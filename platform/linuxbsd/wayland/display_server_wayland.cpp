@@ -619,12 +619,6 @@ Ref<Image> DisplayServerWayland::clipboard_get_image() const {
 		err = image->load_webp_from_buffer(wayland_thread.selection_get_mime("image/webp"));
 	} else if (wayland_thread.selection_has_mime("image/svg+xml")) {
 		err = image->load_svg_from_buffer(wayland_thread.selection_get_mime("image/svg+xml"));
-	} else if (wayland_thread.selection_has_mime("image/bmp")) {
-		err = image->load_bmp_from_buffer(wayland_thread.selection_get_mime("image/bmp"));
-	} else if (wayland_thread.selection_has_mime("image/x-tga")) {
-		err = image->load_tga_from_buffer(wayland_thread.selection_get_mime("image/x-tga"));
-	} else if (wayland_thread.selection_has_mime("image/x-targa")) {
-		err = image->load_tga_from_buffer(wayland_thread.selection_get_mime("image/x-targa"));
 	} else if (wayland_thread.selection_has_mime("image/ktx")) {
 		err = image->load_ktx_from_buffer(wayland_thread.selection_get_mime("image/ktx"));
 	} else if (wayland_thread.selection_has_mime("image/x-exr")) {
@@ -643,9 +637,6 @@ bool DisplayServerWayland::clipboard_has_image() const {
 			wayland_thread.selection_has_mime("image/jpeg") ||
 			wayland_thread.selection_has_mime("image/webp") ||
 			wayland_thread.selection_has_mime("image/svg+xml") ||
-			wayland_thread.selection_has_mime("image/bmp") ||
-			wayland_thread.selection_has_mime("image/x-tga") ||
-			wayland_thread.selection_has_mime("image/x-targa") ||
 			wayland_thread.selection_has_mime("image/ktx") ||
 			wayland_thread.selection_has_mime("image/x-exr");
 }

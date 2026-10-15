@@ -36,7 +36,7 @@ TEST_FORCE_LINK(test_image)
 #include "core/io/image.h"
 #include "tests/test_utils.h"
 
-#include "modules/modules_enabled.gen.h" // For bmp, jpg, svg, webp, tga, exr.
+#include "modules/modules_enabled.gen.h" // For jpg, svg, webp, exr.
 
 namespace TestImage {
 
@@ -109,19 +109,6 @@ TEST_CASE("[Image] Saving and loading") {
 	CHECK_MESSAGE(
 			image->get_data() == image_load->get_data(),
 			"The loaded image should have the same data as the one that got saved.");
-
-#ifdef MODULE_BMP_ENABLED
-	// Load BMP
-	Ref<Image> image_bmp = memnew(Image());
-	Ref<FileAccess> f_bmp = FileAccess::open(TestUtils::get_data_path("images/icon.bmp"), FileAccess::READ, &err);
-	REQUIRE(f_bmp.is_valid());
-	PackedByteArray data_bmp;
-	data_bmp.resize(f_bmp->get_length() + 1);
-	f_bmp->get_buffer(data_bmp.ptrw(), f_bmp->get_length());
-	CHECK_MESSAGE(
-			image_bmp->load_bmp_from_buffer(data_bmp) == OK,
-			"The BMP image should load successfully.");
-#endif // MODULE_BMP_ENABLED
 
 #ifdef MODULE_TINYEXR_ENABLED
 	// Load EXR
@@ -202,18 +189,6 @@ TEST_CASE("[Image] Saving and loading") {
 			image_png->load_png_from_buffer(data_png) == OK,
 			"The PNG image should load successfully.");
 
-#ifdef MODULE_TGA_ENABLED
-	// Load TGA
-	Ref<Image> image_tga = memnew(Image());
-	Ref<FileAccess> f_tga = FileAccess::open(TestUtils::get_data_path("images/icon.tga"), FileAccess::READ, &err);
-	REQUIRE(f_tga.is_valid());
-	PackedByteArray data_tga;
-	data_tga.resize(f_tga->get_length() + 1);
-	f_tga->get_buffer(data_tga.ptrw(), f_tga->get_length());
-	CHECK_MESSAGE(
-			image_tga->load_tga_from_buffer(data_tga) == OK,
-			"The TGA image should load successfully.");
-#endif // MODULE_TGA_ENABLED
 }
 
 TEST_CASE("[Image] Basic getters") {

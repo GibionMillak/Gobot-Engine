@@ -1316,7 +1316,6 @@ void EditorAssetLibrary::_image_update(void *p_image_queue) {
 	uint8_t png_signature[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
 	uint8_t jpg_signature[3] = { 255, 216, 255 };
 	uint8_t webp_signature[4] = { 82, 73, 70, 70 };
-	uint8_t bmp_signature[2] = { 66, 77 };
 
 	if (r) {
 		Ref<Image> parsed_image;
@@ -1327,8 +1326,7 @@ void EditorAssetLibrary::_image_update(void *p_image_queue) {
 			parsed_image = Image::_jpg_mem_loader_func(r, len);
 		} else if ((memcmp(&r[0], &webp_signature[0], 4) == 0) && Image::_webp_mem_loader_func) {
 			parsed_image = Image::_webp_mem_loader_func(r, len);
-		} else if ((memcmp(&r[0], &bmp_signature[0], 2) == 0) && Image::_bmp_mem_loader_func) {
-			parsed_image = Image::_bmp_mem_loader_func(r, len);
+
 		}
 
 		if (parsed_image.is_null()) {

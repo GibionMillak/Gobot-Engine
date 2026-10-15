@@ -640,7 +640,6 @@ void EditorAssetInstaller::_notification(int p_what) {
 
 			extension_icon_map.clear();
 			{
-				extension_icon_map["bmp"] = get_editor_theme_icon(SNAME("ImageTexture"));
 				extension_icon_map["dds"] = get_editor_theme_icon(SNAME("ImageTexture"));
 				extension_icon_map["exr"] = get_editor_theme_icon(SNAME("ImageTexture"));
 				extension_icon_map["hdr"] = get_editor_theme_icon(SNAME("ImageTexture"));
@@ -648,7 +647,6 @@ void EditorAssetInstaller::_notification(int p_what) {
 				extension_icon_map["jpeg"] = get_editor_theme_icon(SNAME("ImageTexture"));
 				extension_icon_map["png"] = get_editor_theme_icon(SNAME("ImageTexture"));
 				extension_icon_map["svg"] = get_editor_theme_icon(SNAME("ImageTexture"));
-				extension_icon_map["tga"] = get_editor_theme_icon(SNAME("ImageTexture"));
 				extension_icon_map["webp"] = get_editor_theme_icon(SNAME("ImageTexture"));
 
 				extension_icon_map["wav"] = get_editor_theme_icon(SNAME("AudioStreamWAV"));

@@ -280,7 +280,7 @@ void ResourceImporterTexture::get_import_options(const String &p_path, List<Impo
 	r_options->push_back(ImportOption(PropertyInfo(Variant::BOOL, "mipmaps/preserve_alpha_test_coverage", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED), false));
 	r_options->push_back(ImportOption(PropertyInfo(Variant::FLOAT, "mipmaps/alpha_test_threshold", PROPERTY_HINT_RANGE, "0.01,0.99,0.01"), 0.5));
 	r_options->push_back(ImportOption(PropertyInfo(Variant::INT, "roughness/mode", PROPERTY_HINT_ENUM, "Detect,Disabled,Red,Green,Blue,Alpha,Gray"), 0));
-	r_options->push_back(ImportOption(PropertyInfo(Variant::STRING, "roughness/src_normal", PROPERTY_HINT_FILE, "*.bmp,*.dds,*.exr,*.jpeg,*.jpg,*.hdr,*.png,*.svg,*.tga,*.webp"), ""));
+	r_options->push_back(ImportOption(PropertyInfo(Variant::STRING, "roughness/src_normal", PROPERTY_HINT_FILE, "*.dds,*.exr,*.jpeg,*.jpg,*.hdr,*.png,*.svg,*.webp"), ""));
 	r_options->push_back(ImportOption(PropertyInfo(Variant::INT, "process/channel_remap/red", PROPERTY_HINT_ENUM, "Red,Green,Blue,Alpha,Inverted Red,Inverted Green,Inverted Blue,Inverted Alpha,Unused,Zero,One"), 0));
 	r_options->push_back(ImportOption(PropertyInfo(Variant::INT, "process/channel_remap/green", PROPERTY_HINT_ENUM, "Red,Green,Blue,Alpha,Inverted Red,Inverted Green,Inverted Blue,Inverted Alpha,Unused,Zero,One"), 1));
 	r_options->push_back(ImportOption(PropertyInfo(Variant::INT, "process/channel_remap/blue", PROPERTY_HINT_ENUM, "Red,Green,Blue,Alpha,Inverted Red,Inverted Green,Inverted Blue,Inverted Alpha,Unused,Zero,One"), 2));
