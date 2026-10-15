@@ -498,12 +498,12 @@ String TranslationServer::get_locale() const {
 	return locale;
 }
 
-void TranslationServer::set_fallback_locale(const String &p_locale) {
-	fallback = p_locale;
+void TranslationServer::set_default_context(const String &p_locale) {
+	default_context = p_locale.is_empty() ? String("en_US") : standardize_locale(p_locale);
 }
 
-String TranslationServer::get_fallback_locale() const {
-	return fallback;
+String TranslationServer::get_default_context() const {
+	return default_context;
 }
 
 bool TranslationServer::is_script_suppored_by_locale(const String &p_locale, const String &p_script) const {
@@ -600,7 +600,7 @@ void TranslationServer::setup() {
 		set_locale(OS::get_singleton()->get_locale());
 	}
 
-	fallback = GLOBAL_DEF("internationalization/locale/fallback", "en");
+	set_default_context(GLOBAL_DEF("internationalization/locale/default_context", "en_US"));
 	main_domain->set_pseudolocalization_enabled(GLOBAL_DEF("internationalization/pseudolocalization/use_pseudolocalization", false));
 	main_domain->set_pseudolocalization_accents_enabled(GLOBAL_DEF("internationalization/pseudolocalization/replace_with_accents", true));
 	main_domain->set_pseudolocalization_double_vowels_enabled(GLOBAL_DEF("internationalization/pseudolocalization/double_vowels", false));
@@ -613,7 +613,7 @@ void TranslationServer::setup() {
 
 #ifdef TOOLS_ENABLED
 	ProjectSettings::get_singleton()->set_custom_property_info(PropertyInfo(Variant::STRING, "internationalization/locale/test", PROPERTY_HINT_LOCALE_ID, ""));
-	ProjectSettings::get_singleton()->set_custom_property_info(PropertyInfo(Variant::STRING, "internationalization/locale/fallback", PROPERTY_HINT_LOCALE_ID, ""));
+	ProjectSettings::get_singleton()->set_custom_property_info(PropertyInfo(Variant::STRING, "internationalization/locale/default_context", PROPERTY_HINT_LOCALE_ID, ""));
 #endif
 }
 
@@ -623,7 +623,7 @@ String TranslationServer::get_tool_locale() {
 		if (editor_domain->has_translation_for_locale(locale, true)) {
 			return locale;
 		}
-		return "en";
+		return "en_US";
 	}
 #endif
 
@@ -640,7 +640,7 @@ String TranslationServer::get_tool_locale() {
 			}
 		}
 	}
-	return res.is_valid() ? res->get_locale() : fallback;
+	return res.is_valid() ? res->get_locale() : default_context;
 }
 
 bool TranslationServer::is_pseudolocalization_enabled() const {

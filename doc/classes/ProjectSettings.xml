@@ -1749,9 +1749,9 @@
 		<member name="input_devices/sensors/enable_magnetometer" type="bool" setter="" getter="" default="false">
 			If [code]true[/code], the magnetometer sensor is enabled and [method Input.get_magnetometer] returns valid data.
 		</member>
-		<member name="internationalization/locale/fallback" type="String" setter="" getter="" default="&quot;en&quot;">
-			The locale to fall back to if a translation isn't available in a given language. If left empty, [code]en[/code] (English) will be used.
-			[b]Note:[/b] Not to be confused with [TextServerFallback].
+		<member name="internationalization/locale/default_context" type="String" setter="" getter="" default="&quot;en_US&quot;">
+			The locale of the project's source messages, used as the default translation preview context and for text layout and export support data. If left empty, [code]en_US[/code] is used.
+			Missing translations return the source message keys; this setting does not select another translation catalog.
 		</member>
 		<member name="internationalization/locale/include_text_server_data" type="bool" setter="" getter="" default="false">
 			If [code]true[/code], text server break iteration rule sets, dictionaries and other optional data are included in the exported project.

@@ -93,7 +93,7 @@
 			<param index="0" name="message" type="StringName" />
 			<param index="1" name="context" type="StringName" default="&amp;&quot;&quot;" />
 			<description>
-				Returns the current locale's translation for the given message and context.
+				Returns the current locale's translation for the given message and context. If no translation is found, returns [param message] unchanged (subject to pseudolocalization when enabled). No other locale is used as a fallback.
 			</description>
 		</method>
 		<method name="translate_plural" qualifiers="const">
@@ -104,6 +104,7 @@
 			<param index="3" name="context" type="StringName" default="&amp;&quot;&quot;" />
 			<description>
 				Returns the current locale's translation for the given message, plural message and context.
+				If no translation is found, returns the singular source key when [param n] is [code]1[/code], or the plural source key otherwise. No other locale is used as a fallback.
 				The number [param n] is the number or quantity of the plural object. It will be used to guide the translation system to fetch the correct plural form for the selected language.
 			</description>
 		</method>

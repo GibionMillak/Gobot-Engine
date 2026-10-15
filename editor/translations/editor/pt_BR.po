@@ -16187,12 +16187,6 @@ msgstr "Geração de Templates"
 msgid "Files with translation strings:"
 msgstr "Arquivos com strings de tradução:"
 
-msgid "Add Built-in Strings"
-msgstr "Adicionar Strings Integradas"
-
-msgid "Add strings from built-in components such as certain Control nodes."
-msgstr "Adicionar strings de componentes integrados como alguns nós de Control."
-
 msgid "No translatable strings found."
 msgstr "Nenhuma string traduzível encontrada."
 

@@ -31,10 +31,9 @@
 #include "template_generator.h"
 
 #include "core/config/project_settings.h"
-#include "editor/translations/editor_translation.h"
 #include "editor/translations/editor_translation_parser.h"
 
-TranslationTemplateGenerator::MessageMap TranslationTemplateGenerator::parse(const Vector<String> &p_sources, bool p_add_builtin, bool p_add_title) const {
+TranslationTemplateGenerator::MessageMap TranslationTemplateGenerator::parse(const Vector<String> &p_sources, bool p_add_title) const {
 	Vector<Vector<String>> raw;
 
 	for (const String &path : p_sources) {
@@ -58,12 +57,6 @@ TranslationTemplateGenerator::MessageMap TranslationTemplateGenerator::parse(con
 			const String &location = source_line > 0 ? vformat("%s:%d", path, source_line) : path;
 
 			raw.push_back({ entry[0], msgctxt, msgid_plural, comment, location });
-		}
-	}
-
-	if (p_add_builtin) {
-		for (const Vector<String> &extractable_msgids : get_extractable_message_list()) {
-			raw.push_back({ extractable_msgids[0], extractable_msgids[1], extractable_msgids[2], String(), String() });
 		}
 	}
 
@@ -105,10 +98,9 @@ TranslationTemplateGenerator::MessageMap TranslationTemplateGenerator::parse(con
 
 void TranslationTemplateGenerator::generate(const String &p_file) {
 	const Vector<String> files = GLOBAL_GET("internationalization/locale/translations_pot_files");
-	const bool add_builtin = GLOBAL_GET("internationalization/locale/translation_add_builtin_strings_to_pot");
 	const bool add_title = GLOBAL_GET("internationalization/locale/translation_add_project_title_to_translation_template");
 
-	const MessageMap &map = parse(files, add_builtin, add_title);
+	const MessageMap &map = parse(files, add_title);
 	if (map.is_empty()) {
 		WARN_PRINT_ED(TTR("No translatable strings found."));
 		return;

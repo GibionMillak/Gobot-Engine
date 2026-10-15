@@ -1122,7 +1122,7 @@
 			Overrides the tablet driver used by the editor.
 		</member>
 		<member name="interface/editor/localization/editor_language" type="String" setter="" getter="">
-			The language to use for the editor interface. If set to [b]Auto[/b], the language is automatically determined based on the system locale. See also [method EditorInterface.get_editor_language].
+			The language to use for the editor interface. Defaults to [code]auto[/code]. Bundled locales are [code]en_US[/code] and [code]pt_BR[/code]. If set to [b]Auto[/b], the first supported system language is selected, falling back to [code]en_US[/code] when none is available. See also [method EditorInterface.get_editor_language].
 			Translations are provided by the community. If you spot a mistake, [url=https://contributing.godotengine.org/en/latest/development/translations.html]contribute to editor translations on Weblate![/url]
 		</member>
 		<member name="interface/editor/localization/localize_settings" type="bool" setter="" getter="">

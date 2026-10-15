@@ -1151,7 +1151,7 @@ Dictionary EditorExportPlatform::get_internal_export_files(const Ref<EditorExpor
 					break;
 				}
 			}
-			if (TS->is_locale_using_support_data(get_project_setting(p_preset, "internationalization/locale/fallback"))) {
+			if (TS->is_locale_using_support_data(get_project_setting(p_preset, "internationalization/locale/default_context"))) {
 				include_data = true;
 			}
 		}

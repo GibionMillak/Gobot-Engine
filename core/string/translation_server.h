@@ -36,8 +36,8 @@
 class TranslationServer : public Object {
 	GDCLASS(TranslationServer, Object);
 
-	String locale = "en";
-	String fallback;
+	String locale = "en_US";
+	String default_context = "en_US";
 
 	Ref<TranslationDomain> main_domain;
 #ifdef TOOLS_ENABLED
@@ -109,8 +109,8 @@ public:
 
 	void set_locale(const String &p_locale);
 	String get_locale() const;
-	void set_fallback_locale(const String &p_locale);
-	String get_fallback_locale() const;
+	void set_default_context(const String &p_locale);
+	String get_default_context() const;
 
 #ifndef DISABLE_DEPRECATED
 	Ref<Translation> get_translation_object(const String &p_locale);

@@ -53,7 +53,6 @@ class LocalizationEditor : public VBoxContainer {
 	Tree *translation_remap_options = nullptr;
 
 	Tree *template_source_list = nullptr;
-	CheckBox *template_add_builtin = nullptr;
 	CheckBox *template_add_title = nullptr;
 	EditorFileDialog *template_source_open_dialog = nullptr;
 	EditorQuickOpenDialog *template_source_quick_open_dialog = nullptr;
@@ -89,7 +88,6 @@ class LocalizationEditor : public VBoxContainer {
 	void _template_generate_open();
 	void _template_generate_quick_open();
 	void _template_generate_command();
-	void _template_add_builtin_toggled();
 	void _template_add_title_toggled();
 	void _template_generate(const String &p_file);
 	void _update_template_source_file_extensions();

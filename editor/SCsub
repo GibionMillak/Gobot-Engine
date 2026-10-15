@@ -50,17 +50,11 @@ if env.editor_build:
         env.Run(editor_builders.make_doc_header),
     )
 
-    # Editor interface and class reference translations incur a significant size
-    # cost for the editor binary (see godot-proposals#3421).
-    # To limit it, we only include translations with a high enough completion
-    # ratio (20% for the editor UI, 10% for the class reference).
-    # Generated with `make include-list` for each resource.
-
+    # Bundle only the supported editor and documentation catalogs.
     translation_targets = {
-        "#editor/translations/editor_translations.gen.cpp": Glob("#editor/translations/editor/*"),
-        "#editor/translations/property_translations.gen.cpp": Glob("#editor/translations/properties/*"),
-        "#editor/translations/doc_translations.gen.cpp": Glob("#doc/translations/*"),
-        "#editor/translations/extractable_translations.gen.cpp": Glob("#editor/translations/extractable/*"),
+        "#editor/translations/editor_translations.gen.cpp": [File(f"#editor/translations/editor/{locale}.po") for locale in ("en_US", "pt_BR")],
+        "#editor/translations/property_translations.gen.cpp": [File(f"#editor/translations/properties/{locale}.po") for locale in ("en_US", "pt_BR")],
+        "#editor/translations/doc_translations.gen.cpp": [File(f"#doc/translations/{locale}.po") for locale in ("en_US", "pt_BR")],
     }
     for target_cpp, sources in translation_targets.items():
         target_h = os.path.splitext(target_cpp)[0] + ".h"

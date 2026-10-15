@@ -43,7 +43,7 @@ void EditorTranslationPreviewButton::_update() {
 		return;
 	}
 
-	if (!locale.is_empty() && locale != TranslationServer::get_singleton()->get_fallback_locale()) {
+	if (!locale.is_empty() && locale != TranslationServer::get_singleton()->get_default_context()) {
 		const String name = TranslationServer::get_singleton()->get_locale_name(locale);
 		set_text(vformat(TTR("Previewing: %s"), name == locale ? locale : name + " [" + locale + "]") + (pseudo ? " (" + TTR("pseudolocalized") + ")" : ""));
 	} else {

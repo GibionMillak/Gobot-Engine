@@ -34,6 +34,10 @@ TEST_FORCE_LINK(test_translation_server)
 
 #include "core/string/translation_server.h"
 
+#ifdef TOOLS_ENABLED
+#include "editor/translations/editor_translation.h"
+#endif
+
 namespace TestTranslationServer {
 
 TEST_CASE("[TranslationServer] Translation operations") {
@@ -87,6 +91,61 @@ TEST_CASE("[TranslationServer] Translation operations") {
 
 	TranslationServer::get_singleton()->remove_domain("godot.test");
 }
+
+TEST_CASE("[TranslationServer] Missing messages use source keys instead of the default context catalog") {
+	TranslationServer *ts = TranslationServer::get_singleton();
+	const String original_context = ts->get_default_context();
+	ts->set_default_context("pt-BR");
+	CHECK(ts->get_default_context() == "pt_BR");
+
+	Ref<TranslationDomain> domain;
+	domain.instantiate();
+	domain->set_locale_override("en_US");
+	Ref<Translation> translation;
+	translation.instantiate();
+	translation->set_locale("pt_BR");
+	translation->add_message("SOURCE_KEY", "Translated text", "context");
+	translation->add_plural_message("SOURCE_ONE", { "Translated one", "Translated many" }, "context");
+	domain->add_translation(translation);
+
+	CHECK(domain->translate("SOURCE_KEY", "context") == "SOURCE_KEY");
+	CHECK(domain->translate_plural("SOURCE_ONE", "SOURCE_MANY", 1, "context") == "SOURCE_ONE");
+	CHECK(domain->translate_plural("SOURCE_ONE", "SOURCE_MANY", 0, "context") == "SOURCE_MANY");
+	CHECK(domain->translate_plural("SOURCE_ONE", "SOURCE_MANY", 2, "context") == "SOURCE_MANY");
+
+	domain->set_locale_override("pt_BR");
+	CHECK(domain->translate("SOURCE_KEY", "context") == "Translated text");
+	CHECK(domain->translate_plural("SOURCE_ONE", "SOURCE_MANY", 2, "context") == "Translated many");
+	CHECK(domain->translate("SOURCE_KEY", "other context") == "SOURCE_KEY");
+	CHECK(domain->translate_plural("SOURCE_ONE", "SOURCE_MANY", 2, "other context") == "SOURCE_MANY");
+
+	domain->set_enabled(false);
+	CHECK(domain->translate("SOURCE_KEY", "context") == "SOURCE_KEY");
+	CHECK(domain->translate_plural("SOURCE_ONE", "SOURCE_MANY", 1, "context") == "SOURCE_ONE");
+	CHECK(domain->translate_plural("SOURCE_ONE", "SOURCE_MANY", 2, "context") == "SOURCE_MANY");
+
+	ts->set_default_context("");
+	CHECK(ts->get_default_context() == "en_US");
+	ts->set_default_context(original_context);
+}
+
+#ifdef TOOLS_ENABLED
+TEST_CASE("[TranslationServer] Bundled editor locales and automatic selection") {
+	const Vector<String> locales = get_editor_locales();
+	CHECK(locales.size() == 2);
+	CHECK(locales.has("en_US"));
+	CHECK(locales.has("pt_BR"));
+	CHECK(select_editor_locale({}) == "en_US");
+	CHECK(select_editor_locale({ "fr_FR" }) == "en_US");
+	CHECK(select_editor_locale({ "pt_BR" }) == "pt_BR");
+	CHECK(select_editor_locale({ "pt_PT" }) == "pt_BR");
+	CHECK(select_editor_locale({ "en_GB", "pt_BR" }) == "en_US");
+	CHECK(select_editor_locale({ "fr_FR", "pt_BR" }) == "pt_BR");
+	LocalVector<String> skipped;
+	skipped.push_back("pt");
+	CHECK(select_editor_locale({ "pt_BR" }, skipped) == "en_US");
+}
+#endif
 
 TEST_CASE("[TranslationServer] Locale operations") {
 	TranslationServer *ts = TranslationServer::get_singleton();

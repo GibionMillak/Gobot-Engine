@@ -424,33 +424,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 			WARN_PRINT("Some locales are not properly supported by selected Text Server and are disabled.");
 		}
 
-		String best = "en";
-		int best_score = 0;
-		for (const String &host_lang : OS::get_singleton()->get_preferred_locales()) {
-			if (host_lang.get_slicec('_', 0) == "en") {
-				int score = TranslationServer::get_singleton()->compare_locales(host_lang, "en");
-				if (score > 0 && score >= best_score) {
-					best = "en";
-					best_score = score;
-				}
-			}
-			for (const String &locale : get_editor_locales()) {
-				// Test against language code without regional variants (e.g. ur_PK).
-				String lang_code = locale.get_slicec('_', 0);
-				if (locales_to_skip.has(lang_code)) {
-					continue;
-				}
-
-				int score = TranslationServer::get_singleton()->compare_locales(host_lang, locale);
-				if (score > 0 && score >= best_score) {
-					best = locale;
-					best_score = score;
-				}
-			}
-			if (best_score > 0) {
-				break;
-			}
-		}
+		const String best = select_editor_locale(OS::get_singleton()->get_preferred_locales(), locales_to_skip);
 
 		String lang_hint;
 		for (const String &locale : get_editor_locales()) {
@@ -458,7 +432,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 			const String lang_name = TranslationServer::get_singleton()->get_locale_name(locale);
 			lang_hint += vformat("%s/[%s] %s", locale, locale, lang_name);
 		}
-		lang_hint = vformat(";auto/Auto (%s);en/[en] English", TranslationServer::get_singleton()->get_locale_name(best)) + lang_hint;
+		lang_hint = vformat(";auto/Auto (%s)", TranslationServer::get_singleton()->get_locale_name(best)) + lang_hint;
 
 		EDITOR_SETTING_USAGE(Variant::STRING, PROPERTY_HINT_ENUM, "interface/editor/localization/editor_language", "auto", lang_hint, PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED | PROPERTY_USAGE_EDITOR_BASIC_SETTING);
 	}
@@ -1521,17 +1495,6 @@ void EditorSettings::setup_language(bool p_initial_setup) {
 		}
 	}
 
-	if (lang == "en") {
-		TranslationServer::get_singleton()->set_locale(lang);
-
-		TranslationServer::get_singleton()->get_editor_domain()->clear();
-		TranslationServer::get_singleton()->get_property_domain()->clear();
-		TranslationServer::get_singleton()->get_doc_domain()->clear();
-
-		emit_signal("_translation_changed");
-		return; // Default, nothing to do.
-	}
-
 	load_editor_translations(lang);
 	load_doc_translations(lang);
 
@@ -2071,41 +2034,14 @@ float EditorSettings::get_auto_display_scale() {
 String EditorSettings::get_language() const {
 	const String language = has_setting("interface/editor/localization/editor_language") ? get_setting("interface/editor/localization/editor_language") : "auto";
 	if (language != "auto" && !language.is_empty()) {
-		return language;
+		return select_editor_locale({ language }, _get_skipped_locales());
 	}
 
 	if (auto_language.is_empty()) {
 		// Skip locales which we can't render properly.
 		const LocalVector<String> locales_to_skip = _get_skipped_locales();
 
-		String best = "en";
-		int best_score = 0;
-		for (const String &host_lang : OS::get_singleton()->get_preferred_locales()) {
-			if (host_lang.get_slicec('_', 0) == "en") {
-				int score = TranslationServer::get_singleton()->compare_locales(host_lang, "en");
-				if (score > 0 && score >= best_score) {
-					best = "en";
-					best_score = score;
-				}
-			}
-			for (const String &locale : get_editor_locales()) {
-				// Test against language code without regional variants (e.g. ur_PK).
-				String lang_code = locale.get_slicec('_', 0);
-				if (locales_to_skip.has(lang_code)) {
-					continue;
-				}
-
-				int score = TranslationServer::get_singleton()->compare_locales(host_lang, locale);
-				if (score > 0 && score >= best_score) {
-					best = locale;
-					best_score = score;
-				}
-			}
-			if (best_score > 0) {
-				break;
-			}
-		}
-		auto_language = best;
+		auto_language = select_editor_locale(OS::get_singleton()->get_preferred_locales(), locales_to_skip);
 	}
 	return auto_language;
 }

@@ -42,7 +42,7 @@ void EditorTranslationPreviewMenu::_prepare() {
 
 	add_radio_check_item(TTRC("None"));
 	set_item_metadata(-1, "");
-	if (current_preview_locale.is_empty() || current_preview_locale == TranslationServer::get_singleton()->get_fallback_locale()) {
+	if (current_preview_locale.is_empty() || current_preview_locale == TranslationServer::get_singleton()->get_default_context()) {
 		set_item_checked(-1, true);
 	}
 
@@ -80,7 +80,7 @@ void EditorTranslationPreviewMenu::_pressed(int p_index) {
 
 		const String preview_locale = EditorNode::get_singleton()->get_preview_locale();
 		EditorNode::get_singleton()->set_preview_locale(
-				preview_locale == TranslationServer::get_singleton()->get_fallback_locale() ? String() : preview_locale,
+				preview_locale == TranslationServer::get_singleton()->get_default_context() ? String() : preview_locale,
 				pseudo_enabled);
 	} else {
 		for (int i = 0; i < get_item_count(); i++) {

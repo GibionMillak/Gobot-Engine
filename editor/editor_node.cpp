@@ -497,12 +497,12 @@ void EditorNode::_update_from_settings() {
 		Viewport::DefaultCanvasItemTextureRepeat tr = (Viewport::DefaultCanvasItemTextureRepeat)current_repeat;
 		scene_root->set_default_canvas_item_texture_repeat(tr);
 	}
-	String current_fallback_locale = GLOBAL_GET("internationalization/locale/fallback");
-	if (current_fallback_locale != TranslationServer::get_singleton()->get_fallback_locale()) {
-		TranslationServer::get_singleton()->set_fallback_locale(current_fallback_locale);
+	String current_default_context = GLOBAL_GET("internationalization/locale/default_context");
+	if (current_default_context != TranslationServer::get_singleton()->get_default_context()) {
+		TranslationServer::get_singleton()->set_default_context(current_default_context);
 		Ref<TranslationDomain> domain = TranslationServer::get_singleton()->get_main_domain();
 		if (!domain->is_enabled()) {
-			domain->set_locale_override(current_fallback_locale);
+			domain->set_locale_override(TranslationServer::get_singleton()->get_default_context());
 		}
 		scene_root->propagate_notification(Control::NOTIFICATION_LAYOUT_DIRECTION_CHANGED);
 	}
@@ -4765,8 +4765,8 @@ void EditorNode::set_preview_locale(const String &p_locale, bool p_pseudolocaliz
 	// So we need to disable translation entirely.
 	Ref<TranslationDomain> main_domain = TranslationServer::get_singleton()->get_main_domain();
 	if (p_locale.is_empty()) {
-		// Disable preview. Use the fallback locale.
-		main_domain->set_locale_override(TranslationServer::get_singleton()->get_fallback_locale());
+		// Disable preview. Use the source locale context.
+		main_domain->set_locale_override(TranslationServer::get_singleton()->get_default_context());
 	} else {
 		// Preview a specific locale.
 		main_domain->set_locale_override(p_locale);
@@ -8570,7 +8570,7 @@ EditorNode::EditorNode() {
 
 	Ref<TranslationDomain> domain = TranslationServer::get_singleton()->get_main_domain();
 	domain->set_enabled(false);
-	domain->set_locale_override(TranslationServer::get_singleton()->get_fallback_locale());
+	domain->set_locale_override(TranslationServer::get_singleton()->get_default_context());
 
 	// Load settings.
 	if (!EditorSettings::get_singleton()) {

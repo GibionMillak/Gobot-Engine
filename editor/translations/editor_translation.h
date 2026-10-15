@@ -31,9 +31,10 @@
 #pragma once
 
 #include "core/string/ustring.h"
+#include "core/templates/local_vector.h"
 #include "core/templates/vector.h"
 
 Vector<String> get_editor_locales();
+String select_editor_locale(const Vector<String> &p_preferred_locales, const LocalVector<String> &p_skipped_locales = {});
 void load_editor_translations(const String &p_locale);
 void load_doc_translations(const String &p_locale);
-Vector<Vector<String>> get_extractable_message_list();

@@ -53,7 +53,6 @@ void LocalizationEditor::_notification(int p_what) {
 		case NOTIFICATION_ENTER_TREE: {
 			translation_list->connect("button_clicked", callable_mp(this, &LocalizationEditor::_translation_delete));
 			template_source_list->connect("button_clicked", callable_mp(this, &LocalizationEditor::_template_source_delete));
-			template_add_builtin->set_pressed(GLOBAL_GET("internationalization/locale/translation_add_builtin_strings_to_pot"));
 			template_add_title->set_pressed(GLOBAL_GET("internationalization/locale/translation_add_project_title_to_translation_template"));
 
 			List<String> tfn;
@@ -429,11 +428,6 @@ void LocalizationEditor::_template_generate_command() {
 		ProjectSettingsEditor::get_singleton()->popup_project_settings();
 		_template_generate_open();
 	}
-}
-
-void LocalizationEditor::_template_add_builtin_toggled() {
-	ProjectSettings::get_singleton()->set_setting("internationalization/locale/translation_add_builtin_strings_to_pot", template_add_builtin->is_pressed());
-	ProjectSettings::get_singleton()->save();
 }
 
 void LocalizationEditor::_template_add_title_toggled() {
@@ -919,11 +913,6 @@ LocalizationEditor::LocalizationEditor() {
 
 		HBoxContainer *checkbox_hb = memnew(HBoxContainer);
 		tvb->add_child(checkbox_hb);
-
-		template_add_builtin = memnew(CheckBox(TTRC("Add Built-in Strings")));
-		template_add_builtin->set_tooltip_text(TTRC("Add strings from built-in components such as certain Control nodes."));
-		template_add_builtin->connect(SceneStringName(pressed), callable_mp(this, &LocalizationEditor::_template_add_builtin_toggled));
-		checkbox_hb->add_child(template_add_builtin);
 
 		template_add_title = memnew(CheckBox(TTRC("Add Project Title")));
 		template_add_title->connect(SceneStringName(pressed), callable_mp(this, &LocalizationEditor::_template_add_title_toggled));
