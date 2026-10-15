@@ -448,7 +448,7 @@ if env["platform"] in platform_opts:
 # as early as possible to ensure that we're using the correct values.
 flag_list = platform_flags[env["platform"]]
 for key, value in flag_list.items():
-    if key not in ARGUMENTS or ARGUMENTS[key] == "auto":  # Allow command line to override platform flags
+    if key in opts.defaulted or env.get(key) == "auto":  # Preserve custom options unless set to auto.
         env[key] = value
 
 # Update the environment to take platform-specific options into account.
