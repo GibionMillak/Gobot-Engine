@@ -1328,14 +1328,14 @@ void ExportTemplateManager::_notification(int p_what) {
 
 		case NOTIFICATION_THEME_CHANGED: {
 			open_folder_button->set_button_icon(get_editor_theme_icon("Folder"));
-			install_button->set_button_icon(get_editor_theme_icon("AssetStore"));
+			install_button->set_button_icon(get_editor_theme_icon("Install"));
 			open_mirror->set_button_icon(get_editor_theme_icon("ExternalLink"));
 			delete_all_button->set_button_icon(get_editor_theme_icon("Remove"));
 			tpz_button->set_button_icon(get_editor_theme_icon("FileBrowse"));
 
 			offline_mode_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 
-			theme_cache.install_icon = get_editor_theme_icon("AssetStore");
+			theme_cache.install_icon = get_editor_theme_icon("Install");
 			theme_cache.remove_icon = get_editor_theme_icon("Remove");
 			theme_cache.repair_icon = get_editor_theme_icon("Tools");
 			theme_cache.failure_icon = get_editor_theme_icon("NodeWarning");

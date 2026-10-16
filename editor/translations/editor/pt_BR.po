@@ -2524,59 +2524,11 @@ msgstr "Carregando..."
 msgid "Download"
 msgstr "Baixar"
 
-msgid "Downloading..."
-msgstr "Baixando..."
-
-msgid "Install..."
-msgstr "Instalar..."
-
 msgid "Version:"
 msgstr "Versão:"
 
 msgid "Description"
 msgstr "Descrição"
-
-msgid "Connection error, please try again."
-msgstr "Erro na conexão, por favor tente novamente."
-
-msgid "Can't connect."
-msgstr "Não foi possível conectar."
-
-msgid "Can't connect to host:"
-msgstr "Não foi possível conectar ao host:"
-
-msgid "No response from host:"
-msgstr "Sem resposta do host:"
-
-msgid "No response."
-msgstr "Sem resposta."
-
-msgid "Can't resolve hostname:"
-msgstr "Não foi possível resolver o hostname:"
-
-msgid "Can't resolve."
-msgstr "Não foi possível resolver."
-
-msgid "Request failed, return code:"
-msgstr "A solicitação falhou, código de retorno:"
-
-msgid "Request failed."
-msgstr "A solicitação falhou."
-
-msgid "Cannot save response to:"
-msgstr "Não foi possível salvar a resposta para:"
-
-msgid "Write error."
-msgstr "Erro ao gravar."
-
-msgid "Request failed, too many redirects"
-msgstr "A solicitação falhou, muitos redirecionamentos"
-
-msgid "Redirect loop."
-msgstr "Repetição de redirecionamento."
-
-msgid "Request failed, timeout"
-msgstr "A solicitação falhou, tempo esgotado"
 
 msgid "Timeout."
 msgstr "Tempo esgotado."
@@ -2584,60 +2536,14 @@ msgstr "Tempo esgotado."
 msgid "Failed:"
 msgstr "Falhou:"
 
-msgid "Bad download hash, assuming file has been tampered with."
-msgstr "Hash de download incorreta, o arquivo pode ter sido adulterado."
-
-msgid "Expected:"
-msgstr "Esperado:"
-
 msgid "Got:"
 msgstr "Obtido:"
-
-msgid "Failed SHA-256 hash check"
-msgstr "Falha na verificação da hash SHA-256"
-
-msgid "Asset Download Error:"
-msgstr "Erro no Download do Recurso:"
-
-msgid "Downloading (%s / %s)..."
-msgstr "Baixando (%s / %s)..."
-
-msgid "Resolving..."
-msgstr "Resolvendo..."
-
-msgid "Connecting..."
-msgstr "Conectando..."
-
-msgid "Requesting..."
-msgstr "Solicitando..."
-
-msgid "Error making request"
-msgstr "Erro ao fazer solicitação"
 
 msgid "Idle"
 msgstr "Ocioso"
 
 msgid "Retry"
 msgstr "Tentar Novamente"
-
-msgid "Download Error"
-msgstr "Erro ao Baixar"
-
-msgctxt "Pagination"
-msgid "First"
-msgstr "Primeira"
-
-msgctxt "Pagination"
-msgid "Previous"
-msgstr "Anterior"
-
-msgctxt "Pagination"
-msgid "Next"
-msgstr "Próxima"
-
-msgctxt "Pagination"
-msgid "Last"
-msgstr "Última"
 
 msgid "Go Online"
 msgstr "Ativar Acesso Online"
@@ -2654,9 +2560,6 @@ msgstr "Sem resultados para \"%s\"."
 msgid "Import..."
 msgstr "Importar..."
 
-msgid "Plugins..."
-msgstr "Plugins..."
-
 msgid "Sort:"
 msgstr "Ordenar:"
 
@@ -2665,76 +2568,6 @@ msgstr "Categoria:"
 
 msgid "Licenses"
 msgstr "Licenças"
-
-msgid "Assets ZIP File"
-msgstr "Arquivo ZIP de Recursos"
-
-msgid "Error opening asset file for \"%s\" (not in ZIP format)."
-msgstr "Erro ao abrir o pacote \"%s\" (não está no formato ZIP)."
-
-msgid "%s (already exists)"
-msgstr "%s (já existe)"
-
-msgid "%d file conflicts with your project and won't be installed"
-msgid_plural "%d files conflict with your project and won't be installed"
-msgstr[0] "Arquivo %d está em conflito com seu projeto e não será instalado"
-msgstr[1] "Arquivos %d estão em conflito com seu projeto e não serão instalados"
-
-msgid "This asset doesn't have a root directory, so it can't be ignored."
-msgstr "Este recurso não possui um diretório raiz, então não pode ser ignorado."
-
-msgid "Ignore the root directory when extracting files."
-msgstr "Ignorar o diretório raiz ao extrair os arquivos."
-
-msgid "Select Install Folder"
-msgstr "Selecionar Pasta para Instalação"
-
-msgid "Uncompressing Assets"
-msgstr "Descompactando Recursos"
-
-msgid "The following files failed extraction from asset \"%s\":"
-msgstr "Os seguintes arquivos falharam na extração do recurso \"%s\":"
-
-msgid "(and %s more files)"
-msgstr "(e mais %s arquivos)"
-
-msgid "Asset \"%s\" installed successfully!"
-msgstr "Recurso \"%s\" foi instalado com sucesso!"
-
-msgid "Success!"
-msgstr "Sucesso!"
-
-msgid "Asset:"
-msgstr "Recurso:"
-
-msgid "Open the list of the asset contents and select which files to install."
-msgstr ""
-"Abra a lista de conteúdos do recurso e selecione quais arquivos instalar."
-
-msgid "Change Install Folder"
-msgstr "Alterar Local de Instalação"
-
-msgid ""
-"Change the folder where the contents of the asset are going to be installed."
-msgstr "Altere a pasta onde os conteúdos do recurso serão instalados."
-
-msgid "Show contents of the asset and conflicting files."
-msgstr "Mostrar o conteúdo do recurso e arquivos conflitantes."
-
-msgid "Contents of the asset:"
-msgstr "Conteúdos do recurso:"
-
-msgid "Source Files"
-msgstr "Arquivos Fonte"
-
-msgid "Installation preview:"
-msgstr "Pré-visualização da instalação:"
-
-msgid "Destination Files"
-msgstr "Arquivos Destino"
-
-msgid "Configure Asset Before Installing"
-msgstr "Configurar Recurso Antes de Instalar"
 
 msgid "Install"
 msgstr "Instalar"

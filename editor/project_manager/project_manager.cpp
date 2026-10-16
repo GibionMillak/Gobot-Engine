@@ -40,7 +40,6 @@
 #include "core/os/keyboard.h"
 #include "core/os/os.h"
 #include "core/version.h"
-#include "editor/asset_library/asset_library_editor_plugin.h"
 #include "editor/doc/editor_help.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/dialogs/project_compatibility_dialog.h"
@@ -108,7 +107,9 @@ void ProjectManager::_notification(int p_what) {
 			filter_option->select(default_sorting);
 			project_list->set_order_option(default_sorting, false);
 
-			_select_main_view(MAIN_VIEW_PROJECTS);
+#ifndef ANDROID_ENABLED
+			callable_mp((Control *)search_box, &Control::grab_focus).call_deferred(true);
+#endif
 			_update_list_placeholder();
 			_titlebar_resized();
 			_update_compact_mode(true);
@@ -119,7 +120,7 @@ void ProjectManager::_notification(int p_what) {
 			SceneTree::get_singleton()->get_root()->set_title(GODOT_VERSION_NAME + String(" - ") + TTR("Project Manager", "Application"));
 
 			const String line1 = TTR("You don't have any projects yet.");
-			const String line2 = TTR("Get started by creating a new one,\nimporting one that exists, or by downloading a project template from the Asset Store!");
+			const String line2 = TTR("Get started by creating a new project or importing an existing one.");
 			empty_list_message->set_text(vformat("[center][b]%s[/b] %s[/center]", line1, line2));
 
 			_titlebar_resized();
@@ -261,12 +262,9 @@ void ProjectManager::_update_theme(bool p_skip_creation) {
 		main_vbox->add_theme_constant_override("separation", top_bar_separation);
 
 		background_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("Background", EditorStringName(EditorStyles)));
-		main_view_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("panel_container", "ProjectManager"));
+		_project_list_pc->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("panel_container", "ProjectManager"));
 
 		title_bar_logo->set_button_icon(get_editor_theme_icon("TitleBarLogo"));
-
-		_set_main_view_icon(MAIN_VIEW_PROJECTS, get_editor_theme_icon("ProjectList"));
-		_set_main_view_icon(MAIN_VIEW_ASSETLIB, get_editor_theme_icon("AssetStore"));
 
 		// Project list.
 		{
@@ -275,10 +273,6 @@ void ProjectManager::_update_theme(bool p_skip_creation) {
 
 			empty_list_create_project->set_button_icon(get_editor_theme_icon("Add"));
 			empty_list_import_project->set_button_icon(get_editor_theme_icon("Load"));
-			empty_list_open_assetlib->set_button_icon(get_editor_theme_icon("AssetStore"));
-
-			empty_list_online_warning->add_theme_font_override(SceneStringName(font), get_theme_font("italic", EditorStringName(EditorFonts)));
-			empty_list_online_warning->add_theme_color_override(SceneStringName(font_color), get_theme_color("font_placeholder_color", EditorStringName(Editor)));
 
 			// Top bar.
 			search_box->set_right_icon(get_editor_theme_icon("Search"));
@@ -318,12 +312,6 @@ void ProjectManager::_update_theme(bool p_skip_creation) {
 			open_options_popup->set_item_icon(0, get_editor_theme_icon("Notification"));
 			open_options_popup->set_item_icon(1, get_editor_theme_icon("NodeWarning"));
 		}
-
-		// Asset store popup.
-		if (asset_library && EDITOR_GET("interface/theme/style") == "Classic") {
-			// Removes extra border margins.
-			asset_library->add_theme_style_override(SceneStringName(panel), memnew(StyleBoxEmpty));
-		}
 	}
 
 #if defined(MODULE_GDSCRIPT_ENABLED) || defined(MODULE_MONO_ENABLED)
@@ -335,96 +323,12 @@ void ProjectManager::_update_theme(bool p_skip_creation) {
 #endif
 }
 
-Button *ProjectManager::_add_main_view(MainViewTab p_id, const String &p_name, const Ref<Texture2D> &p_icon, Control *p_view_control) {
-	ERR_FAIL_INDEX_V(p_id, MAIN_VIEW_MAX, nullptr);
-	ERR_FAIL_COND_V(main_view_map.has(p_id), nullptr);
-	ERR_FAIL_COND_V(main_view_toggle_map.has(p_id), nullptr);
-
-	Button *toggle_button = memnew(Button);
-	toggle_button->set_flat(true);
-	toggle_button->set_theme_type_variation("MainScreenButton");
-	toggle_button->set_toggle_mode(true);
-	toggle_button->set_button_group(main_view_toggles_group);
-	toggle_button->set_text(p_name);
-	toggle_button->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_select_main_view).bind((int)p_id));
-
-	main_view_toggles->add_child(toggle_button);
-	main_view_toggle_map[p_id] = toggle_button;
-
-	_set_main_view_icon(p_id, p_icon);
-
-	p_view_control->set_visible(false);
-	main_view_container->add_child(p_view_control);
-	main_view_map[p_id] = p_view_control;
-
-	return toggle_button;
-}
-
-void ProjectManager::_set_main_view_icon(MainViewTab p_id, const Ref<Texture2D> &p_icon) {
-	ERR_FAIL_INDEX(p_id, MAIN_VIEW_MAX);
-	ERR_FAIL_COND(!main_view_toggle_map.has(p_id));
-
-	Button *toggle_button = main_view_toggle_map[p_id];
-
-	Ref<Texture2D> old_icon = toggle_button->get_button_icon();
-	if (old_icon.is_valid()) {
-		old_icon->disconnect_changed(callable_mp((Control *)toggle_button, &Control::update_minimum_size));
-	}
-
-	if (p_icon.is_valid()) {
-		toggle_button->set_button_icon(p_icon);
-		// Make sure the control is updated if the icon is reimported.
-		p_icon->connect_changed(callable_mp((Control *)toggle_button, &Control::update_minimum_size));
-	} else {
-		toggle_button->set_button_icon(Ref<Texture2D>());
-	}
-}
-
-void ProjectManager::_select_main_view(int p_id) {
-	MainViewTab view_id = (MainViewTab)p_id;
-
-	ERR_FAIL_INDEX(view_id, MAIN_VIEW_MAX);
-	ERR_FAIL_COND(!main_view_map.has(view_id));
-	ERR_FAIL_COND(!main_view_toggle_map.has(view_id));
-
-	if (current_main_view != view_id) {
-		main_view_toggle_map[current_main_view]->set_pressed_no_signal(false);
-		main_view_map[current_main_view]->set_visible(false);
-		current_main_view = view_id;
-	}
-	main_view_toggle_map[current_main_view]->set_pressed_no_signal(true);
-	main_view_map[current_main_view]->set_visible(true);
-
-#ifndef ANDROID_ENABLED
-	if (current_main_view == MAIN_VIEW_PROJECTS && search_box->is_inside_tree()) {
-		// Automatically grab focus when the user moves from the Templates tab
-		// back to the Projects tab.
-		// Needs to be deferred, otherwise the focus outline is always drawn.
-		callable_mp((Control *)search_box, &Control::grab_focus).call_deferred(true);
-	}
-
-	// The Templates tab's search field is focused on display in the asset
-	// library editor plugin code.
-#endif
-}
-
 void ProjectManager::_show_about() {
 	if (!about_dialog) {
 		about_dialog = memnew(EditorAbout);
 		add_child(about_dialog);
 	}
 	about_dialog->popup_centered(Size2(780, 500) * EDSCALE);
-}
-
-void ProjectManager::_open_asset_library_confirmed() {
-	const int network_mode = EDITOR_GET("network/connection/network_mode");
-	if (network_mode == EditorSettings::NETWORK_OFFLINE) {
-		EditorSettings::get_singleton()->set_setting("network/connection/network_mode", EditorSettings::NETWORK_ONLINE);
-		EditorSettings::get_singleton()->notify_changes();
-		EditorSettings::get_singleton()->save();
-	}
-
-	_select_main_view(MAIN_VIEW_ASSETLIB);
 }
 
 void ProjectManager::_project_list_menu_option(int p_option) {
@@ -522,17 +426,6 @@ void ProjectManager::_update_list_placeholder() {
 	if (project_list->get_project_count() > 0) {
 		empty_list_placeholder->hide();
 		return;
-	}
-
-	empty_list_open_assetlib->set_visible(asset_library);
-
-	const int network_mode = EDITOR_GET("network/connection/network_mode");
-	if (network_mode == EditorSettings::NETWORK_OFFLINE) {
-		empty_list_open_assetlib->set_text(TTRC("Go Online and Open Asset Store"));
-		empty_list_online_warning->set_visible(true);
-	} else {
-		empty_list_open_assetlib->set_text(TTRC("Open Asset Store"));
-		empty_list_online_warning->set_visible(false);
 	}
 
 	empty_list_placeholder->show();
@@ -854,9 +747,9 @@ void ProjectManager::_open_recovery_mode_ask(bool manual) {
 
 	recovery_mode_details +=
 			TTR("Recovery Mode is a special mode that may help to recover projects that crash the engine during initialization. This mode temporarily disables the following features:") +
-			String::utf8("\n\n•  ") + TTR("Tool scripts") +
-			String::utf8("\n•  ") + TTR("Editor plugins") +
-			String::utf8("\n•  ") + TTR("Automatic scene restoring") +
+			String::utf8("\n\nâ€¢  ") + TTR("Tool scripts") +
+			String::utf8("\nâ€¢  ") + TTR("Editor plugins") +
+			String::utf8("\nâ€¢  ") + TTR("Automatic scene restoring") +
 			String::utf8("\n\n") + TTR("This mode is intended only for basic editing to troubleshoot such issues, and therefore it will not be possible to run the project during this mode. It is also a good idea to make a backup of your project before proceeding.") +
 			String::utf8("\n\n") + TTR("Edit the project in Recovery Mode?");
 
@@ -951,10 +844,6 @@ void ProjectManager::_on_search_term_changed(const String &p_term) {
 }
 
 void ProjectManager::_on_search_term_submitted(const String &p_text) {
-	if (current_main_view != MAIN_VIEW_PROJECTS) {
-		return;
-	}
-
 	_open_selected_projects_check_recovery_mode();
 }
 
@@ -1117,10 +1006,6 @@ void ProjectManager::shortcut_input(const Ref<InputEvent> &p_ev) {
 			get_tree()->quit();
 		}
 #endif
-
-		if (current_main_view != MAIN_VIEW_PROJECTS) {
-			return;
-		}
 
 		bool keycode_handled = true;
 
@@ -1436,30 +1321,10 @@ ProjectManager::ProjectManager() {
 				main_menu_bar->add_child(help_menu);
 			}
 		}
-		if (can_expand) {
-			// Spacer to center main toggles.
-			left_spacer = memnew(Control);
-			left_spacer->set_mouse_filter(Control::MOUSE_FILTER_PASS);
-			left_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-			title_bar->add_child(left_spacer);
-		}
-
-		main_view_toggles = memnew(HBoxContainer);
-		main_view_toggles->set_alignment(BoxContainer::ALIGNMENT_CENTER);
-		main_view_toggles->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-		main_view_toggles->set_stretch_ratio(2.0);
-		title_bar->add_child(main_view_toggles);
-		title_bar->set_center_control(main_view_toggles);
-
-		if (can_expand) {
-			// Spacer to center main toggles.
-			right_spacer = memnew(Control);
-			right_spacer->set_mouse_filter(Control::MOUSE_FILTER_PASS);
-			right_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-			title_bar->add_child(right_spacer);
-		}
-
-		main_view_toggles_group.instantiate();
+		Control *title_spacer = memnew(Control);
+		title_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+		title_spacer->set_mouse_filter(Control::MOUSE_FILTER_PASS);
+		title_bar->add_child(title_spacer);
 
 		HBoxContainer *right_hbox = memnew(HBoxContainer);
 		right_hbox->set_alignment(BoxContainer::ALIGNMENT_END);
@@ -1481,21 +1346,21 @@ ProjectManager::ProjectManager() {
 		}
 	}
 
-	main_view_container = memnew(PanelContainer);
-	main_view_container->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	main_vbox->add_child(main_view_container);
+	_project_list_pc = memnew(PanelContainer);
+	_project_list_pc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	main_vbox->add_child(_project_list_pc);
 
 	// Project list view.
 	{
-		local_projects_vb = memnew(VBoxContainer);
-		local_projects_vb->set_name("LocalProjectsTab");
-		_add_main_view(MAIN_VIEW_PROJECTS, TTRC("Projects"), Ref<Texture2D>(), local_projects_vb);
+		_local_projects_vbox = memnew(VBoxContainer);
+		_local_projects_vbox->set_name("LocalProjectsTab");
+		_project_list_pc->add_child(_local_projects_vbox);
 
 		// Project list's top bar.
 		{
 			HBoxContainer *hb = memnew(HBoxContainer);
 			hb->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-			local_projects_vb->add_child(hb);
+			_local_projects_vbox->add_child(hb);
 
 			create_btn = memnew(Button);
 			create_btn->set_text(TTRC("Create"));
@@ -1553,7 +1418,7 @@ ProjectManager::ProjectManager() {
 		// Project list and its sidebar.
 		{
 			HBoxContainer *project_list_hbox = memnew(HBoxContainer);
-			local_projects_vb->add_child(project_list_hbox);
+			_local_projects_vbox->add_child(project_list_hbox);
 			project_list_hbox->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 
 			project_list_panel = memnew(PanelContainer);
@@ -1602,21 +1467,6 @@ ProjectManager::ProjectManager() {
 				empty_list_import_project->set_theme_type_variation("PanelBackgroundButton");
 				empty_list_actions->add_child(empty_list_import_project);
 				empty_list_import_project->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_import_project));
-
-				empty_list_open_assetlib = memnew(Button);
-				empty_list_open_assetlib->set_text(TTRC("Open Asset Store"));
-				empty_list_open_assetlib->set_theme_type_variation("PanelBackgroundButton");
-				empty_list_actions->add_child(empty_list_open_assetlib);
-				empty_list_open_assetlib->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_open_asset_library_confirmed));
-
-				empty_list_online_warning = memnew(Label);
-				empty_list_online_warning->set_focus_mode(FOCUS_ACCESSIBILITY);
-				empty_list_online_warning->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
-				empty_list_online_warning->set_custom_minimum_size(Size2(220, 0) * EDSCALE);
-				empty_list_online_warning->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
-				empty_list_online_warning->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-				empty_list_online_warning->set_text(TTRC("Note: The Asset Store requires an online connection and involves sending data over the internet."));
-				empty_list_placeholder->add_child(empty_list_online_warning);
 			}
 
 			// The side bar with the edit, run, rename, etc. buttons.
@@ -1699,20 +1549,6 @@ ProjectManager::ProjectManager() {
 			donate_btn->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_open_donate_page));
 			project_list_sidebar->add_child(donate_btn);
 		}
-	}
-
-	// Asset store view.
-	if (AssetLibraryEditorPlugin::is_available()) {
-		asset_library = memnew(EditorAssetLibrary(true));
-		asset_library->set_name("AssetLibraryTab");
-		_add_main_view(MAIN_VIEW_ASSETLIB, TTRC("Asset Store"), Ref<Texture2D>(), asset_library);
-		asset_library->connect("install_asset", callable_mp(this, &ProjectManager::_install_project));
-	} else {
-		VBoxContainer *asset_library_filler = memnew(VBoxContainer);
-		asset_library_filler->set_name("AssetLibraryTab");
-		Button *asset_library_toggle = _add_main_view(MAIN_VIEW_ASSETLIB, TTRC("Asset Store"), Ref<Texture2D>(), asset_library_filler);
-		asset_library_toggle->set_disabled(true);
-		asset_library_toggle->set_tooltip_text(TTRC("Asset Store not available (due to using Web editor, or because SSL support disabled)."));
 	}
 
 	// Footer bar.

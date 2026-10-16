@@ -47,7 +47,6 @@
 const char *EditorFeatureProfile::feature_names[FEATURE_MAX] = {
 	TTRC("3D Editor"),
 	TTRC("Script Editor"),
-	TTRC("Asset Store"),
 	TTRC("Scene Tree Editing"),
 	TTRC("FileSystem Dock"),
 	TTRC("Import Dock"),
@@ -60,7 +59,6 @@ const char *EditorFeatureProfile::feature_names[FEATURE_MAX] = {
 const char *EditorFeatureProfile::feature_descriptions[FEATURE_MAX] = {
 	TTRC("Allows to view and edit 3D scenes."),
 	TTRC("Allows to edit scripts using the integrated script editor."),
-	TTRC("Provides built-in access to the Asset Store."),
 	TTRC("Allows editing the node hierarchy in the Scene dock."),
 	TTRC("Allows to browse the local file system via a dedicated dock."),
 	TTRC("Allows to configure import settings for individual assets. Requires the FileSystem dock to function."),
@@ -73,7 +71,6 @@ const char *EditorFeatureProfile::feature_descriptions[FEATURE_MAX] = {
 const char *EditorFeatureProfile::feature_identifiers[FEATURE_MAX] = {
 	"3d",
 	"script",
-	"asset_lib",
 	"scene_tree",
 	"filesystem_dock",
 	"import_dock",
@@ -311,7 +308,6 @@ void EditorFeatureProfile::_bind_methods() {
 
 	BIND_ENUM_CONSTANT(FEATURE_3D);
 	BIND_ENUM_CONSTANT(FEATURE_SCRIPT);
-	BIND_ENUM_CONSTANT(FEATURE_ASSET_LIB);
 	BIND_ENUM_CONSTANT(FEATURE_SCENE_TREE);
 	BIND_ENUM_CONSTANT(FEATURE_FILESYSTEM_DOCK);
 	BIND_ENUM_CONSTANT(FEATURE_IMPORT_DOCK);

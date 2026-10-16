@@ -63,8 +63,7 @@ It is maintained by the Godot community in its own [GitHub repository](https://g
 The [class reference](https://docs.godotengine.org/en/latest/classes/)
 is also accessible from the Godot editor.
 
-We also maintain official demos in their own [GitHub repository](https://github.com/godotengine/godot-demo-projects)
-as well as the [Asset Store](https://store.godotengine.org/).
+We also maintain official demos in their own [GitHub repository](https://github.com/godotengine/godot-demo-projects).
 
 There are also a number of other
 [learning resources](https://docs.godotengine.org/en/latest/community/tutorials.html)

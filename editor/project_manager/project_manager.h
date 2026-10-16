@@ -34,7 +34,6 @@
 #include "scene/gui/scroll_container.h"
 
 class EditorAbout;
-class EditorAssetLibrary;
 class EditorFileDialog;
 class EditorTitleBar;
 class HFlowContainer;
@@ -86,41 +85,21 @@ class ProjectManager : public Control {
 
 	EditorTitleBar *title_bar = nullptr;
 	Control *left_menu_spacer = nullptr;
-	Control *left_spacer = nullptr;
 	Control *right_menu_spacer = nullptr;
-	Control *right_spacer = nullptr;
 	Button *title_bar_logo = nullptr;
-	HBoxContainer *main_view_toggles = nullptr;
 	Button *quick_settings_button = nullptr;
 	VBoxContainer *project_list_sidebar = nullptr;
 
 	int compact_mode_threshold = 0;
 	void _update_compact_mode(bool p_reset_threshold = false);
 
-	enum MainViewTab {
-		MAIN_VIEW_PROJECTS,
-		MAIN_VIEW_ASSETLIB,
-		MAIN_VIEW_MAX
-	};
+	PanelContainer *_project_list_pc = nullptr;
 
-	MainViewTab current_main_view = MAIN_VIEW_PROJECTS;
-	HashMap<MainViewTab, Control *> main_view_map;
-	HashMap<MainViewTab, Button *> main_view_toggle_map;
-
-	PanelContainer *main_view_container = nullptr;
-	Ref<ButtonGroup> main_view_toggles_group;
-
-	Button *_add_main_view(MainViewTab p_id, const String &p_name, const Ref<Texture2D> &p_icon, Control *p_view_control);
-	void _set_main_view_icon(MainViewTab p_id, const Ref<Texture2D> &p_icon);
-	void _select_main_view(int p_id);
-
-	VBoxContainer *local_projects_vb = nullptr;
-	EditorAssetLibrary *asset_library = nullptr;
+	VBoxContainer *_local_projects_vbox = nullptr;
 
 	EditorAbout *about_dialog = nullptr;
 
 	void _show_about();
-	void _open_asset_library_confirmed();
 	void _project_list_menu_option(int p_option);
 
 	AcceptDialog *error_dialog = nullptr;
@@ -141,8 +120,6 @@ class ProjectManager : public Control {
 	RichTextLabel *empty_list_message = nullptr;
 	Button *empty_list_create_project = nullptr;
 	Button *empty_list_import_project = nullptr;
-	Button *empty_list_open_assetlib = nullptr;
-	Label *empty_list_online_warning = nullptr;
 
 	void _update_list_placeholder();
 
