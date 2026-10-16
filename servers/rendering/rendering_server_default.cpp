@@ -35,13 +35,10 @@
 #include "core/profiling/profiling.h"
 #include "servers/display/display_server.h"
 #include "servers/rendering/renderer_canvas_cull.h"
+#include "servers/rendering/renderer_compositor.h"
 #include "servers/rendering/renderer_scene_cull.h"
 #include "servers/rendering/rendering_device.h"
 #include "servers/rendering/rendering_server_globals.h"
-
-#ifndef XR_DISABLED
-#include "servers/xr/xr_server.h"
-#endif
 
 // careful, these may run in different threads than the rendering server
 
@@ -83,15 +80,6 @@ void RenderingServerDefault::_draw(bool p_swap_buffers, double frame_step) {
 
 	RENDER_TIMESTAMP("Prepare Render Frame");
 
-#ifndef XR_DISABLED
-	GodotProfileZoneGrouped(_profile_zone, "xr_server->pre_render");
-	XRServer *xr_server = XRServer::get_singleton();
-	if (xr_server != nullptr) {
-		// Let XR server know we're about to render a frame.
-		xr_server->pre_render();
-	}
-#endif // XR_DISABLED
-
 	GodotProfileZoneGrouped(_profile_zone, "scene->update");
 	RSG::scene->update(); //update scenes stuff before updating instances
 	GodotProfileZoneGrouped(_profile_zone, "canvas->update");
@@ -113,14 +101,6 @@ void RenderingServerDefault::_draw(bool p_swap_buffers, double frame_step) {
 
 	GodotProfileZoneGrouped(_profile_zone, "rasterizer->end_frame");
 	RSG::rasterizer->end_frame(p_swap_buffers);
-
-#ifndef XR_DISABLED
-	if (xr_server != nullptr) {
-		GodotProfileZone("xr_server->end_frame");
-		// let our XR server know we're done so we can get our frame timing
-		xr_server->end_frame();
-	}
-#endif // XR_DISABLED
 
 	GodotProfileZoneGrouped(_profile_zone, "update_visibility_notifiers");
 	RSG::canvas->update_visibility_notifiers();

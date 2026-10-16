@@ -91,8 +91,6 @@ private:
 		virtual void free_data() override;
 		virtual void configure(RenderSceneBuffersRD *p_render_buffers) override;
 
-		RID get_motion_vectors_fb();
-
 	private:
 		RenderSceneBuffersRD *render_buffers = nullptr;
 	};
@@ -117,7 +115,6 @@ private:
 		// PASS_MODE_DEPTH_NORMAL_ROUGHNESS_VOXEL_GI,
 		PASS_MODE_DEPTH_MATERIAL,
 		// PASS_MODE_SDF,
-		PASS_MODE_MOTION_VECTORS,
 	};
 
 	struct RenderElementInfo;
@@ -211,8 +208,7 @@ private:
 		struct PushConstant {
 			uint32_t uv_offset;
 			uint32_t base_index;
-			uint32_t multimesh_motion_vectors_current_offset;
-			uint32_t multimesh_motion_vectors_previous_offset;
+			uint32_t multimesh_transform_offset;
 			PushConstantUbershader ubershader;
 		};
 
@@ -226,7 +222,6 @@ private:
 			uint32_t instance_uniforms_ofs; // Base offset in global buffer for instance variables.
 			uint32_t gi_offset; // GI information when using lightmapping (VCT or lightmap index).
 			uint32_t layer_mask;
-			float prev_transform[12];
 			float lightmap_uv_scale[4]; // Doubles as uv_offset when needed.
 			uint32_t reflection_probes[2]; // Packed reflection probes.
 			uint32_t omni_lights[2]; // Packed omni lights.
@@ -236,7 +231,6 @@ private:
 			uint32_t padding[2];
 #ifdef REAL_T_IS_DOUBLE
 			float model_precision[4];
-			float prev_model_precision[4];
 #endif
 
 			// These setters allow us to copy the data over with operation when using floats.
@@ -545,10 +539,6 @@ protected:
 		uint32_t instance_count = 0;
 		uint32_t trail_steps = 1;
 
-		uint64_t prev_transform_change_frame = UINT_MAX;
-		bool prev_transform_dirty = true;
-		Transform3D prev_transform;
-
 		// lightmap
 		uint32_t gi_offset_cache = 0; // !BAS! Should rename this to lightmap_offset_cache, in forward clustered this was shared between gi and lightmap
 		RID lightmap_instance;
@@ -578,7 +568,6 @@ protected:
 
 		virtual void _mark_dirty() override;
 
-		virtual void set_transform(const Transform3D &p_transform, const AABB &p_aabb, const AABB &p_transformed_aabb) override;
 		virtual void set_use_lightmap(RID p_lightmap_instance, const Rect2 &p_lightmap_uv_scale, int p_lightmap_slice_index) override;
 		virtual void set_lightmap_capture(const Color *p_sh9) override;
 

@@ -437,7 +437,7 @@ public:
 
 	// ----- QUEUE -----
 
-	virtual CommandQueueID command_queue_create(CommandQueueFamilyID p_cmd_queue_family, bool p_identify_as_main_queue = false) = 0;
+	virtual CommandQueueID command_queue_create(CommandQueueFamilyID p_cmd_queue_family) = 0;
 	virtual Error command_queue_execute_and_present(CommandQueueID p_cmd_queue, VectorView<SemaphoreID> p_wait_semaphores, VectorView<CommandBufferID> p_cmd_buffers, VectorView<SemaphoreID> p_cmd_semaphores, FenceID p_cmd_fence, VectorView<SwapChainID> p_swap_chains) = 0;
 	virtual void command_queue_free(CommandQueueID p_cmd_queue) = 0;
 
@@ -896,12 +896,10 @@ public:
 	struct FragmentDensityMapCapabilities {
 		Size2i min_texel_size;
 		Size2i max_texel_size;
-		Size2i offset_granularity;
 		bool attachment_supported = false;
 		bool dynamic_attachment_supported = false;
 		bool non_subsampled_images_supported = false;
 		bool invocations_supported = false;
-		bool offset_supported = false;
 	};
 
 	enum ApiTrait {

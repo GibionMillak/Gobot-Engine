@@ -39,6 +39,8 @@
 #include "drivers/gles3/rasterizer_util_gles3.h"
 #include "drivers/gles3/storage/material_storage.h"
 #include "drivers/gles3/storage/utilities.h"
+#include "servers/rendering/renderer_compositor.h"
+#include "servers/rendering/rendering_server_globals.h"
 
 using namespace GLES3;
 
@@ -3310,31 +3312,23 @@ void TextureStorage::_update_render_target_color(RenderTarget *rt) {
 		glBindFramebuffer(GL_FRAMEBUFFER, rt->fbo);
 
 		// color
-		if (rt->overridden.color.is_valid()) {
-			texture = get_texture(rt->overridden.color);
-			ERR_FAIL_NULL(texture);
+		texture = get_texture(rt->texture);
+		ERR_FAIL_NULL(texture);
 
-			rt->color = texture->tex_id;
-			rt->size = Size2i(texture->width, texture->height);
+		glGenTextures(1, &rt->color);
+		glBindTexture(texture_target, rt->color);
+
+		if (use_array) {
+			glTexImage3D(texture_target, 0, rt->color_internal_format, rt->size.x, rt->size.y, rt->view_count, 0, rt->color_format, rt->color_type, nullptr);
 		} else {
-			texture = get_texture(rt->texture);
-			ERR_FAIL_NULL(texture);
-
-			glGenTextures(1, &rt->color);
-			glBindTexture(texture_target, rt->color);
-
-			if (use_array) {
-				glTexImage3D(texture_target, 0, rt->color_internal_format, rt->size.x, rt->size.y, rt->view_count, 0, rt->color_format, rt->color_type, nullptr);
-			} else {
-				glTexImage2D(texture_target, 0, rt->color_internal_format, rt->size.x, rt->size.y, 0, rt->color_format, rt->color_type, nullptr);
-			}
-
-			texture->target = texture_target;
-			texture->gl_set_filter(RSE::CANVAS_ITEM_TEXTURE_FILTER_NEAREST);
-			texture->gl_set_repeat(RSE::CANVAS_ITEM_TEXTURE_REPEAT_DISABLED);
-
-			GLES3::Utilities::get_singleton()->texture_allocated_data(rt->color, rt->size.x * rt->size.y * rt->view_count * rt->color_format_size, "Render target color texture");
+			glTexImage2D(texture_target, 0, rt->color_internal_format, rt->size.x, rt->size.y, 0, rt->color_format, rt->color_type, nullptr);
 		}
+
+		texture->target = texture_target;
+		texture->gl_set_filter(RSE::CANVAS_ITEM_TEXTURE_FILTER_NEAREST);
+		texture->gl_set_repeat(RSE::CANVAS_ITEM_TEXTURE_REPEAT_DISABLED);
+
+		GLES3::Utilities::get_singleton()->texture_allocated_data(rt->color, rt->size.x * rt->size.y * rt->view_count * rt->color_format_size, "Render target color texture");
 #ifndef IOS_ENABLED
 		if (use_array && !config->multiview_supported) {
 			// Attach the first layer now so the FBO is complete.
@@ -3350,31 +3344,23 @@ void TextureStorage::_update_render_target_color(RenderTarget *rt) {
 		}
 
 		// depth
-		if (rt->overridden.depth.is_valid()) {
-			texture = get_texture(rt->overridden.depth);
-			ERR_FAIL_NULL(texture);
+		glGenTextures(1, &rt->depth);
+		glBindTexture(texture_target, rt->depth);
 
-			rt->depth = texture->tex_id;
-			rt->depth_has_stencil = rt->overridden.depth_has_stencil;
+		if (use_array) {
+			glTexImage3D(texture_target, 0, GL_DEPTH24_STENCIL8, rt->size.x, rt->size.y, rt->view_count, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 		} else {
-			glGenTextures(1, &rt->depth);
-			glBindTexture(texture_target, rt->depth);
-
-			if (use_array) {
-				glTexImage3D(texture_target, 0, GL_DEPTH24_STENCIL8, rt->size.x, rt->size.y, rt->view_count, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
-			} else {
-				glTexImage2D(texture_target, 0, GL_DEPTH24_STENCIL8, rt->size.x, rt->size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
-			}
-
-			glTexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(texture_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(texture_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-			rt->depth_has_stencil = true;
-
-			GLES3::Utilities::get_singleton()->texture_allocated_data(rt->depth, rt->size.x * rt->size.y * rt->view_count * 4, "Render target depth texture");
+			glTexImage2D(texture_target, 0, GL_DEPTH24_STENCIL8, rt->size.x, rt->size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 		}
+
+		glTexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(texture_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(texture_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		rt->depth_has_stencil = true;
+
+		GLES3::Utilities::get_singleton()->texture_allocated_data(rt->depth, rt->size.x * rt->size.y * rt->view_count * 4, "Render target depth texture");
 
 #ifndef IOS_ENABLED
 		if (use_array && !config->multiview_supported) {
@@ -3391,111 +3377,45 @@ void TextureStorage::_update_render_target_color(RenderTarget *rt) {
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status != GL_FRAMEBUFFER_COMPLETE) {
 			glDeleteFramebuffers(1, &rt->fbo);
-			if (rt->overridden.color.is_null()) {
-				GLES3::Utilities::get_singleton()->texture_free_data(rt->color);
-			}
-			if (rt->overridden.depth.is_null()) {
-				GLES3::Utilities::get_singleton()->texture_free_data(rt->depth);
-			}
+			GLES3::Utilities::get_singleton()->texture_free_data(rt->color);
+			GLES3::Utilities::get_singleton()->texture_free_data(rt->depth);
 			rt->fbo = 0;
 			rt->size.x = 0;
 			rt->size.y = 0;
 			rt->color = 0;
 			rt->depth = 0;
-			if (rt->overridden.color.is_null()) {
-				texture->tex_id = 0;
-				texture->active = false;
-			}
+			texture->tex_id = 0;
+			texture->active = false;
 			WARN_PRINT("Could not create render target, status: " + get_framebuffer_error(status));
 			return;
 		}
 
 		texture->is_render_target = true;
 		texture->render_target = rt;
-		if (rt->overridden.color.is_null()) {
-			texture->format = rt->image_format;
-			texture->real_format = rt->image_format;
-			texture->target = texture_target;
-			if (rt->view_count > 1) {
-				texture->type = Texture::TYPE_LAYERED;
-				texture->layers = rt->view_count;
-			} else {
-				texture->type = Texture::TYPE_2D;
-				texture->layers = 1;
-			}
-			texture->gl_format_cache = rt->color_format;
-			texture->gl_type_cache = !rt->hdr ? GL_UNSIGNED_BYTE : GL_FLOAT; // to set HDR format size to 8 and keep 4 for LDR format
-			texture->gl_internal_format_cache = rt->color_internal_format;
-			texture->tex_id = rt->color;
-			texture->width = rt->size.x;
-			texture->alloc_width = rt->size.x;
-			texture->height = rt->size.y;
-			texture->alloc_height = rt->size.y;
-			texture->active = true;
+		texture->format = rt->image_format;
+		texture->real_format = rt->image_format;
+		texture->target = texture_target;
+		if (rt->view_count > 1) {
+			texture->type = Texture::TYPE_LAYERED;
+			texture->layers = rt->view_count;
+		} else {
+			texture->type = Texture::TYPE_2D;
+			texture->layers = 1;
 		}
+		texture->gl_format_cache = rt->color_format;
+		texture->gl_type_cache = !rt->hdr ? GL_UNSIGNED_BYTE : GL_FLOAT; // to set HDR format size to 8 and keep 4 for LDR format
+		texture->gl_internal_format_cache = rt->color_internal_format;
+		texture->tex_id = rt->color;
+		texture->width = rt->size.x;
+		texture->alloc_width = rt->size.x;
+		texture->height = rt->size.y;
+		texture->alloc_height = rt->size.y;
+		texture->active = true;
 	}
 
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBindFramebuffer(GL_FRAMEBUFFER, system_fbo);
-}
-
-void TextureStorage::_update_render_target_velocity(RenderTarget *rt) {
-	GLuint new_velocity_fbo;
-	glGenFramebuffers(1, &new_velocity_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, new_velocity_fbo);
-
-	uint32_t view_count = rt->view_count;
-	GLuint texture_target = view_count > 1 ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D;
-
-	GLuint velocity_texture_id = texture_get_texid(rt->overridden.velocity);
-	glBindTexture(texture_target, velocity_texture_id);
-	glTexParameteri(texture_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(texture_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-#ifndef IOS_ENABLED
-	if (view_count > 1 && !GLES3::Config::get_singleton()->multiview_supported) {
-		glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, velocity_texture_id, 0, 0);
-	} else if (view_count > 1) {
-		glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, velocity_texture_id, 0, 0, view_count);
-	} else {
-#else
-	{
-#endif
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, velocity_texture_id, 0);
-	}
-
-	GLuint velocity_depth_texture_id = texture_get_texid(rt->overridden.velocity_depth);
-	glBindTexture(texture_target, velocity_depth_texture_id);
-	glTexParameteri(texture_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(texture_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-#ifndef IOS_ENABLED
-	if (view_count > 1 && !GLES3::Config::get_singleton()->multiview_supported) {
-		glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, velocity_depth_texture_id, 0, 0);
-	} else if (view_count > 1) {
-		glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, velocity_depth_texture_id, 0, 0, view_count);
-	} else {
-#else
-	{
-#endif
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, velocity_depth_texture_id, 0);
-	}
-
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (status != GL_FRAMEBUFFER_COMPLETE) {
-		glDeleteFramebuffers(1, &new_velocity_fbo);
-		WARN_PRINT(vformat("Could not create motion vector render target, status: %s.", GLES3::TextureStorage::get_singleton()->get_framebuffer_error(status)));
-	} else {
-		rt->overridden.velocity_fbo = new_velocity_fbo;
-	}
-
-	glBindTexture(texture_target, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void TextureStorage::_create_render_target_backbuffer(RenderTarget *rt) {
@@ -3559,49 +3479,25 @@ void TextureStorage::_clear_render_target(RenderTarget *rt) {
 		return;
 	}
 
-	for (KeyValue<uint32_t, GLuint> &E : rt->overridden.velocity_fbo_cache) {
-		glDeleteFramebuffers(1, &E.value);
-	}
-	rt->overridden.velocity_fbo_cache.clear();
-	rt->overridden.velocity_fbo = 0;
-
-	// Dispose of the cached fbo's and the allocated textures
-	for (KeyValue<uint32_t, RenderTarget::RTOverridden::FBOCacheEntry> &E : rt->overridden.fbo_cache) {
-		glDeleteTextures(E.value.allocated_textures.size(), E.value.allocated_textures.ptr());
-		// Don't delete the current FBO, we'll do that a couple lines down.
-		if (E.value.fbo != rt->fbo) {
-			glDeleteFramebuffers(1, &E.value.fbo);
-		}
-	}
-	rt->overridden.fbo_cache.clear();
-
 	if (rt->fbo) {
 		glDeleteFramebuffers(1, &rt->fbo);
 		rt->fbo = 0;
 	}
 
-	if (rt->overridden.color.is_null()) {
-		if (rt->texture.is_valid()) {
-			Texture *tex = get_texture(rt->texture);
-			tex->alloc_height = 0;
-			tex->alloc_width = 0;
-			tex->width = 0;
-			tex->height = 0;
-			tex->active = false;
-			tex->render_target = nullptr;
-			tex->is_render_target = false;
-			tex->gl_set_filter(RSE::CANVAS_ITEM_TEXTURE_FILTER_MAX);
-			tex->gl_set_repeat(RSE::CANVAS_ITEM_TEXTURE_REPEAT_MAX);
-		}
-	} else {
-		Texture *tex = get_texture(rt->overridden.color);
+	if (rt->texture.is_valid()) {
+		Texture *tex = get_texture(rt->texture);
+		tex->alloc_height = 0;
+		tex->alloc_width = 0;
+		tex->width = 0;
+		tex->height = 0;
+		tex->active = false;
 		tex->render_target = nullptr;
 		tex->is_render_target = false;
+		tex->gl_set_filter(RSE::CANVAS_ITEM_TEXTURE_FILTER_MAX);
+		tex->gl_set_repeat(RSE::CANVAS_ITEM_TEXTURE_REPEAT_MAX);
 	}
 
-	if (rt->overridden.color.is_valid()) {
-		rt->overridden.color = RID();
-	} else if (rt->color) {
+	if (rt->color) {
 		GLES3::Utilities::get_singleton()->texture_free_data(rt->color);
 		if (rt->texture.is_valid()) {
 			Texture *tex = get_texture(rt->texture);
@@ -3610,14 +3506,10 @@ void TextureStorage::_clear_render_target(RenderTarget *rt) {
 	}
 	rt->color = 0;
 
-	if (rt->overridden.depth.is_valid()) {
-		rt->overridden.depth = RID();
-	} else if (rt->depth) {
+	if (rt->depth) {
 		GLES3::Utilities::get_singleton()->texture_free_data(rt->depth);
 	}
 	rt->depth = 0;
-
-	rt->overridden.is_overridden = false;
 
 	if (rt->backbuffer_fbo != 0) {
 		glDeleteFramebuffers(1, &rt->backbuffer_fbo);
@@ -3659,9 +3551,7 @@ void TextureStorage::render_target_free(RID p_rid) {
 	Texture *t = get_texture(rt->texture);
 	if (t) {
 		t->is_render_target = false;
-		if (rt->overridden.color.is_null()) {
-			texture_free(rt->texture);
-		}
+		texture_free(rt->texture);
 		//memdelete(t);
 	}
 	render_target_owner.free(p_rid);
@@ -3688,9 +3578,6 @@ void TextureStorage::render_target_set_size(RID p_render_target, int p_width, in
 	if (p_width == rt->size.x && p_height == rt->size.y && p_view_count == rt->view_count) {
 		return;
 	}
-	if (rt->overridden.color.is_valid()) {
-		return;
-	}
 
 	_clear_render_target(rt);
 
@@ -3708,174 +3595,11 @@ Size2i TextureStorage::render_target_get_size(RID p_render_target) const {
 	return rt->size;
 }
 
-void TextureStorage::render_target_set_override(RID p_render_target, RID p_color_texture, RID p_depth_texture, RID p_velocity_texture, RID p_velocity_depth_texture) {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL(rt);
-	ERR_FAIL_COND(rt->direct_to_screen);
-
-	// Remember what our current color output is.
-	RID was_color_texture = render_target_get_texture(p_render_target);
-
-	bool create_new_color_fbo = true;
-	bool create_new_velocity_fbo = true;
-	bool needs_clear = !rt->overridden.is_overridden;
-
-	if (rt->overridden.color == p_color_texture && rt->overridden.depth == p_depth_texture && rt->overridden.velocity == p_velocity_texture && rt->overridden.velocity_depth == p_velocity_depth_texture) {
-		return;
-	}
-
-	if (p_color_texture.is_null() && p_depth_texture.is_null()) {
-		// Set this back to our default textures.
-		if (was_color_texture.is_valid()) {
-			texture_remap_proxies(was_color_texture, rt->texture);
-		}
-
-		_clear_render_target(rt);
-		_update_render_target_color(rt);
-		create_new_color_fbo = false;
-		needs_clear = false;
-	}
-
-	if (needs_clear) {
-		_clear_render_target(rt);
-	}
-
-	rt->overridden.color = p_color_texture;
-	rt->overridden.depth = p_depth_texture;
-	rt->overridden.depth_has_stencil = p_depth_texture.is_null();
-	rt->overridden.velocity = p_velocity_texture;
-	rt->overridden.velocity_depth = p_velocity_depth_texture;
-	rt->overridden.is_overridden = p_color_texture.is_valid() || p_depth_texture.is_valid() || p_velocity_texture.is_valid() || p_velocity_depth_texture.is_valid();
-
-	// Update to our new color output.
-	RID new_color_texture = render_target_get_texture(p_render_target);
-	if (was_color_texture.is_valid() && new_color_texture.is_valid()) {
-		texture_remap_proxies(was_color_texture, new_color_texture);
-	}
-
-	uint32_t hash_key = hash_murmur3_one_64(p_color_texture.get_id());
-	hash_key = hash_murmur3_one_64(p_depth_texture.get_id(), hash_key);
-	hash_key = hash_fmix32(hash_key);
-
-	RBMap<uint32_t, RenderTarget::RTOverridden::FBOCacheEntry>::Element *cache;
-	if ((cache = rt->overridden.fbo_cache.find(hash_key)) != nullptr) {
-		rt->fbo = cache->get().fbo;
-		rt->color = cache->get().color;
-		rt->depth = cache->get().depth;
-		rt->depth_has_stencil = cache->get().depth_has_stencil;
-		rt->size = cache->get().size;
-		create_new_color_fbo = false;
-	}
-
-	uint32_t velocity_hash_key = hash_murmur3_one_64(p_velocity_texture.get_id());
-	velocity_hash_key = hash_murmur3_one_64(p_velocity_depth_texture.get_id(), velocity_hash_key);
-	velocity_hash_key = hash_fmix32(velocity_hash_key);
-
-	RBMap<uint32_t, GLuint>::Element *fbo = rt->overridden.velocity_fbo_cache.find(velocity_hash_key);
-	if (fbo != nullptr) {
-		rt->overridden.velocity_fbo = fbo->get();
-		create_new_velocity_fbo = false;
-	}
-
-	if (p_velocity_texture.is_null()) {
-		for (KeyValue<uint32_t, GLuint> &E : rt->overridden.velocity_fbo_cache) {
-			glDeleteFramebuffers(1, &E.value);
-		}
-
-		rt->overridden.velocity_fbo_cache.clear();
-		rt->overridden.velocity_fbo = 0;
-		create_new_velocity_fbo = false;
-	}
-
-	if (create_new_color_fbo) {
-		_update_render_target_color(rt);
-
-		RenderTarget::RTOverridden::FBOCacheEntry new_entry;
-		new_entry.fbo = rt->fbo;
-		new_entry.color = rt->color;
-		new_entry.depth = rt->depth;
-		new_entry.size = rt->size;
-		// Keep track of any textures we had to allocate because they weren't overridden.
-		if (p_color_texture.is_null()) {
-			new_entry.allocated_textures.push_back(rt->color);
-		}
-		if (p_depth_texture.is_null()) {
-			new_entry.allocated_textures.push_back(rt->depth);
-		}
-		rt->overridden.fbo_cache.insert(hash_key, new_entry);
-	}
-
-	if (create_new_velocity_fbo) {
-		_update_render_target_velocity(rt);
-		rt->overridden.velocity_fbo_cache.insert(velocity_hash_key, rt->overridden.velocity_fbo);
-	}
-}
-
-RID TextureStorage::render_target_get_override_color(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	return rt->overridden.color;
-}
-
-RID TextureStorage::render_target_get_override_depth(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	return rt->overridden.depth;
-}
-
-RID TextureStorage::render_target_get_override_velocity(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	return rt->overridden.velocity;
-}
-
-RID TextureStorage::render_target_get_override_velocity_depth(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	return rt->overridden.velocity_depth;
-}
-
-void TextureStorage::render_target_set_render_region(RID p_render_target, const Rect2i &p_render_region) {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL(rt);
-
-	rt->render_region = p_render_region;
-}
-
-Rect2i TextureStorage::render_target_get_render_region(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, Rect2i());
-
-	return rt->render_region;
-}
-
 RID TextureStorage::render_target_get_texture(RID p_render_target) {
 	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
 	ERR_FAIL_NULL_V(rt, RID());
 
-	if (rt->overridden.color.is_valid()) {
-		return rt->overridden.color;
-	}
-
 	return rt->texture;
-}
-
-void TextureStorage::render_target_set_velocity_target_size(RID p_render_target, const Size2i &p_target_size) {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL(rt);
-
-	rt->velocity_target_size = p_target_size;
-}
-
-Size2i TextureStorage::render_target_get_velocity_target_size(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, Size2i(0, 0));
-
-	return rt->velocity_target_size;
 }
 
 void TextureStorage::render_target_set_transparent(RID p_render_target, bool p_transparent) {
@@ -3884,10 +3608,8 @@ void TextureStorage::render_target_set_transparent(RID p_render_target, bool p_t
 
 	rt->is_transparent = p_transparent;
 
-	if (rt->overridden.color.is_null()) {
-		_clear_render_target(rt);
-		_update_render_target_color(rt);
-	}
+	_clear_render_target(rt);
+	_update_render_target_color(rt);
 }
 
 bool TextureStorage::render_target_get_transparent(RID p_render_target) const {
@@ -3908,12 +3630,6 @@ void TextureStorage::render_target_set_direct_to_screen(RID p_render_target, boo
 	// those functions change how they operate depending on the value of DIRECT_TO_SCREEN
 	_clear_render_target(rt);
 	rt->direct_to_screen = p_direct_to_screen;
-	if (rt->direct_to_screen) {
-		rt->overridden.color = RID();
-		rt->overridden.depth = RID();
-		rt->overridden.velocity = RID();
-		rt->overridden.velocity_depth = RID();
-	}
 	_update_render_target_color(rt);
 }
 
@@ -3948,11 +3664,9 @@ void TextureStorage::render_target_set_msaa(RID p_render_target, RSE::ViewportMS
 
 	WARN_PRINT("2D MSAA is not yet supported for GLES3.");
 
-	if (rt->overridden.color.is_null()) {
-		_clear_render_target(rt);
-		rt->msaa = p_msaa;
-		_update_render_target_color(rt);
-	}
+	_clear_render_target(rt);
+	rt->msaa = p_msaa;
+	_update_render_target_color(rt);
 }
 
 RSE::ViewportMSAA TextureStorage::render_target_get_msaa(RID p_render_target) const {
@@ -3970,11 +3684,9 @@ void TextureStorage::render_target_set_use_hdr(RID p_render_target, bool p_use_h
 		return;
 	}
 
-	if (rt->overridden.color.is_null()) {
-		_clear_render_target(rt);
-		rt->hdr = p_use_hdr_2d;
-		_update_render_target_color(rt);
-	}
+	_clear_render_target(rt);
+	rt->hdr = p_use_hdr_2d;
+	_update_render_target_color(rt);
 }
 
 bool TextureStorage::render_target_is_using_hdr(RID p_render_target) const {
@@ -4060,28 +3772,14 @@ GLuint TextureStorage::render_target_get_color(RID p_render_target) const {
 	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
 	ERR_FAIL_NULL_V(rt, 0);
 
-	if (rt->overridden.color.is_valid()) {
-		Texture *texture = get_texture(rt->overridden.color);
-		ERR_FAIL_NULL_V(texture, 0);
-
-		return texture->tex_id;
-	} else {
-		return rt->color;
-	}
+	return rt->color;
 }
 
 GLuint TextureStorage::render_target_get_depth(RID p_render_target) const {
 	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
 	ERR_FAIL_NULL_V(rt, 0);
 
-	if (rt->overridden.depth.is_valid()) {
-		Texture *texture = get_texture(rt->overridden.depth);
-		ERR_FAIL_NULL_V(texture, 0);
-
-		return texture->tex_id;
-	} else {
-		return rt->depth;
-	}
+	return rt->depth;
 }
 
 bool TextureStorage::render_target_get_depth_has_stencil(RID p_render_target) const {

@@ -72,8 +72,8 @@ protected:
 	Error _create_device() override;
 	void _resolve_sync_mode() override;
 	MTL::CommandQueue *get_command_queue() const override { return device_queue.get(); }
-	void add_residency_set_to_main_queue(MTL::ResidencySet *p_set) override API_AVAILABLE(macos(15.0), ios(18.0), tvos(18.0), visionos(2.0));
-	void remove_residency_set_to_main_queue(MTL::ResidencySet *p_set) override API_AVAILABLE(macos(15.0), ios(18.0), tvos(18.0), visionos(2.0));
+	void add_residency_set_to_main_queue(MTL::ResidencySet *p_set) override API_AVAILABLE(macos(15.0), ios(18.0), tvos(18.0));
+	void remove_residency_set_to_main_queue(MTL::ResidencySet *p_set) override API_AVAILABLE(macos(15.0), ios(18.0), tvos(18.0));
 
 public:
 	Error initialize(uint32_t p_device_index, uint32_t p_frame_count) override;
@@ -85,7 +85,7 @@ public:
 	SemaphoreID semaphore_create() override;
 	void semaphore_free(SemaphoreID p_semaphore) override;
 
-	CommandQueueID command_queue_create(CommandQueueFamilyID p_cmd_queue_family, bool p_identify_as_main_queue = false) override;
+	CommandQueueID command_queue_create(CommandQueueFamilyID p_cmd_queue_family) override;
 	Error command_queue_execute_and_present(CommandQueueID p_cmd_queue, VectorView<SemaphoreID> p_wait_semaphores, VectorView<CommandBufferID> p_cmd_buffers, VectorView<SemaphoreID> p_cmd_semaphores, FenceID p_cmd_fence, VectorView<SwapChainID> p_swap_chains) override;
 	void command_queue_free(CommandQueueID p_cmd_queue) override;
 

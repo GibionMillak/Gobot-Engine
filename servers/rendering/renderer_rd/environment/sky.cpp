@@ -33,9 +33,10 @@
 #include "core/config/project_settings.h"
 #include "core/math/math_defs.h"
 #include "servers/rendering/renderer_rd/effects/copy_effects.h"
+#include "servers/rendering/renderer_rd/environment/fog.h"
 #include "servers/rendering/renderer_rd/framebuffer_cache_rd.h"
-#include "servers/rendering/renderer_rd/renderer_compositor_rd.h"
 #include "servers/rendering/renderer_rd/renderer_scene_render_rd.h"
+#include "servers/rendering/renderer_rd/shader_rd.h"
 #include "servers/rendering/renderer_rd/storage_rd/material_storage.h"
 #include "servers/rendering/renderer_rd/storage_rd/render_data_rd.h"
 #include "servers/rendering/renderer_rd/storage_rd/render_scene_buffers_rd.h"
@@ -145,12 +146,8 @@ void SkyRD::SkyShaderData::set_code(const String &p_code) {
 		depth_stencil_state.enable_depth_test = true;
 		depth_stencil_state.depth_compare_operator = RD::COMPARE_OP_GREATER_OR_EQUAL;
 
-		if (scene_singleton->sky.sky_shader.shader.is_variant_enabled(i)) {
-			RID shader_variant = scene_singleton->sky.sky_shader.shader.version_get_shader(version, i);
-			pipelines[i].setup(shader_variant, RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), depth_stencil_state, RD::PipelineColorBlendState::create_disabled(), 0);
-		} else {
-			pipelines[i].clear();
-		}
+		RID shader_variant = scene_singleton->sky.sky_shader.shader.version_get_shader(version, i);
+		pipelines[i].setup(shader_variant, RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), depth_stencil_state, RD::PipelineColorBlendState::create_disabled(), 0);
 	}
 
 	valid = true;
@@ -533,6 +530,8 @@ void SkyRD::Sky::free() {
 }
 
 RID SkyRD::SkyShader::get_default_shader_rd(bool p_is_multiview) {
+	const int variant = p_is_multiview ? SKY_VERSION_BACKGROUND_MULTIVIEW : SKY_VERSION_BACKGROUND;
+	shader.enable_group(shader.get_variant_to_group(variant));
 	RID &shader_rd = p_is_multiview ? default_multiview_shader_rd : default_shader_rd;
 
 	if (shader_rd.is_null()) {
@@ -541,7 +540,7 @@ RID SkyRD::SkyShader::get_default_shader_rd(bool p_is_multiview) {
 		ERR_FAIL_COND_V(!default_material.is_valid(), RID());
 
 		SkyMaterialData *md = static_cast<SkyMaterialData *>(material_storage->material_get_data(default_material, RendererRD::MaterialStorage::SHADER_TYPE_SKY));
-		shader_rd = shader.version_get_shader(md->shader_data->version, p_is_multiview ? SKY_VERSION_BACKGROUND_MULTIVIEW : SKY_VERSION_BACKGROUND);
+		shader_rd = shader.version_get_shader(md->shader_data->version, variant);
 	}
 
 	return shader_rd;
@@ -736,25 +735,22 @@ void SkyRD::init() {
 		defines += "\n#define SAMPLERS_BINDING_FIRST_INDEX " + itos(SAMPLERS_BINDING_FIRST_INDEX) + "\n";
 
 		// Initialize sky
-		Vector<String> sky_modes;
-		sky_modes.push_back(""); // Full size
-		sky_modes.push_back("\n#define USE_HALF_RES_PASS\n"); // Half Res
-		sky_modes.push_back("\n#define USE_QUARTER_RES_PASS\n"); // Quarter res
-		sky_modes.push_back("\n#define USE_CUBEMAP_PASS\n"); // Cubemap
-		sky_modes.push_back("\n#define USE_CUBEMAP_PASS\n#define USE_HALF_RES_PASS\n"); // Half Res Cubemap
-		sky_modes.push_back("\n#define USE_CUBEMAP_PASS\n#define USE_QUARTER_RES_PASS\n"); // Quarter res Cubemap
+		constexpr int DEFAULT_GROUP = 0;
+		constexpr int MULTIVIEW_GROUP = 1;
+		Vector<ShaderRD::VariantDefine> sky_modes;
+		sky_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "", true)); // Full size
+		sky_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define USE_HALF_RES_PASS\n", true)); // Half Res
+		sky_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define USE_QUARTER_RES_PASS\n", true)); // Quarter res
+		sky_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define USE_CUBEMAP_PASS\n", true)); // Cubemap
+		sky_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define USE_CUBEMAP_PASS\n#define USE_HALF_RES_PASS\n", true)); // Half Res Cubemap
+		sky_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define USE_CUBEMAP_PASS\n#define USE_QUARTER_RES_PASS\n", true)); // Quarter res Cubemap
 
-		sky_modes.push_back("\n#define USE_MULTIVIEW\n"); // Full size multiview
-		sky_modes.push_back("\n#define USE_HALF_RES_PASS\n#define USE_MULTIVIEW\n"); // Half Res multiview
-		sky_modes.push_back("\n#define USE_QUARTER_RES_PASS\n#define USE_MULTIVIEW\n"); // Quarter res multiview
+		sky_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n", false)); // Full size multiview
+		sky_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_HALF_RES_PASS\n#define USE_MULTIVIEW\n", false)); // Half Res multiview
+		sky_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_QUARTER_RES_PASS\n#define USE_MULTIVIEW\n", false)); // Quarter res multiview
 
 		sky_shader.shader.initialize(sky_modes, defines);
 
-		if (!RendererCompositorRD::get_singleton()->is_xr_enabled()) {
-			sky_shader.shader.set_variant_enabled(SKY_VERSION_BACKGROUND_MULTIVIEW, false);
-			sky_shader.shader.set_variant_enabled(SKY_VERSION_HALF_RES_MULTIVIEW, false);
-			sky_shader.shader.set_variant_enabled(SKY_VERSION_QUARTER_RES_MULTIVIEW, false);
-		}
 	}
 
 	// register our shader funds

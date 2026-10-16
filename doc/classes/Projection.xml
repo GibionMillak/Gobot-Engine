@@ -59,21 +59,6 @@
 				Creates a new [Projection] that scales a given projection to fit around a given [AABB] in projection space.
 			</description>
 		</method>
-		<method name="create_for_hmd" qualifiers="static">
-			<return type="Projection" />
-			<param index="0" name="eye" type="int" />
-			<param index="1" name="aspect" type="float" />
-			<param index="2" name="intraocular_dist" type="float" />
-			<param index="3" name="display_width" type="float" />
-			<param index="4" name="display_to_lens" type="float" />
-			<param index="5" name="oversample" type="float" />
-			<param index="6" name="z_near" type="float" />
-			<param index="7" name="z_far" type="float" />
-			<description>
-				Creates a new [Projection] for projecting positions onto a head-mounted display with the given X:Y aspect ratio, distance between eyes, display width, distance to lens, oversampling factor, and depth clipping planes.
-				[param eye] creates the projection for the left eye when set to 1, or the right eye when set to 2.
-			</description>
-		</method>
 		<method name="create_frustum" qualifiers="static">
 			<return type="Projection" />
 			<param index="0" name="left" type="float" />
@@ -139,22 +124,6 @@
 			<param index="4" name="flip_fov" type="bool" default="false" />
 			<description>
 				Creates a new [Projection] that projects positions using a perspective projection with the given Y-axis field of view (in degrees), X:Y aspect ratio, and clipping planes.
-				[param flip_fov] determines whether the projection's field of view is flipped over its diagonal.
-			</description>
-		</method>
-		<method name="create_perspective_hmd" qualifiers="static">
-			<return type="Projection" />
-			<param index="0" name="fovy" type="float" />
-			<param index="1" name="aspect" type="float" />
-			<param index="2" name="z_near" type="float" />
-			<param index="3" name="z_far" type="float" />
-			<param index="4" name="flip_fov" type="bool" />
-			<param index="5" name="eye" type="int" />
-			<param index="6" name="intraocular_dist" type="float" />
-			<param index="7" name="convergence_dist" type="float" />
-			<description>
-				Creates a new [Projection] that projects positions using a perspective projection with the given Y-axis field of view (in degrees), X:Y aspect ratio, and clipping distances. The projection is adjusted for a head-mounted display with the given distance between eyes and distance to a point that can be focused on.
-				[param eye] creates the projection for the left eye when set to 1, or the right eye when set to 2.
 				[param flip_fov] determines whether the projection's field of view is flipped over its diagonal.
 			</description>
 		</method>

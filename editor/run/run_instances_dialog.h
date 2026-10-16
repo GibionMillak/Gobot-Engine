@@ -43,6 +43,7 @@ class PopupMenu;
 class RunInstancesDialog : public AcceptDialog {
 	GDCLASS(RunInstancesDialog, AcceptDialog);
 
+#ifndef ANDROID_ENABLED
 	enum Columns {
 		COLUMN_OVERRIDE_ARGS,
 		COLUMN_LAUNCH_ARGUMENTS,
@@ -64,35 +65,48 @@ class RunInstancesDialog : public AcceptDialog {
 		CLEAR_ITEM,
 		CLEAR_ALL,
 	};
+#endif
 
 	inline static RunInstancesDialog *singleton = nullptr;
 
+#ifndef ANDROID_ENABLED
 	TypedArray<Dictionary> stored_data;
 	Vector<InstanceData> instances_data;
+#endif
 
 	Timer *main_apply_timer = nullptr;
+#ifndef ANDROID_ENABLED
 	Timer *instance_apply_timer = nullptr;
+#endif
 
 	LineEdit *main_args_edit = nullptr;
 	LineEdit *main_features_edit = nullptr;
+#ifndef ANDROID_ENABLED
 	SpinBox *instance_count = nullptr;
 	CheckBox *enable_multiple_instances_checkbox = nullptr;
 	Tree *instance_tree = nullptr;
 	PopupMenu *popup_menu = nullptr;
+#endif
 
 	void _fetch_main_args();
-	// These 2 methods are necessary due to callable_mp() not supporting default arguments.
+	// Wrap Timer::start() because callable_mp() does not support its default argument.
 	void _start_main_timer();
+#ifndef ANDROID_ENABLED
 	void _start_instance_timer();
 
 	void _refresh_argument_count();
 	void _create_instance(InstanceData &p_instance, const Dictionary &p_data, int p_idx);
+#endif
 	void _save_main_args();
+#ifndef ANDROID_ENABLED
 	void _save_arguments();
+#endif
 	// Separates command line arguments without splitting up quoted strings.
 	Vector<String> _split_cmdline_args(const String &p_arg_string) const;
+#ifndef ANDROID_ENABLED
 	void _instance_menu_id_pressed(int p_option);
 	void _instance_tree_rmb(const Vector2 &p_pos, MouseButton p_button);
+#endif
 
 public:
 	void popup_dialog();

@@ -111,7 +111,6 @@ class GameMenuFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
 		fun resetTimeScale()
 		fun setTimeScale(scale: Double)
 
-		fun isGameEmbeddingSupported(): Boolean
 		fun embedGameOnPlay(embedded: Boolean)
 
 		fun minimizeGameWindow() {}
@@ -445,18 +444,13 @@ class GameMenuFragment : Fragment(), PopupMenu.OnMenuItemClickListener {
 		audioMuteButton?.isActivated = gameMenuState.getBoolean(BaseGodotEditor.GAME_MENU_ACTION_SET_DEBUG_MUTE_AUDIO, false)
 
 		popupMenu.menu.apply {
-			if (menuListener?.isGameEmbeddingSupported() == false) {
-				setGroupEnabled(R.id.group_menu_embed_options, false)
-				setGroupVisible(R.id.group_menu_embed_options, false)
-			} else {
-				findItem(R.id.menu_embed_game_on_play)?.isChecked = isGameEmbedded
+			findItem(R.id.menu_embed_game_on_play)?.isChecked = isGameEmbedded
 
-				val keepOnTopMenuItem = findItem(R.id.menu_embed_game_keep_on_top)
-				if (menuListener?.isAlwaysOnTopSupported() == false) {
-					keepOnTopMenuItem?.isVisible = false
-				} else {
-					keepOnTopMenuItem?.isEnabled = isGameEmbedded
-				}
+			val keepOnTopMenuItem = findItem(R.id.menu_embed_game_keep_on_top)
+			if (menuListener?.isAlwaysOnTopSupported() == false) {
+				keepOnTopMenuItem?.isVisible = false
+			} else {
+				keepOnTopMenuItem?.isEnabled = isGameEmbedded
 			}
 
 			setGroupEnabled(R.id.group_menu_camera_options, isGameRunning)

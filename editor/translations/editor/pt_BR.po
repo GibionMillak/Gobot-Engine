@@ -9091,17 +9091,11 @@ msgstr "Executar Cena Atual"
 msgid "Run Scene in Regular Mode"
 msgstr "Executar Cena no Modo Normal"
 
-msgid "Run Scene in XR Mode"
-msgstr "Executar Cena no Modo XR"
-
 msgid "Run Specific Scene"
 msgstr "Executar Cena Específica"
 
 msgid "Run in Regular Mode"
 msgstr "Executar no Modo Normal"
-
-msgid "Run in XR Mode"
-msgstr "Executar no Modo XR"
 
 msgid "Enable Movie Maker Mode"
 msgstr "Habilitar Modo Gravação"
@@ -15266,12 +15260,6 @@ msgstr "Navegação (2D)"
 msgid "Navigation (3D)"
 msgstr "Navegação (3D)"
 
-msgid "XR"
-msgstr "XR"
-
-msgid "OpenXR"
-msgstr "OpenXR"
-
 msgid "Wayland"
 msgstr "Wayland"
 
@@ -15331,12 +15319,6 @@ msgstr "Fontes Grafite SIL"
 
 msgid "Multi-channel Signed Distance Field Font Rendering"
 msgstr "Renderização de Fonte de Campo de Distância com Sinal Multicanal (MSDF)"
-
-msgid "XR (AR and VR)."
-msgstr "XR (AR e VR)."
-
-msgid "OpenXR standard implementation (requires XR to be enabled)."
-msgstr "Implementação padrão do OpenXR (XR precisa estar habilitado)."
 
 msgid "Forward+ renderer for advanced 3D graphics."
 msgstr "Renderizador Avançado+ para gráficos 3D avançados."
@@ -17395,13 +17377,6 @@ msgstr "Alterar Nome Traduzido da Ação"
 msgid "Change Action Type"
 msgstr "Alterar Tipo de Ação"
 
-msgid ""
-"Internal name of the action. Some XR runtimes don't allow spaces or special "
-"characters."
-msgstr ""
-"Nome interno da ação. Alguns runtimes de XR não permitem espaços ou "
-"caracteres especiais."
-
 msgid "Action Name"
 msgstr "Nome da Ação"
 
@@ -17435,17 +17410,8 @@ msgstr "Erro ao carregar %s: %s."
 msgid "Error saving file %s: %s"
 msgstr "Erro ao salvar arquivo %s: %s"
 
-msgid "OpenXR Action map:"
-msgstr "Mapa de Ação do OpenXR:"
-
 msgid "Remove interaction profile"
 msgstr "Remover perfil de interação"
-
-msgid "OpenXR Action Map"
-msgstr "Mapa de Ação do OpenXR"
-
-msgid "Toggle OpenXR Action Map Dock"
-msgstr "Alternar Aba de Mapa de Ação do OpenXR"
 
 msgid "Add Action Set"
 msgstr "Adicionar Conjunto de Ações"
@@ -17458,12 +17424,6 @@ msgstr "Adicionar Perfil"
 
 msgid "Add an interaction profile."
 msgstr "Adicionar um perfil de interação."
-
-msgid "Save this OpenXR action map."
-msgstr "Salvar este mapa de ação OpenXR."
-
-msgid "Reset to default OpenXR action map."
-msgstr "Redefinir para o mapa de ação OpenXR padrão."
 
 msgid "Action Sets"
 msgstr "Conjuntos de Ações"
@@ -17576,38 +17536,11 @@ msgstr "Adicione um perfil de interação"
 msgid "All interaction profiles have been added to the action map."
 msgstr "Todos os perfis de interação foram adicionados ao mapa de ação."
 
-msgid "Choose an XR runtime."
-msgstr "Escolha um runtime XR."
-
-msgid ""
-"Cannot use the same SubViewport with multiple OpenXR composition layers. "
-"Clear it from its current layer first."
-msgstr ""
-"Não é possível usar o mesmo SubViewport com múltiplas camadas de composição "
-"OpenXR. Apague-o da sua camada atual antes."
-
-msgid ""
-"Cannot set SubViewport on an OpenXR composition layer when using an Android "
-"surface."
-msgstr ""
-"Não é possível definir um SubViewport em uma camada de composição OpenXR "
-"usando uma supoerfície Android."
-
-msgid ""
-"OpenXR composition layers must have orthonormalized transforms (ie. no scale "
-"or shearing)."
-msgstr ""
-"As camadas de composição OpenXR devem ter transformações orto-normalizadas "
-"(ou seja, sem escala ou cisalhamento)."
-
 msgid ""
 "Hole punching won't work as expected unless the sort order is less than zero."
 msgstr ""
 "A perfuração não funcionará conforme o esperado, a menos que o índice de "
 "ordenação seja menor que zero."
-
-msgid "OpenXR visibility mask must have an XRCamera3D node as their parent."
-msgstr "As máscaras de visibilidade OpenXR devem ter um nó XRCamera3D como pai."
 
 msgid "E constant (2.718282). Represents the base of the natural logarithm."
 msgstr "Constante E (2,718282). Representa a base de um logaritmo natural."
@@ -20951,58 +20884,11 @@ msgstr ""
 "Apenas um WorldEnvironment é permitido por cena (ou conjunto de cenas "
 "instanciadas)."
 
-msgid ""
-"XRCamera3D may not function as expected without an XROrigin3D node as its "
-"parent."
-msgstr ""
-"O XRCamera3D pode não funcionar como esperado sem um nó XROrigin3D como seu "
-"pai."
-
-msgid ""
-"XRCamera3D should have physics_interpolation_mode set to OFF in order to "
-"avoid jitter."
-msgstr ""
-"A propriedade physics_interpolation_mode da XRCamera3D deve estar definida "
-"como OFF para evitar jitter."
-
-msgid ""
-"XRNode3D may not function as expected without an XROrigin3D node as its "
-"parent."
-msgstr ""
-"Um XRNode3D pode não funcionar como esperado sem um nó XROrigin3D como seu "
-"pai."
-
 msgid "No tracker name is set."
 msgstr "Nenhum nome de rastreador foi definido."
 
 msgid "No pose is set."
 msgstr "Nenhuma pose foi definida."
-
-msgid ""
-"XRNode3D should have physics_interpolation_mode set to OFF in order to avoid "
-"jitter."
-msgstr ""
-"A propriedade physics_interpolation_mode do XRNode3D deve estar definida como "
-"OFF para evitar jitter."
-
-msgid "XROrigin3D requires an XRCamera3D child node."
-msgstr "XROrigin3D requer um nó filho XRCamera3D."
-
-msgid ""
-"Changing the scale on the XROrigin3D node is not supported. Change the World "
-"Scale instead."
-msgstr ""
-"Alterar a escala no nó XROrigin3D não é possível. Em vez disso, altere a "
-"escala do mundo."
-
-msgid ""
-"XR shaders are not enabled in project settings. Stereoscopic output is not "
-"supported unless they are enabled. Please enable `xr/shaders/enabled` to use "
-"stereoscopic output."
-msgstr ""
-"Shaders XR não estão ativados nas configurações do projeto. Saída "
-"estereoscópica não é suportada a menos que eles estejam habilitados. Por "
-"favor, ative `xr/shaders/enabled` para usar a saída estereoscópica."
 
 msgid "Animation Apply Reset"
 msgstr "Aplicar Redefinição De Animação"

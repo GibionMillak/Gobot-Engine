@@ -34,7 +34,6 @@
 #include "core/config/project_settings.h"
 #include "core/os/os.h"
 #include "core/templates/fixed_vector.h"
-#include "drivers/vulkan/vulkan_hooks.h"
 
 #include <thirdparty/misc/smolv.h>
 
@@ -577,7 +576,6 @@ Error RenderingDeviceDriverVulkan::_initialize_device_extensions() {
 	_register_requested_device_extension(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME, false);
 	_register_requested_device_extension(VK_EXT_FRAGMENT_DENSITY_MAP_EXTENSION_NAME, false);
 	_register_requested_device_extension(VK_EXT_FRAGMENT_DENSITY_MAP_2_EXTENSION_NAME, false);
-	_register_requested_device_extension(VK_QCOM_FRAGMENT_DENSITY_MAP_OFFSET_EXTENSION_NAME, false);
 	_register_requested_device_extension(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME, false);
 	_register_requested_device_extension(VK_KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME, false);
 	_register_requested_device_extension(VK_KHR_STORAGE_BUFFER_STORAGE_CLASS_EXTENSION_NAME, false);
@@ -906,11 +904,6 @@ Error RenderingDeviceDriverVulkan::_check_device_capabilities() {
 	// Cache extension availability we query often.
 	framebuffer_depth_resolve = enabled_device_extension_names.has(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME);
 
-	bool use_fdm_offsets = false;
-	if (VulkanHooks::get_singleton() != nullptr) {
-		use_fdm_offsets = VulkanHooks::get_singleton()->use_fragment_density_offsets();
-	}
-
 	// References:
 	// https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VK_KHR_multiview.html
 	// https://www.khronos.org/blog/vulkan-subgroup-tutorial
@@ -926,7 +919,6 @@ Error RenderingDeviceDriverVulkan::_check_device_capabilities() {
 		VkPhysicalDeviceVulkanMemoryModelFeaturesKHR vulkan_memory_model_features = {};
 		VkPhysicalDeviceFragmentShadingRateFeaturesKHR fsr_features = {};
 		VkPhysicalDeviceFragmentDensityMapFeaturesEXT fdm_features = {};
-		VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM fdmo_features_qcom = {};
 		VkPhysicalDevice16BitStorageFeaturesKHR storage_feature = {};
 		VkPhysicalDeviceMultiviewFeatures multiview_features = {};
 		VkPhysicalDevicePipelineCreationCacheControlFeatures pipeline_cache_control_features = {};
@@ -970,12 +962,6 @@ Error RenderingDeviceDriverVulkan::_check_device_capabilities() {
 			fdm_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT;
 			fdm_features.pNext = next_features;
 			next_features = &fdm_features;
-		}
-
-		if (use_fdm_offsets && enabled_device_extension_names.has(VK_QCOM_FRAGMENT_DENSITY_MAP_OFFSET_EXTENSION_NAME)) {
-			fdmo_features_qcom.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM;
-			fdmo_features_qcom.pNext = next_features;
-			next_features = &fdmo_features_qcom;
 		}
 
 		if (enabled_device_extension_names.has(VK_KHR_16BIT_STORAGE_EXTENSION_NAME)) {
@@ -1078,10 +1064,6 @@ Error RenderingDeviceDriverVulkan::_check_device_capabilities() {
 			fdm_capabilities.non_subsampled_images_supported = fdm_features.fragmentDensityMapNonSubsampledImages;
 		}
 
-		if (enabled_device_extension_names.has(VK_QCOM_FRAGMENT_DENSITY_MAP_OFFSET_EXTENSION_NAME)) {
-			fdm_capabilities.offset_supported = fdmo_features_qcom.fragmentDensityMapOffset;
-		}
-
 		// Multiple VRS techniques can't co-exist during the existence of one device, so we must
 		// choose one at creation time and only report one of them as available.
 		_choose_vrs_capabilities();
@@ -1130,7 +1112,6 @@ Error RenderingDeviceDriverVulkan::_check_device_capabilities() {
 		void *next_properties = nullptr;
 		VkPhysicalDeviceFragmentShadingRatePropertiesKHR fsr_properties = {};
 		VkPhysicalDeviceFragmentDensityMapPropertiesEXT fdm_properties = {};
-		VkPhysicalDeviceFragmentDensityMapOffsetPropertiesQCOM fdmo_properties = {};
 		VkPhysicalDeviceMultiviewProperties multiview_properties = {};
 		VkPhysicalDeviceSubgroupProperties subgroup_properties = {};
 		VkPhysicalDeviceSubgroupSizeControlProperties subgroup_size_control_properties = {};
@@ -1168,12 +1149,6 @@ Error RenderingDeviceDriverVulkan::_check_device_capabilities() {
 			fdm_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT;
 			fdm_properties.pNext = next_properties;
 			next_properties = &fdm_properties;
-		}
-
-		if (fdm_capabilities.offset_supported) {
-			fdmo_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM;
-			fdmo_properties.pNext = next_properties;
-			next_properties = &fdmo_properties;
 		}
 
 		if (acceleration_structure_capabilities.acceleration_structure_support) {
@@ -1255,17 +1230,6 @@ Error RenderingDeviceDriverVulkan::_check_device_capabilities() {
 			}
 		} else {
 			print_verbose("- Vulkan Fragment Density Map not supported");
-		}
-
-		if (fdm_capabilities.offset_supported) {
-			print_verbose("- Vulkan Fragment Density Map Offset supported");
-
-			fdm_capabilities.offset_granularity.x = fdmo_properties.fragmentDensityOffsetGranularity.width;
-			fdm_capabilities.offset_granularity.y = fdmo_properties.fragmentDensityOffsetGranularity.height;
-
-			print_verbose(vformat("  Offset granularity: (%d, %d)", fdm_capabilities.offset_granularity.x, fdm_capabilities.offset_granularity.y));
-		} else if (use_fdm_offsets) {
-			print_verbose("- Vulkan Fragment Density Map Offset not supported");
 		}
 
 		if (multiview_capabilities.is_supported) {
@@ -1411,14 +1375,6 @@ Error RenderingDeviceDriverVulkan::_initialize_device(const LocalVector<VkDevice
 		create_info_next = &fdm_features;
 	}
 
-	VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM fdm_offset_features = {};
-	if (fdm_capabilities.offset_supported) {
-		fdm_offset_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM;
-		fdm_offset_features.pNext = create_info_next;
-		fdm_offset_features.fragmentDensityMapOffset = VK_TRUE;
-		create_info_next = &fdm_offset_features;
-	}
-
 	VkPhysicalDevicePipelineCreationCacheControlFeatures pipeline_cache_control_features = {};
 	if (pipeline_cache_control_support) {
 		pipeline_cache_control_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES;
@@ -1530,13 +1486,8 @@ Error RenderingDeviceDriverVulkan::_initialize_device(const LocalVector<VkDevice
 	create_info.ppEnabledExtensionNames = enabled_extension_names.ptr();
 	create_info.pEnabledFeatures = &requested_device_features;
 
-	if (VulkanHooks::get_singleton() != nullptr) {
-		bool device_created = VulkanHooks::get_singleton()->create_vulkan_device(&create_info, &vk_device);
-		ERR_FAIL_COND_V_MSG(!device_created, ERR_CANT_CREATE, "Couldn't create a Vulkan device through the VulkanHooks singleton.");
-	} else {
-		VkResult err = vkCreateDevice(physical_device, &create_info, VKC::get_allocation_callbacks(VK_OBJECT_TYPE_DEVICE), &vk_device);
-		ERR_FAIL_COND_V_MSG(err != VK_SUCCESS, ERR_CANT_CREATE, vformat("Couldn't create Vulkan device (VkResult error %d).", err));
-	}
+	VkResult err = vkCreateDevice(physical_device, &create_info, VKC::get_allocation_callbacks(VK_OBJECT_TYPE_DEVICE), &vk_device);
+	ERR_FAIL_COND_V_MSG(err != VK_SUCCESS, ERR_CANT_CREATE, vformat("Couldn't create Vulkan device (VkResult error %d).", err));
 
 	for (uint32_t i = 0; i < queue_families.size(); i++) {
 		for (uint32_t j = 0; j < queue_families[i].size(); j++) {
@@ -1554,7 +1505,6 @@ Error RenderingDeviceDriverVulkan::_initialize_device(const LocalVector<VkDevice
 
 		if (enabled_device_extension_names.has(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME)) {
 			device_functions.CreateRenderPass2KHR = PFN_vkCreateRenderPass2KHR(functions.GetDeviceProcAddr(vk_device, "vkCreateRenderPass2KHR"));
-			device_functions.EndRenderPass2KHR = PFN_vkCmdEndRenderPass2KHR(functions.GetDeviceProcAddr(vk_device, "vkCmdEndRenderPass2KHR"));
 		}
 
 		// Debug marker extensions.
@@ -1930,12 +1880,6 @@ Error RenderingDeviceDriverVulkan::initialize(uint32_t p_device_index, uint32_t 
 	swappy_frame_pacer_enable = GLOBAL_GET("display/window/frame_pacing/android/enable_frame_pacing");
 	swappy_mode = GLOBAL_GET("display/window/frame_pacing/android/swappy_mode");
 
-	if (VulkanHooks::get_singleton() != nullptr) {
-		// Hooks control device creation & possibly presentation
-		// (e.g. OpenXR) thus it's too risky to use Swappy.
-		swappy_frame_pacer_enable = false;
-		OS::get_singleton()->print("VulkanHooks detected (e.g. OpenXR): Force-disabling Swappy Frame Pacing.\n");
-	}
 #endif
 
 	shader_container_format.set_debug_info_enabled(Engine::get_singleton()->is_generate_spirv_debug_info_enabled());
@@ -2330,13 +2274,8 @@ RDD::TextureID RenderingDeviceDriverVulkan::texture_create(const TextureFormat &
 		create_info.flags |= VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
 	}*/
 
-	bool use_subsampled_images = VulkanHooks::get_singleton() && VulkanHooks::get_singleton()->use_subsampled_images();
-	if (fdm_capabilities.attachment_supported && use_subsampled_images && p_format.is_subsampled && (p_format.usage_bits & (TEXTURE_USAGE_COLOR_ATTACHMENT_BIT | TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | TEXTURE_USAGE_INPUT_ATTACHMENT_BIT | TEXTURE_USAGE_DEPTH_RESOLVE_ATTACHMENT_BIT))) {
+	if (fdm_capabilities.attachment_supported && p_format.is_subsampled && (p_format.usage_bits & (TEXTURE_USAGE_COLOR_ATTACHMENT_BIT | TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | TEXTURE_USAGE_INPUT_ATTACHMENT_BIT | TEXTURE_USAGE_DEPTH_RESOLVE_ATTACHMENT_BIT))) {
 		create_info.flags |= VK_IMAGE_CREATE_SUBSAMPLED_BIT_EXT;
-	}
-
-	if (fdm_capabilities.offset_supported && (p_format.usage_bits & (TEXTURE_USAGE_COLOR_ATTACHMENT_BIT | TEXTURE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | TEXTURE_USAGE_INPUT_ATTACHMENT_BIT | TEXTURE_USAGE_DEPTH_RESOLVE_ATTACHMENT_BIT | TEXTURE_USAGE_VRS_ATTACHMENT_BIT))) {
-		create_info.flags |= VK_IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_QCOM;
 	}
 
 	create_info.imageType = RD_TEX_TYPE_TO_VK_IMG_TYPE[p_format.texture_type];
@@ -3209,7 +3148,7 @@ RDD::CommandQueueFamilyID RenderingDeviceDriverVulkan::command_queue_family_get(
 
 // ----- QUEUE -----
 
-RDD::CommandQueueID RenderingDeviceDriverVulkan::command_queue_create(CommandQueueFamilyID p_cmd_queue_family, bool p_identify_as_main_queue) {
+RDD::CommandQueueID RenderingDeviceDriverVulkan::command_queue_create(CommandQueueFamilyID p_cmd_queue_family) {
 	DEV_ASSERT(p_cmd_queue_family.id != 0);
 
 	// Make a virtual queue on top of a real queue. Use the queue from the family with the least amount of virtual queues created.
@@ -3238,11 +3177,6 @@ RDD::CommandQueueID RenderingDeviceDriverVulkan::command_queue_create(CommandQue
 	command_queue->queue_family = family_index;
 	command_queue->queue_index = picked_queue_index;
 	queue_family[picked_queue_index].virtual_count++;
-
-	// If is was identified as the main queue and a hook is active, indicate it as such to the hook.
-	if (p_identify_as_main_queue && (VulkanHooks::get_singleton() != nullptr)) {
-		VulkanHooks::get_singleton()->set_direct_queue_family_and_index(family_index, picked_queue_index);
-	}
 
 	return CommandQueueID(command_queue);
 }
@@ -5614,7 +5548,6 @@ RDD::RenderPassID RenderingDeviceDriverVulkan::render_pass_create(VectorView<Att
 
 	RenderPassInfo *render_pass = VersatileResource::allocate<RenderPassInfo>(resources_allocator);
 	render_pass->vk_render_pass = vk_render_pass;
-	render_pass->uses_fragment_density_map = uses_fragment_density_map;
 	return RenderPassID(render_pass);
 }
 
@@ -5676,28 +5609,7 @@ void RenderingDeviceDriverVulkan::command_end_render_pass(CommandBufferID p_cmd_
 	DEV_ASSERT(command_buffer->active_framebuffer != nullptr && "A framebuffer must be active.");
 	DEV_ASSERT(command_buffer->active_render_pass != nullptr && "A render pass must be active.");
 
-	if (device_functions.EndRenderPass2KHR != nullptr && fdm_capabilities.offset_supported && command_buffer->active_render_pass->uses_fragment_density_map) {
-		LocalVector<VkOffset2D> fragment_density_offsets;
-		if (VulkanHooks::get_singleton() != nullptr) {
-			VulkanHooks::get_singleton()->get_fragment_density_offsets(fragment_density_offsets, fdm_capabilities.offset_granularity);
-		}
-		if (fragment_density_offsets.size() > 0) {
-			VkSubpassFragmentDensityMapOffsetEndInfoQCOM offset_info = {};
-			offset_info.sType = VK_STRUCTURE_TYPE_SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM;
-			offset_info.pFragmentDensityOffsets = fragment_density_offsets.ptr();
-			offset_info.fragmentDensityOffsetCount = fragment_density_offsets.size();
-
-			VkSubpassEndInfo subpass_end_info = {};
-			subpass_end_info.sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
-			subpass_end_info.pNext = &offset_info;
-
-			device_functions.EndRenderPass2KHR(command_buffer->vk_command_buffer, &subpass_end_info);
-		} else {
-			vkCmdEndRenderPass(command_buffer->vk_command_buffer);
-		}
-	} else {
-		vkCmdEndRenderPass(command_buffer->vk_command_buffer);
-	}
+	vkCmdEndRenderPass(command_buffer->vk_command_buffer);
 
 	command_buffer->active_render_pass = nullptr;
 	command_buffer->active_framebuffer = nullptr;

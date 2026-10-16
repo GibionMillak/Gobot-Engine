@@ -1914,7 +1914,7 @@ RID RenderingDevice::texture_create_shared(const TextureView &p_view, RID p_with
 }
 
 RID RenderingDevice::texture_create_from_extension(TextureType p_type, DataFormat p_format, TextureSamples p_samples, BitField<RenderingDevice::TextureUsageBits> p_usage, uint64_t p_image, uint64_t p_width, uint64_t p_height, uint64_t p_depth, uint64_t p_layers, uint64_t p_mipmaps) {
-	// This method creates a texture object using a VkImage created by an extension, module or other external source (OpenXR uses this).
+	// This method creates a texture object using a VkImage created by an extension, module or other external source.
 
 	Texture texture;
 	texture.type = p_type;
@@ -8624,7 +8624,7 @@ Error RenderingDevice::initialize(RenderingContextDriver *p_context, DisplayServ
 	ERR_FAIL_COND_V(!main_queue_family, FAILED);
 
 	// Create the main queue.
-	main_queue = driver->command_queue_create(main_queue_family, true);
+	main_queue = driver->command_queue_create(main_queue_family);
 	ERR_FAIL_COND_V(!main_queue, FAILED);
 
 	transfer_queue_family = driver->command_queue_family_get(RDD::COMMAND_QUEUE_FAMILY_TRANSFER_BIT);

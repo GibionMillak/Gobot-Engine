@@ -41,7 +41,6 @@ ADDITIVE_SPOT = false
 RENDER_MATERIAL = false
 SECOND_REFLECTION_PROBE = false
 LIGHTMAP_BICUBIC_FILTER = false
-RENDER_MOTION_VECTORS = false
 USE_LIGHTMAP_SPECULAR = false
 
 
@@ -167,16 +166,6 @@ layout(location = 14) in highp vec4 instance_xform2;
 layout(location = 15) in highp uvec4 instance_color_custom_data; // Color packed into xy, Custom data into zw.
 #endif
 
-#if defined(RENDER_MOTION_VECTORS)
-layout(location = 16) in highp vec4 prev_vertex_attrib;
-layout(location = 17) in highp vec4 prev_normal_attrib;
-#ifdef USE_INSTANCING
-layout(location = 18) in highp vec4 prev_instance_xform0;
-layout(location = 19) in highp vec4 prev_instance_xform1;
-layout(location = 20) in highp vec4 prev_instance_xform2;
-layout(location = 21) in highp uvec4 prev_instance_color_custom_data;
-#endif // USE_INSTANCING
-#endif // RENDER_MOTION_VECTORS
 
 #define FLAGS_NON_UNIFORM_SCALE (1 << 4)
 
@@ -244,14 +233,7 @@ layout(std140) uniform SceneDataBlock { // ubo:2
 }
 scene_data_block;
 
-#ifdef RENDER_MOTION_VECTORS
-layout(std140) uniform PrevSceneDataBlock { // ubo:13
-	SceneData data;
-}
-prev_scene_data_block;
-#endif
 
-#ifndef RENDER_MOTION_VECTORS
 #ifdef USE_ADDITIVE_LIGHTING
 
 #if defined(ADDITIVE_OMNI) || defined(ADDITIVE_SPOT)
@@ -480,7 +462,6 @@ void light_process_spot(uint idx, vec3 vertex, vec3 eye_vec, vec3 normal, float 
 #endif // !defined(MODE_RENDER_DEPTH) && !defined(MODE_UNSHADED) && defined(USE_VERTEX_LIGHTING)
 
 #endif // USE_VERTEX_LIGHTING
-#endif // RENDER_MOTION_VECTORS
 
 #ifdef USE_MULTIVIEW
 struct MultiviewData {
@@ -502,12 +483,6 @@ multiview_data_block;
 #define ViewIndex (multiview_data_block.data.view_index)
 #endif
 
-#ifdef RENDER_MOTION_VECTORS
-layout(std140) uniform PrevMultiviewDataBlock { // ubo:14
-	MultiviewData data;
-}
-prev_multiview_data_block;
-#endif // RENDER_MOTION_VECTORS
 
 #endif // USE_MULTIVIEW
 
@@ -518,9 +493,6 @@ uniform highp vec4 uv_scale;
 uniform highp uint instance_offset;
 uniform highp uint layer_mask;
 
-#if defined(RENDER_MOTION_VECTORS)
-uniform highp mat4 prev_world_transform;
-#endif
 
 uniform highp uint model_flags;
 
@@ -552,7 +524,6 @@ out vec3 tangent_interp;
 out vec3 binormal_interp;
 #endif
 
-#ifndef RENDER_MOTION_VECTORS
 #ifdef USE_ADDITIVE_LIGHTING
 out highp vec4 shadow_coord;
 
@@ -565,7 +536,6 @@ out highp vec4 shadow_coord3;
 out highp vec4 shadow_coord4;
 #endif // LIGHT_USE_PSSM4
 #endif // USE_ADDITIVE_LIGHTING
-#endif // RENDER_MOTION_VECTORS
 
 #ifdef MATERIAL_UNIFORMS_USED
 
@@ -581,10 +551,6 @@ layout(std140) uniform MaterialUniforms { // ubo:3
 
 /* clang-format off */
 
-#if defined(RENDER_MOTION_VECTORS)
-out highp vec4 clip_position;
-out highp vec4 prev_clip_position;
-#endif
 
 #GLOBALS
 
@@ -784,7 +750,6 @@ void vertex_shader(vec4 vertex_angle_attrib_input,
 	binormal_interp = normalize(binormal);
 #endif
 
-#ifndef RENDER_MOTION_VECTORS
 	// Calculate shadows.
 #ifdef USE_ADDITIVE_LIGHTING
 #if defined(ADDITIVE_OMNI) || defined(ADDITIVE_SPOT)
@@ -828,7 +793,6 @@ void vertex_shader(vec4 vertex_angle_attrib_input,
 	float light_length_sq = dot(vertex_interp, vertex_interp);
 	vertex_interp += vertex_interp * scene_data_input.shadow_bias / light_length_sq;
 #endif
-#endif // RENDER_MOTION_VECTORS
 
 #if defined(OVERRIDE_POSITION)
 	clip_position_output = position;
@@ -855,7 +819,6 @@ void vertex_shader(vec4 vertex_angle_attrib_input,
 	clip_position_output.w = 1.0;
 #endif
 
-#ifndef RENDER_MOTION_VECTORS
 #ifdef USE_VERTEX_LIGHTING
 #if !defined(MODE_RENDER_DEPTH) && !defined(MODE_UNSHADED)
 #ifdef USE_MULTIVIEW
@@ -923,63 +886,10 @@ void vertex_shader(vec4 vertex_angle_attrib_input,
 #endif // USE_ADDITIVE_LIGHTING
 #endif // !defined(MODE_RENDER_DEPTH) && !defined(MODE_UNSHADED)
 #endif // USE_VERTEX_LIGHTING
-#endif // RENDER_MOTION_VECTORS
 }
 
 void main() {
-#if defined(RENDER_MOTION_VECTORS)
-
-#ifdef USE_INSTANCING
-	// Check for inactive particle instances.
-	highp vec4 input_instance_xform0;
-	highp vec4 input_instance_xform1;
-	highp vec4 input_instance_xform2;
-	highp uvec4 input_instance_color_custom_data;
-	if (prev_instance_xform0.xyz == vec3(0.0, 0.0, 0.0)) {
-		input_instance_xform0 = instance_xform0;
-		input_instance_xform1 = instance_xform1;
-		input_instance_xform2 = instance_xform2;
-		input_instance_color_custom_data = instance_color_custom_data;
-	} else {
-		input_instance_xform0 = prev_instance_xform0;
-		input_instance_xform1 = prev_instance_xform1;
-		input_instance_xform2 = prev_instance_xform2;
-		input_instance_color_custom_data = prev_instance_color_custom_data;
-	}
-#endif
-
-	vertex_shader(prev_vertex_attrib,
-			compressed_aabb_size,
-			compressed_aabb_position,
-			prev_world_transform,
-			model_flags,
-			prev_scene_data_block.data,
-#ifdef USE_INSTANCING
-			input_instance_xform0, input_instance_xform1, input_instance_xform2,
-			input_instance_color_custom_data,
-#endif
-#ifdef NORMAL_USED
-			prev_normal_attrib,
-#endif
-#if defined(COLOR_USED)
-			color_attrib,
-#endif
-#if defined(UV_USED)
-			uv_attrib,
-#endif
-#if defined(UV2_USED) || defined(USE_LIGHTMAP) || defined(RENDER_MATERIAL)
-			uv2_attrib,
-#endif
-#ifdef USE_MULTIVIEW
-			prev_multiview_data_block.data.projection_matrix_view[ViewIndex],
-			prev_multiview_data_block.data.inv_projection_matrix_view[ViewIndex],
-			prev_multiview_data_block.data.eye_offset[ViewIndex].xyz,
-#endif
-			uv_scale,
-			prev_clip_position);
-#else
 	vec4 clip_position;
-#endif // defined(RENDER_MOTION_VECTORS)
 
 	vertex_shader(vertex_angle_attrib,
 			compressed_aabb_size,
@@ -1078,12 +988,7 @@ void main() {
 
 /* Varyings */
 
-#if defined(RENDER_MOTION_VECTORS)
-in highp vec4 clip_position;
-in highp vec4 prev_clip_position;
-#endif
 
-#ifndef RENDER_MOTION_VECTORS
 #if defined(COLOR_USED)
 in vec4 color_interp;
 #endif
@@ -1548,7 +1453,6 @@ ivec2 multiview_uv(ivec2 uv) {
 #endif
 
 uniform mediump float opaque_prepass_threshold;
-#endif // !RENDER_MOTION_VECTORS
 
 #if defined(RENDER_MATERIAL)
 layout(location = 0) out vec4 albedo_output_buffer;
@@ -1558,12 +1462,8 @@ layout(location = 3) out vec4 emission_output_buffer;
 
 #else // !RENDER_MATERIAL
 
-#ifndef RENDER_MOTION_VECTORS
 // Normal color rendering.
 layout(location = 0) out vec4 frag_color;
-#else
-layout(location = 0) out vec4 motion_vectors;
-#endif // !RENDER_MOTION_VECTORS
 
 #endif // !RENDER_MATERIAL
 
@@ -1573,7 +1473,6 @@ layout(location = 0) out vec4 motion_vectors;
 
 /* clang-format on */
 
-#ifndef RENDER_MOTION_VECTORS
 vec3 F0(float metallic, float specular, vec3 albedo) {
 	float dielectric = 0.16 * specular * specular;
 	// use albedo * metallic as colored specular reflectance at 0 angle for metallic materials;
@@ -2244,10 +2143,8 @@ vec4 textureArray_bicubic(sampler2DArray tex, vec3 uv, vec2 texture_size) {
 			(g1(fuv.y) * (g0x * texture(tex, vec3(p2, uv.z)) + g1x * texture(tex, vec3(p3, uv.z))));
 }
 #endif //LIGHTMAP_BICUBIC_FILTER
-#endif // RENDER_MOTION_VECTORS
 
 void main() {
-#ifndef RENDER_MOTION_VECTORS
 	//lay out everything, whatever is unused is optimized away anyway
 	vec3 vertex = vertex_interp;
 #ifdef USE_MULTIVIEW
@@ -3289,14 +3186,5 @@ void main() {
 #ifdef PREMUL_ALPHA_USED
 	frag_color.rgb *= premul_alpha;
 #endif // PREMUL_ALPHA_USED
-#endif // !RENDER_MOTION_VECTORS
 
-#if defined(RENDER_MOTION_VECTORS)
-	// These motion vectors are in NDC space (as opposed to screen space) to fit the OpenXR XR_FB_space_warp specification.
-	// https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#XR_FB_space_warp
-
-	vec3 ndc = clip_position.xyz / clip_position.w;
-	vec3 prev_ndc = prev_clip_position.xyz / prev_clip_position.w;
-	motion_vectors = vec4(ndc - prev_ndc, 0.0);
-#endif // RENDER_MOTION_VECTORS
 }

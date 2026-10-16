@@ -722,7 +722,6 @@ public:
 	FUNC4(camera_set_perspective, RID, float, float, float)
 	FUNC4(camera_set_orthogonal, RID, float, float, float)
 	FUNC5(camera_set_frustum, RID, float, Vector2, float, float)
-	FUNC3(camera_set_xr_projections, RID, TypedArray<Projection>, TypedArray<Transform3D>)
 	FUNC2(camera_set_transform, RID, const Transform3D &)
 	FUNC2(camera_set_cull_mask, RID, uint32_t)
 	FUNC2(camera_set_environment, RID, RID)
@@ -744,11 +743,7 @@ public:
 
 	FUNCRIDSPLIT(viewport)
 
-#ifndef XR_DISABLED
-	FUNC2(viewport_set_use_xr, RID, bool)
-#endif // XR_DISABLED
-
-	FUNC4(viewport_set_size, RID, int, int, int)
+	FUNC3(viewport_set_size, RID, int, int)
 
 	FUNC2(viewport_set_active, RID, bool)
 	FUNC2(viewport_set_parent_viewport, RID, RID)

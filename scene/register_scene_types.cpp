@@ -288,12 +288,6 @@
 #include "scene/3d/navigation/navigation_region_3d.h"
 #include "scene/resources/3d/navigation_mesh_source_geometry_data_3d.h"
 #endif // NAVIGATION_3D_DISABLED
-#ifndef XR_DISABLED
-#include "scene/3d/xr/xr_body_modifier_3d.h"
-#include "scene/3d/xr/xr_face_modifier_3d.h"
-#include "scene/3d/xr/xr_hand_modifier_3d.h"
-#include "scene/3d/xr/xr_nodes.h"
-#endif // XR_DISABLED
 #endif // _3D_DISABLED
 
 #if !defined(PHYSICS_2D_DISABLED) || !defined(PHYSICS_3D_DISABLED)
@@ -704,17 +698,6 @@ void register_scene_types() {
 	GDREGISTER_CLASS(LimitAngularVelocityModifier3D);
 	GDREGISTER_CLASS(BoneTwistDisperser3D);
 	GDREGISTER_CLASS(ModifierBoneTarget3D);
-
-#ifndef XR_DISABLED
-	GDREGISTER_CLASS(XRCamera3D);
-	GDREGISTER_CLASS(XRNode3D);
-	GDREGISTER_CLASS(XRController3D);
-	GDREGISTER_CLASS(XRAnchor3D);
-	GDREGISTER_CLASS(XROrigin3D);
-	GDREGISTER_CLASS(XRBodyModifier3D);
-	GDREGISTER_CLASS(XRHandModifier3D);
-	GDREGISTER_CLASS(XRFaceModifier3D);
-#endif // XR_DISABLED
 
 	OS::get_singleton()->yield(); // may take time to init
 

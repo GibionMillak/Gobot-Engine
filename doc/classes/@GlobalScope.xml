@@ -1672,9 +1672,6 @@
 		<member name="WorkerThreadPool" type="WorkerThreadPool" setter="" getter="">
 			The [WorkerThreadPool] singleton.
 		</member>
-		<member name="XRServer" type="XRServer" setter="" getter="">
-			The [XRServer] singleton.
-		</member>
 	</members>
 	<constants>
 		<constant name="SIDE_LEFT" value="0" enum="Side">

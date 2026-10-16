@@ -31,6 +31,7 @@
 #include "render_forward_mobile.h"
 
 #include "core/config/project_settings.h"
+#include "servers/rendering/renderer_compositor.h"
 #include "servers/rendering/renderer_rd/framebuffer_cache_rd.h"
 #include "servers/rendering/renderer_rd/storage_rd/light_storage.h"
 #include "servers/rendering/renderer_rd/storage_rd/mesh_storage.h"
@@ -39,12 +40,8 @@
 #include "servers/rendering/renderer_rd/uniform_set_cache_rd.h"
 #include "servers/rendering/rendering_device.h"
 #include "servers/rendering/rendering_server_default.h"
+#include "servers/rendering/rendering_server_globals.h"
 #include "servers/rendering/storage/ltc_lut.gen.h"
-
-#ifndef XR_DISABLED
-#include "servers/xr/xr_interface.h"
-#include "servers/xr/xr_server.h"
-#endif
 
 #include "modules/modules_enabled.gen.h"
 #ifdef MODULE_TEXTURE_STREAMING_ENABLED
@@ -193,44 +190,11 @@ void RenderForwardMobile::RenderBufferDataForwardMobile::configure(RenderSceneBu
 	ERR_FAIL_NULL(render_buffers); // Huh? really?
 }
 
-RID RendererSceneRenderImplementation::RenderForwardMobile::RenderBufferDataForwardMobile::get_motion_vectors_fb() {
-	ERR_FAIL_NULL_V(render_buffers, RID());
-
-	RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
-	ERR_FAIL_NULL_V(texture_storage, RID());
-
-	RID velocity = render_buffers->get_velocity_buffer(false);
-	RID velocity_depth = render_buffers->get_velocity_depth_buffer();
-
-	if (velocity.is_valid() && velocity_depth.is_valid()) {
-		Vector<RID> textures;
-		textures.push_back(velocity);
-		textures.push_back(velocity_depth);
-
-		Vector<RD::FramebufferPass> passes;
-		RD::FramebufferPass pass;
-		pass.color_attachments.push_back(0);
-		pass.depth_attachment = 1;
-		passes.push_back(pass);
-
-		uint32_t view_count = render_buffers->get_view_count();
-
-		return FramebufferCacheRD::get_singleton()->get_cache_multipass(textures, passes, view_count);
-	}
-
-	return RID();
-}
-
 RID RenderForwardMobile::RenderBufferDataForwardMobile::get_color_fbs(FramebufferConfigType p_config_type, bool p_resolve_depth) {
 	ERR_FAIL_NULL_V(render_buffers, RID());
 
-	RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
-	ERR_FAIL_NULL_V(texture_storage, RID());
-
 	// We use our framebuffer cache here instead of building these in RenderBufferDataForwardMobile::configure
 	// This approach ensures we only build the framebuffers we actually need for this viewport.
-	// In the (near) future this means that if we cycle through a texture chain for our render target, we'll also support
-	// this.
 
 	RSE::ViewportMSAA msaa_3d = render_buffers->get_msaa_3d();
 	bool use_msaa = msaa_3d != RSE::VIEWPORT_MSAA_DISABLED;
@@ -238,19 +202,6 @@ RID RenderForwardMobile::RenderBufferDataForwardMobile::get_color_fbs(Framebuffe
 	uint32_t view_count = render_buffers->get_view_count();
 
 	RID vrs_texture;
-#ifndef XR_DISABLED
-	RSE::ViewportVRSMode vrs_mode = render_buffers->get_vrs_mode();
-	if (vrs_mode == RSE::VIEWPORT_VRS_XR) {
-		Ref<XRInterface> xr_interface = XRServer::get_singleton()->get_primary_interface();
-		if (xr_interface.is_valid()) {
-			bool use_vrs_fragment_density_map = RD::get_singleton()->vrs_get_method() == RD::VRS_METHOD_FRAGMENT_DENSITY_MAP && xr_interface->get_vrs_texture_format() == XRInterface::XR_VRS_TEXTURE_FORMAT_FRAGMENT_DENSITY_MAP;
-			bool use_vrs_rasterization_rate_map = RD::get_singleton()->vrs_get_method() == RD::VRS_METHOD_RASTERIZATION_RATE_MAP && xr_interface->get_vrs_texture_format() == XRInterface::XR_VRS_TEXTURE_FORMAT_RASTERIZATION_RATE_MAP;
-			if (use_vrs_fragment_density_map || use_vrs_rasterization_rate_map) {
-				vrs_texture = xr_interface->get_vrs_texture();
-			}
-		}
-	}
-#endif // XR_DISABLED
 	if (vrs_texture.is_null() && render_buffers->has_texture(RB_SCOPE_VRS, RB_TEXTURE)) {
 		vrs_texture = render_buffers->get_texture(RB_SCOPE_VRS, RB_TEXTURE);
 	}
@@ -258,13 +209,8 @@ RID RenderForwardMobile::RenderBufferDataForwardMobile::get_color_fbs(Framebuffe
 	Vector<RID> textures;
 	int color_buffer_id = 0;
 	int depth_buffer_id = 1;
-	if (p_config_type == FB_CONFIG_RENDER_AND_POST_PASS && vrs_texture.is_valid() && texture_storage->render_target_is_subsampled_enabled(render_buffers->get_render_target())) {
-		textures.push_back(use_msaa ? render_buffers->get_color_msaa_subsampled() : render_buffers->get_color_subsampled()); // 0 - color buffer.
-		textures.push_back(use_msaa ? render_buffers->get_depth_msaa_subsampled() : render_buffers->get_depth_subsampled()); // 1 - depth buffer.
-	} else {
-		textures.push_back(use_msaa ? render_buffers->get_color_msaa() : render_buffers->get_internal_texture()); // 0 - color buffer.
-		textures.push_back(use_msaa ? render_buffers->get_depth_msaa() : render_buffers->get_depth_texture()); // 1 - depth buffer.
-	}
+	textures.push_back(use_msaa ? render_buffers->get_color_msaa() : render_buffers->get_internal_texture()); // 0 - color buffer.
+	textures.push_back(use_msaa ? render_buffers->get_depth_msaa() : render_buffers->get_depth_texture()); // 1 - depth buffer.
 	if (vrs_texture.is_valid()) {
 		textures.push_back(vrs_texture); // 2 - vrs texture.
 	}
@@ -324,6 +270,8 @@ RID RenderForwardMobile::RenderBufferDataForwardMobile::get_color_fbs(Framebuffe
 			passes.push_back(pass);
 
 			// Add blit to 2D pass.
+			RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
+			ERR_FAIL_NULL_V(texture_storage, RID());
 			RID render_target = render_buffers->get_render_target();
 			ERR_FAIL_COND_V(render_target.is_null(), RID());
 			RID target_buffer;
@@ -879,16 +827,8 @@ void RenderForwardMobile::_render_scene(RenderDataRD *p_render_data, const Color
 
 	RENDER_TIMESTAMP("Setup 3D Scene");
 
-	bool has_depth_texture_override = false;
 	bool supports_depth_resolve = RenderingDevice::get_singleton()->has_feature(RD::SUPPORTS_FRAMEBUFFER_DEPTH_RESOLVE);
 
-	RID render_target = rb->get_render_target();
-	if (render_target.is_valid()) {
-		p_render_data->scene_data->calculate_motion_vectors = texture_storage->render_target_get_override_velocity(render_target).is_valid();
-		has_depth_texture_override = texture_storage->render_target_get_override_depth(render_target).is_valid();
-	} else {
-		p_render_data->scene_data->calculate_motion_vectors = false;
-	}
 
 	p_render_data->scene_data->directional_light_count = 0;
 	p_render_data->scene_data->opaque_prepass_threshold = 0.0;
@@ -910,7 +850,7 @@ void RenderForwardMobile::_render_scene(RenderDataRD *p_render_data, const Color
 
 	RSE::ViewportMSAA msaa = rb->get_msaa_3d();
 	bool use_msaa = msaa != RSE::VIEWPORT_MSAA_DISABLED;
-	bool resolve_depth_buffer = (use_msaa && has_depth_texture_override); // We'll check more conditions later.
+	bool resolve_depth_buffer = false; // We'll check more conditions later.
 
 	bool ce_has_post_opaque = _has_compositor_effect(RSE::COMPOSITOR_EFFECT_CALLBACK_TYPE_POST_OPAQUE, p_render_data);
 	bool ce_has_pre_transparent = _has_compositor_effect(RSE::COMPOSITOR_EFFECT_CALLBACK_TYPE_PRE_TRANSPARENT, p_render_data);
@@ -1046,11 +986,6 @@ void RenderForwardMobile::_render_scene(RenderDataRD *p_render_data, const Color
 		}
 	} else {
 		ERR_FAIL(); //bug?
-	}
-
-	if (render_target.is_valid()) {
-		// Set subsampled images as not allowed on this render target, if we are using incompatible rendering features.
-		texture_storage->render_target_set_subsampled_allowed(render_target, using_subpass_post_process);
 	}
 
 	if (p_render_data->scene_data->view_count > 1) {
@@ -1228,25 +1163,6 @@ void RenderForwardMobile::_render_scene(RenderDataRD *p_render_data, const Color
 			breadcrumb = RDD::BreadcrumbMarker::REFLECTION_PROBES;
 		}
 
-		if (rb_data.is_valid() && p_render_data->scene_data->calculate_motion_vectors) {
-			RID mv_fb = rb_data->get_motion_vectors_fb();
-
-			if (mv_fb.is_valid()) {
-				RENDER_TIMESTAMP("Render Motion Vectors");
-
-				Vector<Color> mv_pass_clear;
-				mv_pass_clear.push_back(Color(0, 0, 0, 0));
-
-				RD::get_singleton()->draw_command_begin_label("Render Motion Vectors");
-
-				RID rp_uniform_set = _setup_render_pass_uniform_set(RENDER_LIST_OPAQUE, nullptr, is_multiview, RID(), samplers);
-				RenderListParameters render_list_params(render_list[RENDER_LIST_OPAQUE].elements.ptr(), render_list[RENDER_LIST_OPAQUE].element_info.ptr(), render_list[RENDER_LIST_OPAQUE].elements.size(), reverse_cull, PASS_MODE_MOTION_VECTORS, rp_uniform_set, base_specialization);
-				_render_list_with_draw_list(&render_list_params, mv_fb, RD::DRAW_CLEAR_ALL, mv_pass_clear);
-
-				RD::get_singleton()->draw_command_end_label();
-			}
-		}
-
 		// opaque pass
 		RD::get_singleton()->draw_command_begin_label("Render Opaque");
 
@@ -1286,7 +1202,7 @@ void RenderForwardMobile::_render_scene(RenderDataRD *p_render_data, const Color
 			}
 		}
 
-		RD::DrawListID draw_list = RD::get_singleton()->draw_list_begin(framebuffer, load_color ? RD::DRAW_CLEAR_DEPTH : (RD::DRAW_CLEAR_COLOR_0 | RD::DRAW_CLEAR_DEPTH), c, 0.0f, 0, p_render_data->render_region, breadcrumb);
+		RD::DrawListID draw_list = RD::get_singleton()->draw_list_begin(framebuffer, load_color ? RD::DRAW_CLEAR_DEPTH : (RD::DRAW_CLEAR_COLOR_0 | RD::DRAW_CLEAR_DEPTH), c, 0.0f, 0, Rect2i(), breadcrumb);
 		RD::FramebufferFormatID fb_format = RD::get_singleton()->framebuffer_get_format(framebuffer);
 
 		if (copy_canvas) {
@@ -1348,10 +1264,6 @@ void RenderForwardMobile::_render_scene(RenderDataRD *p_render_data, const Color
 
 			// note, if MSAA is used we should get an automatic resolve of the color buffer here.
 
-			if (use_msaa && has_depth_texture_override && !supports_depth_resolve) {
-				// We don't have a fallback for this, See PR #111322
-				WARN_PRINT_ONCE("MSAA Depth buffer resolve is not supported on this platform.");
-			}
 		} else {
 			// We're done with our subpasses so end our container pass
 			// note, if MSAA is used we should get an automatic resolve of the color buffer here.
@@ -1374,17 +1286,12 @@ void RenderForwardMobile::_render_scene(RenderDataRD *p_render_data, const Color
 				}
 			}
 
-			if (use_msaa && has_depth_texture_override && !supports_depth_resolve) {
-				// We don't have a fallback for this, See PR #111322
-				WARN_PRINT_ONCE("MSAA Depth buffer resolve is not supported on this platform.");
-			}
-
 			if (scene_state.used_depth_texture || global_surface_data.depth_texture_used) {
 				_render_buffers_ensure_depth_texture(p_render_data);
 
 				if (scene_state.used_depth_texture) {
 					// Copy depth texture to backbuffer so we can read from it.
-					_render_buffers_copy_depth_texture(p_render_data, use_msaa && !supports_depth_resolve); // Note, once fallback for has_depth_texture_override works, we also don't need to do our resolve here.
+					_render_buffers_copy_depth_texture(p_render_data, use_msaa && !supports_depth_resolve);
 				}
 			}
 
@@ -1401,7 +1308,7 @@ void RenderForwardMobile::_render_scene(RenderDataRD *p_render_data, const Color
 				render_list_params.framebuffer_format = fb_format;
 				render_list_params.subpass = RD::get_singleton()->draw_list_get_current_pass(); // Should now always be 0.
 
-				draw_list = RD::get_singleton()->draw_list_begin(framebuffer, RD::DRAW_DEFAULT_ALL, Vector<Color>(), 1.0f, 0, p_render_data->render_region, breadcrumb);
+				draw_list = RD::get_singleton()->draw_list_begin(framebuffer, RD::DRAW_DEFAULT_ALL, Vector<Color>(), 1.0f, 0, Rect2i(), breadcrumb);
 				_render_list(draw_list, fb_format, &render_list_params, 0, render_list_params.element_count);
 				RD::get_singleton()->draw_list_end();
 
@@ -2119,8 +2026,6 @@ void RenderForwardMobile::_fill_instance_data(RenderListType p_render_list, uint
 
 	rl->element_info.resize(p_offset + element_total);
 
-	uint64_t frame = RSG::rasterizer->get_frame_number();
-
 	scene_state.grow_instance_buffer(p_render_list, p_offset + element_total, p_offset != 0u);
 	if (!scene_state.curr_gpu_ptr[p_render_list] && element_total > 0u) {
 		// The old buffer was replaced for another larger one. We must start copying from scratch.
@@ -2134,14 +2039,8 @@ void RenderForwardMobile::_fill_instance_data(RenderListType p_render_list, uint
 
 		SceneState::InstanceData instance_data;
 
-		if (inst->prev_transform_dirty && frame > inst->prev_transform_change_frame && inst->prev_transform_change_frame) {
-			inst->prev_transform = inst->transform;
-			inst->prev_transform_dirty = false;
-		}
-
 		if (inst->store_transform_cache) {
 			RendererRD::MaterialStorage::store_transform_transposed_3x4(inst->transform, instance_data.transform);
-			RendererRD::MaterialStorage::store_transform_transposed_3x4(inst->prev_transform, instance_data.prev_transform);
 
 #ifdef REAL_T_IS_DOUBLE
 			// Split the origin into two components, the float approximation and the missing precision.
@@ -2149,16 +2048,11 @@ void RenderForwardMobile::_fill_instance_data(RenderListType p_render_list, uint
 			RendererRD::MaterialStorage::split_double(inst->transform.origin.x, &instance_data.transform[3], &instance_data.model_precision[0]);
 			RendererRD::MaterialStorage::split_double(inst->transform.origin.y, &instance_data.transform[7], &instance_data.model_precision[1]);
 			RendererRD::MaterialStorage::split_double(inst->transform.origin.z, &instance_data.transform[11], &instance_data.model_precision[2]);
-			RendererRD::MaterialStorage::split_double(inst->prev_transform.origin.x, &instance_data.prev_transform[3], &instance_data.prev_model_precision[0]);
-			RendererRD::MaterialStorage::split_double(inst->prev_transform.origin.y, &instance_data.prev_transform[7], &instance_data.prev_model_precision[1]);
-			RendererRD::MaterialStorage::split_double(inst->prev_transform.origin.z, &instance_data.prev_transform[11], &instance_data.prev_model_precision[2]);
 #endif
 		} else {
 			RendererRD::MaterialStorage::store_transform_transposed_3x4(Transform3D(), instance_data.transform);
-			RendererRD::MaterialStorage::store_transform_transposed_3x4(Transform3D(), instance_data.prev_transform);
 #ifdef REAL_T_IS_DOUBLE
 			memset(instance_data.model_precision, 0, sizeof(instance_data.model_precision));
-			memset(instance_data.prev_model_precision, 0, sizeof(instance_data.prev_model_precision));
 #endif
 		}
 
@@ -2352,7 +2246,7 @@ void RenderForwardMobile::_fill_render_list(RenderListType p_render_list, const 
 			}
 
 			// ADD Element
-			if (p_pass_mode == PASS_MODE_COLOR || p_pass_mode == PASS_MODE_COLOR_TRANSPARENT || p_pass_mode == PASS_MODE_MOTION_VECTORS) {
+			if (p_pass_mode == PASS_MODE_COLOR || p_pass_mode == PASS_MODE_COLOR_TRANSPARENT) {
 #ifdef DEBUG_ENABLED
 				bool force_alpha = unlikely(get_debug_draw_mode() == RSE::VIEWPORT_DEBUG_DRAW_OVERDRAW);
 #else
@@ -2443,9 +2337,6 @@ void RenderForwardMobile::_render_list(RenderingDevice::DrawListID p_draw_list, 
 		case PASS_MODE_DEPTH_MATERIAL: {
 			_render_list_template<PASS_MODE_DEPTH_MATERIAL>(p_draw_list, p_framebuffer_Format, p_params, p_from_element, p_to_element);
 		} break;
-		case PASS_MODE_MOTION_VECTORS: {
-			_render_list_template<PASS_MODE_MOTION_VECTORS>(p_draw_list, p_framebuffer_Format, p_params, p_from_element, p_to_element);
-		}
 	}
 }
 
@@ -2595,9 +2486,6 @@ void RenderForwardMobile::_render_list_template(RenderingDevice::DrawListID p_dr
 				ERR_FAIL_COND_MSG(p_params->view_count > 1, "Multiview not supported for material pass");
 				pipeline_key.version = SceneShaderForwardMobile::SHADER_VERSION_DEPTH_PASS_WITH_MATERIAL;
 			} break;
-			case PASS_MODE_MOTION_VECTORS: {
-				pipeline_key.version = SceneShaderForwardMobile::SHADER_VERSION_MOTION_VECTORS_MULTIVIEW;
-			}
 		}
 
 		pipeline_key.framebuffer_format_id = framebuffer_format;
@@ -2618,9 +2506,9 @@ void RenderForwardMobile::_render_list_template(RenderingDevice::DrawListID p_dr
 			// Skeleton and blend shape.
 			uint64_t input_mask = shader->get_vertex_input_mask(pipeline_key.version, pipeline_key.ubershader);
 			if (surf->owner->mesh_instance.is_valid()) {
-				mesh_storage->mesh_instance_surface_get_vertex_arrays_and_format(surf->owner->mesh_instance, surf->surface_index, input_mask, p_pass_mode == PASS_MODE_MOTION_VECTORS, emulate_point_size, vertex_array_rd, vertex_format);
+				mesh_storage->mesh_instance_surface_get_vertex_arrays_and_format(surf->owner->mesh_instance, surf->surface_index, input_mask, false, emulate_point_size, vertex_array_rd, vertex_format);
 			} else {
-				mesh_storage->mesh_surface_get_vertex_arrays_and_format(mesh_surface, input_mask, p_pass_mode == PASS_MODE_MOTION_VECTORS, emulate_point_size, vertex_array_rd, vertex_format);
+				mesh_storage->mesh_surface_get_vertex_arrays_and_format(mesh_surface, input_mask, false, emulate_point_size, vertex_array_rd, vertex_format);
 			}
 
 			pipeline_key.vertex_format_id = vertex_format;
@@ -2698,13 +2586,13 @@ void RenderForwardMobile::_render_list_template(RenderingDevice::DrawListID p_dr
 				prev_material_uniform_set = material_uniform_set;
 			}
 
+			uint32_t previous_offset;
 			if (surf->owner->base_flags & INSTANCE_DATA_FLAG_PARTICLES) {
-				particles_storage->particles_get_instance_buffer_motion_vectors_offsets(surf->owner->data->base, push_constant.multimesh_motion_vectors_current_offset, push_constant.multimesh_motion_vectors_previous_offset);
+				particles_storage->particles_get_instance_buffer_motion_vectors_offsets(surf->owner->data->base, push_constant.multimesh_transform_offset, previous_offset);
 			} else if (surf->owner->base_flags & INSTANCE_DATA_FLAG_MULTIMESH) {
-				mesh_storage->_multimesh_get_motion_vectors_offsets(surf->owner->data->base, push_constant.multimesh_motion_vectors_current_offset, push_constant.multimesh_motion_vectors_previous_offset);
+				mesh_storage->_multimesh_get_motion_vectors_offsets(surf->owner->data->base, push_constant.multimesh_transform_offset, previous_offset);
 			} else {
-				push_constant.multimesh_motion_vectors_current_offset = 0;
-				push_constant.multimesh_motion_vectors_previous_offset = 0;
+				push_constant.multimesh_transform_offset = 0;
 			}
 
 			size_t push_constant_size = 0;
@@ -2763,17 +2651,6 @@ RenderGeometryInstance *RenderForwardMobile::geometry_instance_create(RID p_base
 	ginstance->_mark_dirty();
 
 	return ginstance;
-}
-
-void RendererSceneRenderImplementation::RenderForwardMobile::GeometryInstanceForwardMobile::set_transform(const Transform3D &p_transform, const AABB &p_aabb, const AABB &p_transformed_aabb) {
-	uint64_t frame = RSG::rasterizer->get_frame_number();
-	if (frame != prev_transform_change_frame) {
-		prev_transform = transform;
-		prev_transform_change_frame = frame;
-		prev_transform_dirty = true;
-	}
-
-	RenderGeometryInstanceBase::set_transform(p_transform, p_aabb, p_transformed_aabb);
 }
 
 void RenderForwardMobile::GeometryInstanceForwardMobile::set_use_lightmap(RID p_lightmap_instance, const Rect2 &p_lightmap_uv_scale, int p_lightmap_slice_index) {

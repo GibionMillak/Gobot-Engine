@@ -37,6 +37,7 @@
 #include "drivers/gles3/storage/mesh_storage.h"
 #include "drivers/gles3/storage/texture_storage.h"
 #include "drivers/gles3/storage/utilities.h"
+#include "servers/rendering/renderer_compositor.h"
 #include "servers/rendering/rendering_server_globals.h"
 
 using namespace GLES3;
@@ -1216,7 +1217,6 @@ void ParticlesStorage::update_particles() {
 		}
 
 		SWAP(particles->front_instance_buffer, particles->back_instance_buffer);
-		particles->last_change = RSG::rasterizer->get_frame_number();
 
 		// At the end of update, the back_buffer contains the most up-to-date-information to read from.
 

@@ -53,7 +53,7 @@ void register_android_exporter() {
 	EDITOR_DEF_BASIC("export/android/build/automatically_delete_build_directory", false);
 
 #ifdef ANDROID_ENABLED
-	EDITOR_DEF_BASIC("export/android/install_exported_apk", !OS::get_singleton()->has_feature("horizonos"));
+	EDITOR_DEF_BASIC("export/android/install_exported_apk", true);
 #else
 	EDITOR_DEF("export/android/java_sdk_path", OS::get_singleton()->has_environment("JAVA_HOME") ? OS::get_singleton()->get_environment("JAVA_HOME") : EditorPaths::get_singleton()->get_default_java_sdk_path());
 	EditorSettings::get_singleton()->add_property_hint(PropertyInfo(Variant::STRING, "export/android/java_sdk_path", PROPERTY_HINT_GLOBAL_DIR));

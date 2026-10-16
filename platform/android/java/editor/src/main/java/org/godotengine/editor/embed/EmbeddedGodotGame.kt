@@ -48,7 +48,6 @@ import android.view.WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
 import android.widget.CheckBox
 import org.godotengine.editor.GodotGame
 import org.godotengine.editor.R
-import org.godotengine.godot.editor.utils.GameMenuUtils
 
 /**
  * Host the Godot game from the editor when the embedded mode is enabled.
@@ -432,7 +431,6 @@ class EmbeddedGodotGame : GodotGame() {
 
 	override fun getEditorWindowInfo() = EMBEDDED_RUN_GAME_INFO
 
-	override fun getEditorGameEmbedMode() = GameMenuUtils.GameEmbedMode.ENABLED
 
 	override fun isGameEmbedded() = true
 

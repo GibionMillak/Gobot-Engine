@@ -30,7 +30,7 @@
 
 #include "tone_mapper.h"
 
-#include "servers/rendering/renderer_rd/renderer_compositor_rd.h"
+#include "servers/rendering/renderer_rd/shader_rd.h"
 #include "servers/rendering/renderer_rd/storage_rd/material_storage.h"
 #include "servers/rendering/renderer_rd/uniform_set_cache_rd.h"
 
@@ -40,68 +40,50 @@ ToneMapper::ToneMapper(bool p_use_mobile_version) {
 	using_mobile_version = p_use_mobile_version;
 	if (using_mobile_version) {
 		// Initialize tonemapper
-		Vector<String> tonemap_modes;
-		tonemap_modes.push_back("\n");
-		tonemap_modes.push_back("\n#define USE_1D_LUT\n");
-		tonemap_modes.push_back("\n#define SUBPASS\n");
-		tonemap_modes.push_back("\n#define SUBPASS\n#define USE_1D_LUT\n");
+		constexpr int DEFAULT_GROUP = 0;
+		constexpr int MULTIVIEW_GROUP = 1;
+		Vector<ShaderRD::VariantDefine> tonemap_modes;
+		tonemap_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n", true));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define USE_1D_LUT\n", true));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define SUBPASS\n", true));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define SUBPASS\n#define USE_1D_LUT\n", true));
 
 		// multiview versions of our shaders
-		tonemap_modes.push_back("\n#define USE_MULTIVIEW\n");
-		tonemap_modes.push_back("\n#define USE_MULTIVIEW\n#define USE_1D_LUT\n");
-		tonemap_modes.push_back("\n#define USE_MULTIVIEW\n#define SUBPASS\n");
-		tonemap_modes.push_back("\n#define USE_MULTIVIEW\n#define SUBPASS\n#define USE_1D_LUT\n");
+		tonemap_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n", false));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define USE_1D_LUT\n", false));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define SUBPASS\n", false));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define SUBPASS\n#define USE_1D_LUT\n", false));
 
 		tonemap_mobile.shader.initialize(tonemap_modes);
-
-		if (!RendererCompositorRD::get_singleton()->is_xr_enabled()) {
-			tonemap_mobile.shader.set_variant_enabled(TONEMAP_MOBILE_MODE_NORMAL_MULTIVIEW, false);
-			tonemap_mobile.shader.set_variant_enabled(TONEMAP_MOBILE_MODE_1D_LUT_MULTIVIEW, false);
-			tonemap_mobile.shader.set_variant_enabled(TONEMAP_MOBILE_MODE_SUBPASS_MULTIVIEW, false);
-			tonemap_mobile.shader.set_variant_enabled(TONEMAP_MOBILE_MODE_SUBPASS_1D_LUT_MULTIVIEW, false);
-		}
 
 		tonemap_mobile.shader_version = tonemap_mobile.shader.version_create();
 
 		for (int i = 0; i < TONEMAP_MODE_MAX; i++) {
-			if (tonemap_mobile.shader.is_variant_enabled(i)) {
-				tonemap_mobile.pipelines[i].setup(tonemap_mobile.shader.version_get_shader(tonemap_mobile.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), RD::PipelineColorBlendState::create_disabled(), 0);
-			} else {
-				tonemap_mobile.pipelines[i].clear();
-			}
+			tonemap_mobile.pipelines[i].setup(tonemap_mobile.shader.version_get_shader(tonemap_mobile.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), RD::PipelineColorBlendState::create_disabled(), 0);
 		}
 
 	} else {
 		// Initialize tonemapper
-		Vector<String> tonemap_modes;
-		tonemap_modes.push_back("\n");
-		tonemap_modes.push_back("\n#define USE_GLOW_FILTER_BICUBIC\n");
-		tonemap_modes.push_back("\n#define USE_1D_LUT\n");
-		tonemap_modes.push_back("\n#define USE_GLOW_FILTER_BICUBIC\n#define USE_1D_LUT\n");
+		constexpr int DEFAULT_GROUP = 0;
+		constexpr int MULTIVIEW_GROUP = 1;
+		Vector<ShaderRD::VariantDefine> tonemap_modes;
+		tonemap_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n", true));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define USE_GLOW_FILTER_BICUBIC\n", true));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define USE_1D_LUT\n", true));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define USE_GLOW_FILTER_BICUBIC\n#define USE_1D_LUT\n", true));
 
 		// multiview versions of our shaders
-		tonemap_modes.push_back("\n#define USE_MULTIVIEW\n");
-		tonemap_modes.push_back("\n#define USE_MULTIVIEW\n#define USE_GLOW_FILTER_BICUBIC\n");
-		tonemap_modes.push_back("\n#define USE_MULTIVIEW\n#define USE_1D_LUT\n");
-		tonemap_modes.push_back("\n#define USE_MULTIVIEW\n#define USE_GLOW_FILTER_BICUBIC\n#define USE_1D_LUT\n");
+		tonemap_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n", false));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define USE_GLOW_FILTER_BICUBIC\n", false));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define USE_1D_LUT\n", false));
+		tonemap_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define USE_GLOW_FILTER_BICUBIC\n#define USE_1D_LUT\n", false));
 
 		tonemap.shader.initialize(tonemap_modes);
-
-		if (!RendererCompositorRD::get_singleton()->is_xr_enabled()) {
-			tonemap.shader.set_variant_enabled(TONEMAP_MODE_NORMAL_MULTIVIEW, false);
-			tonemap.shader.set_variant_enabled(TONEMAP_MODE_BICUBIC_GLOW_FILTER_MULTIVIEW, false);
-			tonemap.shader.set_variant_enabled(TONEMAP_MODE_1D_LUT_MULTIVIEW, false);
-			tonemap.shader.set_variant_enabled(TONEMAP_MODE_BICUBIC_GLOW_FILTER_1D_LUT_MULTIVIEW, false);
-		}
 
 		tonemap.shader_version = tonemap.shader.version_create();
 
 		for (int i = 0; i < TONEMAP_MODE_MAX; i++) {
-			if (tonemap.shader.is_variant_enabled(i)) {
-				tonemap.pipelines[i].setup(tonemap.shader.version_get_shader(tonemap.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), RD::PipelineColorBlendState::create_disabled(), 0);
-			} else {
-				tonemap.pipelines[i].clear();
-			}
+			tonemap.pipelines[i].setup(tonemap.shader.version_get_shader(tonemap.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), RD::PipelineColorBlendState::create_disabled(), 0);
 		}
 	}
 }
@@ -205,6 +187,7 @@ void ToneMapper::tonemapper(RID p_source_color, RID p_dst_framebuffer, const Ton
 	u_color_correction_texture.append_id(default_sampler);
 	u_color_correction_texture.append_id(p_settings.color_correction_texture);
 
+	tonemap.shader.enable_group(tonemap.shader.get_variant_to_group(mode));
 	RID shader = tonemap.shader.version_get_shader(tonemap.shader_version, mode);
 	ERR_FAIL_COND(shader.is_null());
 
@@ -301,6 +284,7 @@ void ToneMapper::tonemapper_mobile(RID p_source_color, RID p_dst_framebuffer, co
 	u_color_correction_texture.append_id(default_sampler);
 	u_color_correction_texture.append_id(p_settings.color_correction_texture);
 
+	tonemap_mobile.shader.enable_group(tonemap_mobile.shader.get_variant_to_group(mode));
 	RID shader = tonemap_mobile.shader.version_get_shader(tonemap_mobile.shader_version, mode);
 	ERR_FAIL_COND(shader.is_null());
 
@@ -392,6 +376,7 @@ void ToneMapper::tonemapper_subpass(RD::DrawListID p_subpass_draw_list, RID p_so
 	u_color_correction_texture.append_id(default_sampler);
 	u_color_correction_texture.append_id(p_settings.color_correction_texture);
 
+	tonemap_mobile.shader.enable_group(tonemap_mobile.shader.get_variant_to_group(mode));
 	RID shader = tonemap_mobile.shader.version_get_shader(tonemap_mobile.shader_version, mode);
 	ERR_FAIL_COND(shader.is_null());
 

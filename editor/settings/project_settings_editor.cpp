@@ -357,7 +357,6 @@ void ProjectSettingsEditor::_add_feature_overrides() {
 	presets.insert("32");
 	presets.insert("64");
 	presets.insert("movie");
-	presets.insert("xr_editor");
 
 	EditorExport *ee = EditorExport::get_singleton();
 

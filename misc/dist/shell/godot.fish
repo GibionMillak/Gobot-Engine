@@ -77,7 +77,6 @@ complete -c godot -s t -l always-on-top -d "Request an always-on-top window"
 complete -c godot -l resolution -d "Request window resolution" -x
 complete -c godot -l position -d "Request window position" -x
 complete -c godot -l single-window -d "Use a single window (no separate subwindows)"
-complete -c godot -l xr-mode -d "Select Extended Reality (XR) mode" -a "default off on"
 
 # Debug options:
 complete -c godot -s d -l debug -d "Debug (local stdout debugger)"

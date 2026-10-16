@@ -436,9 +436,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 
 	bool is_android_editor = false;
 #ifdef ANDROID_ENABLED
-	if (!OS::get_singleton()->has_feature("xr_editor")) {
-		is_android_editor = true;
-	}
+	is_android_editor = true;
 #endif
 
 	// Editor
@@ -600,7 +598,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 
 	// Touchscreen
 	bool has_touchscreen_ui = DisplayServer::get_singleton()->is_touchscreen_available();
-	bool is_native_touchscreen = has_touchscreen_ui && !OS::get_singleton()->has_feature("xr_editor"); // Disable some touchscreen settings by default for the XR Editor.
+	bool is_native_touchscreen = has_touchscreen_ui;
 
 	EDITOR_SETTING(Variant::BOOL, PROPERTY_HINT_NONE, "interface/touchscreen/enable_touch_optimizations", is_native_touchscreen, "")
 	EDITOR_SETTING(Variant::BOOL, PROPERTY_HINT_NONE, "interface/touchscreen/enable_long_press_as_right_click", is_native_touchscreen, "")
@@ -613,7 +611,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING(Variant::FLOAT, PROPERTY_HINT_RANGE, "interface/touchscreen/scale_gizmo_handles", has_touchscreen_ui ? 2 : 1, "1,5,1")
 	set_restart_if_changed("interface/touchscreen/scale_gizmo_handles", true);
 
-	// Only available in the Android/XR editor.
+	// Only available in the Android editor.
 	String touch_actions_panel_hints = "Disabled:0,Embedded Panel:1,Floating Panel:2";
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "interface/touchscreen/touch_actions_panel", 1, touch_actions_panel_hints)
 
@@ -1092,14 +1090,9 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 
 	String game_embed_mode_hints = "Disabled:-1,Use Per-Project Configuration:0,Embed Game:1,Make Game Workspace Floating:2";
 #ifdef ANDROID_ENABLED
-	if (OS::get_singleton()->has_feature("xr_editor")) {
-		game_embed_mode_hints = "Disabled:-1";
-	} else {
-		game_embed_mode_hints = "Disabled:-1,Auto (based on screen size):0,Enabled:1";
-	}
+	game_embed_mode_hints = "Disabled:-1,Auto (based on screen size):0,Enabled:1";
 #endif
-	int default_game_embed_mode = OS::get_singleton()->has_feature("xr_editor") ? -1 : 0;
-	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "run/window_placement/game_embed_mode", default_game_embed_mode, game_embed_mode_hints);
+	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "run/window_placement/game_embed_mode", 0, game_embed_mode_hints);
 
 	// Auto save
 	_initial_set("run/auto_save/save_before_running", true, true);

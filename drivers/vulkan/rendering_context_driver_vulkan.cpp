@@ -36,7 +36,6 @@
 #include "core/config/project_settings.h"
 #include "core/version.h"
 #include "drivers/vulkan/rendering_device_driver_vulkan.h"
-#include "drivers/vulkan/vulkan_hooks.h"
 
 #ifndef DEV_ENABLED
 #include "core/os/os.h"
@@ -827,29 +826,16 @@ Error RenderingContextDriverVulkan::_initialize_instance() {
 }
 
 Error RenderingContextDriverVulkan::_initialize_devices() {
-	if (VulkanHooks::get_singleton() != nullptr) {
-		VkPhysicalDevice physical_device;
-		bool device_retrieved = VulkanHooks::get_singleton()->get_physical_device(&physical_device);
-		ERR_FAIL_COND_V(!device_retrieved, ERR_CANT_CREATE);
+	uint32_t physical_device_count = 0;
+	VkResult err = vkEnumeratePhysicalDevices(instance, &physical_device_count, nullptr);
+	ERR_FAIL_COND_V(err != VK_SUCCESS, ERR_CANT_CREATE);
+	ERR_FAIL_COND_V_MSG(physical_device_count == 0, ERR_CANT_CREATE, "vkEnumeratePhysicalDevices reported zero accessible devices.\n\nDo you have a compatible Vulkan installable client driver (ICD) installed?\nvkEnumeratePhysicalDevices Failure.");
 
-		// When a hook is active, pretend the device returned by the hook is the only device available.
-		driver_devices.resize(1);
-		physical_devices.resize(1);
-		device_queue_families.resize(1);
-		physical_devices[0] = physical_device;
-
-	} else {
-		uint32_t physical_device_count = 0;
-		VkResult err = vkEnumeratePhysicalDevices(instance, &physical_device_count, nullptr);
-		ERR_FAIL_COND_V(err != VK_SUCCESS, ERR_CANT_CREATE);
-		ERR_FAIL_COND_V_MSG(physical_device_count == 0, ERR_CANT_CREATE, "vkEnumeratePhysicalDevices reported zero accessible devices.\n\nDo you have a compatible Vulkan installable client driver (ICD) installed?\nvkEnumeratePhysicalDevices Failure.");
-
-		driver_devices.resize(physical_device_count);
-		physical_devices.resize(physical_device_count);
-		device_queue_families.resize(physical_device_count);
-		err = vkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices.ptr());
-		ERR_FAIL_COND_V(err != VK_SUCCESS, ERR_CANT_CREATE);
-	}
+	driver_devices.resize(physical_device_count);
+	physical_devices.resize(physical_device_count);
+	device_queue_families.resize(physical_device_count);
+	err = vkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices.ptr());
+	ERR_FAIL_COND_V(err != VK_SUCCESS, ERR_CANT_CREATE);
 
 	// Fill the list of driver devices with the properties from the physical devices.
 	for (uint32_t i = 0; i < physical_devices.size(); i++) {
@@ -878,23 +864,19 @@ bool RenderingContextDriverVulkan::_use_validation_layers() const {
 }
 
 Error RenderingContextDriverVulkan::_create_vulkan_instance(const VkInstanceCreateInfo *p_create_info, VkInstance *r_instance) {
-	if (VulkanHooks::get_singleton() != nullptr) {
-		return VulkanHooks::get_singleton()->create_vulkan_instance(p_create_info, r_instance) ? OK : ERR_CANT_CREATE;
-	} else {
-		VkResult err = vkCreateInstance(p_create_info, get_allocation_callbacks(VK_OBJECT_TYPE_INSTANCE), r_instance);
-		ERR_FAIL_COND_V_MSG(err == VK_ERROR_INCOMPATIBLE_DRIVER, ERR_CANT_CREATE,
-				"Cannot find a compatible Vulkan installable client driver (ICD).\n\n"
-				"vkCreateInstance Failure");
-		ERR_FAIL_COND_V_MSG(err == VK_ERROR_EXTENSION_NOT_PRESENT, ERR_CANT_CREATE,
-				"Cannot find a specified extension library.\n"
-				"Make sure your layers path is set appropriately.\n"
-				"vkCreateInstance Failure");
-		ERR_FAIL_COND_V_MSG(err, ERR_CANT_CREATE,
-				"vkCreateInstance failed.\n\n"
-				"Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-				"Please look at the Getting Started guide for additional information.\n"
-				"vkCreateInstance Failure");
-	}
+	VkResult err = vkCreateInstance(p_create_info, get_allocation_callbacks(VK_OBJECT_TYPE_INSTANCE), r_instance);
+	ERR_FAIL_COND_V_MSG(err == VK_ERROR_INCOMPATIBLE_DRIVER, ERR_CANT_CREATE,
+			"Cannot find a compatible Vulkan installable client driver (ICD).\n\n"
+			"vkCreateInstance Failure");
+	ERR_FAIL_COND_V_MSG(err == VK_ERROR_EXTENSION_NOT_PRESENT, ERR_CANT_CREATE,
+			"Cannot find a specified extension library.\n"
+			"Make sure your layers path is set appropriately.\n"
+			"vkCreateInstance Failure");
+	ERR_FAIL_COND_V_MSG(err, ERR_CANT_CREATE,
+			"vkCreateInstance failed.\n\n"
+			"Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+			"Please look at the Getting Started guide for additional information.\n"
+			"vkCreateInstance Failure");
 
 	return OK;
 }

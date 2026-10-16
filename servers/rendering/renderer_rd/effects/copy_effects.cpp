@@ -31,7 +31,8 @@
 #include "copy_effects.h"
 
 #include "core/config/project_settings.h"
-#include "servers/rendering/renderer_rd/renderer_compositor_rd.h"
+#include "servers/rendering/renderer_rd/framebuffer_cache_rd.h"
+#include "servers/rendering/renderer_rd/shader_rd.h"
 #include "servers/rendering/renderer_rd/storage_rd/material_storage.h"
 #include "servers/rendering/renderer_rd/uniform_set_cache_rd.h"
 
@@ -114,31 +115,24 @@ CopyEffects::CopyEffects(BitField<RasterEffects> p_raster_effects) {
 	}
 
 	{
-		Vector<String> copy_modes;
-		copy_modes.push_back("\n"); // COPY_TO_FB_COPY
-		copy_modes.push_back("\n#define MODE_PANORAMA_TO_DP\n"); // COPY_TO_FB_COPY_PANORAMA_TO_DP
-		copy_modes.push_back("\n#define MODE_TWO_SOURCES\n"); // COPY_TO_FB_COPY2
-		copy_modes.push_back("\n#define MODE_SET_COLOR\n"); // COPY_TO_FB_SET_COLOR
-		copy_modes.push_back("\n#define USE_MULTIVIEW\n"); // COPY_TO_FB_MULTIVIEW
-		copy_modes.push_back("\n#define USE_MULTIVIEW\n#define MODE_TWO_SOURCES\n"); // COPY_TO_FB_MULTIVIEW_WITH_DEPTH
+		constexpr int DEFAULT_GROUP = 0;
+		constexpr int MULTIVIEW_GROUP = 1;
+		Vector<ShaderRD::VariantDefine> copy_modes;
+		copy_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n", true)); // COPY_TO_FB_COPY
+		copy_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define MODE_PANORAMA_TO_DP\n", true)); // COPY_TO_FB_COPY_PANORAMA_TO_DP
+		copy_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define MODE_TWO_SOURCES\n", true)); // COPY_TO_FB_COPY2
+		copy_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define MODE_SET_COLOR\n", true)); // COPY_TO_FB_SET_COLOR
+		copy_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n", false)); // COPY_TO_FB_MULTIVIEW
+		copy_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define MODE_TWO_SOURCES\n", false)); // COPY_TO_FB_MULTIVIEW_WITH_DEPTH
 
 		copy_to_fb.shader.initialize(copy_modes);
-
-		if (!RendererCompositorRD::get_singleton()->is_xr_enabled()) {
-			copy_to_fb.shader.set_variant_enabled(COPY_TO_FB_MULTIVIEW, false);
-			copy_to_fb.shader.set_variant_enabled(COPY_TO_FB_MULTIVIEW_WITH_DEPTH, false);
-		}
 
 		copy_to_fb.shader_version = copy_to_fb.shader.version_create();
 
 		//use additive
 
 		for (int i = 0; i < COPY_TO_FB_MAX; i++) {
-			if (copy_to_fb.shader.is_variant_enabled(i)) {
-				copy_to_fb.pipelines[i].setup(copy_to_fb.shader.version_get_shader(copy_to_fb.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), RD::PipelineColorBlendState::create_disabled(), 0);
-			} else {
-				copy_to_fb.pipelines[i].clear();
-			}
+			copy_to_fb.pipelines[i].setup(copy_to_fb.shader.version_get_shader(copy_to_fb.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), RD::PipelineColorBlendState::create_disabled(), 0);
 		}
 	}
 
@@ -298,25 +292,20 @@ CopyEffects::CopyEffects(BitField<RasterEffects> p_raster_effects) {
 	}
 
 	{
-		Vector<String> specular_modes;
-		specular_modes.push_back("\n#define MODE_MERGE\n"); // SPECULAR_MERGE_ADD
-		specular_modes.push_back("\n#define MODE_MERGE\n#define MODE_SSR\n"); // SPECULAR_MERGE_SSR
-		specular_modes.push_back("\n"); // SPECULAR_MERGE_ADDITIVE_ADD
-		specular_modes.push_back("\n#define MODE_SSR\n"); // SPECULAR_MERGE_ADDITIVE_SSR
+		constexpr int DEFAULT_GROUP = 0;
+		constexpr int MULTIVIEW_GROUP = 1;
+		Vector<ShaderRD::VariantDefine> specular_modes;
+		specular_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define MODE_MERGE\n", true)); // SPECULAR_MERGE_ADD
+		specular_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define MODE_MERGE\n#define MODE_SSR\n", true)); // SPECULAR_MERGE_SSR
+		specular_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n", true)); // SPECULAR_MERGE_ADDITIVE_ADD
+		specular_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define MODE_SSR\n", true)); // SPECULAR_MERGE_ADDITIVE_SSR
 
-		specular_modes.push_back("\n#define USE_MULTIVIEW\n#define MODE_MERGE\n"); // SPECULAR_MERGE_ADD_MULTIVIEW
-		specular_modes.push_back("\n#define USE_MULTIVIEW\n#define MODE_MERGE\n#define MODE_SSR\n"); // SPECULAR_MERGE_SSR_MULTIVIEW
-		specular_modes.push_back("\n#define USE_MULTIVIEW\n"); // SPECULAR_MERGE_ADDITIVE_ADD_MULTIVIEW
-		specular_modes.push_back("\n#define USE_MULTIVIEW\n#define MODE_SSR\n"); // SPECULAR_MERGE_ADDITIVE_SSR_MULTIVIEW
+		specular_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define MODE_MERGE\n", false)); // SPECULAR_MERGE_ADD_MULTIVIEW
+		specular_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define MODE_MERGE\n#define MODE_SSR\n", false)); // SPECULAR_MERGE_SSR_MULTIVIEW
+		specular_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n", false)); // SPECULAR_MERGE_ADDITIVE_ADD_MULTIVIEW
+		specular_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n#define MODE_SSR\n", false)); // SPECULAR_MERGE_ADDITIVE_SSR_MULTIVIEW
 
 		specular_merge.shader.initialize(specular_modes);
-
-		if (!RendererCompositorRD::get_singleton()->is_xr_enabled()) {
-			specular_merge.shader.set_variant_enabled(SPECULAR_MERGE_ADD_MULTIVIEW, false);
-			specular_merge.shader.set_variant_enabled(SPECULAR_MERGE_SSR_MULTIVIEW, false);
-			specular_merge.shader.set_variant_enabled(SPECULAR_MERGE_ADDITIVE_ADD_MULTIVIEW, false);
-			specular_merge.shader.set_variant_enabled(SPECULAR_MERGE_ADDITIVE_SSR_MULTIVIEW, false);
-		}
 
 		specular_merge.shader_version = specular_merge.shader.version_create();
 
@@ -335,15 +324,13 @@ CopyEffects::CopyEffects(BitField<RasterEffects> p_raster_effects) {
 		blend_additive.attachments.push_back(ba);
 
 		for (int i = 0; i < SPECULAR_MERGE_MAX; i++) {
-			if (specular_merge.shader.is_variant_enabled(i)) {
-				RD::PipelineColorBlendState blend_state;
-				if (i == SPECULAR_MERGE_ADDITIVE_ADD || i == SPECULAR_MERGE_ADDITIVE_SSR || i == SPECULAR_MERGE_ADDITIVE_ADD_MULTIVIEW || i == SPECULAR_MERGE_ADDITIVE_SSR_MULTIVIEW) {
-					blend_state = blend_additive;
-				} else {
-					blend_state = RD::PipelineColorBlendState::create_disabled();
-				}
-				specular_merge.pipelines[i].setup(specular_merge.shader.version_get_shader(specular_merge.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), blend_state, 0);
+			RD::PipelineColorBlendState blend_state;
+			if (i == SPECULAR_MERGE_ADDITIVE_ADD || i == SPECULAR_MERGE_ADDITIVE_SSR || i == SPECULAR_MERGE_ADDITIVE_ADD_MULTIVIEW || i == SPECULAR_MERGE_ADDITIVE_SSR_MULTIVIEW) {
+				blend_state = blend_additive;
+			} else {
+				blend_state = RD::PipelineColorBlendState::create_disabled();
 			}
+			specular_merge.pipelines[i].setup(specular_merge.shader.version_get_shader(specular_merge.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), blend_state, 0);
 		}
 	}
 }
@@ -656,6 +643,7 @@ void CopyEffects::copy_to_fb_rect(RID p_source_rd_texture, RID p_dest_framebuffe
 		mode = p_secondary.is_valid() ? COPY_TO_FB_COPY2 : COPY_TO_FB_COPY;
 	}
 
+	copy_to_fb.shader.enable_group(copy_to_fb.shader.get_variant_to_group(mode));
 	RID shader = copy_to_fb.shader.version_get_shader(copy_to_fb.shader_version, mode);
 	ERR_FAIL_COND(shader.is_null());
 
@@ -1463,6 +1451,7 @@ void CopyEffects::merge_specular(RID p_dest_framebuffer, RID p_specular, RID p_b
 		mode += SPECULAR_MERGE_ADD_MULTIVIEW;
 	}
 
+	specular_merge.shader.enable_group(specular_merge.shader.get_variant_to_group(mode));
 	RID shader = specular_merge.shader.version_get_shader(specular_merge.shader_version, mode);
 	RD::get_singleton()->draw_list_bind_render_pipeline(draw_list, specular_merge.pipelines[mode].get_render_pipeline(RD::INVALID_ID, RD::get_singleton()->framebuffer_get_format(p_dest_framebuffer)));
 

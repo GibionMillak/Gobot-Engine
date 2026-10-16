@@ -3551,12 +3551,6 @@ msgstr "Esconder Barra de Status"
 msgid "Suppress UI Gesture"
 msgstr "Suprimir Gestos de UI"
 
-msgid "XR"
-msgstr "XR"
-
-msgid "OpenXR"
-msgstr "OpenXR"
-
 msgid "Target API Version"
 msgstr "Versão da API Suportada"
 
@@ -5330,12 +5324,6 @@ msgstr "Gráficos"
 msgid "OpenGL Debug"
 msgstr "Depurar OpenGL"
 
-msgid "XR Features"
-msgstr "Funcionalidades XR"
-
-msgid "XR Mode"
-msgstr "Modo XR"
-
 msgid "Gesture"
 msgstr "Gesto"
 
@@ -5683,9 +5671,6 @@ msgstr "Descrição de Uso de Volumes Removíveis"
 
 msgid "Removable Volumes Usage Description Localized"
 msgstr "Descrição de Uso de Volumes Removíveis Traduzida"
-
-msgid "Min visionOS Version"
-msgstr "Mín. Versão do visionOS"
 
 msgid "Web"
 msgstr "Web"
@@ -9262,9 +9247,6 @@ msgstr "Caminho do Viewport"
 
 msgid "Disable 3D"
 msgstr "Desativar 3D"
-
-msgid "Use XR"
-msgstr "Utilizar XR"
 
 msgid "Own World 3D"
 msgstr "Mundo 3D Próprio"

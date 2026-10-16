@@ -33,7 +33,6 @@
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
 #include "core/os/os.h"
-#include "drivers/d3d12/d3d12_hooks.h"
 #include "drivers/d3d12/rendering_context_driver_d3d12.h"
 
 #include <drivers/d3d12/godot_d3d12ma.h>
@@ -2604,16 +2603,12 @@ RDD::CommandQueueFamilyID RenderingDeviceDriverD3D12::command_queue_family_get(B
 
 // ----- QUEUE -----
 
-RDD::CommandQueueID RenderingDeviceDriverD3D12::command_queue_create(CommandQueueFamilyID p_cmd_queue_family, bool p_identify_as_main_queue) {
+RDD::CommandQueueID RenderingDeviceDriverD3D12::command_queue_create(CommandQueueFamilyID p_cmd_queue_family) {
 	ComPtr<ID3D12CommandQueue> d3d_queue;
 	D3D12_COMMAND_QUEUE_DESC queue_desc = {};
 	queue_desc.Type = (D3D12_COMMAND_LIST_TYPE)(p_cmd_queue_family.id - 1);
 	HRESULT res = device->CreateCommandQueue(&queue_desc, IID_PPV_ARGS(d3d_queue.GetAddressOf()));
 	ERR_FAIL_COND_V(!SUCCEEDED(res), CommandQueueID());
-
-	if (p_identify_as_main_queue && D3D12Hooks::get_singleton() != nullptr) {
-		D3D12Hooks::get_singleton()->set_command_queue(d3d_queue.Get());
-	}
 
 	CommandQueueInfo *command_queue = memnew(CommandQueueInfo);
 	command_queue->d3d_queue = d3d_queue;
@@ -6186,10 +6181,6 @@ RenderingDeviceDriverD3D12::~RenderingDeviceDriverD3D12() {
 		}
 	}
 
-	if (D3D12Hooks::get_singleton() != nullptr) {
-		D3D12Hooks::get_singleton()->cleanup_device();
-	}
-
 	glsl_type_singleton_decref();
 }
 
@@ -6224,27 +6215,7 @@ Error RenderingDeviceDriverD3D12::_initialize_device() {
 		d3d_D3D12EnableExperimentalFeatures(1, experimental_features, nullptr, nullptr);
 	}
 
-	D3D_FEATURE_LEVEL requested_feature_level = D3D_FEATURE_LEVEL_11_0;
-	// Override the adapter and feature level if needed by the XR backend.
-	if (D3D12Hooks::get_singleton() != nullptr) {
-		const LUID adapter_luid = D3D12Hooks::get_singleton()->get_adapter_luid();
-		requested_feature_level = D3D12Hooks::get_singleton()->get_feature_level();
-		ComPtr<IDXGIAdapter1> desired_adapter;
-		for (UINT adapter_index = 0;; adapter_index++) {
-			// EnumAdapters1 will fail with DXGI_ERROR_NOT_FOUND when there are no more adapters to
-			// enumerate.
-			if (context_driver->dxgi_factory_get()->EnumAdapters1(adapter_index, desired_adapter.ReleaseAndGetAddressOf()) == DXGI_ERROR_NOT_FOUND) {
-				break;
-			}
-			DXGI_ADAPTER_DESC1 desc;
-			desired_adapter->GetDesc1(&desc);
-			if (!memcmp(&desc.AdapterLuid, &adapter_luid, sizeof(LUID))) {
-				break;
-			}
-		}
-		ERR_FAIL_NULL_V(desired_adapter, ERR_CANT_CREATE);
-		adapter = desired_adapter;
-	}
+	const D3D_FEATURE_LEVEL requested_feature_level = D3D_FEATURE_LEVEL_11_0;
 
 	ID3D12DeviceFactory *device_factory = context_driver->device_factory_get();
 	if (device_factory != nullptr) {
@@ -6256,10 +6227,6 @@ Error RenderingDeviceDriverD3D12::_initialize_device() {
 		res = d3d_D3D12CreateDevice(adapter.Get(), requested_feature_level, IID_PPV_ARGS(device.GetAddressOf()));
 	}
 	ERR_FAIL_COND_V_MSG(!SUCCEEDED(res), ERR_CANT_CREATE, "D3D12CreateDevice failed with error " + vformat("0x%08ux", (uint64_t)res) + ".");
-
-	if (D3D12Hooks::get_singleton() != nullptr) {
-		D3D12Hooks::get_singleton()->set_device(device.Get());
-	}
 
 	if (context_driver->use_validation_layers()) {
 		ComPtr<ID3D12InfoQueue> info_queue;

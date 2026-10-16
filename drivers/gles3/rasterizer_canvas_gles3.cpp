@@ -42,6 +42,7 @@
 #include "drivers/gles3/storage/particles_storage.h"
 #include "drivers/gles3/storage/texture_storage.h"
 #include "drivers/gles3/storage/utilities.h"
+#include "servers/rendering/renderer_compositor.h"
 #include "servers/rendering/rendering_server_default.h"
 #include "servers/rendering/rendering_server_globals.h"
 #include "servers/rendering/rendering_server_types.h"
@@ -324,14 +325,9 @@ void RasterizerCanvasGLES3::canvas_render_items(RID p_to_render_target, Item *p_
 
 		Size2i ssize = texture_storage->render_target_get_size(p_to_render_target);
 
-		// If we've overridden the render target's color texture, then we need
-		// to invert the Y axis, so 2D texture appear right side up.
-		// We're probably rendering directly to an XR device.
-		float y_scale = texture_storage->render_target_get_override_color(p_to_render_target).is_valid() ? -2.0f : 2.0f;
-
 		Transform3D screen_transform;
 		screen_transform.translate_local(-(ssize.width / 2.0f), -(ssize.height / 2.0f), 0.0f);
-		screen_transform.scale(Vector3(2.0f / ssize.width, y_scale / ssize.height, 1.0f));
+		screen_transform.scale(Vector3(2.0f / ssize.width, 2.0f / ssize.height, 1.0f));
 		_update_transform_to_mat4(screen_transform, state_buffer.screen_transform);
 		_update_transform_2d_to_mat4(p_canvas_transform, state_buffer.canvas_transform);
 
@@ -1465,9 +1461,9 @@ void RasterizerCanvasGLES3::_render_batch(Light *p_lights, uint32_t p_index, Ren
 				uint64_t vertex_input_mask = state.canvas_instance_batches[p_index].vertex_input_mask;
 
 				if (mesh_instance.is_valid()) {
-					mesh_storage->mesh_instance_surface_get_vertex_arrays_and_format(mesh_instance, j, vertex_input_mask, false, vertex_array_gl);
+					mesh_storage->mesh_instance_surface_get_vertex_arrays_and_format(mesh_instance, j, vertex_input_mask, vertex_array_gl);
 				} else {
-					mesh_storage->mesh_surface_get_vertex_arrays_and_format(surface, vertex_input_mask, false, vertex_array_gl);
+					mesh_storage->mesh_surface_get_vertex_arrays_and_format(surface, vertex_input_mask, vertex_array_gl);
 				}
 
 				index_array_gl = mesh_storage->mesh_surface_get_index_buffer(surface, 0);

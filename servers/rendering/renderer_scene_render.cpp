@@ -50,24 +50,6 @@ void RendererSceneRender::CameraData::set_camera(const Transform3D p_transform, 
 	taa_frame_count = p_taa_frame_count;
 }
 
-void RendererSceneRender::CameraData::set_multiview_camera(const Transform3D &p_transform, const LocalVector<Transform3D> &p_offsets, const LocalVector<Projection> &p_projections, bool p_is_orthogonal, bool p_vaspect, uint32_t p_visible_layers) {
-	ERR_FAIL_COND_MSG(p_projections.size() != 2, "Incorrect view count for stereoscopic view");
-	ERR_FAIL_COND(p_projections.size() != p_offsets.size());
-
-	visible_layers = p_visible_layers;
-	view_count = p_projections.size();
-	is_orthogonal = p_is_orthogonal;
-	vaspect = p_vaspect;
-
-	main_transform = p_transform;
-	main_projection = Projection::create_combined_projection(p_transform, p_projections[0], p_offsets[0], p_projections[1], p_offsets[1]);
-
-	for (uint32_t v = 0; v < view_count; v++) {
-		view_offset[v] = p_offsets[v];
-		view_projection[v] = p_projections[v] * Projection(view_offset[v].inverse());
-	}
-}
-
 /* Compositor effect API */
 
 RID RendererSceneRender::compositor_effect_allocate() {

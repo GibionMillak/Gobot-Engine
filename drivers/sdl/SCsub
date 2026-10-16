@@ -200,7 +200,7 @@ if env["builtin_sdl"]:
             "timer/windows/SDL_systimer.c",
         ]
 
-    elif env["platform"] in ["ios", "visionos"]:
+    elif env["platform"] in ["ios"]:
         thirdparty_sources += [
             "core/unix/SDL_appid.c",
             "core/unix/SDL_poll.c",

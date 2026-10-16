@@ -47,6 +47,7 @@
 #include "drivers/gles3/storage/utilities.h"
 #include "servers/camera/camera_feed.h"
 #include "servers/camera/camera_server.h"
+#include "servers/rendering/renderer_compositor.h"
 #include "servers/rendering/rendering_server_default.h"
 #include "servers/rendering/rendering_server_globals.h"
 #include "servers/rendering/rendering_server_types.h"
@@ -1728,15 +1729,6 @@ void RasterizerSceneGLES3::_setup_environment(const RenderDataGLES3 *p_render_da
 		_update_scene_ubo(scene_state.multiview_buffer, SCENE_MULTIVIEW_UNIFORM_LOCATION, sizeof(SceneState::MultiviewUBO), &scene_state.multiview_data, "Multiview UBO");
 	}
 
-	if (scene_state.prev_data_state != 0) {
-		void *source_data = scene_state.prev_data_state == 1 ? &scene_state.data : &scene_state.prev_data;
-		_update_scene_ubo(scene_state.prev_ubo_buffer, SCENE_PREV_DATA_UNIFORM_LOCATION, sizeof(SceneState::UBO), source_data, "Previous scene state UBO");
-
-		if (p_render_data->view_count > 1) {
-			source_data = scene_state.prev_data_state == 1 ? &scene_state.multiview_data : &scene_state.prev_multiview_data;
-			_update_scene_ubo(scene_state.prev_multiview_buffer, SCENE_PREV_MULTIVIEW_UNIFORM_LOCATION, sizeof(SceneState::MultiviewUBO), source_data, "Previous multiview UBO");
-		}
-	}
 }
 
 // Puts lights into Uniform Buffers. Needs to be called before _fill_list as this caches the index of each light in the Uniform Buffer
@@ -2477,7 +2469,6 @@ void RasterizerSceneGLES3::render_scene(const Ref<RenderSceneBuffers> &p_render_
 
 		if (rt) {
 			render_data.transparent_bg = rt->is_transparent;
-			render_data.render_region = rt->render_region;
 		}
 
 		// Our first camera is used by default
@@ -2582,24 +2573,8 @@ void RasterizerSceneGLES3::render_scene(const Ref<RenderSceneBuffers> &p_render_
 
 	scene_state.data.emissive_exposure_normalization = -1.0; // Use default exposure normalization.
 
-	bool enough_vertex_attribs_for_motion_vectors = GLES3::Config::get_singleton()->max_vertex_attribs >= 22;
-	if (rt && rt->overridden.velocity_fbo != 0 && enough_vertex_attribs_for_motion_vectors) {
-		// First frame we render motion vectors? Use our current data!
-		if (scene_state.prev_data_state == 0) {
-			scene_state.prev_data_state = 1;
-		}
-	} else {
-		// Not using motion vectors? We don't need to load our data.
-		scene_state.prev_data_state = 0;
-	}
-
 	bool flip_y = !is_reflection_probe;
 
-	if (rt && rt->overridden.color.is_valid()) {
-		// If we've overridden the render target's color texture, then don't render upside down.
-		// We're probably rendering directly to an XR device.
-		flip_y = false;
-	}
 	if (!flip_y) {
 		// If we're rendering right-side up, then we need to change the winding order.
 		glFrontFace(GL_CW);
@@ -2705,40 +2680,6 @@ void RasterizerSceneGLES3::render_scene(const Ref<RenderSceneBuffers> &p_render_
 
 	scene_state.reset_gl_state();
 
-	GLuint motion_vectors_fbo = (rt && !rb->emulate_multiview) ? rt->overridden.velocity_fbo : 0;
-	if (motion_vectors_fbo != 0 && enough_vertex_attribs_for_motion_vectors) {
-		RENDER_TIMESTAMP("Motion Vectors Pass");
-		glBindFramebuffer(GL_FRAMEBUFFER, motion_vectors_fbo);
-
-		Size2i motion_vectors_target_size = rt->velocity_target_size;
-		glViewport(0, 0, motion_vectors_target_size.x, motion_vectors_target_size.y);
-
-		scene_state.enable_gl_depth_test(true);
-		scene_state.enable_gl_depth_draw(true);
-		scene_state.enable_gl_blend(false);
-		glDepthFunc(GL_GEQUAL);
-		scene_state.enable_gl_scissor_test(false);
-
-		glColorMask(1, 1, 1, 1);
-		RasterizerUtilGLES3::clear_depth(0.0);
-		glClearColor(0.0, 0.0, 0.0, 0.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		GLuint db = GL_COLOR_ATTACHMENT0;
-		glDrawBuffers(1, &db);
-
-		uint64_t spec_constant = SceneShaderGLES3::DISABLE_FOG | SceneShaderGLES3::DISABLE_LIGHT_DIRECTIONAL |
-				SceneShaderGLES3::DISABLE_LIGHTMAP | SceneShaderGLES3::DISABLE_LIGHT_OMNI |
-				SceneShaderGLES3::DISABLE_LIGHT_SPOT;
-
-		RenderListParameters render_list_params(render_list[RENDER_LIST_OPAQUE].elements.ptr(), render_list[RENDER_LIST_OPAQUE].elements.size(), reverse_cull, spec_constant, use_wireframe);
-		_render_list_template<PASS_MODE_MOTION_VECTORS>(&render_list_params, &render_data, 0, render_list[RENDER_LIST_OPAQUE].elements.size());
-
-		// Copy our current scene data to our previous scene data for use in the next frame.
-		scene_state.prev_data = scene_state.data;
-		scene_state.prev_multiview_data = scene_state.multiview_data;
-		scene_state.prev_data_state = 2;
-	}
-
 	// When the GPU doesn't support multiview, we emulate it by rendering the
 	// scene once per view into each layer of the texture array. Otherwise this
 	// loop runs a single time and GPU multiview renders all views at once.
@@ -2784,10 +2725,6 @@ void RasterizerSceneGLES3::render_scene(const Ref<RenderSceneBuffers> &p_render_
 		if (use_depth_prepass) {
 			RENDER_TIMESTAMP("Depth Prepass");
 			//pre z pass
-
-			if (render_data.render_region != Rect2i()) {
-				glViewport(render_data.render_region.position.x, render_data.render_region.position.y, render_data.render_region.size.width, render_data.render_region.size.height);
-			}
 
 			scene_state.enable_gl_depth_test(true);
 			scene_state.enable_gl_depth_draw(true);
@@ -2879,10 +2816,6 @@ void RasterizerSceneGLES3::render_scene(const Ref<RenderSceneBuffers> &p_render_
 
 		RENDER_TIMESTAMP("Render Opaque Pass");
 		uint64_t spec_constant_base_flags = 0;
-
-		if (render_data.render_region != Rect2i()) {
-			glViewport(render_data.render_region.position.x, render_data.render_region.position.y, render_data.render_region.size.width, render_data.render_region.size.height);
-		}
 
 		{
 			// Specialization Constants that apply for entire rendering pass.
@@ -3315,8 +3248,6 @@ void RasterizerSceneGLES3::_render_list_template(RenderListParameters *p_params,
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	} else if constexpr (p_pass_mode == PASS_MODE_DEPTH || p_pass_mode == PASS_MODE_SHADOW) {
 		shader_variant = SceneShaderGLES3::MODE_DEPTH;
-	} else if constexpr (p_pass_mode == PASS_MODE_MOTION_VECTORS) {
-		base_spec_constants |= SceneShaderGLES3::RENDER_MOTION_VECTORS;
 	}
 
 	if (p_render_data->view_count > 1) {
@@ -3324,8 +3255,8 @@ void RasterizerSceneGLES3::_render_list_template(RenderListParameters *p_params,
 	}
 
 	bool should_request_redraw = false;
-	if constexpr (p_pass_mode != PASS_MODE_DEPTH && p_pass_mode != PASS_MODE_MOTION_VECTORS) {
-		// Don't count elements during depth pre-pass or motion vector pass to match the RD renderers.
+	if constexpr (p_pass_mode != PASS_MODE_DEPTH) {
+		// Don't count elements during depth pre-pass to match the RD renderers.
 		if (p_render_data->render_info) {
 			p_render_data->render_info->info[RSE::VIEWPORT_RENDER_INFO_TYPE_VISIBLE][RSE::VIEWPORT_RENDER_INFO_OBJECTS_IN_FRAME] += p_to_element - p_from_element;
 		}
@@ -3386,7 +3317,7 @@ void RasterizerSceneGLES3::_render_list_template(RenderListParameters *p_params,
 
 		if constexpr (p_pass_mode != PASS_MODE_SHADOW) {
 			if (shader->depth_draw == GLES3::SceneShaderData::DEPTH_DRAW_OPAQUE) {
-				scene_state.enable_gl_depth_draw((p_pass_mode == PASS_MODE_COLOR && !config->use_depth_prepass) || p_pass_mode == PASS_MODE_DEPTH || p_pass_mode == PASS_MODE_MOTION_VECTORS);
+				scene_state.enable_gl_depth_draw((p_pass_mode == PASS_MODE_COLOR && !config->use_depth_prepass) || p_pass_mode == PASS_MODE_DEPTH);
 			} else {
 				scene_state.enable_gl_depth_draw(shader->depth_draw == GLES3::SceneShaderData::DEPTH_DRAW_ALWAYS);
 			}
@@ -3402,9 +3333,9 @@ void RasterizerSceneGLES3::_render_list_template(RenderListParameters *p_params,
 		 */
 
 		for (int32_t pass = 0; pass < MAX(1, int32_t(inst->light_passes.size() + p_render_data->directional_shadow_count)); pass++) {
-			if constexpr (p_pass_mode == PASS_MODE_DEPTH || p_pass_mode == PASS_MODE_SHADOW || p_pass_mode == PASS_MODE_MOTION_VECTORS) {
+			if constexpr (p_pass_mode == PASS_MODE_DEPTH || p_pass_mode == PASS_MODE_SHADOW) {
 				if (pass > 0) {
-					// Don't render shadow passes when doing depth, shadow, or motion vector pass.
+					// Don't render shadow passes when doing depth or shadow passes.
 					break;
 				}
 			}
@@ -3563,9 +3494,9 @@ void RasterizerSceneGLES3::_render_list_template(RenderListParameters *p_params,
 
 			// Skeleton and blend shapes.
 			if (surf->owner->mesh_instance.is_valid()) {
-				mesh_storage->mesh_instance_surface_get_vertex_arrays_and_format(surf->owner->mesh_instance, surf->surface_index, vertex_input_mask, p_pass_mode == PASS_MODE_MOTION_VECTORS, vertex_array_gl);
+				mesh_storage->mesh_instance_surface_get_vertex_arrays_and_format(surf->owner->mesh_instance, surf->surface_index, vertex_input_mask, vertex_array_gl);
 			} else {
-				mesh_storage->mesh_surface_get_vertex_arrays_and_format(mesh_surface, vertex_input_mask, p_pass_mode == PASS_MODE_MOTION_VECTORS, vertex_array_gl);
+				mesh_storage->mesh_surface_get_vertex_arrays_and_format(mesh_surface, vertex_input_mask, vertex_array_gl);
 			}
 
 			index_array_gl = mesh_storage->mesh_surface_get_index_buffer(mesh_surface, surf->lod_index);
@@ -3781,7 +3712,7 @@ void RasterizerSceneGLES3::_render_list_template(RenderListParameters *p_params,
 				}
 
 				float opaque_prepass_threshold = 0.0;
-				if constexpr (p_pass_mode == PASS_MODE_DEPTH || p_pass_mode == PASS_MODE_MOTION_VECTORS) {
+				if constexpr (p_pass_mode == PASS_MODE_DEPTH) {
 					opaque_prepass_threshold = 0.99;
 				} else if constexpr (p_pass_mode == PASS_MODE_SHADOW) {
 					opaque_prepass_threshold = 0.1;
@@ -4009,16 +3940,6 @@ void RasterizerSceneGLES3::_render_list_template(RenderListParameters *p_params,
 				}
 			}
 
-			if constexpr (p_pass_mode == PASS_MODE_MOTION_VECTORS) {
-				if (unlikely(!inst->is_prev_transform_stored)) {
-					inst->prev_transform = world_transform;
-					inst->is_prev_transform_stored = true;
-				}
-
-				material_storage->shaders.scene_shader.version_set_uniform(SceneShaderGLES3::PREV_WORLD_TRANSFORM, inst->prev_transform, shader->version, instance_variant, spec_constants);
-				inst->prev_transform = world_transform;
-			}
-
 			material_storage->shaders.scene_shader.version_set_uniform(SceneShaderGLES3::WORLD_TRANSFORM, world_transform, shader->version, instance_variant, spec_constants);
 			{
 				GLES3::Mesh::Surface *s = reinterpret_cast<GLES3::Mesh::Surface *>(surf->surface);
@@ -4055,8 +3976,8 @@ void RasterizerSceneGLES3::_render_list_template(RenderListParameters *p_params,
 				count = count * 2;
 			}
 
-			if constexpr (p_pass_mode != PASS_MODE_DEPTH && p_pass_mode != PASS_MODE_MOTION_VECTORS) {
-				// Don't count draw calls during depth pre-pass or motion vector pass to match the RD renderers.
+			if constexpr (p_pass_mode != PASS_MODE_DEPTH) {
+				// Don't count draw calls during depth pre-pass to match the RD renderers.
 				if (p_render_data->render_info) {
 					p_render_data->render_info->info[RSE::VIEWPORT_RENDER_INFO_TYPE_VISIBLE][RSE::VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME]++;
 				}
@@ -4085,37 +4006,6 @@ void RasterizerSceneGLES3::_render_list_template(RenderListParameters *p_params,
 				bool has_color_or_custom_data = (inst->flags_cache & INSTANCE_DATA_FLAG_MULTIMESH_HAS_COLOR) || (inst->flags_cache & INSTANCE_DATA_FLAG_MULTIMESH_HAS_CUSTOM_DATA);
 				// Current data multimesh vertex attrib data begins at index 12.
 				mesh_storage->multimesh_vertex_attrib_setup(instance_buffer, stride, uses_format_2d, has_color_or_custom_data, 12);
-
-				if (p_pass_mode == PASS_MODE_MOTION_VECTORS) {
-					GLuint prev_instance_buffer = 0;
-					if (inst->flags_cache & INSTANCE_DATA_FLAG_PARTICLES) {
-						prev_instance_buffer = particles_storage->particles_get_prev_gl_buffer(inst->data->base);
-					} else {
-						prev_instance_buffer = mesh_storage->multimesh_get_prev_gl_buffer(inst->data->base);
-					}
-
-					if (prev_instance_buffer == 0) {
-						break;
-					}
-
-					GLuint secondary_instance_buffer = 0;
-					if (inst->flags_cache & INSTANCE_DATA_FLAG_PARTICLES) {
-						if (particles_storage->particles_get_last_change(inst->data->base) == RSG::rasterizer->get_frame_number()) {
-							secondary_instance_buffer = prev_instance_buffer;
-						} else {
-							secondary_instance_buffer = instance_buffer;
-						}
-					} else {
-						if (mesh_storage->multimesh_get_last_change(inst->data->base) == RSG::rasterizer->get_frame_number()) {
-							secondary_instance_buffer = prev_instance_buffer;
-						} else {
-							secondary_instance_buffer = instance_buffer;
-						}
-					}
-
-					// Previous data multimesh vertex attrib data begins at index 18.
-					mesh_storage->multimesh_vertex_attrib_setup(secondary_instance_buffer, stride, uses_format_2d, has_color_or_custom_data, 18);
-				}
 
 				if (use_wireframe) {
 					glDrawElementsInstanced(GL_LINES, count, GL_UNSIGNED_INT, nullptr, inst->instance_count);
@@ -4933,16 +4823,8 @@ RasterizerSceneGLES3::~RasterizerSceneGLES3() {
 		GLES3::Utilities::get_singleton()->buffer_free_data(scene_state.ubo_buffer);
 	}
 
-	if (scene_state.prev_ubo_buffer != 0) {
-		GLES3::Utilities::get_singleton()->buffer_free_data(scene_state.prev_ubo_buffer);
-	}
-
 	if (scene_state.multiview_buffer != 0) {
 		GLES3::Utilities::get_singleton()->buffer_free_data(scene_state.multiview_buffer);
-	}
-
-	if (scene_state.prev_multiview_buffer != 0) {
-		GLES3::Utilities::get_singleton()->buffer_free_data(scene_state.prev_multiview_buffer);
 	}
 
 	if (scene_state.tonemap_buffer != 0) {

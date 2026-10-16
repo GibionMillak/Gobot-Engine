@@ -46,7 +46,6 @@ const HashMap<String, String> pascal_case_name_overrides = _create_hashmap_from_
 		{ "BitMap", "Bitmap" },
 		{ "JSONRPC", "JsonRpc" },
 		{ "Object", "GodotObject" },
-		{ "OpenXRIPBinding", "OpenXRIPBinding" },
 		{ "SkeletonModification2DCCDIK", "SkeletonModification2DCcdik" },
 		{ "SkeletonModification2DFABRIK", "SkeletonModification2DFabrik" },
 		{ "SkeletonModification3DCCDIK", "SkeletonModification3DCcdik" },
@@ -81,8 +80,6 @@ const HashMap<String, String> pascal_case_part_overrides = _create_hashmap_from_
 		{ "VBOX", "VBox" }, // Vertical Box
 		{ "WHITESPACE", "WhiteSpace" },
 		{ "WM", "WM" },
-		{ "XR", "XR" },
-		{ "XRAPI", "XRApi" },
 });
 
 String _get_pascal_case_part_override(String p_part, bool p_input_is_upper = true) {

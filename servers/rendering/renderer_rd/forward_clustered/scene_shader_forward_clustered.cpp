@@ -33,7 +33,6 @@
 #include "core/config/project_settings.h"
 #include "core/math/math_defs.h"
 #include "servers/rendering/renderer_rd/forward_clustered/render_forward_clustered.h"
-#include "servers/rendering/renderer_rd/renderer_compositor_rd.h"
 #include "servers/rendering/renderer_rd/storage_rd/material_storage.h"
 
 using namespace RendererSceneRenderImplementation;
@@ -693,10 +692,6 @@ void SceneShaderForwardClustered::init(const String p_defines) {
 		Vector<uint64_t> dynamic_buffers;
 		dynamic_buffers.push_back(ShaderRD::DynamicBuffer::encode(RenderForwardClustered::RENDER_PASS_UNIFORM_SET, 2));
 		shader.initialize(shader_versions, p_defines, Vector<RD::PipelineImmutableSampler>(), dynamic_buffers);
-
-		if (RendererCompositorRD::get_singleton()->is_xr_enabled()) {
-			shader.enable_group(SHADER_GROUP_MULTIVIEW);
-		}
 	}
 
 	material_storage->shader_set_data_request_function(RendererRD::MaterialStorage::SHADER_TYPE_3D, _create_shader_funcs);
@@ -1041,7 +1036,7 @@ void SceneShaderForwardClustered::enable_multiview_shader_group() {
 }
 
 void SceneShaderForwardClustered::enable_advanced_shader_group(bool p_needs_multiview) {
-	if (p_needs_multiview || RendererCompositorRD::get_singleton()->is_xr_enabled()) {
+	if (p_needs_multiview) {
 		shader.enable_group(SHADER_GROUP_ADVANCED_MULTIVIEW);
 	}
 	shader.enable_group(SHADER_GROUP_ADVANCED);

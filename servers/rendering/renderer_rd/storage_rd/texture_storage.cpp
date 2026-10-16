@@ -31,6 +31,7 @@
 #include "texture_storage.h"
 
 #include "core/config/engine.h"
+#include "servers/rendering/renderer_compositor.h"
 #include "servers/rendering/renderer_rd/effects/copy_effects.h"
 #include "servers/rendering/renderer_rd/framebuffer_cache_rd.h"
 #include "servers/rendering/renderer_rd/renderer_scene_render_rd.h"
@@ -4412,27 +4413,15 @@ void TextureStorage::update_decal_buffer(const PagedArray<RID> &p_decals, const 
 /* RENDER TARGET API */
 
 RID TextureStorage::RenderTarget::get_framebuffer() {
-	// We can't resolve into our overridden buffer as it won't be marked as a resolve buffer.
-	// This is only applicable when OpenXR is used and 2D rendering is skipped.
-
-	if (msaa != RSE::VIEWPORT_MSAA_DISABLED && overridden.color.is_null()) {
+	if (msaa != RSE::VIEWPORT_MSAA_DISABLED) {
 		// Render into our MSAA buffer and resolve into our color buffer.
 		return FramebufferCacheRD::get_singleton()->get_cache_multiview(view_count, color_multisample, color);
 	} else {
-		// Note that if we're using an overridden color buffer, we're likely cycling through a texture chain.
-		// this is where our framebuffer cache comes in clutch..
-
-		return FramebufferCacheRD::get_singleton()->get_cache_multiview(view_count, overridden.color.is_valid() ? overridden.color : color);
+		return FramebufferCacheRD::get_singleton()->get_cache_multiview(view_count, color);
 	}
 }
 
 void TextureStorage::_clear_render_target(RenderTarget *rt) {
-	// clear overrides, we assume these are freed by the object that created them
-	rt->overridden.color = RID();
-	rt->overridden.depth = RID();
-	rt->overridden.velocity = RID();
-	rt->overridden.cached_slices.clear(); // these are automatically freed when their parent textures are freed so just clear
-
 	// free in reverse dependency order
 	if (rt->framebuffer_uniform_set.is_valid()) {
 		rt->framebuffer_uniform_set = RID(); //chain deleted
@@ -4465,10 +4454,6 @@ void TextureStorage::_clear_render_target(RenderTarget *rt) {
 }
 
 void TextureStorage::_update_render_target(RenderTarget *rt) {
-	if (rt->overridden.color.is_valid()) {
-		return;
-	}
-
 	if (rt->texture.is_null()) {
 		//create a placeholder until updated
 		rt->texture = texture_allocate();
@@ -4516,7 +4501,6 @@ void TextureStorage::_update_render_target(RenderTarget *rt) {
 		}
 	}
 
-	// TODO see if we can lazy create this once we actually use it as we may not need to create this if we have an overridden color buffer...
 	rt->color = RD::get_singleton()->texture_create(rd_color_attachment_format, rd_view);
 	ERR_FAIL_COND(rt->color.is_null());
 
@@ -4678,124 +4662,6 @@ RID TextureStorage::render_target_get_texture(RID p_render_target) {
 	return rt->texture;
 }
 
-void TextureStorage::render_target_set_override(RID p_render_target, RID p_color_texture, RID p_depth_texture, RID p_velocity_texture, RID p_velocity_depth_texture) {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL(rt);
-
-	rt->overridden.color = p_color_texture;
-	rt->overridden.depth = p_depth_texture;
-	rt->overridden.velocity = p_velocity_texture;
-	rt->overridden.velocity_depth = p_velocity_depth_texture;
-}
-
-RID TextureStorage::render_target_get_override_color(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	return rt->overridden.color;
-}
-
-RID TextureStorage::render_target_get_override_depth(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	return rt->overridden.depth;
-}
-
-RID TextureStorage::render_target_get_override_depth_slice(RID p_render_target, const uint32_t p_layer) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	if (rt->overridden.depth.is_null()) {
-		return RID();
-	} else if (rt->view_count == 1) {
-		return rt->overridden.depth;
-	} else {
-		RenderTarget::RTOverridden::SliceKey key(rt->overridden.depth, p_layer);
-
-		if (!rt->overridden.cached_slices.has(key)) {
-			rt->overridden.cached_slices[key] = RD::get_singleton()->texture_create_shared_from_slice(RD::TextureView(), rt->overridden.depth, p_layer, 0);
-		}
-
-		return rt->overridden.cached_slices[key];
-	}
-}
-
-RID TextureStorage::render_target_get_override_velocity(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	return rt->overridden.velocity;
-}
-
-RID TextureStorage::render_target_get_override_velocity_slice(RID p_render_target, const uint32_t p_layer) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	if (rt->overridden.velocity.is_null()) {
-		return RID();
-	} else if (rt->view_count == 1) {
-		return rt->overridden.velocity;
-	} else {
-		RenderTarget::RTOverridden::SliceKey key(rt->overridden.velocity, p_layer);
-
-		if (!rt->overridden.cached_slices.has(key)) {
-			rt->overridden.cached_slices[key] = RD::get_singleton()->texture_create_shared_from_slice(RD::TextureView(), rt->overridden.velocity, p_layer, 0);
-		}
-
-		return rt->overridden.cached_slices[key];
-	}
-}
-
-RID TextureStorage::render_target_get_override_velocity_depth(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, RID());
-
-	return rt->overridden.velocity_depth;
-}
-
-void RendererRD::TextureStorage::render_target_set_render_region(RID p_render_target, const Rect2i &p_render_region) {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL(rt);
-
-	rt->render_region = p_render_region;
-}
-
-Rect2i RendererRD::TextureStorage::render_target_get_render_region(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, Rect2i());
-
-	return rt->render_region;
-}
-
-void RendererRD::TextureStorage::render_target_set_subsampled_enabled(RID p_render_target, bool p_enabled) {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL(rt);
-
-	rt->subsampled_enabled = p_enabled;
-}
-
-bool RendererRD::TextureStorage::render_target_is_subsampled_enabled(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, false);
-
-	return rt->subsampled_enabled;
-}
-
-void RendererRD::TextureStorage::render_target_set_subsampled_allowed(RID p_render_target, bool p_allowed) {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL(rt);
-
-	rt->subsampled_allowed = p_allowed;
-}
-
-bool RendererRD::TextureStorage::render_target_is_subsampled_allowed(RID p_render_target) const {
-	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
-	ERR_FAIL_NULL_V(rt, false);
-
-	return rt->subsampled_allowed;
-}
-
 void TextureStorage::render_target_set_transparent(RID p_render_target, bool p_is_transparent) {
 	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
 	ERR_FAIL_NULL(rt);
@@ -4916,11 +4782,7 @@ RID TextureStorage::render_target_get_rd_texture(RID p_render_target) {
 	RenderTarget *rt = render_target_owner.get_or_null(p_render_target);
 	ERR_FAIL_NULL_V(rt, RID());
 
-	if (rt->overridden.color.is_valid()) {
-		return rt->overridden.color;
-	} else {
-		return rt->color;
-	}
+	return rt->color;
 }
 
 RID TextureStorage::render_target_get_rd_texture_slice(RID p_render_target, uint32_t p_layer) {

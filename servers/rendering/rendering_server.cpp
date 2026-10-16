@@ -2711,7 +2711,6 @@ void RenderingServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("camera_set_perspective", "camera", "fovy_degrees", "z_near", "z_far"), &RenderingServer::camera_set_perspective);
 	ClassDB::bind_method(D_METHOD("camera_set_orthogonal", "camera", "size", "z_near", "z_far"), &RenderingServer::camera_set_orthogonal);
 	ClassDB::bind_method(D_METHOD("camera_set_frustum", "camera", "size", "offset", "z_near", "z_far"), &RenderingServer::camera_set_frustum);
-	ClassDB::bind_method(D_METHOD("camera_set_xr_projections", "camera", "projections", "offsets"), &RenderingServer::camera_set_xr_projections, DEFVAL(TypedArray<Transform3D>()));
 	ClassDB::bind_method(D_METHOD("camera_set_transform", "camera", "transform"), &RenderingServer::camera_set_transform);
 	ClassDB::bind_method(D_METHOD("camera_set_cull_mask", "camera", "layers"), &RenderingServer::camera_set_cull_mask);
 	ClassDB::bind_method(D_METHOD("camera_set_environment", "camera", "env"), &RenderingServer::camera_set_environment);
@@ -2722,10 +2721,7 @@ void RenderingServer::_bind_methods() {
 	/* VIEWPORT */
 
 	ClassDB::bind_method(D_METHOD("viewport_create"), &RenderingServer::viewport_create);
-#ifndef XR_DISABLED
-	ClassDB::bind_method(D_METHOD("viewport_set_use_xr", "viewport", "use_xr"), &RenderingServer::viewport_set_use_xr);
-#endif // XR_DISABLED
-	ClassDB::bind_method(D_METHOD("viewport_set_size", "viewport", "width", "height", "view_count"), &RenderingServer::viewport_set_size, DEFVAL(1));
+	ClassDB::bind_method(D_METHOD("viewport_set_size", "viewport", "width", "height"), &RenderingServer::viewport_set_size);
 	ClassDB::bind_method(D_METHOD("viewport_set_active", "viewport", "active"), &RenderingServer::viewport_set_active);
 	ClassDB::bind_method(D_METHOD("viewport_set_parent_viewport", "viewport", "parent_viewport"), &RenderingServer::viewport_set_parent_viewport);
 	ClassDB::bind_method(D_METHOD("viewport_attach_to_screen", "viewport", "rect", "screen"), &RenderingServer::viewport_attach_to_screen, DEFVAL(Rect2()), DEFVAL(DisplayServerEnums::MAIN_WINDOW_ID));
@@ -2883,7 +2879,6 @@ void RenderingServer::_bind_methods() {
 
 	BIND_ENUM_CONSTANT(RSE::VIEWPORT_VRS_DISABLED);
 	BIND_ENUM_CONSTANT(RSE::VIEWPORT_VRS_TEXTURE);
-	BIND_ENUM_CONSTANT(RSE::VIEWPORT_VRS_XR);
 	BIND_ENUM_CONSTANT(RSE::VIEWPORT_VRS_MAX);
 
 	BIND_ENUM_CONSTANT(RSE::VIEWPORT_VRS_UPDATE_DISABLED);
@@ -3674,10 +3669,6 @@ void RenderingServer::init() {
 	GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "rendering/limits/opengl/max_decals", PROPERTY_HINT_RANGE, "2,512,1"), 64);
 	GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "rendering/limits/opengl/max_renderable_lights", PROPERTY_HINT_RANGE, "2,256,1"), 32);
 	GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "rendering/limits/opengl/max_lights_per_object", PROPERTY_HINT_RANGE, "2,1024,1"), 8);
-
-#ifndef XR_DISABLED
-	GLOBAL_DEF_RST_BASIC("xr/shaders/enabled", false);
-#endif // XR_DISABLED
 
 	GLOBAL_DEF("debug/shader_language/warnings/enable", true);
 	GLOBAL_DEF("debug/shader_language/warnings/treat_warnings_as_errors", false);

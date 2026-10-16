@@ -108,10 +108,6 @@
 #include "servers/physics_3d/physics_server_3d_manager.h"
 #endif // PHYSICS_3D_DISABLED
 
-#ifndef XR_DISABLED
-#include "servers/xr/xr_server.h"
-#endif // XR_DISABLED
-
 #ifdef TESTS_ENABLED
 #include "servers/rendering/dummy/rasterizer_dummy.h"
 #include "tests/test_main.h"
@@ -184,9 +180,6 @@ static DisplayServer *display_server = nullptr;
 static RenderingServer *rendering_server = nullptr;
 static TextServerManager *tsman = nullptr;
 static ThemeDB *theme_db = nullptr;
-#ifndef XR_DISABLED
-static XRServer *xr_server = nullptr;
-#endif // XR_DISABLED
 // We error out if setup2() doesn't turn this true
 static bool _start_success = false;
 
@@ -573,9 +566,6 @@ void Main::print_help(const char *p_binary) {
 	print_help_option("--position <X>,<Y>", "Request window position.\n");
 	print_help_option("--screen <N>", "Request window screen.\n");
 	print_help_option("--single-window", "Use a single window (no separate subwindows).\n");
-#ifndef _3D_DISABLED
-	print_help_option("--xr-mode <mode>", "Select XR (Extended Reality) mode [\"default\", \"off\", \"on\"].\n");
-#endif
 	print_help_option("--wid <window_id>", "Request parented to window.\n");
 	print_help_option("--accessibility <mode>", "Select accessibility mode ['auto' (when screen reader is running, default), 'always', 'disabled'].\n");
 	print_help_option("--accessibility-driver <driver>", "Select accessibility driver ['accesskit', 'dummy'].\n");
@@ -735,9 +725,6 @@ Error Main::test_setup() {
 
 	/** INITIALIZE SERVERS **/
 	register_server_types();
-#ifndef XR_DISABLED
-	XRServer::set_xr_mode(XRServer::XRMODE_OFF); // Skip in tests.
-#endif // XR_DISABLED
 	initialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
 	GDExtensionManager::get_singleton()->initialize_extensions(GDExtension::INITIALIZATION_LEVEL_SERVERS);
 
@@ -1127,7 +1114,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 				arg == "--display-driver" ||
 				arg == "--rendering-method" ||
 				arg == "--rendering-driver" ||
-				arg == "--xr-mode" ||
 				arg == "-l" ||
 				arg == "--language") {
 			if (N) {
@@ -1900,26 +1886,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		} else if (I->get() == "--ignore-error-breaks") {
 			ignore_error_breaks = true;
 #endif // defined(DEBUG_ENABLED) || defined(TOOLS_ENABLED)
-#ifndef XR_DISABLED
-		} else if (arg == "--xr-mode") {
-			if (N) {
-				String xr_mode = N->get().to_lower();
-				N = N->next();
-				if (xr_mode == "default") {
-					XRServer::set_xr_mode(XRServer::XRMODE_DEFAULT);
-				} else if (xr_mode == "off") {
-					XRServer::set_xr_mode(XRServer::XRMODE_OFF);
-				} else if (xr_mode == "on") {
-					XRServer::set_xr_mode(XRServer::XRMODE_ON);
-				} else {
-					OS::get_singleton()->print("Unknown --xr-mode argument \"%s\", aborting.\n", xr_mode.ascii().get_data());
-					goto error;
-				}
-			} else {
-				OS::get_singleton()->print("Missing --xr-mode argument, aborting.\n");
-				goto error;
-			}
-#endif // XR_DISABLED
 		} else if (arg == "--benchmark") {
 			OS::get_singleton()->set_use_benchmark(true);
 		} else if (arg == "--benchmark-file") {
@@ -2314,7 +2280,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/rendering_device/driver.linuxbsd", PROPERTY_HINT_ENUM, "vulkan"), "vulkan");
 		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/rendering_device/driver.android", PROPERTY_HINT_ENUM, "vulkan"), "vulkan");
 		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/rendering_device/driver.ios", PROPERTY_HINT_ENUM, "metal,vulkan"), "metal");
-		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/rendering_device/driver.visionos", PROPERTY_HINT_ENUM, "metal"), "metal");
 		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/rendering_device/driver.macos", PROPERTY_HINT_ENUM, "metal,vulkan"), "metal");
 
 		GLOBAL_DEF_RST("rendering/rendering_device/fallback_to_vulkan", true);
@@ -2732,7 +2697,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	GLOBAL_DEF_NOVAL(PropertyInfo(Variant::STRING, "display/display_server/driver.linuxbsd", PROPERTY_HINT_ENUM, "default,x11,wayland,headless"), "default");
 	GLOBAL_DEF_NOVAL(PropertyInfo(Variant::STRING, "display/display_server/driver.android", PROPERTY_HINT_ENUM, "default,android,headless"), "default");
 	GLOBAL_DEF_NOVAL(PropertyInfo(Variant::STRING, "display/display_server/driver.ios", PROPERTY_HINT_ENUM, "default,iOS,headless"), "default");
-	GLOBAL_DEF_NOVAL(PropertyInfo(Variant::STRING, "display/display_server/driver.visionos", PROPERTY_HINT_ENUM, "default,visionOS,headless"), "default");
 	GLOBAL_DEF_NOVAL(PropertyInfo(Variant::STRING, "display/display_server/driver.macos", PROPERTY_HINT_ENUM, "default,macos,headless"), "default");
 
 	GLOBAL_DEF_RST_NOVAL("audio/driver/driver", AudioDriverManager::get_driver(0)->get_name());
@@ -2803,76 +2767,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	GLOBAL_DEF("display/window/ios/hide_home_indicator", true);
 	GLOBAL_DEF("display/window/ios/hide_status_bar", true);
 	GLOBAL_DEF("display/window/ios/suppress_ui_gesture", true);
-
-#ifndef _3D_DISABLED
-	// XR project settings.
-	GLOBAL_DEF_RST_BASIC("xr/openxr/enabled", false);
-	GLOBAL_DEF(PropertyInfo(Variant::STRING, "xr/openxr/target_api_version"), "");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "xr/openxr/default_action_map", PROPERTY_HINT_FILE, "*.tres"), "res://openxr_action_map.tres");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/form_factor", PROPERTY_HINT_ENUM, "Head Mounted,Handheld"), "0");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/view_configuration", PROPERTY_HINT_ENUM, "Mono,Stereo,Stereo with Foveated Inset"), "1");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/reference_space", PROPERTY_HINT_ENUM, "Local,Stage,Local Floor"), "1");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/environment_blend_mode", PROPERTY_HINT_ENUM, "Opaque,Additive,Alpha"), "0");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/foveation_level", PROPERTY_HINT_ENUM, "Off,Low,Medium,High"), "0");
-	GLOBAL_DEF_BASIC("xr/openxr/foveation_dynamic", false);
-	GLOBAL_DEF_BASIC("xr/openxr/foveation_eye_tracked", true);
-	GLOBAL_DEF_BASIC("xr/openxr/foveation_with_subsampled_images", true);
-	GLOBAL_DEF_BASIC("xr/openxr/create_default_foveated_inset_viewport", true);
-
-	GLOBAL_DEF_BASIC("xr/openxr/submit_depth_buffer", false);
-	GLOBAL_DEF_BASIC("xr/openxr/startup_alert", true);
-
-	// OpenXR project extensions settings.
-
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/extensions/debug_utils", PROPERTY_HINT_ENUM, "Disabled,Error,Warning,Info,Verbose"), "0");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/extensions/debug_message_types", PROPERTY_HINT_FLAGS, "General,Validation,Performance,Conformance"), "15");
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/frame_synthesis", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/frame_synthesis/flip_y", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/hand_tracking", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/hand_tracking_unobstructed_data_source", false); // XR_HAND_TRACKING_DATA_SOURCE_UNOBSTRUCTED_EXT
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/hand_tracking_controller_data_source", false); // XR_HAND_TRACKING_DATA_SOURCE_CONTROLLER_EXT
-	GLOBAL_DEF_RST_BASIC("xr/openxr/extensions/hand_interaction_profile", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/spatial_container/enabled", false);
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/extensions/spatial_container/bounds_mode", PROPERTY_HINT_ENUM, "Bounded,Immersive"), "0");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::VECTOR3, "xr/openxr/extensions/spatial_container/bounds", PROPERTY_HINT_NONE, ""), Vector3(0.5f, 0.5f, 0.5f));
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/spatial_entity/enabled", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/spatial_entity/enable_spatial_anchors", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/spatial_entity/enable_persistent_anchors", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/spatial_entity/enable_builtin_anchor_detection", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/spatial_entity/enable_plane_tracking", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/spatial_entity/enable_builtin_plane_detection", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/spatial_entity/marker_tracking/enable", false);
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/extensions/spatial_entity/marker_tracking/enable_builtin_for_types", PROPERTY_HINT_FLAGS, "QR codes,Micro QR codes,ArUco markers,April tags"), 0);
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/extensions/spatial_entity/marker_tracking/aruco_dict", PROPERTY_HINT_ENUM, "4x4 50 IDs,4x4 100 IDs,4x4 250 IDs,4x4 1000 IDs,5x5 50 IDs,5x5 100 IDs,5x5 250 IDs,5x5 1000 IDs,6x6 50 IDs,6x6 100 IDs,6x6 250 IDs,6x6 1000 IDs,7x7 50 IDs,7x7 100 IDs,7x7 250 IDs,7x7 1000 IDs"), "15");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/openxr/extensions/spatial_entity/marker_tracking/april_tag_dict", PROPERTY_HINT_ENUM, "4x4H5,5x5H9,6x6H10,6x6H11"), "3");
-	GLOBAL_DEF_RST_BASIC("xr/openxr/extensions/eye_gaze_interaction", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/render_model", false);
-	GLOBAL_DEF_BASIC("xr/openxr/extensions/user_presence", false);
-
-	// OpenXR Binding modifier settings
-	GLOBAL_DEF_BASIC("xr/openxr/binding_modifiers/analog_threshold", false);
-	GLOBAL_DEF_RST_BASIC("xr/openxr/binding_modifiers/dpad_binding", false);
-
-	// visionOS settings
-	GLOBAL_DEF_BASIC("xr/visionos/enable_hand_tracking", false);
-	GLOBAL_DEF_BASIC("xr/visionos/enable_controller_tracking", false);
-	// Dynamic render quality, to be used at runtime depending on the complexity of your scene, see https://developer.apple.com/documentation/compositorservices/defining-layer-renderer-quality.
-	GLOBAL_DEF_BASIC("xr/visionos/dynamic_render_quality/enable", false);
-	// The default value of 0.38 is equivalent to https://developer.apple.com/documentation/compositorservices/layerrenderer/capabilities/defaultrenderquality.
-	// Do not set this value higher than the maximum value you're planning to use at runtime, or your app will use more memory than necessary.
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::FLOAT, "xr/visionos/dynamic_render_quality/maximum_quality", PROPERTY_HINT_RANGE, "0,1,0.01"), 0.38);
-	// Initial values of the corresponding VisionOSXRInterface properties, applied when the immersive scene is created.
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/visionos/upper_limb_visibility", PROPERTY_HINT_ENUM, "Automatic,Visible,Hidden"), 0);
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "xr/visionos/persistent_system_overlays", PROPERTY_HINT_ENUM, "Automatic,Visible,Hidden"), 0);
-
-#ifdef TOOLS_ENABLED
-	// Disabled for now, using XR inside of the editor we'll be working on during the coming months.
-
-	// editor settings (it seems we're too early in the process when setting up rendering, to access editor settings...)
-	// EDITOR_DEF_RST("xr/openxr/in_editor", false);
-	// GLOBAL_DEF("xr/openxr/in_editor", false);
-#endif // TOOLS_ENABLED
-#endif // _3D_DISABLED
 
 	Engine::get_singleton()->set_frame_delay(frame_delay);
 
@@ -3540,18 +3434,6 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 		OS::get_singleton()->benchmark_end_measure("Servers", "Audio");
 	}
-
-#ifndef XR_DISABLED
-	/* Initialize XR Server */
-
-	{
-		OS::get_singleton()->benchmark_begin_measure("Servers", "XR");
-
-		xr_server = memnew(XRServer);
-
-		OS::get_singleton()->benchmark_end_measure("Servers", "XR");
-	}
-#endif // XR_DISABLED
 
 	OS::get_singleton()->benchmark_end_measure("Startup", "Servers");
 
@@ -4886,10 +4768,6 @@ bool Main::iteration() {
 	bool exit = false;
 
 	// process all our active interfaces
-#ifndef XR_DISABLED
-	GodotProfileZoneGrouped(_profile_zone, "xr_server->_process");
-	XRServer::get_singleton()->_process();
-#endif // XR_DISABLED
 
 	GodotProfileZoneGrouped(_profile_zone, "physics");
 	for (int iters = 0; iters < advance.physics_steps; ++iters) {
@@ -5209,14 +5087,6 @@ void Main::cleanup(bool p_force) {
 		rendering_server->global_shader_parameters_clear();
 	}
 
-#ifndef XR_DISABLED
-	if (xr_server) {
-		// Now that we're unregistering properly in plugins we need to keep access to xr_server for a little longer
-		// We do however unset our primary interface
-		xr_server->set_primary_interface(Ref<XRInterface>());
-	}
-#endif // XR_DISABLED
-
 #ifdef TOOLS_ENABLED
 	GDExtensionManager::get_singleton()->deinitialize_extensions(GDExtension::INITIALIZATION_LEVEL_EDITOR);
 	uninitialize_modules(MODULE_INITIALIZATION_LEVEL_EDITOR);
@@ -5256,11 +5126,6 @@ void Main::cleanup(bool p_force) {
 	unregister_server_types();
 
 	EngineDebugger::deinitialize();
-
-#ifndef XR_DISABLED
-	memdelete(xr_server);
-	xr_server = nullptr;
-#endif // XR_DISABLED
 
 	if (audio_server) {
 		audio_server->finish();

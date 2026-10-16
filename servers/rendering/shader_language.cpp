@@ -34,7 +34,6 @@
 #include "core/os/os.h"
 #include "core/templates/local_vector.h"
 #include "core/templates/rb_set.h"
-#include "servers/rendering/renderer_compositor.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/rendering/rendering_server_globals.h"
 #include "servers/rendering/shader_types.h"
@@ -6654,15 +6653,6 @@ ShaderLanguage::Node *ShaderLanguage::_parse_expression(BlockNode *p_block, cons
 											//being sampler, this either comes from a uniform
 											ShaderNode::Uniform *u = &shader->uniforms[varname];
 											ERR_CONTINUE(u->type != call_function->arguments[i].type); //this should have been validated previously
-
-											if (RendererCompositor::get_singleton()->is_xr_enabled() && is_custom_func) {
-												ShaderNode::Uniform::Hint hint = u->hint;
-
-												if (hint == ShaderNode::Uniform::HINT_DEPTH_TEXTURE || hint == ShaderNode::Uniform::HINT_SCREEN_TEXTURE || hint == ShaderNode::Uniform::HINT_NORMAL_ROUGHNESS_TEXTURE) {
-													_set_error(vformat(RTR("Unable to pass a multiview texture sampler as a parameter to a custom function. Consider sampling it in the main function and then passing the vector result to the custom function."), get_uniform_hint_name(hint)));
-													return nullptr;
-												}
-											}
 
 											//propagate
 											if (!_propagate_function_call_sampler_uniform_settings(name, i, u->filter, u->repeat, u->hint)) {

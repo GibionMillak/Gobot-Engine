@@ -75,14 +75,6 @@ layout(location = 10) in uvec4 bone_attrib;
 layout(location = 11) in vec4 weight_attrib;
 #endif
 
-#if defined(MODE_RENDER_MOTION_VECTORS)
-layout(location = 12) in vec4 previous_vertex_attrib;
-
-#if defined(NORMAL_USED) || defined(TANGENT_USED)
-layout(location = 13) in vec4 previous_normal_attrib;
-#endif
-
-#endif // MODE_RENDER_MOTION_VECTORS
 
 void axis_angle_to_tbn(vec3 axis, float angle, out vec3 tangent, out vec3 binormal, out vec3 normal) {
 	float c = cos(angle);
@@ -138,10 +130,6 @@ layout(location = 9) out float dp_clip;
 
 #endif
 
-#if defined(MODE_RENDER_MOTION_VECTORS)
-layout(location = 12) out highp vec4 screen_position;
-layout(location = 13) out highp vec4 prev_screen_position;
-#endif
 
 #ifdef USE_MULTIVIEW
 #extension GL_EXT_multiview : enable
@@ -669,9 +657,6 @@ void vertex_shader(in vec3 vertex,
 		gl_Position.w = 1.0;
 	}
 #endif // MODE_RENDER_MATERIAL
-#ifdef MODE_RENDER_MOTION_VECTORS
-	screen_position_output = gl_Position;
-#endif // MODE_RENDER_MOTION_VECTORS
 
 #ifdef POINT_SIZE_USED
 	if (sc_emulate_point_size) {
@@ -696,68 +681,8 @@ void vertex_shader(in vec3 vertex,
 }
 
 void main() {
-#if defined(MODE_RENDER_MOTION_VECTORS)
-	vec3 prev_vertex;
-#ifdef NORMAL_USED
-	vec3 prev_normal;
-#endif
-#if defined(NORMAL_USED) || defined(TANGENT_USED)
-	vec3 prev_tangent;
-	vec3 prev_binormal;
-#endif
-
-	_unpack_vertex_attributes(
-			previous_vertex_attrib,
-			instances.data[draw_call.instance_index].compressed_aabb_position_pad.xyz,
-			instances.data[draw_call.instance_index].compressed_aabb_size_pad.xyz,
-#if defined(NORMAL_USED) || defined(TANGENT_USED)
-			previous_normal_attrib,
-#ifdef NORMAL_USED
-			prev_normal,
-#endif
-			prev_tangent,
-			prev_binormal,
-#endif
-			prev_vertex);
-
-	vertex_shader(prev_vertex,
-#ifdef NORMAL_USED
-			prev_normal,
-#endif
-#if defined(NORMAL_USED) || defined(TANGENT_USED)
-			prev_tangent,
-			prev_binormal,
-#endif
-			draw_call.instance_index, draw_call.multimesh_motion_vectors_previous_offset, instances.data[draw_call.instance_index].prev_transform,
-#ifdef USE_DOUBLE_PRECISION
-			instances.data[draw_call.instance_index].prev_model_precision.xyz,
-			scene_data_block.prev_data.inv_view_precision,
-#endif
-
-#ifdef MODE_DUAL_PARABOLOID
-			scene_data_block.prev_data.dual_paraboloid_side,
-			scene_data_block.prev_data.z_far,
-#endif
-#if defined(MODE_RENDER_DEPTH) || defined(MODE_RENDER_MATERIAL)
-			scene_data_block.prev_data.flags,
-#endif
-#ifdef USE_MULTIVIEW
-			scene_data_block.prev_data.projection_matrix_view[ViewIndex],
-			scene_data_block.prev_data.inv_projection_matrix_view[ViewIndex],
-			scene_data_block.prev_data.eye_offset[ViewIndex],
-#else
-			scene_data_block.prev_data.projection_matrix,
-			scene_data_block.prev_data.inv_projection_matrix,
-#endif
-			scene_data_block.prev_data.view_matrix,
-			scene_data_block.prev_data.inv_view_matrix,
-			scene_data_block.prev_data.viewport_size,
-			scene_data_block.prev_data.directional_light_count,
-			prev_screen_position);
-#else
 	// Unused output.
 	vec4 screen_position;
-#endif // MODE_RENDER_MOTION_VECTORS
 
 	vec3 vertex;
 #ifdef NORMAL_USED
@@ -790,7 +715,7 @@ void main() {
 			tangent,
 			binormal,
 #endif
-			draw_call.instance_index, draw_call.multimesh_motion_vectors_current_offset, instances.data[draw_call.instance_index].transform,
+			draw_call.instance_index, draw_call.multimesh_transform_offset, instances.data[draw_call.instance_index].transform,
 #ifdef USE_DOUBLE_PRECISION
 			instances.data[draw_call.instance_index].model_precision.xyz,
 			scene_data_block.data.inv_view_precision,
@@ -916,10 +841,6 @@ layout(location = 9) in float dp_clip;
 
 #endif
 
-#if defined(MODE_RENDER_MOTION_VECTORS)
-layout(location = 12) in highp vec4 screen_position;
-layout(location = 13) in highp vec4 prev_screen_position;
-#endif
 
 #ifdef USE_LIGHTMAP
 #include "../bicubic_filter_inc.glsl"
@@ -2456,14 +2377,4 @@ void main() {
 
 #endif //MODE_RENDER_DEPTH
 
-#ifdef MODE_RENDER_MOTION_VECTORS
-	// These motion vectors are in NDC space (as opposed to screen space) to fit the OpenXR XR_FB_space_warp specification.
-	// https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#XR_FB_space_warp
-
-	vec3 ndc = screen_position.xyz / screen_position.w;
-	ndc.y = -ndc.y;
-	vec3 prev_ndc = prev_screen_position.xyz / prev_screen_position.w;
-	prev_ndc.y = -prev_ndc.y;
-	frag_color = vec4(ndc - prev_ndc, 0.0);
-#endif
 }

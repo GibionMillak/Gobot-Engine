@@ -57,7 +57,6 @@ enum PassMode {
 	PASS_MODE_SHADOW,
 	PASS_MODE_DEPTH,
 	PASS_MODE_MATERIAL,
-	PASS_MODE_MOTION_VECTORS,
 };
 
 // These should share as much as possible with SkyUniform Location
@@ -75,9 +74,7 @@ enum SceneUniformLocation {
 	SCENE_POSITIONAL_SHADOW_UNIFORM_LOCATION,
 	SCENE_DIRECTIONAL_SHADOW_UNIFORM_LOCATION,
 	SCENE_EMPTY2, // Unused, put here to avoid conflicts with SKY_MULTIVIEW_UNIFORM_LOCATION.
-	SCENE_PREV_DATA_UNIFORM_LOCATION,
-	SCENE_PREV_MULTIVIEW_UNIFORM_LOCATION,
-	SCENE_DECAL_DATA,
+	SCENE_DECAL_DATA = 16,
 };
 
 enum SkyUniformLocation {
@@ -94,15 +91,11 @@ enum SkyUniformLocation {
 	SKY_EMPTY7, // Unused, put here to avoid conflicts with SCENE_POSITIONAL_SHADOW_UNIFORM_LOCATION.
 	SKY_EMPTY8, // Unused, put here to avoid conflicts with SCENE_DIRECTIONAL_SHADOW_UNIFORM_LOCATION.
 	SKY_MULTIVIEW_UNIFORM_LOCATION,
-	SKY_EMPTY9, // Unused, put here to avoid conflicts with SCENE_PREV_DATA_UNIFORM_LOCATION.
-	SKY_EMPTY10, // Unused, put here to avoid conflicts with SCENE_PREV_MULTIVIEW_UNIFORM_LOCATION.
-	SKY_EMPTY11, // Unused, put here to avoid conflicts with SCENE_DECAL_DATA.
 };
 
 struct RenderDataGLES3 {
 	Ref<RenderSceneBuffersGLES3> render_buffers;
 	bool transparent_bg = false;
-	Rect2i render_region;
 
 	Transform3D cam_transform;
 	Transform3D inv_cam_transform;
@@ -314,10 +307,6 @@ private:
 		//used during rendering
 		bool store_transform_cache = true;
 
-		// Used for generating motion vectors.
-		Transform3D prev_transform;
-		bool is_prev_transform_stored = false;
-
 		int32_t instance_count = 0;
 
 		bool can_sdfgi = false;
@@ -489,16 +478,10 @@ private:
 		static_assert(sizeof(TonemapUBO) % 16 == 0, "Tonemap UBO size must be a multiple of 16 bytes");
 
 		UBO data;
-		UBO prev_data;
 		GLuint ubo_buffer = 0;
-		GLuint prev_ubo_buffer = 0;
 		MultiviewUBO multiview_data;
-		MultiviewUBO prev_multiview_data;
 		GLuint multiview_buffer = 0;
-		GLuint prev_multiview_buffer = 0;
 		GLuint tonemap_buffer = 0;
-
-		int prev_data_state = 0; // 0 = Motion vectors not used, 1 = use data (first frame only), 2 = use previous data
 
 		bool used_depth_prepass = false;
 

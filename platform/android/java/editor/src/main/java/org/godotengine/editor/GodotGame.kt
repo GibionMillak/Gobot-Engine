@@ -32,14 +32,9 @@ package org.godotengine.editor
 
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.CallSuper
 import androidx.core.view.isVisible
 import org.godotengine.editor.embed.GameMenuFragment
-import org.godotengine.godot.GodotLib
-import org.godotengine.godot.editor.utils.GameMenuUtils
 import org.godotengine.godot.utils.ProcessPhoenix
-import org.godotengine.godot.xr.XRMode
-import org.godotengine.openxr.vendors.utils.*
 
 /**
  * Drives the 'run project' window of the Godot Editor.
@@ -71,18 +66,6 @@ abstract class GodotGame : BaseGodotGame() {
 		}
 	}
 
-	override fun getCommandLine(): MutableList<String> {
-		val updatedArgs = super.getCommandLine()
-		if (!updatedArgs.contains(XRMode.REGULAR.cmdLineArg)) {
-			updatedArgs.add(XRMode.REGULAR.cmdLineArg)
-		}
-		if (!updatedArgs.contains(XR_MODE_ARG)) {
-			updatedArgs.add(XR_MODE_ARG)
-			updatedArgs.add("off")
-		}
-		return updatedArgs
-	}
-
 	override fun isPiPEnabled() = true
 
 	override fun shouldShowGameMenuBar(): Boolean {
@@ -101,7 +84,6 @@ abstract class GodotGame : BaseGodotGame() {
 
 	override fun getGodotAppLayout() = R.layout.godot_game_layout
 
-	override fun getEditorGameEmbedMode() = GameMenuUtils.GameEmbedMode.DISABLED
 
 	override fun overrideOrientationRequest() = false
 
@@ -223,11 +205,10 @@ abstract class GodotGame : BaseGodotGame() {
 
 	protected open fun isGameEmbedded() = false
 
-	override fun isGameEmbeddingSupported() = !isNativeXRDevice(applicationContext)
 
-	override fun isMinimizedButtonEnabled() = isTaskRoot && !isNativeXRDevice(applicationContext)
+	override fun isMinimizedButtonEnabled() = isTaskRoot
 
-	override fun isCloseButtonEnabled() = !isNativeXRDevice(applicationContext)
+	override fun isCloseButtonEnabled() = true
 
 	override fun isPiPButtonEnabled() = isPiPModeSupported()
 
@@ -244,20 +225,4 @@ abstract class GodotGame : BaseGodotGame() {
 	override fun onGameMenuCollapsed(collapsed: Boolean) {
 		expandGameMenuButton?.isVisible = shouldShowGameMenuBar() && isMenuBarCollapsable() && collapsed
 	}
-
-	@CallSuper
-	override fun supportsFeature(featureTag: String): Boolean {
-		if (HYBRID_APP_PANEL_FEATURE == featureTag) {
-			// Check if openxr is enabled
-			if (!GodotLib.getGlobal("xr/openxr/enabled").toBoolean()) {
-				return false
-			}
-
-			// Check if hybrid is enabled
-			return isHybridAppEnabled()
-		}
-
-		return super.supportsFeature(featureTag)
-	}
-
 }

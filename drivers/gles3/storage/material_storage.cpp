@@ -36,8 +36,9 @@
 #include "core/config/project_settings.h"
 #include "core/io/resource_loader.h"
 #include "drivers/gles3/rasterizer_canvas_gles3.h"
-#include "drivers/gles3/rasterizer_gles3.h"
+#include "drivers/gles3/rasterizer_scene_gles3.h"
 #include "drivers/gles3/storage/config.h"
+#include "drivers/gles3/storage/particles_storage.h"
 #include "drivers/gles3/storage/texture_storage.h"
 #include "drivers/gles3/storage/utilities.h"
 #include "servers/rendering/rendering_server_types.h"
@@ -1457,7 +1458,6 @@ MaterialStorage::MaterialStorage() {
 		actions.default_repeat = ShaderLanguage::REPEAT_ENABLE;
 
 		actions.apply_luminance_multiplier = true; // apply luminance multiplier to screen texture
-		actions.check_multiview_samplers = RasterizerGLES3::get_singleton()->is_xr_enabled();
 		actions.global_buffer_array_variable = "global_shader_uniforms";
 		actions.global_buffer_array_is_texture = true;
 		actions.instance_uniform_index_variable = "instance_offset";

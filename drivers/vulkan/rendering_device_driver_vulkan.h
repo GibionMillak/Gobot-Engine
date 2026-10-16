@@ -116,7 +116,6 @@ class RenderingDeviceDriverVulkan : public RenderingDeviceDriver {
 		PFN_vkAcquireNextImageKHR AcquireNextImageKHR = nullptr;
 		PFN_vkQueuePresentKHR QueuePresentKHR = nullptr;
 		PFN_vkCreateRenderPass2KHR CreateRenderPass2KHR = nullptr;
-		PFN_vkCmdEndRenderPass2KHR EndRenderPass2KHR = nullptr;
 
 		// Debug marker extensions.
 		PFN_vkCmdDebugMarkerBeginEXT CmdDebugMarkerBeginEXT = nullptr;
@@ -385,7 +384,7 @@ private:
 	};
 
 public:
-	virtual CommandQueueID command_queue_create(CommandQueueFamilyID p_cmd_queue_family, bool p_identify_as_main_queue = false) override final;
+	virtual CommandQueueID command_queue_create(CommandQueueFamilyID p_cmd_queue_family) override final;
 	virtual Error command_queue_execute_and_present(CommandQueueID p_cmd_queue, VectorView<SemaphoreID> p_wait_semaphores, VectorView<CommandBufferID> p_cmd_buffers, VectorView<SemaphoreID> p_cmd_semaphores, FenceID p_cmd_fence, VectorView<SwapChainID> p_swap_chains) override final;
 	virtual void command_queue_free(CommandQueueID p_cmd_queue) override final;
 
@@ -629,7 +628,6 @@ private:
 
 	struct RenderPassInfo {
 		VkRenderPass vk_render_pass = VK_NULL_HANDLE;
-		bool uses_fragment_density_map = false;
 	};
 
 public:

@@ -408,8 +408,6 @@ struct RenderTarget {
 	GLuint backbuffer_depth = 0;
 	bool depth_has_stencil = true;
 
-	Size2i velocity_target_size;
-
 	bool hdr = false; // For Compatibility this effects both 2D and 3D rendering!
 	GLuint color_internal_format = GL_RGBA8;
 	GLuint color_format = GL_RGBA;
@@ -432,30 +430,6 @@ struct RenderTarget {
 	bool used_in_frame = false;
 	RSE::ViewportMSAA msaa = RSE::VIEWPORT_MSAA_DISABLED;
 	bool reattach_textures = false;
-
-	Rect2i render_region;
-
-	struct RTOverridden {
-		bool is_overridden = false;
-		bool depth_has_stencil = false;
-		RID color;
-		RID depth;
-		RID velocity;
-		RID velocity_depth;
-
-		struct FBOCacheEntry {
-			GLuint fbo = 0;
-			GLuint color = 0;
-			GLuint depth = 0;
-			Size2i size;
-			Vector<GLuint> allocated_textures;
-			bool depth_has_stencil = false;
-		};
-		RBMap<uint32_t, FBOCacheEntry> fbo_cache;
-
-		GLuint velocity_fbo = 0;
-		RBMap<uint32_t, GLuint> velocity_fbo_cache;
-	} overridden;
 
 	RID texture;
 
@@ -589,7 +563,6 @@ private:
 
 	void _clear_render_target(RenderTarget *rt);
 	void _update_render_target_color(RenderTarget *rt);
-	void _update_render_target_velocity(RenderTarget *rt);
 	void _create_render_target_backbuffer(RenderTarget *rt);
 	void _render_target_allocate_sdf(RenderTarget *rt);
 	void _render_target_clear_sdf(RenderTarget *rt);
@@ -915,25 +888,9 @@ public:
 	virtual void render_target_set_vrs_texture(RID p_render_target, RID p_texture) override {}
 	virtual RID render_target_get_vrs_texture(RID p_render_target) const override { return RID(); }
 
-	virtual void render_target_set_override(RID p_render_target, RID p_color_texture, RID p_depth_texture, RID p_velocity_texture, RID p_velocity_depth_texture) override;
-	virtual RID render_target_get_override_color(RID p_render_target) const override;
-	virtual RID render_target_get_override_depth(RID p_render_target) const override;
-	virtual RID render_target_get_override_velocity(RID p_render_target) const override;
-	virtual RID render_target_get_override_velocity_depth(RID p_render_target) const override;
 
-	virtual void render_target_set_render_region(RID p_render_target, const Rect2i &p_render_region) override;
-	virtual Rect2i render_target_get_render_region(RID p_render_target) const override;
-
-	virtual void render_target_set_subsampled_enabled(RID p_render_target, bool p_enabled) override {}
-	virtual bool render_target_is_subsampled_enabled(RID p_render_target) const override { return false; }
-
-	virtual void render_target_set_subsampled_allowed(RID p_render_target, bool p_allowed) override {}
-	virtual bool render_target_is_subsampled_allowed(RID p_render_target) const override { return false; }
 
 	virtual RID render_target_get_texture(RID p_render_target) override;
-
-	virtual void render_target_set_velocity_target_size(RID p_render_target, const Size2i &p_target_size) override;
-	virtual Size2i render_target_get_velocity_target_size(RID p_render_target) const override;
 
 	void bind_framebuffer(GLuint framebuffer) {
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);

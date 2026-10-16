@@ -46,12 +46,8 @@ public:
 		RID self;
 		RID parent;
 
-		// use xr interface to override camera positioning and projection matrices and control output
-		bool use_xr = false;
-
 		Size2i internal_size;
 		Size2i size;
-		uint32_t view_count;
 		RID camera;
 		RID scenario;
 
@@ -155,7 +151,6 @@ public:
 		RenderingServerTypes::RenderInfo render_info;
 
 		Viewport() {
-			view_count = 1;
 			update_mode = RSE::VIEWPORT_UPDATE_WHEN_VISIBLE;
 			clear_mode = RSE::VIEWPORT_CLEAR_ALWAYS;
 			transparent_bg = false;
@@ -175,7 +170,6 @@ public:
 			snap_2d_transforms_to_pixel = false;
 			snap_2d_vertices_to_pixel = false;
 
-			use_xr = false;
 			sdf_active = false;
 
 			time_cpu_begin = 0;
@@ -204,7 +198,7 @@ public:
 
 private:
 	Vector<Viewport *> _sort_active_viewports();
-	void _viewport_set_size(Viewport *p_viewport, int p_width, int p_height, uint32_t p_view_count);
+	void _viewport_set_size(Viewport *p_viewport, int p_width, int p_height);
 	bool _viewport_requires_motion_vectors(Viewport *p_viewport);
 	void _viewport_set_force_motion_vectors(Viewport *p_viewport, bool p_force_motion_vectors);
 	void _configure_3d_render_buffers(Viewport *p_viewport);
@@ -220,11 +214,7 @@ public:
 	RID viewport_allocate();
 	void viewport_initialize(RID p_rid);
 
-#ifndef XR_DISABLED
-	void viewport_set_use_xr(RID p_viewport, bool p_use_xr);
-#endif // XR_DISABLED
-
-	void viewport_set_size(RID p_viewport, int p_width, int p_height, int p_view_count = 1);
+	void viewport_set_size(RID p_viewport, int p_width, int p_height);
 
 	void viewport_attach_to_screen(RID p_viewport, const Rect2 &p_rect = Rect2(), DisplayServerEnums::WindowID p_screen = DisplayServerEnums::MAIN_WINDOW_ID);
 	void viewport_set_render_direct_to_screen(RID p_viewport, bool p_enable);

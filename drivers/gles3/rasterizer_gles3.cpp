@@ -402,19 +402,6 @@ void RasterizerGLES3::_blit_render_target_to_screen(DisplayServerEnums::WindowID
 	// We normally render to the render target upside down, so flip Y when blitting to the screen.
 	bool flip_y = true;
 	bool linear_to_srgb = false;
-	if (rt->overridden.color.is_valid()) {
-		// If we've overridden the render target's color texture, that means we
-		// didn't render upside down, so we don't need to flip it.
-		// We're probably rendering directly to an XR device.
-		flip_y = false;
-
-		// It is 99% likely our texture uses the GL_SRGB8_ALPHA8 texture format in
-		// which case we have a GPU sRGB to Linear conversion on texture read.
-		// We need to counter this.
-		// Unfortunately we do not have an API to check this as Godot does not
-		// track this.
-		linear_to_srgb = true;
-	}
 
 #ifdef WINDOWS_ENABLED
 	if (screen_flipped_y) {

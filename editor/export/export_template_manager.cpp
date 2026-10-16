@@ -498,14 +498,6 @@ void ExportTemplateManager::_initialize_template_data() {
 
 	{
 		TemplateInfo info;
-		info.name = "visionOS";
-		info.description = TTRC("Build for Apple's visionOS.");
-		info.file_list = { "visionos.zip" };
-		template_data[TemplateID::VISIONOS] = info;
-	}
-
-	{
-		TemplateInfo info;
 		info.name = TTR("ICU Data");
 		info.description = TTRC("Line breaking dictionaries for TextServer, used by certain languages.");
 		info.file_list = { "icudt_godot.dat" };
@@ -552,16 +544,6 @@ void ExportTemplateManager::_initialize_template_data() {
 		info.templates = { TemplateID::IOS };
 		info.group = TTR("Mobile", "Platform Group");
 		platform_map[PlatformID::IOS] = info;
-	}
-	{
-		PlatformInfo info;
-		info.name = "visionOS";
-		info.icon = _get_platform_icon("visionOS");
-#ifndef MODULE_MONO_ENABLED
-		info.templates = { TemplateID::VISIONOS };
-#endif
-		info.group = TTR("Mobile", "Platform Group");
-		platform_map[PlatformID::VISIONOS] = info;
 	}
 	{
 		PlatformInfo info;
@@ -1353,7 +1335,6 @@ void ExportTemplateManager::_notification(int p_what) {
 			platform_map[PlatformID::WEB].group = TTR("Web", "Platform Group");
 			platform_map[PlatformID::ANDROID].group = TTR("Mobile", "Platform Group");
 			platform_map[PlatformID::IOS].group = TTR("Mobile", "Platform Group");
-			platform_map[PlatformID::VISIONOS].group = TTR("Mobile", "Platform Group");
 			platform_map[PlatformID::COMMON].name = TTR("Common");
 			template_data[TemplateID::WEB_EXTENSIONS].name = TTR("Web with Extensions");
 			template_data[TemplateID::WEB_NOTHREADS].name = TTR("Web Single-Threaded");

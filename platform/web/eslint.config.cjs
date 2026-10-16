@@ -159,7 +159,6 @@ module.exports = [
 				'GodotInput': true,
 				'GodotRuntime': true,
 				'IDHandler': true,
-				'XRWebGLLayer': true,
 			},
 		},
 	},

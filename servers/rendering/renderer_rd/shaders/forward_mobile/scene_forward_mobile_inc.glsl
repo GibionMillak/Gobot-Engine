@@ -16,8 +16,7 @@
 layout(push_constant, std430) uniform DrawCall {
 	uint uv_offset;
 	uint instance_index;
-	uint multimesh_motion_vectors_current_offset;
-	uint multimesh_motion_vectors_previous_offset;
+	uint multimesh_transform_offset;
 #ifdef UBERSHADER
 	uint sc_packed_0;
 	uint sc_packed_1;
@@ -363,7 +362,6 @@ struct InstanceData {
 	uint instance_uniforms_ofs; // Base offset in global buffer for instance variables.
 	uint gi_offset; // GI information when using lightmapping (VCT or lightmap index).
 	uint layer_mask;
-	highp mat3x4 prev_transform;
 
 	vec4 lightmap_uv_scale; // Doubles as uv_offset when needed.
 	uvec2 reflection_probes;
@@ -374,7 +372,6 @@ struct InstanceData {
 	uvec2 padding;
 #ifdef USE_DOUBLE_PRECISION
 	vec4 model_precision;
-	vec4 prev_model_precision;
 #endif
 };
 

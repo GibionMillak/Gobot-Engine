@@ -35,13 +35,11 @@
 #include "core/math/geometry_3d.h"
 #include "core/object/callable_mp.h"
 #include "core/object/worker_thread_pool.h"
+#include "servers/rendering/renderer_compositor.h"
 #include "servers/rendering/rendering_light_culler.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/rendering/rendering_server_default.h"
-
-#ifndef XR_DISABLED
-#include "servers/xr/xr_interface.h"
-#endif
+#include "servers/rendering/rendering_server_globals.h"
 
 //#define DEBUG_CULL_TIME
 #ifdef DEBUG_CULL_TIME
@@ -93,8 +91,6 @@ void RendererSceneCull::camera_set_perspective(RID p_camera, float p_fovy_degree
 	camera->fov = p_fovy_degrees;
 	camera->znear = p_z_near;
 	camera->zfar = p_z_far;
-	camera->offsets.clear();
-	camera->projections.clear();
 }
 
 void RendererSceneCull::camera_set_orthogonal(RID p_camera, float p_size, float p_z_near, float p_z_far) {
@@ -104,8 +100,6 @@ void RendererSceneCull::camera_set_orthogonal(RID p_camera, float p_size, float 
 	camera->size = p_size;
 	camera->znear = p_z_near;
 	camera->zfar = p_z_far;
-	camera->offsets.clear();
-	camera->projections.clear();
 }
 
 void RendererSceneCull::camera_set_frustum(RID p_camera, float p_size, Vector2 p_offset, float p_z_near, float p_z_far) {
@@ -116,28 +110,6 @@ void RendererSceneCull::camera_set_frustum(RID p_camera, float p_size, Vector2 p
 	camera->offset = p_offset;
 	camera->znear = p_z_near;
 	camera->zfar = p_z_far;
-	camera->offsets.clear();
-	camera->projections.clear();
-}
-
-void RendererSceneCull::camera_set_xr_projections(RID p_camera, TypedArray<Projection> p_projections, TypedArray<Transform3D> p_offsets) {
-	ERR_FAIL_COND(p_projections.is_empty());
-	bool has_offsets = !p_offsets.is_empty();
-	ERR_FAIL_COND(has_offsets && p_offsets.size() != p_projections.size());
-
-	Camera *camera = camera_owner.get_or_null(p_camera);
-	ERR_FAIL_NULL(camera);
-	camera->type = Camera::MULTIVIEW_PROJECTION;
-	camera->offsets.resize(p_projections.size());
-	camera->projections.resize(p_projections.size());
-	for (int i = 0; i < p_projections.size(); i++) {
-		if (has_offsets) {
-			camera->offsets[i] = p_offsets[i];
-		} else {
-			camera->offsets[i] = Transform3D();
-		}
-		camera->projections[i] = p_projections[i];
-	}
 }
 
 void RendererSceneCull::camera_set_transform(RID p_camera, const Transform3D &p_transform) {
@@ -2724,15 +2696,14 @@ void RendererSceneCull::render_camera(const Ref<RenderSceneBuffers> &p_render_bu
 
 	RendererSceneRender::CameraData camera_data;
 
-	// Setup Camera(s)
-	// Normal camera
+	// Set up the camera.
 	Transform3D transform = camera->transform;
 	bool vaspect = camera->vaspect;
 	bool is_orthogonal = false;
+	Projection projection;
 
 	switch (camera->type) {
 		case Camera::ORTHOGONAL: {
-			Projection projection;
 			projection.set_orthogonal(
 					camera->size,
 					p_viewport_size.width / (float)p_viewport_size.height,
@@ -2740,28 +2711,16 @@ void RendererSceneCull::render_camera(const Ref<RenderSceneBuffers> &p_render_bu
 					camera->zfar,
 					camera->vaspect);
 			is_orthogonal = true;
-
-			camera->offsets.resize(1);
-			camera->offsets[0] = Transform3D();
-			camera->projections.resize(1);
-			camera->projections[0] = projection;
 		} break;
 		case Camera::PERSPECTIVE: {
-			Projection projection;
 			projection.set_perspective(
 					camera->fov,
 					p_viewport_size.width / (float)p_viewport_size.height,
 					camera->znear,
 					camera->zfar,
 					camera->vaspect);
-
-			camera->offsets.resize(1);
-			camera->offsets[0] = Transform3D();
-			camera->projections.resize(1);
-			camera->projections[0] = projection;
 		} break;
 		case Camera::FRUSTUM: {
-			Projection projection;
 			projection.set_frustum(
 					camera->size,
 					p_viewport_size.width / (float)p_viewport_size.height,
@@ -2769,34 +2728,16 @@ void RendererSceneCull::render_camera(const Ref<RenderSceneBuffers> &p_render_bu
 					camera->znear,
 					camera->zfar,
 					camera->vaspect);
-
-			camera->offsets.resize(1);
-			camera->offsets[0] = Transform3D();
-			camera->projections.resize(1);
-			camera->projections[0] = projection;
 		} break;
-		case Camera::MULTIVIEW_PROJECTION:
-			break;
 	}
 
-	for (const Projection &projection : camera->projections) {
-		is_orthogonal |= projection.is_orthogonal();
-	}
-
-	if (camera->projections.size() == 1) {
-		camera_data.set_camera(transform * camera->offsets[0], camera->projections[0], is_orthogonal, vaspect, jitter, taa_frame_count, camera->visible_layers);
-	} else if (camera->projections.size() == 2) {
-		camera_data.set_multiview_camera(transform, camera->offsets, camera->projections, is_orthogonal, vaspect, camera->visible_layers);
-	} else {
-		ERR_FAIL_MSG("Unsupported camera setup.");
-	}
+	camera_data.set_camera(transform, projection, is_orthogonal, vaspect, jitter, taa_frame_count, camera->visible_layers);
 
 	RID environment = _render_get_environment(p_camera, p_scenario);
 	RID compositor = _render_get_compositor(p_camera, p_scenario);
 
 	RENDER_TIMESTAMP("Update Occlusion Buffer")
 
-	// For now just cull on the first camera
 	RendererSceneOcclusionCull::get_singleton()->buffer_update(p_viewport, camera_data.main_transform, camera_data.main_projection, camera_data.is_orthogonal);
 
 	_render_scene(&camera_data, p_render_buffers, environment, camera->attributes, compositor, camera->visible_layers, p_scenario, p_viewport, p_shadow_atlas, RID(), -1, p_screen_mesh_lod_threshold, p_window_output_max_value, true, r_render_info);

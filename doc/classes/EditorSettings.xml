@@ -1322,7 +1322,7 @@
 		</member>
 		<member name="interface/touchscreen/touch_actions_panel" type="int" setter="" getter="">
 			A touch-friendly panel that provides easy access to common actions such as save, delete, undo, and redo without requiring a keyboard.
-			[b]Note:[/b] Only available in the Android and XR editor.
+			[b]Note:[/b] Only available in the Android editor.
 		</member>
 		<member name="network/connection/check_for_updates" type="int" setter="" getter="">
 			Specifies how the engine should check for updates.

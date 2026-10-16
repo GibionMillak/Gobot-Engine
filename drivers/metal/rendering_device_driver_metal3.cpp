@@ -150,7 +150,7 @@ void RenderingDeviceDriverMetal::semaphore_free(SemaphoreID p_semaphore) {
 
 #pragma mark - Command Queues
 
-RDD::CommandQueueID RenderingDeviceDriverMetal::command_queue_create(CommandQueueFamilyID p_cmd_queue_family, bool p_identify_as_main_queue) {
+RDD::CommandQueueID RenderingDeviceDriverMetal::command_queue_create(CommandQueueFamilyID p_cmd_queue_family) {
 	return CommandQueueID(1);
 }
 

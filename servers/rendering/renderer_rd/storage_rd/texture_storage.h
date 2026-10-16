@@ -446,48 +446,6 @@ private:
 		RSE::ViewportVRSUpdateMode vrs_update_mode = RSE::VIEWPORT_VRS_UPDATE_ONCE;
 		RID vrs_texture;
 
-		Rect2i render_region;
-		bool subsampled_enabled = false;
-		bool subsampled_allowed = true;
-
-		// overridden textures
-		struct RTOverridden {
-			RID color;
-			RID depth;
-			RID velocity;
-			RID velocity_depth;
-
-			// In a multiview scenario, which is the most likely where we
-			// override our destination textures, we need to obtain slices
-			// for each layer of these textures.
-			// These are likely changing every frame as we loop through
-			// texture chains hence we add a cache to manage these slices.
-			// For this we define a key using the RID of the texture and
-			// the layer for which we create a slice.
-			struct SliceKey {
-				RID rid;
-				uint32_t layer = 0;
-
-				bool operator==(const SliceKey &p_val) const {
-					return (rid == p_val.rid) && (layer == p_val.layer);
-				}
-
-				static uint32_t hash(const SliceKey &p_val) {
-					uint32_t h = hash_one_uint64(p_val.rid.get_id());
-					h = hash_murmur3_one_32(p_val.layer, h);
-					return hash_fmix32(h);
-				}
-
-				SliceKey() {}
-				SliceKey(RID p_rid, uint32_t p_layer) {
-					rid = p_rid;
-					layer = p_layer;
-				}
-			};
-
-			mutable HashMap<SliceKey, RID, SliceKey> cached_slices;
-		} overridden;
-
 		//texture generated for this owner (nor RD).
 		RID texture;
 		bool was_used;
@@ -904,27 +862,7 @@ public:
 	virtual void render_target_set_vrs_texture(RID p_render_target, RID p_texture) override;
 	virtual RID render_target_get_vrs_texture(RID p_render_target) const override;
 
-	virtual void render_target_set_override(RID p_render_target, RID p_color_texture, RID p_depth_texture, RID p_velocity_texture, RID p_velocity_depth_texture) override;
-	virtual RID render_target_get_override_color(RID p_render_target) const override;
-	virtual RID render_target_get_override_depth(RID p_render_target) const override;
-	RID render_target_get_override_depth_slice(RID p_render_target, const uint32_t p_layer) const;
-	virtual RID render_target_get_override_velocity(RID p_render_target) const override;
-	RID render_target_get_override_velocity_slice(RID p_render_target, const uint32_t p_layer) const;
-	virtual RID render_target_get_override_velocity_depth(RID p_render_target) const override;
-
-	virtual void render_target_set_render_region(RID p_render_target, const Rect2i &p_render_region) override;
-	virtual Rect2i render_target_get_render_region(RID p_render_target) const override;
-
-	virtual void render_target_set_subsampled_enabled(RID p_render_target, bool p_enabled) override;
-	virtual bool render_target_is_subsampled_enabled(RID p_render_target) const override;
-
-	virtual void render_target_set_subsampled_allowed(RID p_render_target, bool p_allowed) override;
-	virtual bool render_target_is_subsampled_allowed(RID p_render_target) const override;
-
 	virtual RID render_target_get_texture(RID p_render_target) override;
-
-	virtual void render_target_set_velocity_target_size(RID p_render_target, const Size2i &p_target_size) override {}
-	virtual Size2i render_target_get_velocity_target_size(RID p_render_target) const override { return Size2i(0, 0); }
 
 	RID render_target_get_rd_framebuffer(RID p_render_target);
 	RID render_target_get_rd_texture(RID p_render_target);

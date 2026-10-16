@@ -40,8 +40,7 @@ repos:
           (?x)^(
             (driver|platform)/\w+/.*|
             editor/shader/shader_baker/shader_baker_export_plugin_platform_.*|
-            modules/camera/camera_.*|
-            modules/openxr/extensions/platform/.*
+            modules/camera/camera_.*
           )$
         args: [
             --fix,
@@ -177,7 +176,7 @@ repos:
         exclude: |
           (?x)^(
             core/math/bvh_.*\.inc|
-            platform/(?!android|ios|linuxbsd|macos|visionos|web|windows)\w+/.*|
+            platform/(?!android|ios|linuxbsd|macos|web|windows)\w+/.*|
             platform/android/java/lib/src/main/java/org/godotengine/godot/gl/GLSurfaceView\.java|
             platform/android/java/lib/src/main/java/org/godotengine/godot/gl/EGLLogWrapper\.java|
             platform/android/java/lib/src/main/java/org/godotengine/godot/utils/ProcessPhoenix\.java

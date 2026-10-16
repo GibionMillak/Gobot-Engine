@@ -35,16 +35,20 @@
 #include "core/os/os.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
-#include "scene/gui/check_box.h"
+#include "scene/gui/box_container.h"
 #include "scene/gui/grid_container.h"
 #include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
+#include "scene/main/timer.h"
+
+#ifndef ANDROID_ENABLED
+#include "scene/gui/check_box.h"
 #include "scene/gui/margin_container.h"
 #include "scene/gui/popup_menu.h"
 #include "scene/gui/separator.h"
 #include "scene/gui/spin_box.h"
 #include "scene/gui/tree.h"
-#include "scene/main/timer.h"
+#endif
 
 void RunInstancesDialog::_fetch_main_args() {
 	if (!main_args_edit->has_focus()) { // Only set the text if the user is not currently editing it.
@@ -56,6 +60,7 @@ void RunInstancesDialog::_start_main_timer() {
 	main_apply_timer->start();
 }
 
+#ifndef ANDROID_ENABLED
 void RunInstancesDialog::_start_instance_timer() {
 	instance_apply_timer->start();
 }
@@ -100,14 +105,18 @@ void RunInstancesDialog::_create_instance(InstanceData &p_instance, const Dictio
 	instance_item->set_editable(COLUMN_FEATURE_TAGS, true);
 	instance_item->set_text(COLUMN_FEATURE_TAGS, p_data.get("features", String()));
 }
+#endif
 
 void RunInstancesDialog::_save_main_args() {
 	ProjectSettings::get_singleton()->set_setting("editor/run/main_run_args", main_args_edit->get_text());
 	ProjectSettings::get_singleton()->save();
 	EditorSettings::get_singleton()->set_project_metadata("debug_options", "run_main_feature_tags", main_features_edit->get_text());
+#ifndef ANDROID_ENABLED
 	EditorSettings::get_singleton()->set_project_metadata("debug_options", "multiple_instances_enabled", enable_multiple_instances_checkbox->is_pressed());
+#endif
 }
 
+#ifndef ANDROID_ENABLED
 void RunInstancesDialog::_save_arguments() {
 	for (int i = 0; i < instances_data.size(); i++) {
 		const InstanceData &instance = instances_data[i];
@@ -121,6 +130,7 @@ void RunInstancesDialog::_save_arguments() {
 	EditorSettings::get_singleton()->set_project_metadata("debug_options", "run_instances_config", stored_data);
 	EditorSettings::get_singleton()->set_project_metadata("debug_options", "run_instance_count", instance_count->get_value());
 }
+#endif
 
 Vector<String> RunInstancesDialog::_split_cmdline_args(const String &p_arg_string) const {
 	Vector<String> split_args;
@@ -158,6 +168,7 @@ Vector<String> RunInstancesDialog::_split_cmdline_args(const String &p_arg_strin
 	return split_args;
 }
 
+#ifndef ANDROID_ENABLED
 void RunInstancesDialog::_instance_menu_id_pressed(int p_option) {
 	switch (p_option) {
 		case CLEAR_ITEM: {
@@ -196,33 +207,33 @@ void RunInstancesDialog::_instance_tree_rmb(const Vector2 &p_pos, MouseButton p_
 	popup_menu->reset_size();
 	popup_menu->popup();
 }
+#endif
 
 void RunInstancesDialog::popup_dialog() {
 	popup_centered_clamped(Size2(1200, 600) * EDSCALE, 0.8);
 }
 
 int RunInstancesDialog::get_instance_count() const {
+#ifndef ANDROID_ENABLED
 	if (enable_multiple_instances_checkbox->is_pressed()) {
 		return instance_count->get_value();
-	} else {
-		return 1;
 	}
+#endif
+	return 1;
 }
 
 void RunInstancesDialog::get_argument_list_for_instance(int p_idx, List<String> &r_list) const {
-	bool override_args = instances_data[p_idx].overrides_run_args();
-	bool use_multiple_instances = enable_multiple_instances_checkbox->is_pressed();
-	String raw_custom_args;
-
-	if (use_multiple_instances) {
-		if (override_args) {
-			raw_custom_args = instances_data[p_idx].get_launch_arguments();
+	String raw_custom_args = main_args_edit->get_text();
+#ifndef ANDROID_ENABLED
+	if (enable_multiple_instances_checkbox->is_pressed()) {
+		const InstanceData &instance = instances_data[p_idx];
+		if (instance.overrides_run_args()) {
+			raw_custom_args = instance.get_launch_arguments();
 		} else {
-			raw_custom_args = main_args_edit->get_text() + " " + instances_data[p_idx].get_launch_arguments();
+			raw_custom_args += " " + instance.get_launch_arguments();
 		}
-	} else {
-		raw_custom_args = main_args_edit->get_text();
 	}
+#endif
 
 	if (!raw_custom_args.is_empty()) {
 		// Allow the user to specify a command to run, similar to Steam's launch options.
@@ -267,18 +278,17 @@ void RunInstancesDialog::get_argument_list_for_instance(int p_idx, List<String> 
 }
 
 void RunInstancesDialog::apply_custom_features(int p_instance_idx) {
-	const InstanceData &instance = instances_data[p_instance_idx];
-
-	String raw_text;
+	String raw_text = main_features_edit->get_text();
+#ifndef ANDROID_ENABLED
 	if (enable_multiple_instances_checkbox->is_pressed()) {
+		const InstanceData &instance = instances_data[p_instance_idx];
 		if (instance.overrides_features()) {
 			raw_text = instance.get_feature_tags();
 		} else {
-			raw_text = main_features_edit->get_text() + "," + instance.get_feature_tags();
+			raw_text += "," + instance.get_feature_tags();
 		}
-	} else {
-		raw_text = main_features_edit->get_text();
 	}
+#endif
 
 	const Vector<String> raw_list = raw_text.split(",");
 	Vector<String> stripped_features;
@@ -302,11 +312,13 @@ RunInstancesDialog::RunInstancesDialog() {
 	add_child(main_apply_timer);
 	main_apply_timer->connect("timeout", callable_mp(this, &RunInstancesDialog::_save_main_args));
 
+#ifndef ANDROID_ENABLED
 	instance_apply_timer = memnew(Timer);
 	instance_apply_timer->set_wait_time(0.5);
 	instance_apply_timer->set_one_shot(true);
 	add_child(instance_apply_timer);
 	instance_apply_timer->connect("timeout", callable_mp(this, &RunInstancesDialog::_save_arguments));
+#endif
 
 	VBoxContainer *main_vb = memnew(VBoxContainer);
 	add_child(main_vb);
@@ -327,7 +339,9 @@ RunInstancesDialog::RunInstancesDialog() {
 		main_gc->add_child(l);
 	}
 
+#ifndef ANDROID_ENABLED
 	stored_data = TypedArray<Dictionary>(EditorSettings::get_singleton()->get_project_metadata("debug_options", "run_instances_config", TypedArray<Dictionary>()));
+#endif
 
 	main_args_edit = memnew(LineEdit);
 	main_args_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -346,6 +360,7 @@ RunInstancesDialog::RunInstancesDialog() {
 	main_gc->add_child(main_features_edit);
 	main_features_edit->connect(SceneStringName(text_changed), callable_mp(this, &RunInstancesDialog::_start_main_timer).unbind(1));
 
+#ifndef ANDROID_ENABLED
 	main_vb->add_child(memnew(HSeparator));
 
 	HBoxContainer *instance_hb = memnew(HBoxContainer);
@@ -357,22 +372,10 @@ RunInstancesDialog::RunInstancesDialog() {
 	enable_multiple_instances_checkbox->set_pressed(EditorSettings::get_singleton()->get_project_metadata("debug_options", "multiple_instances_enabled", false));
 	instance_hb->add_child(enable_multiple_instances_checkbox);
 	enable_multiple_instances_checkbox->connect(SceneStringName(pressed), callable_mp(this, &RunInstancesDialog::_start_main_timer));
-#ifdef ANDROID_ENABLED
-	// On Android, multiple instances are only supported on XR devices.
-	bool is_xr_editor = OS::get_singleton()->has_feature("xr_editor");
-	enable_multiple_instances_checkbox->set_visible(is_xr_editor);
-	enable_multiple_instances_checkbox->set_disabled(!is_xr_editor);
-#endif
 
 	instance_count = memnew(SpinBox);
 	instance_count->set_min(1);
-#ifdef ANDROID_ENABLED
-	// Multi-instance support is limited on Android.
-	instance_count->set_max(2);
-	instance_count->set_visible(is_xr_editor);
-#else
 	instance_count->set_max(20);
-#endif
 	instance_count->set_value(EditorSettings::get_singleton()->get_project_metadata("debug_options", "run_instance_count", stored_data.size()));
 	instance_count->set_accessibility_name(TTRC("Number of Instances"));
 
@@ -413,8 +416,10 @@ RunInstancesDialog::RunInstancesDialog() {
 
 	_refresh_argument_count();
 	instance_tree->connect("item_edited", callable_mp(this, &RunInstancesDialog::_start_instance_timer));
+#endif
 }
 
+#ifndef ANDROID_ENABLED
 bool RunInstancesDialog::InstanceData::overrides_run_args() const {
 	return item->is_checked(COLUMN_OVERRIDE_ARGS);
 }
@@ -430,3 +435,4 @@ bool RunInstancesDialog::InstanceData::overrides_features() const {
 String RunInstancesDialog::InstanceData::get_feature_tags() const {
 	return item->get_text(COLUMN_FEATURE_TAGS);
 }
+#endif

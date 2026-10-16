@@ -607,13 +607,7 @@ bool RenderSceneBuffersRD::has_depth_texture() {
 		return false;
 	}
 
-	RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
-	RID depth = texture_storage->render_target_get_override_depth(render_target);
-	if (depth.is_valid()) {
-		return true;
-	} else {
-		return has_texture(RB_SCOPE_BUFFERS, RB_TEX_DEPTH);
-	}
+	return has_texture(RB_SCOPE_BUFFERS, RB_TEX_DEPTH);
 }
 
 RID RenderSceneBuffersRD::get_depth_texture() {
@@ -622,97 +616,11 @@ RID RenderSceneBuffersRD::get_depth_texture() {
 		return RID();
 	}
 
-	RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
-	RID depth = texture_storage->render_target_get_override_depth(render_target);
-	if (depth.is_valid()) {
-		return depth;
-	} else {
-		return get_texture(RB_SCOPE_BUFFERS, RB_TEX_DEPTH);
-	}
+	return get_texture(RB_SCOPE_BUFFERS, RB_TEX_DEPTH);
 }
 
 RID RenderSceneBuffersRD::get_depth_texture(const uint32_t p_layer) {
-	RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
-	RID depth_slice = texture_storage->render_target_get_override_depth_slice(render_target, p_layer);
-	if (depth_slice.is_valid()) {
-		return depth_slice;
-	} else {
-		return get_texture_slice(RB_SCOPE_BUFFERS, RB_TEX_DEPTH, p_layer, 0);
-	}
-}
-
-// Subsampled textures.
-
-RID RenderSceneBuffersRD::get_color_subsampled() {
-	const bool use_msaa = (msaa_3d != RSE::VIEWPORT_MSAA_DISABLED);
-
-	RD::TextureFormat tf;
-	tf.format = get_base_data_format();
-	if (view_count > 1) {
-		tf.texture_type = RD::TEXTURE_TYPE_2D_ARRAY;
-	}
-	tf.width = internal_size.x;
-	tf.height = internal_size.y;
-	tf.array_layers = view_count;
-	tf.usage_bits = get_color_usage_bits(use_msaa, false, can_be_storage);
-	tf.is_subsampled = true;
-
-	return create_texture_from_format(RB_SCOPE_BUFFERS, RB_TEX_COLOR_SUBSAMPLED, tf);
-}
-
-RID RenderSceneBuffersRD::get_color_msaa_subsampled() {
-	ERR_FAIL_COND_V(msaa_3d == RSE::VIEWPORT_MSAA_DISABLED, RID());
-
-	RD::TextureFormat tf;
-	tf.format = get_base_data_format();
-	if (view_count > 1) {
-		tf.texture_type = RD::TEXTURE_TYPE_2D_ARRAY;
-	}
-	tf.width = internal_size.x;
-	tf.height = internal_size.y;
-	tf.array_layers = view_count;
-	tf.samples = msaa_to_samples(msaa_3d);
-	tf.usage_bits = get_color_usage_bits(false, true, can_be_storage);
-	tf.is_discardable = true;
-	tf.is_subsampled = true;
-
-	return create_texture_from_format(RB_SCOPE_BUFFERS, RB_TEX_COLOR_MSAA_SUBSAMPLED, tf);
-}
-
-RID RenderSceneBuffersRD::get_depth_subsampled() {
-	const bool use_msaa = (msaa_3d != RSE::VIEWPORT_MSAA_DISABLED);
-
-	RD::TextureFormat tf;
-	tf.format = get_depth_format(use_msaa, false, can_be_storage);
-	if (view_count > 1) {
-		tf.texture_type = RD::TEXTURE_TYPE_2D_ARRAY;
-	}
-	tf.width = internal_size.x;
-	tf.height = internal_size.y;
-	tf.array_layers = view_count;
-	tf.usage_bits = get_depth_usage_bits(use_msaa, false, can_be_storage);
-	tf.is_subsampled = true;
-
-	return create_texture_from_format(RB_SCOPE_BUFFERS, RB_TEX_DEPTH_SUBSAMPLED, tf);
-}
-
-RID RenderSceneBuffersRD::get_depth_msaa_subsampled() {
-	ERR_FAIL_COND_V(msaa_3d == RSE::VIEWPORT_MSAA_DISABLED, RID());
-
-	RD::TextureFormat tf;
-	tf.format = get_depth_format(false, true, can_be_storage);
-	if (view_count > 1) {
-		tf.texture_type = RD::TEXTURE_TYPE_2D_ARRAY;
-	}
-	tf.width = internal_size.x;
-	tf.height = internal_size.y;
-	tf.array_layers = view_count;
-	tf.samples = msaa_to_samples(msaa_3d);
-	tf.usage_bits = get_depth_usage_bits(false, true, can_be_storage);
-	tf.is_discardable = true;
-	tf.is_subsampled = true;
-
-	return create_texture_from_format(RB_SCOPE_BUFFERS, RB_TEX_DEPTH_MSAA_SUBSAMPLED, tf);
+	return get_texture_slice(RB_SCOPE_BUFFERS, RB_TEX_DEPTH, p_layer, 0);
 }
 
 // Upscaled texture.
@@ -742,13 +650,7 @@ bool RenderSceneBuffersRD::has_velocity_buffer(bool p_has_msaa) {
 	if (p_has_msaa) {
 		return has_texture(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY_MSAA);
 	} else {
-		RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
-		RID velocity = texture_storage->render_target_get_override_velocity(render_target);
-		if (velocity.is_valid()) {
-			return true;
-		} else {
-			return has_texture(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY);
-		}
+		return has_texture(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY);
 	}
 }
 
@@ -760,11 +662,7 @@ RID RenderSceneBuffersRD::get_velocity_buffer(bool p_get_msaa) {
 			return get_texture(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY_MSAA);
 		}
 	} else {
-		RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
-		RID velocity = texture_storage->render_target_get_override_velocity(render_target);
-		if (velocity.is_valid()) {
-			return velocity;
-		} else if (!has_texture(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY)) {
+		if (!has_texture(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY)) {
 			return RID();
 		} else {
 			return get_texture(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY);
@@ -776,20 +674,8 @@ RID RenderSceneBuffersRD::get_velocity_buffer(bool p_get_msaa, uint32_t p_layer)
 	if (p_get_msaa) {
 		return get_texture_slice(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY_MSAA, p_layer, 0);
 	} else {
-		RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
-		RID velocity_slice = texture_storage->render_target_get_override_velocity_slice(render_target, p_layer);
-		if (velocity_slice.is_valid()) {
-			return velocity_slice;
-		} else {
-			return get_texture_slice(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY, p_layer, 0);
-		}
+		return get_texture_slice(RB_SCOPE_BUFFERS, RB_TEX_VELOCITY, p_layer, 0);
 	}
-}
-
-RID RenderSceneBuffersRD::get_velocity_depth_buffer() {
-	RendererRD::TextureStorage *texture_storage = RendererRD::TextureStorage::get_singleton();
-	RID velocity_depth = texture_storage->render_target_get_override_velocity_depth(render_target);
-	return velocity_depth;
 }
 
 uint32_t RenderSceneBuffersRD::get_color_usage_bits(bool p_resolve, bool p_msaa, bool p_storage) {

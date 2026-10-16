@@ -30,41 +30,31 @@
 
 #include "vrs.h"
 
-#include "servers/rendering/renderer_rd/renderer_compositor_rd.h"
+#include "servers/rendering/renderer_rd/shader_rd.h"
+#include "servers/rendering/renderer_rd/storage_rd/material_storage.h"
 #include "servers/rendering/renderer_rd/storage_rd/texture_storage.h"
 #include "servers/rendering/renderer_rd/uniform_set_cache_rd.h"
-
-#ifndef XR_DISABLED
-#include "servers/xr/xr_interface.h"
-#include "servers/xr/xr_server.h"
-#endif // XR_DISABLED
 
 using namespace RendererRD;
 
 VRS::VRS() {
 	{
-		Vector<String> vrs_modes;
-		vrs_modes.push_back("\n"); // VRS_DEFAULT
-		vrs_modes.push_back("\n#define USE_MULTIVIEW\n"); // VRS_MULTIVIEW
-		vrs_modes.push_back("\n#define SPLIT_RG\n"); // VRS_RG
-		vrs_modes.push_back("\n#define SPLIT_RG\n#define USE_MULTIVIEW\n"); // VRS_RG_MULTIVIEW
+		constexpr int DEFAULT_GROUP = 0;
+		constexpr int MULTIVIEW_GROUP = 1;
+		Vector<ShaderRD::VariantDefine> vrs_modes;
+		vrs_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n", true)); // VRS_DEFAULT
+		vrs_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define USE_MULTIVIEW\n", false)); // VRS_MULTIVIEW
+		vrs_modes.push_back(ShaderRD::VariantDefine(DEFAULT_GROUP, "\n#define SPLIT_RG\n", true)); // VRS_RG
+		vrs_modes.push_back(ShaderRD::VariantDefine(MULTIVIEW_GROUP, "\n#define SPLIT_RG\n#define USE_MULTIVIEW\n", false)); // VRS_RG_MULTIVIEW
 
 		vrs_shader.shader.initialize(vrs_modes);
-
-		if (!RendererCompositorRD::get_singleton()->is_xr_enabled()) {
-			vrs_shader.shader.set_variant_enabled(VRS_MULTIVIEW, false);
-		}
 
 		vrs_shader.shader_version = vrs_shader.shader.version_create();
 
 		//use additive
 
 		for (int i = 0; i < VRS_MAX; i++) {
-			if (vrs_shader.shader.is_variant_enabled(i)) {
-				vrs_shader.pipelines[i].setup(vrs_shader.shader.version_get_shader(vrs_shader.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), RD::PipelineColorBlendState::create_disabled(), 0);
-			} else {
-				vrs_shader.pipelines[i].clear();
-			}
+			vrs_shader.pipelines[i].setup(vrs_shader.shader.version_get_shader(vrs_shader.shader_version, i), RD::RENDER_PRIMITIVE_TRIANGLES, RD::PipelineRasterizationState(), RD::PipelineMultisampleState(), RD::PipelineDepthStencilState(), RD::PipelineColorBlendState::create_disabled(), 0);
 		}
 	}
 }
@@ -97,6 +87,7 @@ void VRS::copy_vrs(RID p_source_rd_texture, RID p_dest_framebuffer, bool p_multi
 		push_constant.max_texel_factor = 2.0;
 	}
 
+	vrs_shader.shader.enable_group(vrs_shader.shader.get_variant_to_group(mode));
 	RID shader = vrs_shader.shader.version_get_shader(vrs_shader.shader_version, mode);
 	ERR_FAIL_COND(shader.is_null());
 
@@ -135,22 +126,6 @@ void VRS::update_vrs_texture(RID p_vrs_fb, RID p_render_target) {
 			if (vrs_update_mode == RSE::VIEWPORT_VRS_UPDATE_ONCE) {
 				texture_storage->render_target_set_vrs_update_mode(p_render_target, RSE::VIEWPORT_VRS_UPDATE_DISABLED);
 			}
-#ifndef XR_DISABLED
-		} else if (vrs_mode == RSE::VIEWPORT_VRS_XR) {
-			Ref<XRInterface> interface = XRServer::get_singleton()->get_primary_interface();
-			if (interface.is_valid() && interface->get_vrs_texture_format() == XRInterface::XR_VRS_TEXTURE_FORMAT_UNIFIED) {
-				RID vrs_texture = interface->get_vrs_texture();
-				if (vrs_texture.is_valid()) {
-					RID rd_texture = texture_storage->texture_get_rd_texture(vrs_texture);
-					int layers = texture_storage->texture_get_layers(vrs_texture);
-
-					if (rd_texture.is_valid()) {
-						// Copy into our density buffer
-						copy_vrs(rd_texture, p_vrs_fb, layers > 1);
-					}
-				}
-			}
-#endif // XR_DISABLED
 		}
 
 		RD::get_singleton()->draw_command_end_label();

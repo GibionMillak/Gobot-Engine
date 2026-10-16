@@ -135,14 +135,10 @@
 #define SDL_FILESYSTEM_DUMMY 1
 #define SDL_FSOPS_DUMMY 1
 
-// iOS/visionOS defines
-#elif defined(IOS_ENABLED) || defined(VISIONOS_ENABLED)
+// iOS defines
+#elif defined(IOS_ENABLED)
 
-#ifdef IOS_ENABLED
 #define SDL_PLATFORM_PRIVATE_NAME "iOS"
-#else
-#define SDL_PLATFORM_PRIVATE_NAME "visionOS"
-#endif
 
 #define HAVE_STDIO_H 1
 #define HAVE_LIBC 1

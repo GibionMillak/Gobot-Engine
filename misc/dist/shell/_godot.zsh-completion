@@ -59,7 +59,6 @@ _arguments \
   '--resolution[request window resolution]:resolution in WxH format' \
   '--position[request window position]:position in X,Y format' \
   '--single-window[use a single window (no separate subwindows)]' \
-  '--xr-mode[select Extended Reality (XR) mode]:Extended Reality (XR) mode:(default off on)' \
   '(-d --debug)'{-d,--debug}'[debug (local stdout debugger)]' \
   '(-b --breakpoints)'{-b,--breakpoints}'[specify the breakpoint list as source::line comma-separated pairs, no spaces (use %20 instead)]:breakpoint list' \
   '--profiling[enable profiling in the script debugger]' \
