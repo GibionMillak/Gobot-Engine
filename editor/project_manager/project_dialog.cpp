@@ -582,20 +582,14 @@ void ProjectDialog::ok_pressed() {
 		EditorSettings::get_singleton()->set("project_manager/default_renderer", renderer_type);
 		EditorSettings::get_singleton()->save();
 
-		if (renderer_type == "forward_plus") {
-			project_features.push_back("Forward Plus");
-		} else if (renderer_type == "mobile") {
-			project_features.push_back("Mobile");
-		} else if (renderer_type == "gl_compatibility") {
-			project_features.push_back("GL Compatibility");
+		if (renderer_type == "gl_compatibility") {
 			// Also change the default renderer for the mobile override.
 			initial_settings["rendering/renderer/rendering_method.mobile"] = "gl_compatibility";
-		} else {
-			WARN_PRINT("Unknown renderer type. Please report this as a bug on GitHub.");
 		}
 
 		project_features.sort();
 		initial_settings["application/config/features"] = project_features;
+		initial_settings["application/config/editor_version"] = GODOT_VERSION_NUMBER;
 		initial_settings["application/config/name"] = project_name->get_text().strip_edges();
 		initial_settings["application/config/icon"] = "res://icon.svg";
 		ProjectSettings::CustomMap extra_settings = EditorNode::get_initial_settings();

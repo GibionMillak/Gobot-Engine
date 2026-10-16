@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "canvas_item.h"
-#include "canvas_item.compat.inc"
 
 STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 

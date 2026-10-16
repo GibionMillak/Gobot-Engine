@@ -128,10 +128,6 @@ protected:
 	GDVIRTUAL1_REQUIRED(_fetch, String);
 	GDVIRTUAL2R_REQUIRED(TypedArray<Dictionary>, _get_line_diff, String, String);
 
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL1_COMPAT(_commit_bind_compat_117968, _commit, String);
-#endif
-
 public:
 	static EditorVCSInterface *get_singleton();
 	static void set_singleton(EditorVCSInterface *p_singleton);

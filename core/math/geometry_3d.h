@@ -349,12 +349,6 @@ inline Vector3 get_closest_point_to_segment(const Vector3 &p_point, const Vector
 	}
 }
 
-#ifndef DISABLE_DEPRECATED
-inline Vector3 get_closest_point_to_segment(const Vector3 &p_point, const Vector3 *p_segment) {
-	return get_closest_point_to_segment(p_point, p_segment[0], p_segment[1]);
-}
-#endif // DISABLE_DEPRECATED
-
 inline Vector3 get_closest_point_to_segment_uncapped(const Vector3 &p_point, const Vector3 &p_segment_a, const Vector3 &p_segment_b) {
 	Vector3 p = p_point - p_segment_a;
 	Vector3 n = p_segment_b - p_segment_a;
@@ -367,12 +361,6 @@ inline Vector3 get_closest_point_to_segment_uncapped(const Vector3 &p_point, con
 
 	return p_segment_a + n * d; // Inside.
 }
-
-#ifndef DISABLE_DEPRECATED
-inline Vector3 get_closest_point_to_segment_uncapped(const Vector3 &p_point, const Vector3 *p_segment) {
-	return get_closest_point_to_segment_uncapped(p_point, p_segment[0], p_segment[1]);
-}
-#endif // DISABLE_DEPRECATED
 
 inline bool point_in_projected_triangle(const Vector3 &p_point, const Vector3 &p_v1, const Vector3 &p_v2, const Vector3 &p_v3) {
 	Vector3 face_n = (p_v1 - p_v3).cross(p_v1 - p_v2);
@@ -475,12 +463,6 @@ inline bool triangle_sphere_intersection_test(const Vector3 &p_triangle_a, const
 
 	return false;
 }
-
-#ifndef DISABLE_DEPRECATED
-inline bool triangle_sphere_intersection_test(const Vector3 *p_triangle, const Vector3 &p_normal, const Vector3 &p_sphere_pos, real_t p_sphere_radius, Vector3 &r_triangle_contact, Vector3 &r_sphere_contact) {
-	return triangle_sphere_intersection_test(p_triangle[0], p_triangle[1], p_triangle[2], p_normal, p_sphere_pos, p_sphere_radius, r_triangle_contact, r_sphere_contact);
-}
-#endif // DISABLE_DEPRECATED
 
 inline Vector<Vector3> clip_polygon(const Vector<Vector3> &p_polygon, const Plane &p_plane) {
 	enum LocationCache {

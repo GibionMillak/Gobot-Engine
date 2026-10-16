@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "animation_player.h"
-#include "animation_player.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/object/callable_mp.h"
@@ -39,9 +38,7 @@
 
 bool AnimationPlayer::_set(const StringName &p_name, const Variant &p_value) {
 	String name = p_name;
-	if (name.begins_with("playback/play")) { // For backward compatibility.
-		set_current_animation(p_value);
-	} else if (name.begins_with("next/")) {
+	if (name.begins_with("next/")) {
 		String which = name.get_slicec('/', 1);
 		animation_set_next(which, p_value);
 	} else if (p_name == SceneStringName(blend_times)) {
@@ -55,14 +52,6 @@ bool AnimationPlayer::_set(const StringName &p_name, const Variant &p_value) {
 			float time = array[i * 3 + 2];
 			set_blend_time(from, to, time);
 		}
-#ifndef DISABLE_DEPRECATED
-	} else if (p_name == "method_call_mode") {
-		set_callback_mode_method(static_cast<AnimationCallbackModeMethod>((int)p_value));
-	} else if (p_name == "playback_process_mode") {
-		set_callback_mode_process(static_cast<AnimationCallbackModeProcess>((int)p_value));
-	} else if (p_name == "playback_active") {
-		set_active(p_value);
-#endif // DISABLE_DEPRECATED
 	} else {
 		return false;
 	}
@@ -72,11 +61,7 @@ bool AnimationPlayer::_set(const StringName &p_name, const Variant &p_value) {
 bool AnimationPlayer::_get(const StringName &p_name, Variant &r_ret) const {
 	String name = p_name;
 
-	if (name == "playback/play") { // For backward compatibility.
-
-		r_ret = get_current_animation();
-
-	} else if (name.begins_with("next/")) {
+	if (name.begins_with("next/")) {
 		String which = name.get_slicec('/', 1);
 		r_ret = animation_get_next(which);
 
@@ -94,14 +79,6 @@ bool AnimationPlayer::_get(const StringName &p_name, Variant &r_ret) const {
 		}
 
 		r_ret = array;
-#ifndef DISABLE_DEPRECATED
-	} else if (name == "method_call_mode") {
-		r_ret = get_callback_mode_method();
-	} else if (name == "playback_process_mode") {
-		r_ret = get_callback_mode_process();
-	} else if (name == "playback_active") {
-		r_ret = is_active();
-#endif // DISABLE_DEPRECATED
 	} else {
 		return false;
 	}

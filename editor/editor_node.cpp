@@ -122,7 +122,6 @@
 #include "editor/plugins/editor_plugin_list.h"
 #include "editor/plugins/editor_resource_conversion_plugin.h"
 #include "editor/plugins/plugin_config_dialog.h"
-#include "editor/project_upgrade/project_upgrade_tool.h"
 #include "editor/run/editor_run.h"
 #include "editor/run/editor_run_bar.h"
 #include "editor/run/game_view_plugin.h"
@@ -966,7 +965,6 @@ void EditorNode::_notification(int p_what) {
 
 				OS::get_singleton()->benchmark_begin_measure("Editor", "First Scan");
 
-				EditorFileSystem::get_singleton()->connect("filesystem_changed", callable_mp(this, &EditorNode::_execute_upgrades), CONNECT_ONE_SHOT);
 				EditorFileSystem::get_singleton()->scan();
 			}
 
@@ -1275,15 +1273,6 @@ void EditorNode::_update_update_spinner() {
 	}
 }
 
-void EditorNode::_execute_upgrades() {
-	if (run_project_upgrade_tool) {
-		run_project_upgrade_tool = false;
-		// Execute another scan to reimport the modified files.
-		project_upgrade_tool->connect(project_upgrade_tool->UPGRADE_FINISHED, callable_mp(EditorFileSystem::get_singleton(), &EditorFileSystem::scan), CONNECT_ONE_SHOT);
-		project_upgrade_tool->finish_upgrade();
-	}
-}
-
 void EditorNode::init_plugins() {
 	_initializing_plugins = true;
 	Vector<String> addons;
@@ -1561,13 +1550,6 @@ void EditorNode::_sources_changed(bool p_exist) {
 		waiting_for_first_scan = false;
 
 		OS::get_singleton()->benchmark_end_measure("Editor", "First Scan");
-
-		for (const String &arg : OS::get_singleton()->get_cmdline_args()) {
-			if (arg == "--run-upgrade-tool") {
-				project_upgrade_tool->prepare_upgrade();
-				return;
-			}
-		}
 
 		// Reload the global shader variables, but this time
 		// loading textures, as they are now properly imported.
@@ -4210,9 +4192,6 @@ void EditorNode::_tool_menu_option(int p_idx) {
 		case TOOLS_BUILD_PROFILE_MANAGER: {
 			build_profile_manager->popup_centered_clamped(Size2(700, 800) * EDSCALE, 0.8);
 		} break;
-		case TOOLS_PROJECT_UPGRADE: {
-			project_upgrade_tool->popup_dialog();
-		} break;
 		case TOOLS_CLEAR_PROJECT_CACHE: {
 			clear_cache_dialog->popup_centered();
 		} break;
@@ -4492,11 +4471,6 @@ void EditorNode::replace_resources_in_scenes(const Vector<Ref<Resource>> &p_sour
 }
 
 void EditorNode::add_editor_plugin(EditorPlugin *p_editor, bool p_config_changed) {
-#ifndef DISABLE_DEPRECATED
-	if (p_editor->has_main_screen()) {
-		singleton->editor_main_screen->add_main_plugin(p_editor);
-	}
-#endif
 	singleton->editor_data.add_editor_plugin(p_editor);
 	singleton->add_child(p_editor);
 	if (p_config_changed) {
@@ -4505,11 +4479,6 @@ void EditorNode::add_editor_plugin(EditorPlugin *p_editor, bool p_config_changed
 }
 
 void EditorNode::remove_editor_plugin(EditorPlugin *p_editor, bool p_config_changed) {
-#ifndef DISABLE_DEPRECATED
-	if (p_editor->has_main_screen()) {
-		singleton->editor_main_screen->remove_main_plugin(p_editor);
-	}
-#endif
 	p_editor->make_visible(false);
 	p_editor->clear();
 	if (p_config_changed) {
@@ -5573,11 +5542,6 @@ void EditorNode::_add_to_recent_scenes(const String &p_scene) {
 	Array rc = EditorSettings::get_singleton()->get_project_metadata("recent_files", "scenes", Array());
 	const String scene_uid = ResourceUID::path_to_uid(p_scene);
 
-#ifndef DISABLE_DEPRECATED
-	if (rc.has(p_scene)) {
-		rc.erase(p_scene);
-	}
-#endif
 	if (rc.has(scene_uid)) {
 		rc.erase(scene_uid);
 	}
@@ -8232,7 +8196,6 @@ void EditorNode::_build_project_menu(bool p_dark_mode) {
 		tool_menu->connect("index_pressed", callable_mp(this, &EditorNode::_tool_menu_option));
 		tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/orphan_resource_explorer"), TOOLS_ORPHAN_RESOURCES);
 		tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/engine_compilation_configuration_editor"), TOOLS_BUILD_PROFILE_MANAGER);
-		tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/upgrade_project"), TOOLS_PROJECT_UPGRADE);
 		tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/clear_project_cache"), TOOLS_CLEAR_PROJECT_CACHE);
 	}
 	project_menu->add_submenu_node_item(TTRC("Tools"), tool_menu);
@@ -8504,7 +8467,6 @@ HashMap<String, Variant> EditorNode::get_initial_settings() {
 	HashMap<String, Variant> settings;
 	settings["display/window/stretch/aspect"] = "expand";
 	settings["display/window/stretch/mode"] = "canvas_items";
-	settings["gui/common/auto_focus_strategy"] = Control::AutoFocusStrategy::STRATEGY_BALLOON;
 	settings["input_devices/joypads/ignore_joypad_on_unfocused_application"] = true;
 	settings["physics/3d/physics_engine"] = PhysicsServer3DManager::JOLT_PHYSICS_NAME;
 	settings["rendering/rendering_device/driver.windows"] = "d3d12";
@@ -8586,13 +8548,6 @@ EditorNode::EditorNode() {
 	FileAccess::set_backup_save(EDITOR_GET("filesystem/on_save/safe_save_on_backup_then_rename"));
 
 	_update_vsync_mode();
-
-	// Warm up the project upgrade tool as early as possible.
-	project_upgrade_tool = memnew(ProjectUpgradeTool);
-	run_project_upgrade_tool = EditorSettings::get_singleton()->get_project_metadata(project_upgrade_tool->META_PROJECT_UPGRADE_TOOL, project_upgrade_tool->META_RUN_ON_RESTART, false);
-	if (run_project_upgrade_tool) {
-		project_upgrade_tool->begin_upgrade();
-	}
 
 	{
 		bool agile_input_event_flushing = EDITOR_GET("input/buffering/agile_event_flushing");
@@ -9177,7 +9132,6 @@ EditorNode::EditorNode() {
 
 	ED_SHORTCUT_AND_COMMAND("editor/orphan_resource_explorer", TTRC("Orphan Resource Explorer..."));
 	ED_SHORTCUT_AND_COMMAND("editor/engine_compilation_configuration_editor", TTRC("Engine Compilation Configuration Editor..."));
-	ED_SHORTCUT_AND_COMMAND("editor/upgrade_project", TTRC("Upgrade Project Files..."));
 	ED_SHORTCUT_AND_COMMAND("editor/clear_project_cache", TTRC("Clear Project Cache..."));
 
 #ifdef WEB_ENABLED
@@ -9880,7 +9834,6 @@ EditorNode::~EditorNode() {
 	memdelete(editor_plugins_force_over);
 	memdelete(editor_plugins_force_input_forwarding);
 	memdelete(progress_hb);
-	memdelete(project_upgrade_tool);
 	memdelete(editor_dock_manager);
 
 	EditorSettings::destroy();

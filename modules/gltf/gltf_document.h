@@ -73,7 +73,6 @@ public:
 	};
 
 private:
-	int _naming_version = 2;
 	String _image_format = "PNG";
 	float _lossy_quality = 0.75f;
 	String _fallback_image_format = "None";
@@ -102,8 +101,6 @@ public:
 	static Ref<GLTFObjectModelProperty> import_object_model_property(Ref<GLTFState> p_state, const String &p_json_pointer);
 	static Ref<GLTFObjectModelProperty> export_object_model_property(Ref<GLTFState> p_state, const NodePath &p_node_path, const Node *p_godot_node, GLTFNodeIndex p_gltf_node_index);
 
-	void set_naming_version(int p_version);
-	int get_naming_version() const;
 	void set_image_format(const String &p_image_format);
 	String get_image_format() const;
 	void set_lossy_quality(float p_lossy_quality);
@@ -188,7 +185,6 @@ private:
 	Error _serialize_animations(Ref<GLTFState> p_state);
 	bool _does_skinned_mesh_require_placeholder_node(Ref<GLTFState> p_state, Ref<GLTFNode> p_gltf_node);
 	BoneAttachment3D *_generate_bone_attachment(Skeleton3D *p_godot_skeleton, const Ref<GLTFNode> &p_bone_node);
-	BoneAttachment3D *_generate_bone_attachment_compat_4pt4(Ref<GLTFState> p_state, Skeleton3D *p_skeleton, const GLTFNodeIndex p_node_index, const GLTFNodeIndex p_bone_index);
 	ImporterMeshInstance3D *_generate_mesh_instance(Ref<GLTFState> p_state, const GLTFNodeIndex p_node_index);
 	Camera3D *_generate_camera(Ref<GLTFState> p_state, const GLTFNodeIndex p_node_index);
 	Light3D *_generate_light(Ref<GLTFState> p_state, const GLTFNodeIndex p_node_index);
@@ -249,8 +245,6 @@ public:
 	void _generate_scene_node(Ref<GLTFState> p_state, const GLTFNodeIndex p_node_index, Node *p_scene_parent, Node *p_scene_root);
 	void _generate_skeleton_bone_node(Ref<GLTFState> p_state, const GLTFNodeIndex p_node_index, Node3D *p_current_node, Node *p_scene_parent, Node *p_scene_root);
 	void _attach_node_to_skeleton(Ref<GLTFState> p_state, const GLTFNodeIndex p_node_index, Node3D *p_current_node, Skeleton3D *p_godot_skeleton, Node *p_scene_root, GLTFNodeIndex p_bone_node_index = -1);
-	void _generate_scene_node_compat_4pt4(Ref<GLTFState> p_state, const GLTFNodeIndex p_node_index, Node *p_scene_parent, Node *p_scene_root);
-	void _generate_skeleton_bone_node_compat_4pt4(Ref<GLTFState> p_state, const GLTFNodeIndex p_node_index, Node *p_scene_parent, Node *p_scene_root);
 	void _import_animation(Ref<GLTFState> p_state, AnimationPlayer *p_animation_player,
 			const GLTFAnimationIndex p_index, const bool p_trimming, const bool p_remove_immutable_tracks);
 	void _convert_mesh_instances(Ref<GLTFState> p_state);

@@ -180,11 +180,6 @@ static String get_atom_name(Display *p_disp, Atom p_atom) {
 
 bool DisplayServerX11::has_feature(DisplayServerEnums::Feature p_feature) const {
 	switch (p_feature) {
-#ifndef DISABLE_DEPRECATED
-		case DisplayServerEnums::FEATURE_GLOBAL_MENU: {
-			return (native_menu && native_menu->has_feature(NativeMenu::FEATURE_GLOBAL_MENU));
-		} break;
-#endif
 		case DisplayServerEnums::FEATURE_SUBWINDOWS:
 #ifdef TOUCH_ENABLED
 		case DisplayServerEnums::FEATURE_TOUCHSCREEN:

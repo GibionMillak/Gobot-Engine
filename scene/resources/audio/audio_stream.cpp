@@ -343,9 +343,6 @@ void AudioStream::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_meta_stream"), &AudioStream::is_meta_stream);
 
 	GDVIRTUAL_BIND(_instantiate_playback);
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL_BIND(_get_stream_name);
-#endif
 	GDVIRTUAL_BIND(_get_length);
 	GDVIRTUAL_BIND(_is_monophonic);
 	GDVIRTUAL_BIND(_get_bpm)

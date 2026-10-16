@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "spring_bone_simulator_3d.h"
-#include "spring_bone_simulator_3d.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/object/callable_mp.h"

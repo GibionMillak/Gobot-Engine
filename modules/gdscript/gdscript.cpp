@@ -48,12 +48,6 @@
 #include "editor/gdscript_docgen.h"
 #endif
 
-#ifdef TESTS_ENABLED
-#ifndef DISABLE_DEPRECATED
-#include "core/error/error_macros.h"
-#include "core/os/os.h"
-#endif
-#endif
 
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
@@ -1761,46 +1755,12 @@ void GDScriptInstance::get_property_list(List<PropertyInfo> *r_properties) const
 				Variant ret = E->value->call(const_cast<GDScriptInstance *>(this), nullptr, 0, err);
 				if (err.error == Callable::CallError::CALL_OK) {
 					// GH-118877. We decided to make an exception to maintain compatibility, since the problem can only be detected at runtime.
-#ifdef DISABLE_DEPRECATED
 					ERR_FAIL_COND_MSG(ret.get_type() != Variant::ARRAY, R"*(Wrong type for "_get_property_list()", must be "Array[Dictionary]".)*");
-#else // !DISABLE_DEPRECATED
-					ERR_FAIL_COND_MSG(ret.get_type() != Variant::ARRAY, R"*(Wrong type for "_get_property_list()", must be an array of dictionaries.)*");
-#endif // DISABLE_DEPRECATED
 
 					Array arr = ret;
 
 					// GH-118877. We decided to make an exception to maintain compatibility, since the problem can only be detected at runtime.
-#ifdef DISABLE_DEPRECATED
 					ERR_FAIL_COND_MSG(arr.get_typed_builtin() != Variant::DICTIONARY, R"*(Wrong type for "_get_property_list()", must be "Array[Dictionary]".)*");
-#else // !DISABLE_DEPRECATED
-#ifdef DEBUG_ENABLED
-					if (arr.get_typed_builtin() != Variant::DICTIONARY) {
-						static bool error_shown = false;
-						if (unlikely(!error_shown)) {
-							error_shown = true;
-
-							String elem_type;
-							if (arr.is_typed()) {
-								const Ref<Script> script_type = arr.get_typed_script();
-								if (script_type.is_valid() && script_type->is_script_valid()) {
-									elem_type = GDScript::debug_get_script_name(script_type);
-								} else if (!arr.get_typed_class_name().is_empty()) {
-									elem_type = arr.get_typed_class_name();
-								} else {
-									elem_type = Variant::get_type_name((Variant::Type)arr.get_typed_builtin());
-								}
-								elem_type = vformat("[%s]", elem_type);
-							}
-
-							String msg = vformat(R"*("_get_property_list()" should return "Array[Dictionary]", not "Array%s".)*", elem_type);
-							msg += " The old behavior is supported for compatibility and may be removed in the future.";
-							msg += " This message is printed once and will not be repeated for similar errors.";
-
-							ERR_PRINT(msg);
-						}
-					}
-#endif // DEBUG_ENABLED
-#endif // DISABLE_DEPRECATED
 
 					for (int i = 0; i < arr.size(); i++) {
 						Dictionary d = arr[i];
@@ -2201,14 +2161,6 @@ void GDScriptLanguage::init() {
 	}
 #endif // DEBUG_ENABLED
 
-#ifdef TESTS_ENABLED
-#ifndef DISABLE_DEPRECATED
-	if (OS::get_singleton()->get_cmdline_args().find("--gdscript-generate-tests")) {
-		ERR_PRINT(R"(The command for generating GDScript test output has changed to "--test gdscript-generate-tests")");
-		exit(-1);
-	}
-#endif // !DISABLE_DEPRECATED
-#endif // TESTS_ENABLED
 }
 
 #ifdef TOOLS_ENABLED
@@ -2935,17 +2887,8 @@ GDScriptLanguage::GDScriptLanguage() {
 		const Variant default_value = GDScriptWarning::get_default_value(code);
 		GLOBAL_DEF(GDScriptWarning::get_property_info(code), default_value);
 
-#ifndef DISABLE_DEPRECATED
-		if (i >= GDScriptWarning::FIRST_DEPRECATED_WARNING) {
-			const String setting_path = GDScriptWarning::get_setting_path_from_code(code);
-			ProjectSettings::get_singleton()->set_as_internal(setting_path, true);
-		}
-#endif // DISABLE_DEPRECATED
 	}
 
-	// TODO: This setting has nothing to do with warnings. It should be moved at the next compatibility breakage,
-	// if the setting is still relevant at that time.
-	GLOBAL_DEF("debug/gdscript/warnings/renamed_in_godot_4_hint", true);
 #endif // DEBUG_ENABLED
 }
 

@@ -182,9 +182,6 @@ public:
 			SWAP(data[i], data[count - i - 1]);
 		}
 	}
-#ifndef DISABLE_DEPRECATED
-	[[deprecated("Use reverse() instead")]] void invert() { reverse(); }
-#endif
 
 	_FORCE_INLINE_ void clear() { _clear(); }
 	_FORCE_INLINE_ void reset() {

@@ -60,7 +60,7 @@ protected:
 	GDVIRTUAL0RC_REQUIRED(Vector<String>, _get_extensions)
 	GDVIRTUAL3R_REQUIRED(Object *, _import_scene, String, uint32_t, Dictionary)
 	GDVIRTUAL1(_get_import_options, String)
-	GDVIRTUAL3RC(Variant, _get_option_visibility, String, bool, String)
+	GDVIRTUAL3RC(Variant, _get_option_visibility, String, String, String)
 
 public:
 	enum ImportFlags {
@@ -79,7 +79,6 @@ public:
 	virtual Node *import_scene(const String &p_path, uint32_t p_flags, const HashMap<StringName, Variant> &p_options, List<String> *r_missing_deps, Error *r_err = nullptr);
 	virtual void get_import_options(const String &p_path, List<ResourceImporter::ImportOption> *r_options);
 	virtual Variant get_option_visibility(const String &p_path, const String &p_scene_import_type, const String &p_option, const HashMap<StringName, Variant> &p_options);
-	virtual void handle_compatibility_options(HashMap<StringName, Variant> &p_import_params) const {}
 };
 
 VARIANT_BITFIELD_CAST(EditorSceneFormatImporter::ImportFlags)
@@ -122,11 +121,11 @@ private:
 
 protected:
 	GDVIRTUAL1(_get_internal_import_options, int)
-	GDVIRTUAL3RC(Variant, _get_internal_option_visibility, int, bool, String)
+	GDVIRTUAL3RC(Variant, _get_internal_option_visibility, int, String, String)
 	GDVIRTUAL2RC(Variant, _get_internal_option_update_view_required, int, String)
 	GDVIRTUAL4(_internal_process, int, Node *, Node *, Ref<Resource>)
 	GDVIRTUAL1(_get_import_options, String)
-	GDVIRTUAL3RC(Variant, _get_option_visibility, String, bool, String)
+	GDVIRTUAL3RC(Variant, _get_option_visibility, String, String, String)
 	GDVIRTUAL1(_pre_process, Node *)
 	GDVIRTUAL1(_post_process, Node *)
 
@@ -276,7 +275,6 @@ public:
 
 	virtual void get_import_options(const String &p_path, List<ImportOption> *r_options, int p_preset = 0) const override;
 	virtual bool get_option_visibility(const String &p_path, const String &p_option, const HashMap<StringName, Variant> &p_options) const override;
-	virtual void handle_compatibility_options(HashMap<StringName, Variant> &p_import_params) const override;
 	// Import scenes *after* everything else (such as textures).
 	virtual int get_import_order() const override { return ResourceImporter::IMPORT_ORDER_SCENE; }
 

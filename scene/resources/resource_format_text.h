@@ -44,8 +44,6 @@ public:
 		// Version 3: New string ID for ext/subresources, breaks forward compat.
 		// Version 4: PackedByteArray can be base64 encoded, and PackedVector4Array was added.
 		FORMAT_VERSION = 4,
-		// For compat, save as version 3 if not using PackedVector4Array or no big PackedByteArray.
-		FORMAT_VERSION_COMPAT = 3,
 	};
 
 private:
@@ -189,7 +187,6 @@ class ResourceFormatSaverTextInstance {
 	List<Ref<Resource>> saved_resources;
 	HashMap<Ref<Resource>, String> external_resources;
 	HashMap<Ref<Resource>, String> internal_resources;
-	bool use_compat = true;
 
 	struct ResourceSort {
 		Ref<Resource> resource;

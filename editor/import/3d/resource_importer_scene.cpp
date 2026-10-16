@@ -97,8 +97,7 @@ void EditorSceneFormatImporter::get_import_options(const String &p_path, List<Re
 
 Variant EditorSceneFormatImporter::get_option_visibility(const String &p_path, const String &p_scene_import_type, const String &p_option, const HashMap<StringName, Variant> &p_options) {
 	Variant ret;
-	// For compatibility with the old API, pass the import type as a boolean.
-	GDVIRTUAL_CALL(_get_option_visibility, p_path, p_scene_import_type == "AnimationLibrary", p_option, ret);
+	GDVIRTUAL_CALL(_get_option_visibility, p_path, p_scene_import_type, p_option, ret);
 	return ret;
 }
 
@@ -109,7 +108,7 @@ void EditorSceneFormatImporter::_bind_methods() {
 	GDVIRTUAL_BIND(_get_extensions);
 	GDVIRTUAL_BIND(_import_scene, "path", "flags", "options");
 	GDVIRTUAL_BIND(_get_import_options, "path");
-	GDVIRTUAL_BIND(_get_option_visibility, "path", "for_animation", "option");
+	GDVIRTUAL_BIND(_get_option_visibility, "path", "scene_import_type", "option");
 
 	BIND_BITFIELD_FLAG(IMPORT_SCENE);
 	BIND_BITFIELD_FLAG(IMPORT_ANIMATION);
@@ -175,8 +174,7 @@ void EditorScenePostImportPlugin::get_internal_import_options(InternalImportCate
 Variant EditorScenePostImportPlugin::get_internal_option_visibility(InternalImportCategory p_category, const String &p_scene_import_type, const String &p_option, const HashMap<StringName, Variant> &p_options) const {
 	current_options = &p_options;
 	Variant ret;
-	// For compatibility with the old API, pass the import type as a boolean.
-	GDVIRTUAL_CALL(_get_internal_option_visibility, p_category, p_scene_import_type == "AnimationLibrary", p_option, ret);
+	GDVIRTUAL_CALL(_get_internal_option_visibility, p_category, p_scene_import_type, p_option, ret);
 	current_options = nullptr;
 	return ret;
 }
@@ -203,7 +201,7 @@ void EditorScenePostImportPlugin::get_import_options(const String &p_path, List<
 Variant EditorScenePostImportPlugin::get_option_visibility(const String &p_path, const String &p_scene_import_type, const String &p_option, const HashMap<StringName, Variant> &p_options) const {
 	current_options = &p_options;
 	Variant ret;
-	GDVIRTUAL_CALL(_get_option_visibility, p_path, p_scene_import_type == "AnimationLibrary", p_option, ret);
+	GDVIRTUAL_CALL(_get_option_visibility, p_path, p_scene_import_type, p_option, ret);
 	current_options = nullptr;
 	return ret;
 }
@@ -226,11 +224,11 @@ void EditorScenePostImportPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_import_option_advanced", "type", "name", "default_value", "hint", "hint_string", "usage_flags"), &EditorScenePostImportPlugin::add_import_option_advanced, DEFVAL(PROPERTY_HINT_NONE), DEFVAL(""), DEFVAL(PROPERTY_USAGE_DEFAULT));
 
 	GDVIRTUAL_BIND(_get_internal_import_options, "category");
-	GDVIRTUAL_BIND(_get_internal_option_visibility, "category", "for_animation", "option");
+	GDVIRTUAL_BIND(_get_internal_option_visibility, "category", "scene_import_type", "option");
 	GDVIRTUAL_BIND(_get_internal_option_update_view_required, "category", "option");
 	GDVIRTUAL_BIND(_internal_process, "category", "base_node", "node", "resource");
 	GDVIRTUAL_BIND(_get_import_options, "path");
-	GDVIRTUAL_BIND(_get_option_visibility, "path", "for_animation", "option");
+	GDVIRTUAL_BIND(_get_option_visibility, "path", "scene_import_type", "option");
 	GDVIRTUAL_BIND(_pre_process, "scene");
 	GDVIRTUAL_BIND(_post_process, "scene");
 
@@ -2735,12 +2733,6 @@ void ResourceImporterScene::get_import_options(const String &p_path, List<Import
 	}
 }
 
-void ResourceImporterScene::handle_compatibility_options(HashMap<StringName, Variant> &p_import_params) const {
-	for (Ref<EditorSceneFormatImporter> importer_elem : scene_importers) {
-		importer_elem->handle_compatibility_options(p_import_params);
-	}
-}
-
 void ResourceImporterScene::_replace_owner(Node *p_node, Node *p_scene, Node *p_new_owner) {
 	if (p_node != p_new_owner && p_node->get_owner() == p_scene) {
 		p_node->set_owner(p_new_owner);
@@ -3407,10 +3399,7 @@ Error ResourceImporterScene::import(ResourceUID::ID p_source_id, const String &p
 	scene = _replace_node_with_type_and_script(scene, root_type, root_script);
 
 	String root_name = p_options["nodes/root_name"];
-	if (!root_name.is_empty() && root_name != "Scene Root") {
-		// TODO: Remove `&& root_name != "Scene Root"` for Godot 5.0.
-		// For backwards compatibility with existing .import files,
-		// treat "Scene Root" as having no root name override.
+	if (!root_name.is_empty()) {
 		scene->set_name(root_name);
 	} else if (String(scene->get_name()).is_empty()) {
 		scene->set_name(p_save_path.get_file().get_basename());

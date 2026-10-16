@@ -33,7 +33,6 @@
 #include "core/config/engine.h"
 #include "core/extension/gdextension_function_loader.h"
 #include "core/extension/gdextension_library_loader.h"
-#include "core/extension/gdextension_special_compat_hashes.h"
 #include "core/io/dir_access.h"
 #include "core/io/file_access.h"
 #include "core/object/callable_mp.h"
@@ -508,16 +507,10 @@ GDExtensionManager::GDExtensionManager() {
 	ERR_FAIL_COND(singleton != nullptr);
 	singleton = this;
 
-#ifndef DISABLE_DEPRECATED
-	GDExtensionSpecialCompatHashes::initialize();
-#endif
 }
 
 GDExtensionManager::~GDExtensionManager() {
 	if (singleton == this) {
 		singleton = nullptr;
 	}
-#ifndef DISABLE_DEPRECATED
-	GDExtensionSpecialCompatHashes::finalize();
-#endif
 }

@@ -93,12 +93,6 @@ void EditorVCSInterface::commit(const String &p_msg, bool p_amend) {
 		return;
 	}
 
-#ifndef DISABLE_DEPRECATED
-	if (GDVIRTUAL_CALL(_commit_bind_compat_117968, p_msg)) {
-		return;
-	}
-#endif
-
 	ERR_PRINT_ONCE("Required virtual method " + get_class() + "::_commit must be overridden before calling.");
 }
 
@@ -347,10 +341,6 @@ void EditorVCSInterface::_bind_methods() {
 	GDVIRTUAL_BIND(_push, "remote", "force");
 	GDVIRTUAL_BIND(_fetch, "remote");
 	GDVIRTUAL_BIND(_get_line_diff, "file_path", "text");
-
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL_BIND_COMPAT(_commit_bind_compat_117968, "msg");
-#endif
 
 	ClassDB::bind_method(D_METHOD("create_diff_line", "new_line_no", "old_line_no", "content", "status"), &EditorVCSInterface::create_diff_line);
 	ClassDB::bind_method(D_METHOD("create_diff_hunk", "old_start", "new_start", "old_lines", "new_lines"), &EditorVCSInterface::create_diff_hunk);

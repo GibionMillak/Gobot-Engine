@@ -107,7 +107,6 @@ class ProgressDialog;
 class ProjectExportDialog;
 class ProjectSettingsEditor;
 class SceneImportSettingsDialog;
-class ProjectUpgradeTool;
 
 #ifdef ANDROID_ENABLED
 class TouchActionsPanel;
@@ -184,7 +183,6 @@ public:
 
 		TOOLS_ORPHAN_RESOURCES,
 		TOOLS_BUILD_PROFILE_MANAGER,
-		TOOLS_PROJECT_UPGRADE,
 		TOOLS_CLEAR_PROJECT_CACHE,
 		TOOLS_CUSTOM,
 
@@ -455,7 +453,6 @@ private:
 
 	bool changing_scene = false;
 	bool cmdline_mode = false;
-	bool convert_old = false;
 	bool immediate_dialog_confirmed = false;
 	bool restoring_scenes = false;
 	bool settings_overrides_changed = false;
@@ -499,8 +496,6 @@ private:
 	HashMap<String, Ref<Texture2D>> icon_type_cache;
 	HashMap<Pair<String, String>, Ref<Texture2D>> class_icon_cache;
 
-	ProjectUpgradeTool *project_upgrade_tool = nullptr;
-	bool run_project_upgrade_tool = false;
 	ConfirmationDialog *clear_cache_dialog = nullptr;
 
 	LocalVector<String> files_to_delete_on_exit;
@@ -726,8 +721,6 @@ private:
 
 	void _progress_dialog_visibility_changed();
 	void _load_error_dialog_visibility_changed();
-
-	void _execute_upgrades();
 
 	bool _is_project_data_missing();
 
@@ -974,8 +967,6 @@ public:
 
 	void request_instantiate_scene(const String &p_path);
 	void request_instantiate_scenes(const Vector<String> &p_files);
-
-	void set_convert_old_scene(bool p_old) { convert_old = p_old; }
 
 	void notify_all_debug_sessions_exited();
 

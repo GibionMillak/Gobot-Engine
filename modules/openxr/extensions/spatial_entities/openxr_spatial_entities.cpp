@@ -227,9 +227,6 @@ void OpenXRSpatialComponentData::_bind_methods() {
 	GDVIRTUAL_BIND(_set_capacity, "capacity");
 	GDVIRTUAL_BIND(_get_component_type);
 	GDVIRTUAL_BIND(_get_structure_data, "next");
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL_BIND_COMPAT(_get_structure_data_bind_compat_118128, "next");
-#endif
 }
 
 void OpenXRSpatialComponentData::set_capacity(uint32_t p_capacity) {
@@ -257,12 +254,6 @@ void *OpenXRSpatialComponentData::get_structure_data(void *p_next) {
 	if (GDVIRTUAL_CALL(_get_structure_data, (uint64_t)p_next, pointer)) {
 		return reinterpret_cast<void *>(pointer);
 	}
-
-#ifndef DISABLE_DEPRECATED
-	if (GDVIRTUAL_CALL(_get_structure_data_bind_compat_118128, (uint64_t)p_next, pointer)) {
-		return reinterpret_cast<void *>(pointer);
-	}
-#endif
 
 	return p_next;
 }

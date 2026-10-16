@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "graph_edit.h"
-#include "graph_edit.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/input/input.h"

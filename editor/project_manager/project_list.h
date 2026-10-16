@@ -81,6 +81,7 @@ class ProjectListItemControl : public HBoxContainer {
 
 	VersionMatchType version_match_type = VersionMatchType::PROJECT_USES_SAME;
 
+	void _update_version_icon();
 	void _update_favorite_button_focus_color();
 	void _favorite_button_pressed();
 	void _explore_button_pressed();
@@ -113,7 +114,6 @@ public:
 	void set_unsupported_features(PackedStringArray p_features);
 
 	bool should_load_project_icon() const;
-	bool is_older_version() const { return version_match_type == VersionMatchType::PROJECT_USES_OLDER_MAJOR || version_match_type == VersionMatchType::PROJECT_USES_OLDER_MINOR; }
 	void set_selected(bool p_selected, bool p_hide_focus = false);
 
 	void set_is_favorite(bool p_favorite);
@@ -256,8 +256,6 @@ private:
 
 	// Initialization & loading.
 
-	void _migrate_config();
-
 	static Item load_project_data(const String &p_property_key, bool p_favorite);
 	void _update_icons_async();
 	void _load_project_icon(int p_index);
@@ -303,8 +301,6 @@ public:
 	static inline const char *SIGNAL_PROJECT_ASK_OPEN = "project_ask_open";
 	static inline const char *SIGNAL_MENU_OPTION_SELECTED = "menu_option_selected";
 
-	static bool project_feature_looks_like_version(const String &p_feature);
-
 	// Initialization & loading.
 
 	void save_config();
@@ -322,7 +318,6 @@ public:
 	// Project list items.
 
 	void add_project(const String &dir_path, bool favorite);
-	void set_project_version(const String &p_project_path, int version);
 	int refresh_project(const String &dir_path);
 	void ensure_project_visible(int p_index);
 	int get_index(const ProjectListItemControl *p_control) const;

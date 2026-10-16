@@ -73,22 +73,7 @@ void ProjectListItemControl::_notification(int p_what) {
 
 			project_path->add_theme_color_override(SceneStringName(font_color), get_theme_color(SceneStringName(font_color), SNAME("ProjectList")));
 
-			switch (version_match_type) {
-				case VersionMatchType::PROJECT_USES_OLDER_MAJOR:
-					project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectUpgradeMajor")));
-					break;
-				case VersionMatchType::PROJECT_USES_OLDER_MINOR:
-					project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectUpgrade")));
-					break;
-				case VersionMatchType::PROJECT_USES_NEWER_MAJOR:
-					project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectDowngradeMajor")));
-					break;
-				case VersionMatchType::PROJECT_USES_NEWER_MINOR:
-					project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectDowngrade")));
-					break;
-				default:
-					break;
-			}
+			_update_version_icon();
 
 			project_unsupported_features->set_texture(get_editor_theme_icon(SNAME("NodeWarning")));
 
@@ -282,94 +267,63 @@ void ProjectListItemControl::set_last_edited_info(const String &p_info) {
 	last_edited_info->set_text(p_info);
 }
 
+void ProjectListItemControl::_update_version_icon() {
+	switch (version_match_type) {
+		case VersionMatchType::PROJECT_USES_OLDER_MAJOR:
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectUpgradeMajor")));
+			break;
+		case VersionMatchType::PROJECT_USES_OLDER_MINOR:
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectUpgrade")));
+			break;
+		case VersionMatchType::PROJECT_USES_NEWER_MAJOR:
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectDowngradeMajor")));
+			break;
+		case VersionMatchType::PROJECT_USES_NEWER_MINOR:
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectDowngrade")));
+			break;
+		default:
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("StatusWarning")));
+			break;
+	}
+}
+
 void ProjectListItemControl::set_project_version(const String &p_info) {
-	project_version->set_text(p_info);
+	project_version->set_text(p_info.is_empty() ? TTR("Unknown") : p_info);
+	version_match_type = VersionMatchType::PROJECT_USES_SAME;
+	project_different_version->hide();
+	if (p_info.is_empty()) {
+		project_version->set_tooltip_text(TTR("The project does not record an editor version."));
+		return;
+	}
+	const int major = p_info.get_slicec('.', 0).to_int();
+	const int minor = p_info.get_slicec('.', 1).to_int();
+	if (major < GODOT_VERSION_MAJOR) {
+		version_match_type = VersionMatchType::PROJECT_USES_OLDER_MAJOR;
+	} else if (major > GODOT_VERSION_MAJOR) {
+		version_match_type = VersionMatchType::PROJECT_USES_NEWER_MAJOR;
+	} else if (minor < GODOT_VERSION_MINOR) {
+		version_match_type = VersionMatchType::PROJECT_USES_OLDER_MINOR;
+	} else if (minor > GODOT_VERSION_MINOR) {
+		version_match_type = VersionMatchType::PROJECT_USES_NEWER_MINOR;
+	}
+	_update_version_icon();
+	project_version->set_tooltip_text(String());
+	if (p_info != GODOT_VERSION_NUMBER) {
+		project_different_version->set_focus_mode(FOCUS_ACCESSIBILITY);
+		project_different_version->set_tooltip_text(vformat(TTR("This project was last saved with editor %s. This editor is %s. Open the project with the appropriate editor version."), p_info, GODOT_VERSION_NUMBER));
+		project_different_version->show();
+	}
 }
 
 void ProjectListItemControl::set_unsupported_features(PackedStringArray p_features) {
-	if (p_features.size() > 0) {
-		String tooltip_text = "";
-		bool unknown_version = false;
-		for (int i = 0; i < p_features.size(); i++) {
-			if (ProjectList::project_feature_looks_like_version(p_features[i])) {
-				PackedStringArray project_version_split = p_features[i].split(".");
-				int project_version_major = 0, project_version_minor = 0;
-				if (project_version_split.size() >= 2) {
-					project_version_major = project_version_split[0].to_int();
-					project_version_minor = project_version_split[1].to_int();
-				}
-
-				version_match_type = VersionMatchType::PROJECT_USES_SAME;
-				if (project_version_major > GODOT_VERSION_MAJOR) {
-					version_match_type = VersionMatchType::PROJECT_USES_NEWER_MAJOR;
-				} else if (project_version_major < GODOT_VERSION_MAJOR) {
-					version_match_type = VersionMatchType::PROJECT_USES_OLDER_MAJOR;
-				} else {
-					// Project is same major version.
-					// Is it the same minor version, or an upgrade or downgrade?
-					if (project_version_minor > GODOT_VERSION_MINOR) {
-						version_match_type = VersionMatchType::PROJECT_USES_NEWER_MINOR;
-					} else if (project_version_minor < GODOT_VERSION_MINOR) {
-						version_match_type = VersionMatchType::PROJECT_USES_OLDER_MINOR;
-					}
-				}
-
-				if (version_match_type != VersionMatchType::PROJECT_USES_SAME) {
-					String project_version_tooltip_text = TTR("This project was last edited in a different Godot version: ") + p_features[i] + "\n";
-					if (version_match_type == VersionMatchType::PROJECT_USES_OLDER_MAJOR || version_match_type == VersionMatchType::PROJECT_USES_OLDER_MINOR) {
-						project_version_tooltip_text += vformat(TTR("Opening it will upgrade it to Godot %s.%s."), GODOT_VERSION_MAJOR, GODOT_VERSION_MINOR) + "\n";
-					} else if (version_match_type == VersionMatchType::PROJECT_USES_NEWER_MAJOR || version_match_type == VersionMatchType::PROJECT_USES_NEWER_MINOR) {
-						project_version_tooltip_text += vformat(TTR("Opening it will downgrade it to Godot %s.%s."), GODOT_VERSION_MAJOR, GODOT_VERSION_MINOR) + "\n";
-						project_version_tooltip_text += TTR("Downgrading projects is not recommended.") + "\n";
-					}
-					project_different_version->set_focus_mode(FOCUS_ACCESSIBILITY);
-					project_different_version->set_tooltip_text(project_version_tooltip_text);
-					project_different_version->show();
-				} else {
-					project_different_version->hide();
-				}
-			} else {
-				if (p_features[i] == "3.x") {
-					version_match_type = VersionMatchType::PROJECT_USES_OLDER_MAJOR;
-					String project_version_tooltip_text = TTR("This project was last edited in a different Godot version: ") + p_features[i] + "\n";
-					project_version_tooltip_text += vformat(TTR("Opening it will upgrade it to Godot %s.%s."), GODOT_VERSION_MAJOR, GODOT_VERSION_MINOR) + "\n";
-					project_different_version->set_focus_mode(FOCUS_ACCESSIBILITY);
-					project_different_version->set_tooltip_text(project_version_tooltip_text);
-					project_different_version->show();
-				} else if (p_features[i] == "u-ver") {
-					unknown_version = true;
-					project_different_version->hide();
-				}
-			}
-
-			p_features.remove_at(i);
-			i--;
-		}
-
-		// This is actually triggered when the project.godot file's config_version
-		// is less than 4, so perhaps it'd be more accurate to say the engine configuration
-		// file's version is not supported...? If the config/features array includes
-		// a proper version number, it will be displayed alongside the "unknown version"
-		// warning otherwise.
-		if (unknown_version) {
-			tooltip_text += TTR("This project uses an unknown version of Godot.") + "\n";
-		}
-		if (p_features.size() > 0) {
-			String unsupported_features_str = String(", ").join(p_features);
-			tooltip_text += TTR("This project uses features unsupported by the current build:") + "\n" + unsupported_features_str;
-		}
-
-		if (tooltip_text.is_empty()) {
-			return;
-		}
-		project_version->set_tooltip_text(tooltip_text);
-		project_unsupported_features->set_focus_mode(FOCUS_ACCESSIBILITY);
-		project_unsupported_features->set_tooltip_text(tooltip_text);
-		project_unsupported_features->show();
-	} else {
-		project_different_version->hide();
-		project_unsupported_features->hide();
+	project_unsupported_features->hide();
+	if (p_features.is_empty()) {
+		return;
 	}
+	const String tooltip_text = TTR("This project uses features unsupported by the current build:") + "\n" + String(", ").join(p_features);
+	project_unsupported_features->set_focus_mode(FOCUS_ACCESSIBILITY);
+	project_unsupported_features->set_tooltip_text(tooltip_text);
+	project_unsupported_features->show();
 }
 
 bool ProjectListItemControl::should_load_project_icon() const {
@@ -635,12 +589,6 @@ String ProjectList::Item::get_last_edited_string() const {
 	return Time::get_singleton()->get_datetime_string_from_unix_time(last_edited + tz.bias * 60, true);
 }
 
-// Helpers.
-
-bool ProjectList::project_feature_looks_like_version(const String &p_feature) {
-	return p_feature.contains_char('.') && p_feature.substr(0, 3).is_numeric();
-}
-
 // Notifications.
 
 void ProjectList::_notification(int p_what) {
@@ -736,38 +684,6 @@ void ProjectList::_scan_finished() {
 
 // Initialization & loading.
 
-void ProjectList::_migrate_config() {
-	// Proposal #1637 moved the project list from editor settings to a separate config file
-	// If the new config file doesn't exist, populate it from EditorSettings
-	if (FileAccess::exists(_config_path)) {
-		return;
-	}
-
-	List<PropertyInfo> properties;
-	EditorSettings::get_singleton()->get_property_list(&properties);
-
-	for (const PropertyInfo &E : properties) {
-		// This is actually something like "projects/C:::Documents::Godot::Projects::MyGame"
-		String property_key = E.name;
-		if (!property_key.begins_with("projects/")) {
-			continue;
-		}
-
-		String path = EDITOR_GET(property_key);
-		print_line("Migrating legacy project '" + path + "'.");
-
-		String favoriteKey = "favorite_projects/" + property_key.get_slicec('/', 1);
-		bool favorite = EditorSettings::get_singleton()->has_setting(favoriteKey);
-		add_project(path, favorite);
-		if (favorite) {
-			EditorSettings::get_singleton()->erase(favoriteKey);
-		}
-		EditorSettings::get_singleton()->erase(property_key);
-	}
-
-	save_config();
-}
-
 void ProjectList::save_config() {
 	_config.save(_config_path);
 }
@@ -818,26 +734,10 @@ ProjectList::Item ProjectList::load_project_data(const String &p_path, bool p_fa
 		}
 	}
 
-	PackedStringArray project_features = cf->get_value("application", "config/features", PackedStringArray());
-	PackedStringArray unsupported_features = ProjectSettings::get_unsupported_features(project_features);
-
-	String project_version = "?";
-	for (int i = 0; i < project_features.size(); i++) {
-		if (ProjectList::project_feature_looks_like_version(project_features[i])) {
-			project_version = project_features[i];
-			break;
-		}
-	}
-
-	if (config_version < ProjectSettings::CONFIG_VERSION) {
-		// Previous versions may not have unsupported features.
-		if (config_version == 4) {
-			unsupported_features.push_back("3.x");
-			project_version = "3.x";
-		} else {
-			unsupported_features.push_back("u-ver");
-		}
-	}
+	const PackedStringArray project_features = cf->get_value("application", "config/features", PackedStringArray());
+	const String rendering_method = cf->get_value("rendering", "renderer/rendering_method", GLOBAL_GET("rendering/renderer/rendering_method"));
+	const PackedStringArray unsupported_features = ProjectSettings::get_unsupported_features(project_features, rendering_method);
+	const String project_version = cf->get_value("application", "config/editor_version", "");
 
 	uint64_t last_edited = 0;
 	if (cf_err == OK) {
@@ -1105,15 +1005,6 @@ void ProjectList::add_project(const String &dir_path, bool favorite) {
 	queue_accessibility_update();
 }
 
-void ProjectList::set_project_version(const String &p_project_path, int p_version) {
-	for (ProjectList::Item &E : _projects) {
-		if (E.path == p_project_path) {
-			E.version = p_version;
-			break;
-		}
-	}
-}
-
 int ProjectList::refresh_project(const String &dir_path) {
 	// Reloads information about a specific project.
 	// If it wasn't loaded and should be in the list, it is added (i.e new project).
@@ -1198,7 +1089,6 @@ void ProjectList::_create_project_item_control(int p_index) {
 	hb->set_project_path(item.path);
 	hb->set_tooltip_text(item.description);
 	hb->set_tags(item.tags, this);
-	hb->set_project_version(item.project_version);
 
 	hb->set_is_favorite(item.favorite);
 	hb->set_is_missing(item.missing);
@@ -1220,6 +1110,7 @@ void ProjectList::_update_project_control_translatable_fields(const Item &item) 
 
 	control->set_project_title(!item.missing ? item.project_name : TTR("Missing Project"));
 	control->set_last_edited_info(item.get_last_edited_string());
+	control->set_project_version(item.project_version);
 	control->set_unsupported_features(item.unsupported_features.duplicate());
 }
 
@@ -1720,5 +1611,4 @@ ProjectList::ProjectList() {
 	add_child(project_list_vbox);
 
 	_config_path = EditorPaths::get_singleton()->get_data_dir().path_join("projects.cfg");
-	_migrate_config();
 }

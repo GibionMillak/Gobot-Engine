@@ -517,9 +517,6 @@ public:
 	TypedArray<Projection> get_camera_projections(const StringName &p_tracker_name, double p_aspect, double p_z_near, double p_z_far);
 	TypedArray<Transform3D> get_camera_offsets(const StringName &p_tracker_name);
 	bool get_view_offset(uint32_t p_view, Transform3D &r_transform);
-#ifndef DISABLE_DEPRECATED
-	bool get_view_transform(uint32_t p_view, Transform3D &r_transform);
-#endif
 	bool get_view_projection(uint32_t p_view, double p_z_near, double p_z_far, Projection &p_camera_matrix);
 	Vector2 get_eye_focus(uint32_t p_view, float p_aspect);
 	bool process();

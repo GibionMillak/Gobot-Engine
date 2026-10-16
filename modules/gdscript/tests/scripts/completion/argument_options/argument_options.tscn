@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dl28pdkxcjvym"]
+[gd_scene format=4 uid="uid://dl28pdkxcjvym"]
 
 [sub_resource type="Animation" id="Animation_d1pub"]
 resource_name = "bounce"

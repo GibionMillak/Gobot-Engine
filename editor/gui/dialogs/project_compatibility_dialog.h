@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  audio_effect_limiter.h                                                */
+/*  project_compatibility_dialog.h                                        */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,47 +30,34 @@
 
 #pragma once
 
-#include "servers/audio/audio_effect.h"
+#include "scene/gui/dialogs.h"
 
-class AudioEffectLimiter;
+class CheckBox;
+class Label;
+class VBoxContainer;
 
-class AudioEffectLimiterInstance : public AudioEffectInstance {
-	GDCLASS(AudioEffectLimiterInstance, AudioEffectInstance);
-	friend class AudioEffectLimiter;
-	Ref<AudioEffectLimiter> base;
-
-	float mix_volume_db;
+class ProjectCompatibilityDialog : public ConfirmationDialog {
+	GDCLASS(ProjectCompatibilityDialog, ConfirmationDialog);
 
 public:
-	virtual void process(const AudioFrame *p_src_frames, AudioFrame *p_dst_frames, int p_frame_count) override;
-};
+	enum Reason {
+		CONFIG_VERSION,
+		EDITOR_VERSION,
+		UNSUPPORTED_FEATURES,
+	};
 
-class AudioEffectLimiter : public AudioEffect {
-	GDCLASS(AudioEffectLimiter, AudioEffect);
+	ProjectCompatibilityDialog();
 
-	friend class AudioEffectLimiterInstance;
-	float threshold;
-	float ceiling;
-	float soft_clip;
-	float soft_clip_ratio;
+	void show_for_project(Reason p_reason, const String &p_editor_version, int p_config_version, const String &p_feature_warning = String());
+	bool is_backup_requested() const;
 
 protected:
-	static void _bind_methods();
+	void _notification(int p_what);
 
-public:
-	void set_threshold_db(float p_threshold);
-	float get_threshold_db() const;
-
-	void set_ceiling_db(float p_ceiling);
-	float get_ceiling_db() const;
-
-	void set_soft_clip_db(float p_soft_clip);
-	float get_soft_clip_db() const;
-
-	void set_soft_clip_ratio(float p_soft_clip);
-	float get_soft_clip_ratio() const;
-
-	Ref<AudioEffectInstance> instantiate() override;
-
-	AudioEffectLimiter();
+private:
+	VBoxContainer *_content_vbox = nullptr;
+	Label *_heading_lbl = nullptr;
+	Label *_summary_lbl = nullptr;
+	Label *_details_lbl = nullptr;
+	CheckBox *_backup_checkbox = nullptr;
 };

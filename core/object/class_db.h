@@ -136,8 +136,6 @@ public:
 		List<StringName> dependency_list;
 #endif
 
-		HashMap<StringName, Vector<uint32_t>> virtual_methods_compat;
-
 		bool disabled = false;
 		bool exposed = false;
 		bool reloadable = false;
@@ -184,16 +182,15 @@ public:
 
 	static HashMap<StringName, ClassInfo> classes;
 	static HashMap<StringName, StringName> resource_base_extensions;
-	static HashMap<StringName, StringName> compat_classes;
 
 #ifdef TOOLS_ENABLED
 	static HashMap<StringName, ObjectGDExtension> placeholder_extensions;
 #endif
 
 #ifdef DEBUG_ENABLED
-	static MethodBind *bind_methodfi(uint32_t p_flags, MethodBind *p_bind, bool p_compatibility, const MethodDefinition &p_method_name, const Variant **p_defs, int p_defcount);
+	static MethodBind *bind_methodfi(uint32_t p_flags, MethodBind *p_bind, const MethodDefinition &p_method_name, const Variant **p_defs, int p_defcount);
 #else
-	static MethodBind *bind_methodfi(uint32_t p_flags, MethodBind *p_bind, bool p_compatibility, const char *p_method_name, const Variant **p_defs, int p_defcount);
+	static MethodBind *bind_methodfi(uint32_t p_flags, MethodBind *p_bind, const char *p_method_name, const Variant **p_defs, int p_defcount);
 #endif // DEBUG_ENABLED
 
 	static APIType current_api;
@@ -222,8 +219,8 @@ private:
 	// Non-locking variants of get_parent_class and is_parent_class.
 	static StringName _get_parent_class(const StringName &p_class);
 	static bool _is_parent_class(const StringName &p_class, const StringName &p_inherits);
-	static MethodBind *_bind_vararg_method(MethodBind *p_bind, const StringName &p_name, const Vector<Variant> &p_default_args, bool p_compatibility);
-	static void _bind_method_custom(const StringName &p_class, MethodBind *p_method, bool p_compatibility, bool p_take_ownership = true);
+	static MethodBind *_bind_vararg_method(MethodBind *p_bind, const StringName &p_name, const Vector<Variant> &p_default_args);
+	static void _bind_method_custom(const StringName &p_class, MethodBind *p_method, bool p_take_ownership = true);
 
 	static Object *_instantiate_from_gdextension(ObjectGDExtension *p_object_gd_extension, bool p_notify_postinitialize, bool p_with_refcount);
 	static Object *_instantiate_internal(const StringName &p_class, bool p_require_real_class = false, bool p_notify_postinitialize = true, bool p_exposed_only = true, bool p_with_refcount = false);
@@ -323,7 +320,6 @@ public:
 	static StringName get_parent_class_nocheck(const StringName &p_class);
 	static bool get_inheritance_chain_nocheck(const StringName &p_class, Vector<StringName> &r_result);
 	static StringName get_parent_class(const StringName &p_class);
-	static StringName get_compatibility_remapped_class(const StringName &p_class);
 	static bool class_exists(const StringName &p_class);
 	static bool is_parent_class(const StringName &p_class, const StringName &p_inherits);
 	static bool can_instantiate(const StringName &p_class);
@@ -369,7 +365,7 @@ public:
 		if constexpr (std::is_same_v<typename member_function_traits<M>::return_type, Object *>) {
 			bind->set_return_type_is_raw_object_ptr(true);
 		}
-		return bind_methodfi(METHOD_FLAGS_DEFAULT, bind, false, p_method_name, sizeof...(p_args) == 0 ? nullptr : (const Variant **)argptrs, sizeof...(p_args));
+		return bind_methodfi(METHOD_FLAGS_DEFAULT, bind, p_method_name, sizeof...(p_args) == 0 ? nullptr : (const Variant **)argptrs, sizeof...(p_args));
 	}
 
 	template <typename N, typename M, typename... VarArgs>
@@ -384,36 +380,7 @@ public:
 		if constexpr (std::is_same_v<typename member_function_traits<M>::return_type, Object *>) {
 			bind->set_return_type_is_raw_object_ptr(true);
 		}
-		return bind_methodfi(METHOD_FLAGS_DEFAULT, bind, false, p_method_name, sizeof...(p_args) == 0 ? nullptr : (const Variant **)argptrs, sizeof...(p_args));
-	}
-
-	template <typename N, typename M, typename... VarArgs>
-	static MethodBind *bind_compatibility_method(N p_method_name, M p_method, VarArgs... p_args) {
-		Variant args[sizeof...(p_args) + 1] = { p_args..., Variant() }; // +1 makes sure zero sized arrays are also supported.
-		const Variant *argptrs[sizeof...(p_args) + 1];
-		for (uint32_t i = 0; i < sizeof...(p_args); i++) {
-			argptrs[i] = &args[i];
-		}
-		MethodBind *bind = create_method_bind(p_method);
-		if constexpr (std::is_same_v<typename member_function_traits<M>::return_type, Object *>) {
-			bind->set_return_type_is_raw_object_ptr(true);
-		}
-		return bind_methodfi(METHOD_FLAGS_DEFAULT, bind, true, p_method_name, sizeof...(p_args) == 0 ? nullptr : (const Variant **)argptrs, sizeof...(p_args));
-	}
-
-	template <typename N, typename M, typename... VarArgs>
-	static MethodBind *bind_compatibility_static_method(const StringName &p_class, N p_method_name, M p_method, VarArgs... p_args) {
-		Variant args[sizeof...(p_args) + 1] = { p_args..., Variant() }; // +1 makes sure zero sized arrays are also supported.
-		const Variant *argptrs[sizeof...(p_args) + 1];
-		for (uint32_t i = 0; i < sizeof...(p_args); i++) {
-			argptrs[i] = &args[i];
-		}
-		MethodBind *bind = create_static_method_bind(p_method);
-		bind->set_instance_class(p_class);
-		if constexpr (std::is_same_v<typename member_function_traits<M>::return_type, Object *>) {
-			bind->set_return_type_is_raw_object_ptr(true);
-		}
-		return bind_methodfi(METHOD_FLAGS_DEFAULT, bind, true, p_method_name, sizeof...(p_args) == 0 ? nullptr : (const Variant **)argptrs, sizeof...(p_args));
+		return bind_methodfi(METHOD_FLAGS_DEFAULT, bind, p_method_name, sizeof...(p_args) == 0 ? nullptr : (const Variant **)argptrs, sizeof...(p_args));
 	}
 
 	template <typename M>
@@ -426,24 +393,10 @@ public:
 		if constexpr (std::is_same_v<typename member_function_traits<M>::return_type, Object *>) {
 			bind->set_return_type_is_raw_object_ptr(true);
 		}
-		return _bind_vararg_method(bind, p_name, p_default_args, false);
-	}
-
-	template <typename M>
-	static MethodBind *bind_compatibility_vararg_method(uint32_t p_flags, const StringName &p_name, M p_method, const MethodInfo &p_info = MethodInfo(), const Vector<Variant> &p_default_args = Vector<Variant>(), bool p_return_nil_is_variant = true) {
-		Locker::Lock lock(Locker::STATE_WRITE);
-
-		MethodBind *bind = create_vararg_method_bind(p_method, p_info, p_return_nil_is_variant);
-		ERR_FAIL_NULL_V(bind, nullptr);
-
-		if constexpr (std::is_same_v<typename member_function_traits<M>::return_type, Object *>) {
-			bind->set_return_type_is_raw_object_ptr(true);
-		}
-		return _bind_vararg_method(bind, p_name, p_default_args, true);
+		return _bind_vararg_method(bind, p_name, p_default_args);
 	}
 
 	static void bind_method_custom(const StringName &p_class, MethodBind *p_method, bool p_take_ownership = true);
-	static void bind_compatibility_method_custom(const StringName &p_class, MethodBind *p_method);
 
 	static void add_signal(const StringName &p_class, const MethodInfo &p_signal);
 	static bool has_signal(const StringName &p_class, const StringName &p_signal, bool p_no_inheritance = false);
@@ -472,18 +425,15 @@ public:
 	static void set_method_flags(const StringName &p_class, const StringName &p_method, int p_flags);
 
 	static void get_method_list(const StringName &p_class, List<MethodInfo> *p_methods, bool p_no_inheritance = false);
-	static void get_method_list_with_compatibility(const StringName &p_class, List<Pair<MethodInfo, uint32_t>> *p_methods_with_hash, bool p_no_inheritance = false);
+	static void get_method_list_with_hashes(const StringName &p_class, List<Pair<MethodInfo, uint32_t>> *p_methods_with_hash, bool p_no_inheritance = false);
 	static bool get_method_info(const StringName &p_class, const StringName &p_method, MethodInfo *r_info, bool p_no_inheritance = false);
 	static int get_method_argument_count(const StringName &p_class, const StringName &p_method, bool *r_is_valid = nullptr, bool p_no_inheritance = false);
 	static const MethodBind *get_method(const StringName &p_class, const StringName &p_name);
-	static const MethodBind *get_method_with_compatibility(const StringName &p_class, const StringName &p_name, uint64_t p_hash, bool *r_method_exists = nullptr, bool *r_is_deprecated = nullptr);
-	static Vector<uint32_t> get_method_compatibility_hashes(const StringName &p_class, const StringName &p_name);
+	static const MethodBind *get_method_by_hash(const StringName &p_class, const StringName &p_name, uint64_t p_hash, bool *r_method_exists = nullptr);
 
 	static void add_virtual_method(const StringName &p_class, const MethodInfo &p_method, bool p_virtual = true, const Vector<String> &p_arg_names = Vector<String>(), bool p_object_core = false);
-	static void add_virtual_compatibility_method(const StringName &p_class, const MethodInfo &p_method, bool p_virtual = true, const Vector<String> &p_arg_names = Vector<String>(), bool p_object_core = false);
 	static void get_virtual_methods(const StringName &p_class, List<MethodInfo> *p_methods, bool p_no_inheritance = false);
 	static void add_extension_class_virtual_method(const StringName &p_class, const GDExtensionClassVirtualMethodInfo *p_method_info);
-	static Vector<uint32_t> get_virtual_method_compatibility_hashes(const StringName &p_class, const StringName &p_name);
 
 	static void bind_integer_constant(const StringName &p_class, const StringName &p_enum, const StringName &p_name, int64_t p_constant, bool p_is_bitfield = false);
 	static void get_integer_constant_list(const StringName &p_class, List<String> *p_constants, bool p_no_inheritance = false);
@@ -516,9 +466,6 @@ public:
 	static void get_resource_base_extensions(List<String> *p_extensions);
 	static void get_extensions_for_type(const StringName &p_class, List<String> *p_extensions);
 	static bool is_resource_extension(const StringName &p_extension);
-
-	static void add_compatibility_class(const StringName &p_class, const StringName &p_fallback);
-	static StringName get_compatibility_class(const StringName &p_class);
 
 	static void set_current_api(APIType p_api);
 	static APIType get_current_api();

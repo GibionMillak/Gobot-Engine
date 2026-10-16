@@ -56,29 +56,6 @@ bool MeshLibrary::_set(const StringName &p_name, const Variant &p_value) {
 	}
 	init_property = false;
 
-#ifndef DISABLE_DEPRECATED
-	const String sname = p_name;
-	if (!sname.begins_with("item/")) {
-		return false;
-	}
-
-	Vector<String> components = sname.split("/", true, 2);
-	if (components.size() < 2 || !components[1].is_valid_int()) {
-		return false;
-	}
-
-#ifndef NAVIGATION_3D_DISABLED
-	int index = components[1].to_int();
-	if (components[2] == "navmesh") { // Renamed in 4.0 beta 9.
-		set_item_navigation_mesh(index, p_value);
-		return true;
-	} else if (components[2] == "navmesh_transform") { // Renamed in 4.0 beta 9.
-		set_item_navigation_mesh_transform(index, p_value);
-		return true;
-	}
-#endif // NAVIGATION_3D_DISABLED
-#endif // DISABLE_DEPRECATED
-
 	return false;
 }
 
@@ -86,29 +63,6 @@ bool MeshLibrary::_get(const StringName &p_name, Variant &r_ret) const {
 	if (property_helper.property_get_value(p_name, r_ret)) {
 		return true;
 	}
-
-#ifndef DISABLE_DEPRECATED
-	const String sname = p_name;
-	if (!sname.begins_with("item/")) {
-		return false;
-	}
-
-	Vector<String> components = sname.split("/", true, 2);
-	if (components.size() < 2 || !components[1].is_valid_int()) {
-		return false;
-	}
-
-#ifndef NAVIGATION_3D_DISABLED
-	int index = components[1].to_int();
-	if (components[2] == "navmesh") { // Renamed in 4.0 beta 9.
-		r_ret = get_item_navigation_mesh(index);
-		return true;
-	} else if (components[2] == "navmesh_transform") { // Renamed in 4.0 beta 9.
-		r_ret = get_item_navigation_mesh_transform(index);
-		return true;
-	}
-#endif // NAVIGATION_3D_DISABLED
-#endif // DISABLE_DEPRECATED
 
 	return false;
 }

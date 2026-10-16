@@ -82,10 +82,6 @@ class SpinBox : public Range {
 	String _get_xl_format() const;
 
 	bool use_default_format = false;
-#ifndef DISABLE_DEPRECATED
-	String prefix;
-	String suffix;
-#endif
 	String last_text_value;
 	double custom_arrow_step = 0.0;
 	bool custom_arrow_round = false;
@@ -156,11 +152,6 @@ class SpinBox : public Range {
 		Ref<AudioStream> drag_started_sound;
 		Ref<AudioStream> drag_ended_sound;
 
-#ifndef DISABLE_DEPRECATED
-		Ref<Texture2D> updown_icon;
-		bool is_updown_assigned = false;
-		bool set_min_buttons_width_from_icons = false;
-#endif
 	} theme_cache;
 
 	void _mouse_exited();
@@ -197,14 +188,6 @@ public:
 
 	void set_format_auto_translate_mode(AutoTranslateMode p_mode);
 	AutoTranslateMode get_format_auto_translate_mode() const { return format_auto_translate_mode; }
-
-#ifndef DISABLE_DEPRECATED
-	void set_suffix(const String &p_suffix);
-	String get_suffix() const;
-
-	void set_prefix(const String &p_prefix);
-	String get_prefix() const;
-#endif
 
 	void set_update_on_text_changed(bool p_enabled);
 	bool get_update_on_text_changed() const;

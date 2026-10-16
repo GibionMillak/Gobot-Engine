@@ -975,24 +975,6 @@
             ]
         },
         {
-            "name": "GDExtensionClassFreePropertyList",
-            "kind": "function",
-            "arguments": [
-                {
-                    "name": "p_instance",
-                    "type": "GDExtensionClassInstancePtr"
-                },
-                {
-                    "name": "p_list",
-                    "type": "const GDExtensionPropertyInfo*"
-                }
-            ],
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "GDExtensionClassFreePropertyList2"
-            }
-        },
-        {
             "name": "GDExtensionClassFreePropertyList2",
             "kind": "function",
             "arguments": [
@@ -1064,24 +1046,6 @@
                     "type": "GDExtensionPropertyInfo*"
                 }
             ]
-        },
-        {
-            "name": "GDExtensionClassNotification",
-            "kind": "function",
-            "arguments": [
-                {
-                    "name": "p_instance",
-                    "type": "GDExtensionClassInstancePtr"
-                },
-                {
-                    "name": "p_what",
-                    "type": "int32_t"
-                }
-            ],
-            "deprecated": {
-                "since": "4.2",
-                "replace_with": "GDExtensionClassNotification2"
-            }
         },
         {
             "name": "GDExtensionClassNotification2",
@@ -1158,52 +1122,6 @@
             ]
         },
         {
-            "name": "GDExtensionClassCreateInstance",
-            "kind": "function",
-            "return_value": {
-                "type": "GDExtensionObjectPtr"
-            },
-            "arguments": [
-                {
-                    "name": "p_class_userdata",
-                    "type": "void*"
-                }
-            ],
-            "description": [
-                "Called to construct an instance of the class.",
-                "For classes descending from RefCounted, the reference count should be zero."
-            ],
-            "deprecated": {
-                "since": "4.4",
-                "replace_with": "GDExtensionClassCreateInstance3"
-            }
-        },
-        {
-            "name": "GDExtensionClassCreateInstance2",
-            "kind": "function",
-            "return_value": {
-                "type": "GDExtensionObjectPtr"
-            },
-            "arguments": [
-                {
-                    "name": "p_class_userdata",
-                    "type": "void*"
-                },
-                {
-                    "name": "p_notify_postinitialize",
-                    "type": "GDExtensionBool"
-                }
-            ],
-            "description": [
-                "Called to construct an instance of the class.",
-                "For classes descending from RefCounted, the reference count should be zero."
-            ],
-            "deprecated": {
-                "since": "4.7",
-                "replace_with": "GDExtensionClassCreateInstance3"
-            }
-        },
-        {
             "name": "GDExtensionClassCreateInstance3",
             "kind": "function",
             "return_value": {
@@ -1256,27 +1174,6 @@
             ]
         },
         {
-            "name": "GDExtensionClassGetVirtual",
-            "kind": "function",
-            "return_value": {
-                "type": "GDExtensionClassCallVirtual"
-            },
-            "arguments": [
-                {
-                    "name": "p_class_userdata",
-                    "type": "void*"
-                },
-                {
-                    "name": "p_name",
-                    "type": "GDExtensionConstStringNamePtr"
-                }
-            ],
-            "deprecated": {
-                "since": "4.4",
-                "replace_with": "GDExtensionClassGetVirtual2"
-            }
-        },
-        {
             "name": "GDExtensionClassGetVirtual2",
             "kind": "function",
             "return_value": {
@@ -1296,27 +1193,6 @@
                     "type": "uint32_t"
                 }
             ]
-        },
-        {
-            "name": "GDExtensionClassGetVirtualCallData",
-            "kind": "function",
-            "return_value": {
-                "type": "void*"
-            },
-            "arguments": [
-                {
-                    "name": "p_class_userdata",
-                    "type": "void*"
-                },
-                {
-                    "name": "p_name",
-                    "type": "GDExtensionConstStringNamePtr"
-                }
-            ],
-            "deprecated": {
-                "since": "4.4",
-                "replace_with": "GDExtensionClassGetVirtualCallData2"
-            }
         },
         {
             "name": "GDExtensionClassGetVirtualCallData2",
@@ -1364,476 +1240,6 @@
                     "type": "GDExtensionTypePtr"
                 }
             ]
-        },
-        {
-            "name": "GDExtensionClassCreationInfo",
-            "kind": "struct",
-            "members": [
-                {
-                    "name": "is_virtual",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "is_abstract",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "set_func",
-                    "type": "GDExtensionClassSet"
-                },
-                {
-                    "name": "get_func",
-                    "type": "GDExtensionClassGet"
-                },
-                {
-                    "name": "get_property_list_func",
-                    "type": "GDExtensionClassGetPropertyList"
-                },
-                {
-                    "name": "free_property_list_func",
-                    "type": "GDExtensionClassFreePropertyList"
-                },
-                {
-                    "name": "property_can_revert_func",
-                    "type": "GDExtensionClassPropertyCanRevert"
-                },
-                {
-                    "name": "property_get_revert_func",
-                    "type": "GDExtensionClassPropertyGetRevert"
-                },
-                {
-                    "name": "notification_func",
-                    "type": "GDExtensionClassNotification"
-                },
-                {
-                    "name": "to_string_func",
-                    "type": "GDExtensionClassToString"
-                },
-                {
-                    "name": "reference_func",
-                    "type": "GDExtensionClassReference"
-                },
-                {
-                    "name": "unreference_func",
-                    "type": "GDExtensionClassUnreference"
-                },
-                {
-                    "name": "create_instance_func",
-                    "type": "GDExtensionClassCreateInstance",
-                    "description": [
-                        "Class constructor. Required unless the class is virtual or abstract."
-                    ]
-                },
-                {
-                    "name": "free_instance_func",
-                    "type": "GDExtensionClassFreeInstance",
-                    "description": [
-                        "Destructor; mandatory."
-                    ]
-                },
-                {
-                    "name": "get_virtual_func",
-                    "type": "GDExtensionClassGetVirtual",
-                    "description": [
-                        "Queries a virtual function by name and returns a callback to invoke the requested virtual function."
-                    ]
-                },
-                {
-                    "name": "get_rid_func",
-                    "type": "GDExtensionClassGetRID"
-                },
-                {
-                    "name": "class_userdata",
-                    "type": "void*",
-                    "description": [
-                        "Per-class user data, later accessible in instance bindings."
-                    ]
-                }
-            ],
-            "deprecated": {
-                "since": "4.2",
-                "replace_with": "GDExtensionClassCreationInfo6"
-            }
-        },
-        {
-            "name": "GDExtensionClassCreationInfo2",
-            "kind": "struct",
-            "members": [
-                {
-                    "name": "is_virtual",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "is_abstract",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "is_exposed",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "set_func",
-                    "type": "GDExtensionClassSet"
-                },
-                {
-                    "name": "get_func",
-                    "type": "GDExtensionClassGet"
-                },
-                {
-                    "name": "get_property_list_func",
-                    "type": "GDExtensionClassGetPropertyList"
-                },
-                {
-                    "name": "free_property_list_func",
-                    "type": "GDExtensionClassFreePropertyList"
-                },
-                {
-                    "name": "property_can_revert_func",
-                    "type": "GDExtensionClassPropertyCanRevert"
-                },
-                {
-                    "name": "property_get_revert_func",
-                    "type": "GDExtensionClassPropertyGetRevert"
-                },
-                {
-                    "name": "validate_property_func",
-                    "type": "GDExtensionClassValidateProperty"
-                },
-                {
-                    "name": "notification_func",
-                    "type": "GDExtensionClassNotification2"
-                },
-                {
-                    "name": "to_string_func",
-                    "type": "GDExtensionClassToString"
-                },
-                {
-                    "name": "reference_func",
-                    "type": "GDExtensionClassReference"
-                },
-                {
-                    "name": "unreference_func",
-                    "type": "GDExtensionClassUnreference"
-                },
-                {
-                    "name": "create_instance_func",
-                    "type": "GDExtensionClassCreateInstance",
-                    "description": [
-                        "Class constructor. Required unless the class is virtual or abstract."
-                    ]
-                },
-                {
-                    "name": "free_instance_func",
-                    "type": "GDExtensionClassFreeInstance",
-                    "description": [
-                        "Destructor; mandatory."
-                    ]
-                },
-                {
-                    "name": "recreate_instance_func",
-                    "type": "GDExtensionClassRecreateInstance"
-                },
-                {
-                    "name": "get_virtual_func",
-                    "type": "GDExtensionClassGetVirtual",
-                    "description": [
-                        "Queries a virtual function by name and returns a callback to invoke the requested virtual function."
-                    ]
-                },
-                {
-                    "name": "get_virtual_call_data_func",
-                    "type": "GDExtensionClassGetVirtualCallData",
-                    "description": [
-                        "Paired with `call_virtual_with_data_func`, this is an alternative to `get_virtual_func` for extensions that",
-                        "need or benefit from extra data when calling virtual functions.",
-                        "Returns user data that will be passed to `call_virtual_with_data_func`.",
-                        "Returning `NULL` from this function signals to Godot that the virtual function is not overridden.",
-                        "Data returned from this function should be managed by the extension and must be valid until the extension is deinitialized.",
-                        "You should supply either `get_virtual_func`, or `get_virtual_call_data_func` with `call_virtual_with_data_func`."
-                    ]
-                },
-                {
-                    "name": "call_virtual_with_data_func",
-                    "type": "GDExtensionClassCallVirtualWithData",
-                    "description": [
-                        "Used to call virtual functions when `get_virtual_call_data_func` is not null."
-                    ]
-                },
-                {
-                    "name": "get_rid_func",
-                    "type": "GDExtensionClassGetRID"
-                },
-                {
-                    "name": "class_userdata",
-                    "type": "void*",
-                    "description": [
-                        "Per-class user data, later accessible in instance bindings."
-                    ]
-                }
-            ],
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "GDExtensionClassCreationInfo6"
-            }
-        },
-        {
-            "name": "GDExtensionClassCreationInfo3",
-            "kind": "struct",
-            "members": [
-                {
-                    "name": "is_virtual",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "is_abstract",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "is_exposed",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "is_runtime",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "set_func",
-                    "type": "GDExtensionClassSet"
-                },
-                {
-                    "name": "get_func",
-                    "type": "GDExtensionClassGet"
-                },
-                {
-                    "name": "get_property_list_func",
-                    "type": "GDExtensionClassGetPropertyList"
-                },
-                {
-                    "name": "free_property_list_func",
-                    "type": "GDExtensionClassFreePropertyList2"
-                },
-                {
-                    "name": "property_can_revert_func",
-                    "type": "GDExtensionClassPropertyCanRevert"
-                },
-                {
-                    "name": "property_get_revert_func",
-                    "type": "GDExtensionClassPropertyGetRevert"
-                },
-                {
-                    "name": "validate_property_func",
-                    "type": "GDExtensionClassValidateProperty"
-                },
-                {
-                    "name": "notification_func",
-                    "type": "GDExtensionClassNotification2"
-                },
-                {
-                    "name": "to_string_func",
-                    "type": "GDExtensionClassToString"
-                },
-                {
-                    "name": "reference_func",
-                    "type": "GDExtensionClassReference"
-                },
-                {
-                    "name": "unreference_func",
-                    "type": "GDExtensionClassUnreference"
-                },
-                {
-                    "name": "create_instance_func",
-                    "type": "GDExtensionClassCreateInstance",
-                    "description": [
-                        "Class constructor. Required unless the class is virtual or abstract."
-                    ]
-                },
-                {
-                    "name": "free_instance_func",
-                    "type": "GDExtensionClassFreeInstance",
-                    "description": [
-                        "Destructor; mandatory."
-                    ]
-                },
-                {
-                    "name": "recreate_instance_func",
-                    "type": "GDExtensionClassRecreateInstance"
-                },
-                {
-                    "name": "get_virtual_func",
-                    "type": "GDExtensionClassGetVirtual",
-                    "description": [
-                        "Queries a virtual function by name and returns a callback to invoke the requested virtual function."
-                    ]
-                },
-                {
-                    "name": "get_virtual_call_data_func",
-                    "type": "GDExtensionClassGetVirtualCallData",
-                    "description": [
-                        "Paired with `call_virtual_with_data_func`, this is an alternative to `get_virtual_func` for extensions that",
-                        "need or benefit from extra data when calling virtual functions.",
-                        "Returns user data that will be passed to `call_virtual_with_data_func`.",
-                        "Returning `NULL` from this function signals to Godot that the virtual function is not overridden.",
-                        "Data returned from this function should be managed by the extension and must be valid until the extension is deinitialized.",
-                        "You should supply either `get_virtual_func`, or `get_virtual_call_data_func` with `call_virtual_with_data_func`."
-                    ]
-                },
-                {
-                    "name": "call_virtual_with_data_func",
-                    "type": "GDExtensionClassCallVirtualWithData",
-                    "description": [
-                        "Used to call virtual functions when `get_virtual_call_data_func` is not null."
-                    ]
-                },
-                {
-                    "name": "get_rid_func",
-                    "type": "GDExtensionClassGetRID"
-                },
-                {
-                    "name": "class_userdata",
-                    "type": "void*",
-                    "description": [
-                        "Per-class user data, later accessible in instance bindings."
-                    ]
-                }
-            ],
-            "deprecated": {
-                "since": "4.4",
-                "replace_with": "GDExtensionClassCreationInfo6"
-            }
-        },
-        {
-            "name": "GDExtensionClassCreationInfo4",
-            "kind": "struct",
-            "members": [
-                {
-                    "name": "is_virtual",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "is_abstract",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "is_exposed",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "is_runtime",
-                    "type": "GDExtensionBool"
-                },
-                {
-                    "name": "icon_path",
-                    "type": "GDExtensionConstStringPtr"
-                },
-                {
-                    "name": "set_func",
-                    "type": "GDExtensionClassSet"
-                },
-                {
-                    "name": "get_func",
-                    "type": "GDExtensionClassGet"
-                },
-                {
-                    "name": "get_property_list_func",
-                    "type": "GDExtensionClassGetPropertyList"
-                },
-                {
-                    "name": "free_property_list_func",
-                    "type": "GDExtensionClassFreePropertyList2"
-                },
-                {
-                    "name": "property_can_revert_func",
-                    "type": "GDExtensionClassPropertyCanRevert"
-                },
-                {
-                    "name": "property_get_revert_func",
-                    "type": "GDExtensionClassPropertyGetRevert"
-                },
-                {
-                    "name": "validate_property_func",
-                    "type": "GDExtensionClassValidateProperty"
-                },
-                {
-                    "name": "notification_func",
-                    "type": "GDExtensionClassNotification2"
-                },
-                {
-                    "name": "to_string_func",
-                    "type": "GDExtensionClassToString"
-                },
-                {
-                    "name": "reference_func",
-                    "type": "GDExtensionClassReference"
-                },
-                {
-                    "name": "unreference_func",
-                    "type": "GDExtensionClassUnreference"
-                },
-                {
-                    "name": "create_instance_func",
-                    "type": "GDExtensionClassCreateInstance2",
-                    "description": [
-                        "Class constructor. Required unless the class is virtual or abstract."
-                    ]
-                },
-                {
-                    "name": "free_instance_func",
-                    "type": "GDExtensionClassFreeInstance",
-                    "description": [
-                        "Destructor; mandatory."
-                    ]
-                },
-                {
-                    "name": "recreate_instance_func",
-                    "type": "GDExtensionClassRecreateInstance"
-                },
-                {
-                    "name": "get_virtual_func",
-                    "type": "GDExtensionClassGetVirtual2",
-                    "description": [
-                        "Queries a virtual function by name and returns a callback to invoke the requested virtual function."
-                    ]
-                },
-                {
-                    "name": "get_virtual_call_data_func",
-                    "type": "GDExtensionClassGetVirtualCallData2",
-                    "description": [
-                        "Paired with `call_virtual_with_data_func`, this is an alternative to `get_virtual_func` for extensions that",
-                        "need or benefit from extra data when calling virtual functions.",
-                        "Returns user data that will be passed to `call_virtual_with_data_func`.",
-                        "Returning `NULL` from this function signals to Godot that the virtual function is not overridden.",
-                        "Data returned from this function should be managed by the extension and must be valid until the extension is deinitialized.",
-                        "You should supply either `get_virtual_func`, or `get_virtual_call_data_func` with `call_virtual_with_data_func`."
-                    ]
-                },
-                {
-                    "name": "call_virtual_with_data_func",
-                    "type": "GDExtensionClassCallVirtualWithData",
-                    "description": [
-                        "Used to call virtual functions when `get_virtual_call_data_func` is not null."
-                    ]
-                },
-                {
-                    "name": "class_userdata",
-                    "type": "void*",
-                    "description": [
-                        "Per-class user data, later accessible in instance bindings."
-                    ]
-                }
-            ],
-            "deprecated": {
-                "since": "4.5",
-                "replace_with": "GDExtensionClassCreationInfo6"
-            }
-        },
-        {
-            "name": "GDExtensionClassCreationInfo5",
-            "kind": "alias",
-            "type": "GDExtensionClassCreationInfo4",
-            "deprecated": {
-                "since": "4.7",
-                "replace_with": "GDExtensionClassCreationInfo6"
-            }
         },
         {
             "name": "GDExtensionClassCreationInfo6",
@@ -2392,71 +1798,6 @@
             ]
         },
         {
-            "name": "GDExtensionCallableCustomInfo",
-            "kind": "struct",
-            "members": [
-                {
-                    "name": "callable_userdata",
-                    "type": "void*"
-                },
-                {
-                    "name": "token",
-                    "type": "void*"
-                },
-                {
-                    "name": "object_id",
-                    "type": "GDObjectInstanceID"
-                },
-                {
-                    "name": "call_func",
-                    "type": "GDExtensionCallableCustomCall"
-                },
-                {
-                    "name": "is_valid_func",
-                    "type": "GDExtensionCallableCustomIsValid"
-                },
-                {
-                    "name": "free_func",
-                    "type": "GDExtensionCallableCustomFree"
-                },
-                {
-                    "name": "hash_func",
-                    "type": "GDExtensionCallableCustomHash"
-                },
-                {
-                    "name": "equal_func",
-                    "type": "GDExtensionCallableCustomEqual"
-                },
-                {
-                    "name": "less_than_func",
-                    "type": "GDExtensionCallableCustomLessThan"
-                },
-                {
-                    "name": "to_string_func",
-                    "type": "GDExtensionCallableCustomToString"
-                }
-            ],
-            "description": [
-                "Only `call_func` and `token` are strictly required, however, `object_id` should be passed if its not a static method.",
-                "",
-                "`token` should point to an address that uniquely identifies the GDExtension (for example, the",
-                "`GDExtensionClassLibraryPtr` passed to the entry symbol function.",
-                "",
-                "`hash_func`, `equal_func`, and `less_than_func` are optional. If not provided both `call_func` and",
-                "`callable_userdata` together are used as the identity of the callable for hashing and comparison purposes.",
-                "",
-                "The hash returned by `hash_func` is cached, `hash_func` will not be called more than once per callable.",
-                "",
-                "`is_valid_func` is necessary if the validity of the callable can change before destruction.",
-                "",
-                "`free_func` is necessary if `callable_userdata` needs to be cleaned up when the callable is freed."
-            ],
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "GDExtensionCallableCustomInfo2"
-            }
-        },
-        {
             "name": "GDExtensionCallableCustomInfo2",
             "kind": "struct",
             "members": [
@@ -2586,24 +1927,6 @@
                     "type": "uint32_t*"
                 }
             ]
-        },
-        {
-            "name": "GDExtensionScriptInstanceFreePropertyList",
-            "kind": "function",
-            "arguments": [
-                {
-                    "name": "p_instance",
-                    "type": "GDExtensionScriptInstanceDataPtr"
-                },
-                {
-                    "name": "p_list",
-                    "type": "const GDExtensionPropertyInfo*"
-                }
-            ],
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "GDExtensionScriptInstanceFreePropertyList2"
-            }
         },
         {
             "name": "GDExtensionScriptInstanceFreePropertyList2",
@@ -2783,24 +2106,6 @@
             ]
         },
         {
-            "name": "GDExtensionScriptInstanceFreeMethodList",
-            "kind": "function",
-            "arguments": [
-                {
-                    "name": "p_instance",
-                    "type": "GDExtensionScriptInstanceDataPtr"
-                },
-                {
-                    "name": "p_list",
-                    "type": "const GDExtensionMethodInfo*"
-                }
-            ],
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "GDExtensionScriptInstanceFreeMethodList2"
-            }
-        },
-        {
             "name": "GDExtensionScriptInstanceFreeMethodList2",
             "kind": "function",
             "arguments": [
@@ -2885,24 +2190,6 @@
                     "type": "GDExtensionCallError*"
                 }
             ]
-        },
-        {
-            "name": "GDExtensionScriptInstanceNotification",
-            "kind": "function",
-            "arguments": [
-                {
-                    "name": "p_instance",
-                    "type": "GDExtensionScriptInstanceDataPtr"
-                },
-                {
-                    "name": "p_what",
-                    "type": "int32_t"
-                }
-            ],
-            "deprecated": {
-                "since": "4.2",
-                "replace_with": "GDExtensionScriptInstanceNotification2"
-            }
         },
         {
             "name": "GDExtensionScriptInstanceNotification2",
@@ -3022,221 +2309,6 @@
             "description": [
                 "Pointer to ScriptInstance."
             ]
-        },
-        {
-            "name": "GDExtensionScriptInstanceInfo",
-            "kind": "struct",
-            "members": [
-                {
-                    "name": "set_func",
-                    "type": "GDExtensionScriptInstanceSet"
-                },
-                {
-                    "name": "get_func",
-                    "type": "GDExtensionScriptInstanceGet"
-                },
-                {
-                    "name": "get_property_list_func",
-                    "type": "GDExtensionScriptInstanceGetPropertyList"
-                },
-                {
-                    "name": "free_property_list_func",
-                    "type": "GDExtensionScriptInstanceFreePropertyList"
-                },
-                {
-                    "name": "property_can_revert_func",
-                    "type": "GDExtensionScriptInstancePropertyCanRevert"
-                },
-                {
-                    "name": "property_get_revert_func",
-                    "type": "GDExtensionScriptInstancePropertyGetRevert"
-                },
-                {
-                    "name": "get_owner_func",
-                    "type": "GDExtensionScriptInstanceGetOwner"
-                },
-                {
-                    "name": "get_property_state_func",
-                    "type": "GDExtensionScriptInstanceGetPropertyState"
-                },
-                {
-                    "name": "get_method_list_func",
-                    "type": "GDExtensionScriptInstanceGetMethodList"
-                },
-                {
-                    "name": "free_method_list_func",
-                    "type": "GDExtensionScriptInstanceFreeMethodList"
-                },
-                {
-                    "name": "get_property_type_func",
-                    "type": "GDExtensionScriptInstanceGetPropertyType"
-                },
-                {
-                    "name": "has_method_func",
-                    "type": "GDExtensionScriptInstanceHasMethod"
-                },
-                {
-                    "name": "call_func",
-                    "type": "GDExtensionScriptInstanceCall"
-                },
-                {
-                    "name": "notification_func",
-                    "type": "GDExtensionScriptInstanceNotification"
-                },
-                {
-                    "name": "to_string_func",
-                    "type": "GDExtensionScriptInstanceToString"
-                },
-                {
-                    "name": "refcount_incremented_func",
-                    "type": "GDExtensionScriptInstanceRefCountIncremented"
-                },
-                {
-                    "name": "refcount_decremented_func",
-                    "type": "GDExtensionScriptInstanceRefCountDecremented"
-                },
-                {
-                    "name": "get_script_func",
-                    "type": "GDExtensionScriptInstanceGetScript"
-                },
-                {
-                    "name": "is_placeholder_func",
-                    "type": "GDExtensionScriptInstanceIsPlaceholder"
-                },
-                {
-                    "name": "set_fallback_func",
-                    "type": "GDExtensionScriptInstanceSet"
-                },
-                {
-                    "name": "get_fallback_func",
-                    "type": "GDExtensionScriptInstanceGet"
-                },
-                {
-                    "name": "get_language_func",
-                    "type": "GDExtensionScriptInstanceGetLanguage"
-                },
-                {
-                    "name": "free_func",
-                    "type": "GDExtensionScriptInstanceFree"
-                }
-            ],
-            "deprecated": {
-                "since": "4.2",
-                "replace_with": "GDExtensionScriptInstanceInfo3"
-            }
-        },
-        {
-            "name": "GDExtensionScriptInstanceInfo2",
-            "kind": "struct",
-            "members": [
-                {
-                    "name": "set_func",
-                    "type": "GDExtensionScriptInstanceSet"
-                },
-                {
-                    "name": "get_func",
-                    "type": "GDExtensionScriptInstanceGet"
-                },
-                {
-                    "name": "get_property_list_func",
-                    "type": "GDExtensionScriptInstanceGetPropertyList"
-                },
-                {
-                    "name": "free_property_list_func",
-                    "type": "GDExtensionScriptInstanceFreePropertyList"
-                },
-                {
-                    "name": "get_class_category_func",
-                    "type": "GDExtensionScriptInstanceGetClassCategory",
-                    "description": [
-                        "Optional. Set to NULL for the default behavior."
-                    ]
-                },
-                {
-                    "name": "property_can_revert_func",
-                    "type": "GDExtensionScriptInstancePropertyCanRevert"
-                },
-                {
-                    "name": "property_get_revert_func",
-                    "type": "GDExtensionScriptInstancePropertyGetRevert"
-                },
-                {
-                    "name": "get_owner_func",
-                    "type": "GDExtensionScriptInstanceGetOwner"
-                },
-                {
-                    "name": "get_property_state_func",
-                    "type": "GDExtensionScriptInstanceGetPropertyState"
-                },
-                {
-                    "name": "get_method_list_func",
-                    "type": "GDExtensionScriptInstanceGetMethodList"
-                },
-                {
-                    "name": "free_method_list_func",
-                    "type": "GDExtensionScriptInstanceFreeMethodList"
-                },
-                {
-                    "name": "get_property_type_func",
-                    "type": "GDExtensionScriptInstanceGetPropertyType"
-                },
-                {
-                    "name": "validate_property_func",
-                    "type": "GDExtensionScriptInstanceValidateProperty"
-                },
-                {
-                    "name": "has_method_func",
-                    "type": "GDExtensionScriptInstanceHasMethod"
-                },
-                {
-                    "name": "call_func",
-                    "type": "GDExtensionScriptInstanceCall"
-                },
-                {
-                    "name": "notification_func",
-                    "type": "GDExtensionScriptInstanceNotification2"
-                },
-                {
-                    "name": "to_string_func",
-                    "type": "GDExtensionScriptInstanceToString"
-                },
-                {
-                    "name": "refcount_incremented_func",
-                    "type": "GDExtensionScriptInstanceRefCountIncremented"
-                },
-                {
-                    "name": "refcount_decremented_func",
-                    "type": "GDExtensionScriptInstanceRefCountDecremented"
-                },
-                {
-                    "name": "get_script_func",
-                    "type": "GDExtensionScriptInstanceGetScript"
-                },
-                {
-                    "name": "is_placeholder_func",
-                    "type": "GDExtensionScriptInstanceIsPlaceholder"
-                },
-                {
-                    "name": "set_fallback_func",
-                    "type": "GDExtensionScriptInstanceSet"
-                },
-                {
-                    "name": "get_fallback_func",
-                    "type": "GDExtensionScriptInstanceGet"
-                },
-                {
-                    "name": "get_language_func",
-                    "type": "GDExtensionScriptInstanceGetLanguage"
-                },
-                {
-                    "name": "free_func",
-                    "type": "GDExtensionScriptInstanceFree"
-                }
-            ],
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "GDExtensionScriptInstanceInfo3"
-            }
         },
         {
             "name": "GDExtensionScriptInstanceInfo3",
@@ -3518,46 +2590,20 @@
                 "",
                 "For example:",
                 "",
-                "  GDExtensionInterfaceGetGodotVersion get_godot_version = (GDExtensionInterfaceGetGodotVersion)p_get_proc_address(\"get_godot_version\");",
+                "  GDExtensionInterfaceGetGodotVersion get_godot_version2 = (GDExtensionInterfaceGetGodotVersion)p_get_proc_address(\"get_godot_version2\");",
                 "",
                 "(Note that snippet may cause \"cast between incompatible function types\" on some compilers, you can",
                 "silence this by adding an intermediary `void*` cast.)",
                 "",
                 "You can then call it like a normal function:",
                 "",
-                "  GDExtensionGodotVersion godot_version;",
-                "  get_godot_version(&godot_version);",
+                "  GDExtensionGodotVersion2 godot_version;",
+                "  get_godot_version2(&godot_version);",
                 "  printf(\"Godot v%d.%d.%d\\n\", godot_version.major, godot_version.minor, godot_version.patch);",
                 "",
                 "All of these interface functions are described below, together with the name that's used to load it,",
                 "and the function pointer typedef that shows its signature."
             ]
-        },
-        {
-            "name": "GDExtensionGodotVersion",
-            "kind": "struct",
-            "members": [
-                {
-                    "name": "major",
-                    "type": "uint32_t"
-                },
-                {
-                    "name": "minor",
-                    "type": "uint32_t"
-                },
-                {
-                    "name": "patch",
-                    "type": "uint32_t"
-                },
-                {
-                    "name": "string",
-                    "type": "const char*"
-                }
-            ],
-            "deprecated": {
-                "since": "4.5",
-                "replace_with": "GDExtensionGodotVersion2"
-            }
         },
         {
             "name": "GDExtensionGodotVersion2",
@@ -3674,26 +2720,6 @@
     ],
     "interface": [
         {
-            "name": "get_godot_version",
-            "arguments": [
-                {
-                    "name": "r_godot_version",
-                    "type": "GDExtensionGodotVersion*",
-                    "description": [
-                        "A pointer to the structure to write the version information into."
-                    ]
-                }
-            ],
-            "description": [
-                "Gets the Godot version that the GDExtension was loaded into."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.5",
-                "replace_with": "get_godot_version2"
-            }
-        },
-        {
             "name": "get_godot_version2",
             "arguments": [
                 {
@@ -3708,88 +2734,6 @@
                 "Gets the Godot version that the GDExtension was loaded into."
             ],
             "since": "4.5"
-        },
-        {
-            "name": "mem_alloc",
-            "return_value": {
-                "type": "void*",
-                "description": [
-                    "A pointer to the allocated memory, or NULL if unsuccessful."
-                ]
-            },
-            "arguments": [
-                {
-                    "name": "p_bytes",
-                    "type": "size_t",
-                    "description": [
-                        "The amount of memory to allocate in bytes."
-                    ]
-                }
-            ],
-            "description": [
-                "Allocates memory."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.6",
-                "message": "Does not allow explicitly requesting padding.",
-                "replace_with": "mem_alloc2"
-            }
-        },
-        {
-            "name": "mem_realloc",
-            "return_value": {
-                "type": "void*",
-                "description": [
-                    "A pointer to the allocated memory, or NULL if unsuccessful."
-                ]
-            },
-            "arguments": [
-                {
-                    "name": "p_ptr",
-                    "type": "void*",
-                    "description": [
-                        "A pointer to the previously allocated memory."
-                    ]
-                },
-                {
-                    "name": "p_bytes",
-                    "type": "size_t",
-                    "description": [
-                        "The number of bytes to resize the memory block to."
-                    ]
-                }
-            ],
-            "description": [
-                "Reallocates memory."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.6",
-                "message": "Does not allow explicitly requesting padding.",
-                "replace_with": "mem_realloc2"
-            }
-        },
-        {
-            "name": "mem_free",
-            "arguments": [
-                {
-                    "name": "p_ptr",
-                    "type": "void*",
-                    "description": [
-                        "A pointer to the previously allocated memory."
-                    ]
-                }
-            ],
-            "description": [
-                "Frees memory."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.6",
-                "message": "Does not allow explicitly requesting padding.",
-                "replace_with": "mem_free2"
-            }
         },
         {
             "name": "mem_alloc2",
@@ -5309,8 +4253,7 @@
                 "Each function assumes the variant's type has already been determined and matches the function.",
                 "Invoking the function with a variant of a mismatched type has undefined behavior, and may lead to a segmentation fault."
             ],
-            "since": "4.4",
-            "legacy_type_name": "GDExtensionInterfaceGetVariantGetInternalPtrFunc"
+            "since": "4.4"
         },
         {
             "name": "variant_get_ptr_operator_evaluator",
@@ -5852,40 +4795,6 @@
             "since": "4.1"
         },
         {
-            "name": "string_new_with_utf8_chars_and_len",
-            "arguments": [
-                {
-                    "name": "r_dest",
-                    "type": "GDExtensionUninitializedStringPtr",
-                    "description": [
-                        "A pointer to a Variant to hold the newly created String."
-                    ]
-                },
-                {
-                    "name": "p_contents",
-                    "type": "const char*",
-                    "description": [
-                        "A pointer to a UTF-8 encoded C string."
-                    ]
-                },
-                {
-                    "name": "p_size",
-                    "type": "GDExtensionInt",
-                    "description": [
-                        "The number of bytes (not code units)."
-                    ]
-                }
-            ],
-            "description": [
-                "Creates a String from a UTF-8 encoded C string with the given length."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "string_new_with_utf8_chars_and_len2"
-            }
-        },
-        {
             "name": "string_new_with_utf8_chars_and_len2",
             "return_value": {
                 "type": "GDExtensionInt",
@@ -5920,40 +4829,6 @@
                 "Creates a String from a UTF-8 encoded C string with the given length."
             ],
             "since": "4.3"
-        },
-        {
-            "name": "string_new_with_utf16_chars_and_len",
-            "arguments": [
-                {
-                    "name": "r_dest",
-                    "type": "GDExtensionUninitializedStringPtr",
-                    "description": [
-                        "A pointer to a Variant to hold the newly created String."
-                    ]
-                },
-                {
-                    "name": "p_contents",
-                    "type": "const char16_t*",
-                    "description": [
-                        "A pointer to a UTF-16 encoded C string."
-                    ]
-                },
-                {
-                    "name": "p_char_count",
-                    "type": "GDExtensionInt",
-                    "description": [
-                        "The number of characters (not bytes)."
-                    ]
-                }
-            ],
-            "description": [
-                "Creates a String from a UTF-16 encoded C string with the given length."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "string_new_with_utf16_chars_and_len2"
-            }
         },
         {
             "name": "string_new_with_utf16_chars_and_len2",
@@ -7453,33 +6328,6 @@
             "since": "4.1"
         },
         {
-            "name": "array_ref",
-            "arguments": [
-                {
-                    "name": "p_self",
-                    "type": "GDExtensionTypePtr",
-                    "description": [
-                        "A pointer to the Array object to update."
-                    ]
-                },
-                {
-                    "name": "p_from",
-                    "type": "GDExtensionConstTypePtr",
-                    "description": [
-                        "A pointer to the Array object to reference."
-                    ]
-                }
-            ],
-            "description": [
-                "Sets an Array to be a reference to another Array object."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.5",
-                "message": "Removed from interface. Use copy constructor instead."
-            }
-        },
-        {
             "name": "array_set_typed",
             "arguments": [
                 {
@@ -7924,39 +6772,6 @@
             "since": "4.1"
         },
         {
-            "name": "object_cast_to",
-            "return_value": {
-                "type": "GDExtensionObjectPtr",
-                "description": [
-                    "Returns a pointer to the Object, or NULL if it can't be cast to the requested type."
-                ]
-            },
-            "arguments": [
-                {
-                    "name": "p_object",
-                    "type": "GDExtensionConstObjectPtr",
-                    "description": [
-                        "A pointer to the Object."
-                    ]
-                },
-                {
-                    "name": "p_class_tag",
-                    "type": "void*",
-                    "description": [
-                        "A pointer uniquely identifying a built-in class in the ClassDB."
-                    ]
-                }
-            ],
-            "description": [
-                "Casts an Object to a different type."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.7",
-                "message": "Use the `is_class` method on `Object` to check if an object can be cast instead. If true, the previous pointer can be reinterpreted as a pointer to the target type."
-            }
-        },
-        {
             "name": "object_get_instance_from_id",
             "return_value": {
                 "type": "GDExtensionObjectPtr",
@@ -8126,72 +6941,6 @@
             "since": "4.1"
         },
         {
-            "name": "script_instance_create",
-            "return_value": {
-                "type": "GDExtensionScriptInstancePtr",
-                "description": [
-                    "A pointer to a ScriptInstanceExtension object."
-                ]
-            },
-            "arguments": [
-                {
-                    "name": "p_info",
-                    "type": "const GDExtensionScriptInstanceInfo*",
-                    "description": [
-                        "A pointer to a GDExtensionScriptInstanceInfo struct."
-                    ]
-                },
-                {
-                    "name": "p_instance_data",
-                    "type": "GDExtensionScriptInstanceDataPtr",
-                    "description": [
-                        "A pointer to a data representing the script instance in the GDExtension. This will be passed to all the function pointers on p_info."
-                    ]
-                }
-            ],
-            "description": [
-                "Creates a script instance that contains the given info and instance data."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.2",
-                "replace_with": "script_instance_create3"
-            }
-        },
-        {
-            "name": "script_instance_create2",
-            "return_value": {
-                "type": "GDExtensionScriptInstancePtr",
-                "description": [
-                    "A pointer to a ScriptInstanceExtension object."
-                ]
-            },
-            "arguments": [
-                {
-                    "name": "p_info",
-                    "type": "const GDExtensionScriptInstanceInfo2*",
-                    "description": [
-                        "A pointer to a GDExtensionScriptInstanceInfo2 struct."
-                    ]
-                },
-                {
-                    "name": "p_instance_data",
-                    "type": "GDExtensionScriptInstanceDataPtr",
-                    "description": [
-                        "A pointer to a data representing the script instance in the GDExtension. This will be passed to all the function pointers on p_info."
-                    ]
-                }
-            ],
-            "description": [
-                "Creates a script instance that contains the given info and instance data."
-            ],
-            "since": "4.2",
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "script_instance_create3"
-            }
-        },
-        {
             "name": "script_instance_create3",
             "return_value": {
                 "type": "GDExtensionScriptInstancePtr",
@@ -8253,10 +7002,9 @@
             ],
             "description": [
                 "Creates a placeholder script instance for a given script and instance.",
-                "This interface is optional as a custom placeholder could also be created with script_instance_create()."
+                "This interface is optional as a custom placeholder could also be created with script_instance_create3()."
             ],
-            "since": "4.2",
-            "legacy_type_name": "GDExtensionInterfacePlaceHolderScriptInstanceCreate"
+            "since": "4.2"
         },
         {
             "name": "placeholder_script_instance_update",
@@ -8288,15 +7036,14 @@
                 "The passed in placeholder must be an instance of PlaceHolderScriptInstance",
                 "such as the one returned by placeholder_script_instance_create()."
             ],
-            "since": "4.2",
-            "legacy_type_name": "GDExtensionInterfacePlaceHolderScriptInstanceUpdate"
+            "since": "4.2"
         },
         {
             "name": "object_get_script_instance",
             "return_value": {
                 "type": "GDExtensionScriptInstanceDataPtr",
                 "description": [
-                    "A GDExtensionScriptInstanceDataPtr that was attached to this object as part of script_instance_create."
+                    "A GDExtensionScriptInstanceDataPtr that was attached to this object as part of script_instance_create3."
                 ]
             },
             "arguments": [
@@ -8334,7 +7081,7 @@
                     "name": "p_script_instance",
                     "type": "GDExtensionScriptInstancePtr",
                     "description": [
-                        "A pointer to the script instance to attach to this object. Create a script instance through the latest version of \"script_instance_create()\"."
+                        "A pointer to the script instance to attach to this object. Create a script instance through the latest version of \"script_instance_create3()\"."
                     ]
                 }
             ],
@@ -8342,34 +7089,6 @@
                 "Set the script instance attached to this object."
             ],
             "since": "4.5"
-        },
-        {
-            "name": "callable_custom_create",
-            "arguments": [
-                {
-                    "name": "r_callable",
-                    "type": "GDExtensionUninitializedTypePtr",
-                    "description": [
-                        "A pointer that will receive the new Callable."
-                    ]
-                },
-                {
-                    "name": "p_callable_custom_info",
-                    "type": "GDExtensionCallableCustomInfo*",
-                    "description": [
-                        "The info required to construct a Callable."
-                    ]
-                }
-            ],
-            "description": [
-                "Creates a custom Callable object from a function pointer.",
-                "Provided struct can be safely freed once the function returns."
-            ],
-            "since": "4.2",
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "callable_custom_create2"
-            }
         },
         {
             "name": "callable_custom_create2",
@@ -8421,66 +7140,9 @@
             ],
             "description": [
                 "Retrieves the userdata pointer from a custom Callable.",
-                "If the Callable is not a custom Callable or the token does not match the one provided to callable_custom_create() via GDExtensionCallableCustomInfo then NULL will be returned."
+                "If the Callable is not a custom Callable or the token does not match the one provided to callable_custom_create2() via GDExtensionCallableCustomInfo2 then NULL will be returned."
             ],
-            "since": "4.2",
-            "legacy_type_name": "GDExtensionInterfaceCallableCustomGetUserData"
-        },
-        {
-            "name": "classdb_construct_object",
-            "return_value": {
-                "type": "GDExtensionObjectPtr",
-                "description": [
-                    "A pointer to the newly created Object."
-                ]
-            },
-            "arguments": [
-                {
-                    "name": "p_classname",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the class name."
-                    ]
-                }
-            ],
-            "description": [
-                "Constructs an Object of the requested class.",
-                "The passed class must be a built-in godot class, or an already-registered extension class. In both cases, object_set_instance() should be called to fully initialize the object."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.4",
-                "replace_with": "classdb_construct_object3"
-            }
-        },
-        {
-            "name": "classdb_construct_object2",
-            "return_value": {
-                "type": "GDExtensionObjectPtr",
-                "description": [
-                    "A pointer to the newly created Object."
-                ]
-            },
-            "arguments": [
-                {
-                    "name": "p_classname",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the class name."
-                    ]
-                }
-            ],
-            "description": [
-                "Constructs an Object of the requested class.",
-                "The passed class must be a built-in godot class, or an already-registered extension class. In both cases, object_set_instance() should be called to fully initialize the object.",
-                "",
-                "\"NOTIFICATION_POSTINITIALIZE\" must be sent after construction."
-            ],
-            "since": "4.4",
-            "deprecated": {
-                "since": "4.7",
-                "replace_with": "classdb_construct_object3"
-            }
+            "since": "4.2"
         },
         {
             "name": "classdb_construct_object3",
@@ -8543,242 +7205,6 @@
                 "Gets a pointer to the MethodBind in ClassDB for the given class, method and hash."
             ],
             "since": "4.1"
-        },
-        {
-            "name": "classdb_get_class_tag",
-            "return_value": {
-                "type": "void*",
-                "description": [
-                    "A pointer uniquely identifying the built-in class in the ClassDB."
-                ]
-            },
-            "arguments": [
-                {
-                    "name": "p_classname",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the class name."
-                    ]
-                }
-            ],
-            "description": [
-                "Gets a pointer uniquely identifying the given built-in class in the ClassDB."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.7",
-                "message": "No longer needed. Use the `is_class` method on `Object` instead."
-            }
-        },
-        {
-            "name": "classdb_register_extension_class",
-            "arguments": [
-                {
-                    "name": "p_library",
-                    "type": "GDExtensionClassLibraryPtr",
-                    "description": [
-                        "A pointer the library received by the GDExtension's entry point function."
-                    ]
-                },
-                {
-                    "name": "p_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the class name."
-                    ]
-                },
-                {
-                    "name": "p_parent_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the parent class name."
-                    ]
-                },
-                {
-                    "name": "p_extension_funcs",
-                    "type": "const GDExtensionClassCreationInfo*",
-                    "description": [
-                        "A pointer to a GDExtensionClassCreationInfo struct."
-                    ]
-                }
-            ],
-            "description": [
-                "Registers an extension class in the ClassDB.",
-                "Provided struct can be safely freed once the function returns."
-            ],
-            "since": "4.1",
-            "deprecated": {
-                "since": "4.2",
-                "replace_with": "classdb_register_extension_class6"
-            }
-        },
-        {
-            "name": "classdb_register_extension_class2",
-            "arguments": [
-                {
-                    "name": "p_library",
-                    "type": "GDExtensionClassLibraryPtr",
-                    "description": [
-                        "A pointer the library received by the GDExtension's entry point function."
-                    ]
-                },
-                {
-                    "name": "p_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the class name."
-                    ]
-                },
-                {
-                    "name": "p_parent_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the parent class name."
-                    ]
-                },
-                {
-                    "name": "p_extension_funcs",
-                    "type": "const GDExtensionClassCreationInfo2*",
-                    "description": [
-                        "A pointer to a GDExtensionClassCreationInfo2 struct."
-                    ]
-                }
-            ],
-            "description": [
-                "Registers an extension class in the ClassDB.",
-                "Provided struct can be safely freed once the function returns."
-            ],
-            "since": "4.2",
-            "deprecated": {
-                "since": "4.3",
-                "replace_with": "classdb_register_extension_class6"
-            }
-        },
-        {
-            "name": "classdb_register_extension_class3",
-            "arguments": [
-                {
-                    "name": "p_library",
-                    "type": "GDExtensionClassLibraryPtr",
-                    "description": [
-                        "A pointer the library received by the GDExtension's entry point function."
-                    ]
-                },
-                {
-                    "name": "p_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the class name."
-                    ]
-                },
-                {
-                    "name": "p_parent_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the parent class name."
-                    ]
-                },
-                {
-                    "name": "p_extension_funcs",
-                    "type": "const GDExtensionClassCreationInfo3*",
-                    "description": [
-                        "A pointer to a GDExtensionClassCreationInfo3 struct."
-                    ]
-                }
-            ],
-            "description": [
-                "Registers an extension class in the ClassDB.",
-                "Provided struct can be safely freed once the function returns."
-            ],
-            "since": "4.3",
-            "deprecated": {
-                "since": "4.4",
-                "replace_with": "classdb_register_extension_class6"
-            }
-        },
-        {
-            "name": "classdb_register_extension_class4",
-            "arguments": [
-                {
-                    "name": "p_library",
-                    "type": "GDExtensionClassLibraryPtr",
-                    "description": [
-                        "A pointer the library received by the GDExtension's entry point function."
-                    ]
-                },
-                {
-                    "name": "p_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the class name."
-                    ]
-                },
-                {
-                    "name": "p_parent_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the parent class name."
-                    ]
-                },
-                {
-                    "name": "p_extension_funcs",
-                    "type": "const GDExtensionClassCreationInfo4*",
-                    "description": [
-                        "A pointer to a GDExtensionClassCreationInfo4 struct."
-                    ]
-                }
-            ],
-            "description": [
-                "Registers an extension class in the ClassDB.",
-                "Provided struct can be safely freed once the function returns."
-            ],
-            "since": "4.4",
-            "deprecated": {
-                "since": "4.5",
-                "replace_with": "classdb_register_extension_class6"
-            }
-        },
-        {
-            "name": "classdb_register_extension_class5",
-            "arguments": [
-                {
-                    "name": "p_library",
-                    "type": "GDExtensionClassLibraryPtr",
-                    "description": [
-                        "A pointer the library received by the GDExtension's entry point function."
-                    ]
-                },
-                {
-                    "name": "p_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the class name."
-                    ]
-                },
-                {
-                    "name": "p_parent_class_name",
-                    "type": "GDExtensionConstStringNamePtr",
-                    "description": [
-                        "A pointer to a StringName with the parent class name."
-                    ]
-                },
-                {
-                    "name": "p_extension_funcs",
-                    "type": "const GDExtensionClassCreationInfo5*",
-                    "description": [
-                        "A pointer to a GDExtensionClassCreationInfo5 struct."
-                    ]
-                }
-            ],
-            "description": [
-                "Registers an extension class in the ClassDB.",
-                "Provided struct can be safely freed once the function returns."
-            ],
-            "since": "4.5",
-            "deprecated": {
-                "since": "4.7",
-                "replace_with": "classdb_register_extension_class6"
-            }
         },
         {
             "name": "classdb_register_extension_class6",
@@ -9245,8 +7671,7 @@
                 "Loads new XML-formatted documentation data in the editor.",
                 "The provided pointer can be immediately freed once the function returns."
             ],
-            "since": "4.3",
-            "legacy_type_name": "GDExtensionsInterfaceEditorHelpLoadXmlFromUtf8Chars"
+            "since": "4.3"
         },
         {
             "name": "editor_help_load_xml_from_utf8_chars_and_len",
@@ -9270,8 +7695,7 @@
                 "Loads new XML-formatted documentation data in the editor.",
                 "The provided pointer can be immediately freed once the function returns."
             ],
-            "since": "4.3",
-            "legacy_type_name": "GDExtensionsInterfaceEditorHelpLoadXmlFromUtf8CharsAndLen"
+            "since": "4.3"
         },
         {
             "name": "editor_register_get_classes_used_callback",

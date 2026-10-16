@@ -95,7 +95,6 @@ public:
 			Vector<Ref<GLTFNode>> &r_nodes,
 			HashMap<ObjectID, GLTFSkeletonIndex> &r_skeleton3d_to_fbx_skeleton,
 			Vector<Ref<GLTFSkeleton>> &r_skeletons,
-			HashMap<GLTFNodeIndex, Node *> &r_scene_nodes,
-			int p_naming_version);
+			HashMap<GLTFNodeIndex, Node *> &r_scene_nodes);
 	static Error _create_skins(Vector<Ref<GLTFSkin>> &skins, Vector<Ref<GLTFNode>> &nodes, bool use_named_skin_binds, HashSet<String> &unique_names);
 };

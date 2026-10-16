@@ -47,11 +47,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="_create_script" qualifiers="virtual const" deprecated="This method is not called by the engine.">
-			<return type="Object" />
-			<description>
-			</description>
-		</method>
 		<method name="_debug_get_current_stack_info" qualifiers="virtual required">
 			<return type="Dictionary[]" />
 			<description>
@@ -189,11 +184,6 @@
 			<description>
 			</description>
 		</method>
-		<method name="_get_recognized_extensions" qualifiers="virtual const" deprecated="This method is not called by the engine.">
-			<return type="PackedStringArray" />
-			<description>
-			</description>
-		</method>
 		<method name="_get_reserved_words" qualifiers="virtual required const">
 			<return type="PackedStringArray" />
 			<description>
@@ -212,11 +202,6 @@
 		<method name="_handles_global_class_type" qualifiers="virtual required const">
 			<return type="bool" />
 			<param index="0" name="type" type="String" />
-			<description>
-			</description>
-		</method>
-		<method name="_has_named_classes" qualifiers="virtual const" deprecated="This method is not called by the engine.">
-			<return type="bool" />
 			<description>
 			</description>
 		</method>
@@ -390,8 +375,6 @@
 		<constant name="LOOKUP_RESULT_CLASS_SIGNAL" value="5" enum="LookupResultType">
 		</constant>
 		<constant name="LOOKUP_RESULT_CLASS_ENUM" value="6" enum="LookupResultType">
-		</constant>
-		<constant name="LOOKUP_RESULT_CLASS_TBD_GLOBALSCOPE" value="7" enum="LookupResultType" deprecated="">
 		</constant>
 		<constant name="LOOKUP_RESULT_CLASS_ANNOTATION" value="8" enum="LookupResultType">
 		</constant>

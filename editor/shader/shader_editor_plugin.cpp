@@ -82,13 +82,6 @@ bool ShaderEditorPlugin::handles(Object *p_object) const {
 }
 
 void ShaderEditorPlugin::set_window_layout(Ref<ConfigFile> p_layout) {
-#ifndef DISABLE_DEPRECATED
-	for (int i = 0; i < old_layout_keys.size(); i++) {
-		if (new_layout_keys[i] != "" && p_layout->has_section_key(config_section, old_layout_keys[i])) {
-			p_layout->set_value(config_section, new_layout_keys[i], p_layout->get_value(config_section, old_layout_keys[i]));
-		}
-	}
-#endif
 
 	if (bool(EDITOR_GET("editors/shader_editor/behavior/files/restore_shaders_on_load"))) {
 		shader_container->set_window_layout(p_layout);
@@ -96,13 +89,6 @@ void ShaderEditorPlugin::set_window_layout(Ref<ConfigFile> p_layout) {
 }
 
 void ShaderEditorPlugin::get_window_layout(Ref<ConfigFile> p_layout) {
-#ifndef DISABLE_DEPRECATED
-	for (int i = 0; i < old_layout_keys.size(); i++) {
-		if (p_layout->has_section_key(config_section, old_layout_keys[i])) {
-			p_layout->erase_section_key(config_section, old_layout_keys[i]);
-		}
-	}
-#endif
 
 	shader_container->get_window_layout(p_layout);
 }

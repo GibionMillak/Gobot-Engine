@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "audio_stream_player_2d.h"
-#include "audio_stream_player_2d.compat.inc"
 
 #include "core/config/project_settings.h"
 #include "core/object/callable_mp.h"

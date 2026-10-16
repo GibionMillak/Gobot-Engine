@@ -238,53 +238,6 @@ EditorDock *EditorBottomPanel::_get_dock_from_control(Control *p_control) const 
 	return Object::cast_to<EditorDock>(p_control->get_parent());
 }
 
-Button *EditorBottomPanel::add_item(String p_text, Control *p_item, const Ref<Shortcut> &p_shortcut, bool p_at_front) {
-	EditorDock *dock = memnew(EditorDock);
-	dock->add_child(p_item);
-	dock->set_title(p_text);
-	dock->set_dock_shortcut(p_shortcut);
-	dock->set_global(false);
-	dock->set_transient(true);
-	dock->set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
-	dock->set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL);
-	EditorDockManager::get_singleton()->add_dock(dock);
-	bottom_docks.push_back(dock);
-
-	p_item->show(); // Compatibility in case it was hidden.
-
-	// Still return a dummy button for compatibility reasons.
-	Button *tb = memnew(Button);
-	tb->set_toggle_mode(true);
-	tb->connect(SceneStringName(visibility_changed), callable_mp(this, &EditorBottomPanel::_on_button_visibility_changed).bind(tb, dock));
-	legacy_buttons.push_back(tb);
-	return tb;
-}
-
-void EditorBottomPanel::remove_item(Control *p_item) {
-	EditorDock *dock = _get_dock_from_control(p_item);
-	ERR_FAIL_NULL_MSG(dock, vformat("Cannot remove unknown dock \"%s\" from the bottom panel.", p_item->get_name()));
-
-	int item_idx = bottom_docks.find(dock);
-	ERR_FAIL_COND(item_idx == -1);
-
-	bottom_docks.remove_at(item_idx);
-
-	legacy_buttons[item_idx]->queue_free();
-	legacy_buttons.remove_at(item_idx);
-
-	EditorDockManager::get_singleton()->remove_dock(dock);
-	dock->remove_child(p_item);
-	dock->queue_free();
-}
-
-void EditorBottomPanel::_on_button_visibility_changed(Button *p_button, EditorDock *p_dock) {
-	if (p_button->is_visible()) {
-		p_dock->open();
-	} else {
-		p_dock->close();
-	}
-}
-
 EditorBottomPanel::EditorBottomPanel() :
 		DockTabContainer(EditorDock::DOCK_SLOT_BOTTOM) {
 	layout = EditorDock::DOCK_LAYOUT_HORIZONTAL;
@@ -339,12 +292,6 @@ EditorBottomPanel::EditorBottomPanel() :
 	pin_button->connect(SceneStringName(toggled), callable_mp(this, &EditorBottomPanel::_pin_button_toggled));
 
 	callable_mp(this, &EditorBottomPanel::_repaint).call_deferred();
-}
-
-EditorBottomPanel::~EditorBottomPanel() {
-	for (Button *b : legacy_buttons) {
-		memdelete(b);
-	}
 }
 
 void ProgressIndicator::_notification(int p_what) {

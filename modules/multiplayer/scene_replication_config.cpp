@@ -286,8 +286,4 @@ void SceneReplicationConfig::_bind_methods() {
 	BIND_ENUM_CONSTANT(REPLICATION_MODE_ON_CHANGE);
 
 	// Deprecated.
-	ClassDB::bind_method(D_METHOD("property_get_sync", "path"), &SceneReplicationConfig::property_get_sync);
-	ClassDB::bind_method(D_METHOD("property_set_sync", "path", "enabled"), &SceneReplicationConfig::property_set_sync);
-	ClassDB::bind_method(D_METHOD("property_get_watch", "path"), &SceneReplicationConfig::property_get_watch);
-	ClassDB::bind_method(D_METHOD("property_set_watch", "path", "enabled"), &SceneReplicationConfig::property_set_watch);
 }

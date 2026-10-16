@@ -458,15 +458,6 @@ struct AnimationNodeInstance {
 class AnimationTree : public AnimationMixer {
 	GDCLASS(AnimationTree, AnimationMixer);
 
-#ifndef DISABLE_DEPRECATED
-public:
-	enum AnimationProcessCallback {
-		ANIMATION_PROCESS_PHYSICS,
-		ANIMATION_PROCESS_IDLE,
-		ANIMATION_PROCESS_MANUAL,
-	};
-#endif // DISABLE_DEPRECATED
-
 private:
 	Ref<AnimationRootNode> root_animation_node;
 	NodePath advance_expression_base_node = NodePath(String("."));
@@ -515,15 +506,6 @@ private:
 
 	// Make animation instances.
 	virtual bool _blend_pre_process(double p_delta, int p_track_count, const AHashMap<NodePath, int> &p_track_map) override;
-
-#ifndef DISABLE_DEPRECATED
-	void _set_process_callback_bind_compat_80813(AnimationProcessCallback p_mode);
-	AnimationProcessCallback _get_process_callback_bind_compat_80813() const;
-	void _set_tree_root_bind_compat_80813(const Ref<AnimationNode> &p_root);
-	Ref<AnimationNode> _get_tree_root_bind_compat_80813() const;
-
-	static void _bind_compatibility_methods();
-#endif // DISABLE_DEPRECATED
 
 public:
 	AnimationNodeInstance &get_node_instance_by_path(const StringName &p_path) {
@@ -579,7 +561,3 @@ public:
 	AnimationTree();
 	~AnimationTree();
 };
-
-#ifndef DISABLE_DEPRECATED
-VARIANT_ENUM_CAST(AnimationTree::AnimationProcessCallback);
-#endif // DISABLE_DEPRECATED

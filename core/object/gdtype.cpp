@@ -58,11 +58,6 @@ GDType::~GDType() {
 	for (MethodBind *bind : owned_method_map) {
 		memdelete(bind);
 	}
-	for (const KeyValue<StringName, LocalVector<MethodBind *>> &kv : self_compatibility_method_map) {
-		for (MethodBind *bind : kv.value) {
-			memdelete(bind);
-		}
-	}
 	for (const PropertyInfo *property : ordered_self_properties) {
 		memdelete(const_cast<PropertyInfo *>(property));
 	}
@@ -183,17 +178,6 @@ void GDType::set_method_flags(const StringName &p_method, int p_flags) {
 	ERR_FAIL_COND(member->type != Member::Type::METHOD);
 
 	const_cast<MethodBind *>(member->payload.method)->set_hint_flags(p_flags);
-}
-
-bool GDType::bind_compatibility_method(MethodBind *p_method) {
-	ERR_FAIL_COND_V(Thread::get_caller_id() != owning_thread_id, false);
-	ERR_FAIL_COND_V(init_state != InitState::MUTABLE, false);
-
-	if (!self_compatibility_method_map.has(p_method->get_name())) {
-		self_compatibility_method_map.insert(p_method->get_name(), LocalVector<MethodBind *>());
-	}
-	self_compatibility_method_map[p_method->get_name()].push_back(p_method);
-	return true;
 }
 
 void GDType::add_property(const PropertyInfo &p_pinfo, const StringName &p_setter, const StringName &p_getter,

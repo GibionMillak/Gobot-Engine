@@ -200,9 +200,6 @@ void ImportDock::_update_options(const String &p_path, const Ref<ConfigFile> &p_
 		for (const String &section_key : section_keys) {
 			import_options[section_key] = p_config->get_value("params", section_key);
 		}
-		if (params->importer.is_valid()) {
-			params->importer->handle_compatibility_options(import_options);
-		}
 	}
 
 	for (const ResourceImporter::ImportOption &E : options) {

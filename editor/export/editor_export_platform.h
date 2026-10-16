@@ -229,12 +229,6 @@ protected:
 
 	Ref<Image> _load_icon_or_splash_image(const String &p_path, Error *r_error) const;
 
-#ifndef DISABLE_DEPRECATED
-	Error _export_project_bind_compat_118787(const Ref<EditorExportPreset> &p_preset, bool p_debug, const String &p_path, BitField<EditorExportPlatform::DebugFlags> p_flags = 0);
-	static Vector<String> _get_forced_export_files_bind_compat_71542();
-	static void _bind_compatibility_methods();
-#endif
-
 public:
 	static String simplify_path(const String &p_path);
 	static Variant get_project_setting(const Ref<EditorExportPreset> &p_preset, const StringName &p_name);

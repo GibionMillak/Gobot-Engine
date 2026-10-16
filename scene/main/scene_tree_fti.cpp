@@ -639,9 +639,6 @@ void SceneTreeFTI::frame_update(Node *p_root, bool p_frame_start) {
 
 	bool print_debug_stats = false;
 	switch (data.traversal_mode) {
-		case TM_LEGACY: {
-			data.use_optimized_traversal_method = false;
-		} break;
 		case TM_DEBUG: {
 			// Switch on alternate frames between the two methods.
 			data.use_optimized_traversal_method = (frame % 2) == 1;
@@ -763,13 +760,11 @@ SceneTreeFTI::SceneTreeFTI() {
 #endif
 
 	Variant traversal_mode_string = GLOBAL_DEF("physics/3d/physics_interpolation/scene_traversal", "DEFAULT");
-	ProjectSettings::get_singleton()->set_custom_property_info(PropertyInfo(Variant::STRING, "physics/3d/physics_interpolation/scene_traversal", PROPERTY_HINT_ENUM, "DEFAULT,Legacy,Debug"));
+	ProjectSettings::get_singleton()->set_custom_property_info(PropertyInfo(Variant::STRING, "physics/3d/physics_interpolation/scene_traversal", PROPERTY_HINT_ENUM, "DEFAULT,Debug"));
 
 	data.traversal_mode = TM_DEFAULT;
 
-	if (traversal_mode_string == "Legacy") {
-		data.traversal_mode = TM_LEGACY;
-	} else if (traversal_mode_string == "Debug") {
+	if (traversal_mode_string == "Debug") {
 		// Don't allow debug mode in final exports,
 		// it will almost certainly be a mistake.
 #ifdef DEBUG_ENABLED
@@ -782,9 +777,6 @@ SceneTreeFTI::SceneTreeFTI() {
 	switch (data.traversal_mode) {
 		default: {
 			print_verbose("SceneTreeFTI: traversal method DEFAULT");
-		} break;
-		case TM_LEGACY: {
-			print_verbose("SceneTreeFTI: traversal method Legacy");
 		} break;
 		case TM_DEBUG: {
 			print_verbose("SceneTreeFTI: traversal method Debug");

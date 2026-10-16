@@ -89,14 +89,13 @@ struct ManagedCallbacks {
 	using FuncScriptManagerBridge_GetScriptNativeName = void(GD_CLR_STDCALL *)(const CSharpScript *, StringName *);
 	using FuncScriptManagerBridge_GetGlobalClassName = void(GD_CLR_STDCALL *)(const String *, String *, String *, bool *, bool *, String *);
 	using FuncScriptManagerBridge_SetGodotObjectPtr = void(GD_CLR_STDCALL *)(GCHandleIntPtr, Object *);
-	using FuncScriptManagerBridge_RaiseEventSignal = void(GD_CLR_STDCALL *)(GCHandleIntPtr, const StringName *, const Variant **, int32_t, bool *);
 	using FuncScriptManagerBridge_RaiseEventSignalViaTrampoline = void(GD_CLR_STDCALL *)(godotsharp::RaiseSignalTrampoline p_trampoline, GCHandleIntPtr p_obj_gchandle, const Variant **p_args, int32_t p_argc, Callable::CallError *r_ref_call_error, bool *r_owner_is_null);
 	using FuncScriptManagerBridge_ScriptIsOrInherits = bool(GD_CLR_STDCALL *)(const CSharpScript *, const CSharpScript *);
 	using FuncScriptManagerBridge_AddScriptBridge = bool(GD_CLR_STDCALL *)(const CSharpScript *, const String *);
 	using FuncScriptManagerBridge_GetOrCreateScriptBridgeForPath = void(GD_CLR_STDCALL *)(const String *, Ref<CSharpScript> *);
 	using FuncScriptManagerBridge_RemoveScriptBridge = void(GD_CLR_STDCALL *)(const CSharpScript *);
 	using FuncScriptManagerBridge_TryReloadRegisteredScriptWithClass = bool(GD_CLR_STDCALL *)(const CSharpScript *);
-	using FuncScriptManagerBridge_UpdateScriptTrampolines = void(GD_CLR_STDCALL *)(const CSharpScript *, bool *,
+	using FuncScriptManagerBridge_UpdateScriptTrampolines = void(GD_CLR_STDCALL *)(const CSharpScript *,
 			Callback_ScriptManagerBridge_UpdateScriptTrampolines_TryAddMethod,
 			Callback_ScriptManagerBridge_UpdateScriptTrampolines_TryAddProperty,
 			Callback_ScriptManagerBridge_UpdateScriptTrampolines_TryAddRaiseSignal);
@@ -104,17 +103,12 @@ struct ManagedCallbacks {
 	using FuncScriptManagerBridge_SwapGCHandleForType = bool(GD_CLR_STDCALL *)(GCHandleIntPtr, GCHandleIntPtr *, bool);
 	using FuncScriptManagerBridge_GetPropertyInfoList = void(GD_CLR_STDCALL *)(CSharpScript *, Callback_ScriptManagerBridge_GetPropertyInfoList_Add);
 	using FuncScriptManagerBridge_GetPropertyDefaultValues = void(GD_CLR_STDCALL *)(CSharpScript *, Callback_ScriptManagerBridge_GetPropertyDefaultValues_Add);
-	using FuncScriptManagerBridge_CallStatic = bool(GD_CLR_STDCALL *)(const CSharpScript *, const StringName *, const Variant **, int32_t, Callable::CallError *, Variant *);
 	using FuncScriptManagerBridge_CallStaticWithTrampoline = bool(GD_CLR_STDCALL *)(godotsharp::MethodTrampoline p_trampoline, const Variant **, int32_t, Callable::CallError *, Variant *);
-	using FuncCSharpInstanceBridge_Call = bool(GD_CLR_STDCALL *)(GCHandleIntPtr, const StringName *, const Variant **, int32_t, Callable::CallError *, Variant *);
-	using FuncCSharpInstanceBridge_Set = bool(GD_CLR_STDCALL *)(GCHandleIntPtr, const StringName *, const Variant *);
-	using FuncCSharpInstanceBridge_Get = bool(GD_CLR_STDCALL *)(GCHandleIntPtr, const StringName *, Variant *);
 	using FuncCSharpInstanceBridge_CallViaTrampoline = bool(GD_CLR_STDCALL *)(godotsharp::MethodTrampoline p_trampoline, GCHandleIntPtr p_obj_gchandle, const Variant **p_args, int32_t p_argc, Callable::CallError *r_ref_call_error, Variant *r_ret);
 	using FuncCSharpInstanceBridge_SetViaTrampoline = bool(GD_CLR_STDCALL *)(godotsharp::PropertySetterTrampoline p_trampoline, GCHandleIntPtr p_obj_gchandle, const Variant *p_args);
 	using FuncCSharpInstanceBridge_GetViaTrampoline = bool(GD_CLR_STDCALL *)(godotsharp::PropertyGetterTrampoline p_trampoline, GCHandleIntPtr p_obj_gchandle, Variant *r_args);
 	using FuncCSharpInstanceBridge_CallDispose = void(GD_CLR_STDCALL *)(GCHandleIntPtr, bool);
 	using FuncCSharpInstanceBridge_CallToString = void(GD_CLR_STDCALL *)(GCHandleIntPtr, String *, bool *);
-	using FuncCSharpInstanceBridge_HasMethodUnknownParams = bool(GD_CLR_STDCALL *)(GCHandleIntPtr, const StringName *);
 	using FuncCSharpInstanceBridge_SerializeState = void(GD_CLR_STDCALL *)(GCHandleIntPtr, const Dictionary *, const Dictionary *);
 	using FuncCSharpInstanceBridge_DeserializeState = void(GD_CLR_STDCALL *)(GCHandleIntPtr, const Dictionary *, const Dictionary *);
 	using FuncGCHandleBridge_FreeGCHandle = void(GD_CLR_STDCALL *)(GCHandleIntPtr);
@@ -136,7 +130,6 @@ struct ManagedCallbacks {
 	FuncScriptManagerBridge_GetScriptNativeName ScriptManagerBridge_GetScriptNativeName;
 	FuncScriptManagerBridge_GetGlobalClassName ScriptManagerBridge_GetGlobalClassName;
 	FuncScriptManagerBridge_SetGodotObjectPtr ScriptManagerBridge_SetGodotObjectPtr;
-	FuncScriptManagerBridge_RaiseEventSignal ScriptManagerBridge_RaiseEventSignal;
 	FuncScriptManagerBridge_RaiseEventSignalViaTrampoline ScriptManagerBridge_RaiseEventSignalViaTrampoline;
 	FuncScriptManagerBridge_ScriptIsOrInherits ScriptManagerBridge_ScriptIsOrInherits;
 	FuncScriptManagerBridge_AddScriptBridge ScriptManagerBridge_AddScriptBridge;
@@ -148,17 +141,12 @@ struct ManagedCallbacks {
 	FuncScriptManagerBridge_SwapGCHandleForType ScriptManagerBridge_SwapGCHandleForType;
 	FuncScriptManagerBridge_GetPropertyInfoList ScriptManagerBridge_GetPropertyInfoList;
 	FuncScriptManagerBridge_GetPropertyDefaultValues ScriptManagerBridge_GetPropertyDefaultValues;
-	FuncScriptManagerBridge_CallStatic ScriptManagerBridge_CallStatic;
 	FuncScriptManagerBridge_CallStaticWithTrampoline ScriptManagerBridge_CallStaticWithTrampoline;
-	FuncCSharpInstanceBridge_Call CSharpInstanceBridge_Call;
-	FuncCSharpInstanceBridge_Set CSharpInstanceBridge_Set;
-	FuncCSharpInstanceBridge_Get CSharpInstanceBridge_Get;
 	FuncCSharpInstanceBridge_CallViaTrampoline CSharpInstanceBridge_CallViaTrampoline;
 	FuncCSharpInstanceBridge_SetViaTrampoline CSharpInstanceBridge_SetViaTrampoline;
 	FuncCSharpInstanceBridge_GetViaTrampoline CSharpInstanceBridge_GetViaTrampoline;
 	FuncCSharpInstanceBridge_CallDispose CSharpInstanceBridge_CallDispose;
 	FuncCSharpInstanceBridge_CallToString CSharpInstanceBridge_CallToString;
-	FuncCSharpInstanceBridge_HasMethodUnknownParams CSharpInstanceBridge_HasMethodUnknownParams;
 	FuncCSharpInstanceBridge_SerializeState CSharpInstanceBridge_SerializeState;
 	FuncCSharpInstanceBridge_DeserializeState CSharpInstanceBridge_DeserializeState;
 	FuncGCHandleBridge_FreeGCHandle GCHandleBridge_FreeGCHandle;

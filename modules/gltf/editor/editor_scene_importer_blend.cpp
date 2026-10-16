@@ -329,10 +329,6 @@ Node *EditorSceneFormatImporterBlend::import_scene(const String &p_path, uint32_
 	Ref<GLTFState> state;
 	state.instantiate();
 
-	if (p_options.has("gltf/naming_version")) {
-		int naming_version = p_options["gltf/naming_version"];
-		gltf->set_naming_version(naming_version);
-	}
 	if (p_options.has("gltf/texture_map_mode")) {
 		int texture_map_mode = p_options["gltf/texture_map_mode"];
 		gltf->set_texture_map_mode((GLTFDocument::TextureMapMode)texture_map_mode);
@@ -352,12 +348,7 @@ Node *EditorSceneFormatImporterBlend::import_scene(const String &p_path, uint32_
 	}
 	ERR_FAIL_COND_V(!p_options.has("animation/fps"), nullptr);
 
-#ifndef DISABLE_DEPRECATED
-	bool trimming = p_options.has("animation/trimming") ? (bool)p_options["animation/trimming"] : false;
-	return gltf->generate_scene(state, (float)p_options["animation/fps"], trimming, false);
-#else
 	return gltf->generate_scene(state, (float)p_options["animation/fps"], (bool)p_options["animation/trimming"], false);
-#endif
 }
 
 Variant EditorSceneFormatImporterBlend::get_option_visibility(const String &p_path, const String &p_scene_import_type, const String &p_option,
@@ -404,24 +395,7 @@ void EditorSceneFormatImporterBlend::get_import_options(const String &p_path, Li
 	ADD_OPTION_BOOL("blender/animation/always_sample", true);
 	ADD_OPTION_BOOL("blender/animation/group_tracks", true);
 
-	r_options->push_back(ResourceImporterScene::ImportOption(PropertyInfo(Variant::INT, "gltf/naming_version", PROPERTY_HINT_ENUM, "Godot 4.0 or 4.1,Godot 4.2 to 4.4,Godot 4.5 or later"), 2));
 	r_options->push_back(ResourceImporterScene::ImportOption(PropertyInfo(Variant::INT, "gltf/texture_map_mode", PROPERTY_HINT_ENUM, "Do Not Remap,Remap to StandardMaterial3D", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED), GLTFDocument::TEXTURE_MAP_MODE_REMAP_TO_STANDARD_MATERIAL));
-}
-
-void EditorSceneFormatImporterBlend::handle_compatibility_options(HashMap<StringName, Variant> &p_import_params) const {
-	if (p_import_params.has("blender/meshes/colors")) { // Legacy boolean option support.
-		if (bool(p_import_params["blender/meshes/colors"])) {
-			p_import_params["blender/meshes/vertex_colors"] = BLEND_VERTEX_COLOR_MATERIAL;
-		} else {
-			p_import_params["blender/meshes/vertex_colors"] = BLEND_VERTEX_COLOR_NONE;
-		}
-		p_import_params.erase("blender/meshes/colors");
-	}
-	if (!p_import_params.has("gltf/texture_map_mode")) {
-		// If an existing import file is missing the glTF
-		// texture map mode, we need to use "Do Not Remap".
-		p_import_params["gltf/texture_map_mode"] = (int64_t)GLTFDocument::TEXTURE_MAP_MODE_DO_NOT_REMAP;
-	}
 }
 
 static bool _test_blender_path(const String &p_path, String *r_err = nullptr) {

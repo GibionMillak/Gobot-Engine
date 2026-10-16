@@ -71,8 +71,8 @@ const MethodBind *godotsharp_method_bind_get_method(const StringName *p_classnam
 	return ClassDB::get_method(*p_classname, *p_methodname);
 }
 
-const MethodBind *godotsharp_method_bind_get_method_with_compatibility(const StringName *p_classname, const StringName *p_methodname, uint64_t p_hash) {
-	return ClassDB::get_method_with_compatibility(*p_classname, *p_methodname, p_hash);
+const MethodBind *godotsharp_method_bind_get_method_by_hash(const StringName *p_classname, const StringName *p_methodname, uint64_t p_hash) {
+	return ClassDB::get_method_by_hash(*p_classname, *p_methodname, p_hash);
 }
 
 godotsharp_class_creation_func godotsharp_get_class_constructor(const StringName *p_classname) {
@@ -1587,7 +1587,7 @@ static const void *unmanaged_callbacks[]{
 	(void *)godotsharp_dotnet_module_is_initialized,
 	(void *)godotsharp_initialize_marshaling_information,
 	(void *)godotsharp_method_bind_get_method,
-	(void *)godotsharp_method_bind_get_method_with_compatibility,
+	(void *)godotsharp_method_bind_get_method_by_hash,
 	(void *)godotsharp_get_class_constructor,
 	(void *)godotsharp_engine_get_singleton,
 	(void *)godotsharp_stack_info_vector_resize,

@@ -237,10 +237,6 @@ void EditorSceneTabs::_update_context_menu(int p_index) {
 	if (EditorContextMenuPluginManager::get_singleton()->has_plugins_for_slot(EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TABS)) {
 		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(scene_tabs_context_menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TABS, _get_context_data(tab_id));
 
-#ifndef DISABLE_DEPRECATED
-		const PackedStringArray paths = tab_id >= 0 ? PackedStringArray{ EditorNode::get_editor_data().get_scene_path(tab_id) } : PackedStringArray();
-		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(scene_tabs_context_menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TABS, paths, tab_id >= 0 ? paths[0] : String(), 500);
-#endif
 	}
 
 	last_hovered_tab = tab_id;
@@ -439,13 +435,6 @@ void EditorSceneTabs::shortcut_input(const Ref<InputEvent> &p_event) {
 	} else {
 		const Callable custom_callback = EditorContextMenuPluginManager::get_singleton()->match_custom_shortcut(EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TABS, p_event);
 		if (custom_callback.is_valid()) {
-#ifndef DISABLE_DEPRECATED
-			if (p_event->get_meta("_legacy_shortcut", false)) {
-				EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, last_hovered_tab >= 0 ? EditorNode::get_editor_data().get_scene_path(last_hovered_tab) : String());
-				accept_event();
-				return;
-			}
-#endif
 			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, EditorSceneTabs::_get_context_data(get_current_tab()));
 			accept_event();
 		}

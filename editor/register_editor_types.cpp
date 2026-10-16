@@ -138,11 +138,6 @@
 #include "editor/version_control/editor_vcs_interface.h"
 #include "servers/rendering/rendering_server.h"
 
-#ifndef DISABLE_DEPRECATED
-#include "editor/scene/2d/parallax_background_editor_plugin.h"
-#include "editor/scene/3d/skeleton_ik_3d_editor_plugin.h"
-#endif
-
 void register_editor_types() {
 	OS::get_singleton()->benchmark_begin_measure("Editor", "Register Types");
 
@@ -270,9 +265,6 @@ void register_editor_types() {
 	EditorPlugins::add_by_type<Cast2DEditorPlugin>();
 	EditorPlugins::add_by_type<CollisionPolygon2DEditorPlugin>();
 	EditorPlugins::add_by_type<CollisionShape2DEditorPlugin>();
-#ifndef DISABLE_DEPRECATED
-	EditorPlugins::add_by_type<ParallaxBackgroundEditorPlugin>();
-#endif
 
 	// 3D editor plugins.
 	EditorPlugins::add_by_type<BoneMapEditorPlugin>();
@@ -292,9 +284,6 @@ void register_editor_types() {
 	EditorPlugins::add_by_type<VoxelGIEditorPlugin>();
 	// 3D physics editor plugins.
 	EditorPlugins::add_by_type<PhysicalBone3DEditorPlugin>();
-#ifndef DISABLE_DEPRECATED
-	EditorPlugins::add_by_type<SkeletonIK3DEditorPlugin>();
-#endif
 
 	// For correct doc generation.
 	GLOBAL_DEF(PropertyInfo(Variant::STRING, "editor/run/main_run_args", PROPERTY_HINT_NONE, "monospace"), "");

@@ -40,39 +40,6 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
 
-#ifndef DISABLE_DEPRECATED
-void LegacyMainScreenContainer::_force_dock_visible(EditorDock *p_dock, CanvasItem *p_child) {
-	if (p_dock->is_visible_in_tree()) {
-		p_child->show();
-	}
-}
-
-void LegacyMainScreenContainer::add_child_notify(Node *p_child) {
-	EditorMainScreen *ms = EditorNode::get_editor_main_screen();
-	if (!ms->adding_plugin || !ms->adding_plugin->has_main_screen()) {
-		return;
-	}
-
-	EditorDock *dock = memnew(EditorDock);
-	dock->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
-	dock->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN);
-	dock->set_title(ms->adding_plugin->get_plugin_name());
-	dock->set_dock_icon(ms->adding_plugin->get_plugin_icon());
-	dock->set_icon_name(ms->adding_plugin->get_plugin_name());
-	EditorDockManager::get_singleton()->add_dock(dock);
-
-	ms->adding_plugin->set_meta("_dock", dock);
-
-	CanvasItem *ci_child = Object::cast_to<CanvasItem>(p_child);
-	if (ci_child) {
-		ci_child->show();
-		dock->connect(SceneStringName(visibility_changed), callable_mp(this, &LegacyMainScreenContainer::_force_dock_visible).bind(dock, ci_child));
-	}
-
-	callable_mp(p_child, &Node::reparent).call_deferred(dock, false);
-}
-#endif
-
 void EditorMainScreen::_on_tab_changed(int p_tab) {
 	EditorNode::get_singleton()->update_distraction_free_mode();
 
@@ -156,27 +123,6 @@ void EditorMainScreen::select_prev() {
 	}
 }
 
-#ifndef DISABLE_DEPRECATED
-VBoxContainer *EditorMainScreen::get_control() const {
-	return main_screen_vbox;
-}
-
-void EditorMainScreen::add_main_plugin(EditorPlugin *p_editor) {
-	editor_table.push_back(p_editor);
-}
-
-void EditorMainScreen::remove_main_plugin(EditorPlugin *p_editor) {
-	if (p_editor->has_meta("_dock")) {
-		EditorDock *dock = Object::cast_to<EditorDock>(p_editor->get_meta("_dock").get_validated_object());
-		if (dock) {
-			EditorDockManager::get_singleton()->remove_dock(dock);
-		}
-	}
-
-	editor_table.erase(p_editor);
-}
-#endif
-
 EditorMainScreen::EditorMainScreen() :
 		DockTabContainer(EditorDock::DOCK_SLOT_MAIN_SCREEN) {
 	layout = EditorDock::DOCK_LAYOUT_MAIN_SCREEN;
@@ -187,12 +133,6 @@ EditorMainScreen::EditorMainScreen() :
 	set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	set_draw_behind_parent(true);
 	get_tab_bar()->set_mouse_filter(Control::MOUSE_FILTER_PASS);
-
-#ifndef DISABLE_DEPRECATED
-	main_screen_vbox = memnew(LegacyMainScreenContainer);
-	main_screen_vbox->hide();
-	EditorNode::get_singleton()->get_gui_base()->add_child(main_screen_vbox);
-#endif
 
 	Ref<StyleBoxEmpty> sb;
 	sb.instantiate();

@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "xr_server.h"
-#include "xr_server.compat.inc"
 
 #include "core/config/project_settings.h"
 #include "core/object/callable_mp.h"
@@ -100,10 +99,6 @@ void XRServer::_bind_methods() {
 	BIND_ENUM_CONSTANT(TRACKER_ANY_KNOWN);
 	BIND_ENUM_CONSTANT(TRACKER_UNKNOWN);
 	BIND_ENUM_CONSTANT(TRACKER_ANY);
-
-#ifndef DISABLE_DEPRECATED
-	BIND_ENUM_CONSTANT(TRACKER_HEAD);
-#endif
 
 	BIND_ENUM_CONSTANT(RESET_FULL_ROTATION);
 	BIND_ENUM_CONSTANT(RESET_BUT_KEEP_TILT);
@@ -426,15 +421,6 @@ TypedArray<Projection> XRServer::get_camera_projections(const StringName &p_trac
 		}
 	}
 
-#ifndef DISABLE_DEPRECATED
-	// Fallback on old implementation.
-	if (primary_interface.is_valid() && p_tracker_name == XR_TRACKER_HEAD) {
-		for (uint32_t v = 0; v < primary_interface->get_view_count(); v++) {
-			projections.push_back(primary_interface->get_projection_for_view(v, p_aspect, p_z_near, p_z_far));
-		}
-	}
-#endif
-
 	return projections;
 }
 
@@ -458,18 +444,6 @@ TypedArray<Transform3D> XRServer::get_camera_offsets(const StringName &p_tracker
 			}
 		}
 	}
-
-#ifndef DISABLE_DEPRECATED
-	// Fallback on old implementation.
-	if (primary_interface.is_valid() && p_tracker_name == XR_TRACKER_HEAD) {
-		Transform3D inv_camera_transform = primary_interface->get_camera_transform().inverse();
-
-		for (uint32_t v = 0; v < primary_interface->get_view_count(); v++) {
-			Transform3D offset = primary_interface->get_transform_for_view(v, Transform3D());
-			offsets.push_back(inv_camera_transform * offset);
-		}
-	}
-#endif
 
 	return offsets;
 }

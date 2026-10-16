@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "editor_export_platform.h"
-#include "editor_export_platform.compat.inc"
 
 #include "core/config/project_settings.h"
 #include "core/crypto/crypto_core.h"
@@ -1230,28 +1229,6 @@ Error EditorExportPlatform::_script_save_file(const Ref<EditorExportPreset> &p_p
 
 	Variant ret;
 
-#ifndef DISABLE_DEPRECATED
-	if (cb.get_argument_count() == 7) {
-		Variant v_path = simplify_path(p_info.path);
-		Variant v_data = p_data;
-		Variant v_file_index = p_info.file_index;
-		Variant v_file_count = p_info.file_count;
-		Variant v_enc_in_filter = PackedStringArray();
-		Variant v_enc_ex_filter = PackedStringArray();
-		Variant v_enc_key = PackedByteArray();
-
-		if (p_preset->get_enc_pck()) {
-			v_enc_in_filter = p_preset->get_enc_in_filters();
-			v_enc_ex_filter = p_preset->get_enc_ex_filters();
-			v_enc_key = p_preset->resolve_script_encryption_key();
-		}
-
-		Callable::CallError ce;
-		const Variant *args[7] = { &v_path, &v_data, &v_file_index, &v_file_count, &v_enc_in_filter, &v_enc_ex_filter, &v_enc_key };
-		cb.callp(args, 7, ret, ce);
-		ERR_FAIL_COND_V_MSG(ce.error != Callable::CallError::CALL_OK, FAILED, vformat("Failed to execute file save callback: %s.", Variant::get_callable_error_text(cb, args, 7, ce)));
-	} else
-#endif
 	{
 		Dictionary info;
 		info["path"] = simplify_path(p_info.path);

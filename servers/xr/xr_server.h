@@ -75,9 +75,6 @@ public:
 		TRACKER_ANY_KNOWN = 0x7f, /* all except unknown */
 		TRACKER_ANY = 0xff, /* used by get_connected_trackers to return all types */
 
-#ifndef DISABLE_DEPRECATED
-		TRACKER_HEAD = TRACKER_CAMERA /* Just for backwards compatibility */
-#endif
 	};
 
 	enum RotationMode {
@@ -119,13 +116,6 @@ protected:
 	static XRServer *singleton;
 
 	static void _bind_methods();
-
-#ifndef DISABLE_DEPRECATED
-	static void _bind_compatibility_methods();
-	void _add_tracker_bind_compat_90645(const Ref<XRPositionalTracker> &p_tracker);
-	void _remove_tracker_bind_compat_90645(const Ref<XRPositionalTracker> &p_tracker);
-	Ref<XRPositionalTracker> _get_tracker_bind_compat_90645(const StringName &p_name) const;
-#endif
 
 public:
 	static XRMode get_xr_mode();

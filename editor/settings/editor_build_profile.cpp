@@ -1007,12 +1007,7 @@ void EditorBuildProfileManager::_detect_from_project() {
 	for (const StringName &E : used_classes) {
 		StringName c = E;
 		if (!ClassDB::class_exists(c)) {
-			// Maybe this is an old class that got replaced? Try getting compat class.
-			c = ClassDB::get_compatibility_class(c);
-			if (!c) {
-				// No luck, skip.
-				continue;
-			}
+			continue;
 		}
 
 		List<StringName> dependencies;

@@ -69,9 +69,6 @@
 		<member name="sparse_values_byte_offset" type="int" setter="set_sparse_values_byte_offset" getter="get_sparse_values_byte_offset" default="0">
 			The offset relative to the start of the bufferView in bytes.
 		</member>
-		<member name="type" type="int" setter="set_type" getter="get_type" deprecated="Use [member accessor_type] instead.">
-			The glTF accessor type, as an [int]. Possible values are [code]0[/code] for "SCALAR", [code]1[/code] for "VEC2", [code]2[/code] for "VEC3", [code]3[/code] for "VEC4", [code]4[/code] for "MAT2", [code]5[/code] for "MAT3", and [code]6[/code] for "MAT4".
-		</member>
 	</members>
 	<constants>
 		<constant name="TYPE_SCALAR" value="0" enum="GLTFAccessorType">

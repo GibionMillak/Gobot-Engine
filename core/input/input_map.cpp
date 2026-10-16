@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "input_map.h"
-#include "input_map.compat.inc"
 
 #include "core/config/project_settings.h"
 #include "core/input/input.h"
@@ -204,22 +203,6 @@ void InputMap::action_add_event(const StringName &p_action, RequiredParam<InputE
 	ERR_FAIL_COND_MSG(!input_map.has(p_action), suggest_actions(p_action));
 	if (_find_event(input_map[p_action], event, true)) {
 		return; // Already added.
-	}
-
-	// Normalize legacy device IDs: before the device ID change,
-	// keyboard and mouse events defaulted to device=0.
-	if (event->get_device() == 0) {
-		switch (event->get_type()) {
-			case InputEventType::KEY:
-				event->set_device(InputEvent::DEVICE_ID_KEYBOARD);
-				break;
-			case InputEventType::MOUSE_BUTTON:
-			case InputEventType::MOUSE_MOTION:
-				event->set_device(InputEvent::DEVICE_ID_MOUSE);
-				break;
-			default:
-				break;
-		}
 	}
 
 	input_map[p_action].inputs.push_back(event);

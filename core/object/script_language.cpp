@@ -186,14 +186,6 @@ void Script::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_rpc_config"), &Script::_get_rpc_config_bind);
 
-#ifndef DISABLE_DEPRECATED
-	GODOT_PUSH_IGNORE_DEPRECATION();
-
-	ClassDB::bind_method(D_METHOD("instance_has", "base_object"), &Script::instance_has);
-
-	GODOT_POP_IGNORE_DEPRECATION();
-#endif // !DISABLE_DEPRECATED
-
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "source_code", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NONE), "set_source_code", "get_source_code");
 }
 
@@ -275,20 +267,6 @@ Error ScriptServer::unregister_language(const ScriptLanguage *p_language) {
 void ScriptServer::init_languages() {
 	{ // Load global classes.
 		global_classes_clear();
-#ifndef DISABLE_DEPRECATED
-		if (ProjectSettings::get_singleton()->has_setting("_global_script_classes")) {
-			Array script_classes = GLOBAL_GET("_global_script_classes");
-
-			for (const Variant &script_class : script_classes) {
-				Dictionary c = script_class;
-				if (!c.has("class") || !c.has("language") || !c.has("path") || !c.has("base") || !c.has("is_abstract") || !c.has("is_tool")) {
-					continue;
-				}
-				add_global_class(c["class"], c["base"], c["language"], c["path"], c["is_abstract"], c["is_tool"]);
-			}
-			ProjectSettings::get_singleton()->clear("_global_script_classes");
-		}
-#endif
 
 		Array script_classes = ProjectSettings::get_singleton()->get_global_class_list();
 		for (const Variant &script_class : script_classes) {

@@ -140,7 +140,6 @@ private:
 	template <typename T>
 	static Error _parse_construct(Stream *p_stream, Vector<T> &r_construct, int &r_line, String &r_err_str);
 	static Error _parse_byte_array(Stream *p_stream, Vector<uint8_t> &r_construct, int &r_line, String &r_err_str);
-	static Error _parse_enginecfg(Stream *p_stream, Vector<String> &r_strings, int &r_line, String &r_err_str);
 	static Error _parse_dictionary(Dictionary &r_object, Stream *p_stream, int &r_line, String &r_err_str, ResourceParser *p_res_parser = nullptr);
 	static Error _parse_array(Array &r_array, Stream *p_stream, int &r_line, String &r_err_str, ResourceParser *p_res_parser = nullptr);
 	static Error _parse_tag(Token &r_token, Stream *p_stream, int &r_line, String &r_err_str, Tag &r_tag, ResourceParser *p_res_parser = nullptr, bool p_simple_tag = false);
@@ -159,7 +158,7 @@ public:
 	typedef Error (*StoreStringFunc)(void *p_ud, const String &p_string);
 	typedef String (*EncodeResourceFunc)(void *p_ud, const Ref<Resource> &p_resource);
 
-	static Error write(const Variant &p_variant, StoreStringFunc p_store_string_func, void *p_store_string_ud, EncodeResourceFunc p_encode_res_func, void *p_encode_res_ud, bool p_pretty_print = true, int p_recursion_count = 0, bool p_compat = true);
+	static Error write(const Variant &p_variant, StoreStringFunc p_store_string_func, void *p_store_string_ud, EncodeResourceFunc p_encode_res_func, void *p_encode_res_ud, bool p_pretty_print = true, int p_recursion_count = 0);
 	static void write_container_type(const ContainerType &p_type, StoreStringFunc p_store_string_func, void *p_store_string_ud, EncodeResourceFunc p_encode_res_func, void *p_encode_res_ud);
-	static Error write_to_string(const Variant &p_variant, String &r_string, bool p_pretty_print = true, EncodeResourceFunc p_encode_res_func = nullptr, void *p_encode_res_ud = nullptr, bool p_compat = true);
+	static Error write_to_string(const Variant &p_variant, String &r_string, bool p_pretty_print = true, EncodeResourceFunc p_encode_res_func = nullptr, void *p_encode_res_ud = nullptr);
 };

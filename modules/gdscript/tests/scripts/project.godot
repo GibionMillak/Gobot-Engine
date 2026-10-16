@@ -3,9 +3,11 @@
 ; It also helps for opening Godot to edit the scripts, but please don't
 ; let the editor changes be saved.
 
-config_version=5
+config_version=6
 
 [application]
+
+config/editor_version="4.8"
 
 config/name="GDScript Integration Test Suite"
 

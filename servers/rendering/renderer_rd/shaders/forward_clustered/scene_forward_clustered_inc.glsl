@@ -138,10 +138,6 @@ bool sc_multimesh_has_custom_data() {
 	return ((sc_packed_1() >> 3) & 1U) != 0;
 }
 
-bool sc_fog_use_legacy_blending() {
-	return ((sc_packed_1() >> 4) & 1U) != 0;
-}
-
 bool sc_cluster_has_area_light() {
 	return ((sc_packed_1() >> 5) & 1U) != 0;
 }

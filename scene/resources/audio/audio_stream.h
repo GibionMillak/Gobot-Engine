@@ -170,9 +170,6 @@ protected:
 	static void _bind_methods();
 
 	GDVIRTUAL0RC_REQUIRED(Ref<AudioStreamPlayback>, _instantiate_playback)
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL0RC(String, _get_stream_name)
-#endif
 	GDVIRTUAL0RC(double, _get_length)
 	GDVIRTUAL0RC(bool, _is_monophonic)
 	GDVIRTUAL0RC(double, _get_bpm)

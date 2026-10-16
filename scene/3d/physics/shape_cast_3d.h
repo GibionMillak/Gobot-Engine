@@ -41,9 +41,6 @@ class ShapeCast3D : public Node3D {
 	GDCLASS(ShapeCast3D, Node3D);
 
 	bool enabled = true;
-#ifndef DISABLE_DEPRECATED
-	void resource_changed(Ref<Resource> p_res);
-#endif
 
 	Ref<Shape3D> shape;
 	RID shape_rid;

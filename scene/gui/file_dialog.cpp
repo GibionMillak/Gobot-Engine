@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "file_dialog.h"
-#include "file_dialog.compat.inc"
 
 #include "core/config/project_settings.h"
 #include "core/io/dir_access.h"
@@ -2151,12 +2150,6 @@ void FileDialog::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("popup_file_dialog"), &FileDialog::popup_file_dialog);
 	ClassDB::bind_method(D_METHOD("invalidate"), &FileDialog::invalidate);
-
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("set_mode_overrides_title", "override"), &FileDialog::set_mode_overrides_title);
-	ClassDB::bind_method(D_METHOD("is_mode_overriding_title"), &FileDialog::is_mode_overriding_title);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "mode_overrides_title"), "set_mode_overrides_title", "is_mode_overriding_title");
-#endif
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "file_mode", PROPERTY_HINT_ENUM, "Open File,Open Files,Open Folder,Open Any,Save"), "set_file_mode", "get_file_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "display_mode", PROPERTY_HINT_ENUM, "Thumbnails,List"), "set_display_mode", "get_display_mode");

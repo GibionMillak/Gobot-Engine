@@ -532,9 +532,6 @@ protected:
 	void _process_picking();
 #endif // !defined(PHYSICS_2D_DISABLED) || !defined(PHYSICS_3D_DISABLED)
 	static void _bind_methods();
-#ifndef DISABLE_DEPRECATED
-	static void _bind_compatibility_methods();
-#endif
 	void _validate_property(PropertyInfo &p_property) const;
 
 public:
@@ -633,9 +630,6 @@ public:
 	void _push_text_input(const String &p_text, bool p_emit_text_changed_signal = false);
 	void push_text_input(const String &p_text);
 	void push_input(RequiredParam<InputEvent> p_event, bool p_local_coords = false);
-#ifndef DISABLE_DEPRECATED
-	void push_unhandled_input(RequiredParam<InputEvent> p_event, bool p_local_coords = false);
-#endif // DISABLE_DEPRECATED
 	void notify_mouse_entered();
 	void notify_mouse_exited();
 
@@ -893,9 +887,6 @@ public:
 	void set_use_xr(bool p_use_xr);
 	bool is_using_xr() const;
 
-#ifndef DISABLE_DEPRECATED
-	bool _is_using_xr_115799();
-#endif
 #endif // XR_DISABLED
 #endif // _3D_DISABLED
 

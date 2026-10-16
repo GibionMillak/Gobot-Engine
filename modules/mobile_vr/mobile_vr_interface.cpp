@@ -558,50 +558,6 @@ TypedArray<Transform3D> MobileVRInterface::get_camera_offsets(const StringName &
 	return camera_offsets;
 }
 
-#ifndef DISABLE_DEPRECATED
-Transform3D MobileVRInterface::get_transform_for_view(uint32_t p_view, const Transform3D &p_cam_transform) {
-	_THREAD_SAFE_METHOD_
-
-	WARN_PRINT_ONCE("MobileVRInterface.get_transform_for_view is deprecated, please use MobileVRInterface.get_camera_offsets");
-
-	Transform3D transform_for_eye;
-
-	XRServer *xr_server = XRServer::get_singleton();
-	ERR_FAIL_NULL_V(xr_server, transform_for_eye);
-
-	if (initialized) {
-		float world_scale = xr_server->get_world_scale();
-
-		// just scale our origin point of our transform
-		Transform3D _head_transform = head_transform;
-		_head_transform.origin *= world_scale;
-
-		Transform3D offset;
-		offset.origin.x = intraocular_dist * 0.01 * world_scale * (p_view == 0 ? -0.5 : 0.5);
-
-		transform_for_eye = p_cam_transform * (xr_server->get_reference_frame()) * _head_transform * offset;
-	} else {
-		// huh? well just return what we got....
-		transform_for_eye = p_cam_transform;
-	};
-
-	return transform_for_eye;
-}
-
-Projection MobileVRInterface::get_projection_for_view(uint32_t p_view, double p_aspect, double p_z_near, double p_z_far) {
-	_THREAD_SAFE_METHOD_
-
-	WARN_PRINT_ONCE("MobileVRInterface.get_projection_for_view is deprecated, please use MobileVRInterface.get_camera_projections");
-
-	Projection eye;
-
-	aspect = p_aspect;
-	eye.set_for_hmd(p_view + 1, p_aspect, intraocular_dist, display_width, display_to_lens, oversample, p_z_near, p_z_far);
-
-	return eye;
-}
-#endif
-
 Vector<RenderingServerTypes::BlitToScreen> MobileVRInterface::post_draw_viewport(RID p_render_target, const Rect2 &p_screen_rect) {
 	_THREAD_SAFE_METHOD_
 
@@ -670,10 +626,10 @@ RID MobileVRInterface::get_vrs_texture() {
 
 	Size2 target_size = get_render_target_size();
 	real_t aspect_ratio = target_size.x / target_size.y;
-	uint32_t view_count = get_view_count();
+	const TypedArray<Projection> projections = get_camera_projections(XR_TRACKER_HEAD, aspect_ratio, 0.1, 1000.0);
 
-	for (uint32_t v = 0; v < view_count; v++) {
-		Projection cm = get_projection_for_view(v, aspect_ratio, 0.1, 1000.0);
+	for (int64_t v = 0; v < projections.size(); v++) {
+		Projection cm = projections[v];
 		Vector3 center = cm.xform(Vector3(0.0, 0.0, 999.0));
 
 		eye_foci.push_back(Vector2(center.x, center.y));

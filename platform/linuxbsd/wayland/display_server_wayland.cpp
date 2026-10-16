@@ -282,11 +282,6 @@ void DisplayServerWayland::_hover_window(DisplayServerEnums::WindowID p_window_i
 
 bool DisplayServerWayland::has_feature(DisplayServerEnums::Feature p_feature) const {
 	switch (p_feature) {
-#ifndef DISABLE_DEPRECATED
-		case DisplayServerEnums::FEATURE_GLOBAL_MENU: {
-			return (native_menu && native_menu->has_feature(NativeMenu::FEATURE_GLOBAL_MENU));
-		} break;
-#endif
 		case DisplayServerEnums::FEATURE_TOUCHSCREEN:
 		case DisplayServerEnums::FEATURE_MOUSE:
 		case DisplayServerEnums::FEATURE_MOUSE_WARP:

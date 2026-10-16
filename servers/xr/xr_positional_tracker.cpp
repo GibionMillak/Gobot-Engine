@@ -54,8 +54,6 @@ void XRPositionalTracker::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("pose_changed", PropertyInfo(Variant::OBJECT, "pose", PROPERTY_HINT_RESOURCE_TYPE, XRPose::get_class_static())));
 	ADD_SIGNAL(MethodInfo("pose_lost_tracking", PropertyInfo(Variant::OBJECT, "pose", PROPERTY_HINT_RESOURCE_TYPE, XRPose::get_class_static())));
 
-	ClassDB::bind_method(D_METHOD("get_input", "name"), &XRPositionalTracker::get_input);
-	ClassDB::bind_method(D_METHOD("set_input", "name", "value"), &XRPositionalTracker::set_input);
 	ADD_SIGNAL(MethodInfo("button_pressed", PropertyInfo(Variant::STRING, "action_name")));
 	ADD_SIGNAL(MethodInfo("button_released", PropertyInfo(Variant::STRING, "action_name")));
 	ADD_SIGNAL(MethodInfo("input_float_changed", PropertyInfo(Variant::STRING, "action_name"), PropertyInfo(Variant::FLOAT, "value")));

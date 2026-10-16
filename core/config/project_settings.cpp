@@ -80,7 +80,6 @@ String ProjectSettings::get_imported_files_path() const {
 // This is used by the project manager to provide the initial_settings for config/features.
 const PackedStringArray ProjectSettings::get_required_features() {
 	PackedStringArray features;
-	features.append(GODOT_VERSION_BRANCH);
 #ifdef REAL_T_IS_DOUBLE
 	features.append("Double Precision");
 #endif
@@ -98,11 +97,6 @@ const PackedStringArray ProjectSettings::_get_supported_features() {
 #ifdef MODULE_MONO_ENABLED
 	features.append("C#");
 #endif
-	// Allow pinning to a specific patch number or build type by marking
-	// them as supported. They're only used if the user adds them manually.
-	features.append(GODOT_VERSION_BRANCH "." _MKSTR(GODOT_VERSION_PATCH));
-	features.append(GODOT_VERSION_FULL_CONFIG);
-	features.append(GODOT_VERSION_FULL_BUILD);
 
 #ifdef RD_ENABLED
 #ifdef FORWARD_RD_ENABLED
@@ -120,17 +114,26 @@ const PackedStringArray ProjectSettings::_get_supported_features() {
 }
 
 // Returns the features that this project needs but this build of Godot lacks.
-const PackedStringArray ProjectSettings::get_unsupported_features(const PackedStringArray &p_project_features) {
+const PackedStringArray ProjectSettings::get_unsupported_features(const PackedStringArray &p_project_features, const String &p_rendering_method) {
 	PackedStringArray unsupported_features;
 	PackedStringArray supported_features = singleton->_get_supported_features();
 	for (int i = 0; i < p_project_features.size(); i++) {
 		if (!supported_features.has(p_project_features[i])) {
-			// Temporary compatibility code to ease upgrade to 4.0 beta 2+.
-			if (p_project_features[i].begins_with("Vulkan")) {
-				continue;
-			}
 			unsupported_features.append(p_project_features[i]);
 		}
+	}
+	String renderer_feature;
+	if (p_rendering_method == "forward_plus") {
+		renderer_feature = "Forward Plus";
+	} else if (p_rendering_method == "mobile") {
+		renderer_feature = "Mobile";
+	} else if (p_rendering_method == "gl_compatibility") {
+		renderer_feature = "GL Compatibility";
+	} else {
+		renderer_feature = p_rendering_method;
+	}
+	if (!renderer_feature.is_empty() && !supported_features.has(renderer_feature)) {
+		unsupported_features.append(renderer_feature);
 	}
 	unsupported_features.sort();
 	return unsupported_features;
@@ -142,7 +145,7 @@ const PackedStringArray ProjectSettings::_trim_to_supported_features(const Packe
 	PackedStringArray features = PackedStringArray(p_project_features);
 	PackedStringArray supported_features = _get_supported_features();
 	for (int i = p_project_features.size() - 1; i > -1; i--) {
-		if (!supported_features.has(p_project_features[i])) {
+		if (!supported_features.has(p_project_features[i]) || p_project_features[i] == "Forward Plus" || p_project_features[i] == "Mobile" || p_project_features[i] == "GL Compatibility") {
 			features.remove_at(i);
 		}
 	}
@@ -627,43 +630,6 @@ bool ProjectSettings::_load_resource_pack(const String &p_pack, bool p_replace_f
 	return true;
 }
 
-void ProjectSettings::_convert_to_last_version(int p_from_version) {
-#ifndef DISABLE_DEPRECATED
-	if (p_from_version <= 3) {
-		// Converts the actions from array to dictionary (array of events to dictionary with deadzone + events)
-		for (KeyValue<StringName, ProjectSettings::VariantContainer> &E : props) {
-			Variant value = E.value.variant;
-			if (String(E.key).begins_with("input/") && value.get_type() == Variant::ARRAY) {
-				Array array = value;
-				Dictionary action;
-				action["deadzone"] = Variant(0.5f);
-				action["events"] = array;
-				E.value.variant = action;
-			}
-		}
-	} else if (p_from_version <= 6) {
-		// Check if we still have legacy boot splash (removed in 4.6), map it to new project setting, then remove legacy setting.
-		if (has_setting("application/boot_splash/fullsize")) {
-			// See RenderingServerEnums::SplashStretchMode.
-			set_setting("application/boot_splash/stretch_mode", get_setting("application/boot_splash/fullsize") ? 1 : 0);
-			set_setting("application/boot_splash/fullsize", Variant());
-		}
-	}
-	// Automatically adds overrides for project settings that were changed to editor settings.
-	_handle_editor_setting_compat("editor/script/search_in_file_extensions", "text_editor/behavior/general/find_in_file_extensions");
-#endif // DISABLE_DEPRECATED
-}
-
-#ifndef DISABLE_DEPRECATED
-void ProjectSettings::_handle_editor_setting_compat(const String &p_original_setting, const String &p_new_setting) {
-	ProjectSettings *ps = ProjectSettings::get_singleton();
-	if (ps->has_setting(p_original_setting)) {
-		ps->set_editor_setting_override(p_new_setting, ps->get_setting(p_original_setting));
-		ps->set_setting(p_original_setting, Variant());
-	}
-}
-#endif
-
 /*
  * This method is responsible for loading a project.godot file and/or data file
  * using the following merit order:
@@ -985,9 +951,6 @@ Error ProjectSettings::_load_settings_text(const String &p_path) {
 
 		err = VariantParser::parse_tag_assign_eof(&stream, lines, error_text, next_tag, assign, value, nullptr, true);
 		if (err == ERR_FILE_EOF) {
-			// If we're loading a project.godot from source code, we can operate some
-			// ProjectSettings conversions if need be.
-			_convert_to_last_version(config_version);
 			last_save_time = FileAccess::get_modified_time(get_resource_path().path_join("project.godot"));
 			return OK;
 		}
@@ -1023,21 +986,6 @@ Error ProjectSettings::_load_settings_text_or_binary(const String &p_text_path, 
 	// Fallback to text-based project.godot file if binary was not found.
 	err = _load_settings_text(p_text_path);
 	if (err == OK) {
-#ifndef DISABLE_DEPRECATED
-		const PackedStringArray features = get_setting("application/config/features");
-		for (const String &feat : features) {
-			if (feat.contains_char('.') && feat.get_slice_count(".") == 2) {
-				int major_version = feat.get_slicec('.', 0).to_int();
-				int minor_version = feat.get_slicec('.', 1).to_int();
-				// Major version is irrelevant, but the extra check ensures that the feature is in fact a version string.
-				if (major_version == 4 && minor_version < 6) {
-					// Enable MeshInstance3D compat for projects created before 4.6.
-					set_setting("animation/compatibility/default_parent_skeleton_in_mesh_instance_3d", true);
-				}
-				break;
-			}
-		}
-#endif
 		return OK;
 	} else if (err != ERR_FILE_NOT_FOUND) {
 		ERR_PRINT(vformat("Couldn't load file '%s', error code %d.", p_text_path, err));
@@ -1083,6 +1031,9 @@ void ProjectSettings::clear(const String &p_name) {
 }
 
 Error ProjectSettings::save() {
+#ifdef TOOLS_ENABLED
+	set_setting("application/config/editor_version", GODOT_VERSION_NUMBER);
+#endif
 	Error error = save_custom(get_resource_path().path_join("project.godot"));
 	if (error == OK) {
 		last_save_time = FileAccess::get_modified_time(get_resource_path().path_join("project.godot"));
@@ -1239,14 +1190,6 @@ Error ProjectSettings::save_custom(const String &p_path, const CustomMap &p_cust
 	// If there is no feature list currently present, force one to generate.
 	if (project_features.is_empty()) {
 		project_features = ProjectSettings::get_required_features();
-	}
-	// Check the rendering API.
-	const String rendering_api = has_setting("rendering/renderer/rendering_method") ? (String)get_setting("rendering/renderer/rendering_method") : String();
-	if (!rendering_api.is_empty()) {
-		// Add the rendering API as a project feature if it doesn't already exist.
-		if (!project_features.has(rendering_api)) {
-			project_features.append(rendering_api);
-		}
 	}
 	// Check for the existence of a csproj file.
 	if (_csproj_exists(get_resource_path())) {
@@ -1764,9 +1707,6 @@ ProjectSettings::ProjectSettings() {
 	GLOBAL_DEF("animation/warnings/check_invalid_skeleton_modifier_node_paths", true);
 	GLOBAL_DEF("animation/warnings/check_invalid_track_paths", true);
 	GLOBAL_DEF("animation/warnings/check_angle_interpolation_type_conflicting", true);
-#ifndef DISABLE_DEPRECATED
-	GLOBAL_DEF_RST("animation/compatibility/default_parent_skeleton_in_mesh_instance_3d", false);
-#endif
 
 	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "audio/buses/default_bus_layout", PROPERTY_HINT_FILE, "*.tres"), "res://default_bus_layout.tres");
 	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING_NAME, "audio/buses/gui_theme_bus", PROPERTY_HINT_AUDIO_BUS, ""), StringName("Master"));
@@ -1790,11 +1730,7 @@ ProjectSettings::ProjectSettings() {
 	GLOBAL_DEF("display/window/frame_pacing/android/enable_frame_pacing", true);
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "display/window/frame_pacing/android/swappy_mode", PROPERTY_HINT_ENUM, "pipeline_forced_on,auto_fps_pipeline_forced_on,auto_fps_auto_pipeline"), 2);
 
-#ifdef DISABLE_DEPRECATED
 	custom_prop_info["rendering/driver/threads/thread_model"] = PropertyInfo(Variant::INT, "rendering/driver/threads/thread_model", PROPERTY_HINT_ENUM, "Safe:1,Separate");
-#else
-	custom_prop_info["rendering/driver/threads/thread_model"] = PropertyInfo(Variant::INT, "rendering/driver/threads/thread_model", PROPERTY_HINT_ENUM, "Unsafe (deprecated),Safe,Separate");
-#endif
 
 #ifndef PHYSICS_2D_DISABLED
 	GLOBAL_DEF("physics/2d/run_on_separate_thread", false);
@@ -1838,7 +1774,6 @@ ProjectSettings::ProjectSettings() {
 	GLOBAL_DEF_BASIC("gui/common/snap_controls_to_pixels", true);
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "gui/common/show_focus_state_on_pointer_event", PROPERTY_HINT_ENUM, "Never,Text Input Controls,Always"), 1);
 	GLOBAL_DEF_BASIC("gui/fonts/dynamic_fonts/use_oversampling", true);
-	GLOBAL_DEF(PropertyInfo(Variant::INT, "gui/common/auto_focus_strategy", PROPERTY_HINT_ENUM, "Legacy,Balloon"), 0);
 
 #ifdef RD_ENABLED
 	GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "rendering/rendering_device/vsync/frame_queue_size", PROPERTY_HINT_RANGE, "2,3,1"), 2);
@@ -1876,6 +1811,7 @@ ProjectSettings::ProjectSettings() {
 	GLOBAL_DEF_BASIC("input_devices/pointing/android/disable_scroll_deadzone", false);
 
 	// These properties will not show up in the dialog. If you want to exclude whole groups, use add_hidden_prefix().
+	GLOBAL_DEF_INTERNAL("application/config/editor_version", "");
 	GLOBAL_DEF_INTERNAL("application/config/features", PackedStringArray());
 	GLOBAL_DEF_INTERNAL("internationalization/locale/translation_remaps", PackedStringArray());
 	GLOBAL_DEF_INTERNAL("internationalization/locale/translations", PackedStringArray());

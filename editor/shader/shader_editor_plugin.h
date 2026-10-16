@@ -42,17 +42,6 @@ class ShaderEditorPlugin : public EditorPlugin {
 
 	const String config_section = "ShaderEditor";
 
-#ifndef DISABLE_DEPRECATED
-	const PackedStringArray old_layout_keys = {
-		"window_rect", "window_screen", "window_screen_rect",
-		"open_shaders", "split_offset", "selected_shader", "text_shader_zoom_factor"
-	};
-	const PackedStringArray new_layout_keys = {
-		"", "", "",
-		"open_scripts", "script_split_offset", "selected_script", "zoom_factor"
-	};
-#endif
-
 	static inline ShaderEditorPlugin *shader_editor_plugin = nullptr;
 
 protected:

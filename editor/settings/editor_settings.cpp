@@ -73,13 +73,6 @@ Ref<EditorSettings> EditorSettings::singleton = nullptr;
 bool EditorSettings::_set(const StringName &p_name, const Variant &p_value) {
 	_THREAD_SAFE_METHOD_
 
-#ifndef DISABLE_DEPRECATED
-	const String *renamed = compat_map.getptr(p_name);
-	if (renamed) {
-		return _set(*renamed, p_value);
-	}
-#endif
-
 	bool changed = _set_only(p_name, p_value);
 	if (changed && initialized) {
 		changed_settings.insert(p_name);
@@ -164,13 +157,6 @@ bool EditorSettings::_set_only(const StringName &p_name, const Variant &p_value)
 
 bool EditorSettings::_get(const StringName &p_name, Variant &r_ret) const {
 	_THREAD_SAFE_METHOD_
-
-#ifndef DISABLE_DEPRECATED
-	const String *renamed = compat_map.getptr(p_name);
-	if (renamed) {
-		return _get(*renamed, r_ret);
-	}
-#endif
 
 	if (p_name == "shortcuts") {
 		Array save_array;
@@ -1282,96 +1268,6 @@ const String EditorSettings::_get_project_metadata_path() const {
 	return EditorPaths::get_singleton()->get_project_settings_dir().path_join("project_metadata.cfg");
 }
 
-#ifndef DISABLE_DEPRECATED
-void EditorSettings::_handle_setting_compatibility() {
-	// Remove deprecated settings.
-	erase("interface/theme/preset");
-	erase("network/connection/engine_version_update_mode");
-	erase("run/output/always_open_output_on_play");
-	erase("run/output/always_close_output_on_stop");
-	erase("text_editor/theme/line_spacing"); // See GH-106137.
-	erase("interface/editors/show_scene_tree_root_selection");
-	erase("asset_library/available_urls"); // Workaround bugged settings treating the previous default as a modified value (see GH-118755).
-
-	// Handle renamed settings.
-	_rename_setting("interface/editor/editor_language", "interface/editor/localization/editor_language");
-	_rename_setting("interface/editor/localize_settings", "interface/editor/localization/localize_settings");
-	_rename_setting("interface/editor/dock_tab_style", "interface/editor/docks/dock_tab_style");
-	_rename_setting("interface/editor/bottom_dock_tab_style", "interface/editor/docks/bottom_dock_tab_style");
-	_rename_setting("interface/editor/ui_layout_direction", "interface/editor/localization/ui_layout_direction");
-	_rename_setting("interface/editor/display_scale", "interface/editor/appearance/display_scale");
-	_rename_setting("interface/editor/custom_display_scale", "interface/editor/appearance/custom_display_scale");
-	_rename_setting("interface/editor/editor_screen", "interface/editor/appearance/editor_screen");
-	_rename_setting("interface/editor/tablet_driver", "interface/editor/input/tablet_driver");
-	_rename_setting("interface/editor/project_manager_screen", "interface/editor/appearance/project_manager_screen");
-	_rename_setting("interface/editor/use_embedded_menu", "interface/editor/appearance/use_embedded_menu");
-	_rename_setting("interface/editor/use_native_file_dialogs", "interface/editor/appearance/use_native_file_dialogs");
-	_rename_setting("interface/editor/expand_to_title", "interface/editor/appearance/expand_to_title");
-	_rename_setting("interface/editor/main_font_size", "interface/editor/fonts/main_font_size");
-	_rename_setting("interface/editor/code_font_size", "interface/editor/fonts/code_font_size");
-	_rename_setting("interface/editor/main_font_custom_opentype_features", "interface/editor/fonts/main_font_custom_opentype_features");
-	_rename_setting("interface/editor/code_font_contextual_ligatures", "interface/editor/fonts/code_font_contextual_ligatures");
-	_rename_setting("interface/editor/code_font_custom_opentype_features", "interface/editor/fonts/code_font_custom_opentype_features");
-	_rename_setting("interface/editor/code_font_custom_variations", "interface/editor/fonts/code_font_custom_variations");
-	_rename_setting("interface/editor/font_antialiasing", "interface/editor/fonts/font_antialiasing");
-	_rename_setting("interface/editor/font_hinting", "interface/editor/fonts/font_hinting");
-	_rename_setting("interface/editor/font_subpixel_positioning", "interface/editor/fonts/font_subpixel_positioning");
-	_rename_setting("interface/editor/font_disable_embedded_bitmaps", "interface/editor/fonts/font_disable_embedded_bitmaps");
-	_rename_setting("interface/editor/font_allow_msdf", "interface/editor/fonts/font_allow_msdf");
-	_rename_setting("interface/editor/main_font", "interface/editor/fonts/main_font");
-	_rename_setting("interface/editor/main_font_bold", "interface/editor/fonts/main_font_bold");
-	_rename_setting("interface/editor/code_font", "interface/editor/fonts/code_font");
-	_rename_setting("interface/editor/dragging_hover_wait_seconds", "interface/editor/timers/dragging_hover_wait_seconds");
-	_rename_setting("interface/editor/separate_distraction_mode", "interface/editor/behavior/separate_distraction_mode");
-	_rename_setting("interface/editor/automatically_open_screenshots", "interface/editor/behavior/automatically_open_screenshots");
-	_rename_setting("interface/editor/single_window_mode", "interface/editor/display/single_window_mode");
-	_rename_setting("interface/editor/mouse_extra_buttons_navigate_history", "interface/editor/input/mouse_extra_buttons_navigate_history");
-	_rename_setting("interface/editor/save_each_scene_on_quit", "interface/editor/behavior/save_each_scene_on_quit");
-	_rename_setting("interface/editor/save_on_focus_loss", "interface/editor/behavior/save_on_focus_loss");
-	_rename_setting("interface/editor/accept_dialog_cancel_ok_buttons", "interface/editor/appearance/accept_dialog_cancel_ok_buttons");
-	_rename_setting("interface/editor/show_internal_errors_in_toast_notifications", "interface/editor/behavior/show_internal_errors_in_toast_notifications");
-	_rename_setting("interface/editor/show_update_spinner", "interface/editor/appearance/show_update_spinner");
-	_rename_setting("interface/editor/keep_screen_on", "interface/editor/display/keep_screen_on");
-	_rename_setting("interface/editor/low_processor_mode_sleep_usec", "interface/editor/timers/low_processor_mode_sleep_usec");
-	_rename_setting("interface/editor/unfocused_low_processor_mode_sleep_usec", "interface/editor/timers/unfocused_low_processor_mode_sleep_usec");
-	_rename_setting("interface/editor/import_resources_when_unfocused", "interface/editor/behavior/import_resources_when_unfocused");
-	_rename_setting("interface/editor/vsync_mode", "interface/editor/display/vsync_mode");
-	_rename_setting("interface/editor/update_continuously", "interface/editor/display/update_continuously");
-	_rename_setting("interface/editor/collapse_main_menu", "interface/editor/appearance/collapse_main_menu");
-	_rename_setting("asset_library/use_threads", "asset_store/use_threads");
-	_rename_setting("interface/editors/derive_script_globals_by_name", "docks/scene_tree/derive_script_globals_by_name");
-
-	// Handle renamed shortcuts.
-	_rename_shortcut("editor/editor_assetlib", "editor/editor_asset_store");
-	_rename_shortcut("script_editor/window_move_up", "script_editor/move_document_up");
-	_rename_shortcut("script_editor/window_move_down", "script_editor/move_document_down");
-	_rename_shortcut("script_editor/window_sort", "script_editor/sort_documents");
-	_rename_shortcut("script_text_editor/replace_in_files", "editor/replace_in_files");
-}
-
-void EditorSettings::_rename_setting(const String &p_old_name, const String &p_new_name) {
-	if (has_setting(p_old_name)) {
-		set_setting(p_new_name, get_setting(p_old_name));
-		erase(p_old_name);
-	}
-	if (ProjectSettings::get_singleton()->has_editor_setting_override(p_old_name)) {
-		ProjectSettings::get_singleton()->set_editor_setting_override(p_new_name, ProjectSettings::get_singleton()->get_editor_setting_override(p_old_name));
-		ProjectSettings::get_singleton()->set_editor_setting_override(p_old_name, Variant());
-	}
-	compat_map[p_old_name] = p_new_name;
-}
-
-void EditorSettings::_rename_shortcut(const String &p_old_path, const String &p_new_path) {
-	if (!shortcuts.has(p_old_path)) {
-		return;
-	}
-	if (!shortcuts.has(p_new_path)) {
-		shortcuts[p_new_path] = shortcuts[p_old_path];
-	}
-	shortcuts.erase(p_old_path);
-}
-#endif
-
 // PUBLIC METHODS
 
 EditorSettings *EditorSettings::get_singleton() {
@@ -1453,9 +1349,6 @@ void EditorSettings::create() {
 		singleton->setup_network();
 		singleton->load_favorites_and_recent_dirs();
 		singleton->update_text_editor_themes_list();
-#ifndef DISABLE_DEPRECATED
-		singleton->_handle_setting_compatibility();
-#endif
 
 		return;
 	}
@@ -1612,11 +1505,7 @@ Variant EditorSettings::get_setting(const String &p_setting) const {
 bool EditorSettings::has_setting(const String &p_setting) const {
 	_THREAD_SAFE_METHOD_
 
-#ifndef DISABLE_DEPRECATED
-	return props.has(p_setting) || compat_map.has(p_setting);
-#else
 	return props.has(p_setting);
-#endif
 }
 
 void EditorSettings::erase(const String &p_setting) {

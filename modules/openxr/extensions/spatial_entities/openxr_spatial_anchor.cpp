@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "openxr_spatial_anchor.h"
-#include "openxr_spatial_anchor.compat.inc"
 
 #include "../../openxr_api.h"
 #include "../../openxr_util.h"

@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "animation_tree.h"
-#include "animation_tree.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/object/callable_mp.h"
@@ -1058,13 +1057,6 @@ void AnimationTree::_validate_property(PropertyInfo &p_property) const {
 }
 
 bool AnimationTree::_set(const StringName &p_name, const Variant &p_value) {
-#ifndef DISABLE_DEPRECATED
-	String name = p_name;
-	if (name == "process_callback") {
-		set_callback_mode_process(static_cast<AnimationCallbackModeProcess>((int)p_value));
-		return true;
-	}
-#endif // DISABLE_DEPRECATED
 	_update_properties();
 
 	if (Pair<Variant, bool> *property_ptr = property_map.getptr(p_name)) {
@@ -1091,12 +1083,6 @@ bool AnimationTree::_set(const StringName &p_name, const Variant &p_value) {
 }
 
 bool AnimationTree::_get(const StringName &p_name, Variant &r_ret) const {
-#ifndef DISABLE_DEPRECATED
-	if (p_name == "process_callback") {
-		r_ret = get_callback_mode_process();
-		return true;
-	}
-#endif // DISABLE_DEPRECATED
 	_update_properties();
 
 	if (const Pair<Variant, bool> *p = property_map.getptr(p_name)) {

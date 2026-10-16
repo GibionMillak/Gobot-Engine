@@ -81,7 +81,7 @@ namespace GodotTools.Ides
 
         public async Task<EditorPick?> LaunchIdeAsync(int millisecondsTimeout = 10000)
         {
-            var editorSettings = EditorInterface.Singleton.GetEditorSettings();
+            var editorSettings = EditorInterface.GetEditorSettings();
             var editorId = editorSettings.GetSetting(GodotSharpEditor.Settings.ExternalEditor).As<ExternalEditorId>();
             string editorIdentity = GetExternalEditorIdentity(editorId);
 

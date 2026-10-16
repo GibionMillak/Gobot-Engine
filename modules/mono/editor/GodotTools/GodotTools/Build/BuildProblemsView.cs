@@ -167,7 +167,7 @@ namespace GodotTools.Build
         {
             _layout = pressed ? ProblemsLayout.List : ProblemsLayout.Tree;
 
-            var editorSettings = EditorInterface.Singleton.GetEditorSettings();
+            var editorSettings = EditorInterface.GetEditorSettings();
             editorSettings.SetSetting(GodotSharpEditor.Settings.ProblemsLayout, Variant.From(_layout));
 
             _toggleLayoutButton.Icon = GetToggleLayoutIcon();
@@ -517,7 +517,7 @@ namespace GodotTools.Build
 
         public override void _Ready()
         {
-            var editorSettings = EditorInterface.Singleton.GetEditorSettings();
+            var editorSettings = EditorInterface.GetEditorSettings();
             _layout = editorSettings.GetSetting(GodotSharpEditor.Settings.ProblemsLayout).As<ProblemsLayout>();
 
             Name = "Problems".TTR();
@@ -656,7 +656,7 @@ namespace GodotTools.Build
             switch ((long)what)
             {
                 case EditorSettings.NotificationEditorSettingsChanged:
-                    var editorSettings = EditorInterface.Singleton.GetEditorSettings();
+                    var editorSettings = EditorInterface.GetEditorSettings();
                     _layout = editorSettings.GetSetting(GodotSharpEditor.Settings.ProblemsLayout).As<ProblemsLayout>();
                     _toggleLayoutButton.ButtonPressed = GetToggleLayoutPressedState();
                     UpdateProblemsView();

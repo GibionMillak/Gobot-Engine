@@ -25,7 +25,7 @@ namespace GodotTools.Build
             if (dotnetPath == null)
                 throw new FileNotFoundException("Cannot find the dotnet executable.");
 
-            var editorSettings = EditorInterface.Singleton.GetEditorSettings();
+            var editorSettings = EditorInterface.GetEditorSettings();
 
             var startInfo = new ProcessStartInfo(dotnetPath);
 
@@ -41,7 +41,7 @@ namespace GodotTools.Build
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = true;
             startInfo.EnvironmentVariables["DOTNET_CLI_UI_LANGUAGE"]
-                = ((string)EditorInterface.Singleton.GetEditorLanguage()).Replace('_', '-');
+                = ((string)EditorInterface.GetEditorLanguage()).Replace('_', '-');
 
             if (OperatingSystem.IsWindows())
             {
@@ -96,7 +96,7 @@ namespace GodotTools.Build
             if (dotnetPath == null)
                 throw new FileNotFoundException("Cannot find the dotnet executable.");
 
-            var editorSettings = EditorInterface.Singleton.GetEditorSettings();
+            var editorSettings = EditorInterface.GetEditorSettings();
 
             var startInfo = new ProcessStartInfo(dotnetPath);
 
@@ -111,7 +111,7 @@ namespace GodotTools.Build
             startInfo.RedirectStandardError = true;
             startInfo.UseShellExecute = false;
             startInfo.EnvironmentVariables["DOTNET_CLI_UI_LANGUAGE"]
-                = ((string)EditorInterface.Singleton.GetEditorLanguage()).Replace('_', '-');
+                = ((string)EditorInterface.GetEditorLanguage()).Replace('_', '-');
 
             if (OperatingSystem.IsWindows())
             {

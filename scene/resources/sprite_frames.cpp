@@ -154,16 +154,6 @@ double SpriteFrames::get_animation_speed(const StringName &p_anim) const {
 	return E->value.speed;
 }
 
-#ifndef DISABLE_DEPRECATED
-void SpriteFrames::set_animation_loop(const StringName &p_anim, bool p_loop) {
-	set_animation_loop_mode(p_anim, p_loop ? LOOP_LINEAR : LOOP_NONE);
-}
-
-bool SpriteFrames::get_animation_loop(const StringName &p_anim) const {
-	return get_animation_loop_mode(p_anim) == LOOP_LINEAR;
-}
-#endif
-
 void SpriteFrames::set_animation_loop_mode(const StringName &p_anim, LoopMode p_loop_mode) {
 	HashMap<StringName, Anim>::Iterator E = animations.find(p_anim);
 	ERR_FAIL_COND_MSG(!E, "Animation '" + String(p_anim) + "' doesn't exist.");
@@ -220,15 +210,6 @@ void SpriteFrames::_set_animations(const Array &p_animations) {
 		anim.loop = static_cast<LoopMode>((int)loop);
 
 		for (int j = 0; j < frames.size(); j++) {
-#ifndef DISABLE_DEPRECATED
-			// For compatibility.
-			Ref<Resource> res = frames[j];
-			if (res.is_valid()) {
-				Frame frame = { res, 1.0 };
-				anim.frames.push_back(frame);
-				continue;
-			}
-#endif
 
 			Dictionary f = frames[j];
 
@@ -273,11 +254,6 @@ void SpriteFrames::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_animation_speed", "anim", "fps"), &SpriteFrames::set_animation_speed);
 	ClassDB::bind_method(D_METHOD("get_animation_speed", "anim"), &SpriteFrames::get_animation_speed);
-
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("set_animation_loop", "anim", "loop"), &SpriteFrames::set_animation_loop);
-	ClassDB::bind_method(D_METHOD("get_animation_loop", "anim"), &SpriteFrames::get_animation_loop);
-#endif
 
 	ClassDB::bind_method(D_METHOD("set_animation_loop_mode", "anim", "loop_mode"), &SpriteFrames::set_animation_loop_mode);
 	ClassDB::bind_method(D_METHOD("get_animation_loop_mode", "anim"), &SpriteFrames::get_animation_loop_mode);

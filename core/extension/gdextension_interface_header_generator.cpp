@@ -300,18 +300,13 @@ void GDExtensionInterfaceHeaderGenerator::write_interface(const Ref<FileAccess> 
 
 	Dictionary func = p_interface.duplicate();
 	func.erase("deprecated");
-	if (p_interface.has("legacy_type_name")) {
-		// @todo When we can break compat, remove this! This maintains legacy type-o's in some type names.
-		func["name"] = p_interface["legacy_type_name"];
-	} else {
-		// Cannot use `to_pascal_case()` because it'll capitalize after numbers.
-		Vector<String> words = ((String)p_interface["name"]).split("_");
-		for (String &word : words) {
-			// Cannot use `capitalize()` on the whole string, because it'll separate numbers with a space.
-			word[0] = String::char_uppercase(word[0]);
-		}
-		func["name"] = String("GDExtensionInterface") + String().join(words);
+	// Cannot use `to_pascal_case()` because it'll capitalize after numbers.
+	Vector<String> words = ((String)p_interface["name"]).split("_");
+	for (String &word : words) {
+		// Cannot use `capitalize()` on the whole string, because it'll separate numbers with a space.
+		word[0] = String::char_uppercase(word[0]);
 	}
+	func["name"] = String("GDExtensionInterface") + String().join(words);
 	write_function_type(p_fa, func);
 
 	p_fa->store_string("\n");

@@ -102,7 +102,7 @@ Error ResourceFormatImporter::_get_path_and_type(const String &p_path, PathAndTy
 				r_path_and_type.path = value;
 				path_found = true; // First match must have priority.
 			} else if (assign == "type") {
-				r_path_and_type.type = ClassDB::get_compatibility_remapped_class(value);
+				r_path_and_type.type = value;
 			} else if (assign == "importer") {
 				r_path_and_type.importer = value;
 			} else if (assign == "uid") {

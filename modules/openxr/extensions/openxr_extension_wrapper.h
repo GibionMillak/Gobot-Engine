@@ -125,12 +125,6 @@ public:
 	GDVIRTUAL4R(TypedArray<Projection>, _get_camera_projections, const StringName &, double, double, double);
 	GDVIRTUAL1R(TypedArray<Transform3D>, _get_camera_offsets, const StringName &);
 
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL0R_COMPAT(_get_requested_extensions_bind_compat_109302, Dictionary, _get_requested_extensions);
-	GDVIRTUAL1R_COMPAT(_set_instance_create_info_and_get_next_pointer_bind_compat_109302, uint64_t, _set_instance_create_info_and_get_next_pointer, GDExtensionPtr<void>);
-	GDVIRTUAL0_COMPAT(_on_register_metadata_bind_compat_117399, _on_register_metadata);
-#endif
-
 	virtual PackedStringArray get_suggested_tracker_names();
 
 	GDVIRTUAL0R(PackedStringArray, _get_suggested_tracker_names);

@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "gpu_particles_2d.h"
-#include "gpu_particles_2d.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/object/callable_mp.h"

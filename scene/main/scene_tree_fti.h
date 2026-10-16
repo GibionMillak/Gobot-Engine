@@ -72,7 +72,6 @@ class SceneTreeFTI {
 
 	enum TraversalMode : unsigned {
 		TM_DEFAULT,
-		TM_LEGACY,
 		TM_DEBUG,
 	};
 

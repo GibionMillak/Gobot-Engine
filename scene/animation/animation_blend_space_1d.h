@@ -103,11 +103,6 @@ protected:
 	bool is_contain_invalid_point = false;
 	void _check_can_sync();
 
-#ifndef DISABLE_DEPRECATED
-	void _add_blend_point_bind_compat_110369(const Ref<AnimationRootNode> &p_node, float p_position, int p_at_index = -1);
-	static void _bind_compatibility_methods();
-#endif
-
 public:
 	virtual void validate_node(const AnimationTree *p_tree, const StringName &p_path) const override;
 
@@ -147,11 +142,6 @@ public:
 
 	void set_cyclic_length(double p_length);
 	double get_cyclic_length() const;
-
-#ifndef DISABLE_DEPRECATED
-	void set_use_sync(bool p_sync); // Compat: maps to SYNC_MODE_INDEPENDENT or SYNC_MODE_NONE.
-	bool is_using_sync() const; // Compat: returns sync_mode != SYNC_MODE_NONE.
-#endif // DISABLE_DEPRECATED
 
 	void set_sync_mode(SyncMode p_sync_mode);
 	SyncMode get_sync_mode() const;

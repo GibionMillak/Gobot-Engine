@@ -74,10 +74,6 @@
 #include "extensions/openxr_hand_tracking_extension.h"
 #include "extensions/spatial_container/openxr_spatial_container_extension.h"
 
-#ifndef DISABLE_DEPRECATED
-#include "extensions/openxr_extension_wrapper_extension.h"
-#endif // DISABLE_DEPRECATED
-
 #include <thirdparty/openxr/src/common/xr_linear.h>
 
 #ifdef ANDROID_ENABLED
@@ -1903,11 +1899,6 @@ void OpenXRAPI::register_extension_metadata(OpenXRInteractionProfileMetadata *p_
 
 void OpenXRAPI::cleanup_extension_wrappers() {
 	for (OpenXRExtensionWrapper *extension_wrapper : registered_extension_wrappers) {
-#ifndef DISABLE_DEPRECATED
-		// Fix crash when the extension wrapper comes from GDExtension.
-		OpenXRExtensionWrapperExtension *gdextension_extension_wrapper = dynamic_cast<OpenXRExtensionWrapperExtension *>(extension_wrapper);
-		memdelete(gdextension_extension_wrapper);
-#endif
 		memdelete(extension_wrapper);
 	}
 	registered_extension_wrappers.clear();
@@ -2219,26 +2210,6 @@ bool OpenXRAPI::get_view_offset(uint32_t p_view, Transform3D &r_transform) {
 
 	return true;
 }
-
-#ifndef DISABLE_DEPRECATED
-bool OpenXRAPI::get_view_transform(uint32_t p_view, Transform3D &r_transform) {
-	ERR_NOT_ON_RENDER_THREAD_V(false);
-
-	if (!render_state.running) {
-		return false;
-	}
-
-	// we don't have valid view info
-	if (render_state.view_poses.is_empty() || !render_state.view_pose_valid) {
-		return false;
-	}
-
-	// Note, the timing of this is set right before rendering, which is what we need here.
-	r_transform = transform_from_pose(render_state.view_poses[p_view]);
-
-	return true;
-}
-#endif
 
 bool OpenXRAPI::get_view_projection(uint32_t p_view, double p_z_near, double p_z_far, Projection &p_camera_matrix) {
 	ERR_FAIL_NULL_V(graphics_extension, false);

@@ -66,12 +66,6 @@ class EditorPlugin : public Node {
 	String last_main_screen_name;
 	String plugin_version;
 
-#ifndef DISABLE_DEPRECATED
-	static inline HashMap<Control *, EditorDock *> legacy_docks;
-
-	void _editor_project_settings_changed();
-#endif
-
 public:
 	enum CustomControlContainer {
 		CONTAINER_TOOLBAR,
@@ -87,22 +81,6 @@ public:
 		CONTAINER_PROJECT_SETTING_TAB_LEFT,
 		CONTAINER_PROJECT_SETTING_TAB_RIGHT,
 	};
-
-#ifndef DISABLE_DEPRECATED
-	enum DockSlot {
-		DOCK_SLOT_NONE = -1,
-		DOCK_SLOT_LEFT_UL,
-		DOCK_SLOT_LEFT_BL,
-		DOCK_SLOT_LEFT_UR,
-		DOCK_SLOT_LEFT_BR,
-		DOCK_SLOT_RIGHT_UL,
-		DOCK_SLOT_RIGHT_BL,
-		DOCK_SLOT_RIGHT_UR,
-		DOCK_SLOT_RIGHT_BR,
-		DOCK_SLOT_BOTTOM,
-		DOCK_SLOT_MAX
-	};
-#endif
 
 	enum AfterGUIInput {
 		AFTER_GUI_INPUT_PASS,
@@ -127,9 +105,6 @@ protected:
 	GDVIRTUAL1(_forward_3d_force_draw_over_viewport, Control *)
 	GDVIRTUAL0RC(String, _get_plugin_name)
 	GDVIRTUAL0RC(Ref<Texture2D>, _get_plugin_icon)
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL0RC(bool, _has_main_screen)
-#endif
 	GDVIRTUAL1(_make_visible, bool)
 	GDVIRTUAL1(_edit, Object *)
 	GDVIRTUAL1RC(bool, _handles, Object *)
@@ -146,19 +121,6 @@ protected:
 	GDVIRTUAL2RC(Vector<String>, _run_scene, String, Vector<String>)
 	GDVIRTUAL0(_enable_plugin)
 	GDVIRTUAL0(_disable_plugin)
-
-#ifndef DISABLE_DEPRECATED
-	Button *_add_control_to_bottom_panel_bind_compat_88081(Control *p_control, const String &p_title);
-	void _add_control_to_dock_bind_compat_88081(DockSlot p_slot, Control *p_control);
-	static void _bind_compatibility_methods();
-
-	void add_control_to_dock(DockSlot p_slot, Control *p_control, const Ref<Shortcut> &p_shortcut = nullptr);
-	void remove_control_from_docks(Control *p_control);
-	void set_dock_tab_icon(Control *p_control, const Ref<Texture2D> &p_icon);
-
-	Button *add_control_to_bottom_panel(Control *p_control, const String &p_title, const Ref<Shortcut> &p_shortcut = nullptr);
-	void remove_control_from_bottom_panel(Control *p_control);
-#endif
 
 public:
 	//TODO: send a resource for editing to the editor node?
@@ -199,9 +161,6 @@ public:
 	virtual const Ref<Texture2D> get_plugin_icon() const;
 	virtual String get_plugin_version() const;
 	virtual void set_plugin_version(const String &p_version);
-#ifndef DISABLE_DEPRECATED
-	virtual bool has_main_screen() const;
-#endif
 	virtual void make_visible(bool p_visible);
 	virtual void set_current() {}
 	virtual void edit(Object *p_object);
@@ -274,9 +233,6 @@ public:
 	void disable_plugin();
 };
 
-#ifndef DISABLE_DEPRECATED
-VARIANT_ENUM_CAST(EditorPlugin::DockSlot);
-#endif
 VARIANT_ENUM_CAST(EditorPlugin::CustomControlContainer);
 VARIANT_ENUM_CAST(EditorPlugin::AfterGUIInput);
 

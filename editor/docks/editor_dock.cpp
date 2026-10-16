@@ -154,9 +154,6 @@ void EditorDock::_bind_methods() {
 	GDVIRTUAL_BIND(_save_layout_to_config, "config", "section");
 	GDVIRTUAL_BIND(_load_layout_from_config, "config", "section");
 
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL_BIND(_update_layout, "layout");
-#endif
 }
 
 void EditorDock::open() {
@@ -352,9 +349,6 @@ void EditorDock::update_layout(DockLayout p_layout, int p_slot) {
 		return;
 	}
 
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL_CALL(_update_layout, p_layout);
-#endif
 }
 
 EditorDock::EditorDock() {

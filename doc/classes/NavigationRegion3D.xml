@@ -42,12 +42,6 @@
 				Returns the current navigation map [RID] used by this region.
 			</description>
 		</method>
-		<method name="get_region_rid" qualifiers="const" deprecated="Use [method get_rid] instead.">
-			<return type="RID" />
-			<description>
-				Returns the [RID] of this region on the [NavigationServer3D].
-			</description>
-		</method>
 		<method name="get_rid" qualifiers="const">
 			<return type="RID" />
 			<description>

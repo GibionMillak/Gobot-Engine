@@ -54,10 +54,6 @@ void XRInterfaceExtension::_bind_methods() {
 	GDVIRTUAL_BIND(_get_camera_transform);
 	GDVIRTUAL_BIND(_get_camera_projections, "tracker_name", "aspect", "z_near", "z_far");
 	GDVIRTUAL_BIND(_get_camera_offsets, "tracker_name");
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL_BIND(_get_transform_for_view, "view", "cam_transform");
-	GDVIRTUAL_BIND(_get_projection_for_view, "view", "aspect", "z_near", "z_far");
-#endif
 	GDVIRTUAL_BIND(_get_vrs_texture);
 	GDVIRTUAL_BIND(_get_vrs_texture_format);
 
@@ -238,28 +234,6 @@ TypedArray<Transform3D> XRInterfaceExtension::get_camera_offsets(const StringNam
 	}
 
 	return camera_offsets;
-}
-
-Transform3D XRInterfaceExtension::get_transform_for_view(uint32_t p_view, const Transform3D &p_cam_transform) {
-	Transform3D transform;
-	GDVIRTUAL_CALL(_get_transform_for_view, p_view, p_cam_transform, transform);
-	return transform;
-}
-
-Projection XRInterfaceExtension::get_projection_for_view(uint32_t p_view, double p_aspect, double p_z_near, double p_z_far) {
-	Projection cm;
-	PackedFloat64Array arr;
-
-	if (GDVIRTUAL_CALL(_get_projection_for_view, p_view, p_aspect, p_z_near, p_z_far, arr)) {
-		ERR_FAIL_COND_V_MSG(arr.size() != 16, Projection(), "Projection matrix must contain 16 floats");
-		real_t *m = (real_t *)cm.columns;
-		for (int i = 0; i < 16; i++) {
-			m[i] = arr[i];
-		}
-		return cm;
-	}
-
-	return Projection();
 }
 
 RID XRInterfaceExtension::get_vrs_texture() {

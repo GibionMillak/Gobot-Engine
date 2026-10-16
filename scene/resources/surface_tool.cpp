@@ -1342,7 +1342,6 @@ void SurfaceTool::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("optimize_indices_for_cache"), &SurfaceTool::optimize_indices_for_cache);
 
 	ClassDB::bind_method(D_METHOD("get_aabb"), &SurfaceTool::get_aabb);
-	ClassDB::bind_method(D_METHOD("generate_lod", "nd_threshold", "target_index_count"), &SurfaceTool::generate_lod, DEFVAL(3));
 
 	ClassDB::bind_method(D_METHOD("set_material", "material"), &SurfaceTool::set_material);
 	ClassDB::bind_method(D_METHOD("get_primitive_type"), &SurfaceTool::get_primitive_type);

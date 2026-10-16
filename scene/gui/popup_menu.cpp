@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "popup_menu.h"
-#include "popup_menu.compat.inc"
 
 #include "core/config/project_settings.h"
 #include "core/input/input.h"
@@ -3467,48 +3466,6 @@ bool PopupMenu::_set(const StringName &p_name, const Variant &p_value) {
 		return true;
 	}
 
-#ifndef DISABLE_DEPRECATED
-	// Compatibility.
-	if (p_name == "items") {
-		Array arr = p_value;
-		ERR_FAIL_COND_V(arr.size() % 10, false);
-		clear();
-
-		for (int i = 0; i < arr.size(); i += 10) {
-			String text = arr[i + 0];
-			Ref<Texture2D> icon = arr[i + 1];
-			// For compatibility, use false/true for no/checkbox and integers for other values
-			bool checkable = arr[i + 2];
-			bool radio_checkable = (int)arr[i + 2] == Item::CHECKABLE_TYPE_RADIO_BUTTON;
-			bool checked = arr[i + 3];
-			bool disabled = arr[i + 4];
-
-			int id = arr[i + 5];
-			int accel = arr[i + 6];
-			Variant meta = arr[i + 7];
-			String subm = arr[i + 8];
-			bool sep = arr[i + 9];
-
-			int idx = get_item_count();
-			add_item(text, id);
-			set_item_icon(idx, icon);
-			if (checkable) {
-				if (radio_checkable) {
-					set_item_as_radio_checkable(idx, true);
-				} else {
-					set_item_as_checkable(idx, true);
-				}
-			}
-			set_item_checked(idx, checked);
-			set_item_disabled(idx, disabled);
-			set_item_id(idx, id);
-			set_item_metadata(idx, meta);
-			set_item_as_separator(idx, sep);
-			set_item_accelerator(idx, (Key)accel);
-			set_item_submenu(idx, subm);
-		}
-	}
-#endif
 	return false;
 }
 
@@ -3535,7 +3492,6 @@ void PopupMenu::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_radio_check_shortcut", "shortcut", "id", "global"), &PopupMenu::add_radio_check_shortcut, DEFVAL(-1), DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("add_icon_radio_check_shortcut", "texture", "shortcut", "id", "global"), &PopupMenu::add_icon_radio_check_shortcut, DEFVAL(-1), DEFVAL(false));
 
-	ClassDB::bind_method(D_METHOD("add_submenu_item", "label", "submenu", "id"), &PopupMenu::add_submenu_item, DEFVAL(-1));
 	ClassDB::bind_method(D_METHOD("add_submenu_node_item", "label", "submenu", "id"), &PopupMenu::add_submenu_node_item, DEFVAL(-1));
 
 	ClassDB::bind_method(D_METHOD("set_item_text", "index", "text"), &PopupMenu::set_item_text);
@@ -3551,7 +3507,6 @@ void PopupMenu::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_item_accelerator", "index", "accel"), &PopupMenu::set_item_accelerator);
 	ClassDB::bind_method(D_METHOD("set_item_metadata", "index", "metadata"), &PopupMenu::set_item_metadata);
 	ClassDB::bind_method(D_METHOD("set_item_disabled", "index", "disabled"), &PopupMenu::set_item_disabled);
-	ClassDB::bind_method(D_METHOD("set_item_submenu", "index", "submenu"), &PopupMenu::set_item_submenu);
 	ClassDB::bind_method(D_METHOD("set_item_submenu_node", "index", "submenu"), &PopupMenu::set_item_submenu_node);
 	ClassDB::bind_method(D_METHOD("set_item_as_separator", "index", "enable"), &PopupMenu::set_item_as_separator);
 	ClassDB::bind_method(D_METHOD("set_item_as_checkable", "index", "enable"), &PopupMenu::set_item_as_checkable);
@@ -3581,7 +3536,6 @@ void PopupMenu::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_item_accelerator", "index"), &PopupMenu::get_item_accelerator);
 	ClassDB::bind_method(D_METHOD("get_item_metadata", "index"), &PopupMenu::get_item_metadata);
 	ClassDB::bind_method(D_METHOD("is_item_disabled", "index"), &PopupMenu::is_item_disabled);
-	ClassDB::bind_method(D_METHOD("get_item_submenu", "index"), &PopupMenu::get_item_submenu);
 	ClassDB::bind_method(D_METHOD("get_item_submenu_node", "index"), &PopupMenu::get_item_submenu_node);
 	ClassDB::bind_method(D_METHOD("is_item_separator", "index"), &PopupMenu::is_item_separator);
 	ClassDB::bind_method(D_METHOD("is_item_checkable", "index"), &PopupMenu::is_item_checkable);

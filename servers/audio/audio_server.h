@@ -38,7 +38,6 @@
 #include "servers/audio/audio_frame.h"
 #include "servers/audio/audio_server_constants.h"
 #include "servers/audio/audio_server_enums.h"
-#include "servers/audio/audio_server_types.h" // IWYU pragma: keep. Included to have a dedicated file to move stuff over.
 
 class AudioSample;
 class AudioStream;

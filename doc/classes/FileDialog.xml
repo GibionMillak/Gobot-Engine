@@ -258,9 +258,6 @@
 		<member name="layout_toggle_enabled" type="bool" setter="set_customization_flag_enabled" getter="is_customization_flag_enabled" default="true">
 			If [code]true[/code], shows the layout switch buttons (list/thumbnails).
 		</member>
-		<member name="mode_overrides_title" type="bool" setter="set_mode_overrides_title" getter="is_mode_overriding_title" default="true" deprecated="The title is automatically overridden when [member Window.title] is empty.">
-			Has no effect and always equals to [code]true[/code].
-		</member>
 		<member name="navigation_buttons_enabled" type="bool" setter="set_customization_flag_enabled" getter="is_customization_flag_enabled" default="true">
 			If [code]true[/code], shows the go back/forward buttons on the toolbar.
 		</member>

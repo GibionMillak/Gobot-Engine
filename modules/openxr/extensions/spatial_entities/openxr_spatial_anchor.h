@@ -192,10 +192,6 @@ public:
 
 protected:
 	static void _bind_methods();
-#ifndef DISABLE_DEPRECATED
-	static void _bind_compatibility_methods();
-	Ref<OpenXRAnchorTracker> _create_new_anchor_bind_compat_118128(const Transform3D &p_transform, RID p_spatial_context);
-#endif
 
 private:
 	static OpenXRSpatialAnchorCapability *singleton;

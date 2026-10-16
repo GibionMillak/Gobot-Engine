@@ -101,10 +101,6 @@ public:
 protected:
 	static void _bind_methods();
 
-#ifndef DISABLE_DEPRECATED
-	static void _bind_compatibility_methods();
-#endif
-
 	/* MAIN */
 
 public:
@@ -138,71 +134,6 @@ public:
 
 public:
 	virtual void help_set_search_callbacks(const Callable &p_search_callback = Callable(), const Callable &p_action_callback = Callable());
-
-#ifndef DISABLE_DEPRECATED
-private:
-	mutable HashMap<String, RID> menu_names;
-
-	RID _get_rid_from_name(NativeMenu *p_nmenu, const String &p_menu_root) const;
-
-public:
-	virtual void global_menu_set_popup_callbacks(const String &p_menu_root, const Callable &p_open_callback = Callable(), const Callable &p_close_callback = Callable());
-
-	virtual int global_menu_add_submenu_item(const String &p_menu_root, const String &p_label, const String &p_submenu, int p_index = -1);
-	virtual int global_menu_add_item(const String &p_menu_root, const String &p_label, const Callable &p_callback = Callable(), const Callable &p_key_callback = Callable(), const Variant &p_tag = Variant(), Key p_accel = Key::NONE, int p_index = -1);
-	virtual int global_menu_add_check_item(const String &p_menu_root, const String &p_label, const Callable &p_callback = Callable(), const Callable &p_key_callback = Callable(), const Variant &p_tag = Variant(), Key p_accel = Key::NONE, int p_index = -1);
-	virtual int global_menu_add_icon_item(const String &p_menu_root, const Ref<Texture2D> &p_icon, const String &p_label, const Callable &p_callback = Callable(), const Callable &p_key_callback = Callable(), const Variant &p_tag = Variant(), Key p_accel = Key::NONE, int p_index = -1);
-	virtual int global_menu_add_icon_check_item(const String &p_menu_root, const Ref<Texture2D> &p_icon, const String &p_label, const Callable &p_callback = Callable(), const Callable &p_key_callback = Callable(), const Variant &p_tag = Variant(), Key p_accel = Key::NONE, int p_index = -1);
-	virtual int global_menu_add_radio_check_item(const String &p_menu_root, const String &p_label, const Callable &p_callback = Callable(), const Callable &p_key_callback = Callable(), const Variant &p_tag = Variant(), Key p_accel = Key::NONE, int p_index = -1);
-	virtual int global_menu_add_icon_radio_check_item(const String &p_menu_root, const Ref<Texture2D> &p_icon, const String &p_label, const Callable &p_callback = Callable(), const Callable &p_key_callback = Callable(), const Variant &p_tag = Variant(), Key p_accel = Key::NONE, int p_index = -1);
-	virtual int global_menu_add_multistate_item(const String &p_menu_root, const String &p_label, int p_max_states, int p_default_state, const Callable &p_callback = Callable(), const Callable &p_key_callback = Callable(), const Variant &p_tag = Variant(), Key p_accel = Key::NONE, int p_index = -1);
-	virtual int global_menu_add_separator(const String &p_menu_root, int p_index = -1);
-
-	virtual int global_menu_get_item_index_from_text(const String &p_menu_root, const String &p_text) const;
-	virtual int global_menu_get_item_index_from_tag(const String &p_menu_root, const Variant &p_tag) const;
-
-	virtual bool global_menu_is_item_checked(const String &p_menu_root, int p_idx) const;
-	virtual bool global_menu_is_item_checkable(const String &p_menu_root, int p_idx) const;
-	virtual bool global_menu_is_item_radio_checkable(const String &p_menu_root, int p_idx) const;
-	virtual Callable global_menu_get_item_callback(const String &p_menu_root, int p_idx) const;
-	virtual Callable global_menu_get_item_key_callback(const String &p_menu_root, int p_idx) const;
-	virtual Variant global_menu_get_item_tag(const String &p_menu_root, int p_idx) const;
-	virtual String global_menu_get_item_text(const String &p_menu_root, int p_idx) const;
-	virtual String global_menu_get_item_submenu(const String &p_menu_root, int p_idx) const;
-	virtual Key global_menu_get_item_accelerator(const String &p_menu_root, int p_idx) const;
-	virtual bool global_menu_is_item_disabled(const String &p_menu_root, int p_idx) const;
-	virtual bool global_menu_is_item_hidden(const String &p_menu_root, int p_idx) const;
-	virtual String global_menu_get_item_tooltip(const String &p_menu_root, int p_idx) const;
-	virtual int global_menu_get_item_state(const String &p_menu_root, int p_idx) const;
-	virtual int global_menu_get_item_max_states(const String &p_menu_root, int p_idx) const;
-	virtual Ref<Texture2D> global_menu_get_item_icon(const String &p_menu_root, int p_idx) const;
-	virtual int global_menu_get_item_indentation_level(const String &p_menu_root, int p_idx) const;
-
-	virtual void global_menu_set_item_checked(const String &p_menu_root, int p_idx, bool p_checked);
-	virtual void global_menu_set_item_checkable(const String &p_menu_root, int p_idx, bool p_checkable);
-	virtual void global_menu_set_item_radio_checkable(const String &p_menu_root, int p_idx, bool p_checkable);
-	virtual void global_menu_set_item_callback(const String &p_menu_root, int p_idx, const Callable &p_callback);
-	virtual void global_menu_set_item_key_callback(const String &p_menu_root, int p_idx, const Callable &p_key_callback);
-	virtual void global_menu_set_item_hover_callbacks(const String &p_menu_root, int p_idx, const Callable &p_callback);
-	virtual void global_menu_set_item_tag(const String &p_menu_root, int p_idx, const Variant &p_tag);
-	virtual void global_menu_set_item_text(const String &p_menu_root, int p_idx, const String &p_text);
-	virtual void global_menu_set_item_submenu(const String &p_menu_root, int p_idx, const String &p_submenu);
-	virtual void global_menu_set_item_accelerator(const String &p_menu_root, int p_idx, Key p_keycode);
-	virtual void global_menu_set_item_disabled(const String &p_menu_root, int p_idx, bool p_disabled);
-	virtual void global_menu_set_item_hidden(const String &p_menu_root, int p_idx, bool p_hidden);
-	virtual void global_menu_set_item_tooltip(const String &p_menu_root, int p_idx, const String &p_tooltip);
-	virtual void global_menu_set_item_state(const String &p_menu_root, int p_idx, int p_state);
-	virtual void global_menu_set_item_max_states(const String &p_menu_root, int p_idx, int p_max_states);
-	virtual void global_menu_set_item_icon(const String &p_menu_root, int p_idx, const Ref<Texture2D> &p_icon);
-	virtual void global_menu_set_item_indentation_level(const String &p_menu_root, int p_idx, int p_level);
-
-	virtual int global_menu_get_item_count(const String &p_menu_root) const;
-
-	virtual void global_menu_remove_item(const String &p_menu_root, int p_idx);
-	virtual void global_menu_clear(const String &p_menu_root);
-
-	virtual Dictionary global_menu_get_system_menu_roots() const;
-#endif // DISABLE_DEPRECATED
 
 	/* TTS */
 
@@ -512,13 +443,6 @@ public:
 	virtual Error file_dialog_show(const String &p_title, const String &p_current_directory, const String &p_filename, bool p_show_hidden, DisplayServerEnums::FileDialogMode p_mode, const Vector<String> &p_filters, const Callable &p_callback, DisplayServerEnums::WindowID p_window_id = DisplayServerEnums::MAIN_WINDOW_ID);
 	virtual Error file_dialog_with_options_show(const String &p_title, const String &p_current_directory, const String &p_root, const String &p_filename, bool p_show_hidden, DisplayServerEnums::FileDialogMode p_mode, const Vector<String> &p_filters, const TypedArray<Dictionary> &p_options, const Callable &p_callback, DisplayServerEnums::WindowID p_window_id = DisplayServerEnums::MAIN_WINDOW_ID);
 
-#ifndef DISABLE_DEPRECATED
-	Error _file_dialog_show_bind_compat_98194(const String &p_title, const String &p_current_directory, const String &p_filename, bool p_show_hidden, DisplayServerEnums::FileDialogMode p_mode, const Vector<String> &p_filters, const Callable &p_callback);
-	Error _file_dialog_with_options_show_bind_compat_98194(const String &p_title, const String &p_current_directory, const String &p_root, const String &p_filename, bool p_show_hidden, DisplayServerEnums::FileDialogMode p_mode, const Vector<String> &p_filters, const TypedArray<Dictionary> &p_options, const Callable &p_callback);
-	TypedArray<Rect2> _get_display_cutouts_bind_compat_119196() const;
-	Rect2i _get_display_safe_area_bind_compat_119196() const;
-#endif
-
 	virtual void show_emoji_and_symbol_picker() const;
 	virtual bool color_picker(const Callable &p_callback);
 
@@ -550,100 +474,12 @@ public:
 
 	/* ACCESSIBILITY */
 
-#ifndef DISABLE_DEPRECATED
-private:
-	RID _accessibility_create_sub_text_edit_elements_bind_compat_113459(const RID &p_parent_rid, const RID &p_shaped_text, float p_min_height, int p_insert_pos = -1);
-#endif
-
 public:
 	virtual int accessibility_should_increase_contrast() const { return -1; }
 	virtual int accessibility_should_reduce_animation() const { return -1; }
 	virtual int accessibility_should_reduce_transparency() const { return -1; }
 	virtual int accessibility_screen_reader_active() const { return -1; }
 
-#ifndef DISABLE_DEPRECATED
-	virtual RID accessibility_create_element(DisplayServerEnums::WindowID p_window_id, DisplayServerEnums::AccessibilityRole p_role);
-	virtual RID accessibility_create_sub_element(const RID &p_parent_rid, DisplayServerEnums::AccessibilityRole p_role, int p_insert_pos = -1);
-	virtual RID accessibility_create_sub_text_edit_elements(const RID &p_parent_rid, const RID &p_shaped_text, float p_min_height, int p_insert_pos = -1, bool p_is_last_line = false);
-	virtual bool accessibility_has_element(const RID &p_id) const;
-	virtual void accessibility_free_element(const RID &p_id);
-
-	virtual void accessibility_element_set_meta(const RID &p_id, const Variant &p_meta);
-	virtual Variant accessibility_element_get_meta(const RID &p_id) const;
-
-	virtual void accessibility_update_if_active(const Callable &p_callable);
-
-	virtual void accessibility_update_set_focus(const RID &p_id);
-	virtual RID accessibility_get_window_root(DisplayServerEnums::WindowID p_window_id) const;
-
-	virtual void accessibility_set_window_rect(DisplayServerEnums::WindowID p_window_id, const Rect2 &p_rect_out, const Rect2 &p_rect_in);
-	virtual void accessibility_set_window_focused(DisplayServerEnums::WindowID p_window_id, bool p_focused);
-	virtual void accessibility_set_window_callbacks(DisplayServerEnums::WindowID p_window_id, const Callable &p_activate_callable, const Callable &p_deativate_callable); // Note: internal method used by Window, do not expose.
-	virtual void accessibility_window_activation_completed(DisplayServerEnums::WindowID p_window_id); // Note: internal method used by Window, do not expose.
-	virtual void accessibility_window_deactivation_completed(DisplayServerEnums::WindowID p_window_id); // Note: internal method used by Window, do not expose.
-
-	virtual void accessibility_update_set_role(const RID &p_id, DisplayServerEnums::AccessibilityRole p_role);
-	virtual void accessibility_update_set_name(const RID &p_id, const String &p_name);
-	virtual void accessibility_update_set_extra_info(const RID &p_id, const String &p_name_extra_info);
-	virtual void accessibility_update_set_description(const RID &p_id, const String &p_description);
-	virtual void accessibility_update_set_value(const RID &p_id, const String &p_value);
-	virtual void accessibility_update_set_tooltip(const RID &p_id, const String &p_tooltip);
-	virtual void accessibility_update_set_bounds(const RID &p_id, const Rect2 &p_rect);
-	virtual void accessibility_update_set_transform(const RID &p_id, const Transform2D &p_transform);
-	virtual void accessibility_update_add_child(const RID &p_id, const RID &p_child_id);
-	virtual void accessibility_update_add_related_controls(const RID &p_id, const RID &p_related_id);
-	virtual void accessibility_update_add_related_details(const RID &p_id, const RID &p_related_id);
-	virtual void accessibility_update_add_related_described_by(const RID &p_id, const RID &p_related_id);
-	virtual void accessibility_update_add_related_flow_to(const RID &p_id, const RID &p_related_id);
-	virtual void accessibility_update_add_related_labeled_by(const RID &p_id, const RID &p_related_id);
-	virtual void accessibility_update_add_related_radio_group(const RID &p_id, const RID &p_related_id);
-	virtual void accessibility_update_set_active_descendant(const RID &p_id, const RID &p_other_id);
-	virtual void accessibility_update_set_next_on_line(const RID &p_id, const RID &p_other_id);
-	virtual void accessibility_update_set_previous_on_line(const RID &p_id, const RID &p_other_id);
-	virtual void accessibility_update_set_member_of(const RID &p_id, const RID &p_group_id);
-	virtual void accessibility_update_set_in_page_link_target(const RID &p_id, const RID &p_other_id);
-	virtual void accessibility_update_set_error_message(const RID &p_id, const RID &p_other_id);
-	virtual void accessibility_update_set_live(const RID &p_id, DisplayServerEnums::AccessibilityLiveMode p_live);
-	virtual void accessibility_update_add_action(const RID &p_id, DisplayServerEnums::AccessibilityAction p_action, const Callable &p_callable);
-	virtual void accessibility_update_add_custom_action(const RID &p_id, int p_action_id, const String &p_action_description);
-	virtual void accessibility_update_set_table_row_count(const RID &p_id, int p_count);
-	virtual void accessibility_update_set_table_column_count(const RID &p_id, int p_count);
-	virtual void accessibility_update_set_table_row_index(const RID &p_id, int p_index);
-	virtual void accessibility_update_set_table_column_index(const RID &p_id, int p_index);
-	virtual void accessibility_update_set_table_cell_position(const RID &p_id, int p_row_index, int p_column_index);
-	virtual void accessibility_update_set_table_cell_span(const RID &p_id, int p_row_span, int p_column_span);
-	virtual void accessibility_update_set_list_item_count(const RID &p_id, int p_size);
-	virtual void accessibility_update_set_list_item_index(const RID &p_id, int p_index);
-	virtual void accessibility_update_set_list_item_level(const RID &p_id, int p_level);
-	virtual void accessibility_update_set_list_item_selected(const RID &p_id, bool p_selected);
-	virtual void accessibility_update_set_list_item_expanded(const RID &p_id, bool p_expanded);
-	virtual void accessibility_update_set_popup_type(const RID &p_id, DisplayServerEnums::AccessibilityPopupType p_popup);
-	virtual void accessibility_update_set_checked(const RID &p_id, bool p_checekd);
-	virtual void accessibility_update_set_num_value(const RID &p_id, double p_position);
-	virtual void accessibility_update_set_num_range(const RID &p_id, double p_min, double p_max);
-	virtual void accessibility_update_set_num_step(const RID &p_id, double p_step);
-	virtual void accessibility_update_set_num_jump(const RID &p_id, double p_jump);
-	virtual void accessibility_update_set_scroll_x(const RID &p_id, double p_position);
-	virtual void accessibility_update_set_scroll_x_range(const RID &p_id, double p_min, double p_max);
-	virtual void accessibility_update_set_scroll_y(const RID &p_id, double p_position);
-	virtual void accessibility_update_set_scroll_y_range(const RID &p_id, double p_min, double p_max);
-	virtual void accessibility_update_set_text_decorations(const RID &p_id, bool p_underline, bool p_strikethrough, bool p_overline);
-	virtual void accessibility_update_set_text_align(const RID &p_id, HorizontalAlignment p_align);
-	virtual void accessibility_update_set_text_selection(const RID &p_id, const RID &p_text_start_id, int p_start_char, const RID &p_text_end_id, int p_end_char);
-	virtual void accessibility_update_set_flag(const RID &p_id, DisplayServerEnums::AccessibilityFlags p_flag, bool p_value);
-	virtual void accessibility_update_set_classname(const RID &p_id, const String &p_classname);
-	virtual void accessibility_update_set_placeholder(const RID &p_id, const String &p_placeholder);
-	virtual void accessibility_update_set_language(const RID &p_id, const String &p_language);
-	virtual void accessibility_update_set_text_orientation(const RID &p_id, bool p_vertical);
-	virtual void accessibility_update_set_list_orientation(const RID &p_id, bool p_vertical);
-	virtual void accessibility_update_set_shortcut(const RID &p_id, const String &p_shortcut);
-	virtual void accessibility_update_set_url(const RID &p_id, const String &p_url);
-	virtual void accessibility_update_set_role_description(const RID &p_id, const String &p_description);
-	virtual void accessibility_update_set_state_description(const RID &p_id, const String &p_description);
-	virtual void accessibility_update_set_color_value(const RID &p_id, const Color &p_color);
-	virtual void accessibility_update_set_background_color(const RID &p_id, const Color &p_color);
-	virtual void accessibility_update_set_foreground_color(const RID &p_id, const Color &p_color);
-#endif // DISABLE_DEPRECATED
 };
 
 VARIANT_ENUM_CAST_EXT(DisplayServerEnums::Feature, DisplayServer::Feature)
@@ -662,13 +498,3 @@ VARIANT_ENUM_CAST_EXT(DisplayServerEnums::VSyncMode, DisplayServer::VSyncMode)
 VARIANT_ENUM_CAST_EXT(DisplayServerEnums::ProgressState, DisplayServer::ProgressState)
 VARIANT_ENUM_CAST_EXT(DisplayServerEnums::FileDialogMode, DisplayServer::FileDialogMode)
 VARIANT_ENUM_CAST_EXT(DisplayServerEnums::NotificationStatus, DisplayServer::NotificationStatus)
-
-#ifndef DISABLE_DEPRECATED
-VARIANT_ENUM_CAST_EXT(DisplayServerEnums::AccessibilityRole, DisplayServer::AccessibilityRole)
-VARIANT_ENUM_CAST_EXT(DisplayServerEnums::AccessibilityPopupType, DisplayServer::AccessibilityPopupType)
-VARIANT_ENUM_CAST_EXT(DisplayServerEnums::AccessibilityFlags, DisplayServer::AccessibilityFlags)
-VARIANT_ENUM_CAST_EXT(DisplayServerEnums::AccessibilityAction, DisplayServer::AccessibilityAction)
-VARIANT_ENUM_CAST_EXT(DisplayServerEnums::AccessibilityLiveMode, DisplayServer::AccessibilityLiveMode)
-VARIANT_ENUM_CAST_EXT(DisplayServerEnums::AccessibilityScrollUnit, DisplayServer::AccessibilityScrollUnit)
-VARIANT_ENUM_CAST_EXT(DisplayServerEnums::AccessibilityScrollHint, DisplayServer::AccessibilityScrollHint)
-#endif // DISABLE_DEPRECATED

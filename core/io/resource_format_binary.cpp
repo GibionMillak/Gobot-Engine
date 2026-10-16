@@ -86,7 +86,6 @@ enum {
 	VARIANT_PROJECTION = 52,
 	VARIANT_PACKED_VECTOR4_ARRAY = 53,
 	OBJECT_EMPTY = 0,
-	OBJECT_EXTERNAL_RESOURCE = 1,
 	OBJECT_INTERNAL_RESOURCE = 2,
 	OBJECT_EXTERNAL_RESOURCE_INDEX = 3,
 	// Version 2: Added 64-bit support for float and int.
@@ -95,8 +94,6 @@ enum {
 	// Version 5: Ability to store script class in the header.
 	// Version 6: Added PackedVector4Array Variant type.
 	FORMAT_VERSION = 6,
-	FORMAT_VERSION_CAN_RENAME_DEPS = 1,
-	FORMAT_VERSION_NO_NODEPATH_PROPERTY = 3,
 };
 
 void ResourceLoaderBinary::_advance_padding(uint32_t p_len) {
@@ -351,9 +348,6 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 			uint32_t subname_count = f->get_16();
 			absolute = subname_count & 0x8000;
 			subname_count &= 0x7FFF;
-			if (ver_format < FORMAT_VERSION_NO_NODEPATH_PROPERTY) {
-				subname_count += 1; // has a property field, so we should count it as well
-			}
 
 			for (int i = 0; i < name_count; i++) {
 				names.push_back(_get_string());
@@ -382,12 +376,8 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 					uint32_t index = f->get_32();
 					String path;
 
-					if (using_named_scene_ids) { // New format.
-						ERR_FAIL_INDEX_V((int)index, internal_resources.size(), ERR_PARSE_ERROR);
-						path = internal_resources[index].path;
-					} else {
-						path += res_path + "::" + itos(index);
-					}
+					ERR_FAIL_INDEX_V((int)index, internal_resources.size(), ERR_PARSE_ERROR);
+					path = internal_resources[index].path;
 
 					//always use internal cache for loading internal resources
 					if (!internal_index_cache.has(path)) {
@@ -396,29 +386,6 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 					} else {
 						r_v = internal_index_cache[path];
 					}
-				} break;
-				case OBJECT_EXTERNAL_RESOURCE: {
-					//old file format, still around for compatibility
-
-					String exttype = get_unicode_string();
-					String path = get_unicode_string();
-
-					if (!path.contains("://") && path.is_relative_path()) {
-						// path is relative to file being loaded, so convert to a resource path
-						path = ProjectSettings::get_singleton()->localize_path(res_path.get_base_dir().path_join(path));
-					}
-
-					if (remaps.find(path)) {
-						path = remaps[path];
-					}
-
-					Ref<Resource> res = ResourceLoader::load(path, exttype, cache_mode_for_external);
-
-					if (res.is_null()) {
-						WARN_PRINT(vformat("Couldn't load resource: %s.", path));
-					}
-					r_v = res;
-
 				} break;
 				case OBJECT_EXTERNAL_RESOURCE_INDEX: {
 					//new file format, just refers to an index in the external list
@@ -948,7 +915,8 @@ void ResourceLoaderBinary::open(Ref<FileAccess> p_file, bool p_no_resources, boo
 	uint32_t ver_minor = f->get_32();
 	ver_format = f->get_32();
 
-	if (ver_format > FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
+	if (ver_format != FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
+		error = ERR_FILE_UNRECOGNIZED;
 		f.unref();
 		ERR_FAIL_MSG(vformat("File '%s' can't be loaded, as it uses a format version (%d) or engine version (%d.%d) which are not supported by your engine version (%s).",
 				local_path, ver_format, ver_major, ver_minor, GODOT_VERSION_BRANCH));
@@ -958,8 +926,9 @@ void ResourceLoaderBinary::open(Ref<FileAccess> p_file, bool p_no_resources, boo
 
 	importmd_ofs = f->get_64();
 	uint32_t flags = f->get_32();
-	if (flags & ResourceFormatSaverBinaryInstance::FORMAT_FLAG_NAMED_SCENE_IDS) {
-		using_named_scene_ids = true;
+	if (!(flags & ResourceFormatSaverBinaryInstance::FORMAT_FLAG_NAMED_SCENE_IDS) || !(flags & ResourceFormatSaverBinaryInstance::FORMAT_FLAG_UIDS)) {
+		error = ERR_FILE_UNRECOGNIZED;
+		ERR_FAIL_MSG("Resource is missing current-format scene IDs or UIDs.");
 	}
 	if (flags & ResourceFormatSaverBinaryInstance::FORMAT_FLAG_UIDS) {
 		using_uids = true;
@@ -1068,7 +1037,7 @@ String ResourceLoaderBinary::recognize(Ref<FileAccess> p_file) {
 	f->get_32(); // ver_minor
 	uint32_t ver_fmt = f->get_32();
 
-	if (ver_fmt > FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
+	if (ver_fmt != FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
 		f.unref();
 		return "";
 	}
@@ -1109,7 +1078,7 @@ String ResourceLoaderBinary::recognize_script_class(Ref<FileAccess> p_file) {
 	f->get_32(); // ver_minor
 	uint32_t ver_fmt = f->get_32();
 
-	if (ver_fmt > FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
+	if (ver_fmt != FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
 		f.unref();
 		return "";
 	}
@@ -1270,39 +1239,7 @@ Error ResourceFormatLoaderBinary::rename_dependencies(const String &p_path, cons
 	uint32_t ver_minor = f->get_32();
 	uint32_t ver_format = f->get_32();
 
-	if (ver_format < FORMAT_VERSION_CAN_RENAME_DEPS) {
-		fw.unref();
-
-		{
-			Ref<DirAccess> da = DirAccess::create(DirAccess::ACCESS_FILESYSTEM);
-			da->remove(p_path + ".depren");
-		}
-
-		// Use the old approach.
-
-		WARN_PRINT(vformat("This file is old, so it can't refactor dependencies, opening and resaving '%s'.", p_path));
-
-		Error err;
-		f = FileAccess::open(p_path, FileAccess::READ, &err);
-
-		ERR_FAIL_COND_V_MSG(err != OK, ERR_FILE_CANT_OPEN, vformat("Cannot open file '%s'.", p_path));
-
-		ResourceLoaderBinary loader;
-		loader.local_path = ProjectSettings::get_singleton()->localize_path(p_path);
-		loader.res_path = loader.local_path;
-		loader.remaps = p_map;
-		loader.open(f);
-
-		err = loader.load();
-
-		ERR_FAIL_COND_V(err != ERR_FILE_EOF, ERR_FILE_CORRUPT);
-		Ref<Resource> res = loader.get_resource();
-		ERR_FAIL_COND_V(res.is_null(), ERR_FILE_CORRUPT);
-
-		return ResourceFormatSaverBinary::singleton->save(res, p_path);
-	}
-
-	if (ver_format > FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
+	if (ver_format != FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
 		ERR_FAIL_V_MSG(ERR_FILE_UNRECOGNIZED,
 				vformat("File '%s' can't be loaded, as it uses a format version (%d) or engine version (%d.%d) which are not supported by your engine version (%s).",
 						local_path, ver_format, ver_major, ver_minor, GODOT_VERSION_BRANCH));
@@ -1486,7 +1423,7 @@ String ResourceFormatLoaderBinary::get_resource_type(const String &p_path) const
 	loader.local_path = ProjectSettings::get_singleton()->localize_path(p_path);
 	loader.res_path = loader.local_path;
 	String r = loader.recognize(f);
-	return ClassDB::get_compatibility_remapped_class(r);
+	return r;
 }
 
 String ResourceFormatLoaderBinary::get_resource_script_class(const String &p_path) const {
@@ -2375,21 +2312,7 @@ Error ResourceFormatSaverBinaryInstance::set_uid(const String &p_path, ResourceU
 	uint32_t ver_minor = f->get_32();
 	uint32_t ver_format = f->get_32();
 
-	if (ver_format < FORMAT_VERSION_CAN_RENAME_DEPS) {
-		fw.unref();
-
-		{
-			Ref<DirAccess> da = DirAccess::create(DirAccess::ACCESS_FILESYSTEM);
-			da->remove(p_path + ".uidren");
-		}
-
-		// Use the old approach.
-
-		WARN_PRINT(vformat("This file is old, so it does not support UIDs, opening and resaving '%s'.", p_path));
-		return ERR_UNAVAILABLE;
-	}
-
-	if (ver_format > FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
+	if (ver_format != FORMAT_VERSION || ver_major > GODOT_VERSION_MAJOR) {
 		ERR_FAIL_V_MSG(ERR_FILE_UNRECOGNIZED,
 				vformat("File '%s' can't be loaded, as it uses a format version (%d) or engine version (%d.%d) which are not supported by your engine version (%s).",
 						local_path, ver_format, ver_major, ver_minor, GODOT_VERSION_BRANCH));

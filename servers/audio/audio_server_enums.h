@@ -47,10 +47,6 @@ enum PlaybackType {
 	PLAYBACK_TYPE_MAX
 };
 
-#ifndef DISABLE_DEPRECATED
-// Graveyard.
-#endif
-
 } // namespace AudioServerEnums
 
 // Alias to make it easier to use.

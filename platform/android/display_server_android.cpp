@@ -68,11 +68,6 @@ DisplayServerAndroid *DisplayServerAndroid::get_singleton() {
 
 bool DisplayServerAndroid::has_feature(DisplayServerEnums::Feature p_feature) const {
 	switch (p_feature) {
-#ifndef DISABLE_DEPRECATED
-		case DisplayServerEnums::FEATURE_GLOBAL_MENU: {
-			return (native_menu && native_menu->has_feature(NativeMenu::FEATURE_GLOBAL_MENU));
-		} break;
-#endif
 		case DisplayServerEnums::FEATURE_PIP_MODE: {
 			GodotJavaWrapper *godot_java = OS_Android::get_singleton()->get_godot_java();
 			ERR_FAIL_NULL_V(godot_java, false);

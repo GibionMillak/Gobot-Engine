@@ -129,15 +129,6 @@ void SpinBox::_update_text(bool p_only_update_if_value_changed) {
 				line_edit->set_text_with_selection(RTR("<Invalid>"));
 				return;
 			}
-#ifndef DISABLE_DEPRECATED
-		} else {
-			if (!prefix.is_empty()) {
-				value = prefix + " " + value;
-			}
-			if (!suffix.is_empty()) {
-				value += " " + suffix;
-			}
-#endif
 		}
 	}
 
@@ -441,11 +432,7 @@ inline void SpinBox::_compute_sizes() {
 	int buttons_block_wanted_width = theme_cache.buttons_width + theme_cache.field_and_buttons_separation;
 	int buttons_block_icon_enforced_width = _get_widest_button_icon_width() + theme_cache.field_and_buttons_separation;
 
-#ifndef DISABLE_DEPRECATED
-	const bool min_width_from_icons = theme_cache.set_min_buttons_width_from_icons || (theme_cache.buttons_width < 0);
-#else
 	const bool min_width_from_icons = theme_cache.buttons_width < 0;
-#endif
 	int w = min_width_from_icons != 0 ? MAX(buttons_block_icon_enforced_width, buttons_block_wanted_width) : buttons_block_wanted_width;
 
 	if (w != sizing_cache.buttons_block_width) {
@@ -470,9 +457,6 @@ inline void SpinBox::_compute_sizes() {
 
 inline int SpinBox::_get_widest_button_icon_width() {
 	int width = 0;
-#ifndef DISABLE_DEPRECATED
-	width = MAX(width, theme_cache.updown_icon->get_width());
-#endif
 	width = MAX(width, theme_cache.up_icon->get_width());
 	width = MAX(width, theme_cache.up_hover_icon->get_width());
 	width = MAX(width, theme_cache.up_pressed_icon->get_width());
@@ -549,15 +533,6 @@ void SpinBox::_notification(int p_what) {
 			draw_style_box(up_stylebox, Rect2(sizing_cache.buttons_left, 0, sizing_cache.buttons_width, sizing_cache.button_up_height));
 			draw_style_box(down_stylebox, Rect2(sizing_cache.buttons_left, sizing_cache.second_button_top, sizing_cache.buttons_width, sizing_cache.button_down_height));
 
-#ifndef DISABLE_DEPRECATED
-			if (theme_cache.is_updown_assigned) {
-				int updown_icon_left = sizing_cache.buttons_left + (sizing_cache.buttons_width - theme_cache.updown_icon->get_width()) / 2;
-				int updown_icon_top = (size.height - theme_cache.updown_icon->get_height()) / 2;
-
-				theme_cache.updown_icon->draw(get_canvas_item(), Point2i(updown_icon_left, updown_icon_top));
-				break; // If updown is a valid texture, skip other arrows (for compatibility).
-			}
-#endif
 			// Draw arrows.
 			draw_texture_rect(up_icon, Rect2(Point2i(up_icon_left, up_icon_top), up_icon_size));
 			draw_texture_rect(down_icon, Rect2(Point2i(down_icon_left, down_icon_top), down_icon_size));
@@ -593,9 +568,6 @@ void SpinBox::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-#ifndef DISABLE_DEPRECATED
-			theme_cache.is_updown_assigned = !theme_cache.updown_icon->get_size().is_zero_approx();
-#endif
 			callable_mp((Control *)this, &Control::update_minimum_size).call_deferred();
 			callable_mp((Control *)get_line_edit(), &Control::update_minimum_size).call_deferred();
 		} break;
@@ -670,34 +642,6 @@ void SpinBox::set_format_auto_translate_mode(AutoTranslateMode p_mode) {
 	_update_text();
 	notify_property_list_changed();
 }
-
-#ifndef DISABLE_DEPRECATED
-void SpinBox::set_suffix(const String &p_suffix) {
-	if (suffix == p_suffix) {
-		return;
-	}
-
-	suffix = p_suffix;
-	_update_text();
-}
-
-String SpinBox::get_suffix() const {
-	return suffix;
-}
-
-void SpinBox::set_prefix(const String &p_prefix) {
-	if (prefix == p_prefix) {
-		return;
-	}
-
-	prefix = p_prefix;
-	_update_text();
-}
-
-String SpinBox::get_prefix() const {
-	return prefix;
-}
-#endif
 
 void SpinBox::set_update_on_text_changed(bool p_enabled) {
 	if (update_on_text_changed == p_enabled) {
@@ -813,12 +757,6 @@ void SpinBox::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_plural_format"), &SpinBox::get_plural_format);
 	ClassDB::bind_method(D_METHOD("set_format_auto_translate_mode", "mode"), &SpinBox::set_format_auto_translate_mode);
 	ClassDB::bind_method(D_METHOD("get_format_auto_translate_mode"), &SpinBox::get_format_auto_translate_mode);
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("set_suffix", "suffix"), &SpinBox::set_suffix);
-	ClassDB::bind_method(D_METHOD("get_suffix"), &SpinBox::get_suffix);
-	ClassDB::bind_method(D_METHOD("set_prefix", "prefix"), &SpinBox::set_prefix);
-	ClassDB::bind_method(D_METHOD("get_prefix"), &SpinBox::get_prefix);
-#endif
 	ClassDB::bind_method(D_METHOD("set_editable", "enabled"), &SpinBox::set_editable);
 	ClassDB::bind_method(D_METHOD("set_custom_arrow_step", "arrow_step"), &SpinBox::set_custom_arrow_step);
 	ClassDB::bind_method(D_METHOD("get_custom_arrow_step"), &SpinBox::get_custom_arrow_step);
@@ -843,20 +781,11 @@ void SpinBox::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "format", PROPERTY_HINT_PLACEHOLDER_TEXT, "%s"), "set_format", "get_format");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "plural_format", PROPERTY_HINT_PLACEHOLDER_TEXT, "%s"), "set_plural_format", "get_plural_format");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "format_auto_translate_mode", PROPERTY_HINT_ENUM, "Inherit,Always,Disabled"), "set_format_auto_translate_mode", "get_format_auto_translate_mode");
-#ifndef DISABLE_DEPRECATED
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "prefix"), "set_prefix", "get_prefix");
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "suffix"), "set_suffix", "get_suffix");
-#endif
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, SpinBox, buttons_vertical_separation);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, SpinBox, field_and_buttons_separation);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, SpinBox, buttons_width);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, SpinBox, icon_max_width);
-#ifndef DISABLE_DEPRECATED
-	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, SpinBox, set_min_buttons_width_from_icons);
-
-	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_ICON, SpinBox, updown_icon, "updown");
-#endif
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_ICON, SpinBox, up_icon, "up");
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_ICON, SpinBox, up_hover_icon, "up_hover");
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_ICON, SpinBox, up_pressed_icon, "up_pressed");

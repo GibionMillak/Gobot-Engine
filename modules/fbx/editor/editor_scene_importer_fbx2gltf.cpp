@@ -101,10 +101,6 @@ Node *EditorSceneFormatImporterFBX2GLTF::import_scene(const String &p_path, uint
 	gltf.instantiate();
 	Ref<GLTFState> state;
 	state.instantiate();
-	if (p_options.has("fbx/naming_version")) {
-		int naming_version = p_options["fbx/naming_version"];
-		gltf->set_naming_version(naming_version);
-	}
 	if (p_options.has(SNAME("nodes/import_as_skeleton_bones")) ? (bool)p_options[SNAME("nodes/import_as_skeleton_bones")] : false) {
 		state->set_import_as_skeleton_bones(true);
 	}
@@ -117,12 +113,7 @@ Node *EditorSceneFormatImporterFBX2GLTF::import_scene(const String &p_path, uint
 		return nullptr;
 	}
 
-#ifndef DISABLE_DEPRECATED
-	bool trimming = p_options.has("animation/trimming") ? (bool)p_options["animation/trimming"] : false;
-	return gltf->generate_scene(state, (float)p_options["animation/fps"], trimming, false);
-#else
 	return gltf->generate_scene(state, (float)p_options["animation/fps"], (bool)p_options["animation/trimming"], false);
-#endif
 }
 
 Variant EditorSceneFormatImporterFBX2GLTF::get_option_visibility(const String &p_path, const String &p_scene_import_type,
@@ -141,10 +132,4 @@ Variant EditorSceneFormatImporterFBX2GLTF::get_option_visibility(const String &p
 void EditorSceneFormatImporterFBX2GLTF::get_import_options(const String &p_path,
 		List<ResourceImporter::ImportOption> *r_options) {
 	// This function must be empty to avoid both FBX2glTF and UFBX adding the same options to FBX files.
-}
-
-void EditorSceneFormatImporterFBX2GLTF::handle_compatibility_options(HashMap<StringName, Variant> &p_import_params) const {
-	if (!p_import_params.has("fbx/importer")) {
-		p_import_params["fbx/importer"] = EditorSceneFormatImporterUFBX::FBX_IMPORTER_UFBX;
-	}
 }

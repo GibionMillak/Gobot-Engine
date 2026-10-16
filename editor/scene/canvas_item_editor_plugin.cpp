@@ -326,13 +326,6 @@ void CanvasItemEditor::shortcut_input(const Ref<InputEvent> &p_ev) {
 			const Callable custom_callback = EditorContextMenuPluginManager::get_singleton()->match_custom_shortcut(EditorContextMenuPlugin::CONTEXT_SLOT_2D_EDITOR, p_ev);
 			if (custom_callback.is_valid()) {
 				EditorContextMenuPlugin::OptionsData context_data = _get_context_data();
-#ifndef DISABLE_DEPRECATED
-				if (p_ev->get_meta("_legacy_shortcut", false)) {
-					EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, context_data["hovered_nodes"]);
-					accept_event();
-					return;
-				}
-#endif
 				EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, context_data);
 				accept_event();
 			}
@@ -635,16 +628,6 @@ void CanvasItemEditor::_tool_menu_requested(const Point2 &p_pos) {
 		EditorContextMenuPlugin::OptionsData context_data = _get_context_data();
 		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(add_node_menu, EditorContextMenuPlugin::CONTEXT_SLOT_2D_EDITOR, context_data);
 
-#ifndef DISABLE_DEPRECATED
-		Array items = context_data["hovered_nodes"];
-		PackedStringArray paths;
-		paths.reserve_exact(items.size());
-		for (const Variant &var : items) {
-			CanvasItem *ci = Object::cast_to<CanvasItem>(var);
-			paths.append((String)ci->get_path());
-		}
-		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(add_node_menu, EditorContextMenuPlugin::CONTEXT_SLOT_2D_EDITOR, paths, items, 500);
-#endif
 	}
 
 	add_node_menu->reset_size();
@@ -3590,13 +3573,6 @@ void CanvasItemEditor::set_state(const Dictionary &p_state) {
 	if (state.has("grid_step")) {
 		ci_manipulator->set_grid_step(state["grid_step"]);
 	}
-
-#ifndef DISABLE_DEPRECATED
-	if (state.has("primary_grid_steps")) {
-		primary_grid_step.x = state["primary_grid_steps"];
-		primary_grid_step.y = state["primary_grid_steps"];
-	}
-#endif // DISABLE_DEPRECATED
 
 	if (state.has("primary_grid_step")) {
 		primary_grid_step = state["primary_grid_step"];

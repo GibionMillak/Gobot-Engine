@@ -82,10 +82,6 @@
 #include "servers/text/text_server_dummy.h"
 #include "servers/text/text_server_extension.h"
 
-#ifndef DISABLE_DEPRECATED
-#include "servers/audio/effects/audio_effect_limiter.h"
-#endif
-
 // 2D physics and navigation.
 #ifndef NAVIGATION_2D_DISABLED
 #include "servers/navigation_2d/navigation_path_query_parameters_2d.h"
@@ -224,9 +220,6 @@ void register_server_types() {
 
 		GDREGISTER_CLASS(AudioEffectCapture);
 
-#ifndef DISABLE_DEPRECATED
-		GDREGISTER_CLASS(AudioEffectLimiter);
-#endif
 	}
 
 	GDREGISTER_ABSTRACT_CLASS(RenderData);

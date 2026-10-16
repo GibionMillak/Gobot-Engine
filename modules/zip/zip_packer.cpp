@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "zip_packer.h"
-#include "zip_packer.compat.inc"
 
 #include "core/io/zip_io.h"
 #include "core/object/class_db.h"

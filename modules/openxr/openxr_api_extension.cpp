@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "openxr_api_extension.h"
-#include "openxr_api_extension.compat.inc"
 
 #include "extensions/openxr_extension_wrapper.h"
 #include "openxr_api.h"

@@ -16,7 +16,5 @@
 		<member name="pressed" type="bool" setter="set_pressed" getter="is_pressed" default="false">
 			If [code]true[/code], the button's state is pressed. If [code]false[/code], the button's state is released.
 		</member>
-		<member name="pressure" type="float" setter="set_pressure" getter="get_pressure" default="0.0" deprecated="This property is never set by the engine and is always [code]0[/code].">
-		</member>
 	</members>
 </class>

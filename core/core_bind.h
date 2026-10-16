@@ -165,22 +165,7 @@ protected:
 	static void _bind_methods();
 	static inline OS *singleton = nullptr;
 
-#ifndef DISABLE_DEPRECATED
-	Dictionary _execute_with_pipe_bind_compat_94434(const String &p_path, const Vector<String> &p_arguments);
-
-	String _read_string_from_stdin_bind_compat_91201();
-	static void _bind_compatibility_methods();
-#endif
-
 public:
-#ifndef DISABLE_DEPRECATED
-	enum RenderingDriver {
-		RENDERING_DRIVER_VULKAN,
-		RENDERING_DRIVER_OPENGL3,
-		RENDERING_DRIVER_D3D12,
-		RENDERING_DRIVER_METAL,
-	};
-#endif // DISABLE_DEPRECATED
 
 	PackedByteArray get_entropy(int p_bytes);
 	String get_system_ca_certificates();
@@ -464,10 +449,6 @@ class Semaphore : public RefCounted {
 
 protected:
 	static void _bind_methods();
-#ifndef DISABLE_DEPRECATED
-	void _post_bind_compat_93605();
-	static void _bind_compatibility_methods();
-#endif // DISABLE_DEPRECATED
 
 public:
 	void wait();
@@ -719,9 +700,6 @@ VARIANT_ENUM_CAST(CoreBind::ResourceLoader::CacheMode);
 
 VARIANT_BITFIELD_CAST(CoreBind::ResourceSaver::SaverFlags);
 
-#ifndef DISABLE_DEPRECATED
-VARIANT_ENUM_CAST(CoreBind::OS::RenderingDriver);
-#endif
 VARIANT_ENUM_CAST(CoreBind::OS::SystemDir);
 VARIANT_ENUM_CAST(CoreBind::OS::StdHandleType);
 

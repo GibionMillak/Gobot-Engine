@@ -202,10 +202,6 @@ private:
 		// Only safe to be called from the render thread
 		uint32_t get_view_count();
 		Transform3D get_camera_transform();
-#ifndef DISABLE_DEPRECATED
-		Transform3D get_transform_for_view(uint32_t p_view, const Transform3D &p_cam_transform);
-		Projection get_projection_for_view(uint32_t p_view, double p_aspect, double p_z_near, double p_z_far);
-#endif
 		Rect2i get_render_region();
 
 		void pre_render();
@@ -287,14 +283,6 @@ public:
 	virtual Transform3D get_camera_transform() override {
 		return rt.get_camera_transform();
 	}
-#ifndef DISABLE_DEPRECATED
-	virtual Transform3D get_transform_for_view(uint32_t p_view, const Transform3D &p_cam_transform) override {
-		return rt.get_transform_for_view(p_view, p_cam_transform);
-	}
-	virtual Projection get_projection_for_view(uint32_t p_view, double p_aspect, double p_z_near, double p_z_far) override {
-		return rt.get_projection_for_view(p_view, p_aspect, p_z_near, p_z_far);
-	}
-#endif
 	virtual Rect2i get_render_region() override {
 		return rt.get_render_region();
 	}

@@ -402,12 +402,6 @@ protected:
 
 	static void _bind_methods();
 
-#ifndef DISABLE_DEPRECATED
-	void _add_filter_bind_compat_111439(const String &p_filter, const String &p_description = "");
-
-	static void _bind_compatibility_methods();
-#endif
-
 public:
 	virtual void set_visible(bool p_visible) override;
 
@@ -445,11 +439,6 @@ public:
 
 	void set_root_subfolder(const String &p_root);
 	String get_root_subfolder() const;
-
-#ifndef DISABLE_DEPRECATED
-	void set_mode_overrides_title(bool p_override) {}
-	bool is_mode_overriding_title() const { return true; }
-#endif
 
 	void set_use_native_dialog(bool p_native);
 	bool get_use_native_dialog() const;

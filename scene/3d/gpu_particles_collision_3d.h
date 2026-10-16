@@ -79,10 +79,6 @@ class GPUParticlesCollisionBox3D : public GPUParticlesCollision3D {
 
 protected:
 	static void _bind_methods();
-#ifndef DISABLE_DEPRECATED
-	bool _set(const StringName &p_name, const Variant &p_value);
-	bool _get(const StringName &p_name, Variant &r_property) const;
-#endif // DISABLE_DEPRECATED
 
 public:
 	void set_size(const Vector3 &p_size);
@@ -165,10 +161,6 @@ private:
 
 protected:
 	static void _bind_methods();
-#ifndef DISABLE_DEPRECATED
-	bool _set(const StringName &p_name, const Variant &p_value);
-	bool _get(const StringName &p_name, Variant &r_property) const;
-#endif // DISABLE_DEPRECATED
 
 public:
 	virtual PackedStringArray get_configuration_warnings() const override;
@@ -236,10 +228,6 @@ private:
 protected:
 	void _notification(int p_what);
 	static void _bind_methods();
-#ifndef DISABLE_DEPRECATED
-	bool _set(const StringName &p_name, const Variant &p_value);
-	bool _get(const StringName &p_name, Variant &r_property) const;
-#endif // DISABLE_DEPRECATED
 
 public:
 	void set_size(const Vector3 &p_size);
@@ -325,10 +313,6 @@ class GPUParticlesAttractorBox3D : public GPUParticlesAttractor3D {
 
 protected:
 	static void _bind_methods();
-#ifndef DISABLE_DEPRECATED
-	bool _set(const StringName &p_name, const Variant &p_value);
-	bool _get(const StringName &p_name, Variant &r_property) const;
-#endif // DISABLE_DEPRECATED
 
 public:
 	void set_size(const Vector3 &p_size);
@@ -348,10 +332,6 @@ class GPUParticlesAttractorVectorField3D : public GPUParticlesAttractor3D {
 
 protected:
 	static void _bind_methods();
-#ifndef DISABLE_DEPRECATED
-	bool _set(const StringName &p_name, const Variant &p_value);
-	bool _get(const StringName &p_name, Variant &r_property) const;
-#endif // DISABLE_DEPRECATED
 
 public:
 	void set_size(const Vector3 &p_size);

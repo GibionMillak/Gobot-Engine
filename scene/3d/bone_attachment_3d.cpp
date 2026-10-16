@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "bone_attachment_3d.h"
-#include "bone_attachment_3d.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/object/callable_mp.h"

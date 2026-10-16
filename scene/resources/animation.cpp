@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "animation.h"
-#include "animation.compat.inc"
 
 #include "core/io/marshalls.h"
 #include "core/object/class_db.h"
@@ -45,7 +44,7 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 		ERR_FAIL_COND_V(!comp.has("pages"), false);
 		ERR_FAIL_COND_V(!comp.has("format_version"), false);
 		uint32_t format_version = comp["format_version"];
-		ERR_FAIL_COND_V(format_version > Compression::FORMAT_VERSION, false); // version does not match this supported version
+		ERR_FAIL_COND_V_MSG(format_version != Compression::FORMAT_VERSION, false, "Unsupported animation compression format version.");
 		compression.fps = comp["fps"];
 		Array bounds = comp["bounds"];
 		compression.bounds.resize(bounds.size());
@@ -449,11 +448,6 @@ bool Animation::_set(const StringName &p_name, const Variant &p_value) {
 		} else {
 			return false;
 		}
-#ifndef DISABLE_DEPRECATED
-	} else if (prop_name == "loop" && p_value.operator bool()) { // Compatibility with Godot 3.x.
-		loop_mode = Animation::LoopMode::LOOP_LINEAR;
-		return true;
-#endif // DISABLE_DEPRECATED
 	} else {
 		return false;
 	}

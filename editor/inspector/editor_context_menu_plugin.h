@@ -47,9 +47,6 @@ class EditorContextMenuPlugin : public RefCounted {
 	static constexpr int MAX_ITEMS = 100;
 
 	int slot = -1;
-#ifndef DISABLE_DEPRECATED
-	bool legacy_mode = false;
-#endif
 
 public:
 	enum ContextMenuSlot {
@@ -73,9 +70,6 @@ public:
 		Ref<Texture2D> icon;
 		Ref<Shortcut> shortcut;
 		PopupMenu *submenu = nullptr;
-#ifndef DISABLE_DEPRECATED
-		bool legacy = false;
-#endif
 	};
 
 private:
@@ -83,24 +77,14 @@ private:
 	HashMap<Ref<Shortcut>, Callable> context_menu_shortcuts;
 
 	OptionsData context_data;
-#ifndef DISABLE_DEPRECATED
-	Variant legacy_data;
-#endif
 
 protected:
 	static void _bind_methods();
 
 	GDVIRTUAL1(_get_menu_options, const OptionsData &);
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL1(_popup_menu, Vector<String>);
-#endif
 
 public:
 	virtual void get_options(const OptionsData &p_data);
-#ifndef DISABLE_DEPRECATED
-	virtual void get_options(const Vector<String> &p_paths, const Variant &p_data);
-	bool has_legacy_shortcuts() const;
-#endif
 
 	void add_menu_shortcut(const Ref<Shortcut> &p_shortcut, const Callable &p_callable);
 	void add_context_menu_item(const String &p_name, const Callable &p_callable, const Ref<Texture2D> &p_texture);

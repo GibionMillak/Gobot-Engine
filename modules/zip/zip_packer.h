@@ -46,11 +46,6 @@ class ZIPPacker : public RefCounted {
 protected:
 	static void _bind_methods();
 
-#ifndef DISABLE_DEPRECATED
-	Error _start_file_bind_compat_115946(const String &p_path);
-	static void _bind_compatibility_methods();
-#endif
-
 public:
 	enum ZipAppend {
 		APPEND_CREATE = 0,

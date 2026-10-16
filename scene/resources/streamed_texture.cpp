@@ -139,8 +139,8 @@ Error StreamedTexture2D::_parse_header(const String &p_path, StreamedTextureFile
 	// Version.
 	uint32_t version = f->get_32();
 	constexpr uint32_t FORMAT_VERSION = 1;
-	if (version > FORMAT_VERSION) {
-		ERR_FAIL_V_MSG(ERR_FILE_CORRUPT, "Streamed texture file is too new.");
+	if (version != FORMAT_VERSION) {
+		ERR_FAIL_V_MSG(ERR_FILE_CORRUPT, "Streamed texture file uses an unsupported format version.");
 	}
 
 	// Read width, height.

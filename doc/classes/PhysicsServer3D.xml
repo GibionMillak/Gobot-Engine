@@ -1650,9 +1650,6 @@
 		<constant name="G6DOF_JOINT_LINEAR_MOTOR_TARGET_VELOCITY" value="5" enum="G6DOFJointAxisParam">
 			The velocity that the joint's linear motor will attempt to reach.
 		</constant>
-		<constant name="G6DOF_JOINT_LINEAR_MOTOR_FORCE_LIMIT" value="6" enum="G6DOFJointAxisParam" deprecated="Use [constant G6DOF_JOINT_LINEAR_DRIVE_FORCE_LIMIT] instead, which applies in both spring and motor modes.">
-			The maximum force that the linear motor can apply while trying to reach the target velocity.
-		</constant>
 		<constant name="G6DOF_JOINT_LINEAR_SPRING_STIFFNESS" value="7" enum="G6DOFJointAxisParam">
 		</constant>
 		<constant name="G6DOF_JOINT_LINEAR_SPRING_DAMPING" value="8" enum="G6DOFJointAxisParam">
@@ -1688,9 +1685,6 @@
 		<constant name="G6DOF_JOINT_ANGULAR_MOTOR_TARGET_VELOCITY" value="17" enum="G6DOFJointAxisParam">
 			Target speed for the motor at the axes.
 		</constant>
-		<constant name="G6DOF_JOINT_ANGULAR_MOTOR_FORCE_LIMIT" value="18" enum="G6DOFJointAxisParam" deprecated="Use [constant G6DOF_JOINT_ANGULAR_DRIVE_TORQUE_LIMIT] instead, which applies in both spring and motor modes.">
-			Maximum acceleration for the motor at the axes.
-		</constant>
 		<constant name="G6DOF_JOINT_ANGULAR_SPRING_STIFFNESS" value="19" enum="G6DOFJointAxisParam">
 		</constant>
 		<constant name="G6DOF_JOINT_ANGULAR_SPRING_DAMPING" value="20" enum="G6DOFJointAxisParam">
@@ -1721,9 +1715,6 @@
 		<constant name="G6DOF_JOINT_FLAG_ENABLE_LINEAR_SPRING" value="3" enum="G6DOFJointAxisFlag">
 		</constant>
 		<constant name="G6DOF_JOINT_FLAG_ENABLE_ANGULAR_MOTOR" value="4" enum="G6DOFJointAxisFlag">
-			If set, there is a rotational or angular motor across these axes.
-		</constant>
-		<constant name="G6DOF_JOINT_FLAG_ENABLE_MOTOR" value="4" enum="G6DOFJointAxisFlag" deprecated="Use [constant G6DOF_JOINT_FLAG_ENABLE_ANGULAR_MOTOR] instead.">
 			If set, there is a rotational or angular motor across these axes.
 		</constant>
 		<constant name="G6DOF_JOINT_FLAG_ENABLE_LINEAR_MOTOR" value="5" enum="G6DOFJointAxisFlag">

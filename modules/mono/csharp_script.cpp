@@ -1496,13 +1496,6 @@ bool CSharpInstance::set(const StringName &p_name, const Variant &p_value) {
 				trampolines->setter, gchandle.get_intptr(), &p_value);
 	}
 
-	if (unlikely(script->should_fallback_to_legacy_trampolines)) {
-		// The legacy CSharpInstanceBridge.Set already calls "_set" as a last resort,
-		// so don't continue after this branch.
-		return GDMonoCache::managed_callbacks.CSharpInstanceBridge_Set(
-				gchandle.get_intptr(), &p_name, &p_value);
-	}
-
 	if (has_method(SNAME("_set"))) {
 		Callable::CallError call_error;
 		const Variant name_arg = p_name;
@@ -1531,19 +1524,6 @@ bool CSharpInstance::get(const StringName &p_name, Variant &r_ret) const {
 		Variant ret_value;
 		if (likely(GDMonoCache::managed_callbacks.CSharpInstanceBridge_GetViaTrampoline(
 					trampolines->getter, gchandle.get_intptr(), &ret_value))) {
-			r_ret = ret_value;
-			return true;
-		}
-
-		return false;
-	}
-
-	if (unlikely(script->should_fallback_to_legacy_trampolines)) {
-		// The legacy CSharpInstanceBridge.Get already handles signal and method objects,
-		// and calls "_get" as a last resort, so don't continue after this branch.
-
-		Variant ret_value;
-		if (GDMonoCache::managed_callbacks.CSharpInstanceBridge_Get(gchandle.get_intptr(), &p_name, &ret_value)) {
 			r_ret = ret_value;
 			return true;
 		}
@@ -1725,12 +1705,7 @@ bool CSharpInstance::has_method(const StringName &p_method) const {
 		return true;
 	}
 
-	if (likely(!script->should_fallback_to_legacy_trampolines)) {
-		return false;
-	}
-
-	return GDMonoCache::managed_callbacks.CSharpInstanceBridge_HasMethodUnknownParams(
-			gchandle.get_intptr(), &p_method);
+	return false;
 }
 
 int CSharpInstance::get_method_argument_count(const StringName &p_method, bool *r_is_valid) const {
@@ -1777,16 +1752,8 @@ Variant CSharpInstance::_callp(const StringName &p_method, const Variant **p_arg
 		return Variant();
 	}
 
-	if (likely(!script->should_fallback_to_legacy_trampolines)) {
-		r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;
-		return Variant();
-	}
-
-	Variant ret;
-	GDMonoCache::managed_callbacks.CSharpInstanceBridge_Call(
-			gchandle.get_intptr(), &p_method, p_args, p_argcount, &r_error, &ret);
-
-	return ret;
+	r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;
+	return Variant();
 }
 
 Variant CSharpInstance::callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
@@ -1817,20 +1784,8 @@ void CSharpInstance::raise_event_signal(const StringName &p_event_signal_name, c
 		return;
 	}
 
-	if (likely(!script->should_fallback_to_legacy_trampolines)) {
-		r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;
-		return;
-	}
-
-	GDMonoCache::managed_callbacks.ScriptManagerBridge_RaiseEventSignal(
-			gchandle.get_intptr(), &p_event_signal_name,
-			p_args, p_argcount, &owner_is_null);
-
-	if (unlikely(owner_is_null)) {
-		r_error.error = Callable::CallError::CALL_ERROR_INSTANCE_IS_NULL;
-	} else {
-		r_error.error = Callable::CallError::CALL_OK;
-	}
+	r_error.error = Callable::CallError::CALL_ERROR_INVALID_METHOD;
+	return;
 }
 
 bool CSharpInstance::_reference_owner_unsafe() {
@@ -2415,8 +2370,7 @@ void GD_CLR_STDCALL CSharpScript::_try_add_property_tramp(CSharpScript *p_scr, c
 		DEV_ASSERT(found->getter.function_pointer != nullptr || found->setter.function_pointer != nullptr);
 
 		// If an entry already exists, we still replace one of the trampolines if it's null.
-		// This matches the behavior of Get/SetGodotClassPropertyValue, which will continue
-		// looking in base classes if the property in the current class is readonly/writeonly.
+		// Look in base classes for a missing getter or setter of a readonly/writeonly property.
 		if (p_getter_trampoline.function_pointer && !found->getter.function_pointer) {
 			found->getter = p_getter_trampoline;
 		} else if (p_setter_trampoline.function_pointer && !found->setter.function_pointer) {
@@ -2442,7 +2396,7 @@ void CSharpScript::update_script_class_info(Ref<CSharpScript> p_script) {
 	p_script->raise_signal_trampolines.clear();
 
 	GDMonoCache::managed_callbacks.ScriptManagerBridge_UpdateScriptTrampolines(
-			p_script.ptr(), &p_script->should_fallback_to_legacy_trampolines,
+			p_script.ptr(),
 			&_try_add_method_tramp, &_try_add_property_tramp, &_try_add_raise_signal_tramp);
 
 	TypeInfo type_info;
@@ -2800,13 +2754,7 @@ bool CSharpScript::_callp_static(const CSharpScript *p_script, const StringName 
 		return false;
 	}
 
-	if (likely(!p_script->should_fallback_to_legacy_trampolines)) {
-		return false;
-	}
-
-	Variant ret;
-	return GDMonoCache::managed_callbacks.ScriptManagerBridge_CallStatic(
-			p_script, &p_method, p_args, p_argcount, &r_error, &ret);
+	return false;
 }
 
 Variant CSharpScript::callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {

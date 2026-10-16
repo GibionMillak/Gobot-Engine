@@ -51,20 +51,6 @@
 				Returns [code]true[/code] if the property identified by the given [param path] is configured to be synchronized on spawn.
 			</description>
 		</method>
-		<method name="property_get_sync" deprecated="Use [method property_get_replication_mode] instead.">
-			<return type="bool" />
-			<param index="0" name="path" type="NodePath" />
-			<description>
-				Returns [code]true[/code] if the property identified by the given [param path] is configured to be synchronized on process.
-			</description>
-		</method>
-		<method name="property_get_watch" deprecated="Use [method property_get_replication_mode] instead.">
-			<return type="bool" />
-			<param index="0" name="path" type="NodePath" />
-			<description>
-				Returns [code]true[/code] if the property identified by the given [param path] is configured to be reliably synchronized when changes are detected on process.
-			</description>
-		</method>
 		<method name="property_set_replication_mode">
 			<return type="void" />
 			<param index="0" name="path" type="NodePath" />
@@ -79,22 +65,6 @@
 			<param index="1" name="enabled" type="bool" />
 			<description>
 				Sets whether the property identified by the given [param path] is configured to be synchronized on spawn.
-			</description>
-		</method>
-		<method name="property_set_sync" deprecated="Use [method property_set_replication_mode] with [constant REPLICATION_MODE_ALWAYS] instead.">
-			<return type="void" />
-			<param index="0" name="path" type="NodePath" />
-			<param index="1" name="enabled" type="bool" />
-			<description>
-				Sets whether the property identified by the given [param path] is configured to be synchronized on process.
-			</description>
-		</method>
-		<method name="property_set_watch" deprecated="Use [method property_set_replication_mode] with [constant REPLICATION_MODE_ON_CHANGE] instead.">
-			<return type="void" />
-			<param index="0" name="path" type="NodePath" />
-			<param index="1" name="enabled" type="bool" />
-			<description>
-				Sets whether the property identified by the given [param path] is configured to be reliably synchronized when changes are detected on process.
 			</description>
 		</method>
 		<method name="remove_property">

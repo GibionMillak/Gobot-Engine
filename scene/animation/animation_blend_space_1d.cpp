@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "animation_blend_space_1d.h"
-#include "animation_blend_space_1d.compat.inc"
 
 #include "core/object/class_db.h"
 #include "scene/animation/animation_blend_tree.h"
@@ -116,11 +115,6 @@ void AnimationNodeBlendSpace1D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_blend_mode", "mode"), &AnimationNodeBlendSpace1D::set_blend_mode);
 	ClassDB::bind_method(D_METHOD("get_blend_mode"), &AnimationNodeBlendSpace1D::get_blend_mode);
 
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("set_use_sync", "enable"), &AnimationNodeBlendSpace1D::set_use_sync);
-	ClassDB::bind_method(D_METHOD("is_using_sync"), &AnimationNodeBlendSpace1D::is_using_sync);
-#endif // DISABLE_DEPRECATED
-
 	ClassDB::bind_method(D_METHOD("set_sync_mode", "sync_mode"), &AnimationNodeBlendSpace1D::set_sync_mode);
 	ClassDB::bind_method(D_METHOD("get_sync_mode"), &AnimationNodeBlendSpace1D::get_sync_mode);
 
@@ -132,11 +126,6 @@ void AnimationNodeBlendSpace1D::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "snap", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), "set_snap", "get_snap");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "value_label", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), "set_value_label", "get_value_label");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "blend_mode", PROPERTY_HINT_ENUM, "Interpolated,Discrete,Carry", PROPERTY_USAGE_NO_EDITOR), "set_blend_mode", "get_blend_mode");
-#ifndef DISABLE_DEPRECATED
-	// Keep "sync" as bool with old getter/setter for GDExtension API backward compatibility (4.0-4.6).
-	// Old scenes with "sync = true" still load via set_use_sync -> SYNC_MODE_INDEPENDENT.
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "sync", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NONE), "set_use_sync", "is_using_sync");
-#endif // DISABLE_DEPRECATED
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "sync_mode", PROPERTY_HINT_ENUM, "None,Independent,Cyclic Mutable,Cyclic Constant", PROPERTY_USAGE_NO_EDITOR), "set_sync_mode", "get_sync_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "cyclic_length", PROPERTY_HINT_RANGE, "0.0,99.0,0.001,or_greater", PROPERTY_USAGE_NO_EDITOR), "set_cyclic_length", "get_cyclic_length");
 
@@ -163,15 +152,7 @@ void AnimationNodeBlendSpace1D::add_blend_point(const Ref<AnimationRootNode> &p_
 	ERR_FAIL_COND(blend_points_used >= MAX_BLEND_POINTS);
 	ERR_FAIL_COND(p_node.is_null());
 	ERR_FAIL_COND(p_at_index < -1 || p_at_index > blend_points_used);
-#ifndef DISABLE_DEPRECATED
-	if (p_name == StringName()) {
-		_add_blend_point_bind_compat_110369(p_node, p_position, p_at_index);
-		WARN_PRINT_ED("AnimationNodeBlendSpace1D::add_blend_point: No name provided, using safe index as reference. In the future, empty names will be deprecated, so explicitly passing a name is recommended.");
-		return;
-	}
-#else
 	ERR_FAIL_COND(p_name == StringName());
-#endif
 	if (p_at_index == -1 || p_at_index == blend_points_used) {
 		p_at_index = blend_points_used;
 	} else {
@@ -336,16 +317,6 @@ void AnimationNodeBlendSpace1D::set_blend_mode(BlendMode p_blend_mode) {
 AnimationNodeBlendSpace1D::BlendMode AnimationNodeBlendSpace1D::get_blend_mode() const {
 	return blend_mode;
 }
-
-#ifndef DISABLE_DEPRECATED
-void AnimationNodeBlendSpace1D::set_use_sync(bool p_sync) {
-	sync_mode = p_sync ? SYNC_MODE_INDEPENDENT : SYNC_MODE_NONE;
-}
-
-bool AnimationNodeBlendSpace1D::is_using_sync() const {
-	return sync_mode != SYNC_MODE_NONE;
-}
-#endif // DISABLE_DEPRECATED
 
 void AnimationNodeBlendSpace1D::set_sync_mode(SyncMode p_sync_mode) {
 	sync_mode = p_sync_mode;

@@ -643,9 +643,7 @@ Error decode_variant(Variant &r_variant, const uint8_t *p_buffer, int p_len, int
 				len -= 12;
 				buf += 12;
 
-				if (np_flags & 2) { // Obsolete format with property separate from subpath.
-					subnamecount++;
-				}
+				ERR_FAIL_COND_V(np_flags & 2, ERR_INVALID_DATA);
 
 				uint32_t total = namecount + subnamecount;
 
@@ -1444,7 +1442,7 @@ Error encode_variant(const Variant &p_variant, uint8_t *p_buffer, int &r_len, bo
 		case Variant::NODE_PATH: {
 			NodePath np = p_variant;
 			if (buf) {
-				encode_uint32(uint32_t(np.get_name_count()) | 0x80000000, buf); // For compatibility with the old format.
+				encode_uint32(uint32_t(np.get_name_count()) | 0x80000000, buf); // Marks the structured NodePath encoding.
 				encode_uint32(np.get_subname_count(), buf + 4);
 				uint32_t np_flags = 0;
 				if (np.is_absolute()) {

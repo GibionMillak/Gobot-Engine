@@ -36,10 +36,6 @@
 #include "editor/file_system/dependency_editor.h"
 #include "editor/settings/editor_settings.h"
 
-#ifndef DISABLE_DEPRECATED
-#include "core/object/class_db.h"
-#endif
-
 void EditorFileDialog::_item_menu_id_pressed(int p_option) {
 	// Use dependency dialog to delete the entry in the editor, but only for project files.
 	if (p_option == ITEM_MENU_DELETE && get_access() == ACCESS_RESOURCES) {
@@ -92,12 +88,6 @@ Vector2i EditorFileDialog::_get_list_mode_icon_size() const {
 }
 
 void EditorFileDialog::_bind_methods() {
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("add_side_menu", "menu", "title"), &EditorFileDialog::add_side_menu, DEFVAL(""));
-	ClassDB::bind_method(D_METHOD("set_disable_overwrite_warning", "disable"), &EditorFileDialog::set_disable_overwrite_warning);
-	ClassDB::bind_method(D_METHOD("is_overwrite_warning_disabled"), &EditorFileDialog::is_overwrite_warning_disabled);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "disable_overwrite_warning", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), "set_disable_overwrite_warning", "is_overwrite_warning_disabled");
-#endif
 }
 
 void EditorFileDialog::_validate_property(PropertyInfo &p_property) const {

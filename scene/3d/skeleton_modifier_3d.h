@@ -109,9 +109,6 @@ protected:
 	virtual void _process_modification(double p_delta);
 	// TODO: In Godot 5, should obsolete old GDVIRTUAL0(_process_modification); and replace it with _process_modification_with_delta as GDVIRTUAL1(_process_modification, double).
 	GDVIRTUAL1(_process_modification_with_delta, double);
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL0(_process_modification);
-#endif
 
 	bool should_check_node_path();
 

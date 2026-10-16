@@ -235,7 +235,6 @@ private:
 	AHashMap<StringName, PropertyTrampolines> property_trampolines;
 	/// Also includes event signals declared in inherited scripts.
 	AHashMap<SignalKey, godotsharp::RaiseSignalTrampoline> raise_signal_trampolines;
-	bool should_fallback_to_legacy_trampolines = true;
 
 	bool _has_method_mapping_to_proxy_include_base(const StringName &p_name) const;
 

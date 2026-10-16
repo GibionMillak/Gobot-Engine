@@ -1680,13 +1680,6 @@ void ScriptTextEditor::shortcut_input(const Ref<InputEvent> &p_event) {
 
 	const Callable custom_callback = EditorContextMenuPluginManager::get_singleton()->match_custom_shortcut(EditorContextMenuPlugin::CONTEXT_SLOT_SCRIPT_EDITOR_CODE, p_event);
 	if (custom_callback.is_valid()) {
-#ifndef DISABLE_DEPRECATED
-		if (p_event->get_meta("_legacy_shortcut", false)) {
-			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, code_editor->get_text_editor());
-			accept_event();
-			return;
-		}
-#endif
 		EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, _get_context_data());
 		accept_event();
 	}
@@ -2585,11 +2578,6 @@ void ScriptTextEditor::_make_ste_context_menu(bool p_selection, bool p_color, bo
 
 	if (EditorContextMenuPluginManager::get_singleton()->has_plugins_for_slot(EditorContextMenuPlugin::CONTEXT_SLOT_SCRIPT_EDITOR_CODE)) {
 		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(context_menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCRIPT_EDITOR_CODE, _get_context_data());
-#ifndef DISABLE_DEPRECATED
-		const PackedStringArray paths = { String(code_editor->get_text_editor()->get_path()) };
-		Ref<Script> edited_script = get_edited_resource();
-		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(context_menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCRIPT_EDITOR_CODE, paths, code_editor->get_text_editor(), 500);
-#endif
 	}
 
 	_show_context_menu(p_position);

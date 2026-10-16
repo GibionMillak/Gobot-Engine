@@ -159,7 +159,6 @@ namespace Godot.Bridge
 
                 _ = ctor.Invoke(obj, invokeParams);
 
-
                 return godot_bool.True;
             }
             catch (Exception e)
@@ -372,32 +371,6 @@ namespace Godot.Bridge
                         NativeFuncs.godotsharp_internal_editor_file_system_update_files(scriptPathsNative);
                     }).CallDeferred();
                 }
-            }
-        }
-
-        [UnmanagedCallersOnly]
-        internal static unsafe void RaiseEventSignal(IntPtr ownerGCHandlePtr,
-            godot_string_name* eventSignalName, godot_variant** args, int argCount, godot_bool* outOwnerIsNull)
-        {
-            try
-            {
-                var owner = (GodotObject?)GCHandle.FromIntPtr(ownerGCHandlePtr).Target;
-
-                if (owner == null)
-                {
-                    *outOwnerIsNull = godot_bool.True;
-                    return;
-                }
-
-                *outOwnerIsNull = godot_bool.False;
-
-                owner.RaiseGodotClassSignalCallbacks(CustomUnsafe.AsRef(eventSignalName),
-                    new NativeVariantPtrArgs(args, argCount));
-            }
-            catch (Exception e)
-            {
-                ExceptionUtils.LogException(e);
-                *outOwnerIsNull = godot_bool.False;
             }
         }
 
@@ -794,7 +767,7 @@ namespace Godot.Bridge
 
         [UnmanagedCallersOnly]
         internal static unsafe void UpdateScriptTrampolines(
-            IntPtr scriptPtr, godot_bool* outShouldFallbackToLegacyTrampolines,
+            IntPtr scriptPtr,
             TryAddMethodTrampolineDelegate tryAddMethodTrampoline,
             TryAddPropertyTrampolineDelegate tryAddPropertyTrampoline,
             TryAddRaiseSignalTrampolineDelegate tryAddRaiseSignalTrampoline)
@@ -828,34 +801,6 @@ namespace Godot.Bridge
 
                 GetGodotClassTrampolinesForType(scriptType, collectorPool);
 
-                Type native = GodotObject.InternalGetClassNativeBase(scriptType);
-
-                // No need to check for "HasGodotClassMethod" nor "HasGodotClassSignal",
-                // as these always accompany "InvokeGodotClassMethod" and "RaiseGodotClassSignalCallbacks".
-                *outShouldFallbackToLegacyTrampolines =
-                    (DoesUserScriptContainMethod("InvokeGodotClassMethod")
-                     || DoesUserScriptContainMethod("SetGodotClassPropertyValue")
-                     || DoesUserScriptContainMethod("GetGodotClassPropertyValue")
-                     || DoesUserScriptContainMethod("RaiseGodotClassSignalCallbacks")).ToGodotBool();
-
-                return;
-
-                bool DoesUserScriptContainMethod(string methodName)
-                {
-                    var methodInfo = scriptType.GetMethod(methodName,
-                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-                    if (methodInfo == null)
-                        return false;
-
-                    for (Type? top = scriptType; top != null && top != native; top = top.BaseType)
-                    {
-                        if (methodInfo.DeclaringType == top)
-                            return true;
-                    }
-
-                    return false;
-                }
             }
             catch (Exception e)
             {
@@ -1266,55 +1211,6 @@ namespace Godot.Bridge
             public godot_variant Value; // Not owned
         }
 #pragma warning restore IDE1006
-
-        private delegate bool InvokeGodotClassStaticMethodDelegate(in godot_string_name method,
-            NativeVariantPtrArgs args, out godot_variant ret);
-
-        [UnmanagedCallersOnly]
-        internal static unsafe godot_bool CallStatic(IntPtr scriptPtr, godot_string_name* method,
-            godot_variant** args, int argCount, godot_variant_call_error* refCallError, godot_variant* outRet)
-        {
-            try
-            {
-                Type scriptType = _scriptTypeBiMap.GetScriptType(scriptPtr);
-
-                Type? top = scriptType;
-                Type native = GodotObject.InternalGetClassNativeBase(top);
-
-                while (top != null && top != native)
-                {
-                    var invokeGodotClassStaticMethod = top.GetMethod(
-                        "InvokeGodotClassStaticMethod",
-                        BindingFlags.DeclaredOnly | BindingFlags.Static |
-                        BindingFlags.NonPublic | BindingFlags.Public);
-
-                    if (invokeGodotClassStaticMethod != null)
-                    {
-                        var invoked =
-                            invokeGodotClassStaticMethod.CreateDelegate<InvokeGodotClassStaticMethodDelegate>()(
-                                CustomUnsafe.AsRef(method), new NativeVariantPtrArgs(args, argCount),
-                                out godot_variant retValue);
-                        if (invoked)
-                        {
-                            *outRet = retValue;
-                            return godot_bool.True;
-                        }
-                    }
-
-                    top = top.BaseType;
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionUtils.LogException(e);
-                *outRet = default;
-                return godot_bool.False;
-            }
-
-            *outRet = default;
-            (*refCallError).Error = godot_variant_call_error_error.GODOT_CALL_ERROR_CALL_ERROR_INVALID_METHOD;
-            return godot_bool.False;
-        }
 
         [UnmanagedCallersOnly]
         internal static unsafe godot_bool CallStaticWithTrampoline(MethodTrampolineDelegate methodTrampoline,

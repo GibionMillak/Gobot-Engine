@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "optimized_translation.h"
-#include "optimized_translation.compat.inc"
 
 #include "core/object/class_db.h"
 #include "core/templates/pair.h"

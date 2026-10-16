@@ -87,12 +87,6 @@ void OpenXRExtensionWrapper::_bind_methods() {
 	GDVIRTUAL_BIND(_get_camera_projections, "tracker_name", "aspect", "z_near", "z_far");
 	GDVIRTUAL_BIND(_get_camera_offsets, "tracker_name");
 
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL_BIND_COMPAT(_get_requested_extensions_bind_compat_109302);
-	GDVIRTUAL_BIND_COMPAT(_set_instance_create_info_and_get_next_pointer_bind_compat_109302, "next_pointer");
-	GDVIRTUAL_BIND_COMPAT(_on_register_metadata_bind_compat_117399);
-#endif
-
 	ClassDB::bind_method(D_METHOD("get_openxr_api"), &OpenXRExtensionWrapper::_gdextension_get_openxr_api);
 	ClassDB::bind_method(D_METHOD("register_extension_wrapper"), &OpenXRExtensionWrapper::_gdextension_register_extension_wrapper);
 }
@@ -108,17 +102,6 @@ HashMap<String, bool *> OpenXRExtensionWrapper::get_requested_extensions(XrVersi
 		}
 		return result;
 	}
-
-#ifndef DISABLE_DEPRECATED
-	if (GDVIRTUAL_CALL(_get_requested_extensions_bind_compat_109302, request_extension)) {
-		HashMap<String, bool *> result;
-		for (const KeyValue<Variant, Variant> &kv : request_extension) {
-			GDExtensionPtr<bool> value = VariantCaster<GDExtensionPtr<bool>>::cast(kv.value);
-			result.insert(kv.key, value);
-		}
-		return result;
-	}
-#endif
 
 	return HashMap<String, bool *>();
 }
@@ -139,12 +122,6 @@ void *OpenXRExtensionWrapper::set_instance_create_info_and_get_next_pointer(XrVe
 	if (GDVIRTUAL_CALL(_set_instance_create_info_and_get_next_pointer, (uint64_t)p_xr_version, GDExtensionPtr<void>(p_next_pointer), pointer)) {
 		return reinterpret_cast<void *>(pointer);
 	}
-
-#ifndef DISABLE_DEPRECATED
-	if (GDVIRTUAL_CALL(_set_instance_create_info_and_get_next_pointer_bind_compat_109302, GDExtensionPtr<void>(p_next_pointer), pointer)) {
-		return reinterpret_cast<void *>(pointer);
-	}
-#endif
 
 	return nullptr;
 }
@@ -314,9 +291,6 @@ void OpenXRExtensionWrapper::on_register_metadata(OpenXRInteractionProfileMetada
 		return;
 	}
 
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL_CALL(_on_register_metadata_bind_compat_117399);
-#endif
 }
 
 void OpenXRExtensionWrapper::on_before_instance_created() {

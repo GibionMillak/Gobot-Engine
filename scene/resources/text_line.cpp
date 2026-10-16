@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "text_line.h"
-#include "text_line.compat.inc"
 
 #include "core/object/class_db.h"
 

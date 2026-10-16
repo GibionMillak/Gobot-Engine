@@ -32,7 +32,6 @@
 
 #include "core/config/engine.h"
 #include "core/core_constants.h"
-#include "core/extension/gdextension_special_compat_hashes.h"
 #include "core/io/file_access.h"
 #include "core/io/json.h"
 #include "core/object/class_db.h"
@@ -798,17 +797,6 @@ Dictionary GDExtensionAPIDump::generate_extension_api(bool p_include_docs) {
 					d2["is_static"] = Variant::is_builtin_method_static(type, method_name);
 					d2["hash"] = Variant::get_builtin_method_hash(type, method_name);
 
-					Vector<uint32_t> compat_hashes = Variant::get_builtin_method_compatibility_hashes(type, method_name);
-					Array compatibility;
-					if (compat_hashes.size()) {
-						for (int j = 0; j < compat_hashes.size(); j++) {
-							compatibility.push_back(compat_hashes[j]);
-						}
-					}
-					if (compatibility.size() > 0) {
-						d2["hash_compatibility"] = compatibility;
-					}
-
 					Vector<Variant> default_args = Variant::get_builtin_method_default_arguments(type, method_name);
 
 					Array arguments;
@@ -1037,17 +1025,6 @@ Dictionary GDExtensionAPIDump::generate_extension_api(bool p_include_docs) {
 						d2["is_virtual"] = true;
 						d2["hash"] = mi.get_compatibility_hash();
 
-						Vector<uint32_t> compat_hashes = ClassDB::get_virtual_method_compatibility_hashes(class_name, method_name);
-						Array compatibility;
-						if (compat_hashes.size()) {
-							for (int i = 0; i < compat_hashes.size(); i++) {
-								compatibility.push_back(compat_hashes[i]);
-							}
-						}
-						if (compatibility.size() > 0) {
-							d2["hash_compatibility"] = compatibility;
-						}
-
 						bool has_return = mi.return_val.type != Variant::NIL || (mi.return_val.usage & PROPERTY_USAGE_NIL_IS_VARIANT);
 						if (has_return) {
 							PropertyInfo pinfo = mi.return_val;
@@ -1110,22 +1087,6 @@ Dictionary GDExtensionAPIDump::generate_extension_api(bool p_include_docs) {
 						d2["is_static"] = method->is_static();
 						d2["is_virtual"] = false;
 						d2["hash"] = method->get_hash();
-
-						Vector<uint32_t> compat_hashes = ClassDB::get_method_compatibility_hashes(class_name, method_name);
-						Array compatibility;
-						if (compat_hashes.size()) {
-							for (int i = 0; i < compat_hashes.size(); i++) {
-								compatibility.push_back(compat_hashes[i]);
-							}
-						}
-
-#ifndef DISABLE_DEPRECATED
-						GDExtensionSpecialCompatHashes::get_legacy_hashes(class_name, method_name, compatibility);
-#endif
-
-						if (compatibility.size() > 0) {
-							d2["hash_compatibility"] = compatibility;
-						}
 
 						Vector<Variant> default_args = method->get_default_arguments();
 
@@ -1520,23 +1481,9 @@ static bool compare_dict_array(const Dictionary &p_old_api, const Dictionary &p_
 			}
 
 			uint64_t new_hash = new_elem["hash"];
-			bool hash_found = false;
-			if (old_hash == new_hash) {
-				hash_found = true;
-			} else if (new_elem.has("hash_compatibility")) {
-				Array compatibility = new_elem["hash_compatibility"];
-				for (int j = 0; j < compatibility.size(); j++) {
-					new_hash = compatibility[j];
-					if (new_hash == old_hash) {
-						hash_found = true;
-						break;
-					}
-				}
-			}
-
-			if (!hash_found) {
+			if (old_hash != new_hash) {
 				failed = true;
-				print_error(vformat("Validate extension JSON: Error: Hash changed for '%s/%s', from %08X to %08X. This means that the function has changed and no compatibility function was provided.", base_array, name, old_hash, new_hash));
+				print_error(vformat("Validate extension JSON: Error: Hash changed for '%s/%s', from %08X to %08X. The function signature has changed.", base_array, name, old_hash, new_hash));
 				continue;
 			}
 		}

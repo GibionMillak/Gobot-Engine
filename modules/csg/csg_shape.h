@@ -163,11 +163,6 @@ public:
 	void set_smoothing_angle(const float p_angle);
 	float get_smoothing_angle() const;
 
-#ifndef DISABLE_DEPRECATED
-	void set_snap(float p_snap);
-	float get_snap() const;
-#endif // DISABLE_DEPRECATED
-
 	void set_calculate_tangents(bool p_calculate_tangents);
 	bool is_calculating_tangents() const;
 
@@ -283,10 +278,6 @@ class CSGBox3D : public CSGPrimitive3D {
 
 protected:
 	static void _bind_methods();
-#ifndef DISABLE_DEPRECATED
-	// Kept for compatibility from 3.x to 4.0.
-	bool _set(const StringName &p_name, const Variant &p_value);
-#endif
 
 public:
 	void set_size(const Vector3 &p_size);

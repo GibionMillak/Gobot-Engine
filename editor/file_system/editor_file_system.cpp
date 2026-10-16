@@ -1271,13 +1271,6 @@ void EditorFileSystem::_process_file_system(const ScannedDirectory *p_scan_dir, 
 				fi->import_group_file = fc->import_group_file;
 				fi->class_info = fc->class_info;
 
-				// Ensures backward compatibility when the project is loaded for the first time with the added import_md5
-				// and import_dest_paths properties in the file cache.
-				if (fc->import_md5.is_empty()) {
-					fi->import_md5 = FileAccess::get_md5(path + ".import");
-					fi->import_dest_paths = _get_import_dest_paths(path);
-				}
-
 				// The method _is_test_for_reimport_needed checks if the files were modified and ensures that
 				// all the destination files still exist without reading the .import file.
 				// If something is different, we will queue a test for reimportation that will check
@@ -2896,11 +2889,6 @@ Error EditorFileSystem::_reimport_file(const String &p_file, const HashMap<Strin
 		if (importer.is_null()) {
 			ERR_FAIL_V_MSG(ERR_FILE_CANT_OPEN, "BUG: File queued for import, but can't be imported, importer for type '" + importer_name + "' not found.");
 		}
-	}
-
-	if (FileAccess::exists(p_file + ".import")) {
-		// We only want to handle compat for existing files, not new ones.
-		importer->handle_compatibility_options(params);
 	}
 
 	//mix with default params, in case a parameter is missing

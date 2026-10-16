@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "core_bind.h"
-#include "core_bind.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
@@ -878,13 +877,6 @@ void OS::_bind_methods() {
 	// to avoid using values from the documentation writer's own OS instance.
 	ADD_PROPERTY_DEFAULT("low_processor_usage_mode", false);
 	ADD_PROPERTY_DEFAULT("low_processor_usage_mode_sleep_usec", 6900);
-
-#ifndef DISABLE_DEPRECATED
-	BIND_ENUM_CONSTANT(RENDERING_DRIVER_VULKAN);
-	BIND_ENUM_CONSTANT(RENDERING_DRIVER_OPENGL3);
-	BIND_ENUM_CONSTANT(RENDERING_DRIVER_D3D12);
-	BIND_ENUM_CONSTANT(RENDERING_DRIVER_METAL);
-#endif // DISABLE_DEPRECATED
 
 	BIND_ENUM_CONSTANT(SYSTEM_DIR_DESKTOP);
 	BIND_ENUM_CONSTANT(SYSTEM_DIR_DCIM);

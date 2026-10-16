@@ -99,9 +99,6 @@
 			When autosmooth is enabled, faces with an angle between them greater than this will be smoothed, while faces with a smaller angle will remain sharp.
 			Note: An angle lower than 0.1 will cause all smoothing to be disabled, this can be used to increase performance.
 		</member>
-		<member name="snap" type="float" setter="set_snap" getter="get_snap" deprecated="The CSG library no longer uses snapping.">
-			This property does nothing.
-		</member>
 		<member name="use_collision" type="bool" setter="set_use_collision" getter="is_using_collision" default="false">
 			Adds a collision shape to the physics engine for our CSG shape. This will always act like a static body. Note that the collision shape is still active even if the CSG shape itself is hidden. See also [member collision_mask] and [member collision_priority].
 		</member>

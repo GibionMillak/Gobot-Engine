@@ -32,10 +32,6 @@
 
 #include "3d/godot_navigation_server_3d.h"
 
-#ifndef DISABLE_DEPRECATED
-#include "3d/navigation_mesh_generator.h"
-#endif // DISABLE_DEPRECATED
-
 #ifdef TOOLS_ENABLED
 #include "editor/navigation_link_3d_editor_plugin.h"
 #include "editor/navigation_obstacle_3d_editor_plugin.h"
@@ -48,10 +44,6 @@
 #include "servers/navigation_3d/navigation_server_3d.h"
 #include "servers/navigation_3d/navigation_server_3d_manager.h"
 
-#ifndef DISABLE_DEPRECATED
-NavigationMeshGenerator *_nav_mesh_generator = nullptr;
-#endif // DISABLE_DEPRECATED
-
 static NavigationServer3D *_createGodotNavigation3DCallback() {
 	return memnew(GodotNavigationServer3D);
 }
@@ -61,11 +53,6 @@ void initialize_navigation_3d_module(ModuleInitializationLevel p_level) {
 		NavigationServer3DManager::get_singleton()->register_server("GodotNavigation3D", callable_mp_static(_createGodotNavigation3DCallback));
 		NavigationServer3DManager::get_singleton()->set_default_server("GodotNavigation3D");
 
-#ifndef DISABLE_DEPRECATED
-		_nav_mesh_generator = memnew(NavigationMeshGenerator);
-		GDREGISTER_CLASS(NavigationMeshGenerator);
-		Engine::get_singleton()->add_singleton(Engine::Singleton("NavigationMeshGenerator", NavigationMeshGenerator::get_singleton()));
-#endif // DISABLE_DEPRECATED
 	}
 
 #ifdef TOOLS_ENABLED
@@ -82,7 +69,4 @@ void uninitialize_navigation_3d_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-#ifndef DISABLE_DEPRECATED
-	memdelete(_nav_mesh_generator);
-#endif // DISABLE_DEPRECATED
 }

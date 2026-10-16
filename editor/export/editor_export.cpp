@@ -301,12 +301,6 @@ void EditorExport::load_config() {
 		}
 
 		String platform = config->get_value(section, "platform");
-#ifndef DISABLE_DEPRECATED
-		// Compatibility with Linux platform before 4.3.
-		if (platform == "Linux/X11") {
-			platform = "Linux";
-		}
-#endif
 
 		Ref<EditorExportPreset> preset;
 
@@ -330,12 +324,6 @@ void EditorExport::load_config() {
 			continue; // Unknown platform, skip without error (platform might be loaded later).
 		}
 
-#ifndef DISABLE_DEPRECATED
-		bool legacy_runnable = config->get_value(section, "runnable", false);
-		if (legacy_runnable) {
-			preset->set_runnable(true);
-		}
-#endif
 		preset->set_dedicated_server(config->get_value(section, "dedicated_server", false));
 
 		if (config->has_section_key(section, "custom_features")) {

@@ -246,51 +246,6 @@ namespace Godot
             return name;
         }
 
-        // ReSharper disable once VirtualMemberNeverOverridden.Global
-        /// <summary>
-        /// Set the value of a property contained in this class.
-        /// This method is used by Godot to assign property values.
-        /// Do not call or override this method.
-        /// </summary>
-        /// <param name="name">Name of the property to set.</param>
-        /// <param name="value">Value to set the property to if it was found.</param>
-        /// <returns><see langword="true"/> if a property with the given name was found.</returns>
-        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-        protected internal virtual bool SetGodotClassPropertyValue(in godot_string_name name, in godot_variant value)
-        {
-            return false;
-        }
-
-        // ReSharper disable once VirtualMemberNeverOverridden.Global
-        /// <summary>
-        /// Get the value of a property contained in this class.
-        /// This method is used by Godot to retrieve property values.
-        /// Do not call or override this method.
-        /// </summary>
-        /// <param name="name">Name of the property to get.</param>
-        /// <param name="value">Value of the property if it was found.</param>
-        /// <returns><see langword="true"/> if a property with the given name was found.</returns>
-        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-        protected internal virtual bool GetGodotClassPropertyValue(in godot_string_name name, out godot_variant value)
-        {
-            value = default;
-            return false;
-        }
-
-        // ReSharper disable once VirtualMemberNeverOverridden.Global
-        /// <summary>
-        /// Raises the signal with the given name, using the given arguments.
-        /// This method is used by Godot to raise signals from the engine side.\n"
-        /// Do not call or override this method.
-        /// </summary>
-        /// <param name="signal">Name of the signal to raise.</param>
-        /// <param name="args">Arguments to use with the raised signal.</param>
-        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-        protected internal virtual void RaiseGodotClassSignalCallbacks(in godot_string_name signal,
-            NativeVariantPtrArgs args)
-        {
-        }
-
         internal static IntPtr ClassDB_get_method(StringName type, StringName method)
         {
             var typeSelf = (godot_string_name)type.NativeValue;
@@ -303,11 +258,11 @@ namespace Godot
             return methodBind;
         }
 
-        internal static IntPtr ClassDB_get_method_with_compatibility(StringName type, StringName method, ulong hash)
+        internal static IntPtr ClassDB_get_method_by_hash(StringName type, StringName method, ulong hash)
         {
             var typeSelf = (godot_string_name)type.NativeValue;
             var methodSelf = (godot_string_name)method.NativeValue;
-            IntPtr methodBind = NativeFuncs.godotsharp_method_bind_get_method_with_compatibility(typeSelf, methodSelf, hash);
+            IntPtr methodBind = NativeFuncs.godotsharp_method_bind_get_method_by_hash(typeSelf, methodSelf, hash);
 
             if (methodBind == IntPtr.Zero)
                 throw new NativeMethodBindNotFoundException(type + "." + method);

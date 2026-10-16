@@ -112,10 +112,6 @@ protected:
 	GDVIRTUAL2C(_save_layout_to_config, Ref<ConfigFile>, const String &)
 	GDVIRTUAL2(_load_layout_from_config, Ref<ConfigFile>, const String &)
 
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL1(_update_layout, int)
-#endif
-
 public:
 	void open();
 	void make_visible();

@@ -550,16 +550,6 @@ void QuickOpenResultContainer::init(const Vector<StringName> &p_base_types) {
 				ResourceUID::ID *id_write = cleaned_ids.ptrw();
 				int i = 0;
 				for (String uid : history_uids) {
-#ifndef DISABLE_DEPRECATED
-					if (!uid.begins_with("uid://")) {
-						// uid might be a path here, if config was written by older editor version
-						ResourceUID::ID id = EditorFileSystem::get_singleton()->get_file_uid(uid);
-						if (id == ResourceUID::INVALID_ID) {
-							continue;
-						}
-						uid = ResourceUID::get_singleton()->id_to_text(id);
-					}
-#endif
 
 					ResourceUID::ID id = ResourceUID::get_singleton()->text_to_id(uid);
 					if (id == ResourceUID::INVALID_ID || !ResourceUID::get_singleton()->has_id(id)) {
@@ -1111,11 +1101,6 @@ QuickOpenDisplayMode QuickOpenResultContainer::get_adaptive_display_mode(const V
 	}
 
 	return QuickOpenDisplayMode::LIST;
-}
-
-String _get_uid_string(const String &p_filepath) {
-	ResourceUID::ID id = EditorFileSystem::get_singleton()->get_file_uid(p_filepath);
-	return id == ResourceUID::INVALID_ID ? p_filepath : ResourceUID::get_singleton()->id_to_text(id);
 }
 
 bool QuickOpenResultContainer::is_instant_preview_enabled() const {

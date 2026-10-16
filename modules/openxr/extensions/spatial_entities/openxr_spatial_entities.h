@@ -111,9 +111,6 @@ public:
 	GDVIRTUAL1(_set_capacity, uint32_t);
 	GDVIRTUAL0RC(uint64_t, _get_component_type);
 	GDVIRTUAL1R(uint64_t, _get_structure_data, uint64_t);
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL1RC_COMPAT(_get_structure_data_bind_compat_118128, uint64_t, _get_structure_data, uint64_t);
-#endif
 };
 
 class OpenXRSpatialComponentBounded2DList : public OpenXRSpatialComponentData {

@@ -172,10 +172,6 @@ enum ProcessInfo {
 	INFO_ISLAND_COUNT
 };
 
-#ifndef DISABLE_DEPRECATED
-// Graveyard.
-#endif
-
 } // namespace PhysicsServer2DEnums
 
 // Alias to make it easier to use.

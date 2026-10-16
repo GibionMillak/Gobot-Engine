@@ -161,9 +161,6 @@ public:
 		LAYOUT_DIRECTION_RTL,
 		LAYOUT_DIRECTION_SYSTEM_LOCALE,
 		LAYOUT_DIRECTION_MAX,
-#ifndef DISABLE_DEPRECATED
-		LAYOUT_DIRECTION_LOCALE = LAYOUT_DIRECTION_APPLICATION_LOCALE,
-#endif // DISABLE_DEPRECATED
 	};
 
 	enum TextDirection {
@@ -171,11 +168,6 @@ public:
 		TEXT_DIRECTION_LTR = TextServer::DIRECTION_LTR,
 		TEXT_DIRECTION_RTL = TextServer::DIRECTION_RTL,
 		TEXT_DIRECTION_INHERITED = TextServer::DIRECTION_INHERITED,
-	};
-
-	enum AutoFocusStrategy {
-		STRATEGY_LEGACY,
-		STRATEGY_BALLOON,
 	};
 
 private:
@@ -415,7 +407,6 @@ private:
 	void _propagate_focus_behavior_recursive_recursively(bool p_enabled, bool p_skip_non_inherited);
 
 	// Focus Strategies.
-	real_t _focus_strategy_legacy(const Vector2 &p_dir, const Control &p_candidate, const Rect2 &p_rect, const Rect2 &p_clamp, real_t p_min);
 	real_t _focus_strategy_balloon_candidate_score(const Vector2 &p_start, const Vector2 &p_dir, const Pair<Vector2, Vector2> &p_edge);
 	real_t _focus_strategy_balloon(const Vector2 &p_dir, const Control &p_candidate, const Rect2 &p_clamp);
 
@@ -464,12 +455,6 @@ protected:
 	void _accessibility_action_show_tooltip(const Variant &p_data);
 	void _accessibility_action_hide_tooltip(const Variant &p_data);
 	void _accessibility_action_scroll_into_view(const Variant &p_data);
-
-#ifndef DISABLE_DEPRECATED
-	bool _has_focus_bind_compat_110250() const;
-	void _grab_focus_bind_compat_110250();
-	static void _bind_compatibility_methods();
-#endif //DISABLE_DEPRECATED
 
 	// Focus.
 	bool _is_focusable() const;
@@ -867,11 +852,6 @@ public:
 
 	void set_localize_numeral_system(bool p_enable);
 	bool is_localizing_numeral_system() const;
-
-#ifndef DISABLE_DEPRECATED
-	void set_auto_translate(bool p_enable);
-	bool is_auto_translating() const;
-#endif //DISABLE_DEPRECATED
 
 	void set_tooltip_auto_translate_mode(AutoTranslateMode p_mode);
 	AutoTranslateMode get_tooltip_auto_translate_mode() const;

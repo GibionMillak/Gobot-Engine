@@ -539,52 +539,6 @@ TypedArray<Transform3D> WebXRInterfaceJS::get_camera_offsets(const StringName &p
 	return camera_offsets;
 }
 
-#ifndef DISABLE_DEPRECATED
-Transform3D WebXRInterfaceJS::get_transform_for_view(uint32_t p_view, const Transform3D &p_cam_transform) {
-	XRServer *xr_server = XRServer::get_singleton();
-	ERR_FAIL_NULL_V(xr_server, p_cam_transform);
-	ERR_FAIL_COND_V(!initialized, p_cam_transform);
-
-	float js_matrix[16];
-	bool has_transform = godot_webxr_get_transform_for_view(p_view, js_matrix);
-	if (!has_transform) {
-		return p_cam_transform;
-	}
-
-	Transform3D transform_for_view = _js_matrix_to_transform(js_matrix);
-
-	double world_scale = xr_server->get_world_scale();
-	transform_for_view.origin *= world_scale;
-
-	return p_cam_transform * xr_server->get_reference_frame() * transform_for_view;
-}
-
-Projection WebXRInterfaceJS::get_projection_for_view(uint32_t p_view, double p_aspect, double p_z_near, double p_z_far) {
-	Projection view;
-
-	ERR_FAIL_COND_V(!initialized, view);
-
-	float js_matrix[16];
-	bool has_projection = godot_webxr_get_projection_for_view(p_view, js_matrix);
-	if (!has_projection) {
-		return view;
-	}
-
-	int k = 0;
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			view.columns[i][j] = js_matrix[k++];
-		}
-	}
-
-	// Copied from godot_oculus_mobile's ovr_mobile_session.cpp
-	view.columns[2][2] = -(p_z_far + p_z_near) / (p_z_far - p_z_near);
-	view.columns[3][2] = -(2.0f * p_z_far * p_z_near) / (p_z_far - p_z_near);
-
-	return view;
-}
-#endif
-
 bool WebXRInterfaceJS::pre_draw_viewport(RID p_render_target) {
 	GLES3::TextureStorage *texture_storage = GLES3::TextureStorage::get_singleton();
 	if (texture_storage == nullptr) {

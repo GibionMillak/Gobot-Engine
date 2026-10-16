@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "navigation_server_2d.h"
-#include "navigation_server_2d.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
@@ -72,7 +71,6 @@ void NavigationServer2D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("map_get_agents", "map"), &NavigationServer2D::map_get_agents);
 	ClassDB::bind_method(D_METHOD("map_get_obstacles", "map"), &NavigationServer2D::map_get_obstacles);
 
-	ClassDB::bind_method(D_METHOD("map_force_update", "map"), &NavigationServer2D::map_force_update);
 	ClassDB::bind_method(D_METHOD("map_get_iteration_id", "map"), &NavigationServer2D::map_get_iteration_id);
 	ClassDB::bind_method(D_METHOD("map_set_use_async_iterations", "map", "enabled"), &NavigationServer2D::map_set_use_async_iterations);
 	ClassDB::bind_method(D_METHOD("map_get_use_async_iterations", "map"), &NavigationServer2D::map_get_use_async_iterations);

@@ -12,13 +12,6 @@
 		<link title="XR documentation index">$DOCS_URL/tutorials/xr/index.html</link>
 	</tutorials>
 	<methods>
-		<method name="get_input" qualifiers="const" deprecated="Use through [XRControllerTracker].">
-			<return type="Variant" />
-			<param index="0" name="name" type="StringName" />
-			<description>
-				Returns an input for this tracker. It can return a boolean, float or [Vector2] value depending on whether the input is a button, trigger or thumbstick/thumbpad.
-			</description>
-		</method>
 		<method name="get_pose" qualifiers="const">
 			<return type="XRPose" />
 			<param index="0" name="name" type="StringName" />
@@ -38,14 +31,6 @@
 			<param index="0" name="name" type="StringName" />
 			<description>
 				Marks this pose as invalid, we don't clear the last reported state but it allows users to decide if trackers need to be hidden if we lose tracking or just remain at their last known position.
-			</description>
-		</method>
-		<method name="set_input" deprecated="Use through [XRControllerTracker].">
-			<return type="void" />
-			<param index="0" name="name" type="StringName" />
-			<param index="1" name="value" type="Variant" />
-			<description>
-				Changes the value for the given input. This method is called by an [XRInterface] implementation and should not be used directly.
 			</description>
 		</method>
 		<method name="set_pose">

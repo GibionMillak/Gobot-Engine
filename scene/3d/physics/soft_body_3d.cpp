@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "soft_body_3d.h"
-#include "soft_body_3d.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/object/callable_mp.h"

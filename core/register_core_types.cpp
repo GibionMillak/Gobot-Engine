@@ -89,9 +89,6 @@
 #include "core/string/regex.h"
 #include "core/string/translation.h"
 #include "core/string/translation_server.h"
-#ifndef DISABLE_DEPRECATED
-#include "core/io/packed_data_container.h"
-#endif
 
 static Ref<ResourceFormatSaverBinary> resource_saver_binary;
 static Ref<ResourceFormatLoaderBinary> resource_loader_binary;
@@ -288,10 +285,6 @@ void register_core_types() {
 	GDREGISTER_CLASS(AStarGrid2D);
 	GDREGISTER_CLASS(EncodedObjectAsID);
 	GDREGISTER_CLASS(RandomNumberGenerator);
-#ifndef DISABLE_DEPRECATED
-	GDREGISTER_CLASS(PackedDataContainer);
-	GDREGISTER_ABSTRACT_CLASS(PackedDataContainerRef);
-#endif
 
 	GDREGISTER_ABSTRACT_CLASS(ImageFormatLoader);
 	GDREGISTER_CLASS(ImageFormatLoaderExtension);

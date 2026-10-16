@@ -170,11 +170,6 @@ static void update_ime_form_positions(HIMC p_himc, const Point2i &p_pos, const R
 
 bool DisplayServerWindows::has_feature(DisplayServerEnums::Feature p_feature) const {
 	switch (p_feature) {
-#ifndef DISABLE_DEPRECATED
-		case DisplayServerEnums::FEATURE_GLOBAL_MENU: {
-			return (native_menu && native_menu->has_feature(NativeMenu::FEATURE_GLOBAL_MENU));
-		} break;
-#endif
 		case DisplayServerEnums::FEATURE_SUBWINDOWS:
 		case DisplayServerEnums::FEATURE_TOUCHSCREEN:
 		case DisplayServerEnums::FEATURE_MOUSE:

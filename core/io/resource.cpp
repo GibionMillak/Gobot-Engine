@@ -617,13 +617,7 @@ void Resource::_take_over_path(const String &p_path) {
 
 RID Resource::get_rid() const {
 	RID ret;
-	if (!GDVIRTUAL_CALL(_get_rid, ret)) {
-#ifndef DISABLE_DEPRECATED
-		if (_get_extension() && _get_extension()->get_rid) {
-			ret = RID::from_uint64(_get_extension()->get_rid(_get_extension_instance()));
-		}
-#endif
-	}
+	GDVIRTUAL_CALL(_get_rid, ret);
 	return ret;
 }
 
@@ -741,7 +735,6 @@ void Resource::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_local_to_scene", "enable"), &Resource::set_local_to_scene);
 	ClassDB::bind_method(D_METHOD("is_local_to_scene"), &Resource::is_local_to_scene);
 	ClassDB::bind_method(D_METHOD("get_local_scene"), &Resource::get_local_scene);
-	ClassDB::bind_method(D_METHOD("setup_local_to_scene"), &Resource::setup_local_to_scene);
 	ClassDB::bind_method(D_METHOD("reset_state"), &Resource::reset_state);
 
 	ClassDB::bind_method(D_METHOD("set_id_for_path", "path", "id"), &Resource::set_id_for_path);

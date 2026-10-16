@@ -1114,11 +1114,6 @@ static void _find_annotation_arguments(const GDScriptParser::AnnotationNode *p_a
 		}
 	} else if (p_annotation->name == SNAME("@warning_ignore") || p_annotation->name == SNAME("@warning_ignore_start") || p_annotation->name == SNAME("@warning_ignore_restore")) {
 		for (int warning_code = 0; warning_code < GDScriptWarning::WARNING_MAX; warning_code++) {
-#ifndef DISABLE_DEPRECATED
-			if (warning_code >= GDScriptWarning::FIRST_DEPRECATED_WARNING) {
-				break; // Don't suggest deprecated warnings as they are never produced.
-			}
-#endif // DISABLE_DEPRECATED
 			EditorLanguage::CompletionOption warning = _calculate_string_insertion(existing_argument, GDScriptWarning::get_name_from_code((GDScriptWarning::Code)warning_code).to_lower());
 			r_result.insert(warning.display, warning);
 		}

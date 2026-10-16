@@ -272,13 +272,6 @@ void SceneTreeDock::shortcut_input(const Ref<InputEvent> &p_event) {
 		if (custom_callback.is_valid()) {
 			EditorContextMenuPlugin::OptionsData context_data = SceneTreeDock::_get_context_data(editor_selection->get_top_selected_node_list());
 
-#ifndef DISABLE_DEPRECATED
-			if (p_event->get_meta("_legacy_shortcut", false)) {
-				EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, context_data["selected_nodes"]);
-				accept_event();
-				return;
-			}
-#endif
 			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, context_data);
 		} else {
 			return;
@@ -4084,9 +4077,6 @@ void SceneTreeDock::_tree_rmb(const Vector2 &p_menu_pos) {
 
 		if (EditorContextMenuPluginManager::get_singleton()->has_plugins_for_slot(EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TREE)) {
 			EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TREE, SceneTreeDock::_get_context_data(List<Node *>()));
-#ifndef DISABLE_DEPRECATED
-			EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TREE, PackedStringArray(), TypedArray<Node>(), 500);
-#endif
 		}
 
 		menu->reset_size();
@@ -4400,15 +4390,6 @@ void SceneTreeDock::_tree_rmb(const Vector2 &p_menu_pos) {
 		EditorContextMenuPlugin::OptionsData context_data = SceneTreeDock::_get_context_data(selection);
 		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TREE, context_data);
 
-#ifndef DISABLE_DEPRECATED
-		Vector<String> p_paths;
-		Node *root = EditorNode::get_singleton()->get_edited_scene();
-		for (const Node *node : selection) {
-			const String node_path = (String)root->get_path().rel_path_to(node->get_path());
-			p_paths.push_back(node_path);
-		}
-		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCENE_TREE, p_paths, context_data["selected_nodes"], 500);
-#endif
 	}
 
 	menu->reset_size();

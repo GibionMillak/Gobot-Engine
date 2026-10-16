@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "image.h"
-#include "image.compat.inc"
 
 #include "core/config/project_settings.h"
 #include "core/error/error_macros.h"
@@ -3991,9 +3990,6 @@ void Image::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("generate_mipmaps", "renormalize", "preserve_alpha_test_coverage", "alpha_test_threshold"), &Image::generate_mipmaps, DEFVAL(false), DEFVAL(false), DEFVAL(0.5f));
 	ClassDB::bind_method(D_METHOD("clear_mipmaps"), &Image::clear_mipmaps);
 
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_static_method("Image", D_METHOD("create", "width", "height", "use_mipmaps", "format"), &Image::create_empty);
-#endif
 	ClassDB::bind_static_method("Image", D_METHOD("create_empty", "width", "height", "use_mipmaps", "format"), &Image::create_empty);
 	ClassDB::bind_static_method("Image", D_METHOD("create_from_data", "width", "height", "use_mipmaps", "format", "data"), &Image::create_from_data);
 	ClassDB::bind_method(D_METHOD("set_data", "width", "height", "use_mipmaps", "format", "data"), &Image::set_data);
@@ -4158,10 +4154,6 @@ void Image::_bind_methods() {
 	BIND_ENUM_CONSTANT(COMPRESS_PROFILE_MAX_COMPRESSION);
 	BIND_ENUM_CONSTANT(COMPRESS_PROFILE_MAX);
 
-#ifndef DISABLE_DEPRECATED
-	BIND_ENUM_CONSTANT(ASTC_FORMAT_4x4);
-	BIND_ENUM_CONSTANT(ASTC_FORMAT_8x8);
-#endif
 }
 
 void Image::normal_map_to_xy() {

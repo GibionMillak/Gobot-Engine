@@ -37,26 +37,10 @@ class ConfigFile;
 class EditorDock;
 class EditorPlugin;
 
-#ifndef DISABLE_DEPRECATED
-class LegacyMainScreenContainer : public VBoxContainer {
-	GDCLASS(LegacyMainScreenContainer, VBoxContainer);
-
-	void _force_dock_visible(EditorDock *p_dock, CanvasItem *p_child);
-
-protected:
-	virtual void add_child_notify(Node *p_child) override;
-	virtual void remove_child_notify(Node *p_child) override {} // Disable parent method.
-};
-#endif
-
 class EditorMainScreen : public DockTabContainer {
 	GDCLASS(EditorMainScreen, DockTabContainer);
 
 private:
-#ifndef DISABLE_DEPRECATED
-	VBoxContainer *main_screen_vbox = nullptr;
-	Vector<EditorPlugin *> editor_table;
-#endif
 	void _on_tab_changed(int p_tab);
 
 protected:
@@ -68,12 +52,6 @@ protected:
 	virtual bool can_switch_dock() const override;
 
 public:
-#ifndef DISABLE_DEPRECATED
-	EditorPlugin *adding_plugin = nullptr;
-	VBoxContainer *get_control() const;
-	void add_main_plugin(EditorPlugin *p_editor);
-	void remove_main_plugin(EditorPlugin *p_editor);
-#endif
 
 	void select_next();
 	void select_prev();

@@ -85,13 +85,6 @@
 				Close this AES context so it can be started again. See [method start].
 			</description>
 		</method>
-		<method name="get_iv_state" deprecated="Extracting the IV state is no longer supported">
-			<return type="PackedByteArray" />
-			<description>
-				Returns an empty [PackedByteArray].
-				[b]Note:[/b] This method used to return the active IV state as modified by one or more [method update] calls. This is no longer supported.
-			</description>
-		</method>
 		<method name="start">
 			<return type="int" enum="Error" />
 			<param index="0" name="mode" type="int" enum="AESContext.Mode" />

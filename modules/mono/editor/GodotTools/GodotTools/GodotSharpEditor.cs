@@ -163,14 +163,14 @@ namespace GodotTools
         {
             _errorDialog.Title = title;
             _errorDialog.DialogText = message;
-            EditorInterface.Singleton.PopupDialogCentered(_errorDialog);
+            EditorInterface.PopupDialogCentered(_errorDialog);
         }
 
         public void ShowConfirmCreateSlnDialog()
         {
             _confirmCreateSlnDialog.Title = "Create C# solution".TTR();
             _confirmCreateSlnDialog.DialogText = "C# solution already exists. This will override the existing C# project file, any manual changes will be lost.".TTR();
-            EditorInterface.Singleton.PopupDialogCentered(_confirmCreateSlnDialog);
+            EditorInterface.PopupDialogCentered(_confirmCreateSlnDialog);
         }
 
         private static string _vsCodePath = string.Empty;
@@ -493,9 +493,9 @@ namespace GodotTools
                 }
             }
 
-            var editorBaseControl = EditorInterface.Singleton.GetBaseControl();
+            var editorBaseControl = EditorInterface.GetBaseControl();
 
-            _editorSettings = EditorInterface.Singleton.GetEditorSettings();
+            _editorSettings = EditorInterface.GetEditorSettings();
 
             _errorDialog = new AcceptDialog();
             _errorDialog.SetUnparentWhenInvisible(true);
@@ -520,7 +520,7 @@ namespace GodotTools
             _toolBarBuildButton = new Button
             {
                 Flat = false,
-                Icon = EditorInterface.Singleton.GetEditorTheme().GetIcon("BuildCSharp", "EditorIcons"),
+                Icon = EditorInterface.GetEditorTheme().GetIcon("BuildCSharp", "EditorIcons"),
                 FocusMode = Control.FocusModeEnum.None,
                 Shortcut = EditorDefShortcut("mono/build_solution", "Build Project".TTR(), (Key)KeyModifierMask.MaskAlt | Key.B),
                 ShortcutInTooltip = true,
@@ -533,7 +533,7 @@ namespace GodotTools
             // Move Build button so it appears to the left of the Play button.
             _toolBarBuildButton.GetParent().MoveChild(_toolBarBuildButton, 0);
 
-            EditorInterface.Singleton.GetCommandPalette().AddCommand("Build C# project".TTR(), "dotnet/build_solution", Callable.From(BuildProjectPressed), _toolBarBuildButton.Shortcut.GetAsText());
+            EditorInterface.GetCommandPalette().AddCommand("Build C# project".TTR(), "dotnet/build_solution", Callable.From(BuildProjectPressed), _toolBarBuildButton.Shortcut.GetAsText());
 
             if (File.Exists(GodotSharpDirs.ProjectCsProjPath))
             {

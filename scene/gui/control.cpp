@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "control.h"
-#include "control.compat.inc"
 
 STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 
@@ -3547,18 +3546,7 @@ void Control::_window_find_focus_neighbor(const Vector2 &p_dir, Node *p_at, cons
 
 	if (c && c != this && ((c->get_focus_mode_with_override() == FOCUS_ALL) || (ac_enabled && c->get_focus_mode_with_override() == FOCUS_ACCESSIBILITY)) && !in_container && p_clamp.intersects(c->get_global_rect())) {
 		real_t score = NO_SCORE;
-		switch (GLOBAL_GET_CACHED(int, "gui/common/auto_focus_strategy")) {
-			case AutoFocusStrategy::STRATEGY_LEGACY:
-				score = _focus_strategy_legacy(p_dir, *c, p_rect, p_clamp, p_min);
-				break;
-			case AutoFocusStrategy::STRATEGY_BALLOON:
-				score = _focus_strategy_balloon(p_dir, *c, p_clamp);
-				break;
-			default:
-				ERR_PRINT_ONCE("Unknown auto focus strategy. Using default strategy.");
-				score = _focus_strategy_balloon(p_dir, *c, p_clamp);
-				break;
-		}
+		score = _focus_strategy_balloon(p_dir, *c, p_clamp);
 
 		if (score != NO_SCORE) {
 			if (score < r_score || *r_closest == nullptr) {
@@ -3609,48 +3597,6 @@ void Control::_window_find_focus_neighbor(const Vector2 &p_dir, Node *p_at, cons
 		}
 		_window_find_focus_neighbor(p_dir, child, p_rect, intersection, p_min, r_score, r_closest);
 	}
-}
-
-real_t Control::_focus_strategy_legacy(const Vector2 &p_dir, const Control &p_c, const Rect2 &p_rect, const Rect2 &p_clamp, real_t p_min) {
-	Rect2 r_c = p_c.get_global_rect();
-	r_c = r_c.intersection(p_clamp);
-	real_t begin_d = p_dir.dot(r_c.get_position());
-	real_t end_d = p_dir.dot(r_c.get_end());
-	real_t max = MAX(begin_d, end_d);
-
-	// Use max to allow navigation to overlapping controls (for ScrollContainer case).
-	if (max > (p_min + CMP_EPSILON)) {
-		// Calculate the shortest distance. (No shear transform)
-		// Flip along axis(es) so that C falls in the first quadrant of c (as origin) for easy calculation.
-		// The same transformation would put the direction vector in the positive direction (+x or +y).
-		//       |           -------------
-		//       |           |     |     |
-		//       |           |-----C-----|
-		//   ----|---a       |     |     |
-		//   |   |   |       b------------
-		//  -|---c---|----------------------->
-		//   |   |   |
-		//   ----|----
-		// cC = ca + ab + bC
-		// The shortest distance is the vector ab's length or its positive projection length.
-
-		Vector2 cC_origin = r_c.get_center() - p_rect.get_center();
-		Vector2 cC = cC_origin.abs(); // Converted to fall in the first quadrant of c.
-
-		Vector2 ab = cC - 0.5 * r_c.get_size() - 0.5 * p_rect.get_size();
-
-		real_t min_d_squared = 0.0;
-		if (ab.x > 0.0) {
-			min_d_squared += ab.x * ab.x;
-		}
-		if (ab.y > 0.0) {
-			min_d_squared += ab.y * ab.y;
-		}
-
-		return min_d_squared;
-	}
-
-	return NO_SCORE;
 }
 
 real_t Control::_focus_strategy_balloon_candidate_score(const Vector2 &p_start, const Vector2 &p_dir, const Pair<Vector2, Vector2> &p_edge) {
@@ -4578,18 +4524,6 @@ bool Control::is_localizing_numeral_system() const {
 	return data.localize_numeral_system;
 }
 
-#ifndef DISABLE_DEPRECATED
-void Control::set_auto_translate(bool p_enable) {
-	ERR_MAIN_THREAD_GUARD;
-	set_auto_translate_mode(p_enable ? AUTO_TRANSLATE_MODE_ALWAYS : AUTO_TRANSLATE_MODE_DISABLED);
-}
-
-bool Control::is_auto_translating() const {
-	ERR_READ_THREAD_GUARD_V(false);
-	return can_auto_translate();
-}
-#endif // DISABLE_DEPRECATED
-
 void Control::set_tooltip_auto_translate_mode(AutoTranslateMode p_mode) {
 	ERR_MAIN_THREAD_GUARD;
 	data.tooltip_auto_translate_mode = p_mode;
@@ -5196,11 +5130,6 @@ void Control::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_layout_direction"), &Control::get_layout_direction);
 	ClassDB::bind_method(D_METHOD("is_layout_rtl"), &Control::is_layout_rtl);
 
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("set_auto_translate", "enable"), &Control::set_auto_translate);
-	ClassDB::bind_method(D_METHOD("is_auto_translating"), &Control::is_auto_translating);
-#endif // DISABLE_DEPRECATED
-
 	ClassDB::bind_method(D_METHOD("set_localize_numeral_system", "enable"), &Control::set_localize_numeral_system);
 	ClassDB::bind_method(D_METHOD("is_localizing_numeral_system"), &Control::is_localizing_numeral_system);
 
@@ -5292,10 +5221,6 @@ void Control::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "localize_numeral_system"), "set_localize_numeral_system", "is_localizing_numeral_system");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "layout_direction", PROPERTY_HINT_ENUM, "Inherited,Based on Application Locale,Left-to-Right,Right-to-Left,Based on System Locale"), "set_layout_direction", "get_layout_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "translation_context"), "set_translation_context", "get_translation_context");
-
-#ifndef DISABLE_DEPRECATED
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "auto_translate", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NONE), "set_auto_translate", "is_auto_translating");
-#endif // DISABLE_DEPRECATED
 
 	ADD_GROUP("Tooltip", "tooltip_");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "tooltip_text", PROPERTY_HINT_MULTILINE_TEXT), "set_tooltip_text", "get_tooltip_text");
@@ -5423,9 +5348,6 @@ void Control::_bind_methods() {
 	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_RTL);
 	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_SYSTEM_LOCALE);
 	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_MAX);
-#ifndef DISABLE_DEPRECATED
-	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_LOCALE);
-#endif // DISABLE_DEPRECATED
 
 	BIND_ENUM_CONSTANT(TEXT_DIRECTION_INHERITED);
 	BIND_ENUM_CONSTANT(TEXT_DIRECTION_AUTO);

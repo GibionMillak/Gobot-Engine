@@ -62,13 +62,6 @@ void ScriptEditorBase::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("go_to_help", PropertyInfo(Variant::STRING, "what")));
 	ADD_SIGNAL(MethodInfo("go_to_method", PropertyInfo(Variant::OBJECT, "script"), PropertyInfo(Variant::STRING, "method")));
 
-#ifndef DISABLE_DEPRECATED
-	ADD_SIGNAL(MethodInfo("request_save_history"));
-	ADD_SIGNAL(MethodInfo("request_save_previous_state", PropertyInfo(Variant::DICTIONARY, "state")));
-	ADD_SIGNAL(MethodInfo("edited_script_changed"));
-	ADD_SIGNAL(MethodInfo("search_in_files_requested", PropertyInfo(Variant::STRING, "text")));
-	ADD_SIGNAL(MethodInfo("replace_in_files_requested", PropertyInfo(Variant::STRING, "text")));
-#endif
 }
 
 String ScriptEditorBase::get_document_name() const {

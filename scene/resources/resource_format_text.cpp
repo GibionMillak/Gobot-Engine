@@ -1138,14 +1138,17 @@ void ResourceLoaderText::open(Ref<FileAccess> p_f, bool p_skip_first_tag) {
 
 	if (tag.fields.has("format")) {
 		format_version = tag.fields["format"];
-		if (format_version > FORMAT_VERSION) {
-			error_text = "Saved with newer format version";
+		if (format_version != FORMAT_VERSION) {
+			error_text = "Unsupported resource format version";
 			ERR_PRINT(_get_error_string());
 			error = ERR_FILE_UNRECOGNIZED;
 			return;
 		}
 	} else {
-		format_version = FORMAT_VERSION;
+		error = ERR_FILE_UNRECOGNIZED;
+		error_text = "Resource format version is missing";
+		ERR_PRINT(_get_error_string());
+		return;
 	}
 
 	if (tag.name == "gd_scene") {
@@ -1311,8 +1314,8 @@ String ResourceLoaderText::recognize_script_class(Ref<FileAccess> p_f) {
 
 	if (tag.fields.has("format")) {
 		int fmt = tag.fields["format"];
-		if (fmt > FORMAT_VERSION) {
-			error_text = "Saved with newer format version";
+		if (fmt != FORMAT_VERSION) {
+			error_text = "Unsupported resource format version";
 			ERR_FAIL_V_MSG("", _get_error_string());
 		}
 	}
@@ -1345,8 +1348,8 @@ String ResourceLoaderText::recognize(Ref<FileAccess> p_f) {
 
 	if (tag.fields.has("format")) {
 		int fmt = tag.fields["format"];
-		if (fmt > FORMAT_VERSION) {
-			error_text = "Saved with newer format version";
+		if (fmt != FORMAT_VERSION) {
+			error_text = "Unsupported resource format version";
 			ERR_FAIL_V_MSG("", _get_error_string());
 		}
 	}
@@ -1501,7 +1504,7 @@ String ResourceFormatLoaderText::get_resource_type(const String &p_path) const {
 	loader.local_path = ProjectSettings::get_singleton()->localize_path(p_path);
 	loader.res_path = loader.local_path;
 	String r = loader.recognize(f);
-	return ClassDB::get_compatibility_remapped_class(r);
+	return r;
 }
 
 String ResourceFormatLoaderText::get_resource_script_class(const String &p_path) const {
@@ -1695,15 +1698,6 @@ void ResourceFormatSaverTextInstance::_find_resources(const Variant &p_variant, 
 				_find_resources(kv.value);
 			}
 		} break;
-		case Variant::PACKED_BYTE_ARRAY: {
-			// Balance between compatibility and performance.
-			if (use_compat && p_variant.operator PackedByteArray().size() > 64) {
-				use_compat = false;
-			}
-		} break;
-		case Variant::PACKED_VECTOR4_ARRAY: {
-			use_compat = false;
-		} break;
 		default: {
 		}
 	}
@@ -1786,14 +1780,14 @@ void ResourceFormatSaverTextInstance::_parse_nodes(const Ref<PackedScene> &curr_
 		if (!instance_placeholder.is_empty()) {
 			String vars;
 			p_file->store_string(" instance_placeholder=");
-			VariantWriter::write_to_string(instance_placeholder, vars, true, _write_resources, this, use_compat);
+			VariantWriter::write_to_string(instance_placeholder, vars, true, _write_resources, this);
 			p_file->store_string(vars);
 		}
 
 		if (instance.is_valid()) {
 			String vars;
 			p_file->store_string(" instance=");
-			VariantWriter::write_to_string(instance, vars, true, _write_resources, this, use_compat);
+			VariantWriter::write_to_string(instance, vars, true, _write_resources, this);
 			p_file->store_string(vars);
 		}
 
@@ -1801,7 +1795,7 @@ void ResourceFormatSaverTextInstance::_parse_nodes(const Ref<PackedScene> &curr_
 
 		for (int j = 0; j < state->get_node_property_count(i); j++) {
 			String vars;
-			VariantWriter::write_to_string(state->get_node_property_value(i, j), vars, true, _write_resources, this, use_compat);
+			VariantWriter::write_to_string(state->get_node_property_value(i, j), vars, true, _write_resources, this);
 
 			p_file->store_string(String(state->get_node_property_name(i, j)).property_name_encode() + " = " + vars + "\n");
 		}
@@ -1849,7 +1843,7 @@ void ResourceFormatSaverTextInstance::_parse_nodes(const Ref<PackedScene> &curr_
 		p_file->store_string(connstr);
 		if (binds.size()) {
 			String vars;
-			VariantWriter::write_to_string(binds, vars, true, _write_resources, this, use_compat);
+			VariantWriter::write_to_string(binds, vars, true, _write_resources, this);
 			p_file->store_string(" binds= " + vars);
 		}
 
@@ -1888,7 +1882,6 @@ Error ResourceFormatSaverTextInstance::save(const String &p_path, const Ref<Reso
 	}
 
 	// Save resources.
-	use_compat = true; // _find_resources() changes this.
 	_find_resources(p_resource, true);
 
 	if (packed_scene.is_valid()) {
@@ -1916,7 +1909,7 @@ Error ResourceFormatSaverTextInstance::save(const String &p_path, const Ref<Reso
 			}
 		}
 
-		title += "format=" + itos(use_compat ? ResourceLoaderText::FORMAT_VERSION_COMPAT : ResourceLoaderText::FORMAT_VERSION) + "";
+		title += "format=" + itos(ResourceLoaderText::FORMAT_VERSION) + "";
 
 		ResourceUID::ID uid = ResourceSaver::get_resource_id_for_path(local_path, true);
 
@@ -2107,7 +2100,7 @@ Error ResourceFormatSaverTextInstance::save(const String &p_path, const Ref<Reso
 				}
 
 				String vars;
-				VariantWriter::write_to_string(value, vars, true, _write_resources, this, use_compat);
+				VariantWriter::write_to_string(value, vars, true, _write_resources, this);
 
 				// This is here to avoid a change in all old scenes that didn't have have metadata support
 				// The scenes only need to have a resource tag if they have metadata

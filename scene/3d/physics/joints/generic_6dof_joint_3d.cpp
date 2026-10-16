@@ -85,15 +85,12 @@ void Generic6DOFJoint3D::_bind_methods() {
 
 	ADD_PROPERTYI(PropertyInfo(Variant::BOOL, "linear_motor_x/enabled"), "set_flag_x", "get_flag_x", FLAG_ENABLE_LINEAR_MOTOR);
 	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "linear_motor_x/target_velocity", PROPERTY_HINT_NONE, "suffix:m/s"), "set_param_x", "get_param_x", PARAM_LINEAR_MOTOR_TARGET_VELOCITY);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "linear_motor_x/force_limit", PROPERTY_HINT_NONE, U"suffix:kg\u22C5m/s\u00B2 (N)"), "set_param_x", "get_param_x", PARAM_LINEAR_MOTOR_FORCE_LIMIT);
 
 	ADD_PROPERTYI(PropertyInfo(Variant::BOOL, "linear_motor_y/enabled"), "set_flag_y", "get_flag_y", FLAG_ENABLE_LINEAR_MOTOR);
 	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "linear_motor_y/target_velocity", PROPERTY_HINT_NONE, "suffix:m/s"), "set_param_y", "get_param_y", PARAM_LINEAR_MOTOR_TARGET_VELOCITY);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "linear_motor_y/force_limit", PROPERTY_HINT_NONE, U"suffix:kg\u22C5m/s\u00B2 (N)"), "set_param_y", "get_param_y", PARAM_LINEAR_MOTOR_FORCE_LIMIT);
 
 	ADD_PROPERTYI(PropertyInfo(Variant::BOOL, "linear_motor_z/enabled"), "set_flag_z", "get_flag_z", FLAG_ENABLE_LINEAR_MOTOR);
 	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "linear_motor_z/target_velocity", PROPERTY_HINT_NONE, "suffix:m/s"), "set_param_z", "get_param_z", PARAM_LINEAR_MOTOR_TARGET_VELOCITY);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "linear_motor_z/force_limit", PROPERTY_HINT_NONE, U"suffix:kg\u22C5m/s\u00B2 (N)"), "set_param_z", "get_param_z", PARAM_LINEAR_MOTOR_FORCE_LIMIT);
 
 	ADD_GROUP("Linear Spring", "linear_spring_");
 
@@ -151,15 +148,12 @@ void Generic6DOFJoint3D::_bind_methods() {
 
 	ADD_PROPERTYI(PropertyInfo(Variant::BOOL, "angular_motor_x/enabled"), "set_flag_x", "get_flag_x", FLAG_ENABLE_ANGULAR_MOTOR);
 	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "angular_motor_x/target_velocity", PROPERTY_HINT_NONE, U"radians_as_degrees,suffix:\u00B0/s"), "set_param_x", "get_param_x", PARAM_ANGULAR_MOTOR_TARGET_VELOCITY);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "angular_motor_x/force_limit", PROPERTY_HINT_NONE, U"suffix:kg\u22C5m\u00B2/s\u00B2 (Nm)"), "set_param_x", "get_param_x", PARAM_ANGULAR_MOTOR_FORCE_LIMIT);
 
 	ADD_PROPERTYI(PropertyInfo(Variant::BOOL, "angular_motor_y/enabled"), "set_flag_y", "get_flag_y", FLAG_ENABLE_ANGULAR_MOTOR);
 	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "angular_motor_y/target_velocity", PROPERTY_HINT_NONE, U"radians_as_degrees,suffix:\u00B0/s"), "set_param_y", "get_param_y", PARAM_ANGULAR_MOTOR_TARGET_VELOCITY);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "angular_motor_y/force_limit", PROPERTY_HINT_NONE, U"suffix:kg\u22C5m\u00B2/s\u00B2 (Nm)"), "set_param_y", "get_param_y", PARAM_ANGULAR_MOTOR_FORCE_LIMIT);
 
 	ADD_PROPERTYI(PropertyInfo(Variant::BOOL, "angular_motor_z/enabled"), "set_flag_z", "get_flag_z", FLAG_ENABLE_ANGULAR_MOTOR);
 	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "angular_motor_z/target_velocity", PROPERTY_HINT_NONE, U"radians_as_degrees,suffix:\u00B0/s"), "set_param_z", "get_param_z", PARAM_ANGULAR_MOTOR_TARGET_VELOCITY);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "angular_motor_z/force_limit", PROPERTY_HINT_NONE, U"suffix:kg\u22C5m\u00B2/s\u00B2 (Nm)"), "set_param_z", "get_param_z", PARAM_ANGULAR_MOTOR_FORCE_LIMIT);
 
 	ADD_GROUP("Angular Spring", "angular_spring_");
 
@@ -215,9 +209,6 @@ void Generic6DOFJoint3D::_bind_methods() {
 	BIND_ENUM_CONSTANT(FLAG_ENABLE_LINEAR_SPRING);
 	BIND_ENUM_CONSTANT(FLAG_ENABLE_ANGULAR_SPRING);
 	BIND_ENUM_CONSTANT(FLAG_ENABLE_ANGULAR_MOTOR);
-#ifndef DISABLE_DEPRECATED
-	BIND_ENUM_CONSTANT(FLAG_ENABLE_MOTOR);
-#endif // DISABLE_DEPRECATED
 	BIND_ENUM_CONSTANT(FLAG_ENABLE_LINEAR_MOTOR);
 	BIND_ENUM_CONSTANT(FLAG_MAX);
 }

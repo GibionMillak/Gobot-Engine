@@ -3930,10 +3930,6 @@ static EditorPropertyRangeHint _parse_range_hint(PropertyHint p_hint, const Stri
 				hint.prefer_slider = true;
 			} else if (slice == "hide_control") {
 				hint.hide_control = true;
-#ifndef DISABLE_DEPRECATED
-			} else if (slice == "hide_slider") {
-				hint.hide_control = true;
-#endif
 			} else if (slice == "exp") {
 				hint.exp_range = true;
 			}
@@ -3943,9 +3939,6 @@ static EditorPropertyRangeHint _parse_range_hint(PropertyHint p_hint, const Stri
 	for (int i = 0; i < slices.size(); i++) {
 		String slice = slices[i].strip_edges();
 		if (slice == "radians_as_degrees"
-#ifndef DISABLE_DEPRECATED
-				|| slice == "radians"
-#endif // DISABLE_DEPRECATED
 		) {
 			hint.radians_as_degrees = true;
 		} else if (slice == "degrees") {

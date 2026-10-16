@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "rich_text_label.h"
-#include "rich_text_label.compat.inc"
 
 #include "core/input/input_map.h"
 #include "core/io/resource_loader.h"
@@ -8008,18 +8007,6 @@ void RichTextLabel::set_resource_access_flags(BitField<RichTextLabel::ResourceAc
 	}
 }
 
-#ifndef DISABLE_DEPRECATED
-// People will be very angry, if their texts get erased, because of #39148. (3.x -> 4.0)
-// Although some people may not used bbcode_text, so we only overwrite, if bbcode_text is not empty.
-bool RichTextLabel::_set(const StringName &p_name, const Variant &p_value) {
-	if (p_name == "bbcode_text" && !((String)p_value).is_empty()) {
-		set_text(p_value);
-		return true;
-	}
-	return false;
-}
-#endif
-
 void RichTextLabel::_maximum_size_changed() {
 	if (!fit_content || autowrap_mode == TextServer::AUTOWRAP_OFF) {
 		return;
@@ -8170,9 +8157,6 @@ void RichTextLabel::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_text"), &RichTextLabel::get_text);
 
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("is_ready"), &RichTextLabel::is_finished);
-#endif // DISABLE_DEPRECATED
 	ClassDB::bind_method(D_METHOD("is_finished"), &RichTextLabel::is_finished);
 
 	ClassDB::bind_method(D_METHOD("set_threaded", "threaded"), &RichTextLabel::set_threaded);

@@ -49,11 +49,6 @@ class PhysicsServer2D : public Object {
 protected:
 	static void _bind_methods();
 
-#ifndef DISABLE_DEPRECATED
-	void _body_set_shape_as_one_way_collision_bind_compat_104736(RID p_body, int p_shape_idx, bool p_enable, real_t p_margin);
-	static void _bind_compatibility_methods();
-#endif
-
 #ifdef DEBUG_ENABLED
 	bool debug_enabled = false;
 #endif
@@ -278,11 +273,6 @@ public:
 	/* MISC */
 
 	virtual void free_rid(RID p_rid) = 0;
-#ifndef DISABLE_DEPRECATED
-	[[deprecated("Use `free_rid()` instead.")]] void free(RID p_rid) {
-		free_rid(p_rid);
-	}
-#endif // DISABLE_DEPRECATED
 
 	virtual void set_active(bool p_active) = 0;
 	virtual void init() = 0;

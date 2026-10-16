@@ -3768,9 +3768,6 @@ void FileSystemDock::_file_and_folders_fill_popup(PopupMenu *p_popup, const Vect
 	if (EditorContextMenuPluginManager::get_singleton()->has_plugins_for_slot(EditorContextMenuPlugin::CONTEXT_SLOT_FILESYSTEM)) {
 		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(p_popup, EditorContextMenuPlugin::CONTEXT_SLOT_FILESYSTEM, FileSystemDock::_get_context_data(p_paths));
 
-#ifndef DISABLE_DEPRECATED
-		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(p_popup, EditorContextMenuPlugin::CONTEXT_SLOT_FILESYSTEM, p_paths, p_paths, 1000);
-#endif
 	}
 }
 
@@ -3791,10 +3788,6 @@ void FileSystemDock::_add_create_options(PopupMenu *p_popup, const String &p_bas
 		const String base_directory = prefix_new ? "res://" : p_base_folder;
 		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(p_popup, EditorContextMenuPlugin::CONTEXT_SLOT_FILESYSTEM_CREATE, FileSystemDock::_get_context_data_for_create(base_directory, prefix_new), 500);
 
-#ifndef DISABLE_DEPRECATED
-		const PackedStringArray legacy_data = prefix_new ? PackedStringArray() : PackedStringArray{ p_base_folder };
-		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(p_popup, EditorContextMenuPlugin::CONTEXT_SLOT_FILESYSTEM_CREATE, legacy_data, legacy_data, 1500);
-#endif
 	}
 }
 
@@ -4048,17 +4041,6 @@ bool FileSystemDock::_handle_custom_context_callback(Ref<InputEvent> p_event, co
 			return false;
 		}
 	}
-
-#ifndef DISABLE_DEPRECATED
-	if (p_event->get_meta("_legacy_shortcut", false)) {
-		if (create && p_selected.is_empty()) {
-			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, PackedStringArray{ "res://" });
-		} else {
-			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, p_selected);
-		}
-		return true;
-	}
-#endif
 
 	EditorContextMenuPlugin::OptionsData context_data = create
 			? FileSystemDock::_get_context_data_for_create(base_dir, p_selected.is_empty())

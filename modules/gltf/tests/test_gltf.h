@@ -91,7 +91,6 @@ static Node *gltf_import(const String &p_file) {
 	options["import_script/path"] = "";
 	options["extract_path"] = "res://";
 	options["_subresources"] = Dictionary();
-	options["gltf/naming_version"] = 1;
 
 	// Process gltf file, note that this generates `.scn` resource from the 2nd argument.
 	String scene_file = "res://" + p_file.get_file().get_basename();

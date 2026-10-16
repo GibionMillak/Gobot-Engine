@@ -111,17 +111,6 @@ void OpenXRInterface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_motion_range", "hand", "motion_range"), &OpenXRInterface::set_motion_range);
 	ClassDB::bind_method(D_METHOD("get_motion_range", "hand"), &OpenXRInterface::get_motion_range);
 
-	ClassDB::bind_method(D_METHOD("get_hand_tracking_source", "hand"), &OpenXRInterface::get_hand_tracking_source);
-
-	ClassDB::bind_method(D_METHOD("get_hand_joint_flags", "hand", "joint"), &OpenXRInterface::get_hand_joint_flags);
-
-	ClassDB::bind_method(D_METHOD("get_hand_joint_rotation", "hand", "joint"), &OpenXRInterface::get_hand_joint_rotation);
-	ClassDB::bind_method(D_METHOD("get_hand_joint_position", "hand", "joint"), &OpenXRInterface::get_hand_joint_position);
-	ClassDB::bind_method(D_METHOD("get_hand_joint_radius", "hand", "joint"), &OpenXRInterface::get_hand_joint_radius);
-
-	ClassDB::bind_method(D_METHOD("get_hand_joint_linear_velocity", "hand", "joint"), &OpenXRInterface::get_hand_joint_linear_velocity);
-	ClassDB::bind_method(D_METHOD("get_hand_joint_angular_velocity", "hand", "joint"), &OpenXRInterface::get_hand_joint_angular_velocity);
-
 	ClassDB::bind_method(D_METHOD("is_hand_tracking_supported"), &OpenXRInterface::is_hand_tracking_supported);
 	ClassDB::bind_method(D_METHOD("is_hand_interaction_supported"), &OpenXRInterface::is_hand_interaction_supported);
 	ClassDB::bind_method(D_METHOD("is_eye_gaze_interaction_supported"), &OpenXRInterface::is_eye_gaze_interaction_supported);
@@ -1123,37 +1112,6 @@ TypedArray<Transform3D> OpenXRInterface::get_camera_offsets(const StringName &p_
 
 	return openxr_api->get_camera_offsets(p_tracker_name);
 }
-
-#ifndef DISABLE_DEPRECATED
-Transform3D OpenXRInterface::get_transform_for_view(uint32_t p_view, const Transform3D &p_cam_transform) {
-	XRServer *xr_server = XRServer::get_singleton();
-	ERR_FAIL_NULL_V(xr_server, Transform3D());
-	ERR_FAIL_NULL_V(openxr_api, Transform3D());
-	ERR_FAIL_UNSIGNED_INDEX_V_MSG(p_view, get_view_count(), Transform3D(), "View index outside bounds.");
-
-	Transform3D view_offset;
-	openxr_api->get_view_offset(p_view, view_offset);
-	view_offset.origin *= xr_server->get_world_scale();
-
-	return p_cam_transform * xr_server->get_reference_frame() * head_transform * view_offset;
-}
-
-Projection OpenXRInterface::get_projection_for_view(uint32_t p_view, double p_aspect, double p_z_near, double p_z_far) {
-	Projection cm;
-	ERR_FAIL_UNSIGNED_INDEX_V_MSG(p_view, get_view_count(), cm, "View index outside bounds.");
-
-	if (openxr_api) {
-		if (openxr_api->get_view_projection(p_view, p_z_near, p_z_far, cm)) {
-			return cm;
-		}
-	}
-
-	// Failed to get from our OpenXR device? Default to some sort of sensible camera matrix..
-	cm.set_for_hmd(p_view + 1, 1.0, 6.0, 14.5, 4.0, 1.5, p_z_near, p_z_far);
-
-	return cm;
-}
-#endif
 
 Rect2i OpenXRInterface::get_render_region() {
 	if (openxr_api) {

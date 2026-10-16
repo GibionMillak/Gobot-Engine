@@ -221,9 +221,6 @@
 		<constant name="TRACKER_ANY" value="255" enum="TrackerType">
 			Used internally to select all trackers.
 		</constant>
-		<constant name="TRACKER_HEAD" value="1" enum="TrackerType" deprecated="Use TRACKER_CAMERA">
-			The tracker tracks the location of the player's head. This is usually a location centered between the player's eyes. Note that for handheld AR devices this can be the current location of the device.
-		</constant>
 		<constant name="RESET_FULL_ROTATION" value="0" enum="RotationMode">
 			Fully reset the orientation of the HMD. Regardless of what direction the user is looking to in the real world. The user will look dead ahead in the virtual world.
 		</constant>

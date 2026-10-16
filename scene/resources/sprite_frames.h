@@ -77,11 +77,6 @@ public:
 	void set_animation_speed(const StringName &p_anim, double p_fps);
 	double get_animation_speed(const StringName &p_anim) const;
 
-#ifndef DISABLE_DEPRECATED
-	void set_animation_loop(const StringName &p_anim, bool p_loop);
-	bool get_animation_loop(const StringName &p_anim) const;
-#endif
-
 	void set_animation_loop_mode(const StringName &p_anim, LoopMode p_loop_mode);
 	LoopMode get_animation_loop_mode(const StringName &p_anim) const;
 

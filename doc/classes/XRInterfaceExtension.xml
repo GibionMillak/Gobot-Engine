@@ -87,16 +87,6 @@
 				Returns the play area mode that sets up our play area.
 			</description>
 		</method>
-		<method name="_get_projection_for_view" qualifiers="virtual" deprecated="Implement _get_camera_projections">
-			<return type="PackedFloat64Array" />
-			<param index="0" name="view" type="int" />
-			<param index="1" name="aspect" type="float" />
-			<param index="2" name="z_near" type="float" />
-			<param index="3" name="z_far" type="float" />
-			<description>
-				Returns the projection matrix for the given view as a [PackedFloat64Array].
-			</description>
-		</method>
 		<method name="_get_render_target_size" qualifiers="virtual">
 			<return type="Vector2" />
 			<description>
@@ -126,14 +116,6 @@
 			<return type="int" enum="XRInterface.TrackingStatus" />
 			<description>
 				Returns the current status of our tracking.
-			</description>
-		</method>
-		<method name="_get_transform_for_view" qualifiers="virtual" deprecated="Implement _get_camera_offsets">
-			<return type="Transform3D" />
-			<param index="0" name="view" type="int" />
-			<param index="1" name="cam_transform" type="Transform3D" />
-			<description>
-				Returns a [Transform3D] for a given view.
 			</description>
 		</method>
 		<method name="_get_velocity_texture" qualifiers="virtual">

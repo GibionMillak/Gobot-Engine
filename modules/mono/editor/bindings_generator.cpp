@@ -98,7 +98,7 @@ StringBuilder &operator<<(StringBuilder &r_sb, const char *p_cstring) {
 
 #define ICALL_PREFIX "godot_icall_"
 #define ICALL_CLASSDB_GET_METHOD "ClassDB_get_method"
-#define ICALL_CLASSDB_GET_METHOD_WITH_COMPATIBILITY "ClassDB_get_method_with_compatibility"
+#define ICALL_CLASSDB_GET_METHOD_BY_HASH "ClassDB_get_method_by_hash"
 #define ICALL_CLASSDB_GET_CONSTRUCTOR "ClassDB_get_constructor"
 
 #define C_LOCAL_RET "ret"
@@ -1848,7 +1848,7 @@ Error BindingsGenerator::generate_cs_core_project(const String &p_proj_dir) {
 			cs_built_in_ctors_content.append(itype.name);
 			cs_built_in_ctors_content.append("\", " CS_PARAM_INSTANCE " => new ");
 			cs_built_in_ctors_content.append(itype.proxy_name);
-			if (itype.is_singleton && !itype.is_compat_singleton) {
+			if (itype.is_singleton) {
 				cs_built_in_ctors_content.append("Instance");
 			}
 			cs_built_in_ctors_content.append("(" CS_PARAM_INSTANCE "));\n");
@@ -1993,7 +1993,7 @@ Error BindingsGenerator::generate_cs_editor_project(const String &p_proj_dir) {
 			cs_built_in_ctors_content.append(itype.name);
 			cs_built_in_ctors_content.append("\", " CS_PARAM_INSTANCE " => new ");
 			cs_built_in_ctors_content.append(itype.proxy_name);
-			if (itype.is_singleton && !itype.is_compat_singleton) {
+			if (itype.is_singleton) {
 				cs_built_in_ctors_content.append("Instance");
 			}
 			cs_built_in_ctors_content.append("(" CS_PARAM_INSTANCE "));\n");
@@ -2312,19 +2312,13 @@ Error BindingsGenerator::_generate_cs_type(const TypeInterface &itype, const Str
 	output.append(itype.name);
 	output.append("\";\n");
 
-	if (itype.is_singleton || itype.is_compat_singleton) {
+	if (itype.is_singleton) {
 		// Add the Singleton static property.
 
-		String instance_type_name;
-
-		if (itype.is_singleton) {
-			StringName instance_name = itype.name + CS_SINGLETON_INSTANCE_SUFFIX;
-			instance_type_name = obj_types.has(instance_name)
-					? obj_types[instance_name].proxy_name
-					: "GodotObject";
-		} else {
-			instance_type_name = itype.proxy_name;
-		}
+		StringName instance_name = itype.name + CS_SINGLETON_INSTANCE_SUFFIX;
+		String instance_type_name = obj_types.has(instance_name)
+				? obj_types[instance_name].proxy_name
+				: "GodotObject";
 
 		output.append(MEMBER_BEGIN "private static " + instance_type_name + " singleton;\n");
 
@@ -2949,7 +2943,7 @@ Error BindingsGenerator::_generate_cs_method(const BindingsGenerator::TypeInterf
 
 			arguments_sig += iarg.name;
 
-			if (!p_use_span && !p_imethod.is_compat && iarg.default_argument.size()) {
+			if (!p_use_span && iarg.default_argument.size()) {
 				if (iarg.def_param_mode != ArgumentInterface::CONSTANT) {
 					arguments_sig += " = null";
 				} else {
@@ -3041,7 +3035,7 @@ Error BindingsGenerator::_generate_cs_method(const BindingsGenerator::TypeInterf
 				p_output << "GodotObject.";
 			}
 
-			p_output << ICALL_CLASSDB_GET_METHOD_WITH_COMPATIBILITY "(" BINDINGS_NATIVE_NAME_FIELD ", MethodName."
+			p_output << ICALL_CLASSDB_GET_METHOD_BY_HASH "(" BINDINGS_NATIVE_NAME_FIELD ", MethodName."
 					 << p_imethod.proxy_name << ", " << itos(p_imethod.hash) << "ul"
 					 << ");\n";
 		}
@@ -3899,11 +3893,6 @@ bool BindingsGenerator::_populate_object_type_interfaces() {
 			}
 		}
 
-		if (itype.is_singleton && compat_singletons.has(itype.cname)) {
-			itype.is_singleton = false;
-			itype.is_compat_singleton = true;
-		}
-
 		itype.c_out = "%5return ";
 		itype.c_out += C_METHOD_UNMANAGED_GET_MANAGED;
 		itype.c_out += itype.is_ref_counted ? "(%1.Reference);\n" : "(%1);\n";
@@ -3997,10 +3986,9 @@ bool BindingsGenerator::_populate_object_type_interfaces() {
 		ClassDB::get_virtual_methods(type_cname, &virtual_method_list, true);
 
 		List<Pair<MethodInfo, uint32_t>> method_list_with_hashes;
-		ClassDB::get_method_list_with_compatibility(type_cname, &method_list_with_hashes, true);
+		ClassDB::get_method_list_with_hashes(type_cname, &method_list_with_hashes, true);
 		method_list_with_hashes.sort_custom<SortMethodWithHashes>();
 
-		List<MethodInterface> compat_methods;
 		for (const Pair<MethodInfo, uint32_t> &E : method_list_with_hashes) {
 			const MethodInfo &method_info = E.first;
 			const uint32_t hash = E.second;
@@ -4041,7 +4029,7 @@ bool BindingsGenerator::_populate_object_type_interfaces() {
 
 			if (!imethod.is_virtual) {
 				bool method_exists = false;
-				m = ClassDB::get_method_with_compatibility(type_cname, method_info.name, hash, &method_exists, &imethod.is_compat);
+				m = ClassDB::get_method_by_hash(type_cname, method_info.name, hash, &method_exists);
 
 				if (unlikely(!method_exists)) {
 					ERR_FAIL_COND_V_MSG(!virtual_method_list.find(method_info), false,
@@ -4188,27 +4176,6 @@ bool BindingsGenerator::_populate_object_type_interfaces() {
 			ERR_FAIL_COND_V_MSG(itype.find_property_by_name(imethod.cname), false,
 					"Method name conflicts with property: '" + itype.name + "." + imethod.name + "'.");
 
-			// Compat methods aren't added to the type yet, they need to be checked for conflicts
-			// after all the non-compat methods have been added. The compat methods are added in
-			// reverse so the most recently added ones take precedence over older compat methods.
-			if (imethod.is_compat) {
-				// If the method references deprecated types, mark the method as deprecated as well.
-				for (const ArgumentInterface &iarg : imethod.arguments) {
-					String arg_type_name = iarg.type.cname;
-					String doc_name = arg_type_name.begins_with("_") ? arg_type_name.substr(1) : arg_type_name;
-					const DocData::ClassDoc &class_doc = EditorHelp::get_doc_data()->class_list[doc_name];
-					if (class_doc.is_deprecated) {
-						imethod.is_deprecated = true;
-						imethod.deprecation_message = "This method overload is deprecated.";
-						break;
-					}
-				}
-
-				imethod.is_hidden = true;
-				compat_methods.push_front(imethod);
-				continue;
-			}
-
 			// Methods starting with an underscore are ignored unless they're used as a property setter or getter
 			if (!imethod.is_virtual && imethod.name[0] == '_') {
 				for (const PropertyInterface &iprop : itype.properties) {
@@ -4221,15 +4188,6 @@ bool BindingsGenerator::_populate_object_type_interfaces() {
 			} else {
 				itype.methods.push_back(imethod);
 			}
-		}
-
-		// Add compat methods that don't conflict with other methods in the type.
-		for (const MethodInterface &imethod : compat_methods) {
-			if (_method_has_conflicting_signature(imethod, itype)) {
-				WARN_PRINT("Method '" + imethod.name + "' conflicts with an already existing method in type '" + itype.name + "' and has been ignored.");
-				continue;
-			}
-			itype.methods.push_back(imethod);
 		}
 
 		// Populate signals
@@ -5190,10 +5148,6 @@ void BindingsGenerator::_initialize_blacklisted_methods() {
 	blacklisted_methods["Object"].push_back("_init"); // never called in C# (TODO: implement it)
 }
 
-void BindingsGenerator::_initialize_compat_singletons() {
-	compat_singletons.insert("EditorInterface");
-}
-
 void BindingsGenerator::_log(const char *p_format, ...) {
 	if (log_print_enabled) {
 		va_list list;
@@ -5212,8 +5166,6 @@ void BindingsGenerator::_initialize() {
 	enum_types.clear();
 
 	_initialize_blacklisted_methods();
-
-	_initialize_compat_singletons();
 
 	bool obj_type_ok = _populate_object_type_interfaces();
 	ERR_FAIL_COND_MSG(!obj_type_ok, "Failed to generate object type interfaces");

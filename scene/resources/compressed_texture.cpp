@@ -52,8 +52,8 @@ Error CompressedTexture2D::_load_data(const String &p_path, int &r_width, int &r
 
 	uint32_t version = f->get_32();
 
-	if (version > FORMAT_VERSION) {
-		ERR_FAIL_V_MSG(ERR_FILE_CORRUPT, "Compressed texture file is too new.");
+	if (version != FORMAT_VERSION) {
+		ERR_FAIL_V_MSG(ERR_FILE_CORRUPT, "Compressed texture file uses an unsupported format version.");
 	}
 	r_width = f->get_32();
 	r_height = f->get_32();
@@ -453,8 +453,8 @@ Error CompressedTexture3D::_load_data(const String &p_path, Vector<Ref<Image>> &
 	//stored as compressed textures (used for lossless and lossy compression)
 	uint32_t version = f->get_32();
 
-	if (version > FORMAT_VERSION) {
-		ERR_FAIL_V_MSG(ERR_FILE_CORRUPT, "Compressed texture file is too new.");
+	if (version != FORMAT_VERSION) {
+		ERR_FAIL_V_MSG(ERR_FILE_CORRUPT, "Compressed texture file uses an unsupported format version.");
 	}
 
 	r_depth = f->get_32(); //depth
@@ -608,8 +608,8 @@ Error CompressedTextureLayered::_load_data(const String &p_path, Vector<Ref<Imag
 
 	uint32_t version = f->get_32();
 
-	if (version > FORMAT_VERSION) {
-		ERR_FAIL_V_MSG(ERR_FILE_CORRUPT, "Compressed texture file is too new.");
+	if (version != FORMAT_VERSION) {
+		ERR_FAIL_V_MSG(ERR_FILE_CORRUPT, "Compressed texture file uses an unsupported format version.");
 	}
 
 	uint32_t layer_count = f->get_32(); //layer count

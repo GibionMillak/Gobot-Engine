@@ -63,11 +63,7 @@ class EditorBottomPanel : public DockTabContainer {
 
 	int previous_tab = -1;
 	bool lock_panel_switching = false;
-	LocalVector<EditorDock *> bottom_docks;
 	HashMap<String, int> dock_offsets;
-
-	LocalVector<Button *> legacy_buttons;
-	void _on_button_visibility_changed(Button *p_button, EditorDock *p_dock);
 
 	void _repaint();
 	void _on_tab_changed(int p_idx);
@@ -90,9 +86,6 @@ public:
 
 	void save_layout_to_config(Ref<ConfigFile> p_config_file, const String &p_section) const;
 	void load_layout_from_config(Ref<ConfigFile> p_config_file, const String &p_section);
-
-	Button *add_item(String p_text, Control *p_item, const Ref<Shortcut> &p_shortcut = nullptr, bool p_at_front = false);
-	void remove_item(Control *p_item);
 	void make_item_visible(Control *p_item, bool p_visible = true, bool p_ignore_lock = false);
 	void hide_bottom_panel();
 	void toggle_last_opened_bottom_panel();
@@ -106,5 +99,4 @@ public:
 	int get_bottom_panel_offset();
 
 	EditorBottomPanel();
-	~EditorBottomPanel();
 };

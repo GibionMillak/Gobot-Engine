@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "dialogs.h"
-#include "dialogs.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/object/callable_mp.h"

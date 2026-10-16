@@ -40,7 +40,6 @@
 #include "scene/gui/label.h"
 #include "scene/gui/spin_box.h"
 #include "scene/gui/texture_rect.h"
-#include "scene/resources/animated_texture.h"
 #include "scene/resources/atlas_texture.h"
 #include "scene/resources/compressed_texture.h"
 #include "scene/resources/dpi_texture.h"
@@ -380,7 +379,6 @@ bool EditorInspectorPluginTexture::can_handle(Object *p_object) {
 			Object::cast_to<AtlasTexture>(p_object) != nullptr ||
 			Object::cast_to<CompressedTexture2D>(p_object) != nullptr ||
 			Object::cast_to<PortableCompressedTexture2D>(p_object) != nullptr ||
-			Object::cast_to<AnimatedTexture>(p_object) != nullptr ||
 			Object::cast_to<DPITexture>(p_object) != nullptr ||
 			Object::cast_to<StreamedTexture2D>(p_object) != nullptr) {
 		return true;

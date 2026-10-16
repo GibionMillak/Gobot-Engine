@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "a_star_grid_2d.h"
-#include "a_star_grid_2d.compat.inc"
 
 #include "core/object/class_db.h"
 #include "core/variant/typed_array.h"
@@ -764,7 +763,6 @@ void AStarGrid2D::_bind_methods() {
 	GDVIRTUAL_BIND(_compute_cost, "from_id", "to_id")
 
 	ADD_PROPERTY(PropertyInfo(Variant::RECT2I, "region"), "set_region", "get_region");
-	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2I, "size"), "set_size", "get_size");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "offset"), "set_offset", "get_offset");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "cell_size"), "set_cell_size", "get_cell_size");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "cell_shape", PROPERTY_HINT_ENUM, "Square,IsometricRight,IsometricDown"), "set_cell_shape", "get_cell_shape");

@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "audio_stream_player.h"
-#include "audio_stream_player.compat.inc"
 
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"

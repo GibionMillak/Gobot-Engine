@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "rendering_server.h"
-#include "rendering_server.compat.inc"
 
 #include "core/config/project_settings.h"
 #include "core/math/geometry_3d.h"
@@ -2095,143 +2094,6 @@ String RenderingServer::get_current_rendering_method() const {
 	return ::OS::get_singleton()->get_current_rendering_method();
 }
 
-Vector<uint8_t> _convert_surface_version_1_to_surface_version_2(uint64_t p_format, Vector<uint8_t> p_vertex_data, uint32_t p_vertex_count, uint32_t p_old_stride, uint32_t p_vertex_size, uint32_t p_normal_size, uint32_t p_position_stride, uint32_t p_normal_tangent_stride) {
-	Vector<uint8_t> new_vertex_data;
-	new_vertex_data.resize(p_vertex_data.size());
-	uint8_t *dst_vertex_ptr = new_vertex_data.ptrw();
-
-	const uint8_t *src_vertex_ptr = p_vertex_data.ptr();
-
-	uint32_t position_size = p_position_stride * p_vertex_count;
-
-	for (uint32_t j = 0; j < RSE::ARRAY_COLOR; j++) {
-		if (!(p_format & (1ULL << j))) {
-			continue;
-		}
-		switch (j) {
-			case RSE::ARRAY_VERTEX: {
-				if (p_format & RSE::ARRAY_FLAG_USE_2D_VERTICES) {
-					for (uint32_t i = 0; i < p_vertex_count; i++) {
-						const float *src = (const float *)&src_vertex_ptr[i * p_old_stride];
-						float *dst = (float *)&dst_vertex_ptr[i * p_position_stride];
-						dst[0] = src[0];
-						dst[1] = src[1];
-					}
-				} else {
-					for (uint32_t i = 0; i < p_vertex_count; i++) {
-						const float *src = (const float *)&src_vertex_ptr[i * p_old_stride];
-						float *dst = (float *)&dst_vertex_ptr[i * p_position_stride];
-						dst[0] = src[0];
-						dst[1] = src[1];
-						dst[2] = src[2];
-					}
-				}
-			} break;
-			case RSE::ARRAY_NORMAL: {
-				for (uint32_t i = 0; i < p_vertex_count; i++) {
-					const uint16_t *src = (const uint16_t *)&src_vertex_ptr[i * p_old_stride + p_vertex_size];
-					uint16_t *dst = (uint16_t *)&dst_vertex_ptr[i * p_normal_tangent_stride + position_size];
-
-					dst[0] = src[0];
-					dst[1] = src[1];
-				}
-			} break;
-			case RSE::ARRAY_TANGENT: {
-				for (uint32_t i = 0; i < p_vertex_count; i++) {
-					const uint16_t *src = (const uint16_t *)&src_vertex_ptr[i * p_old_stride + p_vertex_size + p_normal_size];
-					uint16_t *dst = (uint16_t *)&dst_vertex_ptr[i * p_normal_tangent_stride + position_size + p_normal_size];
-
-					dst[0] = src[0];
-					dst[1] = src[1];
-				}
-			} break;
-		}
-	}
-	return new_vertex_data;
-}
-
-#ifdef TOOLS_ENABLED
-void RenderingServer::set_surface_upgrade_callback(SurfaceUpgradeCallback p_callback) {
-	surface_upgrade_callback = p_callback;
-}
-
-void RenderingServer::set_warn_on_surface_upgrade(bool p_warn) {
-	warn_on_surface_upgrade = p_warn;
-}
-#endif
-
-#ifndef DISABLE_DEPRECATED
-void RenderingServer::fix_surface_compatibility(RenderingServerTypes::SurfaceData &p_surface, const String &p_path) {
-	uint64_t surface_version = p_surface.format & (RSE::ARRAY_FLAG_FORMAT_VERSION_MASK << RSE::ARRAY_FLAG_FORMAT_VERSION_SHIFT);
-	ERR_FAIL_COND_MSG(surface_version > RSE::ARRAY_FLAG_FORMAT_CURRENT_VERSION, "Cannot convert surface with version provided (" + itos((surface_version >> RSE::ARRAY_FLAG_FORMAT_VERSION_SHIFT) & RSE::ARRAY_FLAG_FORMAT_VERSION_MASK) + ") to current version (" + itos((RSE::ARRAY_FLAG_FORMAT_CURRENT_VERSION >> RSE::ARRAY_FLAG_FORMAT_VERSION_SHIFT) & RSE::ARRAY_FLAG_FORMAT_VERSION_MASK) + ")");
-
-#ifdef TOOLS_ENABLED
-	// Editor callback to ask user about re-saving all meshes.
-	if (surface_upgrade_callback && warn_on_surface_upgrade) {
-		surface_upgrade_callback();
-	}
-
-	if (warn_on_surface_upgrade) {
-		WARN_PRINT_ONCE_ED("At least one surface uses an old surface format and needs to be upgraded. The upgrade happens automatically at load time every time until the mesh is saved again or re-imported. Once saved (or re-imported), this mesh will be incompatible with earlier versions of Godot.");
-
-		if (!p_path.is_empty()) {
-			WARN_PRINT("A surface of " + p_path + " uses an old surface format and needs to be upgraded.");
-		}
-	}
-#endif
-
-	if (surface_version == RSE::ARRAY_FLAG_FORMAT_VERSION_1) {
-		// The only difference for now is that Version 1 uses interleaved vertex positions while version 2 does not.
-		// I.e. PNTPNTPNT -> PPPNTNTNT.
-
-		if (p_surface.vertex_data.size() > 0 && p_surface.vertex_count > 0) {
-			int vertex_size = 0;
-			int normal_size = 0;
-			int tangent_size = 0;
-			if (p_surface.format & RSE::ARRAY_FORMAT_VERTEX) {
-				if (p_surface.format & RSE::ARRAY_FLAG_USE_2D_VERTICES) {
-					vertex_size = sizeof(float) * 2;
-				} else {
-					vertex_size = sizeof(float) * 3;
-				}
-			}
-			if (p_surface.format & RSE::ARRAY_FORMAT_NORMAL) {
-				normal_size += sizeof(uint16_t) * 2;
-			}
-			if (p_surface.format & RSE::ARRAY_FORMAT_TANGENT) {
-				tangent_size = sizeof(uint16_t) * 2;
-			}
-			int stride = p_surface.vertex_data.size() / p_surface.vertex_count;
-			int position_stride = vertex_size;
-			int normal_tangent_stride = normal_size + tangent_size;
-
-			p_surface.vertex_data = _convert_surface_version_1_to_surface_version_2(p_surface.format, p_surface.vertex_data, p_surface.vertex_count, stride, vertex_size, normal_size, position_stride, normal_tangent_stride);
-
-			if (p_surface.blend_shape_data.size() > 0) {
-				// The size of one blend shape.
-				int divisor = (vertex_size + normal_size + tangent_size) * p_surface.vertex_count;
-				ERR_FAIL_COND((p_surface.blend_shape_data.size() % divisor) != 0);
-
-				uint32_t blend_shape_count = p_surface.blend_shape_data.size() / divisor;
-
-				Vector<uint8_t> new_blend_shape_data;
-				for (uint32_t i = 0; i < blend_shape_count; i++) {
-					Vector<uint8_t> bs_data = p_surface.blend_shape_data.slice(i * divisor, (i + 1) * divisor);
-					Vector<uint8_t> blend_shape = _convert_surface_version_1_to_surface_version_2(p_surface.format, bs_data, p_surface.vertex_count, stride, vertex_size, normal_size, position_stride, normal_tangent_stride);
-					new_blend_shape_data.append_array(blend_shape);
-				}
-
-				ERR_FAIL_COND(p_surface.blend_shape_data.size() != new_blend_shape_data.size());
-
-				p_surface.blend_shape_data = new_blend_shape_data;
-			}
-		}
-	}
-	p_surface.format &= ~(RSE::ARRAY_FLAG_FORMAT_VERSION_MASK << RSE::ARRAY_FLAG_FORMAT_VERSION_SHIFT);
-	p_surface.format |= RSE::ARRAY_FLAG_FORMAT_CURRENT_VERSION & (RSE::ARRAY_FLAG_FORMAT_VERSION_MASK << RSE::ARRAY_FLAG_FORMAT_VERSION_SHIFT);
-}
-#endif
-
 #ifdef TOOLS_ENABLED
 void RenderingServer::get_argument_options(const StringName &p_function, int p_idx, List<String> *r_options) const {
 	const String pf = p_function;
@@ -2268,13 +2130,11 @@ void RenderingServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("texture_2d_create", "image"), &RenderingServer::texture_2d_create);
 	ClassDB::bind_method(D_METHOD("texture_2d_layered_create", "layers", "layered_type"), &RenderingServer::_texture_2d_layered_create);
 	ClassDB::bind_method(D_METHOD("texture_3d_create", "format", "width", "height", "depth", "mipmaps", "data"), &RenderingServer::_texture_3d_create);
-	ClassDB::bind_method(D_METHOD("texture_proxy_create", "base"), &RenderingServer::texture_proxy_create);
 	ClassDB::bind_method(D_METHOD("texture_create_from_native_handle", "type", "format", "native_handle", "width", "height", "depth", "layers", "layered_type"), &RenderingServer::texture_create_from_native_handle, DEFVAL(1), DEFVAL(RSE::TEXTURE_LAYERED_2D_ARRAY));
 	ClassDB::bind_method(D_METHOD("texture_drawable_create", "width", "height", "format", "color", "with_mipmaps"), &RenderingServer::texture_drawable_create, DEFVAL(Color(1, 1, 1, 1)), DEFVAL(false));
 
 	ClassDB::bind_method(D_METHOD("texture_2d_update", "texture", "image", "layer"), &RenderingServer::texture_2d_update);
 	ClassDB::bind_method(D_METHOD("texture_3d_update", "texture", "data"), &RenderingServer::_texture_3d_update);
-	ClassDB::bind_method(D_METHOD("texture_proxy_update", "texture", "proxy_to"), &RenderingServer::texture_proxy_update);
 
 	ClassDB::bind_method(D_METHOD("texture_drawable_blit_rect", "textures", "rect", "material", "modulate", "source_textures", "to_mipmap"), &RenderingServer::texture_drawable_blit_rect, DEFVAL(0));
 
@@ -2635,7 +2495,6 @@ void RenderingServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("reflection_probe_set_enable_shadows", "probe", "enable"), &RenderingServer::reflection_probe_set_enable_shadows);
 	ClassDB::bind_method(D_METHOD("reflection_probe_set_cull_mask", "probe", "layers"), &RenderingServer::reflection_probe_set_cull_mask);
 	ClassDB::bind_method(D_METHOD("reflection_probe_set_reflection_mask", "probe", "layers"), &RenderingServer::reflection_probe_set_reflection_mask);
-	ClassDB::bind_method(D_METHOD("reflection_probe_set_resolution", "probe", "resolution"), &RenderingServer::reflection_probe_set_resolution);
 	ClassDB::bind_method(D_METHOD("reflection_probe_set_mesh_lod_threshold", "probe", "pixels"), &RenderingServer::reflection_probe_set_mesh_lod_threshold);
 
 	BIND_ENUM_CONSTANT(RSE::REFLECTION_PROBE_UPDATE_ONCE);
@@ -3096,7 +2955,6 @@ void RenderingServer::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("environment_glow_set_use_bicubic_upscale", "enable"), &RenderingServer::environment_glow_set_use_bicubic_upscale);
 	ClassDB::bind_method(D_METHOD("environment_set_ssr_half_size", "half_size"), &RenderingServer::environment_set_ssr_half_size);
-	ClassDB::bind_method(D_METHOD("environment_set_ssr_roughness_quality", "quality"), &RenderingServer::environment_set_ssr_roughness_quality);
 	ClassDB::bind_method(D_METHOD("environment_set_ssao_quality", "quality", "half_size", "adaptive_target", "blur_passes", "fadeout_from", "fadeout_to"), &RenderingServer::environment_set_ssao_quality);
 	ClassDB::bind_method(D_METHOD("environment_set_ssil_quality", "quality", "half_size", "adaptive_target", "blur_passes", "fadeout_from", "fadeout_to"), &RenderingServer::environment_set_ssil_quality);
 	ClassDB::bind_method(D_METHOD("environment_set_sdfgi_ray_count", "ray_count"), &RenderingServer::environment_set_sdfgi_ray_count);
@@ -3540,9 +3398,6 @@ void RenderingServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_white_texture"), &RenderingServer::get_white_texture);
 
 	ClassDB::bind_method(D_METHOD("set_boot_image_with_stretch", "image", "color", "stretch_mode", "use_filter"), &RenderingServer::set_boot_image_with_stretch, DEFVAL(true));
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("set_boot_image", "image", "color", "scale", "use_filter"), &RenderingServer::set_boot_image, DEFVAL(true));
-#endif
 	ClassDB::bind_method(D_METHOD("get_default_clear_color"), &RenderingServer::get_default_clear_color);
 	ClassDB::bind_method(D_METHOD("set_default_clear_color", "color"), &RenderingServer::set_default_clear_color);
 
@@ -3595,12 +3450,6 @@ void RenderingServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_on_render_thread"), &RenderingServer::is_on_render_thread);
 	ClassDB::bind_method(D_METHOD("call_on_render_thread", "callable"), &RenderingServer::call_on_render_thread);
 
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("has_feature", "feature"), &RenderingServer::has_feature);
-
-	BIND_ENUM_CONSTANT(RSE::FEATURE_SHADERS);
-	BIND_ENUM_CONSTANT(RSE::FEATURE_MULTITHREADED);
-#endif
 }
 
 void RenderingServer::mesh_add_surface_from_mesh_data(RID p_mesh, const Geometry3D::MeshData &p_mesh_data) {
@@ -3631,13 +3480,6 @@ void RenderingServer::mesh_add_surface_from_planes(RID p_mesh, const Vector<Plan
 	Geometry3D::MeshData mdata = Geometry3D::build_convex_mesh(p_planes);
 	mesh_add_surface_from_mesh_data(p_mesh, mdata);
 }
-
-#ifndef DISABLE_DEPRECATED
-void RenderingServer::set_boot_image(const Ref<Image> &p_image, const Color &p_color, bool p_scale, bool p_use_filter) {
-	RSE::SplashStretchMode stretch_mode = p_scale ? RSE::SPLASH_STRETCH_MODE_KEEP : RSE::SPLASH_STRETCH_MODE_DISABLED;
-	set_boot_image_with_stretch(p_image, p_color, stretch_mode, p_use_filter);
-}
-#endif
 
 RID RenderingServer::instance_create2(RID p_base, RID p_scenario) {
 	RID instance = instance_create();
@@ -3818,7 +3660,6 @@ void RenderingServer::init() {
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "rendering/global_illumination/sdfgi/frames_to_converge", PROPERTY_HINT_ENUM, "5 (Less Latency but Lower Quality),10,15,20,25,30 (More Latency but Higher Quality)"), 5);
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "rendering/global_illumination/sdfgi/frames_to_update_lights", PROPERTY_HINT_ENUM, "1 (Slower),2,4,8,16 (Faster)"), 2);
 
-	GLOBAL_DEF_RST("rendering/environment/fog/use_legacy_blending", false);
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "rendering/environment/volumetric_fog/volume_size", PROPERTY_HINT_RANGE, "16,512,1"), 64);
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "rendering/environment/volumetric_fog/volume_depth", PROPERTY_HINT_RANGE, "16,512,1"), 64);
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "rendering/environment/volumetric_fog/use_filter", PROPERTY_HINT_ENUM, "No (Faster),Yes (Higher Quality)"), 1);

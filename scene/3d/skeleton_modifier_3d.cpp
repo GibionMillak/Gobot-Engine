@@ -135,11 +135,6 @@ void SkeletonModifier3D::_process_modification(double p_delta) {
 	if (GDVIRTUAL_CALL(_process_modification_with_delta, p_delta)) {
 		return;
 	}
-#ifndef DISABLE_DEPRECATED
-	if (GDVIRTUAL_CALL(_process_modification)) {
-		return;
-	}
-#endif // DISABLE_DEPRECATED
 }
 
 void SkeletonModifier3D::_notification(int p_what) {
@@ -169,9 +164,6 @@ void SkeletonModifier3D::_bind_methods() {
 
 	ADD_SIGNAL(MethodInfo("modification_processed"));
 	GDVIRTUAL_BIND(_process_modification_with_delta, "delta");
-#ifndef DISABLE_DEPRECATED
-	GDVIRTUAL_BIND(_process_modification);
-#endif
 
 	GDVIRTUAL_BIND(_skeleton_changed, "old_skeleton", "new_skeleton");
 	GDVIRTUAL_BIND(_validate_bone_names);

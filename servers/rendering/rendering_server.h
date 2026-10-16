@@ -90,19 +90,6 @@ protected:
 	static RenderingServer *(*create_func)();
 	static void _bind_methods();
 
-#ifndef DISABLE_DEPRECATED
-	void _environment_set_fog_bind_compat_84792(RID p_env, bool p_enable, const Color &p_light_color, float p_light_energy, float p_sun_scatter, float p_density, float p_height, float p_height_density, float p_aerial_perspective, float p_sky_affect);
-	void _canvas_item_add_multiline_bind_compat_84523(RID p_item, const Vector<Point2> &p_points, const Vector<Color> &p_colors, float p_width = -1.0);
-	void _canvas_item_add_rect_bind_compat_84523(RID p_item, const Rect2 &p_rect, const Color &p_color);
-	void _canvas_item_add_circle_bind_compat_84523(RID p_item, const Point2 &p_pos, float p_radius, const Color &p_color);
-	void _instance_set_interpolated_bind_compat_104269(RID p_instance, bool p_interpolated);
-	void _instance_reset_physics_interpolation_bind_compat_104269(RID p_instance);
-	void _viewport_set_size_bind_compat_115799(RID p_viewport, int p_width, int p_height);
-	void _particles_request_process_time_bind_compat_109142(RID p_particles, real_t p_request_process_time);
-
-	static void _bind_compatibility_methods();
-#endif
-
 public:
 	static RenderingServer *get_singleton();
 	static RenderingServer *create();
@@ -259,9 +246,6 @@ public:
 	virtual RID multimesh_create() = 0;
 
 protected:
-#ifndef DISABLE_DEPRECATED
-	void _multimesh_allocate_data_bind_compat_99455(RID p_multimesh, int p_instances, RSE::MultimeshTransformFormat p_transform_format, bool p_use_colors, bool p_use_custom_data);
-#endif
 public:
 	virtual void multimesh_allocate_data(RID p_multimesh, int p_instances, RSE::MultimeshTransformFormat p_transform_format, bool p_use_colors = false, bool p_use_custom_data = false, bool p_use_indirect = false) = 0;
 	virtual int multimesh_get_instance_count(RID p_multimesh) const = 0;
@@ -964,11 +948,6 @@ public:
 	/* FREE */
 
 	virtual void free_rid(RID p_rid) = 0; // Free RIDs associated with the rendering server.
-#ifndef DISABLE_DEPRECATED
-	[[deprecated("Use `free_rid()` instead.")]] void free(RID p_rid) {
-		free_rid(p_rid);
-	}
-#endif // DISABLE_DEPRECATED
 
 	/* INTERPOLATION */
 
@@ -1021,19 +1000,12 @@ public:
 	/* BACKGROUND */
 
 	virtual void set_boot_image_with_stretch(const Ref<Image> &p_image, const Color &p_color, RSE::SplashStretchMode p_stretch_mode, bool p_use_filter = true) = 0;
-#ifndef DISABLE_DEPRECATED
-	void set_boot_image(const Ref<Image> &p_image, const Color &p_color, bool p_scale, bool p_use_filter = true); // Superseded, but left to preserve compat.
-#endif
 
 	virtual Color get_default_clear_color() = 0;
 	virtual void set_default_clear_color(const Color &p_color) = 0;
 
 	/* MISC */
 
-#ifndef DISABLE_DEPRECATED
-	// Never actually used, should be removed when we can break compatibility.
-	virtual bool has_feature(RSE::Features p_feature) const = 0;
-#endif
 	virtual bool has_os_feature(const String &p_feature) const = 0;
 
 	virtual void set_debug_generate_wireframes(bool p_generate) = 0;
@@ -1067,16 +1039,6 @@ public:
 	RenderingServer();
 	virtual ~RenderingServer();
 
-#ifdef TOOLS_ENABLED
-	typedef void (*SurfaceUpgradeCallback)();
-	void set_surface_upgrade_callback(SurfaceUpgradeCallback p_callback);
-	void set_warn_on_surface_upgrade(bool p_warn);
-#endif
-
-#ifndef DISABLE_DEPRECATED
-	void fix_surface_compatibility(RenderingServerTypes::SurfaceData &p_surface, const String &p_path = "");
-#endif
-
 private:
 	// Binder helpers
 	RID _texture_2d_layered_create(const TypedArray<Image> &p_layers, RSE::TextureLayeredType p_layered_type);
@@ -1091,10 +1053,6 @@ private:
 	TypedArray<Dictionary> _canvas_item_get_instance_shader_parameter_list(RID p_item) const;
 	TypedArray<Image> _bake_render_uv2(RID p_base, const TypedArray<RID> &p_material_overrides, const Size2i &p_image_size);
 	void _particles_set_trail_bind_poses(RID p_particles, const TypedArray<Transform3D> &p_bind_poses);
-#ifdef TOOLS_ENABLED
-	SurfaceUpgradeCallback surface_upgrade_callback = nullptr;
-	bool warn_on_surface_upgrade = true;
-#endif
 };
 
 // Make variant understand the enums.
@@ -1185,10 +1143,6 @@ VARIANT_ENUM_CAST_EXT(RSE::RenderingInfo, RenderingServer::RenderingInfo);
 VARIANT_ENUM_CAST_EXT(RSE::SplashStretchMode, RenderingServer::SplashStretchMode);
 VARIANT_ENUM_CAST_EXT(RSE::CanvasTextureChannel, RenderingServer::CanvasTextureChannel);
 VARIANT_ENUM_CAST_EXT(RSE::BakeChannels, RenderingServer::BakeChannels);
-
-#ifndef DISABLE_DEPRECATED
-VARIANT_ENUM_CAST_EXT(RSE::Features, RenderingServer::Features);
-#endif
 
 // Alias to make it easier to use.
 #define RS RenderingServer

@@ -3560,22 +3560,6 @@ String String::format(const Variant &p_values, const String &p_placeholder) cons
 		Array values_arr = p_values;
 
 		for (int i = 0; i < values_arr.size(); i++) {
-#ifndef DISABLE_DEPRECATED
-			if (values_arr[i].get_type() == Variant::ARRAY) { // Array in Array structure [["name","RobotGuy"], [0,"godot"], ["strength",9000.91]].
-				Array value_arr = values_arr[i];
-
-				WARN_DEPRECATED_MSG("In String.format(), Arrays inside another Array are treated as key-value pairs. This behavior is deprecated. Consider using a Dictionary instead.");
-				if (value_arr.size() == 2) {
-					String key = value_arr[0];
-					String val = value_arr[1];
-
-					new_string = new_string.replace(p_placeholder.replace("_", key), val);
-				} else {
-					ERR_PRINT(vformat("Invalid format: the inner Array at index %d needs to contain only 2 elements, as a key-value pair.", i).ascii().get_data());
-				}
-				continue;
-			}
-#endif // DISABLE_DEPRECATED
 
 			// Array structure ["RobotGuy", "Logis", "rookie"].
 			String val = values_arr[i];

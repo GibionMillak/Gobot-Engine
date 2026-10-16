@@ -17,13 +17,6 @@
 				Called when creating a context menu, custom options can be added by using the [method add_context_menu_item] or [method add_context_menu_item_from_shortcut] functions. [param data] contains the context data, which differs depending on the context menu slot. See the descriptions of [enum ContextMenuSlot] for more information.
 			</description>
 		</method>
-		<method name="_popup_menu" qualifiers="virtual" deprecated="Use [method _get_menu_options] instead.">
-			<return type="void" />
-			<param index="0" name="paths" type="PackedStringArray" />
-			<description>
-				[b]Note:[/b] Implementing this method makes the shortcut callbacks receive legacy data (for compatibility reasons).
-			</description>
-		</method>
 		<method name="add_context_menu_item">
 			<return type="void" />
 			<param index="0" name="name" type="String" />

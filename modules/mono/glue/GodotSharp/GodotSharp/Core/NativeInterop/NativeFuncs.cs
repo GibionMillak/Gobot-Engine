@@ -6,7 +6,6 @@ using System;
 using System.Runtime.CompilerServices;
 using Godot.SourceGenerators.Internal;
 
-
 namespace Godot.NativeInterop
 {
     /*
@@ -46,14 +45,13 @@ namespace Godot.NativeInterop
         public static partial IntPtr godotsharp_method_bind_get_method(in godot_string_name p_classname,
             in godot_string_name p_methodname);
 
-        public static partial IntPtr godotsharp_method_bind_get_method_with_compatibility(
+        public static partial IntPtr godotsharp_method_bind_get_method_by_hash(
             in godot_string_name p_classname, in godot_string_name p_methodname, ulong p_hash);
 
         public static partial delegate* unmanaged<godot_bool, IntPtr> godotsharp_get_class_constructor(
             in godot_string_name p_classname);
 
         public static partial IntPtr godotsharp_engine_get_singleton(in godot_string p_name);
-
 
         internal static partial Error godotsharp_stack_info_vector_resize(
             ref DebuggingUtils.godot_stack_info_vector p_stack_info_vector, int p_size);

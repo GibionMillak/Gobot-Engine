@@ -204,9 +204,6 @@ public:
 		_define_ancestry(AncestralClass::SCRIPT);
 	}
 
-#ifndef DISABLE_DEPRECATED
-	[[deprecated("Use Object::get_script instead.")]] bool instance_has(const Object *p_this) const { return p_this != nullptr && Object::cast_to<Script>(p_this->get_script()) == this; }
-#endif // !DISABLE_DEPRECATED
 };
 
 class ScriptLanguage : public Object {

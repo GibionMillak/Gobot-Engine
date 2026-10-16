@@ -429,14 +429,6 @@ void DocumentList::_show_context_menu() {
 		EditorContextMenuPlugin::OptionsData context_data = DocumentEditorContainer::get_context_data(document_editor_container->tab_container->get_tab_control(selected));
 		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(context_menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCRIPT_EDITOR, context_data);
 
-#ifndef DISABLE_DEPRECATED
-		Vector<String> selected_paths;
-		Ref<Resource> current_resource = context_data["selected_resource"];
-		if (current_resource.is_valid()) {
-			selected_paths.push_back(current_resource->get_path());
-		}
-		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(context_menu, EditorContextMenuPlugin::CONTEXT_SLOT_SCRIPT_EDITOR, selected_paths, current_resource, 500);
-#endif
 	}
 
 	context_menu->set_position(get_screen_position() + get_local_mouse_position());
@@ -2653,11 +2645,6 @@ bool DocumentEditorContainer::edit(const Ref<Resource> &p_resource, int p_line, 
 		teb->connect("_request_save_previous_state", callable_mp(this, &DocumentEditorContainer::_save_previous_state).bind(teb));
 		teb->connect("go_to_method", callable_mp(this, &DocumentEditorContainer::script_goto_method));
 
-#ifndef DISABLE_DEPRECATED
-		teb->connect("search_in_files_requested", callable_mp(FindInFiles::get_singleton(), &FindInFiles::open_dock).bind("", false));
-		teb->connect("replace_in_files_requested", callable_mp(FindInFiles::get_singleton(), &FindInFiles::open_dock).bind("", true));
-#endif
-
 		if (script_editor_cache->has_section(p_resource->get_path())) {
 			teb->set_edit_state(script_editor_cache->get_value(p_resource->get_path(), "state"), p_grab_focus);
 			if (ScriptTextEditor *ste = Object::cast_to<ScriptTextEditor>(teb)) {
@@ -3348,13 +3335,6 @@ void DocumentEditorContainer::shortcut_input(const Ref<InputEvent> &p_event) {
 	const Callable custom_callback = EditorContextMenuPluginManager::get_singleton()->match_custom_shortcut(EditorContextMenuPlugin::CONTEXT_SLOT_SCRIPT_EDITOR, p_event);
 	if (custom_callback.is_valid()) {
 		EditorContextMenuPlugin::OptionsData context_data = DocumentEditorContainer::get_context_data(tab_container->get_current_tab_control());
-#ifndef DISABLE_DEPRECATED
-		if (p_event->get_meta("_legacy_shortcut", false)) {
-			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, context_data["selected_resource"]);
-			accept_event();
-			return;
-		}
-#endif
 		EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, context_data);
 		accept_event();
 	}
@@ -4073,16 +4053,6 @@ DocumentEditorContainer::DocumentEditorContainer(bool p_is_main_editor, const St
 	toggle_files_button->set_shortcut_context(this);
 	toggle_files_button->set_shortcut(ED_GET_SHORTCUT("script_editor/toggle_files_panel"));
 	menu_hb->add_child(toggle_files_button);
-#ifndef DISABLE_DEPRECATED
-	EditorSettings *es = EditorSettings::get_singleton();
-	if (es && es->get_project_metadata("files_panel", "show_files_panel", "") != "") {
-		bool show_files_panel = es->get_project_metadata("files_panel", "show_files_panel", true);
-		es->set_project_metadata("show_files_panel", "ScriptEditor", show_files_panel);
-		es->set_project_metadata("show_files_panel", "ShaderEditor", show_files_panel);
-		es->set_project_metadata("files_panel", "show_files_panel", Variant());
-		es->save_project_metadata();
-	}
-#endif
 	bool initial_state = EditorSettings::get_singleton()->get_project_metadata("show_files_panel", config_section, true);
 	toggle_files_button->set_pressed_no_signal(initial_state);
 	_toggle_files_pressed(initial_state);
@@ -4724,24 +4694,6 @@ void ScriptEditorPlugin::set_window_layout(Ref<ConfigFile> p_layout) {
 }
 
 void ScriptEditorPlugin::get_window_layout(Ref<ConfigFile> p_layout) {
-#ifndef DISABLE_DEPRECATED
-	EditorSettings *es = EditorSettings::get_singleton();
-	if (es && es->get_project_metadata("recent_files", "scripts", "") != "") {
-		es->set_project_metadata("recent_files", "ScriptEditor", es->get_project_metadata("recent_files", "scripts", Array()));
-		es->set_project_metadata("recent_files", "scripts", Variant());
-		es->save_project_metadata();
-	}
-
-	if (p_layout->has_section_key("ScriptEditor", "window_rect")) {
-		p_layout->erase_section_key("ScriptEditor", "window_rect");
-	}
-	if (p_layout->has_section_key("ScriptEditor", "window_screen")) {
-		p_layout->erase_section_key("ScriptEditor", "window_screen");
-	}
-	if (p_layout->has_section_key("ScriptEditor", "window_screen_rect")) {
-		p_layout->erase_section_key("ScriptEditor", "window_screen_rect");
-	}
-#endif
 
 	script_editor->get_script_container()->get_window_layout(p_layout);
 }

@@ -87,13 +87,6 @@ class EditorInterface : public Object {
 protected:
 	static void _bind_methods();
 
-#ifndef DISABLE_DEPRECATED
-	void _popup_node_selector_bind_compat_94323(const Callable &p_callback, const TypedArray<StringName> &p_valid_types = TypedArray<StringName>());
-	void _popup_property_selector_bind_compat_94323(Object *p_object, const Callable &p_callback, const PackedInt32Array &p_type_filter = PackedInt32Array());
-	void _open_scene_from_path_bind_compat_90057(const String &scene_path);
-	static void _bind_compatibility_methods();
-#endif
-
 public:
 	static EditorInterface *get_singleton() { return singleton; }
 
@@ -123,16 +116,10 @@ public:
 	Ref<Theme> get_editor_theme() const;
 
 	Control *get_base_control() const;
-#ifndef DISABLE_DEPRECATED
-	VBoxContainer *get_editor_main_screen() const;
-#endif
 	ScriptEditor *get_script_editor() const;
 	SubViewport *get_editor_viewport_2d() const;
 	SubViewport *get_editor_viewport_3d(int p_idx = 0) const;
 
-#ifndef DISABLE_DEPRECATED
-	void set_main_screen_editor(const String &p_name);
-#endif
 	EditorDock *get_dock_by_name(const String &p_name);
 	void set_distraction_free_mode(bool p_enter);
 	bool is_distraction_free_mode_enabled() const;

@@ -188,16 +188,8 @@ class BindingsGenerator {
 		/**
 		 * Determines if the method will be hidden with the [EditorBrowsable(EditorBrowsableState.Never)]
 		 * attribute.
-		 * We do this for methods that we don't want to expose but need to be public to prevent breaking
-		 * compat (i.e: methods with 'is_compat' set to true.)
 		 */
 		bool is_hidden = false;
-
-		/**
-		 * Determines if the method is a compatibility method added to avoid breaking binary compatibility.
-		 * These methods will be generated but hidden and are considered deprecated.
-		 */
-		bool is_compat = false;
 
 		List<ArgumentInterface> arguments;
 
@@ -264,14 +256,6 @@ class BindingsGenerator {
 		bool is_singleton_instance = false;
 		bool is_ref_counted = false;
 		bool is_span_compatible = false;
-
-		/**
-		 * Class is a singleton, but can't be declared as a static class as that would
-		 * break backwards compatibility. As such, instead of going with a static class,
-		 * we use the actual singleton pattern (private constructor with instance property),
-		 * which doesn't break compatibility.
-		 */
-		bool is_compat_singleton = false;
 
 		/**
 		 * Determines whether the native return value of this type must be disposed
@@ -661,10 +645,8 @@ class BindingsGenerator {
 	HashMap<const MethodInterface *, const InternalCall *> method_icalls_map;
 
 	HashMap<StringName, List<StringName>> blacklisted_methods;
-	HashSet<StringName> compat_singletons;
 
 	void _initialize_blacklisted_methods();
-	void _initialize_compat_singletons();
 
 	struct NameCache {
 		StringName type_void = "void";

@@ -63,7 +63,6 @@ class ResourceLoaderBinary {
 		Ref<ResourceLoader::LoadToken> load_token;
 	};
 
-	bool using_named_scene_ids = false;
 	bool using_uids = false;
 	String script_class;
 	bool use_sub_threads = false;

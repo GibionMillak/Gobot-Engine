@@ -33,12 +33,6 @@
 #include "core/io/net_socket.h"
 #include "core/io/stream_peer.h"
 
-#ifndef DISABLE_DEPRECATED
-namespace compat::StreamPeerTCP {
-enum class Status;
-} //namespace compat::StreamPeerTCP
-#endif
-
 class StreamPeerSocket : public StreamPeer {
 	GDCLASS(StreamPeerSocket, StreamPeer);
 
@@ -51,10 +45,6 @@ public:
 	};
 
 protected:
-#ifndef DISABLE_DEPRECATED
-	compat::StreamPeerTCP::Status _get_status_bind_compat_107954() const;
-	static void _bind_compatibility_methods();
-#endif
 
 	Ref<NetSocket> _sock;
 	uint64_t timeout = 0;

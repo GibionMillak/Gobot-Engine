@@ -78,9 +78,6 @@ void initialize_visual_shader_module(ModuleInitializationLevel p_level) {
 		GDREGISTER_ABSTRACT_CLASS(VisualShaderNodeConstant);
 		GDREGISTER_ABSTRACT_CLASS(VisualShaderNodeVectorBase);
 		GDREGISTER_CLASS(VisualShaderNodeFrame);
-#ifndef DISABLE_DEPRECATED
-		GDREGISTER_CLASS(VisualShaderNodeComment); // Deprecated, just for compatibility.
-#endif
 		GDREGISTER_CLASS(VisualShaderNodeFloatConstant);
 		GDREGISTER_CLASS(VisualShaderNodeIntConstant);
 		GDREGISTER_CLASS(VisualShaderNodeUIntConstant);

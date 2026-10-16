@@ -45,11 +45,6 @@ protected:
 	GDVIRTUAL0_REQUIRED(_run)
 
 public:
-#ifndef DISABLE_DEPRECATED
-	void add_root_node(Node *p_node);
-	Node *get_scene() const;
-	EditorInterface *get_editor_interface() const;
-#endif // DISABLE_DEPRECATED
 
 	virtual void run();
 };

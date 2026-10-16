@@ -115,9 +115,6 @@ public:
 	Vector<Vector<Vector2>> get_outlines() const;
 
 	void clear_outlines();
-#ifndef DISABLE_DEPRECATED
-	void make_polygons_from_outlines();
-#endif // DISABLE_DEPRECATED
 
 	void set_polygons(const Vector<Vector<int>> &p_polygons);
 	Vector<Vector<int>> get_polygons() const;

@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "editor_inspector.h"
-#include "editor_inspector.compat.inc"
 
 #include "core/input/input.h"
 #include "core/io/resource_loader.h"
@@ -1371,13 +1370,6 @@ void EditorProperty::shortcut_input(const Ref<InputEvent> &p_event) {
 	} else {
 		const Callable custom_callback = EditorContextMenuPluginManager::get_singleton()->match_custom_shortcut(EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY, p_event);
 		if (custom_callback.is_valid()) {
-#ifndef DISABLE_DEPRECATED
-			if (p_event->get_meta("_legacy_shortcut", false)) {
-				EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, this);
-				accept_event();
-				return;
-			}
-#endif
 			EditorContextMenuPluginManager::get_singleton()->invoke_callback(custom_callback, _get_context_data());
 			accept_event();
 		}
@@ -1835,10 +1827,6 @@ void EditorProperty::_update_popup() {
 	if (EditorContextMenuPluginManager::get_singleton() && EditorContextMenuPluginManager::get_singleton()->has_plugins_for_slot(EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY)) {
 		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(menu, EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY, _get_context_data());
 
-#ifndef DISABLE_DEPRECATED
-		Vector<String> property_paths = { String::num_int64(get_edited_object()->get_instance_id()), property_path };
-		EditorContextMenuPluginManager::get_singleton()->add_options_from_plugins(menu, EditorContextMenuPlugin::CONTEXT_SLOT_INSPECTOR_PROPERTY, property_paths, this, 500);
-#endif
 	}
 }
 

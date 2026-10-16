@@ -281,13 +281,12 @@ void NavigationMeshSourceGeometryData3D::set_projected_obstructions(const Array 
 		ERR_FAIL_COND(!data.has("version"));
 
 		uint32_t po_version = data["version"];
+		ERR_FAIL_COND(po_version != 1);
 
-		if (po_version == 1) {
-			ERR_FAIL_COND(!data.has("vertices"));
-			ERR_FAIL_COND(!data.has("elevation"));
-			ERR_FAIL_COND(!data.has("height"));
-			ERR_FAIL_COND(!data.has("carve"));
-		}
+		ERR_FAIL_COND(!data.has("vertices"));
+		ERR_FAIL_COND(!data.has("elevation"));
+		ERR_FAIL_COND(!data.has("height"));
+		ERR_FAIL_COND(!data.has("carve"));
 
 		ProjectedObstruction projected_obstruction;
 		projected_obstruction.vertices = Vector<float>(data["vertices"]);

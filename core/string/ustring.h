@@ -668,9 +668,6 @@ public:
 	bool is_valid_ip_address() const;
 	bool is_valid_filename() const;
 
-	// Use `is_valid_ascii_identifier()` instead. Kept for compatibility.
-	bool is_valid_identifier() const { return is_valid_ascii_identifier(); }
-
 	/**
 	 * The constructors must not depend on other overloads
 	 */

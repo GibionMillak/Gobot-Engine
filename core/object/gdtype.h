@@ -133,8 +133,6 @@ protected:
 	/// bind_method supports binding non-owned methods.
 	LocalVector<MethodBind *> owned_method_map;
 
-	AHashMap<StringName, LocalVector<MethodBind *>> self_compatibility_method_map;
-
 	/// Contains all members that can be obtained or set with dot notation (`object.member`).
 	AHashMap<StringName, Member> _members;
 	AHashMap<StringName, Member> _self_members;
@@ -165,9 +163,6 @@ public:
 	bool bind_method(MethodBind *p_method, bool p_take_ownership = true);
 
 	void set_method_flags(const StringName &p_method, int p_flags);
-
-	bool bind_compatibility_method(MethodBind *p_method);
-	const AHashMap<StringName, LocalVector<MethodBind *>> &get_self_compatibility_method_map() const { return self_compatibility_method_map; }
 
 	void add_property(const PropertyInfo &p_pinfo, const StringName &p_setter, const StringName &p_getter, int p_index);
 	void add_to_ordered_properties(const PropertyInfo &p_pinfo);

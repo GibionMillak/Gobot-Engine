@@ -59,11 +59,6 @@ struct RayResult {
 	int shape = 0;
 
 	_FORCE_INLINE_ Object *get_collider() const {
-#ifndef DISABLE_DEPRECATED
-		if (collider != nullptr) {
-			return collider;
-		}
-#endif // !DISABLE_DEPRECATED
 
 		if (collider_id.is_valid()) {
 			return ObjectDB::get_instance(collider_id);
@@ -82,11 +77,6 @@ struct ShapeResult {
 	int shape = 0;
 
 	_FORCE_INLINE_ Object *get_collider() const {
-#ifndef DISABLE_DEPRECATED
-		if (collider != nullptr) {
-			return collider;
-		}
-#endif // !DISABLE_DEPRECATED
 
 		if (collider_id.is_valid()) {
 			return ObjectDB::get_instance(collider_id);
@@ -166,10 +156,6 @@ struct MotionResult {
 		return Math::acos(collision_normal.dot(p_up_direction));
 	}
 };
-
-#ifndef DISABLE_DEPRECATED
-// Graveyard.
-#endif
 
 } // namespace PhysicsServer2DTypes
 

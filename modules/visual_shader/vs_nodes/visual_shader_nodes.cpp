@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "visual_shader_nodes.h"
-#include "visual_shader_nodes.compat.inc"
 
 #include "core/config/project_settings.h"
 #include "core/object/class_db.h"

@@ -281,8 +281,6 @@ void NavigationRegion3D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_navigation_layer_value", "layer_number", "value"), &NavigationRegion3D::set_navigation_layer_value);
 	ClassDB::bind_method(D_METHOD("get_navigation_layer_value", "layer_number"), &NavigationRegion3D::get_navigation_layer_value);
 
-	ClassDB::bind_method(D_METHOD("get_region_rid"), &NavigationRegion3D::get_region_rid);
-
 	ClassDB::bind_method(D_METHOD("set_enter_cost", "enter_cost"), &NavigationRegion3D::set_enter_cost);
 	ClassDB::bind_method(D_METHOD("get_enter_cost"), &NavigationRegion3D::get_enter_cost);
 
@@ -304,25 +302,6 @@ void NavigationRegion3D::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("navigation_mesh_changed"));
 	ADD_SIGNAL(MethodInfo("bake_finished"));
 }
-
-#ifndef DISABLE_DEPRECATED
-// Compatibility with earlier 4.0 betas.
-bool NavigationRegion3D::_set(const StringName &p_name, const Variant &p_value) {
-	if (p_name == "navmesh") {
-		set_navigation_mesh(p_value);
-		return true;
-	}
-	return false;
-}
-
-bool NavigationRegion3D::_get(const StringName &p_name, Variant &r_ret) const {
-	if (p_name == "navmesh") {
-		r_ret = get_navigation_mesh();
-		return true;
-	}
-	return false;
-}
-#endif // DISABLE_DEPRECATED
 
 void NavigationRegion3D::_navigation_mesh_changed() {
 	_update_bounds();

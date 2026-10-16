@@ -908,8 +908,6 @@ _FORCE_INLINE_ TextServerAdvanced::FontTexturePosition TextServerAdvanced::find_
 #ifdef MODULE_MSDFGEN_ENABLED
 
 // FreeType outline coordinates are 26.6 fixed point, so one pixel is 64 units.
-// Godot versions before 4.8 used an incorrect divisor of 60, which can be
-// restored via the `gui/fonts/compatibility/msdf_legacy_scaling` project setting.
 static double ft_units_per_pixel = 64.0;
 
 struct MSContext {
@@ -8458,11 +8456,6 @@ TextServerAdvanced::TextServerAdvanced() {
 	_bmp_create_font_funcs();
 	_update_settings();
 	ProjectSettings::get_singleton()->connect("settings_changed", callable_mp(this, &TextServerAdvanced::_update_settings));
-#if defined(MODULE_MSDFGEN_ENABLED) && !defined(DISABLE_DEPRECATED)
-	if (GLOBAL_GET("gui/fonts/compatibility/msdf_legacy_scaling")) {
-		ft_units_per_pixel = 60.0;
-	}
-#endif
 }
 
 void TextServerAdvanced::_font_clear_system_fallback_cache() {

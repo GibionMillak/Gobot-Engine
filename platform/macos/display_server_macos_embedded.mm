@@ -403,11 +403,6 @@ void DisplayServerMacOSEmbedded::_window_callback(const Callable &p_callable, co
 
 bool DisplayServerMacOSEmbedded::has_feature(DisplayServerEnums::Feature p_feature) const {
 	switch (p_feature) {
-#ifndef DISABLE_DEPRECATED
-		case DisplayServerEnums::FEATURE_GLOBAL_MENU: {
-			return (native_menu && native_menu->has_feature(NativeMenu::FEATURE_GLOBAL_MENU));
-		} break;
-#endif
 		case DisplayServerEnums::FEATURE_CURSOR_SHAPE:
 		case DisplayServerEnums::FEATURE_IME:
 		case DisplayServerEnums::FEATURE_CUSTOM_CURSOR_SHAPE:

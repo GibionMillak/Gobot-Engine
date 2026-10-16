@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "rendering_device.h"
-#include "rendering_device.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
@@ -3008,12 +3007,6 @@ Size2i RenderingDevice::texture_size(RID p_texture) {
 	return Size2i(tex->width, tex->height);
 }
 
-#ifndef DISABLE_DEPRECATED
-uint64_t RenderingDevice::texture_get_native_handle(RID p_texture) {
-	return get_driver_resource(DRIVER_RESOURCE_TEXTURE, p_texture);
-}
-#endif
-
 Error RenderingDevice::texture_copy(RID p_from_texture, RID p_to_texture, const Vector3 &p_from, const Vector3 &p_to, const Vector3 &p_size, uint32_t p_src_mipmap, uint32_t p_dst_mipmap, uint32_t p_src_layer, uint32_t p_dst_layer) {
 	ERR_RENDER_THREAD_GUARD_V(ERR_UNAVAILABLE);
 
@@ -5797,12 +5790,6 @@ RenderingDevice::DrawListID RenderingDevice::draw_list_begin(RID p_framebuffer, 
 	return int64_t(ID_TYPE_DRAW_LIST) << ID_BASE_SHIFT;
 }
 
-#ifndef DISABLE_DEPRECATED
-Error RenderingDevice::draw_list_begin_split(RID p_framebuffer, uint32_t p_splits, DrawListID *r_split_ids, InitialAction p_initial_color_action, FinalAction p_final_color_action, InitialAction p_initial_depth_action, FinalAction p_final_depth_action, const Vector<Color> &p_clear_color_values, float p_clear_depth, uint32_t p_clear_stencil, const Rect2 &p_region, const Vector<RID> &p_storage_textures) {
-	ERR_FAIL_V_MSG(ERR_UNAVAILABLE, "Deprecated. Split draw lists are used automatically by RenderingDevice.");
-}
-#endif
-
 void RenderingDevice::draw_list_set_blend_constants(DrawListID p_list, const Color &p_color) {
 	ERR_RENDER_THREAD_GUARD();
 
@@ -6449,12 +6436,6 @@ RenderingDevice::DrawListID RenderingDevice::draw_list_switch_to_next_pass() {
 
 	return int64_t(ID_TYPE_DRAW_LIST) << ID_BASE_SHIFT;
 }
-
-#ifndef DISABLE_DEPRECATED
-Error RenderingDevice::draw_list_switch_to_next_pass_split(uint32_t p_splits, DrawListID *r_split_ids) {
-	ERR_FAIL_V_MSG(ERR_UNAVAILABLE, "Deprecated. Split draw lists are used automatically by RenderingDevice.");
-}
-#endif
 
 void RenderingDevice::_draw_list_start(const Rect2i &p_viewport) {
 	draw_list.viewport = p_viewport;
@@ -7221,16 +7202,6 @@ void RenderingDevice::compute_list_end() {
 
 	compute_list = ComputeList();
 }
-
-#ifndef DISABLE_DEPRECATED
-void RenderingDevice::barrier(BitField<BarrierMask> p_from, BitField<BarrierMask> p_to) {
-	WARN_PRINT("Deprecated. Barriers are automatically inserted by RenderingDevice.");
-}
-
-void RenderingDevice::full_barrier() {
-	WARN_PRINT("Deprecated. Barriers are automatically inserted by RenderingDevice.");
-}
-#endif
 
 /*************************/
 /**** TRANSFER WORKER ****/
@@ -8067,12 +8038,6 @@ void RenderingDevice::draw_command_begin_label(const Span<char> p_label_name, co
 
 	draw_graph.begin_label(p_label_name, p_color);
 }
-
-#ifndef DISABLE_DEPRECATED
-void RenderingDevice::draw_command_insert_label(String p_label_name, const Color &p_color) {
-	WARN_PRINT("Deprecated. Inserting labels no longer applies due to command reordering.");
-}
-#endif
 
 void RenderingDevice::draw_command_end_label() {
 	ERR_RENDER_THREAD_GUARD();
@@ -9330,9 +9295,6 @@ void RenderingDevice::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("texture_resolve_multisample", "from_texture", "to_texture"), &RenderingDevice::texture_resolve_multisample);
 
 	ClassDB::bind_method(D_METHOD("texture_get_format", "texture"), &RenderingDevice::_texture_get_format);
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("texture_get_native_handle", "texture"), &RenderingDevice::texture_get_native_handle);
-#endif
 
 	ClassDB::bind_method(D_METHOD("framebuffer_format_create", "attachments", "view_count"), &RenderingDevice::_framebuffer_format_create, DEFVAL(1));
 	ClassDB::bind_method(D_METHOD("framebuffer_format_create_multipass", "attachments", "passes", "view_count"), &RenderingDevice::_framebuffer_format_create_multipass, DEFVAL(1));
@@ -9404,9 +9366,6 @@ void RenderingDevice::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("draw_list_begin_for_screen", "screen", "clear_color"), &RenderingDevice::draw_list_begin_for_screen, DEFVAL(DisplayServerEnums::MAIN_WINDOW_ID), DEFVAL(Color()));
 
 	ClassDB::bind_method(D_METHOD("draw_list_begin", "framebuffer", "draw_flags", "clear_color_values", "clear_depth_value", "clear_stencil_value", "region", "breadcrumb"), &RenderingDevice::_draw_list_begin_bind, DEFVAL(DRAW_DEFAULT_ALL), DEFVAL(Vector<Color>()), DEFVAL(1.0), DEFVAL(0), DEFVAL(Rect2()), DEFVAL(0));
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("draw_list_begin_split", "framebuffer", "splits", "initial_color_action", "final_color_action", "initial_depth_action", "final_depth_action", "clear_color_values", "clear_depth", "clear_stencil", "region", "storage_textures"), &RenderingDevice::_draw_list_begin_split, DEFVAL(Vector<Color>()), DEFVAL(1.0), DEFVAL(0), DEFVAL(Rect2()), DEFVAL(TypedArray<RID>()));
-#endif
 
 	ClassDB::bind_method(D_METHOD("draw_list_set_blend_constants", "draw_list", "color"), &RenderingDevice::draw_list_set_blend_constants);
 	ClassDB::bind_method(D_METHOD("draw_list_bind_render_pipeline", "draw_list", "render_pipeline"), &RenderingDevice::draw_list_bind_render_pipeline);
@@ -9423,9 +9382,6 @@ void RenderingDevice::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("draw_list_disable_scissor", "draw_list"), &RenderingDevice::draw_list_disable_scissor);
 
 	ClassDB::bind_method(D_METHOD("draw_list_switch_to_next_pass"), &RenderingDevice::draw_list_switch_to_next_pass);
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("draw_list_switch_to_next_pass_split", "splits"), &RenderingDevice::_draw_list_switch_to_next_pass_split);
-#endif
 
 	ClassDB::bind_method(D_METHOD("draw_list_end"), &RenderingDevice::draw_list_end);
 
@@ -9460,19 +9416,11 @@ void RenderingDevice::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("submit"), &RenderingDevice::submit);
 	ClassDB::bind_method(D_METHOD("sync"), &RenderingDevice::sync);
 
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("barrier", "from", "to"), &RenderingDevice::barrier, DEFVAL(BARRIER_MASK_ALL_BARRIERS), DEFVAL(BARRIER_MASK_ALL_BARRIERS));
-	ClassDB::bind_method(D_METHOD("full_barrier"), &RenderingDevice::full_barrier);
-#endif
-
 	ClassDB::bind_method(D_METHOD("create_local_device"), &RenderingDevice::create_local_device);
 
 	ClassDB::bind_method(D_METHOD("set_resource_name", "id", "name"), &RenderingDevice::set_resource_name);
 
 	ClassDB::bind_method(D_METHOD("draw_command_begin_label", "name", "color"), &RenderingDevice::_draw_command_begin_label);
-#ifndef DISABLE_DEPRECATED
-	ClassDB::bind_method(D_METHOD("draw_command_insert_label", "name", "color"), &RenderingDevice::draw_command_insert_label);
-#endif
 	ClassDB::bind_method(D_METHOD("draw_command_end_label"), &RenderingDevice::draw_command_end_label);
 
 	ClassDB::bind_method(D_METHOD("get_device_vendor_name"), &RenderingDevice::get_device_vendor_name);
@@ -9517,21 +9465,6 @@ void RenderingDevice::_bind_methods() {
 	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_BUFFER);
 	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_COMPUTE_PIPELINE);
 	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_RENDER_PIPELINE);
-#ifndef DISABLE_DEPRECATED
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_DEVICE);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_PHYSICAL_DEVICE);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_INSTANCE);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_QUEUE);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_QUEUE_FAMILY_INDEX);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_IMAGE);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_IMAGE_VIEW);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_IMAGE_NATIVE_TEXTURE_FORMAT);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_SAMPLER);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_DESCRIPTOR_SET);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_BUFFER);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_COMPUTE_PIPELINE);
-	BIND_ENUM_CONSTANT(DRIVER_RESOURCE_VULKAN_RENDER_PIPELINE);
-#endif
 
 	BIND_ENUM_CONSTANT(DATA_FORMAT_R4G4_UNORM_PACK8);
 	BIND_ENUM_CONSTANT(DATA_FORMAT_R4G4B4A4_UNORM_PACK16);
@@ -9767,16 +9700,6 @@ void RenderingDevice::_bind_methods() {
 	BIND_ENUM_CONSTANT(DATA_FORMAT_ASTC_12x12_SFLOAT_BLOCK);
 	BIND_ENUM_CONSTANT(DATA_FORMAT_MAX);
 
-#ifndef DISABLE_DEPRECATED
-	BIND_BITFIELD_FLAG(BARRIER_MASK_VERTEX);
-	BIND_BITFIELD_FLAG(BARRIER_MASK_FRAGMENT);
-	BIND_BITFIELD_FLAG(BARRIER_MASK_COMPUTE);
-	BIND_BITFIELD_FLAG(BARRIER_MASK_TRANSFER);
-	BIND_BITFIELD_FLAG(BARRIER_MASK_RASTER);
-	BIND_BITFIELD_FLAG(BARRIER_MASK_ALL_BARRIERS);
-	BIND_BITFIELD_FLAG(BARRIER_MASK_NO_BARRIER);
-#endif
-
 	BIND_ENUM_CONSTANT(TEXTURE_TYPE_1D);
 	BIND_ENUM_CONSTANT(TEXTURE_TYPE_2D);
 	BIND_ENUM_CONSTANT(TEXTURE_TYPE_3D);
@@ -9974,24 +9897,6 @@ void RenderingDevice::_bind_methods() {
 	BIND_BITFIELD_FLAG(DYNAMIC_STATE_STENCIL_COMPARE_MASK);
 	BIND_BITFIELD_FLAG(DYNAMIC_STATE_STENCIL_WRITE_MASK);
 	BIND_BITFIELD_FLAG(DYNAMIC_STATE_STENCIL_REFERENCE);
-
-#ifndef DISABLE_DEPRECATED
-	BIND_ENUM_CONSTANT(INITIAL_ACTION_LOAD);
-	BIND_ENUM_CONSTANT(INITIAL_ACTION_CLEAR);
-	BIND_ENUM_CONSTANT(INITIAL_ACTION_DISCARD);
-	BIND_ENUM_CONSTANT(INITIAL_ACTION_MAX);
-	BIND_ENUM_CONSTANT(INITIAL_ACTION_CLEAR_REGION);
-	BIND_ENUM_CONSTANT(INITIAL_ACTION_CLEAR_REGION_CONTINUE);
-	BIND_ENUM_CONSTANT(INITIAL_ACTION_KEEP);
-	BIND_ENUM_CONSTANT(INITIAL_ACTION_DROP);
-	BIND_ENUM_CONSTANT(INITIAL_ACTION_CONTINUE);
-
-	BIND_ENUM_CONSTANT(FINAL_ACTION_STORE);
-	BIND_ENUM_CONSTANT(FINAL_ACTION_DISCARD);
-	BIND_ENUM_CONSTANT(FINAL_ACTION_MAX);
-	BIND_ENUM_CONSTANT(FINAL_ACTION_READ);
-	BIND_ENUM_CONSTANT(FINAL_ACTION_CONTINUE);
-#endif
 
 	BIND_ENUM_CONSTANT(SHADER_STAGE_VERTEX);
 	BIND_ENUM_CONSTANT(SHADER_STAGE_FRAGMENT);
@@ -10489,16 +10394,6 @@ RID RenderingDevice::_raytracing_pipeline_create(const TypedArray<RDPipelineShad
 			hit_groups,
 			p_max_trace_recursion_depth);
 }
-
-#ifndef DISABLE_DEPRECATED
-Vector<int64_t> RenderingDevice::_draw_list_begin_split(RID p_framebuffer, uint32_t p_splits, InitialAction p_initial_color_action, FinalAction p_final_color_action, InitialAction p_initial_depth_action, FinalAction p_final_depth_action, const Vector<Color> &p_clear_color_values, float p_clear_depth, uint32_t p_clear_stencil, const Rect2 &p_region, const TypedArray<RID> &p_storage_textures) {
-	ERR_FAIL_V_MSG(Vector<int64_t>(), "Deprecated. Split draw lists are used automatically by RenderingDevice.");
-}
-
-Vector<int64_t> RenderingDevice::_draw_list_switch_to_next_pass_split(uint32_t p_splits) {
-	ERR_FAIL_V_MSG(Vector<int64_t>(), "Deprecated. Split draw lists are used automatically by RenderingDevice.");
-}
-#endif
 
 void RenderingDevice::_draw_list_set_push_constant(DrawListID p_list, const Vector<uint8_t> &p_data, uint32_t p_data_size) {
 	ERR_FAIL_COND(p_data_size > (uint32_t)p_data.size());

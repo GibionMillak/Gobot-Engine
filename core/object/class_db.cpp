@@ -65,7 +65,6 @@ ClassDB::APIType ClassDB::get_current_api() {
 
 HashMap<StringName, ClassDB::ClassInfo> ClassDB::classes;
 HashMap<StringName, StringName> ClassDB::resource_base_extensions;
-HashMap<StringName, StringName> ClassDB::compat_classes;
 
 #ifdef TOOLS_ENABLED
 HashMap<StringName, ObjectGDExtension> ClassDB::placeholder_extensions;
@@ -339,18 +338,6 @@ bool ClassDB::get_inheritance_chain_nocheck(const StringName &p_class, Vector<St
 	return true;
 }
 
-StringName ClassDB::get_compatibility_remapped_class(const StringName &p_class) {
-	if (classes.has(p_class)) {
-		return p_class;
-	}
-
-	if (compat_classes.has(p_class)) {
-		return compat_classes[p_class];
-	}
-
-	return p_class;
-}
-
 StringName ClassDB::_get_parent_class(const StringName &p_class) {
 	ClassInfo *ti = classes.getptr(p_class);
 	ERR_FAIL_NULL_V_MSG(ti, StringName(), vformat("Cannot get class '%s'.", String(p_class)));
@@ -515,39 +502,13 @@ bool ClassDB::class_exists(const StringName &p_class) {
 	return classes.has(p_class);
 }
 
-void ClassDB::add_compatibility_class(const StringName &p_class, const StringName &p_fallback) {
-	Locker::Lock lock(Locker::STATE_WRITE);
-	compat_classes[p_class] = p_fallback;
-}
-
-StringName ClassDB::get_compatibility_class(const StringName &p_class) {
-	if (compat_classes.has(p_class)) {
-		return compat_classes[p_class];
-	}
-	return StringName();
-}
-
 Object *ClassDB::_instantiate_from_gdextension(ObjectGDExtension *p_object_gd_extension, bool p_notify_postinitialize, bool p_with_refcount) {
 	if (p_with_refcount) {
 		if (p_object_gd_extension->create_instance3 != nullptr) {
 			// Caller expects refcount=1, creation func returns with refcount=1. It's a match.
 			return (Object *)p_object_gd_extension->create_instance3(p_object_gd_extension->class_userdata, p_notify_postinitialize);
 		}
-#ifndef DISABLE_DEPRECATED
-		Object *object = (Object *)p_object_gd_extension->create_instance2(p_object_gd_extension->class_userdata, p_notify_postinitialize);
-		if (object != nullptr && object->is_ref_counted()) {
-			// Caller expects a refcount, creation func didn't increment, so do it now.
-			((RefCounted *)object)->init_ref();
-		}
-		return object;
-#endif
 	} else {
-#ifndef DISABLE_DEPRECATED
-		if (p_object_gd_extension->create_instance2 != nullptr) {
-			// Caller expects no refcount, creation func returns without refcount. It's a match.
-			return (Object *)p_object_gd_extension->create_instance2(p_object_gd_extension->class_userdata, p_notify_postinitialize);
-		}
-#endif
 		if (p_object_gd_extension->create_instance3 != nullptr) {
 			Object *object = (Object *)p_object_gd_extension->create_instance3(p_object_gd_extension->class_userdata, p_notify_postinitialize);
 			if (object != nullptr && object->is_ref_counted()) {
@@ -567,19 +528,8 @@ Object *ClassDB::_instantiate_internal(const StringName &p_class, bool p_require
 	{
 		Locker::Lock lock(Locker::STATE_READ);
 		ti = classes.getptr(p_class);
-		if (!_can_instantiate(ti, p_exposed_only)) {
-			if (compat_classes.has(p_class)) {
-				ti = classes.getptr(compat_classes[p_class]);
-			}
-		}
 		ERR_FAIL_NULL_V_MSG(ti, nullptr, vformat("Cannot get class '%s'.", String(p_class)));
 		ERR_FAIL_COND_V_MSG(ti->disabled, nullptr, vformat("Class '%s' is disabled.", String(p_class)));
-#ifndef DISABLE_DEPRECATED
-		// Force legacy unexposed classes to skip the exposed check to preserve backcompat.
-		if (ti->gdextension && ti->gdextension->legacy_unexposed_class) {
-			p_exposed_only = false;
-		}
-#endif // DISABLE_DEPRECATED
 		if (p_exposed_only) {
 			ERR_FAIL_COND_V_MSG(!ti->exposed, nullptr, vformat("Class '%s' isn't exposed.", String(p_class)));
 		}
@@ -601,11 +551,6 @@ Object *ClassDB::_instantiate_internal(const StringName &p_class, bool p_require
 			if (ti->gdextension->create_instance3) {
 				can_create_placeholder = true;
 			}
-#ifndef DISABLE_DEPRECATED
-			else if (ti->gdextension->create_instance || ti->gdextension->create_instance2) {
-				can_create_placeholder = true;
-			}
-#endif // DISABLE_DEPRECATED
 		} else if (!ti->inherits_ptr || !ti->inherits_ptr->creation_func) {
 			ERR_PRINT(vformat("Cannot make a placeholder instance of runtime class %s because its parent cannot be constructed.", ti->gdtype->get_name()));
 		} else {
@@ -623,15 +568,6 @@ Object *ClassDB::_instantiate_internal(const StringName &p_class, bool p_require
 		ObjectGDExtension *extension = ti->gdextension;
 		return _instantiate_from_gdextension(extension, p_notify_postinitialize, p_with_refcount);
 	}
-#ifndef DISABLE_DEPRECATED
-	else if (ti->gdextension && ti->gdextension->create_instance2) {
-		ObjectGDExtension *extension = ti->gdextension;
-		return _instantiate_from_gdextension(extension, p_notify_postinitialize, p_with_refcount);
-	} else if (ti->gdextension && ti->gdextension->create_instance) {
-		ObjectGDExtension *extension = ti->gdextension;
-		return (Object *)extension->create_instance(extension->class_userdata);
-	}
-#endif // DISABLE_DEPRECATED
 	else {
 		Object *object = ti->creation_func(p_notify_postinitialize);
 		if (p_with_refcount && object != nullptr && object->is_ref_counted()) {
@@ -647,13 +583,6 @@ bool ClassDB::_can_instantiate(ClassInfo *p_class_info, bool p_exposed_only) {
 	if (!p_class_info) {
 		return false;
 	}
-
-#ifndef DISABLE_DEPRECATED
-	// Force legacy unexposed classes to skip the exposed check to preserve backcompat.
-	if (p_class_info->gdextension && p_class_info->gdextension->legacy_unexposed_class) {
-		p_exposed_only = false;
-	}
-#endif // DISABLE_DEPRECATED
 
 	if (p_exposed_only && !p_class_info->exposed) {
 		return false;
@@ -671,15 +600,6 @@ bool ClassDB::_can_instantiate(ClassInfo *p_class_info, bool p_exposed_only) {
 		return true;
 	}
 
-#ifndef DISABLE_DEPRECATED
-	if (p_class_info->gdextension->create_instance2) {
-		return true;
-	}
-
-	if (p_class_info->gdextension->create_instance) {
-		return true;
-	}
-#endif //  DISABLE_DEPRECATED
 	return false;
 }
 
@@ -710,11 +630,6 @@ ObjectGDExtension *ClassDB::get_placeholder_extension(const StringName &p_class)
 	{
 		Locker::Lock lock(Locker::STATE_READ);
 		ti = classes.getptr(p_class);
-		if (!_can_instantiate(ti)) {
-			if (compat_classes.has(p_class)) {
-				ti = classes.getptr(compat_classes[p_class]);
-			}
-		}
 		ERR_FAIL_NULL_V_MSG(ti, nullptr, vformat("Cannot get class '%s'.", String(p_class)));
 		ERR_FAIL_COND_V_MSG(ti->disabled, nullptr, vformat("Class '%s' is disabled.", String(p_class)));
 	}
@@ -760,10 +675,6 @@ ObjectGDExtension *ClassDB::get_placeholder_extension(const StringName &p_class)
 	placeholder_extension->property_can_revert = &PlaceholderExtensionInstance::placeholder_instance_property_can_revert;
 	placeholder_extension->property_get_revert = &PlaceholderExtensionInstance::placeholder_instance_property_get_revert;
 	placeholder_extension->validate_property = &PlaceholderExtensionInstance::placeholder_instance_validate_property;
-#ifndef DISABLE_DEPRECATED
-	placeholder_extension->notification = nullptr;
-	placeholder_extension->free_property_list = nullptr;
-#endif // DISABLE_DEPRECATED
 	placeholder_extension->notification2 = &PlaceholderExtensionInstance::placeholder_instance_notification;
 	placeholder_extension->to_string = &PlaceholderExtensionInstance::placeholder_instance_to_string;
 	placeholder_extension->reference = &PlaceholderExtensionInstance::placeholder_instance_reference;
@@ -771,16 +682,8 @@ ObjectGDExtension *ClassDB::get_placeholder_extension(const StringName &p_class)
 	placeholder_extension->get_rid = &PlaceholderExtensionInstance::placeholder_instance_get_rid;
 
 	placeholder_extension->class_userdata = ti;
-#ifndef DISABLE_DEPRECATED
-	placeholder_extension->create_instance = nullptr;
-	placeholder_extension->create_instance2 = nullptr;
-#endif // DISABLE_DEPRECATED
 	placeholder_extension->create_instance3 = &PlaceholderExtensionInstance::placeholder_class_create_instance;
 	placeholder_extension->free_instance = &PlaceholderExtensionInstance::placeholder_class_free_instance;
-#ifndef DISABLE_DEPRECATED
-	placeholder_extension->get_virtual = nullptr;
-	placeholder_extension->get_virtual_call_data = nullptr;
-#endif // DISABLE_DEPRECATED
 	placeholder_extension->get_virtual2 = &PlaceholderExtensionInstance::placeholder_class_get_virtual;
 	placeholder_extension->get_virtual_call_data2 = nullptr;
 	placeholder_extension->call_virtual_with_data = nullptr;
@@ -805,11 +708,6 @@ void ClassDB::set_object_extension_instance(Object *p_object, const StringName &
 	{
 		Locker::Lock lock(Locker::STATE_READ);
 		ti = classes.getptr(p_class);
-		if (!_can_instantiate(ti)) {
-			if (compat_classes.has(p_class)) {
-				ti = classes.getptr(compat_classes[p_class]);
-			}
-		}
 		ERR_FAIL_NULL_MSG(ti, vformat("Cannot get class '%s'.", String(p_class)));
 		ERR_FAIL_COND_MSG(ti->disabled, vformat("Class '%s' is disabled.", String(p_class)));
 		ERR_FAIL_NULL_MSG(ti->gdextension, vformat("Class '%s' has no native extension.", String(p_class)));
@@ -852,11 +750,7 @@ bool ClassDB::is_abstract(const StringName &p_class) {
 	if (!ti->gdextension) {
 		return true;
 	}
-#ifndef DISABLE_DEPRECATED
-	return ti->gdextension->create_instance3 == nullptr && ti->gdextension->create_instance2 == nullptr && ti->gdextension->create_instance == nullptr;
-#else
 	return ti->gdextension->create_instance3 == nullptr;
-#endif //  DISABLE_DEPRECATED
 }
 
 bool ClassDB::is_virtual(const StringName &p_class) {
@@ -948,7 +842,7 @@ void ClassDB::get_method_list(const StringName &p_class, List<MethodInfo> *p_met
 #endif
 }
 
-void ClassDB::get_method_list_with_compatibility(const StringName &p_class, List<Pair<MethodInfo, uint32_t>> *p_methods, bool p_no_inheritance) {
+void ClassDB::get_method_list_with_hashes(const StringName &p_class, List<Pair<MethodInfo, uint32_t>> *p_methods, bool p_no_inheritance) {
 	Locker::Lock lock(Locker::STATE_READ);
 
 	ClassInfo *type = classes.getptr(p_class);
@@ -974,14 +868,6 @@ void ClassDB::get_method_list_with_compatibility(const StringName &p_class, List
 			p_methods->push_back(pair);
 		}
 #endif
-		for (const KeyValue<StringName, LocalVector<MethodBind *, unsigned int, false, false>> &E : type->gdtype->get_self_compatibility_method_map()) {
-			LocalVector<MethodBind *> compat(E.value);
-			for (MethodBind *method : compat) {
-				MethodInfo minfo = info_from_bind(method);
-
-				p_methods->push_back(Pair<MethodInfo, uint32_t>(minfo, method->get_hash()));
-			}
-		}
 
 		if (p_no_inheritance) {
 			break;
@@ -1051,26 +937,7 @@ const MethodBind *ClassDB::get_method(const StringName &p_class, const StringNam
 	return member && member->type == GDType::Member::Type::METHOD ? member->payload.method : nullptr;
 }
 
-Vector<uint32_t> ClassDB::get_method_compatibility_hashes(const StringName &p_class, const StringName &p_name) {
-	Locker::Lock lock(Locker::STATE_READ);
-
-	ClassInfo *type = classes.getptr(p_class);
-
-	while (type) {
-		if (type->gdtype->get_self_compatibility_method_map().has(p_name)) {
-			const LocalVector<MethodBind *> *c = type->gdtype->get_self_compatibility_method_map().getptr(p_name);
-			Vector<uint32_t> ret;
-			for (uint32_t i = 0; i < c->size(); i++) {
-				ret.push_back((*c)[i]->get_hash());
-			}
-			return ret;
-		}
-		type = type->inherits_ptr;
-	}
-	return Vector<uint32_t>();
-}
-
-const MethodBind *ClassDB::get_method_with_compatibility(const StringName &p_class, const StringName &p_name, uint64_t p_hash, bool *r_method_exists, bool *r_is_deprecated) {
+const MethodBind *ClassDB::get_method_by_hash(const StringName &p_class, const StringName &p_name, uint64_t p_hash, bool *r_method_exists) {
 	Locker::Lock lock(Locker::STATE_READ);
 
 	ClassInfo *type = classes.getptr(p_class);
@@ -1086,20 +953,6 @@ const MethodBind *ClassDB::get_method_with_compatibility(const StringName &p_cla
 			}
 		}
 
-		const LocalVector<MethodBind *> *compat = type->gdtype->get_self_compatibility_method_map().getptr(p_name);
-		if (compat) {
-			if (r_method_exists) {
-				*r_method_exists = true;
-			}
-			for (uint32_t i = 0; i < compat->size(); i++) {
-				if ((*compat)[i]->get_hash() == p_hash) {
-					if (r_is_deprecated) {
-						*r_is_deprecated = true;
-					}
-					return (*compat)[i];
-				}
-			}
-		}
 		type = type->inherits_ptr;
 	}
 	return nullptr;
@@ -1558,13 +1411,10 @@ int ClassDB::get_method_argument_count(const StringName &p_class, const StringNa
 }
 
 void ClassDB::bind_method_custom(const StringName &p_class, MethodBind *p_method, bool p_take_ownership) {
-	_bind_method_custom(p_class, p_method, false, p_take_ownership);
-}
-void ClassDB::bind_compatibility_method_custom(const StringName &p_class, MethodBind *p_method) {
-	_bind_method_custom(p_class, p_method, true);
+	_bind_method_custom(p_class, p_method, p_take_ownership);
 }
 
-void ClassDB::_bind_method_custom(const StringName &p_class, MethodBind *p_method, bool p_compatibility, bool p_take_ownership) {
+void ClassDB::_bind_method_custom(const StringName &p_class, MethodBind *p_method, bool p_take_ownership) {
 	Locker::Lock lock(Locker::STATE_WRITE);
 
 	StringName method_name = p_method->get_name();
@@ -1575,14 +1425,10 @@ void ClassDB::_bind_method_custom(const StringName &p_class, MethodBind *p_metho
 		ERR_FAIL_MSG(vformat("Couldn't bind custom method '%s' for instance '%s'.", method_name, p_class));
 	}
 
-	if (p_compatibility) {
-		type->gdtype->bind_compatibility_method(p_method);
-	} else {
-		type->gdtype->bind_method(p_method, p_take_ownership);
-	}
+	type->gdtype->bind_method(p_method, p_take_ownership);
 }
 
-MethodBind *ClassDB::_bind_vararg_method(MethodBind *p_bind, const StringName &p_name, const Vector<Variant> &p_default_args, bool p_compatibility) {
+MethodBind *ClassDB::_bind_vararg_method(MethodBind *p_bind, const StringName &p_name, const Vector<Variant> &p_default_args) {
 	MethodBind *bind = p_bind;
 	bind->set_name(p_name);
 	bind->set_default_arguments(p_default_args);
@@ -1595,18 +1441,14 @@ MethodBind *ClassDB::_bind_vararg_method(MethodBind *p_bind, const StringName &p
 		ERR_FAIL_NULL_V(type, nullptr);
 	}
 
-	if (p_compatibility) {
-		return type->gdtype->bind_compatibility_method(bind) ? bind : nullptr;
-	} else {
-		return type->gdtype->bind_method(bind) ? bind : nullptr;
-	}
+	return type->gdtype->bind_method(bind) ? bind : nullptr;
 }
 
 #ifdef DEBUG_ENABLED
-MethodBind *ClassDB::bind_methodfi(uint32_t p_flags, MethodBind *p_bind, bool p_compatibility, const MethodDefinition &p_method_name, const Variant **p_defs, int p_defcount) {
+MethodBind *ClassDB::bind_methodfi(uint32_t p_flags, MethodBind *p_bind, const MethodDefinition &p_method_name, const Variant **p_defs, int p_defcount) {
 	StringName mdname = p_method_name.name;
 #else
-MethodBind *ClassDB::bind_methodfi(uint32_t p_flags, MethodBind *p_bind, bool p_compatibility, const char *p_method_name, const Variant **p_defs, int p_defcount) {
+MethodBind *ClassDB::bind_methodfi(uint32_t p_flags, MethodBind *p_bind, const char *p_method_name, const Variant **p_defs, int p_defcount) {
 	StringName mdname = StringName(p_method_name);
 #endif // DEBUG_ENABLED
 
@@ -1618,7 +1460,7 @@ MethodBind *ClassDB::bind_methodfi(uint32_t p_flags, MethodBind *p_bind, bool p_
 
 #ifdef DEBUG_ENABLED
 
-	ERR_FAIL_COND_V_MSG(!p_compatibility && has_method(instance_type, mdname), nullptr, vformat("Class '%s' already has a method '%s'.", String(instance_type), String(mdname)));
+	ERR_FAIL_COND_V_MSG(has_method(instance_type, mdname), nullptr, vformat("Class '%s' already has a method '%s'.", String(instance_type), String(mdname)));
 #endif // DEBUG_ENABLED
 
 	ClassInfo *type = classes.getptr(instance_type);
@@ -1642,14 +1484,8 @@ MethodBind *ClassDB::bind_methodfi(uint32_t p_flags, MethodBind *p_bind, bool p_
 	p_bind->set_argument_names(p_method_name.args);
 #endif // DEBUG_ENABLED
 
-	if (p_compatibility) {
-		if (!type->gdtype->bind_compatibility_method(p_bind)) {
-			return nullptr;
-		}
-	} else {
-		if (!type->gdtype->bind_method(p_bind)) {
-			return nullptr;
-		}
+	if (!type->gdtype->bind_method(p_bind)) {
+		return nullptr;
 	}
 
 	Vector<Variant> defvals;
@@ -1698,22 +1534,6 @@ void ClassDB::add_virtual_method(const StringName &p_class, const MethodInfo &p_
 #endif // DEBUG_ENABLED
 }
 
-void ClassDB::add_virtual_compatibility_method(const StringName &p_class, const MethodInfo &p_method, bool p_virtual, const Vector<String> &p_arg_names, bool p_object_core) {
-	ERR_FAIL_COND_MSG(!classes.has(p_class), vformat("Request for nonexistent class '%s'.", p_class));
-
-	Locker::Lock lock(Locker::STATE_WRITE);
-
-	HashMap<StringName, Vector<uint32_t>> &virtual_methods_compat = classes[p_class].virtual_methods_compat;
-
-	Vector<uint32_t> *compat_hashes = virtual_methods_compat.getptr(p_method.name);
-	if (!compat_hashes) {
-		virtual_methods_compat[p_method.name] = Vector<uint32_t>();
-		compat_hashes = &virtual_methods_compat[p_method.name];
-	}
-
-	compat_hashes->push_back(p_method.get_compatibility_hash());
-}
-
 void ClassDB::get_virtual_methods(const StringName &p_class, List<MethodInfo> *p_methods, bool p_no_inheritance) {
 	ERR_FAIL_COND_MSG(!classes.has(p_class), vformat("Request for nonexistent class '%s'.", p_class));
 
@@ -1733,25 +1553,6 @@ void ClassDB::get_virtual_methods(const StringName &p_class, List<MethodInfo> *p
 	}
 
 #endif // DEBUG_ENABLED
-}
-
-Vector<uint32_t> ClassDB::get_virtual_method_compatibility_hashes(const StringName &p_class, const StringName &p_name) {
-	Locker::Lock lock(Locker::STATE_READ);
-
-	ClassInfo *type = classes.getptr(p_class);
-
-	while (type) {
-		if (type->virtual_methods_compat.has(p_name)) {
-			Vector<uint32_t> *compat_hashes = type->virtual_methods_compat.getptr(p_name);
-			if (compat_hashes) {
-				return *compat_hashes;
-			}
-			break;
-		}
-		type = type->inherits_ptr;
-	}
-
-	return Vector<uint32_t>();
 }
 
 void ClassDB::add_extension_class_virtual_method(const StringName &p_class, const GDExtensionClassVirtualMethodInfo *p_method_info) {
@@ -1787,11 +1588,6 @@ bool ClassDB::is_class_enabled(const StringName &p_class) {
 	Locker::Lock lock(Locker::STATE_READ);
 
 	ClassInfo *ti = classes.getptr(p_class);
-	if (!ti || !ti->creation_func) {
-		if (compat_classes.has(p_class)) {
-			ti = classes.getptr(compat_classes[p_class]);
-		}
-	}
 
 	ERR_FAIL_NULL_V_MSG(ti, false, vformat("Cannot get class '%s'.", String(p_class)));
 	return !ti->disabled;
@@ -2061,7 +1857,6 @@ void ClassDB::cleanup() {
 
 	classes.clear();
 	resource_base_extensions.clear();
-	compat_classes.clear();
 	native_structs.clear();
 
 	for (GDType **type : gdtype_autorelease_pool) {

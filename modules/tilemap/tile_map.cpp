@@ -29,7 +29,6 @@
 /**************************************************************************/
 
 #include "tile_map.h"
-#include "tile_map.compat.inc"
 
 #include "core/config/engine.h"
 #include "core/io/marshalls.h"
@@ -71,9 +70,6 @@ void TileMap::_emit_changed() {
 void TileMap::_set_tile_map_data_using_compatibility_format(int p_layer, TileMapDataFormat p_format, const Vector<int> &p_data) {
 	ERR_FAIL_INDEX(p_layer, (int)layers.size());
 	ERR_FAIL_COND(p_format >= TileMapDataFormat::TILE_MAP_DATA_FORMAT_MAX);
-#ifndef DISABLE_DEPRECATED
-	ERR_FAIL_COND_MSG(p_format != (TileMapDataFormat)(TILE_MAP_DATA_FORMAT_MAX - 1), "Old TileMap data format detected despite DISABLE_DEPRECATED being set compilation time.");
-#endif // DISABLE_DEPRECATED
 
 	// Set data for a given tile from raw data.
 	int c = p_data.size();
@@ -103,35 +99,6 @@ void TileMap::_set_tile_map_data_using_compatibility_format(int p_layer, TileMap
 			uint16_t alternative_tile = decode_uint16(&local[10]);
 			layers[p_layer]->set_cell(Vector2i(x, y), source_id, Vector2i(atlas_coords_x, atlas_coords_y), alternative_tile);
 		} else {
-#ifndef DISABLE_DEPRECATED
-			// Previous decated format.
-			uint32_t v = decode_uint32(&local[4]);
-			// Extract the transform flags that used to be in the tilemap.
-			bool flip_h = v & (1UL << 29);
-			bool flip_v = v & (1UL << 30);
-			bool transpose = v & (1UL << 31);
-			v &= (1UL << 29) - 1;
-
-			// Extract autotile/atlas coords.
-			int16_t coord_x = 0;
-			int16_t coord_y = 0;
-			if (p_format == TileMapDataFormat::TILE_MAP_DATA_FORMAT_2) {
-				coord_x = decode_uint16(&local[8]);
-				coord_y = decode_uint16(&local[10]);
-			}
-
-			if (tile_set.is_valid()) {
-				Array a = tile_set->compatibility_tilemap_map(v, Vector2i(coord_x, coord_y), flip_h, flip_v, transpose);
-				if (a.size() == 3) {
-					layers[p_layer]->set_cell(Vector2i(x, y), a[0], a[1], a[2]);
-				} else {
-					ERR_PRINT(vformat("No valid tile in Tileset for: tile:%s coords:%s flip_h:%s flip_v:%s transpose:%s", v, Vector2i(coord_x, coord_y), flip_h, flip_v, transpose));
-				}
-			} else {
-				int compatibility_alternative_tile = ((int)flip_h) + ((int)flip_v << 1) + ((int)transpose << 2);
-				layers[p_layer]->set_cell(Vector2i(x, y), v, Vector2i(coord_x, coord_y), compatibility_alternative_tile);
-			}
-#endif // DISABLE_DEPRECATED
 		}
 	}
 }
@@ -204,14 +171,6 @@ void TileMap::_notification(int p_what) {
 		} break;
 	}
 }
-
-#ifndef DISABLE_DEPRECATED
-// Deprecated methods.
-void TileMap::force_update(int p_layer) {
-	notify_runtime_tile_data_update(p_layer);
-	update_internals();
-}
-#endif // DISABLE_DEPRECATED
 
 void TileMap::set_rendering_quadrant_size(int p_size) {
 	ERR_FAIL_COND_MSG(p_size < 1, "TileMapQuadrant size cannot be smaller than 1.");
@@ -684,12 +643,6 @@ bool TileMap::_set(const StringName &p_name, const Variant &p_value) {
 			return true;
 		}
 	}
-#ifndef DISABLE_DEPRECATED
-	else if (sname == "cell_quadrant_size") {
-		set_rendering_quadrant_size(p_value);
-		return true;
-	}
-#endif // DISABLE_DEPRECATED
 	else if (property_helper.is_property_valid(sname, &index)) {
 		if (index >= (int)layers.size()) {
 			while (index >= (int)layers.size()) {
@@ -724,12 +677,6 @@ bool TileMap::_get(const StringName &p_name, Variant &r_ret) const {
 		r_ret = TileMapDataFormat::TILE_MAP_DATA_FORMAT_MAX - 1; // When saving, always save highest format.
 		return true;
 	}
-#ifndef DISABLE_DEPRECATED
-	else if (sname == "cell_quadrant_size") { // Kept for compatibility reasons.
-		r_ret = get_rendering_quadrant_size();
-		return true;
-	}
-#endif // DISABLE_DEPRECATED
 	else {
 		return property_helper.property_get_value(sname, r_ret);
 	}
@@ -893,13 +840,6 @@ PackedStringArray TileMap::get_configuration_warnings() const {
 }
 
 void TileMap::_bind_methods() {
-#ifndef DISABLE_DEPRECATED
-#ifndef NAVIGATION_2D_DISABLED
-	ClassDB::bind_method(D_METHOD("set_navigation_map", "layer", "map"), &TileMap::set_layer_navigation_map);
-	ClassDB::bind_method(D_METHOD("get_navigation_map", "layer"), &TileMap::get_layer_navigation_map);
-#endif // NAVIGATION_2D_DISABLED
-	ClassDB::bind_method(D_METHOD("force_update", "layer"), &TileMap::force_update, DEFVAL(-1));
-#endif // DISABLE_DEPRECATED
 
 	ClassDB::bind_method(D_METHOD("set_tileset", "tileset"), &TileMap::set_tileset);
 	ClassDB::bind_method(D_METHOD("get_tileset"), &TileMap::get_tileset);

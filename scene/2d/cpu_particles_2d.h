@@ -217,12 +217,6 @@ protected:
 #endif
 	void _validate_property(PropertyInfo &p_property) const;
 
-#ifndef DISABLE_DEPRECATED
-	void _restart_bind_compat_92089();
-	void _request_particles_process_bind_compat_109142(real_t p_time);
-	static void _bind_compatibility_methods();
-#endif
-
 public:
 	void set_emitting(bool p_emitting);
 	void set_amount(int p_amount);

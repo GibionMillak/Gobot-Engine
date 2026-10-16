@@ -51,7 +51,6 @@ void initialize_noise_module(ModuleInitializationLevel p_level) {
 		GDREGISTER_CLASS(NoiseTexture2D);
 		GDREGISTER_ABSTRACT_CLASS(Noise);
 		GDREGISTER_CLASS(FastNoiseLite);
-		ClassDB::add_compatibility_class("NoiseTexture", "NoiseTexture2D");
 	}
 
 #ifdef TOOLS_ENABLED

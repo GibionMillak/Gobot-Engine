@@ -21,7 +21,7 @@ proto = """#define GDVIRTUAL$VER($ALIAS $RET m_name $ARG)\\
 		$SCRIPTCALL\\
 		if (_get_extension()) {\\
 			if (unlikely(!_gdvirtual_##$VARNAME)) {\\
-			    _gdvirtual_init_method_ptr(_gdvirtual_##$VARNAME##_get_method_info().get_compatibility_hash(), _gdvirtual_##$VARNAME, _gdvirtual_##$VARNAME##_sn, $COMPAT);\\
+			    _gdvirtual_init_method_ptr(_gdvirtual_##$VARNAME##_get_method_info().get_compatibility_hash(), _gdvirtual_##$VARNAME, _gdvirtual_##$VARNAME##_sn);\\
 			}\\
 			if (_gdvirtual_##$VARNAME != reinterpret_cast<void*>(_INVALID_GDVIRTUAL_FUNC_ADDR)) {\\
 				$CALLPTRARGS\\
@@ -45,7 +45,7 @@ proto = """#define GDVIRTUAL$VER($ALIAS $RET m_name $ARG)\\
 		$SCRIPTHASMETHOD\\
 		if (_get_extension()) {\\
 			if (unlikely(!_gdvirtual_##$VARNAME)) {\\
-			    _gdvirtual_init_method_ptr(_gdvirtual_##$VARNAME##_get_method_info().get_compatibility_hash(), _gdvirtual_##$VARNAME, _gdvirtual_##$VARNAME##_sn, $COMPAT);\\
+			    _gdvirtual_init_method_ptr(_gdvirtual_##$VARNAME##_get_method_info().get_compatibility_hash(), _gdvirtual_##$VARNAME, _gdvirtual_##$VARNAME##_sn);\\
 			}\\
 			if (_gdvirtual_##$VARNAME != reinterpret_cast<void*>(_INVALID_GDVIRTUAL_FUNC_ADDR)) {\\
 				return true;\\
@@ -63,15 +63,10 @@ proto = """#define GDVIRTUAL$VER($ALIAS $RET m_name $ARG)\\
 
 """
 
-
-def generate_version(argcount, const=False, returns=False, required=False, compat=False):
+def generate_version(argcount, const=False, returns=False, required=False):
     s = proto
-    if compat:
-        s = s.replace("$SCRIPTCALL", "")
-        s = s.replace("$SCRIPTHASMETHOD", "")
-    else:
-        s = s.replace("$SCRIPTCALL", script_call)
-        s = s.replace("$SCRIPTHASMETHOD", script_has_method)
+    s = s.replace("$SCRIPTCALL", script_call)
+    s = s.replace("$SCRIPTHASMETHOD", script_has_method)
 
     sproto = str(argcount)
     method_info = ""
@@ -105,15 +100,8 @@ def generate_version(argcount, const=False, returns=False, required=False, compa
     else:
         s = s.replace("\t\t$REQCHECK\\\n", "")
 
-    if compat:
-        sproto += "_COMPAT"
-        s = s.replace("$COMPAT", "true")
-        s = s.replace("$ALIAS", "m_alias,")
-        s = s.replace("$VARNAME", "m_alias")
-    else:
-        s = s.replace("$COMPAT", "false")
-        s = s.replace("$ALIAS ", "")
-        s = s.replace("$VARNAME", "m_name")
+    s = s.replace("$ALIAS ", "")
+    s = s.replace("$VARNAME", "m_name")
 
     s = s.replace("$METHOD_FLAGS", method_flags)
     s = s.replace("$VER", sproto)
@@ -231,10 +219,6 @@ _NO_INLINE_ inline void _gdvirtual_print_required_error(const Object *p_object, 
         txt += generate_version(i, False, True, True)
         txt += generate_version(i, True, False, True)
         txt += generate_version(i, True, True, True)
-        txt += generate_version(i, False, False, False, True)
-        txt += generate_version(i, False, True, False, True)
-        txt += generate_version(i, True, False, False, True)
-        txt += generate_version(i, True, True, False, True)
 
     with open(str(target[0]), "w", encoding="utf-8", newline="\n") as f:
         f.write(txt)

@@ -128,7 +128,6 @@ private:
 	Quaternion device_orientation;
 	Vector2 mouse_pos;
 	int64_t mouse_window = 0;
-	bool legacy_just_pressed_behavior = false;
 	bool disable_input = false;
 	bool ignore_joypad_on_unfocused_application = false;
 	bool application_focused = true;
@@ -346,11 +345,6 @@ private:
 	EventDispatchFunc event_dispatch_function = nullptr;
 
 	bool _should_ignore_joypad_events() const;
-
-#ifndef DISABLE_DEPRECATED
-	void _vibrate_handheld_bind_compat_91143(int p_duration_ms = 500);
-	static void _bind_compatibility_methods();
-#endif // DISABLE_DEPRECATED
 
 protected:
 	static void _bind_methods();

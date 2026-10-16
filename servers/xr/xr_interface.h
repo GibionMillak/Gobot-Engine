@@ -144,10 +144,6 @@ public:
 	virtual uint32_t get_view_count() = 0; /* returns the primary view count we need (1 is monoscopic, 2 is stereoscopic but can be more) */
 
 	// These methods are called from the rendering thread.
-#ifndef DISABLE_DEPRECATED
-	virtual Transform3D get_transform_for_view(uint32_t p_view, const Transform3D &p_cam_transform) { return Transform3D(); } /* Deprecated, get each views transform */
-	virtual Projection get_projection_for_view(uint32_t p_view, double p_aspect, double p_z_near, double p_z_far) { return Projection(); } /* Deprecated, get each view projection matrix */
-#endif
 	virtual RID get_color_texture(); /* obtain color output texture (if applicable) */
 	virtual RID get_depth_texture(); /* obtain depth output texture (if applicable, used for reprojection) */
 	virtual RID get_velocity_texture(); /* obtain velocity output texture (if applicable, used for spacewarp) */
