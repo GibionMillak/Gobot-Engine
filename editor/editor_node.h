@@ -105,6 +105,7 @@ class HistoryDock;
 class OrphanResourcesDialog;
 class ProgressDialog;
 class ProjectExportDialog;
+class ProjectPluginsDialog;
 class ProjectSettingsEditor;
 class SceneImportSettingsDialog;
 
@@ -170,6 +171,7 @@ public:
 
 		// Project menu.
 		PROJECT_OPEN_SETTINGS,
+		PROJECT_OPEN_PLUGINS,
 		PROJECT_FIND_IN_FILES,
 		PROJECT_REPLACE_IN_FILES,
 		PROJECT_VERSION_CONTROL,
@@ -282,6 +284,7 @@ private:
 	HistoryDock *history_dock = nullptr;
 
 	ProjectExportDialog *project_export = nullptr;
+	ProjectPluginsDialog *_project_plugins_dialog = nullptr;
 	ProjectSettingsEditor *project_settings_editor = nullptr;
 
 	FBXImporterManager *fbx_importer_manager = nullptr;
@@ -749,9 +752,6 @@ protected:
 	void _notification(int p_what);
 
 public:
-	// Public for use as signal callback.
-	void _on_plugin_ready(Object *p_script, const String &p_activate_name);
-
 	void init_plugins();
 
 	bool call_build();
@@ -814,6 +814,7 @@ public:
 	EditorSelection *get_editor_selection() { return editor_selection; }
 	EditorSelectionHistory *get_editor_selection_history() { return &editor_history; }
 
+	ProjectPluginsDialog *get_project_plugins_dialog() { return _project_plugins_dialog; }
 	ProjectSettingsEditor *get_project_settings() { return project_settings_editor; }
 
 	void trigger_menu_option(int p_option, bool p_confirmed);

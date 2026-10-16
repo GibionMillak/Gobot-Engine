@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_plugin_settings.h                                              */
+/*  config_plugin_dialog.h                                                */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,43 +30,53 @@
 
 #pragma once
 
-#include "editor/plugins/plugin_config_dialog.h"
+#include "scene/gui/dialogs.h"
 
-class TextureRect;
-class Tree;
+class EditorValidationPanel;
+class Label;
+class LineEdit;
+class OptionButton;
+class ScriptLanguage;
+class TextEdit;
 
-class EditorPluginSettings : public VBoxContainer {
-	GDCLASS(EditorPluginSettings, VBoxContainer);
-
-	enum {
-		BUTTON_PLUGIN_EDIT
-	};
-
-	enum {
-		COLUMN_STATUS,
-		COLUMN_NAME,
-		COLUMN_VERSION,
-		COLUMN_AUTHOR,
-		COLUMN_EDIT,
-		COLUMN_MAX,
-	};
-
-	PluginConfigDialog *plugin_config_dialog = nullptr;
-	TextureRect *recovery_mode_icon = nullptr;
-	Tree *plugin_list = nullptr;
-	bool updating = false;
-
-	void _plugin_activity_changed();
-	void _create_clicked();
-	void _cell_button_pressed(Object *p_item, int p_column, int p_id, MouseButton p_button);
-
-	static Vector<String> _get_plugins(const String &p_dir);
-
-protected:
-	void _notification(int p_what);
+class ConfigPluginDialog : public ConfirmationDialog {
+	GDCLASS(ConfigPluginDialog, ConfirmationDialog);
 
 public:
-	void update_plugins();
+	ConfigPluginDialog();
 
-	EditorPluginSettings();
+	void popup_create();
+	void popup_edit(const String &p_config_path);
+
+protected:
+	static void _bind_methods();
+	void _notification(int p_what);
+
+private:
+	enum MessageId {
+		PLUGIN_NAME,
+		SUBFOLDER,
+		SCRIPT,
+		ENABLE_WARNINGS,
+	};
+
+	void _clear_fields();
+	void _update_mode();
+	void _on_confirmed();
+	void _validate();
+	String _get_subfolder() const;
+	Error _save_plugin();
+	Error _create_plugin_script(const String &p_script_path, ScriptLanguage *p_language);
+
+	LineEdit *_name_edit = nullptr;
+	Label *_subfolder_lbl = nullptr;
+	LineEdit *_subfolder_edit = nullptr;
+	TextEdit *_description_edit = nullptr;
+	LineEdit *_author_edit = nullptr;
+	LineEdit *_version_edit = nullptr;
+	OptionButton *_language_option_btn = nullptr;
+	LineEdit *_script_edit = nullptr;
+	EditorValidationPanel *_validation_panel = nullptr;
+	String _config_path;
+	int _default_language = -1;
 };

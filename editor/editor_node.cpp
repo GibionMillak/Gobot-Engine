@@ -79,6 +79,7 @@
 #include "editor/export/register_exporters.h"
 #include "editor/file_system/dependency_editor.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/dialogs/project_plugins_dialog.h"
 #include "editor/gui/editor_about.h"
 #include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_file_dialog.h"
@@ -119,7 +120,6 @@
 #include "editor/plugins/editor_plugin.h"
 #include "editor/plugins/editor_plugin_list.h"
 #include "editor/plugins/editor_resource_conversion_plugin.h"
-#include "editor/plugins/plugin_config_dialog.h"
 #include "editor/run/editor_run.h"
 #include "editor/run/editor_run_bar.h"
 #include "editor/run/game_view_plugin.h"
@@ -162,6 +162,7 @@
 #include "scene/gui/file_dialog.h"
 #include "scene/gui/menu_bar.h"
 #include "scene/gui/menu_button.h"
+#include "scene/gui/option_button.h"
 #include "scene/gui/panel.h"
 #include "scene/gui/popup.h"
 #include "scene/gui/rich_text_label.h"
@@ -702,6 +703,7 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 	file_menu->set_item_icon(file_menu->get_item_index(SCENE_QUIT), get_editor_theme_native_menu_icon(SNAME("Close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 #endif
 
+	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_PLUGINS), get_editor_theme_native_menu_icon(SNAME("Plugin"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_SETTINGS), get_editor_theme_native_menu_icon(SNAME("ClassList"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_EXPORT), get_editor_theme_native_menu_icon(SNAME("ResourcePreloader"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_QUIT_TO_PROJECT_MANAGER), get_editor_theme_native_menu_icon(SNAME("Close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
@@ -1271,19 +1273,6 @@ void EditorNode::init_plugins() {
 
 	if (!pending_addons.is_empty()) {
 		EditorFileSystem::get_singleton()->connect("script_classes_updated", callable_mp(this, &EditorNode::_enable_pending_addons), CONNECT_ONE_SHOT);
-	}
-}
-
-void EditorNode::_on_plugin_ready(Object *p_script, const String &p_activate_name) {
-	Ref<Script> scr = Object::cast_to<Script>(p_script);
-	if (scr.is_null()) {
-		return;
-	}
-	project_settings_editor->update_plugins();
-	project_settings_editor->hide();
-	push_item(scr.operator->());
-	if (p_activate_name.length()) {
-		set_addon_plugin_enabled(p_activate_name, true);
 	}
 }
 
@@ -3737,6 +3726,10 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			}
 		} break;
 
+		case PROJECT_OPEN_PLUGINS: {
+			_project_plugins_dialog->popup_plugins();
+		} break;
+
 		case PROJECT_OPEN_SETTINGS: {
 			project_settings_editor->popup_project_settings();
 		} break;
@@ -5858,8 +5851,6 @@ Ref<Texture2D> EditorNode::_get_class_or_script_icon(const String &p_class, cons
 
 	// Script was not valid or didn't yield any useful values, try the class name
 	// directly.
-
-
 
 	// Check if the class name is a custom type.
 	// TODO: Should probably be deprecated in 4.x
@@ -8154,6 +8145,7 @@ void EditorNode::_build_project_menu(bool p_dark_mode) {
 		tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/clear_project_cache"), TOOLS_CLEAR_PROJECT_CACHE);
 	}
 	project_menu->add_submenu_node_item(TTRC("Tools"), tool_menu);
+	project_menu->add_icon_item(get_editor_theme_native_menu_icon(SNAME("Plugin"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), TTRC("Plugins"), PROJECT_OPEN_PLUGINS);
 
 	project_menu->add_separator();
 #ifdef WEB_ENABLED
@@ -8997,6 +8989,9 @@ EditorNode::EditorNode() {
 	editor_settings_dialog = memnew(EditorSettingsDialog);
 	gui_base->add_child(editor_settings_dialog);
 	editor_settings_dialog->connect("restart_requested", callable_mp(this, &EditorNode::restart_editor).bind(false));
+
+	_project_plugins_dialog = memnew(ProjectPluginsDialog);
+	gui_base->add_child(_project_plugins_dialog);
 
 	project_settings_editor = memnew(ProjectSettingsEditor(&editor_data));
 	gui_base->add_child(project_settings_editor);

@@ -44,6 +44,8 @@
 #include "editor/settings/editor_settings_dialog.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/check_button.h"
+#include "scene/gui/line_edit.h"
+#include "scene/main/timer.h"
 #include "servers/movie_writer/movie_writer.h"
 
 void ProjectSettingsEditor::connect_filesystem_dock_signals(FileSystemDock *p_fs_dock) {
@@ -73,7 +75,6 @@ void ProjectSettingsEditor::popup_project_settings(bool p_clear_filter) {
 	localization_editor->update_translations();
 	autoload_settings->update_autoload();
 	group_settings->update_groups();
-	plugin_settings->update_plugins();
 	import_defaults_editor->clear();
 
 	if (p_clear_filter) {
@@ -109,18 +110,9 @@ void ProjectSettingsEditor::_save() {
 	}
 }
 
-void ProjectSettingsEditor::set_plugins_page() {
-	tab_container->set_current_tab(tab_container->get_tab_idx_from_control(addons_container));
-	addons_container->set_current_tab(0);
-}
-
 void ProjectSettingsEditor::set_general_page(const String &p_category) {
 	tab_container->set_current_tab(tab_container->get_tab_idx_from_control(general_editor));
 	general_settings_inspector->set_current_section(p_category);
-}
-
-void ProjectSettingsEditor::update_plugins() {
-	plugin_settings->update_plugins();
 }
 
 void ProjectSettingsEditor::init_autoloads() {
@@ -852,15 +844,6 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	group_settings->set_name(TTRC("Groups"));
 	group_settings->connect("group_changed", callable_mp(this, &ProjectSettingsEditor::queue_save));
 	globals_container->add_child(group_settings);
-
-	addons_container = memnew(TabContainer);
-	addons_container->set_theme_type_variation("TabContainerInner");
-	addons_container->set_name(TTRC("Addons"));
-	tab_container->add_child(addons_container);
-
-	plugin_settings = memnew(EditorPluginSettings);
-	plugin_settings->set_name(TTRC("Plugins"));
-	addons_container->add_child(plugin_settings);
 
 	timer = memnew(Timer);
 	timer->set_wait_time(1.5);

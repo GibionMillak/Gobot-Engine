@@ -44,15 +44,16 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/dialogs/project_plugins_dialog.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/project_manager/project_manager.h"
 #include "editor/settings/editor_settings.h"
-#include "editor/settings/project_settings_editor.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/color_rect.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/separator.h"
 #include "scene/main/scene_tree.h"
+#include "scene/main/timer.h"
 #include "scene/resources/image_texture.h"
 #include "scene/resources/style_box_flat.h"
 
@@ -2118,8 +2119,7 @@ void EditorAssetLibrary::_asset_open() {
 }
 
 void EditorAssetLibrary::_manage_plugins() {
-	ProjectSettingsEditor::get_singleton()->popup_project_settings(true);
-	ProjectSettingsEditor::get_singleton()->set_plugins_page();
+	EditorNode::get_singleton()->get_project_plugins_dialog()->popup_plugins();
 }
 
 EditorAssetLibraryItemDownload *EditorAssetLibrary::_get_asset_in_progress(const String &p_asset_id) const {
