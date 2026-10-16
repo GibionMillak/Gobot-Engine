@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_scale.cpp                                                      */
+/*  editor_unit.h                                                         */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,14 +28,16 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include "editor_scale.h"
+#pragma once
 
-float EditorScale::_scale = 1.0f;
+class EditorUnit {
+	inline static int _unit = 32;
 
-void EditorScale::set_scale(float p_scale) {
-	_scale = p_scale;
-}
+public:
+	static void set_unit(int p_unit) { _unit = p_unit; }
+	[[nodiscard]] static int get_unit() { return _unit; }
+};
 
-float EditorScale::get_scale() {
-	return _scale;
-}
+#define EDUNIT (EditorUnit::get_unit())
+
+#define EDUNIT_RND(m_value) (Math::round(m_value * EDUNIT))

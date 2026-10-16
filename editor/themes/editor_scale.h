@@ -31,13 +31,13 @@
 #pragma once
 
 class EditorScale {
-	static float _scale;
+	inline static float _scale = 1.0f;
 
 public:
-	static void set_scale(float p_scale);
-	static float get_scale();
+	static void set_scale(float p_scale) { _scale = p_scale; }
+	[[nodiscard]] static float get_scale() { return _scale; }
 };
 
 #define EDSCALE (EditorScale::get_scale())
 
-#define EDSCALE_RND(m_value) (Math::round((m_value) * EDSCALE))
+#define EDSCALE_RND(m_value) (Math::round(m_value * EDSCALE))
