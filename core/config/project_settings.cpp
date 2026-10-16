@@ -1112,15 +1112,6 @@ Error ProjectSettings::_save_settings_text(const String &p_file, const RBMap<Str
 
 	ERR_FAIL_COND_V_MSG(err != OK, err, vformat("Couldn't save project.godot - %s.", p_file));
 
-	file->store_line("; Engine configuration file.");
-	file->store_line("; It's best edited using the editor UI and not directly,");
-	file->store_line("; since the parameters that go here are not all obvious.");
-	file->store_line(";");
-	file->store_line("; Format:");
-	file->store_line(";   [section] ; section goes between []");
-	file->store_line(";   param=value ; assign values to parameters");
-	file->store_line("");
-
 	file->store_string("config_version=" + itos(CONFIG_VERSION) + "\n");
 	if (!p_custom_features.is_empty()) {
 		file->store_string("custom_features=\"" + p_custom_features + "\"\n");
@@ -1643,6 +1634,7 @@ ProjectSettings::ProjectSettings() {
 	}
 #endif
 
+	GLOBAL_DEF_INTERNAL("application/config/editor_version", "");
 	GLOBAL_DEF_BASIC("application/config/name", "");
 	GLOBAL_DEF(PropertyInfo(Variant::DICTIONARY, "application/config/name_localized", PROPERTY_HINT_LOCALIZABLE_STRING), Dictionary());
 	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/config/description", PROPERTY_HINT_MULTILINE_TEXT), "");
@@ -1807,7 +1799,6 @@ ProjectSettings::ProjectSettings() {
 	GLOBAL_DEF_BASIC("input_devices/pointing/android/disable_scroll_deadzone", false);
 
 	// These properties will not show up in the dialog. If you want to exclude whole groups, use add_hidden_prefix().
-	GLOBAL_DEF_INTERNAL("application/config/editor_version", "");
 	GLOBAL_DEF_INTERNAL("application/config/features", PackedStringArray());
 	GLOBAL_DEF_INTERNAL("internationalization/locale/translation_remaps", PackedStringArray());
 	GLOBAL_DEF_INTERNAL("internationalization/locale/translations", PackedStringArray());
