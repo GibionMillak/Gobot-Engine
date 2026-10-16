@@ -30,8 +30,6 @@
 
 #include "wsl_peer.h"
 
-#ifndef WEB_ENABLED
-
 #include "core/io/stream_peer_tls.h"
 #include "core/object/class_db.h"
 #include "core/os/os.h"
@@ -924,5 +922,3 @@ WSLPeer::WSLPeer() {
 WSLPeer::~WSLPeer() {
 	close(-1);
 }
-
-#endif // WEB_ENABLED

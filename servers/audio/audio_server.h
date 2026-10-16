@@ -39,10 +39,7 @@
 #include "servers/audio/audio_server_constants.h"
 #include "servers/audio/audio_server_enums.h"
 
-class AudioSample;
-class AudioStream;
 class AudioStreamPlayback;
-class AudioSamplePlayback;
 class AudioBusLayout;
 
 class AudioServer : public Object {
@@ -163,7 +160,6 @@ private:
 	SafeList<AudioStreamPlaybackBusDetails *> bus_details_graveyard;
 	uint64_t playback_stream_idle_since_msec = 0;
 	bool output_driver_sleeping = false;
-	void _delete_stream_playback(Ref<AudioStreamPlayback> p_playback);
 	void _delete_stream_playback_list_node(AudioStreamPlaybackListNode *p_node);
 	void _set_output_driver_sleep(bool p_enable);
 
@@ -200,8 +196,6 @@ private:
 
 	friend class AudioDriver;
 	void _driver_process(int p_frames, int32_t *p_buffer);
-
-	LocalVector<Ref<AudioSamplePlayback>> sample_playback_list;
 
 protected:
 	static void _bind_methods();
@@ -360,23 +354,8 @@ public:
 	virtual void get_argument_options(const StringName &p_function, int p_idx, List<String> *r_options) const override;
 #endif
 
-	AuSE::PlaybackType get_default_playback_type() const;
-
-	bool is_stream_registered_as_sample(const Ref<AudioStream> &p_stream);
-	void register_stream_as_sample(const Ref<AudioStream> &p_stream);
-	void unregister_stream_as_sample(const Ref<AudioStream> &p_stream);
-	void register_sample(const Ref<AudioSample> &p_sample);
-	void unregister_sample(const Ref<AudioSample> &p_sample);
-	void start_sample_playback(const Ref<AudioSamplePlayback> &p_playback);
-	void stop_sample_playback(const Ref<AudioSamplePlayback> &p_playback);
-	void set_sample_playback_pause(const Ref<AudioSamplePlayback> &p_playback, bool p_paused);
-	bool is_sample_playback_active(const Ref<AudioSamplePlayback> &p_playback);
-	double get_sample_playback_position(const Ref<AudioSamplePlayback> &p_playback);
-	void update_sample_playback_pitch_scale(const Ref<AudioSamplePlayback> &p_playback, float p_pitch_scale = 0.0f);
-
 	AudioServer();
 	virtual ~AudioServer();
 };
 
 VARIANT_ENUM_CAST_EXT(AuSE::SpeakerMode, AudioServer::SpeakerMode);
-VARIANT_ENUM_CAST_EXT(AuSE::PlaybackType, AudioServer::PlaybackType);

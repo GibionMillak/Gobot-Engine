@@ -2521,9 +2521,6 @@ msgstr "Licença"
 msgid "Loading..."
 msgstr "Carregando..."
 
-msgid "Download"
-msgstr "Baixar"
-
 msgid "Version:"
 msgstr "Versão:"
 
@@ -5352,20 +5349,8 @@ msgstr "Recarregamento finalizado."
 msgid "Save & Restart"
 msgstr "Salvar & Reiniciar"
 
-msgid ""
-"Changing the renderer requires restarting the editor.\n"
-"\n"
-"Choosing Save & Restart will change the renderer to:\n"
-"- Desktop platforms: %s\n"
-"- Mobile platforms: %s\n"
-"- Web platform: %s"
-msgstr ""
-"Alterar o renderizador requer a reinicialização do editor.\n"
-"\n"
-"Escolha Salvar e Reiniciar para mudar o método de renderização para:\n"
-"- Plataformas de desktop: %s\n"
-"- Dispositivos móveis: %s\n"
-"- Plataforma web: %s"
+msgid "Changing the renderer requires restarting the editor.\n\nChoosing Save & Restart will change the renderer to:\n- Desktop platforms: %s\n- Mobile platforms: %s"
+msgstr "Alterar o renderizador requer a reinicialização do editor.\n\nEscolha Salvar e Reiniciar para mudar o método de renderização para:\n- Plataformas de desktop: %s\n- Dispositivos móveis: %s"
 
 msgid "Forward+"
 msgstr "Avançado+"
@@ -5613,21 +5598,8 @@ msgstr "Abrir o Editor anterior"
 msgid "Project"
 msgstr "Projeto"
 
-msgid ""
-"Choose a renderer.\n"
-"\n"
-"Notes:\n"
-"- On mobile platforms, the Mobile renderer is used if Forward+ is selected "
-"here.\n"
-"- On the web platform, the Compatibility renderer is always used."
-msgstr ""
-"Escolha um método de renderização.\n"
-"\n"
-"Notas:\n"
-"- Nos dispositivos móveis, o método de renderização Mobile será usado se o "
-"Avançado+ estiver selecionado aqui.\n"
-"- Na plataforma web, o método de renderização Compatibilidade é sempre "
-"utilizado."
+msgid "Choose a renderer.\n\nOn mobile platforms, the Mobile renderer is used if Forward+ is selected here."
+msgstr "Escolha um método de renderização.\n\nNos dispositivos móveis, o método de renderização Mobile será usado se o Avançado+ estiver selecionado aqui."
 
 msgid "Renderer"
 msgstr "Renderizador"
@@ -8161,8 +8133,8 @@ msgstr "Menos escalável para cenas complexas."
 msgid "Fast rendering of simple scenes."
 msgstr "Renderização rápida de cenas simples."
 
-msgid "Supports desktop, mobile + web platforms."
-msgstr "Suporta desktop, plataformas mobile + web."
+msgid "Supports desktop and mobile platforms."
+msgstr "Suporta plataformas desktop e móveis."
 
 msgid "Least advanced 3D graphics."
 msgstr "Gráficos 3D menos avançados."
@@ -8170,8 +8142,8 @@ msgstr "Gráficos 3D menos avançados."
 msgid "Intended for low-end/older devices."
 msgstr "Destinado a dispositivos modestos/antigos."
 
-msgid "Uses OpenGL 3 backend (OpenGL 3.3/ES 3.0/WebGL2)."
-msgstr "Usa renderizador OpenGL 3 (OpenGL 3.3/ES 3.0/WebGL2)."
+msgid "Uses OpenGL 3 backend (OpenGL 3.3/ES 3.0)."
+msgstr "Usa renderizador OpenGL 3 (OpenGL 3.3/ES 3.0)."
 
 msgid "Fastest rendering of simple scenes."
 msgstr "Renderização mais rápida de cenas simples."
@@ -19665,71 +19637,6 @@ msgstr "Executar em sistema macOS remoto"
 
 msgid "Run exported project on remote macOS system"
 msgstr "Executar o projeto exportado em um sistema macOS remoto"
-
-msgid "Could not open template for export: \"%s\"."
-msgstr "Não foi possível abrir o modelo para exportação: \"%s\"."
-
-msgid "Invalid export template: \"%s\"."
-msgstr "Modelo de exportação inválido: \"%s\"."
-
-msgid "Could not write file: \"%s\"."
-msgstr "Não foi possível salvar o arquivo: \"%s\"."
-
-msgid "Icon Creation"
-msgstr "Criação de Ícone"
-
-msgid "Could not read file: \"%s\"."
-msgstr "Não foi possível ler o arquivo: \"%s\"."
-
-msgid "PWA"
-msgstr "PWA"
-
-msgid ""
-"Exporting to Web is currently not supported in Godot 4 when using C#/.NET. "
-"Use Godot 3 to target Web with C#/Mono instead."
-msgstr ""
-"Atualmente, a exportação para a Web não é suportada no Godot 4 ao usar "
-"C#/.NET. Em vez disso, use Godot 3 para exportar para a Web com C#/Mono."
-
-msgid ""
-"If this project does not use C#, use a non-C# editor build to export the "
-"project."
-msgstr ""
-"Se este projeto não usar C#, use uma compilação do editor sem C# para "
-"exportar o projeto."
-
-msgid "Could not read HTML shell: \"%s\"."
-msgstr "Não foi possível ler o shell HTML: \"%s\"."
-
-msgid "Run in Browser"
-msgstr "Rodar no Navegador"
-
-msgid "Start HTTP Server"
-msgstr "Iniciar Servidor HTTP"
-
-msgid "Re-export Project"
-msgstr "Reexportar Projeto"
-
-msgid "Stop HTTP Server"
-msgstr "Parar Servidor HTTP"
-
-msgid "Run exported HTML in the system's default browser."
-msgstr "Rodar HTML exportado no navegador padrão do sistema."
-
-msgid "Start the HTTP server."
-msgstr "Iniciar o servidor HTTP."
-
-msgid "Export project again to account for updates."
-msgstr "Exportar projeto novamente para testar a versão mais atualizada."
-
-msgid "Stop the HTTP server."
-msgstr "Parar o servidor HTTP."
-
-msgid "Could not create HTTP server directory: %s."
-msgstr "Não foi possível criar o diretório do servidor HTTP: \"%s\"."
-
-msgid "Error starting HTTP server: %d."
-msgstr "Erro ao iniciar o servidor HTTP: %d."
 
 msgid "Resources Modification"
 msgstr "Modificação de Recursos"

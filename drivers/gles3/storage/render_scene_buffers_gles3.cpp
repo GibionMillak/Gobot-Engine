@@ -55,7 +55,7 @@ RenderSceneBuffersGLES3::~RenderSceneBuffersGLES3() {
 void RenderSceneBuffersGLES3::_rt_attach_textures(GLuint p_color, GLuint p_depth, GLsizei p_samples, uint32_t p_view_count, bool p_depth_has_stencil) {
 	if (p_view_count > 1) {
 		if (p_samples > 1) {
-#if defined(ANDROID_ENABLED) || defined(WEB_ENABLED)
+#if defined(ANDROID_ENABLED)
 			glFramebufferTextureMultisampleMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, p_color, 0, p_samples, 0, p_view_count);
 			glFramebufferTextureMultisampleMultiviewOVR(GL_FRAMEBUFFER, p_depth_has_stencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT, p_depth, 0, p_samples, 0, p_view_count);
 #else
@@ -87,7 +87,7 @@ void RenderSceneBuffersGLES3::_rt_attach_textures(GLuint p_color, GLuint p_depth
 GLuint RenderSceneBuffersGLES3::_rt_get_cached_fbo(GLuint p_color, GLuint p_depth, GLsizei p_samples, uint32_t p_view_count, bool p_depth_has_stencil) {
 	FBDEF new_fbo;
 
-#if defined(ANDROID_ENABLED) || defined(WEB_ENABLED)
+#if defined(ANDROID_ENABLED)
 	// There shouldn't be more then 3 entries in this...
 	for (const FBDEF &cached_fbo : msaa3d.cached_fbos) {
 		if (cached_fbo.color == p_color && cached_fbo.depth == p_depth) {
@@ -326,7 +326,7 @@ void RenderSceneBuffersGLES3::_check_render_buffers() {
 
 			glBindRenderbuffer(GL_RENDERBUFFER, 0);
 			glBindFramebuffer(GL_FRAMEBUFFER, GLES3::TextureStorage::system_fbo);
-#if !defined(IOS_ENABLED) && !defined(WEB_ENABLED)
+#if !defined(IOS_ENABLED)
 		} else if (use_multiview && !config->rt_msaa_multiview_supported) {
 			// Render to texture extensions not supported? fall back to MSAA textures through GL_EXT_multiview_texture_multisample.
 			msaa3d.needs_resolve = true;
@@ -373,7 +373,7 @@ void RenderSceneBuffersGLES3::_check_render_buffers() {
 			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE_ARRAY, 0);
 			glBindFramebuffer(GL_FRAMEBUFFER, GLES3::TextureStorage::system_fbo);
 #endif
-#if defined(ANDROID_ENABLED) || defined(WEB_ENABLED) // Only supported on OpenGLES!
+#if defined(ANDROID_ENABLED) // Only supported on OpenGLES!
 		} else if (!use_internal_buffer) {
 			// We are going to render directly into our render target textures,
 			// these can change from frame to frame as we cycle through swapchains,

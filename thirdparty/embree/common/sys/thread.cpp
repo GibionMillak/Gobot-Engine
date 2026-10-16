@@ -10,9 +10,6 @@
 #include "../simd/arm/emulation.h"
 #else
 #include <xmmintrin.h>
-#if defined(__EMSCRIPTEN__)
-#include "../simd/wasm/emulation.h"
-#endif
 #endif
 
 #if defined(PTHREADS_WIN32)
@@ -299,16 +296,6 @@ namespace embree
 /// WebAssembly Platform
 ////////////////////////////////////////////////////////////////////////////////
 
-#if defined(__EMSCRIPTEN__)
-namespace embree
-{
-  /*! set affinity of the calling thread */
-  void setAffinity(ssize_t affinity)
-  {
-      // Setting thread affinity is not supported in WASM.
-  }
-}
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 /// MacOSX Platform

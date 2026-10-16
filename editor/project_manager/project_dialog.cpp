@@ -517,10 +517,10 @@ void ProjectDialog::_renderer_selected() {
 		rd_error = !rendering_device_supported;
 	} else if (renderer_type == "gl_compatibility") {
 		renderer_info->set_text(
-				String::utf8("•  ") + TTR("Supports desktop, mobile + web platforms.") +
+				String::utf8("•  ") + TTR("Supports desktop and mobile platforms.") +
 				String::utf8("\n•  ") + TTR("Least advanced 3D graphics.") +
 				String::utf8("\n•  ") + TTR("Intended for low-end/older devices.") +
-				String::utf8("\n•  ") + TTR("Uses OpenGL 3 backend (OpenGL 3.3/ES 3.0/WebGL2).") +
+				String::utf8("\n•  ") + TTR("Uses OpenGL 3 backend (OpenGL 3.3/ES 3.0).") +
 				String::utf8("\n•  ") + TTR("Fastest rendering of simple scenes."));
 	} else {
 		WARN_PRINT("Unknown renderer type. Please report this as a bug on GitHub.");
@@ -574,8 +574,7 @@ void ProjectDialog::ok_pressed() {
 		ProjectSettings::CustomMap initial_settings;
 
 		// Be sure to change this code if/when renderers are changed.
-		// Default values are "forward_plus" for the main setting, "mobile" for the mobile override,
-		// and "gl_compatibility" for the web override.
+		// Default values are "forward_plus" for the main setting and "mobile" for the mobile override.
 		String renderer_type = renderer_button_group->get_pressed_button()->get_meta(SNAME("rendering_method"));
 		initial_settings["rendering/renderer/rendering_method"] = renderer_type;
 

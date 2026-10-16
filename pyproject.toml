@@ -74,7 +74,6 @@ skip = [
 	"DONORS.md",
 	"editor/import/unicode_ranges.inc",
 	"platform/android/java/lib/src/main/java/com/*",
-	"platform/web/package-lock.json",
 ]
 ignore-words-list = [
 	"breaked",

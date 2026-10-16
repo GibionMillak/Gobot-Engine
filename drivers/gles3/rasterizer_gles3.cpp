@@ -86,7 +86,7 @@
 #endif
 
 #if defined(GLAD_ENABLED) || defined(EGL_ENABLED) || defined(ANDROID_ENABLED)
-// We can debug GL if we use GLAD or EGL, so not on iOS or Web.
+// We can debug GL if we use GLAD or EGL, so not on iOS.
 #define GL_DEBUG_CALLBACK
 
 #ifdef _WIN32

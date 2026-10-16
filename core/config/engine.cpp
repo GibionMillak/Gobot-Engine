@@ -268,10 +268,6 @@ String Engine::get_architecture_name() const {
 	return "ppc64";
 #elif defined(__loongarch64)
 	return "loongarch64";
-#elif defined(__wasm64__)
-	return "wasm64";
-#elif defined(__wasm32__)
-	return "wasm32";
 #endif
 }
 

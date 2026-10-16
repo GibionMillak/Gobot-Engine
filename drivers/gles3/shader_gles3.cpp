@@ -34,13 +34,10 @@
 
 #include "core/io/compression.h"
 #include "core/io/dir_access.h"
+#include "core/io/file_access.h"
 #include "core/string/string_builder.h"
 #include "drivers/gles3/rasterizer_util_gles3.h"
 #include "drivers/gles3/storage/config.h"
-
-#ifndef WEB_ENABLED
-#include "core/io/file_access.h"
-#endif
 
 static String _mkid(const String &p_id) {
 	String id = "m_" + p_id.replace("__", "_dus_");
@@ -552,15 +549,10 @@ String ShaderGLES3::_version_get_sha1(Version *p_version) const {
 	return hash_build.as_string().sha1_text();
 }
 
-#ifndef WEB_ENABLED // not supported in webgl
 static const char *shader_file_header = "GLSC";
 static const uint32_t cache_file_version = 3;
-#endif
 
 bool ShaderGLES3::_load_from_cache(Version *p_version) {
-#ifdef WEB_ENABLED // not supported in webgl
-	return false;
-#else
 #if !defined(ANDROID_ENABLED) && !defined(IOS_ENABLED)
 	if (RasterizerUtilGLES3::is_gles_over_gl() && (glProgramBinary == nullptr)) { // ARB_get_program_binary extension not available.
 		return false;
@@ -640,13 +632,9 @@ bool ShaderGLES3::_load_from_cache(Version *p_version) {
 	p_version->variants = variants;
 
 	return true;
-#endif // WEB_ENABLED
 }
 
 void ShaderGLES3::_save_to_cache(Version *p_version) {
-#ifdef WEB_ENABLED // not supported in webgl
-	return;
-#else
 	ERR_FAIL_COND(!shader_cache_dir_valid);
 #if !defined(ANDROID_ENABLED) && !defined(IOS_ENABLED)
 	if (RasterizerUtilGLES3::is_gles_over_gl() && (glGetProgramBinary == nullptr)) { // ARB_get_program_binary extension not available.
@@ -691,7 +679,6 @@ void ShaderGLES3::_save_to_cache(Version *p_version) {
 			f->store_buffer(compiled_program.ptr(), compiled_program.size());
 		}
 	}
-#endif // WEB_ENABLED
 }
 
 void ShaderGLES3::_clear_version(Version *p_version) {

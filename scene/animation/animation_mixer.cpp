@@ -879,8 +879,6 @@ bool AnimationMixer::_update_caches() {
 						track_audio->object_id = child->get_instance_id();
 						track_audio->audio_stream.instantiate();
 						track_audio->audio_stream->set_polyphony(audio_max_polyphony);
-						track_audio->playback_type = (AuSE::PlaybackType)(int)(child->call(SNAME("get_playback_type")));
-						track_audio->bus = (StringName)(child->call(SNAME("get_bus")));
 
 						track = track_audio;
 
@@ -1771,20 +1769,8 @@ void AnimationMixer::_blend_process(double p_delta, bool p_update_only) {
 							t->audio_stream_playback = t_obj->call(SNAME("get_stream_playback"));
 						}
 
-						if (t_obj->call(SNAME("get_is_sample"))) {
-							if (t->audio_stream_playback->get_sample_playback().is_valid()) {
-								AudioServer::get_singleton()->stop_sample_playback(t->audio_stream_playback->get_sample_playback());
-							}
-							Ref<AudioSamplePlayback> sample_playback;
-							sample_playback.instantiate();
-							sample_playback->stream = stream;
-							t->audio_stream_playback->set_sample_playback(sample_playback);
-							AudioServer::get_singleton()->start_sample_playback(sample_playback);
-							continue;
-						}
-
 						PlayingAudioStreamInfo pasi;
-						pasi.index = t->audio_stream_playback->play_stream(stream, start_ofs, 0, 1.0, t->playback_type, t->bus);
+						pasi.index = t->audio_stream_playback->play_stream(stream, start_ofs);
 						pasi.start = time;
 						if (len && Animation::is_greater_approx(end_ofs, 0)) { // Force an end at a time.
 							pasi.len = len - start_ofs - end_ofs;

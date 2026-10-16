@@ -30,8 +30,6 @@
 
 #pragma once
 
-#ifndef WEB_ENABLED
-
 #include "upnp.h"
 
 #include <miniupnpc/miniupnpc.h>
@@ -86,5 +84,3 @@ public:
 	UPNPMiniUPNP() {}
 	virtual ~UPNPMiniUPNP() {}
 };
-
-#endif // WEB_ENABLED

@@ -6,7 +6,6 @@
 	<description>
 		Represents a class from the Java Native Interface. It is returned from [method JavaClassWrapper.wrap].
 		[b]Note:[/b] This class only works on Android. On any other platform, this class does nothing.
-		[b]Note:[/b] This class is not to be confused with [JavaScriptObject].
 	</description>
 	<tutorials>
 	</tutorials>

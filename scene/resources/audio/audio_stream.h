@@ -36,44 +36,6 @@
 #include "core/variant/typed_array.h"
 #include "servers/audio/audio_frame.h"
 
-class AudioStream;
-class AudioStreamPlayback;
-
-class AudioSamplePlayback : public RefCounted {
-	GDCLASS(AudioSamplePlayback, RefCounted);
-
-public:
-	Ref<AudioStream> stream;
-	Ref<AudioStreamPlayback> stream_playback;
-
-	float offset = 0.0f;
-	float pitch_scale = 1.0;
-	Vector<AudioFrame> volume_vector;
-	StringName bus;
-};
-
-class AudioSample : public RefCounted {
-	GDCLASS(AudioSample, RefCounted)
-
-public:
-	enum LoopMode {
-		LOOP_DISABLED,
-		LOOP_FORWARD,
-		LOOP_PINGPONG,
-		LOOP_BACKWARD,
-	};
-
-	Ref<AudioStream> stream;
-	Vector<AudioFrame> data;
-	int num_channels = 1;
-	int sample_rate = 44100;
-	LoopMode loop_mode = LOOP_DISABLED;
-	int loop_begin = 0;
-	int loop_end = 0;
-};
-
-///////////
-
 class AudioStreamPlayback : public RefCounted {
 	GDCLASS(AudioStreamPlayback, RefCounted);
 
@@ -108,13 +70,8 @@ public:
 
 	virtual int mix(AudioFrame *p_buffer, float p_rate_scale, int p_frames);
 
-	virtual void set_is_sample(bool p_is_sample) {}
-	virtual bool get_is_sample() const { return false; }
-	virtual Ref<AudioSamplePlayback> get_sample_playback() const;
-	virtual void set_sample_playback(const Ref<AudioSamplePlayback> &p_playback) {}
-
 	AudioStreamPlayback();
-	~AudioStreamPlayback();
+	~AudioStreamPlayback() = default;
 
 	Vector<AudioFrame> mix_audio(float p_rate_scale, int p_frames);
 	void start_playback(double p_from_pos = 0.0);
@@ -207,8 +164,4 @@ public:
 
 	virtual void get_parameter_list(List<Parameter> *r_parameters);
 
-	virtual bool can_be_sampled() const { return false; }
-	virtual Ref<AudioSample> generate_sample() const;
-
-	virtual bool is_meta_stream() const { return false; }
 };

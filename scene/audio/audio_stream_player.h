@@ -31,7 +31,6 @@
 #pragma once
 
 #include "scene/main/node.h"
-#include "servers/audio/audio_server_enums.h"
 
 struct AudioFrame;
 class AudioStream;
@@ -102,9 +101,6 @@ public:
 
 	bool has_stream_playback();
 	Ref<AudioStreamPlayback> get_stream_playback();
-
-	AuSE::PlaybackType get_playback_type() const;
-	void set_playback_type(AuSE::PlaybackType p_playback_type);
 
 	AudioStreamPlayer();
 	~AudioStreamPlayer();

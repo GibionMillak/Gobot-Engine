@@ -633,10 +633,6 @@ void OS::delay_msec(int p_msec) const {
 	::OS::get_singleton()->delay_usec(int64_t(p_msec) * 1000);
 }
 
-bool OS::is_userfs_persistent() const {
-	return ::OS::get_singleton()->is_userfs_persistent();
-}
-
 int OS::get_processor_count() const {
 	return ::OS::get_singleton()->get_processor_count();
 }
@@ -830,7 +826,6 @@ void OS::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_locale_language"), &OS::get_locale_language);
 	ClassDB::bind_method(D_METHOD("get_model_name"), &OS::get_model_name);
 
-	ClassDB::bind_method(D_METHOD("is_userfs_persistent"), &OS::is_userfs_persistent);
 	ClassDB::bind_method(D_METHOD("is_stdout_verbose"), &OS::is_stdout_verbose);
 
 	ClassDB::bind_method(D_METHOD("is_debug_build"), &OS::is_debug_build);

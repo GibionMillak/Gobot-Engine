@@ -274,8 +274,6 @@ public:
 	virtual uint64_t get_ticks_usec() const = 0;
 	uint64_t get_ticks_msec() const;
 
-	virtual bool is_userfs_persistent() const { return true; }
-
 	bool is_stdout_verbose() const;
 	bool is_stdout_debug_enabled() const;
 

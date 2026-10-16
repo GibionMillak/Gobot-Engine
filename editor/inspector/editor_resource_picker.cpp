@@ -338,7 +338,7 @@ void EditorResourcePicker::_update_menu_items() {
 			edit_menu->set_item_disabled(-1, !unique_enabled);
 
 			String modifier = "Ctrl";
-			if (OS::get_singleton()->has_feature("macos") || OS::get_singleton()->has_feature("web_macos") || OS::get_singleton()->has_feature("web_ios")) {
+			if (OS::get_singleton()->has_feature("macos")) {
 				modifier = "Cmd";
 			}
 			const String drag_and_drop_text = vformat(TTR("Hold %s while drag-and-dropping from the FileSystem dock or another resource picker to automatically make a dropped resource unique."), modifier);

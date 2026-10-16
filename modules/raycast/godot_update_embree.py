@@ -21,7 +21,6 @@ include_dirs = [
     "common/lexers",
     "common/simd",
     "common/simd/arm",
-    "common/simd/wasm",
     "include/embree4",
     "kernels/subdiv",
     "kernels/geometry",

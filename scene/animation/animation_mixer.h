@@ -280,15 +280,12 @@ protected:
 		Ref<AudioStreamPolyphonic> audio_stream;
 		Ref<AudioStreamPlaybackPolyphonic> audio_stream_playback;
 		HashMap<ObjectID, PlayingAudioTrackInfo> playing_streams; // Key is Animation resource ObjectID.
-		AuSE::PlaybackType playback_type;
-		StringName bus;
 
 		TrackCacheAudio(const TrackCacheAudio &p_other) :
 				TrackCache(p_other),
 				audio_stream(p_other.audio_stream),
 				audio_stream_playback(p_other.audio_stream_playback),
-				playing_streams(p_other.playing_streams),
-				playback_type(p_other.playback_type) {}
+				playing_streams(p_other.playing_streams) {}
 
 		TrackCacheAudio() {
 			type = Animation::TYPE_AUDIO;
@@ -316,9 +313,6 @@ protected:
 	void _init_root_motion_cache();
 	bool _update_caches();
 	void _create_track_num_to_track_cache_for_animation(const Ref<Animation> &p_animation);
-
-	/* ---- Audio ---- */
-	AuSE::PlaybackType playback_type;
 
 	/* ---- Blending processor ---- */
 	LocalVector<AnimationInstance> animation_instances;
@@ -430,7 +424,6 @@ public:
 	void set_callback_mode_discrete(AnimationCallbackModeDiscrete p_mode);
 	AnimationCallbackModeDiscrete get_callback_mode_discrete() const;
 
-	/* ---- Audio ---- */
 	void set_audio_max_polyphony(int p_audio_max_polyphony);
 	int get_audio_max_polyphony() const;
 

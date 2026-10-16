@@ -32,11 +32,9 @@
 
 #include "core/object/ref_counted.h"
 #include "core/templates/safe_refcount.h"
-#include "servers/audio/audio_server_enums.h"
 
 class AudioStream;
 class AudioStreamPlayback;
-class AudioSamplePlayback;
 class Node;
 
 class AudioStreamPlayerInternal : public Object {
@@ -54,14 +52,11 @@ private:
 	Callable play_callable;
 	Callable stop_callable;
 	bool physical = false;
-	AuSE::PlaybackType playback_type = AuSE::PlaybackType::PLAYBACK_TYPE_DEFAULT;
 
 	HashMap<StringName, ParameterData> playback_parameters;
 
 	void _set_process(bool p_enabled);
 	void _update_stream_parameters();
-
-	bool _is_sample();
 
 public:
 	Vector<Ref<AudioStreamPlayback>> stream_playbacks;
@@ -103,9 +98,6 @@ public:
 
 	bool has_stream_playback();
 	Ref<AudioStreamPlayback> get_stream_playback();
-
-	void set_playback_type(AuSE::PlaybackType p_playback_type);
-	AuSE::PlaybackType get_playback_type() const;
 
 	AudioStreamPlayerInternal(Node *p_node, const Callable &p_play_callable, const Callable &p_stop_callable, bool p_physical);
 };

@@ -1237,11 +1237,11 @@
 		</constant>
 		<constant name="NOTIFICATION_WM_MOUSE_ENTER" value="1002">
 			Notification received when the mouse enters the window.
-			Implemented for embedded windows and on desktop and web platforms.
+			Implemented for embedded windows and on desktop platforms.
 		</constant>
 		<constant name="NOTIFICATION_WM_MOUSE_EXIT" value="1003">
 			Notification received when the mouse leaves the window.
-			Implemented for embedded windows and on desktop and web platforms.
+			Implemented for embedded windows and on desktop platforms.
 		</constant>
 		<constant name="NOTIFICATION_WM_WINDOW_FOCUS_IN" value="1004">
 			Notification received from the OS when the node's [Window] ancestor is focused. This may be a change of focus between two windows of the same engine instance, or from the OS desktop or a third-party application to a window of the game (in which case [constant NOTIFICATION_APPLICATION_FOCUS_IN] is also received).
@@ -1304,7 +1304,7 @@
 		</constant>
 		<constant name="NOTIFICATION_OS_IME_UPDATE" value="2013">
 			Notification received from the OS when an update of the Input Method Engine occurs (e.g. change of IME cursor position or composition string).
-			Implemented on desktop and web platforms.
+			Implemented on desktop platforms.
 		</constant>
 		<constant name="NOTIFICATION_APPLICATION_RESUMED" value="2014">
 			Notification received from the OS when the application is resumed.

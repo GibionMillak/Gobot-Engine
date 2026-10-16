@@ -355,9 +355,6 @@ msgstr "Canais"
 msgid "Default Bus Layout"
 msgstr "Layout Padrão de Canais"
 
-msgid "Default Playback Type"
-msgstr "Tipo Padrão de Reprodução"
-
 msgid "Text to Speech"
 msgstr "Texto para Voz"
 
@@ -5672,86 +5669,11 @@ msgstr "Descrição de Uso de Volumes Removíveis"
 msgid "Removable Volumes Usage Description Localized"
 msgstr "Descrição de Uso de Volumes Removíveis Traduzida"
 
-msgid "Web"
-msgstr "Web"
-
-msgid "HTTP Host"
-msgstr "Host HTTP"
-
-msgid "HTTP Port"
-msgstr "Porta HTTP"
-
-msgid "Use TLS"
-msgstr "Usar TLS"
-
-msgid "TLS Key"
-msgstr "Chave TLS"
-
-msgid "TLS Certificate"
-msgstr "Certificado TLS"
-
 msgid "Variant"
 msgstr "Variante"
 
-msgid "Extensions Support"
-msgstr "Suporte a Extensões"
-
-msgid "Thread Support"
-msgstr "Suporte a Threads"
-
-msgid "VRAM Texture Compression"
-msgstr "Compressão de Texturas na VRAM"
-
-msgid "For Desktop"
-msgstr "Para Desktop"
-
-msgid "For Mobile"
-msgstr "Para Mobile"
-
 msgid "HTML"
 msgstr "HTML"
-
-msgid "Export Icon"
-msgstr "Ícone Exportado"
-
-msgid "Custom HTML Shell"
-msgstr "Documento HTML Personalizado"
-
-msgid "Head Include"
-msgstr "Inclusão na Head"
-
-msgid "Canvas Resize Policy"
-msgstr "Política de Redimensionamento de Canvas"
-
-msgid "Focus Canvas on Start"
-msgstr "Focar Canvas ao Iniciar"
-
-msgid "Experimental Virtual Keyboard"
-msgstr "Teclado Virtual Experimental"
-
-msgid "Progressive Web App"
-msgstr "Aplicativo Web Progressivo"
-
-msgid "Ensure Cross Origin Isolation Headers"
-msgstr "Garantir Headers de Cross Origin Isolation"
-
-msgid "Offline Page"
-msgstr "Página Offline"
-
-msgid "Icon 144 X 144"
-msgstr "Ícone 144 X 144"
-
-msgid "Icon 180 X 180"
-msgstr "Ícone 180 X 180"
-
-msgid "Icon 512 X 512"
-msgstr "Ícone 512 X 512"
-
-msgid "Emscripten Pool Size"
-msgstr "Tamanho da piscina Emscripten"
-
-msgid "Godot Pool Size"
-msgstr "Tamanho de Pool do Godot"
 
 msgid "Windows"
 msgstr "Windows"
@@ -5857,9 +5779,6 @@ msgstr "Canal"
 
 msgid "Area Mask"
 msgstr "Máscara de Área"
-
-msgid "Playback Type"
-msgstr "Modo de Reprodução"
 
 msgid "Copy Mode"
 msgstr "Modo de Cópia"
@@ -9067,9 +8986,6 @@ msgstr "NormalMap"
 
 msgid "Shininess"
 msgstr "Reluzente"
-
-msgid "Download File"
-msgstr "Arquivo de Download"
 
 msgid "Download Chunk Size"
 msgstr "Tamanho de Bloco de Download"

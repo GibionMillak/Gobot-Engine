@@ -108,7 +108,7 @@ static void _setup_clock() {
 	_clock_start = mach_absolute_time() * _clock_scale;
 }
 #else
-#if defined(CLOCK_MONOTONIC_RAW) && !defined(WEB_ENABLED) // This is a better clock on Linux.
+#if defined(CLOCK_MONOTONIC_RAW) // This is a better clock on Linux.
 #define GODOT_CLOCK CLOCK_MONOTONIC_RAW
 #else
 #define GODOT_CLOCK CLOCK_MONOTONIC
@@ -552,7 +552,7 @@ Dictionary OS_Unix::get_memory_info() const {
 	return meminfo;
 }
 
-#if !defined(__GLIBC__) && !defined(WEB_ENABLED)
+#if !defined(__GLIBC__)
 void OS_Unix::_load_iconv() {
 #if defined(MACOS_ENABLED) || defined(IOS_ENABLED)
 	String iconv_lib_aliases[] = { "/usr/lib/libiconv.2.dylib" };
@@ -604,7 +604,7 @@ String OS_Unix::multibyte_to_string(const String &p_encoding, const PackedByteAr
 	ERR_FAIL_COND_V_MSG(!_iconv_ok, String(), "Conversion failed: Unable to load libiconv");
 
 	LocalVector<char> chars;
-#if defined(__GLIBC__) || defined(WEB_ENABLED)
+#if defined(__GLIBC__)
 	gd_iconv_t ctx = gd_iconv_open("UTF-8", p_encoding.is_empty() ? nl_langinfo(CODESET) : p_encoding.utf8().get_data());
 #else
 	gd_iconv_t ctx = gd_iconv_open("UTF-8", p_encoding.is_empty() ? gd_locale_charset() : p_encoding.utf8().get_data());
@@ -641,7 +641,7 @@ PackedByteArray OS_Unix::string_to_multibyte(const String &p_encoding, const Str
 	CharString charstr = p_string.utf8();
 
 	PackedByteArray ret;
-#if defined(__GLIBC__) || defined(WEB_ENABLED)
+#if defined(__GLIBC__)
 	gd_iconv_t ctx = gd_iconv_open(p_encoding.is_empty() ? nl_langinfo(CODESET) : p_encoding.utf8().get_data(), "UTF-8");
 #else
 	gd_iconv_t ctx = gd_iconv_open(p_encoding.is_empty() ? gd_locale_charset() : p_encoding.utf8().get_data(), "UTF-8");
@@ -694,11 +694,6 @@ Dictionary OS_Unix::execute_with_pipe(const String &p_path, const List<String> &
 	}
 
 	Dictionary ret;
-#ifdef __EMSCRIPTEN__
-	// Don't compile this code at all to avoid undefined references.
-	// Actual virtual call goes to OS_Web.
-	ERR_FAIL_V(ret);
-#else
 	// Create pipes.
 	int pipe_in[2] = { -1, -1 };
 	int pipe_out[2] = { -1, -1 };
@@ -779,7 +774,6 @@ Dictionary OS_Unix::execute_with_pipe(const String &p_path, const List<String> &
 
 #undef CLEAN_PIPES
 	return ret;
-#endif
 }
 
 int OS_Unix::_wait_for_pid_completion(const pid_t p_pid, int *r_status, int p_options, pid_t *r_pid) {
@@ -839,11 +833,6 @@ bool OS_Unix::_check_pid_is_running(const pid_t p_pid, int *r_status) const {
 }
 
 Error OS_Unix::execute(const String &p_path, const List<String> &p_arguments, String *r_pipe, int *r_exitcode, bool read_stderr, Mutex *p_pipe_mutex, bool p_open_console) {
-#ifdef __EMSCRIPTEN__
-	// Don't compile this code at all to avoid undefined references.
-	// Actual virtual call goes to OS_Web.
-	ERR_FAIL_V(ERR_BUG);
-#else
 	if (r_pipe) {
 		String command = "\"" + p_path + "\"";
 		for (const String &arg : p_arguments) {
@@ -909,15 +898,9 @@ Error OS_Unix::execute(const String &p_path, const List<String> &p_arguments, St
 		*r_exitcode = WIFEXITED(status) ? WEXITSTATUS(status) : status;
 	}
 	return result ? FAILED : OK;
-#endif
 }
 
 Error OS_Unix::create_process(const String &p_path, const List<String> &p_arguments, ProcessID *r_child_id, bool p_open_console) {
-#ifdef __EMSCRIPTEN__
-	// Don't compile this code at all to avoid undefined references.
-	// Actual virtual call goes to OS_Web.
-	ERR_FAIL_V(ERR_BUG);
-#else
 	pid_t pid = fork();
 	ERR_FAIL_COND_V(pid < 0, ERR_CANT_FORK);
 
@@ -954,7 +937,6 @@ Error OS_Unix::create_process(const String &p_path, const List<String> &p_argume
 		*r_child_id = pid;
 	}
 	return OK;
-#endif
 }
 
 Error OS_Unix::kill(const ProcessID &p_pid) {
@@ -1280,7 +1262,7 @@ void UnixTerminalLogger::log_error(const char *p_function, const char *p_file, i
 UnixTerminalLogger::~UnixTerminalLogger() {}
 
 OS_Unix::OS_Unix() {
-#if !defined(__GLIBC__) && !defined(WEB_ENABLED)
+#if !defined(__GLIBC__)
 	_load_iconv();
 #endif
 

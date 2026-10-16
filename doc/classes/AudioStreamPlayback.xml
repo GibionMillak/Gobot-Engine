@@ -90,12 +90,6 @@
 				Returns the current position in the stream, in seconds.
 			</description>
 		</method>
-		<method name="get_sample_playback" qualifiers="const" experimental="">
-			<return type="AudioSamplePlayback" />
-			<description>
-				Returns the [AudioSamplePlayback] associated with this [AudioStreamPlayback] for playing back the audio sample of this stream.
-			</description>
-		</method>
 		<method name="is_playing" qualifiers="const">
 			<return type="bool" />
 			<description>
@@ -117,13 +111,6 @@
 			<param index="0" name="time" type="float" default="0.0" />
 			<description>
 				Seeks the stream at the given [param time], in seconds.
-			</description>
-		</method>
-		<method name="set_sample_playback" experimental="">
-			<return type="void" />
-			<param index="0" name="playback_sample" type="AudioSamplePlayback" />
-			<description>
-				Associates [AudioSamplePlayback] to this [AudioStreamPlayback] for playing back the audio sample of this stream.
 			</description>
 		</method>
 		<method name="start">

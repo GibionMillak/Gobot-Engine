@@ -114,45 +114,6 @@ repos:
         entry: python misc/scripts/validate_includes.py
         files: \.(c|h|cpp|hpp|cc|hh|cxx|hxx|m|mm|inc)$
 
-      - id: eslint
-        name: eslint
-        language: node
-        entry: eslint
-        files: ^(platform/web/js/|modules/|misc/dist/html/).*\.(js|html)$
-        args:
-          - --fix
-          - --no-warn-ignored
-          - --no-config-lookup
-          - --config
-          - platform/web/eslint.config.cjs
-        additional_dependencies:
-          - "@eslint/js@^9.12.0"
-          - "@html-eslint/eslint-plugin@^0.27.0"
-          - "@html-eslint/parser@^0.27.0"
-          - "@stylistic/eslint-plugin@^2.13.0"
-          - eslint@^9.39.5
-          - eslint-plugin-html@^8.2.0
-          - espree@^10.4.0
-          - globals@^15.15.0
-
-      - id: jsdoc
-        name: jsdoc
-        language: node
-        entry: jsdoc
-        files: ^platform/web/js/engine/(engine|config|features)\.js$
-        args:
-          - --template
-          - platform/web/js/jsdoc2rst/
-          - platform/web/js/engine/engine.js
-          - platform/web/js/engine/config.js
-          - platform/web/js/engine/features.js
-          - --destination
-          - ""
-          - -d
-          - dry-run
-        pass_filenames: false
-        additional_dependencies: [jsdoc@^4.0.3]
-
       - id: svgo
         name: svgo
         language: node
@@ -169,7 +130,7 @@ repos:
         exclude: |
           (?x)^(
             core/math/bvh_.*\.inc|
-            platform/(?!android|ios|linuxbsd|macos|web|windows)\w+/.*|
+            platform/(?!android|ios|linuxbsd|macos|windows)\w+/.*|
             platform/android/java/lib/src/main/java/org/godotengine/godot/gl/GLSurfaceView\.java|
             platform/android/java/lib/src/main/java/org/godotengine/godot/gl/EGLLogWrapper\.java|
             platform/android/java/lib/src/main/java/org/godotengine/godot/utils/ProcessPhoenix\.java

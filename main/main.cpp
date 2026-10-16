@@ -496,9 +496,9 @@ void Main::print_help(const char *p_binary) {
 	print_help_option("--path <directory>", "Path to a project (<directory> must contain a \"project.godot\" file).\n", CLI_OPTION_AVAILABILITY_TEMPLATE_UNSAFE);
 	print_help_option("--scene <path>", "Path or UID of a scene in the project that should be started.\n", CLI_OPTION_AVAILABILITY_TEMPLATE_UNSAFE);
 #endif // defined(OVERRIDE_PATH_ENABLED)
-#if defined(OVERRIDE_PATH_ENABLED) || defined(ANDROID_ENABLED) || defined(WEB_ENABLED)
+#if defined(OVERRIDE_PATH_ENABLED) || defined(ANDROID_ENABLED)
 	print_help_option("--main-pack <file>", "Path to a pack (.pck) file to load.\n", CLI_OPTION_AVAILABILITY_TEMPLATE_UNSAFE);
-#endif // defined(OVERRIDE_PATH_ENABLED) || defined(ANDROID_ENABLED) || defined(WEB_ENABLED)
+#endif
 
 	print_help_option("--render-thread <mode>", "Render thread mode (\"safe\", \"separate\").\n");
 #if defined(DEBUG_ENABLED) || defined(TOOLS_ENABLED)
@@ -1666,9 +1666,8 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 				goto error;
 			}
 		} else if (arg == "--main-pack") {
-// Note: main-pack is always used on web and can't be disabled.
 // Note: main-pack can be used on Android so long as it's located within the 'assets' directory which is in the executable.
-#if defined(OVERRIDE_PATH_ENABLED) || defined(WEB_ENABLED) || defined(ANDROID_ENABLED)
+#if defined(OVERRIDE_PATH_ENABLED) || defined(ANDROID_ENABLED)
 			if (N) {
 				main_pack = N->get();
 				N = N->next();
@@ -1697,7 +1696,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 					"`--main-pack` was specified on the command line, but this Godot binary was compiled without support for path overrides. Aborting.\n"
 					"To be able to use it, use the `disable_path_overrides=no` SCons option when compiling Godot.\n");
 			goto error;
-#endif // defined(OVERRIDE_PATH_ENABLED) || defined(WEB_ENABLED) || defined(ANDROID_ENABLED)
+#endif
 
 		} else if (arg == "-d" || arg == "--debug") {
 #if defined(DEBUG_ENABLED) || defined(TOOLS_ENABLED)
@@ -2115,7 +2114,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 
 	GLOBAL_DEF("debug/file_logging/enable_file_logging", false);
 	// Only file logging by default on desktop platforms as logs can't be
-	// accessed easily on mobile/Web platforms (if at all).
+	// accessed easily on mobile platforms (if at all).
 	// This also prevents logs from being created for the editor instance, as feature tags
 	// are disabled while in the editor (even if they should logically apply).
 	GLOBAL_DEF("debug/file_logging/enable_file_logging.pc", true);
@@ -2206,7 +2205,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		GLOBAL_DEF_RST("rendering/gl_compatibility/driver", "opengl3");
 		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/gl_compatibility/driver.windows", PROPERTY_HINT_ENUM, "opengl3,opengl3_angle"), "opengl3");
 		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/gl_compatibility/driver.linuxbsd", PROPERTY_HINT_ENUM, "opengl3,opengl3_es"), "opengl3");
-		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/gl_compatibility/driver.web", PROPERTY_HINT_ENUM, "opengl3"), "opengl3");
 		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/gl_compatibility/driver.android", PROPERTY_HINT_ENUM, "opengl3"), "opengl3");
 		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/gl_compatibility/driver.ios", PROPERTY_HINT_ENUM, "opengl3"), "opengl3");
 		GLOBAL_DEF_RST(PropertyInfo(Variant::STRING, "rendering/gl_compatibility/driver.macos", PROPERTY_HINT_ENUM, "opengl3,opengl3_angle"), "opengl3");
@@ -2461,7 +2459,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	default_renderer = renderer_hints.get_slicec(',', 0);
 	GLOBAL_DEF_RST_BASIC(PropertyInfo(Variant::STRING, "rendering/renderer/rendering_method", PROPERTY_HINT_ENUM, renderer_hints), default_renderer);
 	GLOBAL_DEF_RST_BASIC("rendering/renderer/rendering_method.mobile", default_renderer_mobile);
-	GLOBAL_DEF_RST_BASIC(PropertyInfo(Variant::STRING, "rendering/renderer/rendering_method.web", PROPERTY_HINT_ENUM, "gl_compatibility"), "gl_compatibility"); // This is a bit of a hack until we have WebGPU support.
 
 	// Default to ProjectSettings default if nothing set on the command line.
 	if (rendering_method.is_empty()) {
@@ -2657,8 +2654,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	}
 
 	GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "audio/driver/output_latency", PROPERTY_HINT_RANGE, "1,100,1"), 15);
-	// Use a safer default output_latency for web to avoid audio cracking on low-end devices, especially mobile.
-	GLOBAL_DEF_RST("audio/driver/output_latency.web", 50);
 
 	Engine::get_singleton()->set_audio_output_latency(GLOBAL_GET("audio/driver/output_latency"));
 
@@ -3348,10 +3343,8 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 	OS::get_singleton()->benchmark_end_measure("Startup", "Servers");
 
-#ifndef WEB_ENABLED
 	// Add a blank line for readability.
 	Engine::get_singleton()->print_header("");
-#endif // WEB_ENABLED
 
 	register_core_singletons();
 
@@ -3656,13 +3649,7 @@ void Main::setup_boot_logo() {
 	GodotProfileZone("setup_boot_logo");
 	MAIN_PRINT("Main: Load Boot Image");
 
-#if !defined(TOOLS_ENABLED) && defined(WEB_ENABLED)
-	bool show_logo = false;
-#else
-	bool show_logo = true;
-#endif
-
-	if (show_logo) { //boot logo!
+	{
 		const bool boot_logo_image = GLOBAL_DEF_BASIC("application/boot_splash/show_image", true);
 
 		const RSE::SplashStretchMode boot_stretch_mode = GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "application/boot_splash/stretch_mode", PROPERTY_HINT_ENUM, "Disabled,Keep,Keep Width,Keep Height,Cover,Ignore"), 1);

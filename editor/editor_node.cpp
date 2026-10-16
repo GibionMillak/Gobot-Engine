@@ -221,12 +221,6 @@
 
 #include <cstdlib>
 
-#ifdef WEB_ENABLED
-extern "C" {
-extern void godot_js_os_download_buffer(const uint8_t *p_buf, int p_buf_size, const char *p_name, const char *p_mime);
-}
-#endif // WEB_ENABLED
-
 EditorNode *EditorNode::singleton = nullptr;
 
 static const String EDITOR_NODE_CONFIG_SECTION = "EditorNode";
@@ -3755,25 +3749,6 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			OS::get_singleton()->ensure_user_data_dir();
 			OS::get_singleton()->shell_show_in_file_manager(OS::get_singleton()->get_user_data_dir(), true);
 		} break;
-		case PROJECT_DOWNLOAD_SOURCE: {
-#ifdef WEB_ENABLED
-			const String output_name = ProjectZIPPacker::get_project_zip_safe_name();
-			const String output_path = String("/tmp").path_join(output_name);
-			ProjectZIPPacker::pack_project_zip(output_path);
-
-			{
-				Ref<FileAccess> f = FileAccess::open(output_path, FileAccess::READ);
-				ERR_FAIL_COND_MSG(f.is_null(), "Unable to create ZIP file.");
-				LocalVector<uint8_t> buf;
-				buf.resize(f->get_length());
-				f->get_buffer(buf.ptr(), buf.size());
-				godot_js_os_download_buffer(buf.ptr(), buf.size(), output_name.utf8().get_data(), "application/zip");
-			}
-
-			// Remove the temporary file since it was sent to the user's native filesystem as a download.
-			DirAccess::remove_file_or_error(output_path);
-#endif
-		} break;
 		case SCENE_QUIT:
 		case PROJECT_QUIT_TO_PROJECT_MANAGER:
 		case TOOLS_CLEAR_PROJECT_CACHE:
@@ -3923,7 +3898,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			export_template_manager->popup_manager();
 		} break;
 		case EDITOR_CONFIGURE_FBX_IMPORTER: {
-#if !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#if !defined(ANDROID_ENABLED)
 			fbx_importer_manager->show_dialog();
 #endif
 		} break;
@@ -7839,11 +7814,10 @@ void EditorNode::_renderer_selected(int p_index) {
 	}
 
 	const String mobile_rendering_method = rendering_method == "forward_plus" ? "mobile" : rendering_method;
-	const String web_rendering_method = "gl_compatibility";
 	video_restart_dialog->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_set_renderer_name_save_and_restart).bind(rendering_method));
 	video_restart_dialog->set_text(
-			vformat(TTR("Changing the renderer requires restarting the editor.\n\nChoosing Save & Restart will change the renderer to:\n- Desktop platforms: %s\n- Mobile platforms: %s\n- Web platform: %s"),
-					_to_rendering_method_display_name(rendering_method), _to_rendering_method_display_name(mobile_rendering_method), _to_rendering_method_display_name(web_rendering_method)));
+			vformat(TTR("Changing the renderer requires restarting the editor.\n\nChoosing Save & Restart will change the renderer to:\n- Desktop platforms: %s\n- Mobile platforms: %s"),
+					_to_rendering_method_display_name(rendering_method), _to_rendering_method_display_name(mobile_rendering_method)));
 	video_restart_dialog->popup_centered();
 
 	_update_renderer_color();
@@ -8120,10 +8094,7 @@ void EditorNode::_build_project_menu(bool p_dark_mode) {
 
 	project_menu->add_separator();
 	project_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("ResourcePreloader"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/export"), PROJECT_EXPORT);
-#ifndef WEB_ENABLED
-	// In Web editor "Download Project Source" option is used instead
 	project_menu->add_item(TTRC("Pack Project as ZIP..."), PROJECT_PACK_AS_ZIP);
-#endif
 	project_menu->add_item(TTRC("Setup Android Build..."), PROJECT_SETUP_ANDROID_BUILD);
 #ifndef ANDROID_ENABLED
 	project_menu->add_item(TTRC("Open User Data Folder"), PROJECT_OPEN_USER_DATA_FOLDER);
@@ -8141,9 +8112,6 @@ void EditorNode::_build_project_menu(bool p_dark_mode) {
 	project_menu->add_icon_item(get_editor_theme_native_menu_icon(SNAME("Plugin"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), TTRC("Plugins"), PROJECT_OPEN_PLUGINS);
 
 	project_menu->add_separator();
-#ifdef WEB_ENABLED
-	project_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("Download"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/download_project_source"), PROJECT_DOWNLOAD_SOURCE);
-#endif
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/reload_current_project"), PROJECT_RELOAD_CURRENT_PROJECT);
 	project_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("Close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/quit_to_project_list"), PROJECT_QUIT_TO_PROJECT_MANAGER, true);
 }
@@ -8194,7 +8162,7 @@ void EditorNode::_build_settings_menu(bool p_dark_mode) {
 
 	settings_menu->add_item(TTRC("Manage Editor Features..."), EDITOR_MANAGE_FEATURE_PROFILES);
 	settings_menu->add_item(TTRC("Manage Export Templates..."), EDITOR_MANAGE_EXPORT_TEMPLATES);
-#if !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#if !defined(ANDROID_ENABLED)
 	settings_menu->add_item(TTRC("Configure FBX Importer..."), EDITOR_CONFIGURE_FBX_IMPORTER);
 #endif
 }
@@ -9009,7 +8977,7 @@ EditorNode::EditorNode() {
 
 	feature_profile_manager->connect("current_feature_profile_changed", callable_mp(this, &EditorNode::_feature_profile_changed));
 
-#if !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#if !defined(ANDROID_ENABLED)
 	fbx_importer_manager = memnew(FBXImporterManager);
 	gui_base->add_child(fbx_importer_manager);
 #endif
@@ -9075,10 +9043,6 @@ EditorNode::EditorNode() {
 	ED_SHORTCUT_AND_COMMAND("editor/orphan_resource_explorer", TTRC("Orphan Resource Explorer..."));
 	ED_SHORTCUT_AND_COMMAND("editor/engine_compilation_configuration_editor", TTRC("Engine Compilation Configuration Editor..."));
 	ED_SHORTCUT_AND_COMMAND("editor/clear_project_cache", TTRC("Clear Project Cache..."));
-
-#ifdef WEB_ENABLED
-	ED_SHORTCUT_AND_COMMAND("editor/download_project_source", TTRC("Download Project"));
-#endif
 
 	ED_SHORTCUT_AND_COMMAND("editor/reload_current_project", TTRC("Reload Current Project"));
 	ED_SHORTCUT_AND_COMMAND("editor/quit_to_project_list", TTRC("Quit to Project List"), KeyModifierMask::CTRL + KeyModifierMask::SHIFT + Key::Q);
@@ -9205,7 +9169,7 @@ EditorNode::EditorNode() {
 	renderer->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	renderer->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	renderer->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
-	renderer->set_tooltip_text(TTRC("Choose a renderer.\n\nNotes:\n- On mobile platforms, the Mobile renderer is used if Forward+ is selected here.\n- On the web platform, the Compatibility renderer is always used."));
+	renderer->set_tooltip_text(TTRC("Choose a renderer.\n\nOn mobile platforms, the Mobile renderer is used if Forward+ is selected here."));
 	renderer->set_accessibility_name(TTRC("Renderer"));
 
 	right_menu_hb->add_child(renderer);

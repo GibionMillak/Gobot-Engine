@@ -41,10 +41,6 @@
 #include <platform_egl.h>
 #endif
 
-#ifdef WEB_ENABLED
-#include <emscripten/html5_webgl.h>
-#endif
-
 using namespace GLES3;
 
 #define _GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
@@ -54,23 +50,6 @@ Config *Config::singleton = nullptr;
 Config::Config() {
 	singleton = this;
 
-#ifdef WEB_ENABLED
-	// Starting with Emscripten 3.1.51, glGetStringi(GL_EXTENSIONS, i) will only ever return
-	// a fixed list of extensions, regardless of what additional extensions are enabled. This
-	// isn't very useful for us in determining which extensions we can rely on here. So, instead
-	// we use emscripten_webgl_get_supported_extensions() to get all supported extensions, which
-	// is what Emscripten 3.1.50 and earlier do.
-	{
-		char *extension_array_string = emscripten_webgl_get_supported_extensions();
-		PackedStringArray extension_array = String((const char *)extension_array_string).split(" ");
-		extensions.reserve(extension_array.size() * 2);
-		for (const String &s : extension_array) {
-			extensions.insert(s);
-			extensions.insert("GL_" + s);
-		}
-		free(extension_array_string);
-	}
-#else
 	{
 		GLint max_extensions = 0;
 		glGetIntegerv(GL_NUM_EXTENSIONS, &max_extensions);
@@ -82,13 +61,12 @@ Config::Config() {
 			extensions.insert((const char *)s);
 		}
 	}
-#endif
 
 	bptc_supported = extensions.has("GL_ARB_texture_compression_bptc") || extensions.has("GL_EXT_texture_compression_bptc");
 	astc_3d_supported = extensions.has("GL_OES_texture_compression_astc");
 	astc_hdr_supported = astc_3d_supported || extensions.has("GL_KHR_texture_compression_astc_hdr");
 	astc_layered_supported = astc_hdr_supported || extensions.has("GL_KHR_texture_compression_astc_sliced_3d");
-	astc_supported = astc_layered_supported || extensions.has("GL_KHR_texture_compression_astc_ldr") || extensions.has("WEBGL_compressed_texture_astc");
+	astc_supported = astc_layered_supported || extensions.has("GL_KHR_texture_compression_astc_ldr");
 
 	if (RasterizerUtilGLES3::is_gles_over_gl()) {
 		float_texture_supported = true;
@@ -101,18 +79,14 @@ Config::Config() {
 	} else {
 		float_texture_supported = extensions.has("GL_EXT_color_buffer_float");
 		float_texture_linear_supported = extensions.has("GL_OES_texture_float_linear");
-#ifdef WEB_ENABLED
-		etc2_supported = extensions.has("WEBGL_compressed_texture_etc");
-#else
 		etc2_supported = true;
-#endif
 #if defined(ANDROID_ENABLED) || defined(IOS_ENABLED)
 		// Some Android devices report support for S3TC but we don't expect that and don't export the textures.
 		// This could be fixed but so few devices support it that it doesn't seem useful (and makes bigger APKs).
 		// For good measure we do the same hack for iOS, just in case.
 		s3tc_supported = false;
 #else
-		s3tc_supported = extensions.has("GL_EXT_texture_compression_dxt1") || extensions.has("GL_EXT_texture_compression_s3tc") || extensions.has("WEBGL_compressed_texture_s3tc");
+		s3tc_supported = extensions.has("GL_EXT_texture_compression_dxt1") || extensions.has("GL_EXT_texture_compression_s3tc");
 #endif
 		rgtc_supported = extensions.has("GL_EXT_texture_compression_rgtc") || extensions.has("GL_ARB_texture_compression_rgtc");
 		srgb_framebuffer_supported = extensions.has("GL_EXT_sRGB_write_control");
@@ -141,18 +115,9 @@ Config::Config() {
 	}
 
 	glGetIntegerv(GL_MAX_SAMPLES, &msaa_max_samples);
-#ifdef WEB_ENABLED
-	msaa_supported = (msaa_max_samples > 0);
-#else
 	msaa_supported = true;
-#endif
 #ifndef IOS_ENABLED
-#ifdef WEB_ENABLED
-	msaa_multiview_supported = extensions.has("OCULUS_multiview");
-	rt_msaa_multiview_supported = msaa_multiview_supported;
-#else
 	msaa_multiview_supported = extensions.has("GL_EXT_multiview_texture_multisample");
-#endif
 
 	multiview_supported = extensions.has("OCULUS_multiview") || extensions.has("GL_OVR_multiview2") || extensions.has("GL_OVR_multiview");
 #endif
@@ -255,9 +220,6 @@ Config::Config() {
 	if (OS::get_singleton()->get_current_rendering_driver_name() == "opengl3_angle") {
 		polyfill_half2float = false;
 	}
-#ifdef WEB_ENABLED
-	polyfill_half2float = false;
-#endif
 }
 
 Config::~Config() {

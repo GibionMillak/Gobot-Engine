@@ -28,8 +28,6 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef WEB_ENABLED
-
 #include "upnp_miniupnp.h"
 
 #include "upnp_device_miniupnp.h"
@@ -336,5 +334,3 @@ int UPNPMiniUPNP::delete_port_mapping(int port, String proto) const {
 
 	return dev->delete_port_mapping(port, proto);
 }
-
-#endif // WEB_ENABLED

@@ -202,7 +202,7 @@
 				The dictionary can also include the following fields under selected platforms:
 				[code]steam_input_index[/code]: The Steam Input gamepad index (Windows, Linux, and macOS only). If the device is not a Steam Input device this key won't be present.
 				[code]xinput_index[/code]: The index of the controller in the XInput system (Windows only). This key won't be present for devices not handled by XInput.
-				[b]Note:[/b] The returned dictionary is always empty on Android and Web.
+				[b]Note:[/b] The returned dictionary is always empty on Android.
 			</description>
 		</method>
 		<method name="get_joy_motion_sensors_calibration" qualifiers="const" experimental="">
@@ -647,7 +647,6 @@
 				[param image] can be either [Texture2D] or [Image] and its size must be lower than or equal to 256×256. To avoid rendering issues, sizes lower than or equal to 128×128 are recommended.
 				[param hotspot] must be within [param image]'s size.
 				[b]Note:[/b] The [b]Lossless[/b], [b]Lossy[/b] or [b]Uncompressed[/b] compression modes are recommended. The [b]Video RAM[/b] compression mode can be used, but it will be decompressed on the CPU, which means loading times are slowed down and no memory is saved compared to lossless modes.
-				[b]Note:[/b] On the web platform, the maximum allowed cursor image size is 128×128. Cursor images larger than 32×32 will also only be displayed if the mouse cursor image is entirely located within the page for [url=https://chromestatus.com/feature/5825971391299584]security reasons[/url].
 			</description>
 		</method>
 		<method name="set_default_cursor_shape">
@@ -892,11 +891,9 @@
 			<description>
 				Starts vibrating the handheld device for the specified duration in milliseconds.
 				[param amplitude] is the strength of the vibration, as a value between [code]0.0[/code] and [code]1.0[/code]. If set to [code]-1.0[/code], the default vibration strength of the device is used.
-				[b]Note:[/b] This method is implemented on Android, iOS, and Web. It has no effect on other platforms.
+				[b]Note:[/b] This method is implemented on Android, iOS. It has no effect on other platforms.
 				[b]Note:[/b] For Android, [method vibrate_handheld] requires enabling the [code]VIBRATE[/code] permission in the export preset. Otherwise, [method vibrate_handheld] will have no effect.
 				[b]Note:[/b] For iOS, specifying the duration is only supported in iOS 13 and later.
-				[b]Note:[/b] For Web, the amplitude cannot be changed.
-				[b]Note:[/b] Some web browsers such as Safari and Firefox for Android do not support [method vibrate_handheld].
 				[b]Note:[/b] Device settings such as vibration on/off, "do not disturb" mode or specific haptic feedback on/off may prevent [method vibrate_handheld] effects.
 			</description>
 		</method>
@@ -906,7 +903,7 @@
 			<description>
 				Sets the mouse position to the specified vector, provided in pixels and relative to an origin at the upper left corner of the currently focused Window Manager game window.
 				Mouse position is clipped to the limits of the screen resolution, or to the limits of the game window if [enum MouseMode] is set to [constant MOUSE_MODE_CONFINED] or [constant MOUSE_MODE_CONFINED_HIDDEN].
-				[b]Note:[/b] [method warp_mouse] is only supported on Windows, macOS and Linux. It has no effect on Android, iOS and Web.
+				[b]Note:[/b] [method warp_mouse] is only supported on Windows, macOS and Linux. It has no effect on Android, iOS.
 			</description>
 		</method>
 	</methods>

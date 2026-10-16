@@ -111,7 +111,6 @@ static const char *platform_name_map[][2] = {
 	{ "BSD", "linuxbsd" },
 	{ "Android", "android" },
 	{ "iOS", "ios" },
-	{ "Web", "web" },
 	{ nullptr, nullptr }
 };
 
@@ -150,11 +149,7 @@ private:
 		// TODO use paths from csproj
 		res_temp_assemblies_dir = res_data_dir.path_join("temp").path_join("bin").path_join(_get_expected_build_config());
 
-#ifdef WEB_ENABLED
-		mono_user_dir = "user://";
-#else
 		mono_user_dir = _get_mono_user_dir();
-#endif
 
 		String exe_dir = OS::get_singleton()->get_executable_path().get_base_dir();
 #ifdef MACOS_ENABLED

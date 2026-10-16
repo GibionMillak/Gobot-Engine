@@ -650,7 +650,6 @@ EditorBuildProfile::EditorBuildProfile() {
 	HashMap<String, LocalVector<Variant>> settings_rd = {
 		{ "rendering/renderer/rendering_method", { "forward_plus", "mobile" } },
 		{ "rendering/renderer/rendering_method.mobile", { "forward_plus", "mobile" } },
-		{ "rendering/renderer/rendering_method.web", { "forward_plus", "mobile" } },
 	};
 	build_option_settings.insert(BUILD_OPTION_RENDERING_DEVICE, settings_rd);
 
@@ -686,7 +685,6 @@ EditorBuildProfile::EditorBuildProfile() {
 	HashMap<String, LocalVector<Variant>> settings_opengl = {
 		{ "rendering/renderer/rendering_method", { "gl_compatibility" } },
 		{ "rendering/renderer/rendering_method.mobile", { "gl_compatibility" } },
-		{ "rendering/renderer/rendering_method.web", { "gl_compatibility" } },
 		{ "rendering/rendering_device/fallback_to_opengl3", { true } },
 	};
 	build_option_settings.insert(BUILD_OPTION_OPENGL, settings_opengl);

@@ -453,21 +453,6 @@ void ExportTemplateManager::_initialize_template_data() {
 
 	{
 		TemplateInfo info;
-		info.name = "Web";
-		info.description = TTRC("Regular web build with threading support. Threads improve performance, but require \"cross-origin isolated\" website to run.");
-		info.file_list = { "web_debug.zip", "web_release.zip" };
-		template_data[TemplateID::WEB] = info;
-	}
-	{
-		TemplateInfo info;
-		info.name = TTR("Web Single-Threaded");
-		info.description = TTRC("Web build without threading support.");
-		info.file_list = { "web_nothreads_debug.zip", "web_nothreads_release.zip" };
-		template_data[TemplateID::WEB_NOTHREADS] = info;
-	}
-
-	{
-		TemplateInfo info;
 		info.name = "Android";
 		info.description = TTRC("Android APK template and source for Gradle builds.");
 		info.file_list = { "android_debug.apk", "android_release.apk", "android_source.zip" };
@@ -530,16 +515,6 @@ void ExportTemplateManager::_initialize_template_data() {
 		info.templates = { TemplateID::IOS };
 		info.group = TTR("Mobile", "Platform Group");
 		platform_map[PlatformID::IOS] = info;
-	}
-	{
-		PlatformInfo info;
-		info.name = "Web";
-		info.icon = _get_platform_icon("Web");
-#ifndef MODULE_MONO_ENABLED
-		info.templates = { TemplateID::WEB, TemplateID::WEB_NOTHREADS };
-#endif
-		info.group = TTR("Web", "Platform Group");
-		platform_map[PlatformID::WEB] = info;
 	}
 	{
 		PlatformInfo info;
@@ -1318,11 +1293,9 @@ void ExportTemplateManager::_notification(int p_what) {
 			platform_map[PlatformID::WINDOWS].group = TTR("Desktop", "Platform Group");
 			platform_map[PlatformID::LINUX].group = TTR("Desktop", "Platform Group");
 			platform_map[PlatformID::MACOS].group = TTR("Desktop", "Platform Group");
-			platform_map[PlatformID::WEB].group = TTR("Web", "Platform Group");
 			platform_map[PlatformID::ANDROID].group = TTR("Mobile", "Platform Group");
 			platform_map[PlatformID::IOS].group = TTR("Mobile", "Platform Group");
 			platform_map[PlatformID::COMMON].name = TTR("Common");
-			template_data[TemplateID::WEB_NOTHREADS].name = TTR("Web Single-Threaded");
 			template_data[TemplateID::ICU_DATA].name = TTR("ICU Data");
 		} break;
 

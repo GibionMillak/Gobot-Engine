@@ -10,7 +10,7 @@ env_upnp = env_modules.Clone()
 
 thirdparty_obj = []
 
-if env["builtin_miniupnpc"] and env["platform"] != "web":
+if env["builtin_miniupnpc"]:
     thirdparty_dir = "#thirdparty/miniupnpc/"
     thirdparty_sources = [
         "igd_desc_parse.c",

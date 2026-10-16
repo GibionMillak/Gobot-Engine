@@ -59,8 +59,6 @@ OS *OS::get_singleton() {
 bool OS::prefer_meta_over_ctrl() {
 #if defined(MACOS_ENABLED) || defined(APPLE_EMBEDDED_ENABLED)
 	return true;
-#elif defined(WEB_ENABLED)
-	return singleton->has_feature("web_macos") || singleton->has_feature("web_ios");
 #else
 	return false;
 #endif
@@ -586,19 +584,6 @@ bool OS::has_feature(const String &p_feature) {
 	}
 #endif
 	if (p_feature == "ppc") {
-		return true;
-	}
-#elif defined(__wasm__)
-#if defined(__wasm64__)
-	if (p_feature == "wasm64") {
-		return true;
-	}
-#elif defined(__wasm32__)
-	if (p_feature == "wasm32") {
-		return true;
-	}
-#endif
-	if (p_feature == "wasm") {
 		return true;
 	}
 #elif defined(__loongarch64)

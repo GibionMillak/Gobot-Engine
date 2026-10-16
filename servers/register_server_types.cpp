@@ -36,7 +36,6 @@
 #include "core/object/class_db.h"
 #include "core/os/os.h"
 #include "servers/audio/audio_effect.h"
-#include "servers/audio/audio_frame.h"
 #include "servers/audio/audio_server.h"
 #include "servers/audio/effects/audio_effect_amplify.h"
 #include "servers/audio/effects/audio_effect_capture.h"
@@ -157,8 +156,6 @@ void register_server_types() {
 
 	GDREGISTER_CLASS(CameraServer);
 
-	GDREGISTER_CLASS(AudioSample);
-	GDREGISTER_CLASS(AudioSamplePlayback);
 	GDREGISTER_VIRTUAL_CLASS(AudioEffect);
 	GDREGISTER_VIRTUAL_CLASS(AudioEffectInstance);
 	GDREGISTER_CLASS(AudioEffectEQ);

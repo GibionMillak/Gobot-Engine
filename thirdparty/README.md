@@ -231,7 +231,6 @@ Patches:
 
 - `0001-disable-exceptions.patch` ([GH-48050](https://github.com/godotengine/godot/pull/48050))
 - `0002-godot-config.patch` ([GH-88783](https://github.com/godotengine/godot/pull/88783))
-- `0003-emscripten-nthreads.patch` ([GH-69799](https://github.com/godotengine/godot/pull/69799))
 - `0004-mingw-no-cpuidex.patch` ([GH-92488](https://github.com/godotengine/godot/pull/92488))
 - `0005-mingw-llvm-arm64.patch` ([GH-93364](https://github.com/godotengine/godot/pull/93364))
 - `0006-explicit-includes.patch` ([GH-111557](https://github.com/godotengine/godot/pull/111557))
@@ -657,7 +656,6 @@ Patches:
 - `0001-msvc-node-debug-rename.patch` ([GH-75769](https://github.com/godotengine/godot/pull/75769))
 - `0002-msvc-arm64-fpstrict.patch` ([GH-94655](https://github.com/godotengine/godot/pull/94655))
 - `0003-clang-cl-sse2-sse41-avx2.patch` ([GH-92316](https://github.com/godotengine/godot/pull/92316))
-- `0004-emscripten-cppdefine.patch` ([GH-122412](https://github.com/godotengine/godot/pull/122412))
 
 
 ## linuxbsd_headers

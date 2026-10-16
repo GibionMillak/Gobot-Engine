@@ -30,8 +30,6 @@
 
 #pragma once
 
-#ifndef WEB_ENABLED
-
 #include "upnp_device.h"
 
 class UPNPDeviceMiniUPNP : public UPNPDevice {
@@ -76,5 +74,3 @@ public:
 	UPNPDeviceMiniUPNP() {}
 	virtual ~UPNPDeviceMiniUPNP() {}
 };
-
-#endif // WEB_ENABLED

@@ -28,7 +28,6 @@ namespace GodotTools.Utils
             public const string BSD = "BSD";
             public const string Android = "Android";
             public const string iOS = "iOS";
-            public const string Web = "Web";
         }
 
         /// <summary>
@@ -41,7 +40,6 @@ namespace GodotTools.Utils
             public const string LinuxBSD = "linuxbsd";
             public const string Android = "android";
             public const string iOS = "ios";
-            public const string Web = "web";
         }
 
         /// <summary>
@@ -58,7 +56,6 @@ namespace GodotTools.Utils
             public const string LinuxBionic = "linux-bionic";
             public const string iOS = "ios";
             public const string iOSSimulator = "iossimulator";
-            public const string Browser = "browser";
         }
 
         public static readonly Dictionary<string, string> PlatformFeatureMap = new Dictionary<string, string>(
@@ -71,7 +68,6 @@ namespace GodotTools.Utils
             ["Linux"] = Platforms.LinuxBSD,
             ["Android"] = Platforms.Android,
             ["iOS"] = Platforms.iOS,
-            ["Web"] = Platforms.Web
         };
 
         public static readonly Dictionary<string, string> PlatformNameMap = new Dictionary<string, string>
@@ -84,7 +80,6 @@ namespace GodotTools.Utils
             [Names.BSD] = Platforms.LinuxBSD,
             [Names.Android] = Platforms.Android,
             [Names.iOS] = Platforms.iOS,
-            [Names.Web] = Platforms.Web
         };
 
         public static readonly Dictionary<string, string> DotNetOSPlatformMap = new Dictionary<string, string>
@@ -98,7 +93,6 @@ namespace GodotTools.Utils
             [Platforms.LinuxBSD] = DotNetOS.Linux,
             [Platforms.Android] = DotNetOS.Android,
             [Platforms.iOS] = DotNetOS.iOS,
-            [Platforms.Web] = DotNetOS.Browser
         };
         private static bool IsOS(string name)
         {
@@ -132,7 +126,6 @@ namespace GodotTools.Utils
         private static readonly Lazy<bool> _isLinuxBSD = new(() => IsAnyOS(LinuxBSDPlatforms));
         private static readonly Lazy<bool> _isAndroid = new(() => IsOS(Names.Android));
         private static readonly Lazy<bool> _isiOS = new(() => IsOS(Names.iOS));
-        private static readonly Lazy<bool> _isWeb = new(() => IsOS(Names.Web));
         private static readonly Lazy<bool> _isUnixLike = new(() => IsAnyOS(UnixLikePlatforms));
 
         [SupportedOSPlatformGuard("windows")] public static bool IsWindows => _isWindows.Value;
@@ -145,7 +138,6 @@ namespace GodotTools.Utils
 
         [SupportedOSPlatformGuard("ios")] public static bool IsiOS => _isiOS.Value;
 
-        [SupportedOSPlatformGuard("browser")] public static bool IsWeb => _isWeb.Value;
         public static bool IsUnixLike => _isUnixLike.Value;
 
         public static char PathSep => IsWindows ? ';' : ':';

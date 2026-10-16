@@ -107,8 +107,6 @@ public:
 	virtual double get_length() const override; //if supported, otherwise return 0
 	virtual bool is_monophonic() const override;
 
-	virtual bool is_meta_stream() const override { return true; }
-
 	AudioStreamRandomizer();
 };
 

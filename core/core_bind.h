@@ -261,8 +261,6 @@ public:
 	uint64_t get_ticks_msec() const;
 	uint64_t get_ticks_usec() const;
 
-	bool is_userfs_persistent() const;
-
 	bool is_stdout_verbose() const;
 
 	int get_processor_count() const;

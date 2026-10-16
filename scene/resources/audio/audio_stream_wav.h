@@ -66,9 +66,6 @@ class AudioStreamPlaybackWAV : public AudioStreamPlaybackResampled {
 	template <typename Depth, bool is_stereo, bool is_ima_adpcm, bool is_qoa>
 	void decode_samples(const Depth *p_src, AudioFrame *p_dst, int64_t &p_offset, int8_t &p_increment, uint32_t p_amount, IMA_ADPCM_State *p_ima_adpcm, QOA_State *p_qoa);
 
-	bool _is_sample = false;
-	Ref<AudioSamplePlayback> sample_playback;
-
 protected:
 	virtual int _mix_internal(AudioFrame *p_buffer, int p_frames) override;
 	virtual float get_stream_sampling_rate() override;
@@ -85,10 +82,6 @@ public:
 
 	virtual void tag_used_streams() override;
 
-	virtual void set_is_sample(bool p_is_sample) override;
-	virtual bool get_is_sample() const override;
-	virtual Ref<AudioSamplePlayback> get_sample_playback() const override;
-	virtual void set_sample_playback(const Ref<AudioSamplePlayback> &p_playback) override;
 };
 
 class AudioStreamWAV : public AudioStream {
@@ -163,10 +156,6 @@ public:
 
 	virtual Ref<AudioStreamPlayback> instantiate_playback() override;
 
-	virtual bool can_be_sampled() const override {
-		return true;
-	}
-	virtual Ref<AudioSample> generate_sample() const override;
 
 	static void _compress_ima_adpcm(const Vector<float> &p_data, Vector<uint8_t> &r_dst_data) {
 		static const int16_t _ima_adpcm_step_table[89] = {

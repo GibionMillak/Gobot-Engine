@@ -122,10 +122,7 @@ void RasterizerCanvasGLES3::canvas_render_items(RID p_to_render_target, Item *p_
 		if (syncStatus == GL_UNSIGNALED) {
 			// If older than 2 frames, wait for sync OpenGL can have up to 3 frames in flight, any more and we need to sync anyway.
 			if (state.canvas_instance_data_buffers[state.current_data_buffer_index].last_frame_used < RSG::rasterizer->get_frame_number() - 2) {
-#ifndef WEB_ENABLED
-				// On web, we do nothing as the glSubBufferData will force a sync anyway and WebGL does not like waiting.
 				glClientWaitSync(state.canvas_instance_data_buffers[state.current_data_buffer_index].fence, 0, 100000000); // wait for up to 100ms
-#endif
 				state.canvas_instance_data_buffers[state.current_data_buffer_index].last_frame_used = RSG::rasterizer->get_frame_number();
 				glDeleteSync(state.canvas_instance_data_buffers[state.current_data_buffer_index].fence);
 				state.canvas_instance_data_buffers[state.current_data_buffer_index].fence = GLsync();
@@ -294,14 +291,10 @@ void RasterizerCanvasGLES3::canvas_render_items(RID p_to_render_target, Item *p_
 	if (light_count > 0) {
 		glBindBufferBase(GL_UNIFORM_BUFFER, LIGHT_UNIFORM_LOCATION, state.canvas_instance_data_buffers[state.current_data_buffer_index].light_ubo);
 
-#ifdef WEB_ENABLED
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightUniform) * light_count, state.light_uniforms);
-#else
 		// On Desktop and mobile we map the memory without synchronizing for maximum speed.
 		void *ubo = glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(LightUniform) * light_count, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 		memcpy(ubo, state.light_uniforms, sizeof(LightUniform) * light_count);
 		glUnmapBuffer(GL_UNIFORM_BUFFER);
-#endif
 
 		GLuint texture_atlas = texture_storage->texture_atlas_get_texture();
 		if (texture_atlas == 0) {
@@ -664,14 +657,10 @@ void RasterizerCanvasGLES3::_render_items(RID p_to_render_target, int p_item_cou
 
 	// Copy over all data needed for rendering.
 	glBindBuffer(GL_ARRAY_BUFFER, state.canvas_instance_data_buffers[state.current_data_buffer_index].instance_buffers[state.current_instance_buffer_index]);
-#ifdef WEB_ENABLED
-	glBufferSubData(GL_ARRAY_BUFFER, state.last_item_index * sizeof(InstanceData), sizeof(InstanceData) * index, state.instance_data_array);
-#else
 	// On Desktop and mobile we map the memory without synchronizing for maximum speed.
 	void *buffer = glMapBufferRange(GL_ARRAY_BUFFER, state.last_item_index * sizeof(InstanceData), index * sizeof(InstanceData), GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 	memcpy(buffer, state.instance_data_array, index * sizeof(InstanceData));
 	glUnmapBuffer(GL_ARRAY_BUFFER);
-#endif
 
 	glDisable(GL_SCISSOR_TEST);
 	current_clip = nullptr;
@@ -1547,14 +1536,10 @@ void RasterizerCanvasGLES3::_add_to_batch(uint32_t &r_index, bool &r_batch_broke
 		// Copy over all data needed for rendering right away
 		// then go back to recording item commands.
 		glBindBuffer(GL_ARRAY_BUFFER, state.canvas_instance_data_buffers[state.current_data_buffer_index].instance_buffers[state.current_instance_buffer_index]);
-#ifdef WEB_ENABLED
-		glBufferSubData(GL_ARRAY_BUFFER, state.last_item_index * sizeof(InstanceData), sizeof(InstanceData) * r_index, state.instance_data_array);
-#else
 		// On Desktop and mobile we map the memory without synchronizing for maximum speed.
 		void *buffer = glMapBufferRange(GL_ARRAY_BUFFER, state.last_item_index * sizeof(InstanceData), r_index * sizeof(InstanceData), GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 		memcpy(buffer, state.instance_data_array, r_index * sizeof(InstanceData));
 		glUnmapBuffer(GL_ARRAY_BUFFER);
-#endif
 		_allocate_instance_buffer();
 		r_index = 0;
 		state.last_item_index = 0;

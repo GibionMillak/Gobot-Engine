@@ -907,27 +907,23 @@ Ref<Image> TextureStorage::_get_gl_image_and_format(const Ref<Image> &p_image, I
 			}
 		} break;
 		case Image::FORMAT_ETC2_RA_AS_RG: {
-#ifndef WEB_ENABLED
 			if (config->etc2_supported) {
 				r_gl_internal_format = _EXT_COMPRESSED_RGBA8_ETC2_EAC;
 				r_gl_format = GL_RGBA;
 				r_gl_type = GL_UNSIGNED_BYTE;
 				r_compressed = true;
 			} else
-#endif
 			{
 				need_decompress = true;
 			}
 		} break;
 		case Image::FORMAT_DXT5_RA_AS_RG: {
-#ifndef WEB_ENABLED
 			if (config->s3tc_supported) {
 				r_gl_internal_format = _EXT_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 				r_gl_format = GL_RGBA;
 				r_gl_type = GL_UNSIGNED_BYTE;
 				r_compressed = true;
 			} else
-#endif
 			{
 				need_decompress = true;
 			}
@@ -1609,7 +1605,7 @@ Ref<Image> TextureStorage::texture_2d_get(RID p_texture) const {
 	if (!RasterizerUtilGLES3::is_gles_over_gl()) {
 		Vector<uint8_t> data;
 
-		// On web and mobile we always read an RGBA8 image with no mipmaps.
+		// On mobile we always read an RGBA8 image with no mipmaps.
 		int64_t data_size = Image::get_image_data_size(texture->alloc_width, texture->alloc_height, Image::FORMAT_RGBA8, false);
 
 		data.resize(data_size * 2); // Add some memory at the end, just in case for buggy drivers.
@@ -2044,7 +2040,7 @@ void TextureStorage::_texture_set_data(RID p_texture, const Ref<Image> &p_image,
 
 	bool needs_decompress = texture->resize_to_po2;
 
-	// Support for RGTC-compressed Texture Arrays isn't mandated by GLES3/WebGL.
+	// Support for RGTC-compressed Texture Arrays isn't mandated by GLES3.
 	if (!RasterizerUtilGLES3::is_gles_over_gl() && texture->target == GL_TEXTURE_2D_ARRAY) {
 		if (p_image->get_format() == Image::FORMAT_RGTC_R || p_image->get_format() == Image::FORMAT_RGTC_RG) {
 			needs_decompress = true;
@@ -2214,7 +2210,6 @@ void TextureStorage::_texture_set_3d_data(RID p_texture, const Vector<Ref<Image>
 }
 
 void TextureStorage::_texture_set_swizzle(GLES3::Texture *p_texture, Image::Format p_real_format) {
-#ifndef WEB_ENABLED
 	switch (p_texture->format) {
 		case Image::FORMAT_L8: {
 			if (RasterizerUtilGLES3::is_gles_over_gl()) {
@@ -2262,7 +2257,6 @@ void TextureStorage::_texture_set_swizzle(GLES3::Texture *p_texture, Image::Form
 			glTexParameteri(p_texture->target, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
 		} break;
 	}
-#endif // WEB_ENABLED
 }
 
 Image::Format TextureStorage::texture_get_format(RID p_texture) const {

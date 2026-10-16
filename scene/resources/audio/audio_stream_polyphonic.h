@@ -32,14 +32,10 @@
 
 #include "core/templates/local_vector.h"
 #include "scene/resources/audio/audio_stream.h"
-#include "scene/scene_string_names.h"
-#include "servers/audio/audio_server_enums.h"
 
 class AudioStreamPolyphonic : public AudioStream {
 	GDCLASS(AudioStreamPolyphonic, AudioStream)
 	int polyphony = 32;
-
-	AuSE::PlaybackType playback_type;
 
 	static void _bind_methods();
 
@@ -49,8 +45,6 @@ public:
 
 	void set_polyphony(int p_voices);
 	int get_polyphony() const;
-
-	virtual bool is_meta_stream() const override { return true; }
 
 	AudioStreamPolyphonic();
 };
@@ -82,9 +76,6 @@ class AudioStreamPlaybackPolyphonic : public AudioStreamPlayback {
 	bool active = false;
 	uint32_t id_counter = 1;
 
-	bool _is_sample = false;
-	Ref<AudioSamplePlayback> sample_playback;
-
 	_FORCE_INLINE_ Stream *_find_stream(int64_t p_id);
 	_FORCE_INLINE_ const Stream *_find_stream(int64_t p_id) const;
 
@@ -112,16 +103,11 @@ public:
 
 	virtual int mix(AudioFrame *p_buffer, float p_rate_scale, int p_frames) override;
 
-	ID play_stream(const Ref<AudioStream> &p_stream, float p_from_offset = 0, float p_volume_db = 0, float p_pitch_scale = 1.0, AuSE::PlaybackType p_playback_type = AuSE::PlaybackType::PLAYBACK_TYPE_DEFAULT, const StringName &p_bus = SceneStringName(Master));
+	ID play_stream(const Ref<AudioStream> &p_stream, float p_from_offset = 0, float p_volume_db = 0, float p_pitch_scale = 1.0);
 	void set_stream_volume(ID p_stream_id, float p_volume_db);
 	void set_stream_pitch_scale(ID p_stream_id, float p_pitch_scale);
 	bool is_stream_playing(ID p_stream_id) const;
 	void stop_stream(ID p_stream_id);
-
-	virtual void set_is_sample(bool p_is_sample) override;
-	virtual bool get_is_sample() const override;
-	virtual Ref<AudioSamplePlayback> get_sample_playback() const override;
-	virtual void set_sample_playback(const Ref<AudioSamplePlayback> &p_playback) override;
 
 private:
 

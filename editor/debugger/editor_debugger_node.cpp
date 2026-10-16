@@ -290,11 +290,7 @@ ScriptEditorDebugger *EditorDebuggerNode::get_default_debugger() const {
 }
 
 String EditorDebuggerNode::get_server_uri() const {
-#ifdef WEB_ENABLED
-	return server.is_valid() ? server->get_uri() : "messageport://";
-#else
 	return server.is_valid() ? server->get_uri() : "";
-#endif
 }
 
 void EditorDebuggerNode::set_keep_open(bool p_keep_open) {

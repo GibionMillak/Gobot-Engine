@@ -30,8 +30,6 @@
 
 #pragma once
 
-#ifndef WEB_ENABLED
-
 #include "packet_buffer.h"
 #include "websocket_peer.h"
 
@@ -162,5 +160,3 @@ public:
 	WSLPeer();
 	~WSLPeer();
 };
-
-#endif // WEB_ENABLED

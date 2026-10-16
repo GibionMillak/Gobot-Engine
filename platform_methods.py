@@ -13,11 +13,10 @@ compatibility_platform_aliases = {
     "osx": "macos",
     "iphone": "ios",
     "x11": "linuxbsd",
-    "javascript": "web",
 }
 
 # CPU architecture options.
-architectures = ["x86_32", "x86_64", "arm32", "arm64", "rv64", "ppc64", "wasm32", "loongarch64"]
+architectures = ["x86_32", "x86_64", "arm32", "arm64", "rv64", "ppc64", "loongarch64"]
 architecture_aliases = {
     "x86": "x86_32",
     "x64": "x86_64",

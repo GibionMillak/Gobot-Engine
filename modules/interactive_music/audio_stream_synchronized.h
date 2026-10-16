@@ -64,7 +64,6 @@ public:
 
 	virtual Ref<AudioStreamPlayback> instantiate_playback() override;
 	virtual double get_length() const override;
-	virtual bool is_meta_stream() const override { return true; }
 
 	AudioStreamSynchronized();
 

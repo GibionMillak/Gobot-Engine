@@ -34,11 +34,7 @@
 #include "core/variant/variant.h"
 #include "servers/audio/audio_server_enums.h"
 
-struct AudioFrame;
 class AudioDriverDummy;
-class AudioSample;
-class AudioStream;
-class AudioSamplePlayback;
 
 class AudioDriver {
 	static AudioDriver *singleton;
@@ -125,29 +121,6 @@ public:
 	uint64_t get_profiling_time() const { return prof_time.get(); }
 	void reset_profiling_time() { prof_time.set(0); }
 #endif
-
-	// Samples handling.
-	virtual bool is_stream_registered_as_sample(const Ref<AudioStream> &p_stream) const {
-		return false;
-	}
-	virtual void register_sample(const Ref<AudioSample> &p_sample) {}
-	virtual void unregister_sample(const Ref<AudioSample> &p_sample) {}
-	virtual void start_sample_playback(const Ref<AudioSamplePlayback> &p_playback);
-	virtual void stop_sample_playback(const Ref<AudioSamplePlayback> &p_playback) {}
-	virtual void set_sample_playback_pause(const Ref<AudioSamplePlayback> &p_playback, bool p_paused) {}
-	virtual bool is_sample_playback_active(const Ref<AudioSamplePlayback> &p_playback) { return false; }
-	virtual double get_sample_playback_position(const Ref<AudioSamplePlayback> &p_playback) { return false; }
-	virtual void update_sample_playback_pitch_scale(const Ref<AudioSamplePlayback> &p_playback, float p_pitch_scale = 0.0f) {}
-	virtual void set_sample_playback_bus_volumes_linear(const Ref<AudioSamplePlayback> &p_playback, const HashMap<StringName, Vector<AudioFrame>> &p_bus_volumes) {}
-
-	virtual void set_sample_bus_count(int p_count) {}
-	virtual void remove_sample_bus(int p_bus) {}
-	virtual void add_sample_bus(int p_at_pos = -1) {}
-	virtual void move_sample_bus(int p_bus, int p_to_pos) {}
-	virtual void set_sample_bus_send(int p_bus, const StringName &p_send) {}
-	virtual void set_sample_bus_volume_db(int p_bus, float p_volume_db) {}
-	virtual void set_sample_bus_solo(int p_bus, bool p_enable) {}
-	virtual void set_sample_bus_mute(int p_bus, bool p_enable) {}
 
 	AudioDriver() {}
 	virtual ~AudioDriver() {}

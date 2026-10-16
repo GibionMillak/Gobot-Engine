@@ -7,7 +7,7 @@
 //    functions, so we just use our own there to keep it simple.
 
 #ifdef USE_HALF2FLOAT
-// Floating point pack/unpack functions are part of the GLSL ES 300 specification used by web and mobile.
+// Floating point pack/unpack functions are part of the GLSL ES 300 specification used by mobile.
 // It appears to be safe to expose these on mobile, but when running through ANGLE this appears to break.
 uint float2half(uint f) {
 	uint e = f & uint(0x7f800000);

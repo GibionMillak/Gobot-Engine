@@ -829,24 +829,13 @@ void ParticlesStorage::particles_set_view_axis(RID p_particles, const Vector3 &p
 		glBindBuffer(GL_ARRAY_BUFFER, particles->sort_buffer);
 
 		ParticleInstanceData3D *particle_array;
-#ifndef __EMSCRIPTEN__
 		particle_array = static_cast<ParticleInstanceData3D *>(glMapBufferRange(GL_ARRAY_BUFFER, 0, particles->amount * sizeof(ParticleInstanceData3D), GL_MAP_READ_BIT | GL_MAP_WRITE_BIT));
 		ERR_FAIL_NULL(particle_array);
-#else
-		LocalVector<ParticleInstanceData3D> particle_vector;
-		particle_vector.resize(particles->amount);
-		particle_array = particle_vector.ptr();
-		godot_webgl2_glGetBufferSubData(GL_ARRAY_BUFFER, 0, particles->amount * sizeof(ParticleInstanceData3D), particle_array);
-#endif
 		SortArray<ParticleInstanceData3D, ParticlesViewSort> sorter;
 		sorter.compare.z_dir = axis;
 		sorter.sort(particle_array, particles->amount);
 
-#ifndef __EMSCRIPTEN__
 		glUnmapBuffer(GL_ARRAY_BUFFER);
-#else
-		glBufferSubData(GL_ARRAY_BUFFER, 0, particles->amount * sizeof(ParticleInstanceData3D), particle_vector.ptr());
-#endif
 	}
 
 	glEnable(GL_RASTERIZER_DISCARD);
@@ -1232,16 +1221,9 @@ void ParticlesStorage::_particles_reverse_lifetime_sort(Particles *particles) {
 
 	ParticleInstanceData *particle_array;
 	uint32_t buffer_size = particles->amount * sizeof(ParticleInstanceData);
-#ifndef __EMSCRIPTEN__
 	particle_array = static_cast<ParticleInstanceData *>(glMapBufferRange(GL_ARRAY_BUFFER, 0, buffer_size, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT));
 
 	ERR_FAIL_NULL(particle_array);
-#else
-	LocalVector<ParticleInstanceData> particle_vector;
-	particle_vector.resize(particles->amount);
-	particle_array = particle_vector.ptr();
-	godot_webgl2_glGetBufferSubData(GL_ARRAY_BUFFER, 0, buffer_size, particle_array);
-#endif
 
 	uint32_t lifetime_split = (MIN(int(particles->amount * particles->sort_buffer_phase), particles->amount - 1) + 1) % particles->amount;
 	for (uint32_t i = 0; i < lifetime_split / 2; i++) {
@@ -1252,11 +1234,7 @@ void ParticlesStorage::_particles_reverse_lifetime_sort(Particles *particles) {
 		SWAP(particle_array[lifetime_split + i], particle_array[particles->amount - 1 - i]);
 	}
 
-#ifndef __EMSCRIPTEN__
 	glUnmapBuffer(GL_ARRAY_BUFFER);
-#else
-	glBufferSubData(GL_ARRAY_BUFFER, 0, buffer_size, particle_vector.ptr());
-#endif
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

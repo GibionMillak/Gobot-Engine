@@ -126,9 +126,6 @@ class ExportTemplateManager : public AcceptDialog {
 
 		MACOS,
 
-		WEB,
-		WEB_NOTHREADS,
-
 		ANDROID,
 
 		IOS,
@@ -140,7 +137,6 @@ class ExportTemplateManager : public AcceptDialog {
 		WINDOWS,
 		LINUX,
 		MACOS,
-		WEB,
 		ANDROID,
 		IOS,
 		COMMON,

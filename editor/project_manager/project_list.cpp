@@ -87,7 +87,7 @@ void ProjectListItemControl::_notification(int p_what) {
 
 			if (project_is_missing) {
 				explore_button->set_button_icon(get_editor_theme_icon(SNAME("FileBroken")));
-#if !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#if !defined(ANDROID_ENABLED)
 			} else {
 				explore_button->set_button_icon(get_editor_theme_icon(SNAME("Load")));
 #endif
@@ -357,13 +357,13 @@ void ProjectListItemControl::set_is_missing(bool p_missing) {
 		explore_button->set_button_icon(get_editor_theme_icon(SNAME("FileBroken")));
 		explore_button->set_tooltip_text(TTRC("Error: Project is missing on the filesystem."));
 	} else {
-#if defined(ANDROID_ENABLED) || defined(WEB_ENABLED)
-		// Opening the system file manager is not supported on the Android and web editors.
+#if defined(ANDROID_ENABLED)
+		// Opening the system file manager is not supported on the Android editor.
 		explore_button->hide();
-#else // !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#else
 		explore_button->set_button_icon(get_editor_theme_icon(SNAME("Load")));
 		explore_button->set_tooltip_text(OS::get_singleton()->get_platform_string(OS::PLATFORM_STRING_FILE_MANAGER_OPEN));
-#endif // defined(ANDROID_ENABLED) || defined(WEB_ENABLED)
+#endif
 	}
 }
 
@@ -1097,7 +1097,7 @@ void ProjectList::_create_project_item_control(int p_index) {
 	hb->connect(SceneStringName(gui_input), callable_mp(this, &ProjectList::_list_item_input).bind(hb));
 	hb->connect("favorite_pressed", callable_mp(this, &ProjectList::_on_favorite_pressed).bind(hb));
 
-#if !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#if !defined(ANDROID_ENABLED)
 	hb->connect("explore_pressed", callable_mp(this, &ProjectList::_on_explore_pressed).bind(item.path));
 #endif
 	hb->connect("request_menu", callable_mp(this, &ProjectList::_open_menu).bind(hb));
@@ -1256,9 +1256,9 @@ void ProjectList::_open_menu(const Vector2 &p_at, Control *p_hb) {
 		project_context_menu->add_item(TTRC("Open in Editor (Recovery Mode)"), MENU_EDIT_RECOVERY);
 		project_context_menu->add_item(TTRC("Run Project"), MENU_RUN);
 		project_context_menu->add_separator();
-#if !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#if !defined(ANDROID_ENABLED)
 		project_context_menu->add_item(OS::get_singleton()->get_platform_string(OS::PLATFORM_STRING_FILE_MANAGER_OPEN), MENU_SHOW_IN_FILE_MANAGER);
-#endif // !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#endif
 		project_context_menu->add_item(TTRC("Copy Path"), MENU_COPY_PATH);
 		project_context_menu->add_separator();
 		project_context_menu->add_item(TTRC("Rename"), MENU_RENAME);
@@ -1276,7 +1276,7 @@ void ProjectList::_open_menu(const Vector2 &p_at, Control *p_hb) {
 				 MENU_EDIT_VERBOSE,
 				 MENU_EDIT_RECOVERY,
 				 MENU_RUN,
-#if !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#if !defined(ANDROID_ENABLED)
 				 MENU_SHOW_IN_FILE_MANAGER,
 #endif
 				 MENU_RENAME,
@@ -1299,7 +1299,7 @@ void ProjectList::_update_menu_icons() {
 	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_EDIT_VERBOSE), get_editor_theme_icon("Notification"));
 	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_EDIT_RECOVERY), get_editor_theme_icon("NodeWarning"));
 	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_RUN), get_editor_theme_icon("Play"));
-#if !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
+#if !defined(ANDROID_ENABLED)
 	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_SHOW_IN_FILE_MANAGER), get_editor_theme_icon("Load"));
 #endif
 	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_COPY_PATH), get_editor_theme_icon("ActionCopy"));

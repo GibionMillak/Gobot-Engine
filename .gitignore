@@ -94,10 +94,6 @@ platform/android/java/*/libs/
 # iOS
 *.dSYM
 
-# Web platform
-*.bc
-platform/web/node_modules/
-
 # Misc
 *.debug
 

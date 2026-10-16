@@ -204,7 +204,7 @@
 	<members>
 		<member name="access" type="int" setter="set_access" getter="get_access" enum="FileDialog.Access" default="0">
 			The file system access scope.
-			[b]Warning:[/b] In Web builds, FileDialog cannot access the host file system. In sandboxed Linux and macOS environments, [member use_native_dialog] is automatically used to allow limited access to host file system.
+			In sandboxed Linux and macOS environments, [member use_native_dialog] is automatically used to allow limited access to host file system.
 		</member>
 		<member name="current_dir" type="String" setter="set_current_dir" getter="get_current_dir">
 			The current working directory of the file dialog.

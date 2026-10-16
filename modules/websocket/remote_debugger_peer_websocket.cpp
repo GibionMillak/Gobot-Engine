@@ -36,10 +36,6 @@ Error RemoteDebuggerPeerWebSocket::connect_to_host(const String &p_uri) {
 	ws_peer = Ref<WebSocketPeer>(WebSocketPeer::create());
 	ERR_FAIL_COND_V(ws_peer.is_null(), ERR_BUG);
 
-	Vector<String> protocols;
-	protocols.push_back("binary"); // Compatibility for emscripten TCP-to-WebSocket.
-
-	ws_peer->set_supported_protocols(protocols);
 	ws_peer->set_max_queued_packets(max_queued_messages);
 	ws_peer->set_inbound_buffer_size((1 << 23) - 1);
 	ws_peer->set_outbound_buffer_size((1 << 23) - 1);
@@ -112,11 +108,7 @@ void RemoteDebuggerPeerWebSocket::close() {
 }
 
 bool RemoteDebuggerPeerWebSocket::can_block() const {
-#ifdef WEB_ENABLED
-	return false;
-#else
 	return true;
-#endif
 }
 
 RemoteDebuggerPeerWebSocket::RemoteDebuggerPeerWebSocket(const Ref<WebSocketPeer> &p_peer) {

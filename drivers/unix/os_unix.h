@@ -34,7 +34,7 @@
 
 #include "core/os/os.h"
 
-#if defined(__GLIBC__) || defined(WEB_ENABLED)
+#if defined(__GLIBC__)
 #include <iconv.h>
 #include <langinfo.h>
 #define gd_iconv_t iconv_t
@@ -57,7 +57,7 @@ class OS_Unix : public OS {
 	HashMap<ProcessID, ProcessInfo> *process_map = nullptr;
 	Mutex process_map_mutex;
 
-#if defined(__GLIBC__) || defined(WEB_ENABLED)
+#if defined(__GLIBC__)
 	bool _iconv_ok = true;
 #else
 	bool _iconv_ok = false;

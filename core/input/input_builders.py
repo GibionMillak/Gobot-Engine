@@ -20,7 +20,6 @@ def make_default_controller_mappings(target, source, env):
             "Mac OS X": "MACOS",
             "Android": "ANDROID",
             "iOS": "APPLE_EMBEDDED",
-            "Web": "WEB",
         }
 
         # ensure mappings have a consistent order

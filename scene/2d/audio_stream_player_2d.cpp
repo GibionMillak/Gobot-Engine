@@ -199,10 +199,6 @@ void AudioStreamPlayer2D::_update_panning() {
 
 	for (const Ref<AudioStreamPlayback> &playback : internal->stream_playbacks) {
 		AudioServer::get_singleton()->set_playback_pitch_scale(playback, internal->pitch_scale);
-		if (playback->get_is_sample() && playback->get_sample_playback().is_valid()) {
-			Ref<AudioSamplePlayback> sample_playback = playback->get_sample_playback();
-			AudioServer::get_singleton()->update_sample_playback_pitch_scale(sample_playback, internal->pitch_scale);
-		}
 	}
 
 	last_mix_count = AudioServer::get_singleton()->get_mix_count();
@@ -248,15 +244,6 @@ void AudioStreamPlayer2D::play(float p_from_pos) {
 	}
 	setplayback = stream_playback;
 	setplay.set(p_from_pos);
-
-	// Sample handling.
-	if (stream_playback->get_is_sample() && stream_playback->get_sample_playback().is_valid()) {
-		Ref<AudioSamplePlayback> sample_playback = stream_playback->get_sample_playback();
-		sample_playback->offset = p_from_pos;
-		sample_playback->bus = _get_actual_bus();
-
-		AudioServer::get_singleton()->start_sample_playback(sample_playback);
-	}
 }
 
 void AudioStreamPlayer2D::seek(float p_seconds) {
@@ -360,14 +347,6 @@ float AudioStreamPlayer2D::get_panning_strength() const {
 	return panning_strength;
 }
 
-AuSE::PlaybackType AudioStreamPlayer2D::get_playback_type() const {
-	return internal->get_playback_type();
-}
-
-void AudioStreamPlayer2D::set_playback_type(AuSE::PlaybackType p_playback_type) {
-	internal->set_playback_type(p_playback_type);
-}
-
 bool AudioStreamPlayer2D::_set(const StringName &p_name, const Variant &p_value) {
 	return internal->set(p_name, p_value);
 }
@@ -429,9 +408,6 @@ void AudioStreamPlayer2D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("has_stream_playback"), &AudioStreamPlayer2D::has_stream_playback);
 	ClassDB::bind_method(D_METHOD("get_stream_playback"), &AudioStreamPlayer2D::get_stream_playback);
 
-	ClassDB::bind_method(D_METHOD("set_playback_type", "playback_type"), &AudioStreamPlayer2D::set_playback_type);
-	ClassDB::bind_method(D_METHOD("get_playback_type"), &AudioStreamPlayer2D::get_playback_type);
-
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "stream", PROPERTY_HINT_RESOURCE_TYPE, AudioStream::get_class_static()), "set_stream", "get_stream");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "volume_db", PROPERTY_HINT_RANGE, "-80,24,or_greater,suffix:dB"), "set_volume_db", "get_volume_db");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "volume_linear", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NONE), "set_volume_linear", "get_volume_linear");
@@ -445,7 +421,6 @@ void AudioStreamPlayer2D::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "panning_strength", PROPERTY_HINT_RANGE, "0,3,0.01,or_greater"), "set_panning_strength", "get_panning_strength");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "bus", PROPERTY_HINT_AUDIO_BUS), "set_bus", "get_bus");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "area_mask", PROPERTY_HINT_LAYERS_2D_PHYSICS), "set_area_mask", "get_area_mask");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "playback_type", PROPERTY_HINT_ENUM, "Default,Stream,Sample"), "set_playback_type", "get_playback_type");
 
 	ADD_SIGNAL(MethodInfo("finished"));
 }

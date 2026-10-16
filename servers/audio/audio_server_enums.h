@@ -40,13 +40,6 @@ enum SpeakerMode {
 	SPEAKER_SURROUND_71,
 };
 
-enum PlaybackType {
-	PLAYBACK_TYPE_DEFAULT,
-	PLAYBACK_TYPE_STREAM,
-	PLAYBACK_TYPE_SAMPLE,
-	PLAYBACK_TYPE_MAX
-};
-
 } // namespace AudioServerEnums
 
 // Alias to make it easier to use.

@@ -28,8 +28,6 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef WEB_ENABLED
-
 #include "upnp_device_miniupnp.h"
 
 #include "upnp_miniupnp.h"
@@ -155,5 +153,3 @@ UPNPDeviceMiniUPNP::IGDStatus UPNPDeviceMiniUPNP::get_igd_status() const {
 bool UPNPDeviceMiniUPNP::is_valid_gateway() const {
 	return igd_status == IGD_STATUS_OK;
 }
-
-#endif // WEB_ENABLED

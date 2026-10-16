@@ -32,7 +32,6 @@
 
 #include "core/config/project_settings.h"
 #include "core/os/os.h"
-#include "scene/resources/audio/audio_stream.h"
 #include "servers/audio/audio_driver_dummy.h"
 #include "servers/audio/audio_server.h"
 
@@ -117,10 +116,6 @@ int AudioDriver::_get_configured_mix_rate() {
 	StringName audio_driver_setting = "audio/driver/mix_rate";
 	int mix_rate = GLOBAL_GET(audio_driver_setting);
 
-#ifdef WEB_ENABLED
-	// `0` is an acceptable value (resorts to the browser's default).
-	return MAX(0, mix_rate);
-#else // !WEB_ENABLED
 	// In the case of invalid mix rate, let's default to a sensible value..
 	if (mix_rate <= 0) {
 		WARN_PRINT(vformat("Invalid mix rate of %d, consider reassigning setting \'%s\'. \nDefaulting mix rate to value %d.",
@@ -128,7 +123,6 @@ int AudioDriver::_get_configured_mix_rate() {
 		mix_rate = AudioDriverManager::DEFAULT_MIX_RATE;
 	}
 	return mix_rate;
-#endif
 }
 
 AudioDriver::SpeakerMode AudioDriver::get_speaker_mode_by_total_channels(int p_channels) const {
@@ -180,18 +174,6 @@ PackedStringArray AudioDriver::get_input_device_list() {
 	return list;
 }
 
-void AudioDriver::start_sample_playback(const Ref<AudioSamplePlayback> &p_playback) {
-	if (p_playback.is_valid()) {
-		if (p_playback->stream.is_valid()) {
-			WARN_PRINT_ED(vformat(R"(Trying to play stream (%s) as a sample (%s), but the driver doesn't support sample playback.)", p_playback->get_instance_id(), p_playback->stream->get_instance_id()));
-		} else {
-			WARN_PRINT_ED(vformat(R"(Trying to play stream (%s) as a null sample, but the driver doesn't support sample playback.)", p_playback->get_instance_id()));
-		}
-	} else {
-		WARN_PRINT_ED("Trying to play a null sample playback from a driver that doesn't support sample playback.");
-	}
-}
-
 AudioDriverDummy AudioDriverManager::dummy_driver;
 AudioDriver *AudioDriverManager::drivers[MAX_DRIVERS] = {
 	&AudioDriverManager::dummy_driver,
@@ -213,7 +195,6 @@ int AudioDriverManager::get_driver_count() {
 void AudioDriverManager::initialize(int p_driver) {
 	GLOBAL_DEF_RST("audio/driver/enable_input", false);
 	GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "audio/driver/mix_rate", PROPERTY_HINT_RANGE, "11025,192000,1,or_greater,suffix:Hz"), DEFAULT_MIX_RATE);
-	GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "audio/driver/mix_rate.web", PROPERTY_HINT_RANGE, "0,192000,1,or_greater,suffix:Hz"), 0); // Safer default output_latency for web (use browser default).
 
 	int failed_driver = -1;
 

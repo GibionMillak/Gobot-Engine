@@ -1747,7 +1747,7 @@ def make_link(url: str, title: str) -> str:
         groups = match.groups()
         if match.lastindex == 2:
             # Doc reference with fragment identifier: emit direct link to section with reference to page, for example:
-            # `#calling-javascript-from-script in Exporting For Web`
+            # A section anchor in a tutorial title.
             # Or use the title if provided.
             if title != "":
                 return f"`{title} <../{groups[0]}.html{groups[1]}>`__"

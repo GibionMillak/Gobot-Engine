@@ -810,8 +810,8 @@ void FileDialog::_popup_menu(const Vector2 &p_pos, int p_for_item) {
 		item_menu->set_item_shortcut(-1, action_shortcuts[ITEM_MENU_REFRESH]);
 	}
 
-#if !defined(ANDROID_ENABLED) && !defined(WEB_ENABLED)
-	// Opening the system file manager is not supported on the Android and web editors.
+#if !defined(ANDROID_ENABLED)
+	// Opening the system file manager is not supported on the Android editor.
 	item_menu->add_separator();
 
 	Dictionary meta;
