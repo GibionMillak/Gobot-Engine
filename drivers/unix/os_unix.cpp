@@ -1001,7 +1001,7 @@ String OS_Unix::get_locale() const {
 	return locale;
 }
 
-Error OS_Unix::open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data) {
+Error OS_Unix::open_dynamic_library(const String &p_path, void *&r_library_handle) {
 	String path = p_path;
 
 	if (FileAccess::exists(path) && path.is_relative_path()) {
@@ -1011,23 +1011,19 @@ Error OS_Unix::open_dynamic_library(const String &p_path, void *&p_library_handl
 	}
 
 	if (!FileAccess::exists(path)) {
-		// This code exists so GDExtension can load .so files from within the executable path.
+		// Also search beside the executable.
 		path = get_executable_path().get_base_dir().path_join(p_path.get_file());
 	}
 
 	if (!FileAccess::exists(path)) {
-		// This code exists so GDExtension can load .so files from a standard unix location.
+		// Also search the standard Unix library location.
 		path = get_executable_path().get_base_dir().path_join("../lib").path_join(p_path.get_file());
 	}
 
 	ERR_FAIL_COND_V_MSG(!FileAccess::exists(path), ERR_FILE_NOT_FOUND, vformat("Can't open dynamic library, file not found: '%s'.", p_path));
 
-	p_library_handle = dlopen(path.utf8().get_data(), GODOT_DLOPEN_MODE);
-	ERR_FAIL_NULL_V_MSG(p_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, dlerror()));
-
-	if (p_data != nullptr && p_data->r_resolved_path != nullptr) {
-		*p_data->r_resolved_path = path;
-	}
+	r_library_handle = dlopen(path.utf8().get_data(), GODOT_DLOPEN_MODE);
+	ERR_FAIL_NULL_V_MSG(r_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, dlerror()));
 
 	return OK;
 }
@@ -1039,11 +1035,11 @@ Error OS_Unix::close_dynamic_library(void *p_library_handle) {
 	return OK;
 }
 
-Error OS_Unix::get_dynamic_library_symbol_handle(void *p_library_handle, const String &p_name, void *&p_symbol_handle, bool p_optional) {
+Error OS_Unix::get_dynamic_library_symbol_handle(void *p_library_handle, const String &p_name, void *&r_symbol_handle, bool p_optional) {
 	const char *error;
 	dlerror(); // Clear existing errors
 
-	p_symbol_handle = dlsym(p_library_handle, p_name.utf8().get_data());
+	r_symbol_handle = dlsym(p_library_handle, p_name.utf8().get_data());
 
 	error = dlerror();
 	if (error != nullptr) {

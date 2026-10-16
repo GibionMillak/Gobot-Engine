@@ -50,7 +50,6 @@ public:
 	bool has_doc(const String &p_class_name);
 	enum GenerateFlags {
 		GENERATE_FLAG_SKIP_BASIC_TYPES = (1 << 0),
-		GENERATE_FLAG_EXTENSION_CLASSES_ONLY = (1 << 1),
 	};
 	void generate(BitField<GenerateFlags> p_flags = {});
 	Error load_classes(const String &p_dir);
@@ -58,5 +57,4 @@ public:
 
 	Error _load(Ref<XMLParser> parser);
 	Error load_compressed(const uint8_t *p_data, int64_t p_compressed_size, int64_t p_uncompressed_size);
-	Error load_xml(const uint8_t *p_data, int64_t p_size);
 };

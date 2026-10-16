@@ -31,7 +31,6 @@
 #include "editor_data.h"
 
 #include "core/config/project_settings.h"
-#include "core/extension/gdextension_manager.h"
 #include "core/io/file_access.h"
 #include "core/io/resource_loader.h"
 #include "core/object/callable_mp.h"
@@ -522,24 +521,6 @@ int EditorData::get_editor_plugin_count() const {
 EditorPlugin *EditorData::get_editor_plugin(int p_idx) {
 	ERR_FAIL_INDEX_V(p_idx, editor_plugins.size(), nullptr);
 	return editor_plugins[p_idx];
-}
-
-void EditorData::add_extension_editor_plugin(const StringName &p_class_name, EditorPlugin *p_plugin) {
-	ERR_FAIL_COND(extension_editor_plugins.has(p_class_name));
-	extension_editor_plugins.insert(p_class_name, p_plugin);
-}
-
-void EditorData::remove_extension_editor_plugin(const StringName &p_class_name) {
-	extension_editor_plugins.erase(p_class_name);
-}
-
-bool EditorData::has_extension_editor_plugin(const StringName &p_class_name) {
-	return extension_editor_plugins.has(p_class_name);
-}
-
-EditorPlugin *EditorData::get_extension_editor_plugin(const StringName &p_class_name) {
-	EditorPlugin **plugin = extension_editor_plugins.getptr(p_class_name);
-	return plugin == nullptr ? nullptr : *plugin;
 }
 
 void EditorData::add_custom_type(const String &p_type, const String &p_inherits, const Ref<Script> &p_script, const Ref<Texture2D> &p_icon) {
@@ -1144,17 +1125,6 @@ void EditorData::script_class_load_icon_paths() {
 	}
 }
 
-Ref<Texture2D> EditorData::extension_class_get_icon(const String &p_class) const {
-	if (GDExtensionManager::get_singleton()->class_has_icon_path(p_class)) {
-		String icon_path = GDExtensionManager::get_singleton()->class_get_icon_path(p_class);
-		Ref<Texture2D> icon = _load_script_icon(icon_path);
-		if (icon.is_valid()) {
-			return icon;
-		}
-	}
-	return nullptr;
-}
-
 Ref<Texture2D> EditorData::_load_script_icon(const String &p_path) const {
 	if (!p_path.is_empty() && ResourceLoader::exists(p_path)) {
 		Ref<Texture2D> icon = ResourceLoader::load(p_path);
@@ -1217,13 +1187,6 @@ Ref<Texture2D> EditorData::get_script_icon(const String &p_script_path) {
 
 		// Move to the base class.
 		base_scr = base_scr->get_base_script();
-	}
-
-	// Check if the base type is an extension-defined type.
-	Ref<Texture2D> ext_icon = extension_class_get_icon(class_name);
-	if (ext_icon.is_valid()) {
-		_script_icon_cache[p_script_path] = ext_icon;
-		return ext_icon;
 	}
 
 	// If no icon found, cache it as null.

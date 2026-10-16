@@ -1181,12 +1181,6 @@ static _FORCE_INLINE_ void validated_call_helperpr(R (*p_func)(P...), Variant *r
 	(void)p_args;
 }
 
-template <typename R, typename... P, size_t... Is>
-static _FORCE_INLINE_ void ptr_call_helperpr(R (*p_func)(P...), void *r_ret, const void **p_args, IndexSequence<Is...>) {
-	PtrToArg<R>::encode(p_func(PtrToArg<P>::convert(p_args[Is])...), r_ret);
-	(void)p_args;
-}
-
 template <typename R, typename... P>
 static _FORCE_INLINE_ void call_helperr(R (*p_func)(P...), Variant *r_ret, const Variant **p_args, Callable::CallError &r_error) {
 	call_helperpr(p_func, r_ret, p_args, r_error, BuildIndexSequence<sizeof...(P)>{});
@@ -1195,11 +1189,6 @@ static _FORCE_INLINE_ void call_helperr(R (*p_func)(P...), Variant *r_ret, const
 template <typename R, typename... P>
 static _FORCE_INLINE_ void validated_call_helperr(R (*p_func)(P...), Variant *r_ret, const Variant **p_args) {
 	validated_call_helperpr(p_func, r_ret, p_args, BuildIndexSequence<sizeof...(P)>{});
-}
-
-template <typename R, typename... P>
-static _FORCE_INLINE_ void ptr_call_helperr(R (*p_func)(P...), void *r_ret, const void **p_args) {
-	ptr_call_helperpr(p_func, r_ret, p_args, BuildIndexSequence<sizeof...(P)>{});
 }
 
 template <typename R, typename... P>
@@ -1233,12 +1222,6 @@ static _FORCE_INLINE_ void validated_call_helperp(void (*p_func)(P...), const Va
 	(void)p_args;
 }
 
-template <typename... P, size_t... Is>
-static _FORCE_INLINE_ void ptr_call_helperp(void (*p_func)(P...), const void **p_args, IndexSequence<Is...>) {
-	p_func(PtrToArg<P>::convert(p_args[Is])...);
-	(void)p_args;
-}
-
 template <typename... P>
 static _FORCE_INLINE_ void call_helper(void (*p_func)(P...), const Variant **p_args, Callable::CallError &r_error) {
 	call_helperp(p_func, p_args, r_error, BuildIndexSequence<sizeof...(P)>{});
@@ -1247,11 +1230,6 @@ static _FORCE_INLINE_ void call_helper(void (*p_func)(P...), const Variant **p_a
 template <typename... P>
 static _FORCE_INLINE_ void validated_call_helper(void (*p_func)(P...), const Variant **p_args) {
 	validated_call_helperp(p_func, p_args, BuildIndexSequence<sizeof...(P)>{});
-}
-
-template <typename... P>
-static _FORCE_INLINE_ void ptr_call_helper(void (*p_func)(P...), const void **p_args) {
-	ptr_call_helperp(p_func, p_args, BuildIndexSequence<sizeof...(P)>{});
 }
 
 template <typename... P>
@@ -1277,9 +1255,6 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 		} \
 		static void validated_call(Variant *r_ret, const Variant **p_args, int p_argcount) { \
 			validated_call_helperr(VariantUtilityFunctions::m_func, r_ret, p_args); \
-		} \
-		static void ptrcall(void *r_ret, const void **p_args, int p_argcount) { \
-			ptr_call_helperr(VariantUtilityFunctions::m_func, r_ret, p_args); \
 		} \
 		static int get_argument_count() { \
 			return get_arg_count_helperr(VariantUtilityFunctions::m_func); \
@@ -1313,10 +1288,6 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 			Callable::CallError ce; \
 			*r_ret = VariantUtilityFunctions::m_func(*p_args[0], ce); \
 		} \
-		static void ptrcall(void *r_ret, const void **p_args, int p_argcount) { \
-			Callable::CallError ce; \
-			PtrToArg<Variant>::encode(VariantUtilityFunctions::m_func(PtrToArg<Variant>::convert(p_args[0]), ce), r_ret); \
-		} \
 		static int get_argument_count() { \
 			return 1; \
 		} \
@@ -1348,12 +1319,6 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 		static void validated_call(Variant *r_ret, const Variant **p_args, int p_argcount) { \
 			Callable::CallError ce; \
 			*r_ret = VariantUtilityFunctions::m_func(*p_args[0], *p_args[1], ce); \
-		} \
-		static void ptrcall(void *r_ret, const void **p_args, int p_argcount) { \
-			Callable::CallError ce; \
-			Variant r; \
-			r = VariantUtilityFunctions::m_func(PtrToArg<Variant>::convert(p_args[0]), PtrToArg<Variant>::convert(p_args[1]), ce); \
-			PtrToArg<Variant>::encode(r, r_ret); \
 		} \
 		static int get_argument_count() { \
 			return 2; \
@@ -1387,12 +1352,6 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 			Callable::CallError ce; \
 			*r_ret = VariantUtilityFunctions::m_func(*p_args[0], *p_args[1], *p_args[2], ce); \
 		} \
-		static void ptrcall(void *r_ret, const void **p_args, int p_argcount) { \
-			Callable::CallError ce; \
-			Variant r; \
-			r = VariantUtilityFunctions::m_func(PtrToArg<Variant>::convert(p_args[0]), PtrToArg<Variant>::convert(p_args[1]), PtrToArg<Variant>::convert(p_args[2]), ce); \
-			PtrToArg<Variant>::encode(r, r_ret); \
-		} \
 		static int get_argument_count() { \
 			return 3; \
 		} \
@@ -1424,19 +1383,6 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 		static void validated_call(Variant *r_ret, const Variant **p_args, int p_argcount) { \
 			Callable::CallError c; \
 			*r_ret = VariantUtilityFunctions::m_func(p_args, p_argcount, c); \
-		} \
-		static void ptrcall(void *r_ret, const void **p_args, int p_argcount) { \
-			Vector<Variant> args; \
-			for (int i = 0; i < p_argcount; i++) { \
-				args.push_back(PtrToArg<Variant>::convert(p_args[i])); \
-			} \
-			Vector<const Variant *> argsp; \
-			for (int i = 0; i < p_argcount; i++) { \
-				argsp.push_back(&args[i]); \
-			} \
-			Variant r; \
-			validated_call(&r, (const Variant **)argsp.ptr(), p_argcount); \
-			PtrToArg<Variant>::encode(r, r_ret); \
 		} \
 		static int get_argument_count() { \
 			return 2; \
@@ -1470,19 +1416,6 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 			Callable::CallError c; \
 			*r_ret = VariantUtilityFunctions::m_func(p_args, p_argcount, c); \
 		} \
-		static void ptrcall(void *r_ret, const void **p_args, int p_argcount) { \
-			Vector<Variant> args; \
-			for (int i = 0; i < p_argcount; i++) { \
-				args.push_back(PtrToArg<Variant>::convert(p_args[i])); \
-			} \
-			Vector<const Variant *> argsp; \
-			for (int i = 0; i < p_argcount; i++) { \
-				argsp.push_back(&args[i]); \
-			} \
-			Variant r; \
-			validated_call(&r, (const Variant **)argsp.ptr(), p_argcount); \
-			PtrToArg<String>::encode(r.operator String(), r_ret); \
-		} \
 		static int get_argument_count() { \
 			return 1; \
 		} \
@@ -1514,18 +1447,6 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 		static void validated_call(Variant *r_ret, const Variant **p_args, int p_argcount) { \
 			Callable::CallError c; \
 			VariantUtilityFunctions::m_func_cname(p_args, p_argcount, c); \
-		} \
-		static void ptrcall(void *r_ret, const void **p_args, int p_argcount) { \
-			Vector<Variant> args; \
-			for (int i = 0; i < p_argcount; i++) { \
-				args.push_back(PtrToArg<Variant>::convert(p_args[i])); \
-			} \
-			Vector<const Variant *> argsp; \
-			for (int i = 0; i < p_argcount; i++) { \
-				argsp.push_back(&args[i]); \
-			} \
-			Variant r; \
-			validated_call(&r, (const Variant **)argsp.ptr(), p_argcount); \
 		} \
 		static int get_argument_count() { \
 			return 1; \
@@ -1559,9 +1480,6 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 		static void validated_call(Variant *r_ret, const Variant **p_args, int p_argcount) { \
 			validated_call_helper(VariantUtilityFunctions::m_func, p_args); \
 		} \
-		static void ptrcall(void *r_ret, const void **p_args, int p_argcount) { \
-			ptr_call_helper(VariantUtilityFunctions::m_func, p_args); \
-		} \
 		static int get_argument_count() { \
 			return get_arg_count_helper(VariantUtilityFunctions::m_func); \
 		} \
@@ -1586,7 +1504,6 @@ static _FORCE_INLINE_ Variant::Type get_ret_type_helper(void (*p_func)(P...)) {
 struct VariantUtilityFunctionInfo {
 	void (*call_utility)(Variant *r_ret, const Variant **p_args, int p_argcount, Callable::CallError &r_error) = nullptr;
 	Variant::ValidatedUtilityFunction validated_call_utility = nullptr;
-	Variant::PTRUtilityFunction ptr_call_utility = nullptr;
 	Vector<String> argnames;
 	bool is_vararg = false;
 	bool returns_value = false;
@@ -1611,7 +1528,6 @@ static void register_utility_function(const String &p_name, const Vector<String>
 	VariantUtilityFunctionInfo bfi;
 	bfi.call_utility = T::call;
 	bfi.validated_call_utility = T::validated_call;
-	bfi.ptr_call_utility = T::ptrcall;
 	bfi.is_vararg = T::is_vararg();
 	bfi.argnames = p_argnames;
 	bfi.argcount = T::get_argument_count();
@@ -1824,15 +1740,6 @@ Variant::ValidatedUtilityFunction Variant::get_validated_utility_function(const 
 	return bfi->validated_call_utility;
 }
 
-Variant::PTRUtilityFunction Variant::get_ptr_utility_function(const StringName &p_name) {
-	const VariantUtilityFunctionInfo *bfi = utility_function_table.getptr(p_name);
-	if (!bfi) {
-		return nullptr;
-	}
-
-	return bfi->ptr_call_utility;
-}
-
 Variant::UtilityFunctionType Variant::get_utility_function_type(const StringName &p_name) {
 	const VariantUtilityFunctionInfo *bfi = utility_function_table.getptr(p_name);
 	if (!bfi) {
@@ -1916,23 +1823,6 @@ bool Variant::is_utility_function_vararg(const StringName &p_name) {
 	}
 
 	return bfi->is_vararg;
-}
-
-uint32_t Variant::get_utility_function_hash(const StringName &p_name) {
-	const VariantUtilityFunctionInfo *bfi = utility_function_table.getptr(p_name);
-	ERR_FAIL_NULL_V(bfi, 0);
-
-	uint32_t hash = hash_murmur3_one_32(bfi->is_vararg);
-	hash = hash_murmur3_one_32(bfi->returns_value, hash);
-	if (bfi->returns_value) {
-		hash = hash_murmur3_one_32(bfi->return_type, hash);
-	}
-	hash = hash_murmur3_one_32(bfi->argcount, hash);
-	for (int i = 0; i < bfi->argcount; i++) {
-		hash = hash_murmur3_one_32(bfi->get_arg_type(i), hash);
-	}
-
-	return hash_fmix32(hash);
 }
 
 void Variant::get_utility_function_list(List<StringName> *r_functions) {

@@ -42,7 +42,6 @@
 #endif
 
 #include "core/config/engine.h"
-#include "core/extension/gdextension_manager.h"
 #include "core/input/input.h"
 #include "core/io/xml_parser.h"
 #include "core/os/main_loop.h"
@@ -218,7 +217,7 @@ bool OS_Android::copy_dynamic_library(const String &p_library_path, const String
 	return copy_exists;
 }
 
-Error OS_Android::open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data) {
+Error OS_Android::open_dynamic_library(const String &p_path, void *&r_library_handle) {
 	String path = p_path;
 	bool so_file_exists = true;
 	if (!FileAccess::exists(path)) {
@@ -226,27 +225,11 @@ Error OS_Android::open_dynamic_library(const String &p_path, void *&p_library_ha
 		so_file_exists = false;
 	}
 
-	p_library_handle = dlopen(path.utf8().get_data(), RTLD_NOW);
-	if (!p_library_handle && so_file_exists) {
+	r_library_handle = dlopen(path.utf8().get_data(), RTLD_NOW);
+	if (!r_library_handle && so_file_exists) {
 		// The library (and its dependencies) may be on the sdcard and thus inaccessible.
 		// Try to copy to the internal directory for access.
 		const String dynamic_library_path = get_dynamic_libraries_path();
-
-		if (p_data != nullptr && p_data->library_dependencies != nullptr && !p_data->library_dependencies->is_empty()) {
-			// Copy the library dependencies
-			print_verbose("Copying library dependencies..");
-			for (const String &library_dependency_path : *p_data->library_dependencies) {
-				String internal_library_dependency_path;
-				if (!copy_dynamic_library(library_dependency_path, dynamic_library_path.path_join(library_dependency_path.get_base_dir()), &internal_library_dependency_path)) {
-					ERR_PRINT(vformat("Unable to copy library dependency %s", library_dependency_path));
-				} else {
-					void *lib_dependency_handle = dlopen(internal_library_dependency_path.utf8().get_data(), RTLD_NOW);
-					if (!lib_dependency_handle) {
-						ERR_PRINT(vformat("Can't open dynamic library dependency: %s. Error: %s.", internal_library_dependency_path, dlerror()));
-					}
-				}
-			}
-		}
 
 		String internal_path;
 		print_verbose("Copying library " + p_path);
@@ -254,18 +237,14 @@ Error OS_Android::open_dynamic_library(const String &p_path, void *&p_library_ha
 
 		if (internal_so_file_exists) {
 			print_verbose("Opening library " + internal_path);
-			p_library_handle = dlopen(internal_path.utf8().get_data(), RTLD_NOW);
-			if (p_library_handle) {
+			r_library_handle = dlopen(internal_path.utf8().get_data(), RTLD_NOW);
+			if (r_library_handle) {
 				path = internal_path;
 			}
 		}
 	}
 
-	ERR_FAIL_NULL_V_MSG(p_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, dlerror()));
-
-	if (p_data != nullptr && p_data->r_resolved_path != nullptr) {
-		*p_data->r_resolved_path = path;
-	}
+	ERR_FAIL_NULL_V_MSG(r_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, dlerror()));
 
 	return OK;
 }
@@ -999,14 +978,6 @@ Error OS_Android::setup_remote_filesystem(const String &p_server_host, int p_por
 		FileAccess::make_default<FileAccessFilesystemJAndroid>(FileAccess::ACCESS_RESOURCES);
 	}
 	return err;
-}
-
-void OS_Android::load_platform_gdextensions() const {
-	Vector<String> extension_list_config_file = godot_java->get_gdextension_list_config_file();
-	for (String config_file_path : extension_list_config_file) {
-		GDExtensionManager::LoadStatus err = GDExtensionManager::get_singleton()->load_extension(config_file_path);
-		ERR_CONTINUE_MSG(err == GDExtensionManager::LOAD_STATUS_FAILED, "Error loading platform extension: " + config_file_path);
-	}
 }
 
 OS_Android::~OS_Android() {

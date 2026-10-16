@@ -31,7 +31,9 @@
 #pragma once
 
 #include "core/io/image.h"
+#include "core/object/gdvirtual.gen.h"
 #include "core/templates/local_vector.h"
+#include "core/variant/native_ptr.h"
 #include "servers/audio/audio_server.h" // IWYU pragma: keep. Bind GDVIRTUAL0RC_REQUIRED.
 #include "servers/audio/audio_server_enums.h"
 
@@ -75,7 +77,7 @@ protected:
 	GDVIRTUAL0RC_REQUIRED(Vector<String>, _get_supported_extensions)
 
 	GDVIRTUAL3R_REQUIRED(Error, _write_begin, const Size2i &, uint32_t, const String &)
-	GDVIRTUAL2R_REQUIRED(Error, _write_frame, const Ref<Image> &, GDExtensionPtr<const int32_t>)
+	GDVIRTUAL2R_REQUIRED(Error, _write_frame, const Ref<Image> &, NativePtr<const int32_t>)
 	GDVIRTUAL0_REQUIRED(_write_end)
 
 	static void _bind_methods();

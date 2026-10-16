@@ -5,7 +5,7 @@
 	</brief_description>
 	<description>
 		Provides access to metadata stored for every available engine class.
-		[b]Note:[/b] Script-defined classes with [code]class_name[/code] are not part of [ClassDB], so they will not return reflection data such as a method or property list. However, [GDExtension]-defined classes [i]are[/i] part of [ClassDB], so they will return reflection data.
+		[b]Note:[/b] Script-defined classes with [code]class_name[/code] are not part of [ClassDB], so they will not return reflection data such as a method or property list.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -266,13 +266,7 @@
 		<constant name="API_EDITOR" value="1" enum="APIType">
 			Native Editor class type.
 		</constant>
-		<constant name="API_EXTENSION" value="2" enum="APIType">
-			GDExtension class type.
-		</constant>
-		<constant name="API_EDITOR_EXTENSION" value="3" enum="APIType">
-			GDExtension Editor class type.
-		</constant>
-		<constant name="API_NONE" value="4" enum="APIType">
+		<constant name="API_NONE" value="2" enum="APIType">
 			Unknown class type.
 		</constant>
 	</constants>

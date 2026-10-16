@@ -212,7 +212,7 @@
 				- for binding/unbinding arguments (see [method bind] and [method unbind]);
 				- for representing methods of built-in [Variant] types (see [method create]);
 				- for representing global and lambda functions in GDScript;
-				- for other purposes in the core, GDExtension, and C#.
+				- for other purposes in the core and C#.
 			</description>
 		</method>
 		<method name="is_null" qualifiers="const">

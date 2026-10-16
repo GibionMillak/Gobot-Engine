@@ -115,7 +115,7 @@ public:
 
 	virtual void alert(const String &p_alert, const String &p_title) override;
 
-	virtual Error open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data = nullptr) override;
+	virtual Error open_dynamic_library(const String &p_path, void *&r_library_handle) override;
 
 	virtual String get_name() const override;
 	virtual String get_distribution_name() const override;
@@ -175,8 +175,6 @@ public:
 	virtual void benchmark_begin_measure(const String &p_context, const String &p_what) override;
 	virtual void benchmark_end_measure(const String &p_context, const String &p_what) override;
 	virtual void benchmark_dump() override;
-
-	virtual void load_platform_gdextensions() const override;
 
 	virtual bool _check_internal_feature_support(const String &p_feature) override;
 	OS_Android(GodotJavaWrapper *p_godot_java, GodotIOJavaWrapper *p_godot_io_java, bool p_use_apk_expansion);

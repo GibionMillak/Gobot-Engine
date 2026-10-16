@@ -75,7 +75,6 @@
 #include "servers/rendering/shader_include_db.h"
 #include "servers/rendering/shader_types.h"
 #include "servers/rendering/storage/render_data.h"
-#include "servers/rendering/storage/render_data_extension.h"
 #include "servers/rendering/storage/render_scene_buffers.h"
 #include "servers/rendering/storage/render_scene_data.h"
 #include "servers/text/text_server.h"
@@ -92,7 +91,6 @@
 #ifndef PHYSICS_2D_DISABLED
 #include "servers/physics_2d/physics_server_2d.h"
 #include "servers/physics_2d/physics_server_2d_dummy.h"
-#include "servers/physics_2d/physics_server_2d_extension.h"
 #include "servers/physics_2d/physics_server_2d_manager.h"
 #endif // PHYSICS_2D_DISABLED
 
@@ -106,7 +104,6 @@
 #ifndef PHYSICS_3D_DISABLED
 #include "servers/physics_3d/physics_server_3d.h"
 #include "servers/physics_3d/physics_server_3d_dummy.h"
-#include "servers/physics_3d/physics_server_3d_extension.h"
 #include "servers/physics_3d/physics_server_3d_manager.h"
 #endif // PHYSICS_3D_DISABLED
 
@@ -146,9 +143,6 @@ void register_server_types() {
 	GDREGISTER_CLASS(TextServerExtension);
 	GDREGISTER_CLASS(TextServerDummy);
 
-	GDREGISTER_NATIVE_STRUCT(Glyph, "int start = -1;int end = -1;uint8_t count = 0;uint8_t repeat = 1;uint16_t flags = 0;float x_off = 0.f;float y_off = 0.f;float advance = 0.f;RID font_rid;int font_size = 0;int32_t index = 0;int span_index = -1");
-	GDREGISTER_NATIVE_STRUCT(CaretInfo, "Rect2 leading_caret;Rect2 trailing_caret;TextServer::Direction leading_direction;TextServer::Direction trailing_direction");
-
 	Engine::get_singleton()->add_singleton(Engine::Singleton("TextServerManager", TextServerManager::get_singleton(), "TextServerManager"));
 
 	OS::get_singleton()->set_has_server_feature_callback(has_server_feature_callback);
@@ -158,7 +152,6 @@ void register_server_types() {
 	GDREGISTER_ABSTRACT_CLASS(RenderingServer);
 
 	GDREGISTER_CLASS(AudioServer);
-	GDREGISTER_NATIVE_STRUCT(AudioFrame, "float left;float right");
 
 	GDREGISTER_CLASS(NativeMenu);
 
@@ -210,13 +203,10 @@ void register_server_types() {
 	}
 
 	GDREGISTER_ABSTRACT_CLASS(RenderData);
-	GDREGISTER_CLASS(RenderDataExtension);
 	GDREGISTER_ABSTRACT_CLASS(RenderSceneData);
-	GDREGISTER_CLASS(RenderSceneDataExtension);
 
 	GDREGISTER_CLASS(RenderSceneBuffersConfiguration);
 	GDREGISTER_ABSTRACT_CLASS(RenderSceneBuffers);
-	GDREGISTER_CLASS(RenderSceneBuffersExtension);
 
 	GDREGISTER_CLASS(ShaderIncludeDB);
 
@@ -276,16 +266,8 @@ void register_server_types() {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("PhysicsServer2DManager", PhysicsServer2DManager::get_singleton(), "PhysicsServer2DManager"));
 
 	GDREGISTER_ABSTRACT_CLASS(PhysicsServer2D);
-	GDREGISTER_VIRTUAL_CLASS(PhysicsServer2DExtension);
 	GDREGISTER_ABSTRACT_CLASS(PhysicsDirectBodyState2D);
-	GDREGISTER_VIRTUAL_CLASS(PhysicsDirectBodyState2DExtension);
 	GDREGISTER_ABSTRACT_CLASS(PhysicsDirectSpaceState2D);
-	GDREGISTER_VIRTUAL_CLASS(PhysicsDirectSpaceState2DExtension);
-
-	GDREGISTER_NATIVE_STRUCT(PhysicsServer2DExtensionRayResult, "Vector2 position;Vector2 normal;RID rid;ObjectID collider_id;Object *collider;int shape");
-	GDREGISTER_NATIVE_STRUCT(PhysicsServer2DExtensionShapeResult, "RID rid;ObjectID collider_id;Object *collider;int shape");
-	GDREGISTER_NATIVE_STRUCT(PhysicsServer2DExtensionShapeRestInfo, "Vector2 point;Vector2 normal;RID rid;ObjectID collider_id;int shape;Vector2 linear_velocity");
-	GDREGISTER_NATIVE_STRUCT(PhysicsServer2DExtensionMotionResult, "Vector2 travel;Vector2 remainder;Vector2 collision_point;Vector2 collision_normal;Vector2 collider_velocity;real_t collision_depth;real_t collision_safe_fraction;real_t collision_unsafe_fraction;int collision_local_shape;ObjectID collider_id;RID collider;int collider_shape");
 
 	GDREGISTER_CLASS(PhysicsRayQueryParameters2D);
 	GDREGISTER_CLASS(PhysicsIntersectRayResult2D);
@@ -323,18 +305,9 @@ void register_server_types() {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("PhysicsServer3DManager", PhysicsServer3DManager::get_singleton(), "PhysicsServer3DManager"));
 
 	GDREGISTER_ABSTRACT_CLASS(PhysicsServer3D);
-	GDREGISTER_VIRTUAL_CLASS(PhysicsServer3DExtension);
 	GDREGISTER_ABSTRACT_CLASS(PhysicsDirectBodyState3D);
-	GDREGISTER_VIRTUAL_CLASS(PhysicsDirectBodyState3DExtension);
 	GDREGISTER_ABSTRACT_CLASS(PhysicsDirectSpaceState3D);
-	GDREGISTER_VIRTUAL_CLASS(PhysicsDirectSpaceState3DExtension)
 	GDREGISTER_VIRTUAL_CLASS(PhysicsServer3DRenderingServerHandler)
-
-	GDREGISTER_NATIVE_STRUCT(PhysicsServer3DExtensionRayResult, "Vector3 position;Vector3 normal;RID rid;ObjectID collider_id;Object *collider;int shape;int face_index");
-	GDREGISTER_NATIVE_STRUCT(PhysicsServer3DExtensionShapeResult, "RID rid;ObjectID collider_id;Object *collider;int shape");
-	GDREGISTER_NATIVE_STRUCT(PhysicsServer3DExtensionShapeRestInfo, "Vector3 point;Vector3 normal;RID rid;ObjectID collider_id;int shape;Vector3 linear_velocity");
-	GDREGISTER_NATIVE_STRUCT(PhysicsServer3DExtensionMotionCollision, "Vector3 position;Vector3 normal;Vector3 collider_velocity;Vector3 collider_angular_velocity;real_t depth;int local_shape;ObjectID collider_id;RID collider;int collider_shape");
-	GDREGISTER_NATIVE_STRUCT(PhysicsServer3DExtensionMotionResult, "Vector3 travel;Vector3 remainder;real_t collision_depth;real_t collision_safe_fraction;real_t collision_unsafe_fraction;PhysicsServer3DExtensionMotionCollision collisions[32];int collision_count");
 
 	GDREGISTER_CLASS(PhysicsRayQueryParameters3D);
 	GDREGISTER_CLASS(PhysicsIntersectRayResult3D);

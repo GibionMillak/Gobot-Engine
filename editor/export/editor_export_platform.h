@@ -153,7 +153,6 @@ private:
 	void _edit_filter_list(HashSet<String> &r_list, const String &p_filter, bool exclude);
 
 	struct FilteredCache {
-		Vector<uint8_t> extension_list;
 		Vector<uint8_t> global_class_list;
 		Vector<uint8_t> uids;
 	};

@@ -2498,9 +2498,6 @@
 		<member name="network/limits/unix/connect_timeout_seconds" type="int" setter="" getter="" default="30">
 			Timeout (in seconds) for connection attempts using UNIX domain socket.
 		</member>
-		<member name="network/limits/webrtc/max_channel_in_buffer_kb" type="int" setter="" getter="" default="64">
-			Maximum size (in kiB) for the [WebRTCDataChannel] input buffer.
-		</member>
 		<member name="network/tls/certificate_bundle_override" type="String" setter="" getter="" default="&quot;&quot;">
 			The CA certificates bundle to use for TLS connections. If this is set to a non-empty value, this will [i]override[/i] Godot's default [url=https://github.com/godotengine/godot/blob/master/thirdparty/certs/ca-bundle.crt]Mozilla certificate bundle[/url]. If left empty, the default certificate bundle will be used.
 			If in doubt, leave this setting empty.

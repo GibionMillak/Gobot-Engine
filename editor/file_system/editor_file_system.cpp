@@ -31,7 +31,6 @@
 #include "editor_file_system.h"
 
 #include "core/config/project_settings.h"
-#include "core/extension/gdextension_manager.h"
 #include "core/io/dir_access.h"
 #include "core/io/file_access.h"
 #include "core/io/resource_importer.h"
@@ -312,25 +311,18 @@ void EditorFileSystem::_scan_for_uid_directory(const ScannedDirectory *p_scan_di
 }
 
 void EditorFileSystem::_first_scan_filesystem() {
-	EditorProgress ep = EditorProgress("first_scan_filesystem", TTR("Project initialization"), 5);
+	EditorProgress ep = EditorProgress("first_scan_filesystem", TTR("Project initialization"), 4);
 	HashSet<String> existing_class_names;
-	HashSet<String> extensions;
 
 	if (!first_scan_root_dir) {
 		ep.step(TTR("Scanning file structure..."), 0, true);
 		_load_first_scan_root_dir();
 	}
 
-	// Preloading GDExtensions file extensions to prevent looping on all the resource loaders
-	// for each files in _first_scan_process_scripts.
-	List<String> gdextension_extensions;
-	ResourceLoader::get_recognized_extensions_for_type("GDExtension", &gdextension_extensions);
-
 	// This loads the global class names from the scripts and ensures that even if the
 	// global_script_class_cache.cfg was missing or invalid, the global class names are valid in ScriptServer.
-	// At the same time, to prevent looping multiple times in all files, it looks for extensions.
 	ep.step(TTR("Loading global class names..."), 1, true);
-	_first_scan_process_scripts(first_scan_root_dir, gdextension_extensions, existing_class_names, extensions);
+	_first_scan_process_scripts(first_scan_root_dir, existing_class_names);
 
 	// Removing invalid global class to prevent having invalid paths in ScriptServer.
 	bool save_scripts = _remove_invalid_global_class_names(existing_class_names);
@@ -340,28 +332,21 @@ void EditorFileSystem::_first_scan_filesystem() {
 		EditorNode::get_editor_data().script_class_save_global_classes();
 	}
 
-	// Processing extensions to add new extensions or remove invalid ones.
-	// Important to do it in the first scan so custom types, new class names, custom importers, etc...
-	// from extensions are ready to go before plugins, autoloads and resources validation/importation.
-	// At this point, a restart of the editor should not be needed so we don't use the return value.
-	ep.step(TTR("Verifying GDExtensions..."), 2, true);
-	GDExtensionManager::get_singleton()->ensure_extensions_loaded(extensions);
-
 	// Now that all the global class names should be loaded, create autoloads and plugins.
 	// This is done after loading the global class names because autoloads and plugins can use
 	// global class names.
-	ep.step(TTR("Creating autoload scripts..."), 3, true);
+	ep.step(TTR("Creating autoload scripts..."), 2, true);
 	ProjectSettingsEditor::get_singleton()->init_autoloads();
 
-	ep.step(TTR("Initializing plugins..."), 4, true);
+	ep.step(TTR("Initializing plugins..."), 3, true);
 	EditorNode::get_singleton()->init_plugins();
 
-	ep.step(TTR("Starting file scan..."), 5, true);
+	ep.step(TTR("Starting file scan..."), 4, true);
 }
 
-void EditorFileSystem::_first_scan_process_scripts(const ScannedDirectory *p_scan_dir, List<String> &p_gdextension_extensions, HashSet<String> &p_existing_class_names, HashSet<String> &p_extensions) {
+void EditorFileSystem::_first_scan_process_scripts(const ScannedDirectory *p_scan_dir, HashSet<String> &p_existing_class_names) {
 	for (ScannedDirectory *scan_sub_dir : p_scan_dir->subdirs) {
-		_first_scan_process_scripts(scan_sub_dir, p_gdextension_extensions, p_existing_class_names, p_extensions);
+		_first_scan_process_scripts(scan_sub_dir, p_existing_class_names);
 	}
 
 	for (const String &scan_file : p_scan_dir->files) {
@@ -389,15 +374,6 @@ void EditorFileSystem::_first_scan_process_scripts(const ScannedDirectory *p_sca
 				if (!info.name.is_empty()) {
 					p_existing_class_names.insert(info.name);
 				}
-			}
-		}
-
-		// Check for GDExtensions.
-		if (p_gdextension_extensions.find(ext)) {
-			const String path = p_scan_dir->full_path.path_join(scan_file);
-			const String type = ResourceLoader::get_resource_type(path);
-			if (type == SNAME("GDExtension")) {
-				p_extensions.insert(path);
 			}
 		}
 	}
@@ -1029,19 +1005,6 @@ bool EditorFileSystem::_update_scan_actions() {
 	}
 
 	memdelete(ep);
-
-	if (_scan_extensions()) {
-		//needs editor restart
-		//extensions also may provide filetypes to be imported, so they must run before importing
-		if (EditorNode::immediate_confirmation_dialog(TTR("Some extensions need the editor to restart to take effect."), first_scan ? TTR("Restart") : TTR("Save & Restart"), TTR("Continue"))) {
-			if (!first_scan) {
-				EditorNode::get_singleton()->save_all_scenes();
-			}
-			EditorNode::get_singleton()->restart_editor();
-			//do not import
-			return true;
-		}
-	}
 
 	if (!reimports.is_empty()) {
 		if (_scan_import_support(reimports)) {
@@ -3669,27 +3632,6 @@ ResourceUID::ID EditorFileSystem::_resource_saver_get_resource_id_for_path(const
 	} else {
 		return ResourceUID::INVALID_ID;
 	}
-}
-
-static void _scan_extensions_dir(EditorFileSystemDirectory *d, HashSet<String> &extensions) {
-	int fc = d->get_file_count();
-	for (int i = 0; i < fc; i++) {
-		if (d->get_file_type(i) == SNAME("GDExtension")) {
-			extensions.insert(d->get_file_path(i));
-		}
-	}
-	int dc = d->get_subdir_count();
-	for (int i = 0; i < dc; i++) {
-		_scan_extensions_dir(d->get_subdir(i), extensions);
-	}
-}
-bool EditorFileSystem::_scan_extensions() {
-	EditorFileSystemDirectory *d = get_filesystem();
-	HashSet<String> extensions;
-
-	_scan_extensions_dir(d, extensions);
-
-	return GDExtensionManager::get_singleton()->ensure_extensions_loaded(extensions);
 }
 
 void EditorFileSystem::_bind_methods() {

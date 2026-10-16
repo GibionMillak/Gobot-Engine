@@ -30,9 +30,9 @@
 
 #pragma once
 
-#include "core/extension/ext_wrappers.gen.h"
 #include "core/object/gdvirtual.gen.h"
 #include "core/object/ref_counted.h"
+#include "core/object/virtual_wrappers.gen.h"
 #include "core/variant/native_ptr.h"
 
 class StreamPeer : public RefCounted {
@@ -102,16 +102,16 @@ protected:
 
 public:
 	virtual Error put_data(const uint8_t *p_data, int p_bytes) override;
-	GDVIRTUAL3R(Error, _put_data, GDExtensionPtr<const uint8_t>, int, GDExtensionPtr<int>);
+	GDVIRTUAL3R(Error, _put_data, NativePtr<const uint8_t>, int, NativePtr<int>);
 
 	virtual Error put_partial_data(const uint8_t *p_data, int p_bytes, int &r_sent) override;
-	GDVIRTUAL3R(Error, _put_partial_data, GDExtensionPtr<const uint8_t>, int, GDExtensionPtr<int>);
+	GDVIRTUAL3R(Error, _put_partial_data, NativePtr<const uint8_t>, int, NativePtr<int>);
 
 	virtual Error get_data(uint8_t *p_buffer, int p_bytes) override;
-	GDVIRTUAL3R(Error, _get_data, GDExtensionPtr<uint8_t>, int, GDExtensionPtr<int>);
+	GDVIRTUAL3R(Error, _get_data, NativePtr<uint8_t>, int, NativePtr<int>);
 
 	virtual Error get_partial_data(uint8_t *p_buffer, int p_bytes, int &r_received) override;
-	GDVIRTUAL3R(Error, _get_partial_data, GDExtensionPtr<uint8_t>, int, GDExtensionPtr<int>);
+	GDVIRTUAL3R(Error, _get_partial_data, NativePtr<uint8_t>, int, NativePtr<int>);
 
 	EXBIND0RC(int, get_available_bytes);
 };

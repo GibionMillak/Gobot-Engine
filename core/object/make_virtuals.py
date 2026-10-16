@@ -15,27 +15,9 @@ script_has_method = """ScriptInstance *_script_instance = ((Object *)(this))->ge
 		}"""
 
 proto = """#define GDVIRTUAL$VER($ALIAS $RET m_name $ARG)\\
-	mutable void *_gdvirtual_##$VARNAME = nullptr;\\
 	_FORCE_INLINE_ bool _gdvirtual_##$VARNAME##_call($CALLARGS) $CONST {\\
 		static const StringName _gdvirtual_##$VARNAME##_sn = StringName(#m_name, true);\\
 		$SCRIPTCALL\\
-		if (_get_extension()) {\\
-			if (unlikely(!_gdvirtual_##$VARNAME)) {\\
-			    _gdvirtual_init_method_ptr(_gdvirtual_##$VARNAME##_get_method_info().get_compatibility_hash(), _gdvirtual_##$VARNAME, _gdvirtual_##$VARNAME##_sn);\\
-			}\\
-			if (_gdvirtual_##$VARNAME != reinterpret_cast<void*>(_INVALID_GDVIRTUAL_FUNC_ADDR)) {\\
-				$CALLPTRARGS\\
-				$CALLPTRRETDEF\\
-				if (_get_extension()->call_virtual_with_data) {\\
-					_get_extension()->call_virtual_with_data(_get_extension_instance(), &_gdvirtual_##$VARNAME##_sn, _gdvirtual_##$VARNAME, $CALLPTRARGPASS, $CALLPTRRETPASS);\\
-					$CALLPTRRET\\
-				} else {\\
-					((GDExtensionClassCallVirtual)_gdvirtual_##$VARNAME)(_get_extension_instance(), $CALLPTRARGPASS, $CALLPTRRETPASS);\\
-					$CALLPTRRET\\
-				}\\
-				return true;\\
-			}\\
-		}\\
 		$REQCHECK\\
 		$RVOID\\
 		return false;\\
@@ -43,14 +25,6 @@ proto = """#define GDVIRTUAL$VER($ALIAS $RET m_name $ARG)\\
 	_FORCE_INLINE_ bool _gdvirtual_##$VARNAME##_overridden() const {\\
 		static const StringName _gdvirtual_##$VARNAME##_sn = StringName(#m_name, true);\\
 		$SCRIPTHASMETHOD\\
-		if (_get_extension()) {\\
-			if (unlikely(!_gdvirtual_##$VARNAME)) {\\
-			    _gdvirtual_init_method_ptr(_gdvirtual_##$VARNAME##_get_method_info().get_compatibility_hash(), _gdvirtual_##$VARNAME, _gdvirtual_##$VARNAME##_sn);\\
-			}\\
-			if (_gdvirtual_##$VARNAME != reinterpret_cast<void*>(_INVALID_GDVIRTUAL_FUNC_ADDR)) {\\
-				return true;\\
-			}\\
-		}\\
 		return false;\\
 	}\\
 	_FORCE_INLINE_ static MethodInfo _gdvirtual_##$VARNAME##_get_method_info() {\\
@@ -75,13 +49,11 @@ def generate_version(argcount, const=False, returns=False, required=False):
         sproto += "R"
         s = s.replace("$RET", "m_ret,")
         s = s.replace("$RVOID", "(void)r_ret;")  # If required, may lead to uninitialized errors
-        s = s.replace("$CALLPTRRETDEF", "PtrToArg<m_ret>::EncodeT ret;")
         method_info += "method_info.return_val = GetTypeInfo<m_ret>::get_class_info();\\\n"
         method_info += "\t\tmethod_info.return_val_metadata = GetTypeInfo<m_ret>::METADATA;"
     else:
         s = s.replace("$RET ", "")
         s = s.replace("\t\t$RVOID\\\n", "")
-        s = s.replace("\t\t\t$CALLPTRRETDEF\\\n", "")
 
     if const:
         sproto += "C"
@@ -109,12 +81,10 @@ def generate_version(argcount, const=False, returns=False, required=False):
     callargtext = ""
     callsiargs = ""
     callsiargptrs = ""
-    callptrargsptr = ""
     if argcount > 0:
         argtext += ", "
         callsiargs = f"Variant vargs[{argcount}] = {{ "
         callsiargptrs = f"\t\t\tconst Variant *vargptrs[{argcount}] = {{ "
-        callptrargsptr = f"\t\t\tGDExtensionConstTypePtr argptrs[{argcount}] = {{ "
 
         if method_info:
             method_info += "\\\n\t\t"
@@ -124,35 +94,25 @@ def generate_version(argcount, const=False, returns=False, required=False):
             + ">(method_info);"
         )
 
-    callptrargs = ""
     for i in range(argcount):
         if i > 0:
             argtext += ", "
             callargtext += ", "
             callsiargs += ", "
             callsiargptrs += ", "
-            callptrargs += "\t\t\t"
-            callptrargsptr += ", "
         argtext += f"m_type{i + 1}"
-        callargtext += f"m_type{i + 1} arg{i + 1}"
-        callsiargs += f"VariantInternal::make(arg{i + 1})"
+        callargtext += f"m_type{i + 1} p_arg{i + 1}"
+        callsiargs += f"VariantInternal::make(p_arg{i + 1})"
         callsiargptrs += f"&vargs[{i}]"
-        callptrargs += f"PtrToArg<m_type{i + 1}>::EncodeT argval{i + 1}; PtrToArg<m_type{i + 1}>::encode(arg{i + 1}, &argval{i + 1});\\\n"
-        callptrargsptr += f"&argval{i + 1}"
 
     if argcount:
         callsiargs += " };\\\n"
         callsiargptrs += " };"
         s = s.replace("$CALLSIARGS", callsiargs + callsiargptrs)
         s = s.replace("$CALLSIARGPASS", f"(const Variant **)vargptrs, {argcount}")
-        callptrargsptr += " };"
-        s = s.replace("$CALLPTRARGS", callptrargs + callptrargsptr)
-        s = s.replace("$CALLPTRARGPASS", "reinterpret_cast<GDExtensionConstTypePtr *>(argptrs)")
     else:
         s = s.replace("\t\t\t$CALLSIARGS\\\n", "")
         s = s.replace("$CALLSIARGPASS", "nullptr, 0")
-        s = s.replace("\t\t\t$CALLPTRARGS\\\n", "")
-        s = s.replace("$CALLPTRARGPASS", "nullptr")
 
     if returns:
         if argcount > 0:
@@ -160,13 +120,9 @@ def generate_version(argcount, const=False, returns=False, required=False):
         callargtext += "m_ret &r_ret"
         s = s.replace("$CALLSIBEGIN", "Variant ret = ")
         s = s.replace("$CALLSIRET", "r_ret = VariantCaster<m_ret>::cast(ret);")
-        s = s.replace("$CALLPTRRETPASS", "&ret")
-        s = s.replace("$CALLPTRRET", "r_ret = (m_ret)ret;")
     else:
         s = s.replace("$CALLSIBEGIN", "")
         s = s.replace("\t\t\t\t$CALLSIRET\\\n", "")
-        s = s.replace("$CALLPTRRETPASS", "nullptr")
-        s = s.replace("\t\t\t\t$CALLPTRRET\\\n", "")
 
     s = s.replace(" $ARG", argtext)
     s = s.replace("$CALLARGS", callargtext)
@@ -186,12 +142,10 @@ def run(target, source, env):
 
 // IWYU pragma: begin_keep
 #include "core/object/script_instance.h"
-#include "core/variant/method_ptrcall.h"
+#include "core/variant/type_info.h"
 #include "core/variant/variant_caster.h"
 #include "core/variant/variant_internal.h"
 // IWYU pragma: end_keep
-
-inline constexpr uintptr_t _INVALID_GDVIRTUAL_FUNC_ADDR = static_cast<uintptr_t>(-1);
 
 template <typename... Args>
 _NO_INLINE_ void _gdvirtual_set_method_info_args(MethodInfo &p_method_info) {

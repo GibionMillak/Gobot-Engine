@@ -317,10 +317,6 @@ void register_editor_types() {
 		TexturePreview::init_shaders();
 	}
 
-	// Required as GDExtensions can register docs at init time way before this
-	// class is actually instantiated.
-	EditorHelp::init_gdext_pointers();
-
 	OS::get_singleton()->benchmark_end_measure("Editor", "Register Types");
 }
 

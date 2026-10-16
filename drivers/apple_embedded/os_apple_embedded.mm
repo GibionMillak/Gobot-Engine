@@ -71,32 +71,6 @@
 #endif // VULKAN_ENABLED
 #endif
 
-// Initialization order between compilation units is not guaranteed,
-// so we use this as a hack to ensure certain code is called before
-// everything else, but after all units are initialized.
-typedef void (*init_callback)();
-static init_callback *apple_init_callbacks = nullptr;
-static int apple_embedded_platform_init_callbacks_count = 0;
-static int apple_embedded_platform_init_callbacks_capacity = 0;
-HashMap<String, void *> OS_AppleEmbedded::dynamic_symbol_lookup_table;
-
-void add_apple_embedded_platform_init_callback(init_callback cb) {
-	if (apple_embedded_platform_init_callbacks_count == apple_embedded_platform_init_callbacks_capacity) {
-		void *new_ptr = realloc(apple_init_callbacks, sizeof(cb) * (apple_embedded_platform_init_callbacks_capacity + 32));
-		if (new_ptr) {
-			apple_init_callbacks = (init_callback *)(new_ptr);
-			apple_embedded_platform_init_callbacks_capacity += 32;
-		} else {
-			ERR_FAIL_MSG("Unable to allocate memory for extension callbacks.");
-		}
-	}
-	apple_init_callbacks[apple_embedded_platform_init_callbacks_count++] = cb;
-}
-
-void register_dynamic_symbol(char *name, void *address) {
-	OS_AppleEmbedded::dynamic_symbol_lookup_table[String(name)] = address;
-}
-
 Rect2 fit_keep_aspect_centered(const Vector2 &p_container, const Vector2 &p_rect) {
 	real_t available_ratio = p_container.width / p_container.height;
 	real_t fit_ratio = p_rect.width / p_rect.height;
@@ -142,14 +116,6 @@ OS_AppleEmbedded *OS_AppleEmbedded::get_singleton() {
 }
 
 OS_AppleEmbedded::OS_AppleEmbedded() {
-	for (int i = 0; i < apple_embedded_platform_init_callbacks_count; ++i) {
-		apple_init_callbacks[i]();
-	}
-	free(apple_init_callbacks);
-	apple_init_callbacks = nullptr;
-	apple_embedded_platform_init_callbacks_count = 0;
-	apple_embedded_platform_init_callbacks_capacity = 0;
-
 	main_loop = nullptr;
 
 	Vector<Logger *> loggers;
@@ -278,14 +244,10 @@ _FORCE_INLINE_ String OS_AppleEmbedded::get_framework_executable(const String &p
 	return p_path;
 }
 
-Error OS_AppleEmbedded::open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data) {
+Error OS_AppleEmbedded::open_dynamic_library(const String &p_path, void *&r_library_handle) {
 	if (p_path.length() == 0) {
 		// Static xcframework.
-		p_library_handle = RTLD_SELF;
-
-		if (p_data != nullptr && p_data->r_resolved_path != nullptr) {
-			*p_data->r_resolved_path = p_path;
-		}
+		r_library_handle = RTLD_SELF;
 
 		return OK;
 	}
@@ -324,22 +286,14 @@ Error OS_AppleEmbedded::open_dynamic_library(const String &p_path, void *&p_libr
 
 	if (!FileAccess::exists(path) && (p_path.ends_with(".a") || p_path.ends_with(".xcframework"))) {
 		// Static library already linked into the binary — use RTLD_SELF.
-		p_library_handle = RTLD_SELF;
-
-		if (p_data != nullptr && p_data->r_resolved_path != nullptr) {
-			*p_data->r_resolved_path = p_path;
-		}
+		r_library_handle = RTLD_SELF;
 
 		return OK;
 	} else {
 		ERR_FAIL_COND_V(!FileAccess::exists(path), ERR_FILE_NOT_FOUND);
 	}
-	p_library_handle = dlopen(path.utf8().get_data(), RTLD_NOW);
-	ERR_FAIL_NULL_V_MSG(p_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, dlerror()));
-
-	if (p_data != nullptr && p_data->r_resolved_path != nullptr) {
-		*p_data->r_resolved_path = path;
-	}
+	r_library_handle = dlopen(path.utf8().get_data(), RTLD_NOW);
+	ERR_FAIL_NULL_V_MSG(r_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, dlerror()));
 
 	return OK;
 }
@@ -349,17 +303,6 @@ Error OS_AppleEmbedded::close_dynamic_library(void *p_library_handle) {
 		return OK;
 	}
 	return OS_Unix::close_dynamic_library(p_library_handle);
-}
-
-Error OS_AppleEmbedded::get_dynamic_library_symbol_handle(void *p_library_handle, const String &p_name, void *&p_symbol_handle, bool p_optional) {
-	if (p_library_handle == RTLD_SELF) {
-		void **ptr = OS_AppleEmbedded::dynamic_symbol_lookup_table.getptr(p_name);
-		if (ptr) {
-			p_symbol_handle = *ptr;
-			return OK;
-		}
-	}
-	return OS_Unix::get_dynamic_library_symbol_handle(p_library_handle, p_name, p_symbol_handle, p_optional);
 }
 
 String OS_AppleEmbedded::get_distribution_name() const {

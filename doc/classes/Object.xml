@@ -569,7 +569,7 @@
 		<method name="free" keywords="delete, remove, kill, die">
 			<return type="void" />
 			<description>
-				Deletes the object from memory. Pre-existing references to the object become invalid, and any attempt to access them will result in a runtime error. Checking the references with [method @GlobalScope.is_instance_valid] will return [code]false[/code]. This is equivalent to the [code]memdelete[/code] function in GDExtension C++.
+				Deletes the object from memory. Pre-existing references to the object become invalid, and any attempt to access them will result in a runtime error. Checking the references with [method @GlobalScope.is_instance_valid] will return [code]false[/code].
 			</description>
 		</method>
 		<method name="get" qualifiers="const">
@@ -686,7 +686,7 @@
 				- [code]hint[/code] is [i]how[/i] the property is meant to be edited (see [enum PropertyHint]);
 				- [code]hint_string[/code] depends on the hint (see [enum PropertyHint]);
 				- [code]usage[/code] is a combination of [enum PropertyUsageFlags].
-				[b]Note:[/b] In GDScript, all class members are treated as properties. In C# and GDExtension, it may be necessary to explicitly mark class members as Godot properties using decorators or attributes.
+				[b]Note:[/b] In GDScript, all class members are treated as properties. In C#, it may be necessary to explicitly mark class members as Godot properties using decorators or attributes.
 			</description>
 		</method>
 		<method name="get_script" qualifiers="const">

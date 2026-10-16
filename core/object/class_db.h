@@ -111,8 +111,6 @@ public:
 	enum APIType {
 		API_CORE,
 		API_EDITOR,
-		API_EXTENSION,
-		API_EDITOR_EXTENSION,
 		API_NONE
 	};
 
@@ -120,10 +118,7 @@ public:
 	struct ClassInfo {
 		APIType api = API_NONE;
 		ClassInfo *inherits_ptr = nullptr;
-		void *class_ptr = nullptr;
 		GDType *gdtype = nullptr;
-
-		ObjectGDExtension *gdextension = nullptr;
 
 #ifdef DEBUG_ENABLED
 		List<MethodInfo> virtual_methods;
@@ -138,9 +133,7 @@ public:
 
 		bool disabled = false;
 		bool exposed = false;
-		bool reloadable = false;
 		bool is_virtual = false;
-		bool is_runtime = false;
 		// The bool argument indicates the need to postinitialize.
 		Object *(*creation_func)(bool) = nullptr;
 	};
@@ -183,10 +176,6 @@ public:
 	static HashMap<StringName, ClassInfo> classes;
 	static HashMap<StringName, StringName> resource_base_extensions;
 
-#ifdef TOOLS_ENABLED
-	static HashMap<StringName, ObjectGDExtension> placeholder_extensions;
-#endif
-
 #ifdef DEBUG_ENABLED
 	static MethodBind *bind_methodfi(uint32_t p_flags, MethodBind *p_bind, const MethodDefinition &p_method_name, const Variant **p_defs, int p_defcount);
 #else
@@ -200,13 +189,6 @@ public:
 
 	static HashMap<StringName, HashMap<StringName, Variant>> default_values;
 	static HashSet<StringName> default_values_cached;
-
-	// Native structs, used by binder
-	struct NativeStruct {
-		String ccode; // C code to create the native struct, fields separated by ; Arrays accepted (even containing other structs), also function pointers. All types must be Godot types.
-		uint64_t struct_size; // local size of struct, for comparison
-	};
-	static HashMap<StringName, NativeStruct> native_structs;
 
 	static Array default_array_arg;
 	static bool is_default_array_arg(const Array &p_array);
@@ -222,10 +204,7 @@ private:
 	static MethodBind *_bind_vararg_method(MethodBind *p_bind, const StringName &p_name, const Vector<Variant> &p_default_args);
 	static void _bind_method_custom(const StringName &p_class, MethodBind *p_method, bool p_take_ownership = true);
 
-	static Object *_instantiate_from_gdextension(ObjectGDExtension *p_object_gd_extension, bool p_notify_postinitialize, bool p_with_refcount);
-	static Object *_instantiate_internal(const StringName &p_class, bool p_require_real_class = false, bool p_notify_postinitialize = true, bool p_exposed_only = true, bool p_with_refcount = false);
-
-	static bool _can_instantiate(ClassInfo *p_class_info, bool p_exposed_only = true);
+	static bool _can_instantiate(const ClassInfo *p_class_info);
 
 public:
 	template <typename T>
@@ -238,7 +217,6 @@ public:
 		t->creation_func = &creator<T>;
 		t->exposed = true;
 		t->is_virtual = p_virtual;
-		t->class_ptr = T::get_class_ptr_static();
 		t->api = current_api;
 		T::register_custom_data_to_otdb();
 	}
@@ -251,7 +229,6 @@ public:
 		ClassInfo *t = classes.getptr(T::get_class_static());
 		ERR_FAIL_NULL(t);
 		t->exposed = true;
-		t->class_ptr = T::get_class_ptr_static();
 		t->api = current_api;
 		//nothing
 	}
@@ -264,30 +241,9 @@ public:
 		ClassInfo *t = classes.getptr(T::get_class_static());
 		ERR_FAIL_NULL(t);
 		t->exposed = false;
-		t->class_ptr = T::get_class_ptr_static();
 		t->api = current_api;
 		T::register_custom_data_to_otdb();
 	}
-
-	template <typename T>
-	static void register_runtime_class() {
-		Locker::Lock lock(Locker::STATE_WRITE);
-		static_assert(std::is_same_v<typename T::self_type, T>, "Class not declared properly, please use GDCLASS.");
-		T::initialize_class();
-		ClassInfo *t = classes.getptr(T::get_class_static());
-		ERR_FAIL_NULL(t);
-		ERR_FAIL_COND_MSG(t->inherits_ptr && !t->inherits_ptr->creation_func, vformat("Cannot register runtime class '%s' that descends from an abstract parent class.", T::get_class_static()));
-		t->creation_func = &creator<T>;
-		t->exposed = true;
-		t->is_virtual = false;
-		t->is_runtime = true;
-		t->class_ptr = T::get_class_ptr_static();
-		t->api = current_api;
-		T::register_custom_data_to_otdb();
-	}
-
-	static void register_extension_class(ObjectGDExtension *p_extension);
-	static void unregister_extension_class(const StringName &p_class);
 
 	template <typename T>
 	static Object *_create_ptr_func(bool p_notify_postinitialize) {
@@ -303,17 +259,11 @@ public:
 		ERR_FAIL_NULL(t);
 		t->creation_func = &_create_ptr_func<T>;
 		t->exposed = true;
-		t->class_ptr = T::get_class_ptr_static();
 		t->api = current_api;
 		T::register_custom_data_to_otdb();
 	}
 
 	static void get_class_list(LocalVector<StringName> &p_classes);
-#ifdef TOOLS_ENABLED
-	static void get_extensions_class_list(LocalVector<StringName> &p_classes);
-	static void get_extension_class_list(const Ref<GDExtension> &p_extension, List<StringName> *p_classes);
-	static ObjectGDExtension *get_placeholder_extension(const StringName &p_class);
-#endif
 	static const GDType *get_gdtype(const StringName &p_class);
 	static void get_inheriters_from_class(const StringName &p_class, LocalVector<StringName> &p_classes);
 	static void get_direct_inheriters_from_class(const StringName &p_class, List<StringName> *p_classes);
@@ -325,12 +275,7 @@ public:
 	static bool can_instantiate(const StringName &p_class);
 	static bool is_abstract(const StringName &p_class);
 	static bool is_virtual(const StringName &p_class);
-	static bool is_gdextension(const StringName &p_class);
 	static Object *instantiate(const StringName &p_class);
-	static Object *instantiate_no_placeholders(const StringName &p_class);
-	static Object *instantiate_without_postinitialization(const StringName &p_class);
-	static Object *instantiate_without_postinitialization_with_refcount(const StringName &p_class);
-	static void set_object_extension_instance(Object *p_object, const StringName &p_class, GDExtensionClassInstancePtr p_instance);
 
 	static APIType get_api_type(const StringName &p_class);
 
@@ -433,7 +378,6 @@ public:
 
 	static void add_virtual_method(const StringName &p_class, const MethodInfo &p_method, bool p_virtual = true, const Vector<String> &p_arg_names = Vector<String>(), bool p_object_core = false);
 	static void get_virtual_methods(const StringName &p_class, List<MethodInfo> *p_methods, bool p_no_inheritance = false);
-	static void add_extension_class_virtual_method(const StringName &p_class, const GDExtensionClassVirtualMethodInfo *p_method_info);
 
 	static void bind_integer_constant(const StringName &p_class, const StringName &p_enum, const StringName &p_name, int64_t p_constant, bool p_is_bitfield = false);
 	static void get_integer_constant_list(const StringName &p_class, List<String> *p_constants, bool p_no_inheritance = false);
@@ -454,8 +398,6 @@ public:
 	static bool is_class_enabled(const StringName &p_class);
 
 	static bool is_class_exposed(const StringName &p_class);
-	static bool is_class_reloadable(const StringName &p_class);
-	static bool is_class_runtime(const StringName &p_class);
 
 #ifdef TOOLS_ENABLED
 	static void add_class_dependency(const StringName &p_class, const StringName &p_dependency);
@@ -471,13 +413,6 @@ public:
 	static APIType get_current_api();
 	static void cleanup_defaults();
 	static void cleanup();
-
-	static void register_native_struct(const StringName &p_name, const String &p_code, uint64_t p_current_size);
-	static void get_native_struct_list(List<StringName> *r_names);
-	static String get_native_struct_code(const StringName &p_name);
-	static uint64_t get_native_struct_size(const StringName &p_name); // Used for asserting
-
-	static Object *_instantiate_allow_unexposed(const StringName &p_class); // Used to create unexposed classes from GDExtension, typically for unexposed EditorPlugin.
 };
 
 #define BIND_ENUM_CONSTANT(m_constant) \
@@ -522,9 +457,3 @@ public:
 	if constexpr (GD_IS_CLASS_ENABLED(m_class)) { \
 		::ClassDB::register_internal_class<m_class>(); \
 	}
-#define GDREGISTER_RUNTIME_CLASS(m_class) \
-	if constexpr (GD_IS_CLASS_ENABLED(m_class)) { \
-		::ClassDB::register_runtime_class<m_class>(); \
-	}
-
-#define GDREGISTER_NATIVE_STRUCT(m_class, m_code) ClassDB::register_native_struct(#m_class, m_code, sizeof(m_class))

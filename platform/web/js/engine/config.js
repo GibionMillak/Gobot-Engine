@@ -131,12 +131,7 @@ const InternalConfig = function (initConfig) { // eslint-disable-line no-unused-
 		 * @type {!Array<string>}
 		 */
 		persistentPaths: ['/userfs'],
-		/**
-		 * @ignore
-		 * @export
-		 * @type {!Array<string>}
-		 */
-		gdextensionLibs: [],
+
 		/**
 		 * @ignore
 		 * @export
@@ -307,13 +302,12 @@ const InternalConfig = function (initConfig) { // eslint-disable-line no-unused-
 	 */
 	Config.prototype.getModuleConfig = function (loadPath, response) {
 		let r = response;
-		const gdext = this.gdextensionLibs;
 		return {
 			'print': this.onPrint,
 			'printErr': this.onPrintError,
 			'thisProgram': this.executable,
 			'noExitRuntime': false,
-			'dynamicLibraries': [`${loadPath}.side.wasm`].concat(this.gdextensionLibs),
+			'dynamicLibraries': [`${loadPath}.side.wasm`],
 			'emscriptenPoolSize': this.emscriptenPoolSize,
 			'instantiateWasm': function (imports, onSuccess) {
 				function done(result) {

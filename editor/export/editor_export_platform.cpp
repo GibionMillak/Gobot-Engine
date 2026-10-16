@@ -32,7 +32,6 @@
 
 #include "core/config/project_settings.h"
 #include "core/crypto/crypto_core.h"
-#include "core/extension/gdextension.h"
 #include "core/io/delta_encoding.h"
 #include "core/io/dir_access.h"
 #include "core/io/file_access_encrypted.h"
@@ -1215,11 +1214,6 @@ Vector<String> EditorExportPlatform::get_forced_export_files(const Ref<EditorExp
 		files.push_back(splash);
 	}
 
-	String extension_list_config_file = GDExtension::get_extension_list_config_file();
-	if (FileAccess::exists(extension_list_config_file)) {
-		files.push_back(extension_list_config_file);
-	}
-
 	return files;
 }
 
@@ -1742,9 +1736,7 @@ Error EditorExportPlatform::export_project_files(const Ref<EditorExportPreset> &
 	for (const String &file : forced_export) {
 		Vector<uint8_t> array;
 
-		if (file == GDExtension::get_extension_list_config_file()) {
-			array = filtered_cache.extension_list;
-		} else if (file == ProjectSettings::get_singleton()->get_global_class_list_path()) {
+		if (file == ProjectSettings::get_singleton()->get_global_class_list_path()) {
 			array = filtered_cache.global_class_list;
 		} else {
 			array = FileAccess::get_file_as_bytes(file);
@@ -1808,19 +1800,10 @@ Error EditorExportPlatform::export_project_files(const Ref<EditorExportPreset> &
 	return OK;
 }
 
-// Used by the main export function to filter excluded global classes, extensions
+// Used by the main export function to filter excluded global classes
 // and UIDs based on excluded resources configured in the export preset.
 EditorExportPlatform::FilteredCache EditorExportPlatform::_get_filtered_cache(const HashSet<String> &p_paths) {
 	FilteredCache result;
-
-	HashSet<String> extension_list_lines;
-	Ref<FileAccess> ext_file = FileAccess::open(GDExtension::get_extension_list_config_file(), FileAccess::READ);
-	if (ext_file.is_valid()) {
-		while (!ext_file->eof_reached()) {
-			String line = ext_file->get_line().strip_edges();
-			extension_list_lines.insert(line);
-		}
-	}
 
 	HashMap<String, Dictionary> class_by_path;
 	Ref<ConfigFile> global_class_cf;
@@ -1835,17 +1818,12 @@ EditorExportPlatform::FilteredCache EditorExportPlatform::_get_filtered_cache(co
 		}
 	}
 
-	Vector<String> extension_lines;
 	Array global_class_list;
 	Vector<Pair<ResourceUID::ID, String>> uid_entries;
-	extension_lines.reserve(extension_list_lines.size());
 	global_class_list.reserve(class_by_path.size());
 	uid_entries.reserve(p_paths.size());
 
 	for (const String &path : p_paths) {
-		if (extension_list_lines.has(path)) {
-			extension_lines.push_back(path);
-		}
 		if (class_by_path.has(path)) {
 			global_class_list.push_back(class_by_path[path]);
 		}
@@ -1853,12 +1831,6 @@ EditorExportPlatform::FilteredCache EditorExportPlatform::_get_filtered_cache(co
 		if (uid != ResourceUID::INVALID_ID) {
 			uid_entries.push_back(Pair<ResourceUID::ID, String>(uid, path));
 		}
-	}
-
-	// Encode extensions.
-	for (const String &line : extension_lines) {
-		result.extension_list.append_array(line.to_utf8_buffer());
-		result.extension_list.append('\n');
 	}
 
 	// Encode global classes.

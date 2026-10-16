@@ -315,7 +315,6 @@ EditorPropertyNameProcessor::EditorPropertyNameProcessor() {
 	capitalize_string_remaps["vsync"] = "V-Sync";
 	capitalize_string_remaps["wap"] = "WAP";
 	capitalize_string_remaps["webp"] = "WebP";
-	capitalize_string_remaps["webrtc"] = "WebRTC";
 	capitalize_string_remaps["websocket"] = "WebSocket";
 	capitalize_string_remaps["wintab"] = "WinTab";
 	capitalize_string_remaps["winink"] = "Windows Ink";

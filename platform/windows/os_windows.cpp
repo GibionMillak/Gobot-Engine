@@ -33,7 +33,6 @@
 #include "display_server_windows.h"
 #include "lang_table.h"
 #include "windows_terminal_logger.h"
-#include "windows_utils.h"
 #include "winrt_utils.h"
 
 #include "core/config/engine.h"
@@ -381,10 +380,6 @@ void OS_Windows::finalize() {
 }
 
 void OS_Windows::finalize_core() {
-	while (!temp_libraries.is_empty()) {
-		_remove_temp_library(temp_libraries.last()->key);
-	}
-
 	FileAccessWindows::finalize();
 
 #if WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP
@@ -472,56 +467,19 @@ void debug_dynamic_library_check_dependencies(const String &p_path, HashSet<Stri
 }
 #endif
 
-Error OS_Windows::open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data) {
+Error OS_Windows::open_dynamic_library(const String &p_path, void *&r_library_handle) {
 	String path = p_path;
 
 	if (!FileAccess::exists(path)) {
-		//this code exists so gdextension can load .dll files from within the executable path
+		// Also search beside the executable.
 		path = get_executable_path().get_base_dir().path_join(p_path.get_file());
 		ERR_FAIL_COND_V(!FileAccess::exists(path), ERR_FILE_NOT_FOUND);
 	}
-	// Path to load from may be different from original if we make copies.
-	String load_path = path;
 
-	// Here we want a copy to be loaded.
-	// This is so the original file isn't locked and can be updated by a compiler.
-	if (p_data != nullptr && p_data->generate_temp_files) {
-		// Copy the file to the same directory as the original with a prefix in the name.
-		// This is so relative path to dependencies are satisfied.
-		load_path = path.get_base_dir().path_join("~" + path.get_file());
+	String dll_path = fix_path(path);
 
-		// If there's a left-over copy (possibly from a crash) then delete it first.
-		if (FileAccess::exists(load_path)) {
-			DirAccess::remove_absolute(load_path);
-		}
-
-		Error copy_err = DirAccess::copy_absolute(path, load_path);
-		if (copy_err) {
-			ERR_PRINT("Error copying library: " + path);
-			return ERR_CANT_CREATE;
-		}
-
-		FileAccess::set_hidden_attribute(load_path, true);
-
-		Error pdb_err = WindowsUtils::copy_and_rename_pdb(load_path);
-		if (pdb_err != OK && pdb_err != ERR_SKIP) {
-			WARN_PRINT(vformat("Failed to rename the PDB file. The original PDB file for '%s' will be loaded.", path));
-		}
-	}
-
-	DLL_DIRECTORY_COOKIE cookie = nullptr;
-
-	String dll_path = fix_path(load_path);
-	String dll_dir = fix_path(ProjectSettings::get_singleton()->globalize_path(load_path.get_base_dir()));
-	if (p_data != nullptr && p_data->also_set_library_path) {
-		cookie = AddDllDirectory((LPCWSTR)(dll_dir.utf16().get_data()));
-	}
-
-	p_library_handle = (void *)LoadLibraryExW((LPCWSTR)(dll_path.utf16().get_data()), nullptr, (p_data != nullptr && p_data->also_set_library_path) ? LOAD_LIBRARY_SEARCH_DEFAULT_DIRS : 0);
-	if (!p_library_handle) {
-		if (p_data != nullptr && p_data->generate_temp_files) {
-			DirAccess::remove_absolute(load_path);
-		}
+	r_library_handle = (void *)LoadLibraryExW((LPCWSTR)(dll_path.utf16().get_data()), nullptr, 0);
+	if (!r_library_handle) {
 
 #ifdef DEBUG_ENABLED
 		DWORD err_code = GetLastError();
@@ -545,21 +503,8 @@ Error OS_Windows::open_dynamic_library(const String &p_path, void *&p_library_ha
 	}
 
 #ifndef DEBUG_ENABLED
-	ERR_FAIL_NULL_V_MSG(p_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, format_error_message(GetLastError())));
+	ERR_FAIL_NULL_V_MSG(r_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, format_error_message(GetLastError())));
 #endif
-
-	if (cookie) {
-		RemoveDllDirectory(cookie);
-	}
-
-	if (p_data != nullptr && p_data->r_resolved_path != nullptr) {
-		*p_data->r_resolved_path = path;
-	}
-
-	if (p_data != nullptr && p_data->generate_temp_files) {
-		// Save the copied path so it can be deleted later.
-		temp_libraries[p_library_handle] = load_path;
-	}
 
 	return OK;
 }
@@ -569,24 +514,12 @@ Error OS_Windows::close_dynamic_library(void *p_library_handle) {
 		return FAILED;
 	}
 
-	// Delete temporary copy of library if it exists.
-	_remove_temp_library(p_library_handle);
-
 	return OK;
 }
 
-void OS_Windows::_remove_temp_library(void *p_library_handle) {
-	if (temp_libraries.has(p_library_handle)) {
-		String path = temp_libraries[p_library_handle];
-		DirAccess::remove_absolute(path);
-		WindowsUtils::remove_temp_pdbs(path);
-		temp_libraries.erase(p_library_handle);
-	}
-}
-
-Error OS_Windows::get_dynamic_library_symbol_handle(void *p_library_handle, const String &p_name, void *&p_symbol_handle, bool p_optional) {
-	p_symbol_handle = (void *)GetProcAddress((HMODULE)p_library_handle, p_name.utf8().get_data());
-	if (!p_symbol_handle) {
+Error OS_Windows::get_dynamic_library_symbol_handle(void *p_library_handle, const String &p_name, void *&r_symbol_handle, bool p_optional) {
+	r_symbol_handle = (void *)GetProcAddress((HMODULE)p_library_handle, p_name.utf8().get_data());
+	if (!r_symbol_handle) {
 		if (!p_optional) {
 			ERR_FAIL_V_MSG(ERR_CANT_RESOLVE, vformat("Can't resolve symbol %s, error: \"%s\".", p_name, format_error_message(GetLastError())));
 		} else {

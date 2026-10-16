@@ -129,7 +129,6 @@ public:
 
 private:
 	Vector<EditorPlugin *> editor_plugins;
-	HashMap<StringName, EditorPlugin *> extension_editor_plugins;
 
 	struct PropertyData {
 		String name;
@@ -175,11 +174,6 @@ public:
 
 	int get_editor_plugin_count() const;
 	EditorPlugin *get_editor_plugin(int p_idx);
-
-	void add_extension_editor_plugin(const StringName &p_class_name, EditorPlugin *p_plugin);
-	void remove_extension_editor_plugin(const StringName &p_class_name);
-	bool has_extension_editor_plugin(const StringName &p_class_name);
-	EditorPlugin *get_extension_editor_plugin(const StringName &p_class_name);
 
 	void add_undo_redo_inspector_hook_callback(Callable p_callable); // Callbacks should have this signature: void (Object* undo_redo, Object *modified_object, String property, Variant new_value)
 	void remove_undo_redo_inspector_hook_callback(Callable p_callable);
@@ -260,7 +254,6 @@ public:
 	void script_class_save_global_classes();
 	void script_class_load_icon_paths();
 
-	Ref<Texture2D> extension_class_get_icon(const String &p_class) const;
 
 	Ref<Texture2D> get_script_icon(const String &p_script_path);
 	void clear_script_icon_cache();

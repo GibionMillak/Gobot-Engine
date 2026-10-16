@@ -76,13 +76,6 @@ repos:
       - id: codespell
         additional_dependencies: [tomli]
 
-  - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.4
-    hooks:
-      - id: check-jsonschema
-        files: ^core/extension/gdextension_interface\.json$
-        args: ["--schemafile", "core/extension/gdextension_interface.schema.json"]
-
   - repo: local
     hooks:
       - id: make-rst

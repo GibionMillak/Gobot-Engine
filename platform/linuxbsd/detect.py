@@ -89,7 +89,7 @@ def get_doc_path():
 def get_flags():
     return {
         "arch": detect_arch(),
-        "supported": ["library", "mono"],
+        "supported": ["mono"],
     }
 
 
@@ -127,7 +127,7 @@ def configure(env: "SConsEnvironment"):
             env["CXX"] = "clang++"
         env.extra_suffix = ".llvm" + env.extra_suffix
 
-    if env["library_type"] == "executable" and env["arch"] not in ["x86_32", "arm32"]:
+    if env["arch"] not in ["x86_32", "arm32"]:
         # PIE has a performance cost on 32-bit, and it's a niche target. Not worth the tradeoff.
         env.Append(CCFLAGS=["-fPIE"], LINKFLAGS=["-pie"])
     env.Append(LINKFLAGS=["-Wl,-z,relro", "-Wl,-z,now"])
@@ -212,9 +212,6 @@ def configure(env: "SConsEnvironment"):
 
     env.Append(CCFLAGS=["-ffp-contract=off"])
 
-    if env["library_type"] == "shared_library":
-        env.Append(CCFLAGS=["-fPIC"])
-
     # LTO
 
     if env["lto"] == "auto":  # Enable LTO for production.
@@ -266,11 +263,6 @@ def configure(env: "SConsEnvironment"):
 
     if not env["builtin_harfbuzz"]:
         env.ParseConfig("pkg-config harfbuzz harfbuzz-icu harfbuzz-raster harfbuzz-vector --cflags --libs")
-
-    if not env["builtin_icu4c"] or not env["builtin_harfbuzz"]:
-        print_warning(
-            "System-provided icu4c or harfbuzz cause known issues for GDExtension (see GH-91401 and GH-100301)."
-        )
 
     if not env["builtin_libpng"]:
         env.ParseConfig("pkg-config libpng16 --cflags --libs")

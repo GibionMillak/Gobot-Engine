@@ -122,11 +122,8 @@ void print_web_header() {
 	String thread_support = OS::get_singleton()->has_feature("threads")
 			? "multi-threaded"
 			: "single-threaded";
-	String extensions_support = OS::get_singleton()->has_feature("web_extensions")
-			? "GDExtension support"
-			: "no GDExtension support";
 
-	Vector<String> build_configuration = { emscripten_version, thread_support, extensions_support };
+	Vector<String> build_configuration = { emscripten_version, thread_support };
 	print_line(vformat("Build configuration: %s.", String(", ").join(build_configuration)));
 }
 

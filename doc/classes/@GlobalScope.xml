@@ -1572,9 +1572,6 @@
 		<member name="EngineDebugger" type="EngineDebugger" setter="" getter="">
 			The [EngineDebugger] singleton.
 		</member>
-		<member name="GDExtensionManager" type="GDExtensionManager" setter="" getter="">
-			The [GDExtensionManager] singleton.
-		</member>
 		<member name="GDScriptLanguageProtocol" type="GDScriptLanguageProtocol" setter="" getter="">
 			The [GDScriptLanguageProtocol] singleton.
 			[b]Note:[/b] Only available in editor builds.
@@ -2952,7 +2949,7 @@
 			Hints that a [String] property is a path to a file. Editing it will show a file dialog for picking the path for the file to be saved at. The dialog has access to the entire filesystem. The hint string can be a set of filters with wildcards like [code]"*.png,*.jpg"[/code]. See also [member FileDialog.filters].
 		</constant>
 		<constant name="PROPERTY_HINT_INT_IS_POINTER" value="30" enum="PropertyHint">
-			Hints that an [int] property is a pointer. Used by GDExtension.
+			Hints that an [int] property is a pointer. Used by native backends.
 		</constant>
 		<constant name="PROPERTY_HINT_ARRAY_TYPE" value="31" enum="PropertyHint">
 			Hints that a property is an [Array] with the stored type specified in the hint string. The hint string contains the type of the array (e.g. [code]"String"[/code]).

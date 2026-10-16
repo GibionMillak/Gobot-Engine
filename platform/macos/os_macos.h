@@ -86,11 +86,6 @@ public:
 		"--help",
 		"/?",
 		"--version",
-		"--dump-gdextension-interface",
-		"--dump-extension-api",
-		"--dump-gdextension-interface-json",
-		"--dump-extension-api-with-docs",
-		"--validate-extension-api",
 		"--doctool",
 		"--test",
 	};
@@ -109,7 +104,7 @@ public:
 
 	virtual void alert(const String &p_alert, const String &p_title = "ALERT!") override;
 
-	virtual Error open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data = nullptr) override;
+	virtual Error open_dynamic_library(const String &p_path, void *&r_library_handle) override;
 
 	virtual MainLoop *get_main_loop() const override;
 

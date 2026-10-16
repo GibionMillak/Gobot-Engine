@@ -112,7 +112,6 @@ class EditorHelp : public VBoxContainer {
 
 	RichTextLabel *class_desc = nullptr;
 	inline static DocTools *doc = nullptr;
-	inline static DocTools *ext_doc = nullptr;
 
 	LineEdit *search = nullptr;
 	FindBar *find_bar = nullptr;
@@ -198,7 +197,6 @@ class EditorHelp : public VBoxContainer {
 	static void _wait_for_thread(Thread &p_thread = worker_thread);
 	static void _load_doc_thread(void *p_udata);
 	static void _gen_doc_thread(void *p_udata);
-	static void _gen_extensions_docs();
 	static void _process_postponed_docs();
 	static void _load_script_doc_cache_thread(void *p_udata);
 	static void _regen_script_doc_thread(void *p_udata);
@@ -242,8 +240,6 @@ public:
 	static void remove_script_doc_by_path(const String &p_path);
 	static bool has_doc(const String &p_class_name);
 
-	static void load_xml_buffer(const uint8_t *p_buffer, int p_size);
-	static void remove_class(const String &p_class);
 
 	void go_to_help(const String &p_help);
 	void go_to_class(const String &p_class);
@@ -263,8 +259,6 @@ public:
 
 	int get_scroll() const;
 	void set_scroll(int p_scroll);
-
-	static void init_gdext_pointers();
 
 	EditorHelp();
 };

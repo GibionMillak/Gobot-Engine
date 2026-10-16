@@ -38,76 +38,77 @@
 struct AudioFrame;
 
 // Metafunction for pointee name. Specialized in GDVIRTUAL_NATIVE_PTR; takes into account const; falls back to "void".
-template <typename T>
-struct GDExtensionPtrName {
+template <typename PointeeType>
+struct NativePtrName {
 	static const char *get() { return "void"; }
 };
-template <typename T>
-struct GDExtensionPtrName<const T> {
+template <typename PointeeType>
+struct NativePtrName<const PointeeType> {
 	static const char *get() {
-		static const CharString name = (String("const ") + GDExtensionPtrName<T>::get()).utf8();
+		static const CharString name = (String("const ") + NativePtrName<PointeeType>::get()).utf8();
 		return name.get_data();
 	}
 };
-template <typename T>
-struct GDExtensionPtrName<T *> {
+template <typename PointeeType>
+struct NativePtrName<PointeeType *> {
 	static const char *get() {
-		static const CharString name = (String(GDExtensionPtrName<T>::get()) + " *").utf8();
+		static const CharString name = (String(NativePtrName<PointeeType>::get()) + " *").utf8();
 		return name.get_data();
 	}
 };
 
 #define GDVIRTUAL_NATIVE_PTR(m_type) \
 	template <> \
-	struct GDExtensionPtrName<m_type> { \
+	struct NativePtrName<m_type> { \
 		static const char *get() { return #m_type; } \
 	};
 
-// Raw pointer passed across the GDExtension boundary. T can be const-qualified to map to `const MyClass*`.
-template <typename T>
-struct GDExtensionPtr {
-	T *data = nullptr;
-	GDExtensionPtr() {}
-	GDExtensionPtr(T *p_assign) { data = p_assign; }
-	static const char *get_name() { return GDExtensionPtrName<T>::get(); }
-	operator T *() const { return data; }
+// Raw pointer transported through Variant for native backends. PointeeType can be const-qualified to map to `const MyClass*`.
+template <typename PointeeType>
+struct NativePtr {
+	NativePtr() = default;
+	NativePtr(PointeeType *p_assign) { data = p_assign; }
+	static const char *get_name() { return NativePtrName<PointeeType>::get(); }
+	operator PointeeType *() const { return data; }
 	operator Variant() const { return uint64_t(data); }
+
+	PointeeType *data = nullptr;
 };
 
-template <typename T>
-struct GetTypeInfo<GDExtensionPtr<T>> {
+template <typename PointeeType>
+struct GetTypeInfo<NativePtr<PointeeType>> {
 	static constexpr Variant::Type VARIANT_TYPE = Variant::INT;
 	static constexpr GodotTypeInfo::Metadata METADATA = GodotTypeInfo::METADATA_NONE;
 	static inline PropertyInfo get_class_info() {
-		return PropertyInfo(Variant::INT, String(), PROPERTY_HINT_INT_IS_POINTER, GDExtensionPtr<T>::get_name());
+		return PropertyInfo(Variant::INT, String(), PROPERTY_HINT_INT_IS_POINTER, NativePtr<PointeeType>::get_name());
 	}
 };
 
-template <typename T>
-struct VariantCaster<GDExtensionPtr<T>> {
-	static _FORCE_INLINE_ GDExtensionPtr<T> cast(const Variant &p_variant) {
-		return GDExtensionPtr<T>(reinterpret_cast<T *>(p_variant.operator uint64_t()));
+template <typename PointeeType>
+struct VariantCaster<NativePtr<PointeeType>> {
+	static _FORCE_INLINE_ NativePtr<PointeeType> cast(const Variant &p_variant) {
+		return NativePtr<PointeeType>(reinterpret_cast<PointeeType *>(p_variant.operator uint64_t()));
 	}
 };
 
-template <typename T>
-struct VariantInternalAccessor<GDExtensionPtr<T>> {
-	static _FORCE_INLINE_ const GDExtensionPtr<T> &get(const Variant *p_variant) {
-		return *reinterpret_cast<const GDExtensionPtr<T> *>(VariantInternal::get_int(p_variant));
+template <typename PointeeType>
+struct VariantInternalAccessor<NativePtr<PointeeType>> {
+	static _FORCE_INLINE_ const NativePtr<PointeeType> &get(const Variant *p_variant) {
+		return *reinterpret_cast<const NativePtr<PointeeType> *>(VariantInternal::get_int(p_variant));
 	}
-	static _FORCE_INLINE_ void set(Variant *r_variant, const GDExtensionPtr<T> &p_value) {
+	static _FORCE_INLINE_ void set(Variant *r_variant, const NativePtr<PointeeType> &p_value) {
 		*VariantInternal::get_int(r_variant) = uint64_t(p_value.data);
 	}
 };
 
-template <typename T>
-struct PtrToArg<GDExtensionPtr<T>> {
-	_FORCE_INLINE_ static GDExtensionPtr<T> convert(const void *p_ptr) {
-		return GDExtensionPtr<T>(static_cast<T *>(const_cast<void *>(p_ptr)));
+template <typename PointeeType>
+struct PtrToArg<NativePtr<PointeeType>> {
+	_FORCE_INLINE_ static NativePtr<PointeeType> convert(const void *p_ptr) {
+		return NativePtr<PointeeType>(static_cast<PointeeType *>(const_cast<void *>(p_ptr)));
 	}
-	typedef T *EncodeT;
-	_FORCE_INLINE_ static void encode(GDExtensionPtr<T> p_val, void *p_ptr) {
-		*static_cast<T **>(p_ptr) = p_val.data;
+	using EncodeT = PointeeType *;
+	_FORCE_INLINE_ static void encode(NativePtr<PointeeType> p_val, void *r_ptr) {
+		*static_cast<PointeeType **>(r_ptr) = p_val.data;
 	}
 };
 

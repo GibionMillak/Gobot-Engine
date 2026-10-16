@@ -40,7 +40,7 @@
  *
  * API design should keep the LSP spec in mind: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/ since the GDScript language server is also using this API.
  *
- * Note: This class is unstable and work-in-progress, stability is only ensured for the things currently exposed through `ScriptLanguageExtension`.
+ * Note: This class is unstable and work-in-progress.
  * The goal is to move all editor functionality out of `ScriptLanguage` over time.
  */
 class EditorLanguage {
@@ -122,7 +122,6 @@ public:
 	 */
 	virtual Error complete_code(const String &p_code, const String &p_path, Object *p_owner, List<CompletionOption> *r_options, bool &r_force, String &r_call_hint) { return ERR_UNAVAILABLE; }
 
-	// Keep ScriptLanguageExtension::LookupResultType a subset of this.
 	struct LookupResult {
 		enum class Type {
 			SCRIPT_LOCATION, // Use if none of the options below apply.

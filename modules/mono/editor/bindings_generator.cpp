@@ -1435,13 +1435,7 @@ bool BindingsGenerator::_validate_api_type(const TypeInterface *p_target_itype, 
 			validate = true;
 			break;
 		case ClassDB::API_EDITOR:
-			validate = source_api == ClassDB::API_EDITOR || source_api == ClassDB::API_EDITOR_EXTENSION;
-			break;
-		case ClassDB::API_EXTENSION:
-			validate = source_api == ClassDB::API_EXTENSION || source_api == ClassDB::API_EDITOR_EXTENSION;
-			break;
-		case ClassDB::API_EDITOR_EXTENSION:
-			validate = source_api == ClassDB::API_EDITOR_EXTENSION;
+			validate = source_api == ClassDB::API_EDITOR;
 			break;
 	}
 	if (!validate) {

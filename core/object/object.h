@@ -30,7 +30,6 @@
 
 #pragma once
 
-#include "core/extension/gdextension_interface.gen.h"
 #include "core/object/gdtype.h"
 #include "core/object/method_info.h"
 #include "core/object/object_id.h"
@@ -67,58 +66,7 @@
 // PropertyInfo(Variant::ARRAY, "fallbacks", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("Font")
 #define MAKE_RESOURCE_TYPE_HINT(m_type) vformat("%s/%s:%s", Variant::OBJECT, PROPERTY_HINT_RESOURCE_TYPE, m_type)
 
-// API used to extend in GDExtension and other C compatible compiled languages.
 class MethodBind;
-class GDExtension;
-
-struct ObjectGDExtension {
-	GDExtension *library = nullptr;
-	ObjectGDExtension *parent = nullptr;
-	List<ObjectGDExtension *> children;
-	StringName parent_class_name;
-	StringName class_name;
-	bool editor_class = false;
-	bool reloadable = false;
-	bool is_virtual = false;
-	bool is_abstract = false;
-	bool is_exposed = true;
-#ifdef TOOLS_ENABLED
-	bool is_runtime = false;
-	bool is_placeholder = false;
-#endif
-	GDExtensionClassSet set;
-	GDExtensionClassGet get;
-	GDExtensionClassGetPropertyList get_property_list;
-	GDExtensionClassFreePropertyList2 free_property_list2;
-	GDExtensionClassPropertyCanRevert property_can_revert;
-	GDExtensionClassPropertyGetRevert property_get_revert;
-	GDExtensionClassValidateProperty validate_property;
-	GDExtensionClassNotification2 notification2;
-	GDExtensionClassToString to_string;
-	GDExtensionClassReference reference;
-	GDExtensionClassReference unreference;
-	GDExtensionClassGetRID get_rid;
-
-	void *class_userdata = nullptr;
-
-	GDExtensionClassCreateInstance3 create_instance3;
-	GDExtensionClassFreeInstance free_instance;
-	GDExtensionClassGetVirtual2 get_virtual2;
-	GDExtensionClassGetVirtualCallData2 get_virtual_call_data2;
-	GDExtensionClassCallVirtualWithData call_virtual_with_data;
-	GDExtensionClassRecreateInstance recreate_instance;
-
-#ifdef TOOLS_ENABLED
-	void *tracking_userdata = nullptr;
-	void (*track_instance)(void *p_userdata, void *p_instance) = nullptr;
-	void (*untrack_instance)(void *p_userdata, void *p_instance) = nullptr;
-#endif
-
-	/// A type for this Object extension.
-	/// This is not exposed through the GDExtension API (yet) so it is inferred from above parameters.
-	/// The GDType's lifetime is (usually) owned by ClassDB.
-	const GDType *gdtype = nullptr;
-};
 
 #define GDVIRTUAL_CALL(m_name, ...) _gdvirtual_##m_name##_call(__VA_ARGS__)
 #define GDVIRTUAL_CALL_PTR(m_obj, m_name, ...) m_obj->_gdvirtual_##m_name##_call(__VA_ARGS__)
@@ -328,6 +276,12 @@ class ScriptInstance;
  */
 class Object {
 public:
+	struct InstanceBindingCallbacks {
+		void *(*create_callback)(void *p_token, void *p_instance) = nullptr;
+		void (*free_callback)(void *p_token, void *p_instance, void *p_binding) = nullptr;
+		bool (*reference_callback)(void *p_token, void *p_binding, bool p_reference) = nullptr;
+	};
+
 	typedef Object self_type;
 
 	enum ConnectFlags {
@@ -384,9 +338,6 @@ private:
 	friend struct ObjectSignalLock;
 	friend bool predelete_handler(Object *);
 	friend void postinitialize_handler(Object *);
-
-	ObjectGDExtension *_extension = nullptr;
-	GDExtensionClassInstancePtr _extension_instance = nullptr;
 
 	struct SignalData {
 		struct Slot {
@@ -470,8 +421,8 @@ private:
 	struct InstanceBinding {
 		void *binding = nullptr;
 		void *token = nullptr;
-		GDExtensionInstanceBindingFreeCallback free_callback = nullptr;
-		GDExtensionInstanceBindingReferenceCallback reference_callback = nullptr;
+		void (*free_callback)(void *p_token, void *p_instance, void *p_binding) = nullptr;
+		bool (*reference_callback)(void *p_token, void *p_binding, bool p_reference) = nullptr;
 	};
 	InstanceBinding *_instance_bindings = nullptr;
 	uint32_t _instance_binding_count = 0;
@@ -496,12 +447,6 @@ protected:
 		return can_die;
 	}
 
-	// Used in gdvirtual.gen.h
-	void _gdvirtual_init_method_ptr(uint32_t p_compat_hash, void *&r_fn_ptr, const StringName &p_fn_name) const;
-
-	friend class GDExtensionMethodBind;
-	_ALWAYS_INLINE_ const ObjectGDExtension *_get_extension() const { return _extension; }
-	_ALWAYS_INLINE_ GDExtensionClassInstancePtr _get_extension_instance() const { return _extension_instance; }
 	virtual void _initialize_classv() { initialize_class(); }
 	virtual bool _setv(const StringName &p_name, const Variant &p_property) { return false; }
 	virtual bool _getv(const StringName &p_name, Variant &r_property) const { return false; }
@@ -567,7 +512,6 @@ protected:
 	void _clear_internal_resource_paths(const Variant &p_var);
 
 	friend class ::ClassDB;
-	friend class PlaceholderExtensionInstance;
 
 	static void _add_class_to_classdb(GDType &p_class, const GDType *p_inherits);
 	static void _get_property_list_from_classdb(const StringName &p_class, List<PropertyInfo> *p_list, bool p_no_inheritance, const Object *p_validator);
@@ -581,15 +525,6 @@ protected:
 
 	// Internal helper to get the current locale, taking into account the translation domain.
 	String _get_locale() const;
-
-#ifdef TOOLS_ENABLED
-	struct VirtualMethodTracker {
-		void **method;
-		VirtualMethodTracker *next;
-	};
-
-	mutable VirtualMethodTracker *virtual_method_list = nullptr;
-#endif
 
 public: // Should be protected, but bug in clang++.
 	static void initialize_class();
@@ -656,8 +591,6 @@ public:
 
 	const StringName &get_class_name() const;
 
-	StringName get_class_name_for_extension(const GDExtension *p_library) const;
-
 	/* IAPI */
 
 	void set(const StringName &p_name, const Variant &p_value, bool *r_valid = nullptr);
@@ -694,8 +627,8 @@ public:
 	}
 
 	// Depending on the boolean, we call either the virtual function _notification_backward or _notification_forward.
-	// - Forward calls subclasses in descending order (e.g. Object -> Node -> Node3D -> extension -> script).
-	//   Backward calls subclasses in descending order (e.g. script -> extension -> Node3D -> Node -> Object).
+	// - Forward calls subclasses in descending order (e.g. Object -> Node -> Node3D -> script).
+	//   Backward calls subclasses in descending order (e.g. script -> Node3D -> Node -> Object).
 	_FORCE_INLINE_ void notification(int p_notification, bool p_reversed = false) {
 		if (p_reversed) {
 			_notification_backward(p_notification);
@@ -804,18 +737,10 @@ public:
 	void editor_clear_section_folding() { editor_section_folding.clear(); }
 #endif
 
-	// Used by script languages to store binding data.
-	void *get_instance_binding(void *p_token, const GDExtensionInstanceBindingCallbacks *p_callbacks);
-	// Used on creation by binding only.
-	void set_instance_binding(void *p_token, void *p_binding, const GDExtensionInstanceBindingCallbacks *p_callbacks);
+	// Used by built-in script languages to store binding data.
+	void *get_instance_binding(void *p_token, const InstanceBindingCallbacks *p_callbacks);
 	bool has_instance_binding(void *p_token);
 	void free_instance_binding(void *p_token);
-
-#ifdef TOOLS_ENABLED
-	void clear_internal_extension();
-	void reset_internal_extension(ObjectGDExtension *p_extension);
-	bool is_extension_placeholder() const { return _extension && _extension->is_placeholder; }
-#endif
 
 	void clear_internal_resource_paths();
 
@@ -918,7 +843,7 @@ public:
 };
 
 // Using `RequiredResult<T>` as the return type indicates that null will only be returned in the case of an error.
-// This allows GDExtension language bindings to use the appropriate error handling mechanism for that language
+// This allows language bindings to use the appropriate error handling mechanism for that language
 // when null is returned (for example, throwing an exception), rather than simply returning the value.
 template <typename T>
 class RequiredResult {
@@ -1031,7 +956,7 @@ public:
 
 // Using `RequiredParam<T>` as an argument type indicates that passing null as that parameter is an error,
 // that will prevent the method from doing its intended function.
-// This allows GDExtension bindings to use language-specific mechanisms to prevent users from passing null,
+// This allows language bindings to use language-specific mechanisms to prevent users from passing null,
 // because it is never valid to do so.
 template <typename T>
 class RequiredParam {

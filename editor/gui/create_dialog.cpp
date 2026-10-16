@@ -259,22 +259,15 @@ void CreateDialog::_update_search() {
 	if (type_filter_enabled) {
 		for (const TypeInfo &candidate : type_info_list) {
 			bool is_script_type = !ClassDB::class_exists(candidate.type_name);
-			bool is_extension = !is_script_type && ClassDB::is_gdextension(candidate.type_name);
 			bool is_editor = false;
 			if (!is_script_type) {
 				const ClassDB::APIType api_type = ClassDB::get_api_type(candidate.type_name);
-				is_editor = (api_type == ClassDB::API_EDITOR || api_type == ClassDB::API_EDITOR_EXTENSION);
+				is_editor = api_type == ClassDB::API_EDITOR;
 			}
 
 			bool valid = false;
 			if (is_script_type) {
 				valid = types_enabled[TYPE_CUSTOM];
-			} else if (is_extension) {
-				if (is_editor) {
-					valid = types_enabled[TYPE_EDITOR];
-				} else {
-					valid = types_enabled[TYPE_CUSTOM];
-				}
 			} else {
 				// Native type.
 				if (is_editor) {
@@ -713,7 +706,7 @@ String CreateDialog::get_selected_type() {
 
 	String type = selected->get_text(0).get_slicec(' ', 0);
 	if (ClassDB::class_exists(type)) {
-		return type; // CPP type - from the core or GDExtensions
+		return type; // C++ type
 	}
 
 	const EditorData::CustomType *custom_type = EditorNode::get_editor_data().get_custom_type_by_name(type);

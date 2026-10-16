@@ -276,7 +276,6 @@ def generate_scu_files(max_includes_per_scu):
     process_folder(["core/crypto"])
     process_folder(["core/debugger"])
     process_folder(["core/error"])
-    process_folder(["core/extension"])
     process_folder(["core/input"])
     process_folder(["core/io"])
     process_folder(["core/math"])
@@ -370,7 +369,6 @@ def generate_scu_files(max_includes_per_scu):
     process_folder(["modules/objectdb_profiler/editor"])
     process_folder(["modules/objectdb_profiler/editor/data_viewers"])
     process_folder(["modules/tilemap"])
-    process_folder(["modules/webrtc"])
     process_folder(["modules/websocket"])
 
     process_folder(["scene/2d"])

@@ -106,8 +106,6 @@ complete -c godot -l export-pack -d "Export the project data only as a PCK or ZI
 complete -c godot -l doctool -d "Dump the engine API reference to the given path in XML format, merging if existing files are found" -r
 complete -c godot -l no-docbase -d "Disallow dumping the base types (used with --doctool)"
 complete -c godot -l build-solutions -d "Build the scripting solutions (e.g. for C# projects)"
-complete -c godot -l dump-gdextension-interface -d "Generate GDExtension header file 'gdextension_interface.h' in the current folder. This file is the base file required to implement a GDExtension"
-complete -c godot -l dump-extension-api -d "Generate JSON dump of the Godot API for GDExtension bindings named 'extension_api.json' in the current folder"
 complete -c godot -l benchmark -d "Benchmark the run time and print it to console"
 complete -c godot -l benchmark-file -d "Benchmark the run time and save it to a given file in JSON format" -x
 complete -c godot -l test -d "Run all unit tests; run with '--test --help' for more information" -x

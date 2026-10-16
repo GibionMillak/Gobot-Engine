@@ -168,20 +168,6 @@ bool OS_Web::_check_internal_feature_support(const String &p_feature) {
 		return true;
 	}
 
-	if (p_feature == "web_extensions") {
-#ifdef WEB_DLINK_ENABLED
-		return true;
-#else
-		return false;
-#endif
-	}
-	if (p_feature == "web_noextensions") {
-#ifdef WEB_DLINK_ENABLED
-		return false;
-#else
-		return true;
-#endif
-	}
 
 	if (godot_js_os_has_feature(p_feature.utf8().get_data())) {
 		return true;
@@ -304,14 +290,10 @@ Error OS_Web::get_entropy(uint8_t *r_buffer, int p_bytes) {
 	return OK;
 }
 
-Error OS_Web::open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data) {
+Error OS_Web::open_dynamic_library(const String &p_path, void *&r_library_handle) {
 	String path = p_path.get_file();
-	p_library_handle = dlopen(path.utf8().get_data(), RTLD_NOW);
-	ERR_FAIL_NULL_V_MSG(p_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, dlerror()));
-
-	if (p_data != nullptr && p_data->r_resolved_path != nullptr) {
-		*p_data->r_resolved_path = path;
-	}
+	r_library_handle = dlopen(path.utf8().get_data(), RTLD_NOW);
+	ERR_FAIL_NULL_V_MSG(r_library_handle, ERR_CANT_OPEN, vformat("Can't open dynamic library: %s. Error: %s.", p_path, dlerror()));
 
 	return OK;
 }

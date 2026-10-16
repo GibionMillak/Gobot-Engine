@@ -38,8 +38,8 @@ def generate_mod_version(argcount, const=False, returns=False):
             callargs += ", "
 
         argtext += ", m_type" + str(i + 1)
-        funcargs += "m_type" + str(i + 1) + " arg" + str(i + 1)
-        callargs += "arg" + str(i + 1)
+        funcargs += "m_type" + str(i + 1) + " p_arg" + str(i + 1)
+        callargs += "p_arg" + str(i + 1)
 
     if argcount:
         s = s.replace("$ARG", argtext)
@@ -96,8 +96,8 @@ def generate_ex_version(argcount, const=False, returns=False):
             funcargs += ", "
 
         argtext += ", m_type" + str(i + 1)
-        funcargs += "m_type" + str(i + 1) + " arg" + str(i + 1)
-        callargs += ", arg" + str(i + 1)
+        funcargs += "m_type" + str(i + 1) + " p_arg" + str(i + 1)
+        callargs += ", p_arg" + str(i + 1)
 
     if argcount:
         s = s.replace("$ARG", argtext)
@@ -122,7 +122,7 @@ def run(target, source, env):
     txt = "#pragma once"
 
     for i in range(max_versions + 1):
-        txt += "\n/* Extension Wrapper " + str(i) + " Arguments */\n"
+        txt += "\n/* Script Virtual Wrapper " + str(i) + " Arguments */\n"
         txt += generate_ex_version(i, False, False)
         txt += generate_ex_version(i, False, True)
         txt += generate_ex_version(i, True, False)

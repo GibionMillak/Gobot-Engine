@@ -637,7 +637,6 @@ private:
 
 	void _update_vsync_mode();
 	void _update_from_settings();
-	void _gdextensions_reloaded();
 	void _update_translations();
 	void _translation_resources_changed();
 	void _queue_translation_notification();
@@ -794,9 +793,6 @@ public:
 
 	static void add_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
 	static void remove_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
-
-	static void add_extension_editor_plugin(const StringName &p_class_name);
-	static void remove_extension_editor_plugin(const StringName &p_class_name);
 
 	static void add_plugin_init_callback(EditorPluginInitializeCallback p_callback);
 	static void add_init_callback(EditorNodeInitCallback p_callback) { _init_callbacks.push_back(p_callback); }

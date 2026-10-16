@@ -127,9 +127,7 @@ class ExportTemplateManager : public AcceptDialog {
 		MACOS,
 
 		WEB,
-		WEB_EXTENSIONS,
 		WEB_NOTHREADS,
-		WEB_EXTENSIONS_NOTHREADS,
 
 		ANDROID,
 

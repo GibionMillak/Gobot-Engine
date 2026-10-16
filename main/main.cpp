@@ -35,10 +35,6 @@
 #include "core/core_globals.h"
 #include "core/crypto/crypto.h"
 #include "core/debugger/engine_debugger.h"
-#include "core/extension/extension_api_dump.h"
-#include "core/extension/gdextension_interface_dump.gen.h"
-#include "core/extension/gdextension_interface_header_generator.h"
-#include "core/extension/gdextension_manager.h"
 #include "core/input/input.h"
 #include "core/input/input_map.h"
 #include "core/io/dir_access.h"
@@ -267,12 +263,6 @@ static bool disable_vsync = false;
 static bool print_fps = false;
 #ifdef TOOLS_ENABLED
 static bool editor_pseudolocalization = false;
-static bool dump_gdextension_interface = false;
-static bool dump_gdextension_interface_header = false;
-static bool dump_extension_api = false;
-static bool include_docs_in_extension_api_dump = false;
-static bool validate_extension_api = false;
-static String validate_extension_api_file;
 #endif
 bool profile_gpu = false;
 
@@ -492,7 +482,7 @@ void Main::print_help(const char *p_binary) {
 #ifdef TOOLS_ENABLED
 	print_help_option("-e, --editor", "Start the editor instead of running the scene.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("-p, --project-manager", "Start the project manager, even if a project is auto-detected.\n", CLI_OPTION_AVAILABILITY_EDITOR);
-	print_help_option("--recovery-mode", "Start the editor in recovery mode, which disables features that can typically cause startup crashes, such as tool scripts, editor plugins, GDExtension addons, and others.\n", CLI_OPTION_AVAILABILITY_EDITOR);
+	print_help_option("--recovery-mode", "Start the editor in recovery mode, which disables features that can typically cause startup crashes, such as tool scripts, editor plugins, and others.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--debug-server <uri>", "Start the editor debug server (<protocol>://<host/IP>[:port], e.g. tcp://127.0.0.1:6007)\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--dap-port <port>", "Use the specified port for the GDScript Debug Adapter Protocol. Recommended port range [1024, 49151].\n", CLI_OPTION_AVAILABILITY_EDITOR);
 #if defined(MODULE_GDSCRIPT_ENABLED) && !defined(GDSCRIPT_NO_LSP)
@@ -634,17 +624,10 @@ void Main::print_help(const char *p_binary) {
 	print_help_option("--install-android-build-template", "Install the Android build template. Used in conjunction with --export-release or --export-debug.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--doctool [path]", "Dump the engine API reference to the given <path> (defaults to current directory) in XML format, merging if existing files are found.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--no-docbase", "Disallow dumping the base types (used with --doctool).\n", CLI_OPTION_AVAILABILITY_EDITOR);
-	print_help_option("--gdextension-docs", "Rather than dumping the engine API, generate API reference from all the GDExtensions loaded in the current project (used with --doctool).\n", CLI_OPTION_AVAILABILITY_EDITOR);
 #ifdef MODULE_GDSCRIPT_ENABLED
 	print_help_option("--gdscript-docs <path>", "Rather than dumping the engine API, generate API reference from the inline documentation in the GDScript files found in <path> (used with --doctool).\n", CLI_OPTION_AVAILABILITY_EDITOR);
 #endif
 	print_help_option("--build-solutions", "Build the scripting solutions (e.g. for C# projects). Implies --editor and requires a valid project to edit.\n", CLI_OPTION_AVAILABILITY_EDITOR);
-	print_help_option("--dump-gdextension-interface", "Generate a GDExtension header file \"gdextension_interface.h\" in the current folder. This file is the base file required to implement a GDExtension.\n", CLI_OPTION_AVAILABILITY_EDITOR);
-	print_help_option("--dump-gdextension-interface-json", "Generate a JSON dump of the GDExtension interface named \"gdextension_interface.json\" in the current folder.\n", CLI_OPTION_AVAILABILITY_EDITOR);
-	print_help_option("--dump-extension-api", "Generate a JSON dump of the Godot API for GDExtension bindings named \"extension_api.json\" in the current folder.\n", CLI_OPTION_AVAILABILITY_EDITOR);
-	print_help_option("--dump-extension-api-with-docs", "Generate JSON dump of the Godot API like the previous option, but including documentation.\n", CLI_OPTION_AVAILABILITY_EDITOR);
-	print_help_option("--validate-extension-api <path>", "Validate an extension API file dumped (with one of the two previous options) from a previous version of the engine to ensure API compatibility.\n", CLI_OPTION_AVAILABILITY_EDITOR);
-	print_help_option("", "If incompatibilities or errors are detected, the exit code will be non-zero.\n");
 	print_help_option("--benchmark", "Benchmark the run time and print it to console.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--benchmark-file <path>", "Benchmark the run time and save it to a given file in JSON format. The path should be absolute.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 #endif // TOOLS_ENABLED
@@ -719,14 +702,12 @@ Error Main::test_setup() {
 	// From `Main::setup2()`.
 	register_early_core_singletons();
 	initialize_modules(MODULE_INITIALIZATION_LEVEL_CORE);
-	register_core_extensions();
 
 	register_core_singletons();
 
 	/** INITIALIZE SERVERS **/
 	register_server_types();
 	initialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
-	GDExtensionManager::get_singleton()->initialize_extensions(GDExtension::INITIALIZATION_LEVEL_SERVERS);
 
 	translation_server->setup(); //register translations, load them, etc.
 	if (!locale.is_empty()) {
@@ -759,14 +740,12 @@ Error Main::test_setup() {
 	register_scene_singletons();
 
 	initialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
-	GDExtensionManager::get_singleton()->initialize_extensions(GDExtension::INITIALIZATION_LEVEL_SCENE);
 
 #ifdef TOOLS_ENABLED
 	ClassDB::set_current_api(ClassDB::API_EDITOR);
 	register_editor_types();
 
 	initialize_modules(MODULE_INITIALIZATION_LEVEL_EDITOR);
-	GDExtensionManager::get_singleton()->initialize_extensions(GDExtension::INITIALIZATION_LEVEL_EDITOR);
 
 	ClassDB::set_current_api(ClassDB::API_CORE);
 #endif
@@ -826,12 +805,10 @@ void Main::test_cleanup() {
 	PropertyListHelper::clear_base_helpers();
 
 #ifdef TOOLS_ENABLED
-	GDExtensionManager::get_singleton()->deinitialize_extensions(GDExtension::INITIALIZATION_LEVEL_EDITOR);
 	uninitialize_modules(MODULE_INITIALIZATION_LEVEL_EDITOR);
 	unregister_editor_types();
 #endif
 
-	GDExtensionManager::get_singleton()->deinitialize_extensions(GDExtension::INITIALIZATION_LEVEL_SCENE);
 	uninitialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
 
 	unregister_platform_apis();
@@ -860,7 +837,6 @@ void Main::test_cleanup() {
 	NavigationServer3DManager::finalize_server_manager();
 #endif // NAVIGATION_3D_DISABLED
 
-	GDExtensionManager::get_singleton()->deinitialize_extensions(GDExtension::INITIALIZATION_LEVEL_SERVERS);
 	uninitialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
 	unregister_server_types();
 
@@ -883,7 +859,6 @@ void Main::test_cleanup() {
 	globals = nullptr;
 
 	unregister_core_driver_types();
-	unregister_core_extensions();
 	uninitialize_modules(MODULE_INITIALIZATION_LEVEL_CORE);
 
 	memdelete(engine);
@@ -1543,65 +1518,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 			auto_build_solutions = true;
 			editor = true;
 			cmdline_tool = true;
-		} else if (arg == "--dump-gdextension-interface") {
-			// Register as an editor instance to use low-end fallback if relevant.
-			editor = true;
-			cmdline_tool = true;
-			dump_gdextension_interface_header = true;
-			print_line("Dumping GDExtension interface header file");
-			// Hack. Not needed but otherwise we end up detecting that this should
-			// run the project instead of a cmdline tool.
-			// Needs full refactoring to fix properly.
-			main_args.push_back(arg);
-		} else if (arg == "--dump-gdextension-interface-json") {
-			// Register as an editor instance to use low-end fallback if relevant.
-			editor = true;
-			cmdline_tool = true;
-			dump_gdextension_interface = true;
-			print_line("Dumping GDExtension interface json file");
-			// Hack. Not needed but otherwise we end up detecting that this should
-			// run the project instead of a cmdline tool.
-			// Needs full refactoring to fix properly.
-			main_args.push_back(arg);
-		} else if (arg == "--dump-extension-api") {
-			// Register as an editor instance to use low-end fallback if relevant.
-			editor = true;
-			cmdline_tool = true;
-			dump_extension_api = true;
-			print_line("Dumping Extension API");
-			// Hack. Not needed but otherwise we end up detecting that this should
-			// run the project instead of a cmdline tool.
-			// Needs full refactoring to fix properly.
-			main_args.push_back(arg);
-		} else if (arg == "--dump-extension-api-with-docs") {
-			// Register as an editor instance to use low-end fallback if relevant.
-			editor = true;
-			cmdline_tool = true;
-			dump_extension_api = true;
-			include_docs_in_extension_api_dump = true;
-			print_line("Dumping Extension API including documentation");
-			// Hack. Not needed but otherwise we end up detecting that this should
-			// run the project instead of a cmdline tool.
-			// Needs full refactoring to fix properly.
-			main_args.push_back(arg);
-		} else if (arg == "--validate-extension-api") {
-			// Register as an editor instance to use low-end fallback if relevant.
-			editor = true;
-			cmdline_tool = true;
-			validate_extension_api = true;
-			// Hack. Not needed but otherwise we end up detecting that this should
-			// run the project instead of a cmdline tool.
-			// Needs full refactoring to fix properly.
-			main_args.push_back(arg);
-
-			if (N) {
-				validate_extension_api_file = N->get();
-
-				N = N->next();
-			} else {
-				OS::get_singleton()->print("Missing file to load argument after --validate-extension-api, aborting.");
-				goto error;
-			}
 		} else if (arg == "--import") {
 			editor = true;
 			cmdline_tool = true;
@@ -2107,7 +2023,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 #ifdef TOOLS_ENABLED
 	if (editor) {
 		Engine::get_singleton()->set_editor_hint(true);
-		Engine::get_singleton()->set_extension_reloading_enabled(true);
 
 		// Create initialization lock file to detect crashes during startup.
 		OS::get_singleton()->create_lock_file();
@@ -2165,7 +2080,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 
 	register_early_core_singletons();
 	initialize_modules(MODULE_INITIALIZATION_LEVEL_CORE);
-	register_core_extensions(); // core extensions must be registered after globals setup and before display
 
 	if (!editor) {
 		ResourceUID::get_singleton()->enable_reverse_cache();
@@ -2873,7 +2787,6 @@ error:
 	packed_data = nullptr;
 
 	unregister_core_driver_types();
-	unregister_core_extensions();
 
 	memdelete(engine);
 	engine = nullptr;
@@ -3111,12 +3024,11 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 	register_server_types();
 	{
-		OS::get_singleton()->benchmark_begin_measure("Servers", "Modules and Extensions");
+		OS::get_singleton()->benchmark_begin_measure("Servers", "Modules");
 
 		initialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
-		GDExtensionManager::get_singleton()->initialize_extensions(GDExtension::INITIALIZATION_LEVEL_SERVERS);
 
-		OS::get_singleton()->benchmark_end_measure("Servers", "Modules and Extensions");
+		OS::get_singleton()->benchmark_end_measure("Servers", "Modules");
 	}
 
 	/* Initialize Input */
@@ -3236,7 +3148,6 @@ Error Main::setup2(bool p_show_boot_logo) {
 			memdelete(display_server);
 			display_server = nullptr;
 
-			GDExtensionManager::get_singleton()->deinitialize_extensions(GDExtension::INITIALIZATION_LEVEL_SERVERS);
 			uninitialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
 			unregister_server_types();
 
@@ -3614,15 +3525,14 @@ Error Main::setup2(bool p_show_boot_logo) {
 	register_scene_singletons();
 
 	{
-		OS::get_singleton()->benchmark_begin_measure("Scene", "Modules and Extensions");
+		OS::get_singleton()->benchmark_begin_measure("Scene", "Modules");
 
 		initialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
-		GDExtensionManager::get_singleton()->initialize_extensions(GDExtension::INITIALIZATION_LEVEL_SCENE);
 
-		OS::get_singleton()->benchmark_end_measure("Scene", "Modules and Extensions");
+		OS::get_singleton()->benchmark_end_measure("Scene", "Modules");
 
 		// We need to initialize the movie writer here in case
-		// one of the user-provided GDExtensions subclasses MovieWriter.
+		// built-in modules have registered their movie writers.
 		if (Engine::get_singleton()->get_write_movie_path() != String()) {
 			movie_writer = MovieWriter::find_writer_for_file(Engine::get_singleton()->get_write_movie_path());
 			if (movie_writer == nullptr) {
@@ -3638,12 +3548,11 @@ Error Main::setup2(bool p_show_boot_logo) {
 	register_editor_types();
 
 	{
-		OS::get_singleton()->benchmark_begin_measure("Editor", "Modules and Extensions");
+		OS::get_singleton()->benchmark_begin_measure("Editor", "Modules");
 
 		initialize_modules(MODULE_INITIALIZATION_LEVEL_EDITOR);
-		GDExtensionManager::get_singleton()->initialize_extensions(GDExtension::INITIALIZATION_LEVEL_EDITOR);
 
-		OS::get_singleton()->benchmark_end_measure("Editor", "Modules and Extensions");
+		OS::get_singleton()->benchmark_end_measure("Editor", "Modules");
 	}
 
 	ClassDB::set_current_api(ClassDB::API_CORE);
@@ -3784,7 +3693,7 @@ void Main::setup_boot_logo() {
 				}
 			}
 		} else {
-			// Create a 1×1 transparent image. This will effectively hide the splash image.
+			// Create a 1Ã—1 transparent image. This will effectively hide the splash image.
 			boot_logo.instantiate();
 			boot_logo->initialize_data(1, 1, false, Image::FORMAT_RGBA8);
 			boot_logo->set_pixel(0, 0, Color(0, 0, 0, 0));
@@ -3876,9 +3785,6 @@ int Main::start() {
 #ifdef TOOLS_ENABLED
 		} else if (E->get() == "--no-docbase") {
 			gen_flags.set_flag(DocTools::GENERATE_FLAG_SKIP_BASIC_TYPES);
-		} else if (E->get() == "--gdextension-docs") {
-			gen_flags.set_flag(DocTools::GENERATE_FLAG_SKIP_BASIC_TYPES);
-			gen_flags.set_flag(DocTools::GENERATE_FLAG_EXTENSION_CLASSES_ONLY);
 		} else if (E->get() == "-e" || E->get() == "--editor") {
 			editor = true;
 		} else if (E->get() == "-p" || E->get() == "--project-manager") {
@@ -4036,34 +3942,29 @@ int Main::start() {
 		HashSet<String> checked_paths;
 		print_line("Loading docs...");
 
-		const bool gdextension_docs = gen_flags.has_flag(DocTools::GENERATE_FLAG_EXTENSION_CLASSES_ONLY);
+		for (int i = 0; i < _doc_data_class_path_count; i++) {
+			// Custom modules are always located by absolute path.
+			String path = _doc_data_class_paths[i].path;
+			if (path.is_relative_path()) {
+				path = doc_tool_path.path_join(path);
+			}
+			String name = _doc_data_class_paths[i].name;
+			doc_data_classes[name] = path;
+			if (!checked_paths.has(path)) {
+				checked_paths.insert(path);
 
-		if (!gdextension_docs) {
-			for (int i = 0; i < _doc_data_class_path_count; i++) {
-				// Custom modules are always located by absolute path.
-				String path = _doc_data_class_paths[i].path;
-				if (path.is_relative_path()) {
-					path = doc_tool_path.path_join(path);
-				}
-				String name = _doc_data_class_paths[i].name;
-				doc_data_classes[name] = path;
-				if (!checked_paths.has(path)) {
-					checked_paths.insert(path);
+				// Create the module documentation directory if it doesn't exist
+				Ref<DirAccess> da = DirAccess::create_for_path(path);
+				err = da->make_dir_recursive(path);
+				ERR_FAIL_COND_V_MSG(err != OK, EXIT_FAILURE, "Error: Can't create directory: " + path + ": " + itos(err));
 
-					// Create the module documentation directory if it doesn't exist
-					Ref<DirAccess> da = DirAccess::create_for_path(path);
-					err = da->make_dir_recursive(path);
-					ERR_FAIL_COND_V_MSG(err != OK, EXIT_FAILURE, "Error: Can't create directory: " + path + ": " + itos(err));
-
-					print_line("Loading docs from: " + path);
-					err = docsrc.load_classes(path);
-					ERR_FAIL_COND_V_MSG(err != OK, EXIT_FAILURE, "Error loading docs from: " + path + ": " + itos(err));
-				}
+				print_line("Loading docs from: " + path);
+				err = docsrc.load_classes(path);
+				ERR_FAIL_COND_V_MSG(err != OK, EXIT_FAILURE, "Error loading docs from: " + path + ": " + itos(err));
 			}
 		}
 
-		// For GDExtension docs, use a path that is compatible with Godot modules.
-		String index_path = gdextension_docs ? doc_tool_path.path_join("doc_classes") : doc_tool_path.path_join("doc/classes");
+		String index_path = doc_tool_path.path_join("doc/classes");
 		// Create the main documentation directory if it doesn't exist
 		Ref<DirAccess> da = DirAccess::create_for_path(index_path);
 		err = da->make_dir_recursive(index_path);
@@ -4084,7 +3985,7 @@ int Main::start() {
 		}
 
 		print_line("Generating new docs...");
-		err = doc.save_classes(index_path, doc_data_classes, !gdextension_docs);
+		err = doc.save_classes(index_path, doc_data_classes, true);
 		ERR_FAIL_COND_V_MSG(err != OK, EXIT_FAILURE, "Error saving new docs:" + itos(err));
 
 		print_line("Deleting docs cache...");
@@ -4093,32 +3994,6 @@ int Main::start() {
 		}
 
 		return EXIT_SUCCESS;
-	}
-
-	// GDExtension API and interface.
-	{
-		if (dump_gdextension_interface) {
-			GDExtensionInterfaceDump::generate_gdextension_interface_file("gdextension_interface.json");
-		}
-
-		if (dump_gdextension_interface_header) {
-			GDExtensionInterfaceHeaderGenerator::generate_gdextension_interface_header("gdextension_interface.h");
-		}
-
-		if (dump_extension_api) {
-			Engine::get_singleton()->set_editor_hint(true); // "extension_api.json" should always contains editor singletons.
-			GDExtensionAPIDump::generate_extension_json_file("extension_api.json", include_docs_in_extension_api_dump);
-		}
-
-		if (dump_gdextension_interface || dump_gdextension_interface_header || dump_extension_api) {
-			return EXIT_SUCCESS;
-		}
-
-		if (validate_extension_api) {
-			Engine::get_singleton()->set_editor_hint(true); // "extension_api.json" should always contains editor singletons.
-			bool valid = GDExtensionAPIDump::validate_extension_json_file(validate_extension_api_file) == OK;
-			return valid ? EXIT_SUCCESS : EXIT_FAILURE;
-		}
 	}
 
 #endif // TOOLS_ENABLED
@@ -4662,8 +4537,6 @@ int Main::start() {
 		movie_writer->begin(movie_size, fixed_fps, Engine::get_singleton()->get_write_movie_path());
 	}
 
-	GDExtensionManager::get_singleton()->startup();
-
 #ifdef MACOS_ENABLED
 	// TODO: Used to fix full-screen splash drawing on macOS, processing events before main loop is fully initialized cause issues on Wayland, and has no effect on other platforms.
 	if (minimum_time_msec) {
@@ -4907,9 +4780,6 @@ bool Main::iteration() {
 	process_max = MAX(process_ticks, process_max);
 	uint64_t frame_time = OS::get_singleton()->get_ticks_usec() - ticks;
 
-	GodotProfileZoneGrouped(_profile_zone, "GDExtensionManager::frame");
-	GDExtensionManager::get_singleton()->frame();
-
 	GodotProfileZoneGrouped(_profile_zone, "ScriptServer::frame");
 	for (int i = 0; i < ScriptServer::get_language_count(); i++) {
 		ScriptServer::get_language(i)->frame();
@@ -5043,8 +4913,6 @@ void Main::cleanup(bool p_force) {
 		movie_writer = nullptr;
 	}
 
-	GDExtensionManager::get_singleton()->shutdown();
-
 	if (TextServerManager::get_singleton()) {
 		for (int i = 0; i < TextServerManager::get_singleton()->get_interface_count(); i++) {
 			TextServerManager::get_singleton()->get_interface(i)->cleanup();
@@ -5088,14 +4956,12 @@ void Main::cleanup(bool p_force) {
 	}
 
 #ifdef TOOLS_ENABLED
-	GDExtensionManager::get_singleton()->deinitialize_extensions(GDExtension::INITIALIZATION_LEVEL_EDITOR);
 	uninitialize_modules(MODULE_INITIALIZATION_LEVEL_EDITOR);
 	unregister_editor_types();
 #endif
 
 	ImageLoader::cleanup();
 
-	GDExtensionManager::get_singleton()->deinitialize_extensions(GDExtension::INITIALIZATION_LEVEL_SCENE);
 	uninitialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
 
 	unregister_platform_apis();
@@ -5104,7 +4970,7 @@ void Main::cleanup(bool p_force) {
 
 	finalize_theme_db();
 
-// Before deinitializing server extensions, finalize servers which may be loaded as extensions.
+// Finalize servers before uninitializing their modules.
 #ifndef NAVIGATION_2D_DISABLED
 	NavigationServer2DManager::finalize_server();
 	NavigationServer2DManager::finalize_server_manager();
@@ -5121,7 +4987,6 @@ void Main::cleanup(bool p_force) {
 	PhysicsServer3DManager::finalize_server();
 #endif // PHYSICS_3D_DISABLED
 
-	GDExtensionManager::get_singleton()->deinitialize_extensions(GDExtension::INITIALIZATION_LEVEL_SERVERS);
 	uninitialize_modules(MODULE_INITIALIZATION_LEVEL_SERVERS);
 	unregister_server_types();
 
@@ -5180,7 +5045,6 @@ void Main::cleanup(bool p_force) {
 #endif
 
 	unregister_core_driver_types();
-	unregister_core_extensions();
 	uninitialize_modules(MODULE_INITIALIZATION_LEVEL_CORE);
 
 	memdelete(engine);

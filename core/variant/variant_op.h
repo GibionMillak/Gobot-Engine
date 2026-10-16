@@ -32,7 +32,6 @@
 
 #include "core/math/math_funcs.h"
 #include "core/variant/container_type_validate.h"
-#include "core/variant/method_ptrcall.h"
 #include "core/variant/type_info.h"
 #include "core/variant/variant.h"
 #include "core/variant/variant_internal.h"
@@ -54,9 +53,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) + VariantInternalAccessor<B>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) + PtrToArg<B>::convert(p_right), r_ret);
-	}
 	using ReturnType = R;
 };
 
@@ -65,9 +61,6 @@ class OperatorEvaluatorSub : public CommonEvaluate<OperatorEvaluatorSub<R, A, B>
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) - VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) - PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = R;
 };
@@ -78,9 +71,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) * VariantInternalAccessor<B>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) * PtrToArg<B>::convert(p_right), r_ret);
-	}
 	using ReturnType = R;
 };
 
@@ -89,9 +79,6 @@ class OperatorEvaluatorPow : public CommonEvaluate<OperatorEvaluatorPow<R, A, B>
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = R(Math::pow((double)VariantInternalAccessor<A>::get(p_left), (double)VariantInternalAccessor<B>::get(p_right)));
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(R(Math::pow((double)PtrToArg<A>::convert(p_left), (double)PtrToArg<B>::convert(p_right))), r_ret);
 	}
 	using ReturnType = R;
 };
@@ -102,9 +89,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left).xform(VariantInternalAccessor<B>::get(p_right));
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left).xform(PtrToArg<B>::convert(p_right)), r_ret);
-	}
 	using ReturnType = R;
 };
 
@@ -114,9 +98,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<B>::get(p_right).xform_inv(VariantInternalAccessor<A>::get(p_left));
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<B>::convert(p_right).xform_inv(PtrToArg<A>::convert(p_left)), r_ret);
-	}
 	using ReturnType = R;
 };
 
@@ -125,9 +106,6 @@ class OperatorEvaluatorDiv : public CommonEvaluate<OperatorEvaluatorDiv<R, A, B>
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) / VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) / PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = R;
 };
@@ -148,9 +126,6 @@ public:
 	}
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) / VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) / PtrToArg<B>::convert(p_right), r_ret);
 	}
 	static Variant::Type get_return_type() { return GetTypeInfo<R>::VARIANT_TYPE; }
 };
@@ -173,9 +148,6 @@ public:
 		VariantTypeChanger<Vector2i>::change(r_ret);
 		VariantInternalAccessor<Vector2i>::get(r_ret) = VariantInternalAccessor<Vector2i>::get(p_left) / VariantInternalAccessor<Vector2i>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector2i>::encode(PtrToArg<Vector2i>::convert(p_left) / PtrToArg<Vector2i>::convert(p_right), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<Vector2i>::VARIANT_TYPE; }
 };
 
@@ -196,9 +168,6 @@ public:
 	static void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantTypeChanger<Vector3i>::change(r_ret);
 		VariantInternalAccessor<Vector3i>::get(r_ret) = VariantInternalAccessor<Vector3i>::get(p_left) / VariantInternalAccessor<Vector3i>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector3i>::encode(PtrToArg<Vector3i>::convert(p_left) / PtrToArg<Vector3i>::convert(p_right), r_ret);
 	}
 	static Variant::Type get_return_type() { return GetTypeInfo<Vector3i>::VARIANT_TYPE; }
 };
@@ -221,9 +190,6 @@ public:
 		VariantTypeChanger<Vector4i>::change(r_ret);
 		VariantInternalAccessor<Vector4i>::get(r_ret) = VariantInternalAccessor<Vector4i>::get(p_left) / VariantInternalAccessor<Vector4i>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector4i>::encode(PtrToArg<Vector4i>::convert(p_left) / PtrToArg<Vector4i>::convert(p_right), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<Vector4i>::VARIANT_TYPE; }
 };
 
@@ -244,9 +210,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<int64_t>::get(r_ret) = Math::division_no_overflow(VariantInternalAccessor<int64_t>::get(p_left), VariantInternalAccessor<int64_t>::get(p_right));
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<int64_t>::encode(Math::division_no_overflow(PtrToArg<int64_t>::convert(p_left), PtrToArg<int64_t>::convert(p_right)), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<int64_t>::VARIANT_TYPE; }
 };
 
@@ -255,9 +218,6 @@ class OperatorEvaluatorMod : public CommonEvaluate<OperatorEvaluatorMod<R, A, B>
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) % VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) % PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = R;
 };
@@ -278,9 +238,6 @@ public:
 	}
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) % VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) % PtrToArg<B>::convert(p_right), r_ret);
 	}
 	static Variant::Type get_return_type() { return GetTypeInfo<R>::VARIANT_TYPE; }
 };
@@ -303,9 +260,6 @@ public:
 		VariantTypeChanger<Vector2i>::change(r_ret);
 		VariantInternalAccessor<Vector2i>::get(r_ret) = VariantInternalAccessor<Vector2i>::get(p_left) % VariantInternalAccessor<Vector2i>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector2i>::encode(PtrToArg<Vector2i>::convert(p_left) % PtrToArg<Vector2i>::convert(p_right), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<Vector2i>::VARIANT_TYPE; }
 };
 
@@ -326,9 +280,6 @@ public:
 	static void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantTypeChanger<Vector3i>::change(r_ret);
 		VariantInternalAccessor<Vector3i>::get(r_ret) = VariantInternalAccessor<Vector3i>::get(p_left) % VariantInternalAccessor<Vector3i>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector3i>::encode(PtrToArg<Vector3i>::convert(p_left) % PtrToArg<Vector3i>::convert(p_right), r_ret);
 	}
 	static Variant::Type get_return_type() { return GetTypeInfo<Vector3i>::VARIANT_TYPE; }
 };
@@ -351,9 +302,6 @@ public:
 		VariantTypeChanger<Vector4i>::change(r_ret);
 		VariantInternalAccessor<Vector4i>::get(r_ret) = VariantInternalAccessor<Vector4i>::get(p_left) % VariantInternalAccessor<Vector4i>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector4i>::encode(PtrToArg<Vector4i>::convert(p_left) % PtrToArg<Vector4i>::convert(p_right), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<Vector4i>::VARIANT_TYPE; }
 };
 
@@ -374,9 +322,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<int64_t>::get(r_ret) = Math::modulo_no_overflow(VariantInternalAccessor<int64_t>::get(p_left), VariantInternalAccessor<int64_t>::get(p_right));
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<int64_t>::encode(Math::modulo_no_overflow(PtrToArg<int64_t>::convert(p_left), PtrToArg<int64_t>::convert(p_right)), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<int64_t>::VARIANT_TYPE; }
 };
 
@@ -386,9 +331,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = -VariantInternalAccessor<A>::get(p_left);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(-PtrToArg<A>::convert(p_left), r_ret);
-	}
 	using ReturnType = R;
 };
 
@@ -397,9 +339,6 @@ class OperatorEvaluatorPos : public CommonEvaluate<OperatorEvaluatorPos<R, A>> {
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left), r_ret);
 	}
 	using ReturnType = R;
 };
@@ -424,9 +363,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) << VariantInternalAccessor<B>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) << PtrToArg<B>::convert(p_right), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<R>::VARIANT_TYPE; }
 };
 
@@ -450,9 +386,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) >> VariantInternalAccessor<B>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) >> PtrToArg<B>::convert(p_right), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<R>::VARIANT_TYPE; }
 };
 
@@ -461,9 +394,6 @@ class OperatorEvaluatorBitOr : public CommonEvaluate<OperatorEvaluatorBitOr<R, A
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) | VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) | PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = R;
 };
@@ -474,9 +404,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) & VariantInternalAccessor<B>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) & PtrToArg<B>::convert(p_right), r_ret);
-	}
 	using ReturnType = R;
 };
 
@@ -485,9 +412,6 @@ class OperatorEvaluatorBitXor : public CommonEvaluate<OperatorEvaluatorBitXor<R,
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) ^ VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(PtrToArg<A>::convert(p_left) ^ PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = R;
 };
@@ -498,9 +422,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<R>::get(r_ret) = ~VariantInternalAccessor<A>::get(p_left);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<R>::encode(~PtrToArg<A>::convert(p_left), r_ret);
-	}
 	using ReturnType = R;
 };
 
@@ -509,9 +430,6 @@ class OperatorEvaluatorEqual : public CommonEvaluate<OperatorEvaluatorEqual<A, B
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) == VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<A>::convert(p_left) == PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -523,9 +441,6 @@ public:
 		const Object *b = p_right->get_validated_object();
 		VariantInternalAccessor<bool>::get(r_ret) = a == b;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Object *>::convert(p_left) == PtrToArg<Object *>::convert(p_right), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -534,9 +449,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		const Object *a = p_left->get_validated_object();
 		VariantInternalAccessor<bool>::get(r_ret) = a == nullptr;
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Object *>::convert(p_left) == nullptr, r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -547,9 +459,6 @@ public:
 		const Object *b = p_right->get_validated_object();
 		VariantInternalAccessor<bool>::get(r_ret) = nullptr == b;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(nullptr == PtrToArg<Object *>::convert(p_right), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -558,9 +467,6 @@ class OperatorEvaluatorNotEqual : public CommonEvaluate<OperatorEvaluatorNotEqua
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) != VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<A>::convert(p_left) != PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -572,9 +478,6 @@ public:
 		Object *b = p_right->get_validated_object();
 		VariantInternalAccessor<bool>::get(r_ret) = a != b;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Object *>::convert(p_left) != PtrToArg<Object *>::convert(p_right), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -583,9 +486,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		Object *a = p_left->get_validated_object();
 		VariantInternalAccessor<bool>::get(r_ret) = a != nullptr;
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Object *>::convert(p_left) != nullptr, r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -596,9 +496,6 @@ public:
 		Object *b = p_right->get_validated_object();
 		VariantInternalAccessor<bool>::get(r_ret) = nullptr != b;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(nullptr != PtrToArg<Object *>::convert(p_right), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -607,9 +504,6 @@ class OperatorEvaluatorLess : public CommonEvaluate<OperatorEvaluatorLess<A, B>>
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) < VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<A>::convert(p_left) < PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -620,9 +514,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) <= VariantInternalAccessor<B>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<A>::convert(p_left) <= PtrToArg<B>::convert(p_right), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -631,9 +522,6 @@ class OperatorEvaluatorGreater : public CommonEvaluate<OperatorEvaluatorGreater<
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) > VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<A>::convert(p_left) > PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -644,9 +532,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) >= VariantInternalAccessor<B>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<A>::convert(p_left) >= PtrToArg<B>::convert(p_right), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -656,9 +541,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) && VariantInternalAccessor<B>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<A>::convert(p_left) && PtrToArg<B>::convert(p_right), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -667,9 +549,6 @@ class OperatorEvaluatorOr : public CommonEvaluate<OperatorEvaluatorOr<A, B>> {
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) || VariantInternalAccessor<B>::get(p_right);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<A>::convert(p_left) || PtrToArg<B>::convert(p_right), r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -684,9 +563,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = xor_op(VariantInternalAccessor<A>::get(p_left), VariantInternalAccessor<B>::get(p_right));
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(xor_op(PtrToArg<A>::convert(p_left), PtrToArg<B>::convert(p_right)), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -695,9 +571,6 @@ class OperatorEvaluatorNot : public CommonEvaluate<OperatorEvaluatorNot<A>> {
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = VariantInternalAccessor<A>::get(p_left) == A();
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<A>::convert(p_left) == A(), r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -726,11 +599,6 @@ public:
 		*r_ret = Array();
 		_add_arrays(VariantInternalAccessor<Array>::get(r_ret), VariantInternalAccessor<Array>::get(p_left), VariantInternalAccessor<Array>::get(p_right));
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		Array ret;
-		_add_arrays(ret, PtrToArg<Array>::convert(p_left), PtrToArg<Array>::convert(p_right));
-		PtrToArg<Array>::encode(ret, r_ret);
-	}
 	using ReturnType = Array;
 };
 
@@ -740,11 +608,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector<T>>::get(r_ret) = VariantInternalAccessor<Vector<T>>::get(p_left);
 		VariantInternalAccessor<Vector<T>>::get(r_ret).append_array(VariantInternalAccessor<Vector<T>>::get(p_right));
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		Vector<T> sum = PtrToArg<Vector<T>>::convert(p_left);
-		sum.append_array(PtrToArg<Vector<T>>::convert(p_right));
-		PtrToArg<Vector<T>>::encode(sum, r_ret);
 	}
 	using ReturnType = Vector<T>;
 };
@@ -756,11 +619,6 @@ public:
 		const String a(VariantInternalAccessor<Left>::get(p_left));
 		const String b(VariantInternalAccessor<Right>::get(p_right));
 		VariantInternalAccessor<String>::get(r_ret) = a + b;
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		const String a(PtrToArg<Left>::convert(p_left));
-		const String b(PtrToArg<Right>::convert(p_right));
-		PtrToArg<String>::encode(a + b, r_ret);
 	}
 	using ReturnType = String;
 };
@@ -791,9 +649,6 @@ public:
 		}
 		VariantInternalAccessor<String>::get(r_ret) = result;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<String>::encode(do_mod(PtrToArg<S>::convert(p_left), nullptr), r_ret);
-	}
 	static Variant::Type get_return_type() { return Variant::STRING; }
 };
 
@@ -818,9 +673,6 @@ public:
 			ERR_FAIL_MSG(vformat("String formatting error: %s.", result));
 		}
 		VariantInternalAccessor<String>::get(r_ret) = result;
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<String>::encode(do_mod(PtrToArg<S>::convert(p_left), PtrToArg<Array>::convert(p_right), nullptr), r_ret);
 	}
 	static Variant::Type get_return_type() { return Variant::STRING; }
 };
@@ -849,9 +701,6 @@ public:
 		}
 		VariantInternalAccessor<String>::get(r_ret) = result;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<String>::encode(do_mod(PtrToArg<S>::convert(p_left), PtrToArg<Object *>::convert(p_right), nullptr), r_ret);
-	}
 	static Variant::Type get_return_type() { return Variant::STRING; }
 };
 
@@ -878,9 +727,6 @@ public:
 		}
 		VariantInternalAccessor<String>::get(r_ret) = result;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<String>::encode(do_mod(PtrToArg<S>::convert(p_left), PtrToArg<T>::convert(p_right), nullptr), r_ret);
-	}
 	static Variant::Type get_return_type() { return Variant::STRING; }
 };
 
@@ -889,9 +735,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = true;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(true, r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -899,9 +742,6 @@ class OperatorEvaluatorAlwaysFalse : public CommonEvaluate<OperatorEvaluatorAlwa
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = false;
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(false, r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -940,25 +780,10 @@ _FORCE_INLINE_ static bool _operate_get_object(const Variant *p_ptr) {
 	return p_ptr->get_validated_object() != nullptr;
 }
 
-_FORCE_INLINE_ static bool _operate_get_ptr_nil(const void *p_ptr) {
-	return false;
-}
 
-_FORCE_INLINE_ static bool _operate_get_ptr_bool(const void *p_ptr) {
-	return PtrToArg<bool>::convert(p_ptr);
-}
 
-_FORCE_INLINE_ static bool _operate_get_ptr_int(const void *p_ptr) {
-	return PtrToArg<int64_t>::convert(p_ptr) != 0;
-}
 
-_FORCE_INLINE_ static bool _operate_get_ptr_float(const void *p_ptr) {
-	return PtrToArg<double>::convert(p_ptr) != 0.0;
-}
 
-_FORCE_INLINE_ static bool _operate_get_ptr_object(const void *p_ptr) {
-	return PtrToArg<Object *>::convert(p_ptr) != nullptr;
-}
 
 #define OP_EVALUATOR(m_class_name, m_left, m_right, m_op) \
 	class m_class_name : public CommonEvaluate<m_class_name> { \
@@ -966,11 +791,6 @@ _FORCE_INLINE_ static bool _operate_get_ptr_object(const void *p_ptr) {
 		static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) { \
 			VariantInternalAccessor<bool>::get(r_ret) = m_op(_operate_get_##m_left(p_left), _operate_get_##m_right(p_right)); \
 		} \
-\
-		static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) { \
-			PtrToArg<bool>::encode(m_op(_operate_get_ptr_##m_left(p_left), _operate_get_ptr_##m_right(p_right)), r_ret); \
-		} \
-\
 		using ReturnType = bool; \
 	};
 
@@ -1114,9 +934,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = !VariantInternalAccessor<bool>::get(p_left);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(!PtrToArg<bool>::convert(p_left), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -1124,9 +941,6 @@ class OperatorEvaluatorNotInt : public CommonEvaluate<OperatorEvaluatorNotInt> {
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = !VariantInternalAccessor<int64_t>::get(p_left);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(!PtrToArg<int64_t>::convert(p_left), r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -1136,9 +950,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = !VariantInternalAccessor<double>::get(p_left);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(!PtrToArg<double>::convert(p_left), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -1146,9 +957,6 @@ class OperatorEvaluatorNotObject : public CommonEvaluate<OperatorEvaluatorNotObj
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<bool>::get(r_ret) = p_left->get_validated_object() == nullptr;
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Object *>::convert(p_left) == nullptr, r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -1166,9 +974,6 @@ public:
 		const String &str_b = VariantInternalAccessor<String>::get(p_right);
 		VariantInternalAccessor<bool>::get(r_ret) = str_b.find(str_a) != -1;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<String>::convert(p_right).find(PtrToArg<Left>::convert(p_left)) != -1, r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -1179,9 +984,6 @@ public:
 		const Left &str_a = VariantInternalAccessor<Left>::get(p_left);
 		const String str_b = VariantInternalAccessor<StringName>::get(p_right).string();
 		VariantInternalAccessor<bool>::get(r_ret) = str_b.find(str_a) != -1;
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<StringName>::convert(p_right).string().find(PtrToArg<Left>::convert(p_left)) != -1, r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -1194,9 +996,6 @@ public:
 		const B &b = VariantInternalAccessor<B>::get(p_right);
 		VariantInternalAccessor<bool>::get(r_ret) = b.find(a) != -1;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<B>::convert(p_right).find(PtrToArg<A>::convert(p_left)) != -1, r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -1206,9 +1005,6 @@ public:
 		const Array &b = VariantInternalAccessor<Array>::get(p_right);
 		VariantInternalAccessor<bool>::get(r_ret) = b.find(Variant()) != -1;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Array>::convert(p_right).find(Variant()) != -1, r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -1217,9 +1013,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		const Array &b = VariantInternalAccessor<Array>::get(p_right);
 		VariantInternalAccessor<bool>::get(r_ret) = b.find(*p_left) != -1;
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Array>::convert(p_right).find(PtrToArg<Object *>::convert(p_left)) != -1, r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -1232,9 +1025,6 @@ public:
 		const A &a = VariantInternalAccessor<A>::get(p_left);
 		VariantInternalAccessor<bool>::get(r_ret) = b.has(a);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Dictionary>::convert(p_right).has(PtrToArg<A>::convert(p_left)), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -1244,9 +1034,6 @@ public:
 		const Dictionary &b = VariantInternalAccessor<Dictionary>::get(p_right);
 		VariantInternalAccessor<bool>::get(r_ret) = b.has(Variant());
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Dictionary>::convert(p_right).has(Variant()), r_ret);
-	}
 	using ReturnType = bool;
 };
 
@@ -1255,9 +1042,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		const Dictionary &b = VariantInternalAccessor<Dictionary>::get(p_right);
 		VariantInternalAccessor<bool>::get(r_ret) = b.has(*p_left);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<bool>::encode(PtrToArg<Dictionary>::convert(p_right).has(PtrToArg<Object *>::convert(p_left)), r_ret);
 	}
 	using ReturnType = bool;
 };
@@ -1291,11 +1075,6 @@ public:
 		l->get(a, &valid);
 		VariantInternalAccessor<bool>::get(r_ret) = valid;
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		bool valid;
-		PtrToArg<Object *>::convert(p_right)->get(PtrToArg<String>::convert(p_left), &valid);
-		PtrToArg<bool>::encode(valid, r_ret);
-	}
 	static Variant::Type get_return_type() { return Variant::BOOL; }
 };
 
@@ -1327,11 +1106,6 @@ public:
 		bool valid;
 		l->get(a, &valid);
 		VariantInternalAccessor<bool>::get(r_ret) = valid;
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		bool valid;
-		PtrToArg<Object *>::convert(p_right)->get(PtrToArg<StringName>::convert(p_left), &valid);
-		PtrToArg<bool>::encode(valid, r_ret);
 	}
 	static Variant::Type get_return_type() { return Variant::BOOL; }
 };

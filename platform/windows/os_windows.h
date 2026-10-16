@@ -124,9 +124,6 @@ class OS_Windows : public OS {
 	bool dwrite_init = false;
 	bool dwrite2_init = false;
 
-	HashMap<void *, String> temp_libraries;
-
-	void _remove_temp_library(void *p_library_handle);
 	String _get_default_fontname(const String &p_font_name) const;
 	DWRITE_FONT_WEIGHT _weight_to_dw(int p_weight) const;
 	DWRITE_FONT_STRETCH _stretch_to_dw(int p_stretch) const;
@@ -171,9 +168,9 @@ public:
 
 	virtual Error get_entropy(uint8_t *r_buffer, int p_bytes) override;
 
-	virtual Error open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data = nullptr) override;
+	virtual Error open_dynamic_library(const String &p_path, void *&r_library_handle) override;
 	virtual Error close_dynamic_library(void *p_library_handle) override;
-	virtual Error get_dynamic_library_symbol_handle(void *p_library_handle, const String &p_name, void *&p_symbol_handle, bool p_optional = false) override;
+	virtual Error get_dynamic_library_symbol_handle(void *p_library_handle, const String &p_name, void *&r_symbol_handle, bool p_optional = false) override;
 
 	virtual MainLoop *get_main_loop() const override;
 

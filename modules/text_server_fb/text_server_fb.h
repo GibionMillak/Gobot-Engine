@@ -35,7 +35,7 @@
 /* BiDi, shaping and advanced font features support.                     */
 /*************************************************************************/
 
-#include "core/extension/ext_wrappers.gen.h"
+#include "core/object/virtual_wrappers.gen.h"
 #include "core/templates/hash_map.h"
 #include "core/templates/rid_owner.h"
 #include "core/templates/safe_refcount.h"

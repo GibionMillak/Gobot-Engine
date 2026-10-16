@@ -167,11 +167,7 @@ const Engine = (function () {
 					// Godot configuration.
 					me.rtenv['initConfig'](config);
 
-					// Preload GDExtension libraries.
-					if (me.config.gdextensionLibs.length > 0 && !me.rtenv['loadDynamicLibrary']) {
-						return Promise.reject(new Error('GDExtension libraries are not supported by this engine version. '
-							+ 'Enable "Extensions Support" for your export preset and/or build your custom template with "dlink_enabled=yes".'));
-					}
+
 					return new Promise(function (resolve, reject) {
 						for (const file of preloader.preloadedFiles) {
 							me.rtenv['copyToFS'](file.path, file.buffer);

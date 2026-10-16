@@ -17,7 +17,6 @@ common_win = [
     "display_server_windows.cpp",
     "key_mapping_windows.cpp",
     "windows_terminal_logger.cpp",
-    "windows_utils.cpp",
     "native_menu_windows.cpp",
     "gl_manager_windows_native.cpp",
     "wgl_detect_version.cpp",
@@ -32,10 +31,7 @@ common_win = [
 if env["angle"]:
     common_win += ["gl_manager_windows_angle.cpp"]
 
-if env["library_type"] == "executable":
-    common_win += ["godot_windows.cpp"]
-else:
-    common_win += ["libgodot_windows.cpp"]
+common_win += ["godot_windows.cpp"]
 
 if env.msvc:
     common_win += ["crash_handler_windows_seh.cpp"]
@@ -48,7 +44,7 @@ common_win_wrap = [
 
 env_wrap = env.Clone()
 
-if env["arch"] == "x86_64" and env["library_type"] == "executable":
+if env["arch"] == "x86_64":
     env_cpp_check = env.Clone()
     env_cpp_check.add_source_files(sources, ["cpu_feature_validation.c"])
     if env.msvc:
@@ -87,12 +83,7 @@ env.add_source_files(sources, common_win)
 
 sources += res_obj
 
-if env["library_type"] == "static_library":
-    prog = env.add_library("#bin/godot", sources, PROGSUFFIX=env["PROGSUFFIX"])
-elif env["library_type"] == "shared_library":
-    prog = env.add_shared_library("#bin/godot", sources, PROGSUFFIX=env["PROGSUFFIX"])
-else:
-    prog = env.add_program("#bin/godot", sources, PROGSUFFIX=env["PROGSUFFIX"])
+prog = env.add_program("#bin/godot", sources, PROGSUFFIX=env["PROGSUFFIX"])
 arrange_program_clean(prog)
 
 env.Depends(prog, "godot.manifest")

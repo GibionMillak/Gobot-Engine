@@ -460,24 +460,10 @@ void ExportTemplateManager::_initialize_template_data() {
 	}
 	{
 		TemplateInfo info;
-		info.name = TTR("Web with Extensions");
-		info.description = TTRC("Web build with support for GDExtensions. Only useful if you use GDExtensions, otherwise it only increases build size.");
-		info.file_list = { "web_dlink_debug.zip", "web_dlink_release.zip" };
-		template_data[TemplateID::WEB_EXTENSIONS] = info;
-	}
-	{
-		TemplateInfo info;
 		info.name = TTR("Web Single-Threaded");
 		info.description = TTRC("Web build without threading support.");
 		info.file_list = { "web_nothreads_debug.zip", "web_nothreads_release.zip" };
 		template_data[TemplateID::WEB_NOTHREADS] = info;
-	}
-	{
-		TemplateInfo info;
-		info.name = TTR("Web with Extensions Single-Threaded");
-		info.description = TTRC("Web build with GDExtension support and no threading support.");
-		info.file_list = { "web_dlink_nothreads_debug.zip", "web_dlink_nothreads_release.zip" };
-		template_data[TemplateID::WEB_EXTENSIONS_NOTHREADS] = info;
 	}
 
 	{
@@ -550,7 +536,7 @@ void ExportTemplateManager::_initialize_template_data() {
 		info.name = "Web";
 		info.icon = _get_platform_icon("Web");
 #ifndef MODULE_MONO_ENABLED
-		info.templates = { TemplateID::WEB, TemplateID::WEB_EXTENSIONS, TemplateID::WEB_NOTHREADS, TemplateID::WEB_EXTENSIONS_NOTHREADS };
+		info.templates = { TemplateID::WEB, TemplateID::WEB_NOTHREADS };
 #endif
 		info.group = TTR("Web", "Platform Group");
 		platform_map[PlatformID::WEB] = info;
@@ -1336,9 +1322,7 @@ void ExportTemplateManager::_notification(int p_what) {
 			platform_map[PlatformID::ANDROID].group = TTR("Mobile", "Platform Group");
 			platform_map[PlatformID::IOS].group = TTR("Mobile", "Platform Group");
 			platform_map[PlatformID::COMMON].name = TTR("Common");
-			template_data[TemplateID::WEB_EXTENSIONS].name = TTR("Web with Extensions");
 			template_data[TemplateID::WEB_NOTHREADS].name = TTR("Web Single-Threaded");
-			template_data[TemplateID::WEB_EXTENSIONS_NOTHREADS].name = TTR("Web with Extensions Single-Threaded");
 			template_data[TemplateID::ICU_DATA].name = TTR("ICU Data");
 		} break;
 

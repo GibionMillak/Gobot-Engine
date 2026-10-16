@@ -1450,8 +1450,8 @@ void ResourceFormatLoaderText::get_recognized_extensions_for_type(const String &
 		p_extensions->push_back("tscn");
 	}
 
-	// Don't allow .tres for PackedScenes or GDExtension.
-	if (p_type != "PackedScene" && p_type != "GDExtension") {
+	// Don't allow .tres for PackedScenes.
+	if (p_type != "PackedScene") {
 		p_extensions->push_back("tres");
 	}
 }

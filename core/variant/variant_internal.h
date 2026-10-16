@@ -39,8 +39,8 @@
 
 class RefCounted;
 
-template <typename T>
-struct GDExtensionPtr;
+template <typename PointeeType>
+struct NativePtr;
 
 class VariantInternal {
 	friend class Variant;
@@ -373,193 +373,14 @@ public:
 		r_variant->_get_obj() = Variant::ObjData();
 	}
 
-	_FORCE_INLINE_ static void update_object_id(Variant *r_variant) {
-		const Object *o = r_variant->_get_obj().obj;
-		if (o) {
-			r_variant->_get_obj().id = o->get_instance_id();
-		}
-	}
-
-	_FORCE_INLINE_ static void *get_opaque_pointer(Variant *p_variant) {
-		switch (p_variant->type) {
-			case Variant::NIL:
-				return nullptr;
-			case Variant::BOOL:
-				return get_bool(p_variant);
-			case Variant::INT:
-				return get_int(p_variant);
-			case Variant::FLOAT:
-				return get_float(p_variant);
-			case Variant::STRING:
-				return get_string(p_variant);
-			case Variant::VECTOR2:
-				return get_vector2(p_variant);
-			case Variant::VECTOR2I:
-				return get_vector2i(p_variant);
-			case Variant::VECTOR3:
-				return get_vector3(p_variant);
-			case Variant::VECTOR3I:
-				return get_vector3i(p_variant);
-			case Variant::VECTOR4:
-				return get_vector4(p_variant);
-			case Variant::VECTOR4I:
-				return get_vector4i(p_variant);
-			case Variant::RECT2:
-				return get_rect2(p_variant);
-			case Variant::RECT2I:
-				return get_rect2i(p_variant);
-			case Variant::TRANSFORM3D:
-				return get_transform(p_variant);
-			case Variant::PROJECTION:
-				return get_projection(p_variant);
-			case Variant::TRANSFORM2D:
-				return get_transform2d(p_variant);
-			case Variant::QUATERNION:
-				return get_quaternion(p_variant);
-			case Variant::PLANE:
-				return get_plane(p_variant);
-			case Variant::BASIS:
-				return get_basis(p_variant);
-			case Variant::AABB:
-				return get_aabb(p_variant);
-			case Variant::COLOR:
-				return get_color(p_variant);
-			case Variant::STRING_NAME:
-				return get_string_name(p_variant);
-			case Variant::NODE_PATH:
-				return get_node_path(p_variant);
-			case Variant::RID:
-				return get_rid(p_variant);
-			case Variant::CALLABLE:
-				return get_callable(p_variant);
-			case Variant::SIGNAL:
-				return get_signal(p_variant);
-			case Variant::DICTIONARY:
-				return get_dictionary(p_variant);
-			case Variant::ARRAY:
-				return get_array(p_variant);
-			case Variant::PACKED_BYTE_ARRAY:
-				return get_byte_array(p_variant);
-			case Variant::PACKED_INT32_ARRAY:
-				return get_int32_array(p_variant);
-			case Variant::PACKED_INT64_ARRAY:
-				return get_int64_array(p_variant);
-			case Variant::PACKED_FLOAT32_ARRAY:
-				return get_float32_array(p_variant);
-			case Variant::PACKED_FLOAT64_ARRAY:
-				return get_float64_array(p_variant);
-			case Variant::PACKED_STRING_ARRAY:
-				return get_string_array(p_variant);
-			case Variant::PACKED_VECTOR2_ARRAY:
-				return get_vector2_array(p_variant);
-			case Variant::PACKED_VECTOR3_ARRAY:
-				return get_vector3_array(p_variant);
-			case Variant::PACKED_COLOR_ARRAY:
-				return get_color_array(p_variant);
-			case Variant::PACKED_VECTOR4_ARRAY:
-				return get_vector4_array(p_variant);
-			case Variant::OBJECT:
-				return get_object(p_variant);
-			case Variant::VARIANT_MAX:
-				ERR_FAIL_V(nullptr);
-		}
-		ERR_FAIL_V(nullptr);
-	}
-
-	_FORCE_INLINE_ static const void *get_opaque_pointer(const Variant *p_variant) {
-		switch (p_variant->type) {
-			case Variant::NIL:
-				return nullptr;
-			case Variant::BOOL:
-				return get_bool(p_variant);
-			case Variant::INT:
-				return get_int(p_variant);
-			case Variant::FLOAT:
-				return get_float(p_variant);
-			case Variant::STRING:
-				return get_string(p_variant);
-			case Variant::VECTOR2:
-				return get_vector2(p_variant);
-			case Variant::VECTOR2I:
-				return get_vector2i(p_variant);
-			case Variant::VECTOR3:
-				return get_vector3(p_variant);
-			case Variant::VECTOR3I:
-				return get_vector3i(p_variant);
-			case Variant::VECTOR4:
-				return get_vector4(p_variant);
-			case Variant::VECTOR4I:
-				return get_vector4i(p_variant);
-			case Variant::RECT2:
-				return get_rect2(p_variant);
-			case Variant::RECT2I:
-				return get_rect2i(p_variant);
-			case Variant::TRANSFORM3D:
-				return get_transform(p_variant);
-			case Variant::PROJECTION:
-				return get_projection(p_variant);
-			case Variant::TRANSFORM2D:
-				return get_transform2d(p_variant);
-			case Variant::QUATERNION:
-				return get_quaternion(p_variant);
-			case Variant::PLANE:
-				return get_plane(p_variant);
-			case Variant::BASIS:
-				return get_basis(p_variant);
-			case Variant::AABB:
-				return get_aabb(p_variant);
-			case Variant::COLOR:
-				return get_color(p_variant);
-			case Variant::STRING_NAME:
-				return get_string_name(p_variant);
-			case Variant::NODE_PATH:
-				return get_node_path(p_variant);
-			case Variant::RID:
-				return get_rid(p_variant);
-			case Variant::CALLABLE:
-				return get_callable(p_variant);
-			case Variant::SIGNAL:
-				return get_signal(p_variant);
-			case Variant::DICTIONARY:
-				return get_dictionary(p_variant);
-			case Variant::ARRAY:
-				return get_array(p_variant);
-			case Variant::PACKED_BYTE_ARRAY:
-				return get_byte_array(p_variant);
-			case Variant::PACKED_INT32_ARRAY:
-				return get_int32_array(p_variant);
-			case Variant::PACKED_INT64_ARRAY:
-				return get_int64_array(p_variant);
-			case Variant::PACKED_FLOAT32_ARRAY:
-				return get_float32_array(p_variant);
-			case Variant::PACKED_FLOAT64_ARRAY:
-				return get_float64_array(p_variant);
-			case Variant::PACKED_STRING_ARRAY:
-				return get_string_array(p_variant);
-			case Variant::PACKED_VECTOR2_ARRAY:
-				return get_vector2_array(p_variant);
-			case Variant::PACKED_VECTOR3_ARRAY:
-				return get_vector3_array(p_variant);
-			case Variant::PACKED_COLOR_ARRAY:
-				return get_color_array(p_variant);
-			case Variant::PACKED_VECTOR4_ARRAY:
-				return get_vector4_array(p_variant);
-			case Variant::OBJECT:
-				return get_object(p_variant);
-			case Variant::VARIANT_MAX:
-				ERR_FAIL_V(nullptr);
-		}
-		ERR_FAIL_V(nullptr);
-	}
-
-	// Used internally in GDExtension and Godot's binding system when converting to Variant
+	// Used by the binding system when converting to Variant
 	// from values that may include RequiredParam<T> or RequiredResult<T>.
 	template <typename T>
 	_FORCE_INLINE_ static Variant make(const T &p_variant) {
 		return Variant(p_variant);
 	}
 	template <typename T>
-	_FORCE_INLINE_ static Variant make(const GDExtensionPtr<T> &p_variant) {
+	_FORCE_INLINE_ static Variant make(const NativePtr<T> &p_variant) {
 		return p_variant.operator Variant();
 	}
 	template <typename T>
@@ -986,20 +807,5 @@ struct VariantTypeAdjust<Object *> {
 	_FORCE_INLINE_ static void adjust(Variant *r_ret) {
 		VariantInternal::clear(r_ret);
 		*r_ret = (Object *)nullptr;
-	}
-};
-
-// GDExtension helpers.
-
-template <typename T>
-struct VariantTypeConstructor {
-	_FORCE_INLINE_ static void variant_from_type(void *r_variant, void *p_value) {
-		// r_variant is provided by caller as uninitialized memory
-		memnew_placement(r_variant, Variant(*((T *)p_value)));
-	}
-
-	_FORCE_INLINE_ static void type_from_variant(void *r_value, void *p_variant) {
-		// r_value is provided by caller as uninitialized memory
-		memnew_placement(r_value, T(*reinterpret_cast<Variant *>(p_variant)));
 	}
 };

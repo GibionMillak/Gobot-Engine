@@ -229,7 +229,7 @@ static const char *ANDROID_PERMS[] = {
 	nullptr
 };
 
-static const char *GDEXTENSION_LIBS_PATH = "libs/gdextensionlibs.json";
+static const char *COPIED_LIBRARIES_PATH = "libs/copied_libraries.json";
 
 // This template string must be in sync with the content of 'platform/android/java/lib/src/main/java/res/mipmap-anydpi-v26/icon.xml'.
 static const String ICON_XML_TEMPLATE =
@@ -3168,10 +3168,10 @@ void EditorExportPlatformAndroid::_clear_assets_directory(const Ref<EditorExport
 	}
 }
 
-void EditorExportPlatformAndroid::_remove_copied_libs(String p_gdextension_libs_path) {
+void EditorExportPlatformAndroid::_remove_copied_libs(String p_copied_libraries_path) {
 	print_verbose("Removing previously installed libraries...");
 	Error error;
-	String libs_json = FileAccess::get_file_as_string(p_gdextension_libs_path, &error);
+	String libs_json = FileAccess::get_file_as_string(p_copied_libraries_path, &error);
 	if (error || libs_json.is_empty()) {
 		print_verbose("No previously installed libraries found");
 		return;
@@ -3187,7 +3187,7 @@ void EditorExportPlatformAndroid::_remove_copied_libs(String p_gdextension_libs_
 		print_verbose("Removing previously installed library " + libs[i]);
 		da->remove(libs[i]);
 	}
-	da->remove(p_gdextension_libs_path);
+	da->remove(p_copied_libraries_path);
 }
 
 String EditorExportPlatformAndroid::join_list(const List<String> &p_parts, const String &p_separator) {
@@ -3468,8 +3468,8 @@ Error EditorExportPlatformAndroid::export_project_helper(const Ref<EditorExportP
 		_fix_themes_xml(p_preset, export_src_dir);
 
 		//stores all the project files inside the Gradle project directory. Also includes all ABIs
-		String gdextension_libs_path = gradle_build_directory.path_join(GDEXTENSION_LIBS_PATH);
-		_remove_copied_libs(gdextension_libs_path);
+		String copied_libraries_path = gradle_build_directory.path_join(COPIED_LIBRARIES_PATH);
+		_remove_copied_libs(copied_libraries_path);
 
 		if (ep.step(TTR("Exporting project files..."), 20)) {
 			return ERR_SKIP;
@@ -3511,7 +3511,7 @@ Error EditorExportPlatformAndroid::export_project_helper(const Ref<EditorExportP
 			return err;
 		}
 		if (user_data.libs.size() > 0) {
-			Ref<FileAccess> fa = FileAccess::open(gdextension_libs_path, FileAccess::WRITE);
+			Ref<FileAccess> fa = FileAccess::open(copied_libraries_path, FileAccess::WRITE);
 			fa->store_string(JSON::stringify(user_data.libs, "\t"));
 		}
 

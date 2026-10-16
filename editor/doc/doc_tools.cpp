@@ -427,14 +427,10 @@ void DocTools::generate(BitField<GenerateFlags> p_flags) {
 	// Add ClassDB-exposed classes.
 	{
 		LocalVector<StringName> classes;
-		if (p_flags.has_flag(GENERATE_FLAG_EXTENSION_CLASSES_ONLY)) {
-			ClassDB::get_extensions_class_list(classes);
-		} else {
-			ClassDB::get_class_list(classes);
-			// Move ProjectSettings, so that other classes can register properties there.
-			classes.erase("ProjectSettings");
-			classes.push_back("ProjectSettings");
-		}
+		ClassDB::get_class_list(classes);
+		// Move ProjectSettings, so that other classes can register properties there.
+		classes.erase("ProjectSettings");
+		classes.push_back("ProjectSettings");
 
 		bool skip_setter_getter_methods = true;
 
@@ -462,12 +458,6 @@ void DocTools::generate(BitField<GenerateFlags> p_flags) {
 					break;
 				case ClassDB::API_EDITOR:
 					c.api_type = "editor";
-					break;
-				case ClassDB::API_EXTENSION:
-					c.api_type = "extension";
-					break;
-				case ClassDB::API_EDITOR_EXTENSION:
-					c.api_type = "editor_extension";
 					break;
 				case ClassDB::API_NONE:
 					c.api_type = String();
@@ -1847,15 +1837,6 @@ Error DocTools::load_compressed(const uint8_t *p_data, int64_t p_compressed_size
 
 	Ref<XMLParser> parser = memnew(XMLParser);
 	RETURN_IF_ERROR(parser->open_buffer(data));
-
-	_load(parser);
-
-	return OK;
-}
-
-Error DocTools::load_xml(const uint8_t *p_data, int64_t p_size) {
-	Ref<XMLParser> parser = memnew(XMLParser);
-	RETURN_IF_ERROR(parser->_open_buffer(p_data, p_size));
 
 	_load(parser);
 

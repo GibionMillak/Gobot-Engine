@@ -132,13 +132,9 @@ void EditorExportPlatformWeb::_replace_strings(const HashMap<String, String> &p_
 	}
 }
 
-void EditorExportPlatformWeb::_fix_html(Vector<uint8_t> &p_html, const Ref<EditorExportPreset> &p_preset, const String &p_name, bool p_debug, BitField<EditorExportPlatform::DebugFlags> p_flags, const Vector<SharedObject> p_shared_objects, const Dictionary &p_file_sizes) {
+void EditorExportPlatformWeb::_fix_html(Vector<uint8_t> &p_html, const Ref<EditorExportPreset> &p_preset, const String &p_name, bool p_debug, BitField<EditorExportPlatform::DebugFlags> p_flags, const Dictionary &p_file_sizes) {
 	// Engine.js config
 	Dictionary config;
-	Array libs;
-	for (int i = 0; i < p_shared_objects.size(); i++) {
-		libs.push_back(p_shared_objects[i].path.get_file());
-	}
 	Vector<String> flags = gen_export_flags(p_flags & (~DEBUG_FLAG_DUMB_CLIENT));
 	Array args;
 	for (int i = 0; i < flags.size(); i++) {
@@ -147,7 +143,6 @@ void EditorExportPlatformWeb::_fix_html(Vector<uint8_t> &p_html, const Ref<Edito
 	config["canvasResizePolicy"] = p_preset->get("html/canvas_resize_policy");
 	config["experimentalVK"] = p_preset->get("html/experimental_virtual_keyboard");
 	config["focusCanvas"] = p_preset->get("html/focus_canvas_on_start");
-	config["gdextensionLibs"] = libs;
 	config["executable"] = p_name;
 	config["args"] = args;
 	config["fileSizes"] = p_file_sizes;
@@ -226,7 +221,7 @@ Error EditorExportPlatformWeb::_add_manifest_icon(const Ref<EditorExportPreset> 
 	return err;
 }
 
-Error EditorExportPlatformWeb::_build_pwa(const Ref<EditorExportPreset> &p_preset, const String p_path, const Vector<SharedObject> &p_shared_objects) {
+Error EditorExportPlatformWeb::_build_pwa(const Ref<EditorExportPreset> &p_preset, const String p_path) {
 	String proj_name = get_project_setting(p_preset, "application/config/name");
 	if (proj_name.is_empty()) {
 		proj_name = "Godot Game";
@@ -235,7 +230,6 @@ Error EditorExportPlatformWeb::_build_pwa(const Ref<EditorExportPreset> &p_prese
 	// Service worker
 	const String dir = p_path.get_base_dir();
 	const String name = p_path.get_file().get_basename();
-	bool extensions = (bool)p_preset->get("variant/extensions_support");
 	bool ensure_crossorigin_isolation_headers = (bool)p_preset->get("progressive_web_app/ensure_cross_origin_isolation_headers");
 	HashMap<String, String> replaces;
 	replaces["___GODOT_VERSION___"] = String::num_int64(OS::get_singleton()->get_unix_time()) + "|" + String::num_int64(OS::get_singleton()->get_ticks_usec());
@@ -263,12 +257,6 @@ Error EditorExportPlatformWeb::_build_pwa(const Ref<EditorExportPreset> &p_prese
 		name + ".wasm",
 		name + ".pck"
 	};
-	if (extensions) {
-		opt_cache_files.push_back(name + ".side.wasm");
-		for (int i = 0; i < p_shared_objects.size(); i++) {
-			opt_cache_files.push_back(p_shared_objects[i].path.get_file());
-		}
-	}
 	replaces["___GODOT_OPT_CACHE___"] = Variant(opt_cache_files).to_json_string();
 
 	const String sw_path = dir.path_join(name + ".service.worker.js");
@@ -359,11 +347,6 @@ void EditorExportPlatformWeb::get_preset_features(const Ref<EditorExportPreset> 
 	} else {
 		r_features->push_back("nothreads");
 	}
-	if (p_preset->get("variant/extensions_support").operator bool()) {
-		r_features->push_back("web_extensions");
-	} else {
-		r_features->push_back("web_noextensions");
-	}
 	r_features->push_back("wasm32");
 }
 
@@ -371,7 +354,6 @@ void EditorExportPlatformWeb::get_export_options(List<ExportOption> *r_options) 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "custom_template/debug", PROPERTY_HINT_GLOBAL_FILE, "*.zip"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "custom_template/release", PROPERTY_HINT_GLOBAL_FILE, "*.zip"), ""));
 
-	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "variant/extensions_support"), false)); // GDExtension support.
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "variant/thread_support"), false, true)); // Thread support (i.e. run with or without COEP/COOP headers).
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "vram_texture_compression/for_desktop"), true)); // S3TC
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "vram_texture_compression/for_mobile"), false)); // ETC or ETC2, depending on renderer
@@ -431,12 +413,11 @@ bool EditorExportPlatformWeb::has_valid_export_configuration(const Ref<EditorExp
 
 	String err;
 	bool valid = false;
-	bool extensions = (bool)p_preset->get("variant/extensions_support");
 	bool thread_support = (bool)p_preset->get("variant/thread_support");
 
 	// Look for export templates (first official, and if defined custom templates).
-	bool dvalid = exists_export_template(_get_template_name(extensions, thread_support, true), &err);
-	bool rvalid = exists_export_template(_get_template_name(extensions, thread_support, false), &err);
+	bool dvalid = exists_export_template(_get_template_name(thread_support, true), &err);
+	bool rvalid = exists_export_template(_get_template_name(thread_support, false), &err);
 
 	if (p_preset->get("custom_template/debug") != "") {
 		dvalid = FileAccess::exists(p_preset->get("custom_template/debug"));
@@ -512,9 +493,8 @@ Error EditorExportPlatformWeb::export_project(const Ref<EditorExportPreset> &p_p
 	String template_path = p_debug ? custom_debug : custom_release;
 	template_path = template_path.strip_edges();
 	if (template_path.is_empty()) {
-		bool extensions = (bool)p_preset->get("variant/extensions_support");
 		bool thread_support = (bool)p_preset->get("variant/thread_support");
-		template_path = find_export_template(_get_template_name(extensions, thread_support, p_debug));
+		template_path = find_export_template(_get_template_name(thread_support, p_debug));
 	}
 
 	if (!template_path.is_empty() && !FileAccess::exists(template_path)) {
@@ -574,7 +554,7 @@ Error EditorExportPlatformWeb::export_project(const Ref<EditorExportPreset> &p_p
 	f.unref(); // close file.
 
 	// Generate HTML file with replaced strings.
-	_fix_html(html, p_preset, base_name, p_debug, p_flags, shared_objects, file_sizes);
+	_fix_html(html, p_preset, base_name, p_debug, p_flags, file_sizes);
 	Error err = _write_or_error(html.ptr(), html.size(), p_path);
 	if (err != OK) {
 		// Message is supplied by the subroutine method.
@@ -609,7 +589,7 @@ Error EditorExportPlatformWeb::export_project(const Ref<EditorExportPreset> &p_p
 
 	// Generate the PWA worker and manifest
 	if (pwa) {
-		err = _build_pwa(p_preset, p_path, shared_objects);
+		err = _build_pwa(p_preset, p_path);
 		if (err != OK) {
 			// Message is supplied by the subroutine method.
 			return err;

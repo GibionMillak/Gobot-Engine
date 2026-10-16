@@ -30,9 +30,9 @@
 
 #pragma once
 
-#include "core/extension/ext_wrappers.gen.h"
 #include "core/io/stream_peer.h"
 #include "core/object/gdvirtual.gen.h"
+#include "core/object/virtual_wrappers.gen.h"
 #include "core/templates/ring_buffer.h"
 #include "core/variant/native_ptr.h"
 
@@ -79,10 +79,10 @@ protected:
 
 public:
 	virtual Error get_packet(const uint8_t **r_buffer, int &r_buffer_size) override; ///< buffer is GONE after next get_packet
-	GDVIRTUAL2R(Error, _get_packet, GDExtensionPtr<const uint8_t *>, GDExtensionPtr<int>);
+	GDVIRTUAL2R(Error, _get_packet, NativePtr<const uint8_t *>, NativePtr<int>);
 
 	virtual Error put_packet(const uint8_t *p_buffer, int p_buffer_size) override;
-	GDVIRTUAL2R(Error, _put_packet, GDExtensionPtr<const uint8_t>, int);
+	GDVIRTUAL2R(Error, _put_packet, NativePtr<const uint8_t>, int);
 
 	EXBIND0RC(int, get_available_packet_count);
 	EXBIND0RC(int, get_max_packet_size);

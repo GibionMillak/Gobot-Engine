@@ -2668,7 +2668,7 @@
 			<param index="0" name="mesh" type="RID" />
 			<param index="1" name="surface" type="int" />
 			<description>
-				Returns the [RenderingDevice] [RID] handle of the vertex buffer of the given mesh surface (Vertex, Normal, Tangent). The returned [RID] can be used like any other buffer on the [RenderingDevice], so the surface vertices can be read or written from a compute shader without a CPU round-trip. This is the [Mesh] equivalent of [method multimesh_get_buffer_rd_rid] and is intended for GPU-driven mesh workflows (procedural meshes, ribbon trails, cloth, hair, grass) implemented from a [GDExtension].
+				Returns the [RenderingDevice] [RID] handle of the vertex buffer of the given mesh surface (Vertex, Normal, Tangent). The returned [RID] can be used like any other buffer on the [RenderingDevice], so the surface vertices can be read or written from a compute shader without a CPU round-trip. This is the [Mesh] equivalent of [method multimesh_get_buffer_rd_rid] and is intended for GPU-driven mesh workflows (procedural meshes, ribbon trails, cloth, hair, grass) implemented in native modules.
 				To bind the buffer as a storage buffer in compute, the surface must have been created with the [constant ARRAY_FLAG_USE_STORAGE_BUFFER] flag set in its format.
 				Returns an invalid [RID] if the surface has no vertex buffer or if the rendering backend does not expose [RenderingDevice] [RID]s (such as the OpenGL backend).
 			</description>
@@ -3989,7 +3989,7 @@
 			<param index="0" name="texture" type="RID" />
 			<param index="1" name="srgb" type="bool" default="false" />
 			<description>
-				Returns the internal graphics handle for this texture object. For use when communicating with third-party APIs mostly with GDExtension.
+				Returns the internal graphics handle for this texture object. For use when communicating with third-party APIs.
 				[param srgb] should be [code]true[/code] when the texture uses nonlinear sRGB encoding and [code]false[/code] when the texture uses linear encoding.
 				[b]Note:[/b] This function returns a [code]uint64_t[/code] which internally maps to a [code]GLuint[/code] (OpenGL) or [code]VkImage[/code] (Vulkan).
 			</description>

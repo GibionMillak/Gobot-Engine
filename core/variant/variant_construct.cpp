@@ -33,7 +33,6 @@
 struct VariantConstructData {
 	void (*construct)(Variant &r_base, const Variant **p_args, Callable::CallError &r_error) = nullptr;
 	Variant::ValidatedConstructor validated_construct = nullptr;
-	Variant::PTRConstructor ptr_construct = nullptr;
 	Variant::Type (*get_argument_type)(int) = nullptr;
 	int argument_count = 0;
 	Vector<String> arg_names;
@@ -48,7 +47,6 @@ static void add_constructor(const Vector<String> &p_arg_names) {
 	VariantConstructData cd;
 	cd.construct = T::construct;
 	cd.validated_construct = T::validated_construct;
-	cd.ptr_construct = T::ptr_construct;
 	cd.get_argument_type = T::get_argument_type;
 	cd.argument_count = T::get_argument_count();
 	cd.arg_names = p_arg_names;
@@ -297,12 +295,6 @@ Variant::ValidatedConstructor Variant::get_validated_constructor(Variant::Type p
 	ERR_FAIL_INDEX_V(p_type, Variant::VARIANT_MAX, nullptr);
 	ERR_FAIL_INDEX_V(p_constructor, (int)construct_data[p_type].size(), nullptr);
 	return construct_data[p_type][p_constructor].validated_construct;
-}
-
-Variant::PTRConstructor Variant::get_ptr_constructor(Variant::Type p_type, int p_constructor) {
-	ERR_FAIL_INDEX_V(p_type, Variant::VARIANT_MAX, nullptr);
-	ERR_FAIL_INDEX_V(p_constructor, (int)construct_data[p_type].size(), nullptr);
-	return construct_data[p_type][p_constructor].ptr_construct;
 }
 
 int Variant::get_constructor_argument_count(Variant::Type p_type, int p_constructor) {

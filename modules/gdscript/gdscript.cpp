@@ -57,7 +57,6 @@
 #include "scene/scene_string_names.h"
 
 #ifdef TOOLS_ENABLED
-#include "core/extension/gdextension_manager.h"
 #include "editor/file_system/editor_paths.h"
 #endif
 
@@ -103,7 +102,7 @@ Variant GDScriptNativeClass::_new() {
 }
 
 Object *GDScriptNativeClass::instantiate() {
-	return ClassDB::instantiate_no_placeholders(name);
+	return ClassDB::instantiate(name);
 }
 
 Variant GDScriptNativeClass::callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) {
@@ -2083,14 +2082,6 @@ void GDScriptLanguage::_add_global(const StringName &p_name, const Variant &p_va
 	}
 }
 
-void GDScriptLanguage::_remove_global(const StringName &p_name) {
-	if (!globals.has(p_name)) {
-		return;
-	}
-	global_array_empty_indexes.push_back(globals[p_name]);
-	global_array.write[globals[p_name]] = Variant::NIL;
-	globals.erase(p_name);
-}
 
 void GDScriptLanguage::add_global_constant(const StringName &p_variable, const Variant &p_value) {
 	_add_global(p_variable, p_value);
@@ -2147,13 +2138,6 @@ void GDScriptLanguage::init() {
 		_add_global(E.name, E.ptr);
 	}
 
-#ifdef TOOLS_ENABLED
-	if (Engine::get_singleton()->is_editor_hint()) {
-		GDExtensionManager::get_singleton()->connect("extension_loaded", callable_mp(this, &GDScriptLanguage::_extension_loaded));
-		GDExtensionManager::get_singleton()->connect("extension_unloading", callable_mp(this, &GDScriptLanguage::_extension_unloading));
-	}
-#endif // TOOLS_ENABLED
-
 #ifdef DEBUG_ENABLED
 	GDScriptParser::update_project_settings();
 	if (!ProjectSettings::get_singleton()->is_connected("settings_changed", callable_mp_static(&GDScriptParser::update_project_settings))) {
@@ -2162,28 +2146,6 @@ void GDScriptLanguage::init() {
 #endif // DEBUG_ENABLED
 
 }
-
-#ifdef TOOLS_ENABLED
-void GDScriptLanguage::_extension_loaded(const Ref<GDExtension> &p_extension) {
-	List<StringName> class_list;
-	ClassDB::get_extension_class_list(p_extension, &class_list);
-	for (const StringName &n : class_list) {
-		if (globals.has(n)) {
-			continue;
-		}
-		Ref<GDScriptNativeClass> nc = memnew(GDScriptNativeClass(n));
-		_add_global(n, nc);
-	}
-}
-
-void GDScriptLanguage::_extension_unloading(const Ref<GDExtension> &p_extension) {
-	List<StringName> class_list;
-	ClassDB::get_extension_class_list(p_extension, &class_list);
-	for (const StringName &n : class_list) {
-		_remove_global(n);
-	}
-}
-#endif
 
 String GDScriptLanguage::get_type() const {
 	return "GDScript";

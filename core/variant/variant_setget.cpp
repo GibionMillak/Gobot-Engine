@@ -32,6 +32,7 @@
 
 #include "core/debugger/engine_debugger.h"
 #include "core/io/resource.h"
+#include "core/variant/method_ptrcall.h"
 #include "core/variant/variant_callable.h"
 
 struct VariantSetterGetterInfo {
@@ -39,8 +40,6 @@ struct VariantSetterGetterInfo {
 	void (*getter)(const Variant *p_base, Variant *r_value);
 	Variant::ValidatedSetter validated_setter;
 	Variant::ValidatedGetter validated_getter;
-	Variant::PTRSetter ptr_setter;
-	Variant::PTRGetter ptr_getter;
 	Variant::Type member_type;
 };
 
@@ -52,11 +51,9 @@ static void register_member(Variant::Type p_type, const StringName &p_member) {
 	VariantSetterGetterInfo sgi;
 	sgi.setter = T::set;
 	sgi.validated_setter = T::validated_set;
-	sgi.ptr_setter = T::ptr_set;
 
 	sgi.getter = T::get;
 	sgi.validated_getter = T::validated_get;
-	sgi.ptr_getter = T::ptr_get;
 
 	sgi.member_type = T::get_type();
 
@@ -207,30 +204,6 @@ Variant::ValidatedGetter Variant::get_member_validated_getter(Variant::Type p_ty
 	for (uint32_t i = 0; i < variant_setters_getters_names[p_type].size(); i++) {
 		if (variant_setters_getters_names[p_type][i] == p_member) {
 			return variant_setters_getters[p_type][i].validated_getter;
-		}
-	}
-
-	return nullptr;
-}
-
-Variant::PTRSetter Variant::get_member_ptr_setter(Variant::Type p_type, const StringName &p_member) {
-	ERR_FAIL_INDEX_V(p_type, Variant::VARIANT_MAX, nullptr);
-
-	for (uint32_t i = 0; i < variant_setters_getters_names[p_type].size(); i++) {
-		if (variant_setters_getters_names[p_type][i] == p_member) {
-			return variant_setters_getters[p_type][i].ptr_setter;
-		}
-	}
-
-	return nullptr;
-}
-
-Variant::PTRGetter Variant::get_member_ptr_getter(Variant::Type p_type, const StringName &p_member) {
-	ERR_FAIL_INDEX_V(p_type, Variant::VARIANT_MAX, nullptr);
-
-	for (uint32_t i = 0; i < variant_setters_getters_names[p_type].size(); i++) {
-		if (variant_setters_getters_names[p_type][i] == p_member) {
-			return variant_setters_getters[p_type][i].ptr_getter;
 		}
 	}
 
@@ -1013,29 +986,13 @@ struct VariantKeyedSetGetDictionary {
 		*r_value = *ptr;
 		*r_valid = true;
 	}
-	static void ptr_get(const void *p_base, const void *p_key, void *r_value) {
-		/* avoid ptrconvert for performance*/
-		const Dictionary &v = *reinterpret_cast<const Dictionary *>(p_base);
-		const Variant *ptr = v.getptr(PtrToArg<Variant>::convert(p_key));
-		NULL_TEST(ptr);
-		PtrToArg<Variant>::encode(*ptr, r_value);
-	}
 	static void set(Variant *r_base, const Variant *p_key, const Variant *p_value, bool *r_valid) {
 		*r_valid = VariantInternalAccessor<Dictionary>::get(r_base).set(*p_key, *p_value);
-	}
-	static void ptr_set(void *r_base, const void *p_key, const void *p_value) {
-		Dictionary &v = *reinterpret_cast<Dictionary *>(r_base);
-		v.set(PtrToArg<Variant>::convert(p_key), PtrToArg<Variant>::convert(p_value));
 	}
 
 	static bool has(const Variant *p_base, const Variant *p_key, bool *r_valid) {
 		*r_valid = true;
 		return VariantInternalAccessor<Dictionary>::get(p_base).has(*p_key);
-	}
-	static uint32_t ptr_has(const void *p_base, const void *p_key) {
-		/* avoid ptrconvert for performance*/
-		const Dictionary &v = *reinterpret_cast<const Dictionary *>(p_base);
-		return v.has(PtrToArg<Variant>::convert(p_key));
 	}
 };
 
@@ -1050,12 +1007,6 @@ struct VariantKeyedSetGetObject {
 		}
 		*r_value = obj->getvar(*p_key, r_valid);
 	}
-	static void ptr_get(const void *p_base, const void *p_key, void *r_value) {
-		const Object *obj = PtrToArg<Object *>::convert(p_base);
-		NULL_TEST(obj);
-		Variant v = obj->getvar(PtrToArg<Variant>::convert(p_key));
-		PtrToArg<Variant>::encode(v, r_value);
-	}
 	static void set(Variant *r_base, const Variant *p_key, const Variant *p_value, bool *r_valid) {
 		Object *obj = r_base->get_validated_object();
 
@@ -1064,11 +1015,6 @@ struct VariantKeyedSetGetObject {
 			return;
 		}
 		obj->setvar(*p_key, *p_value, r_valid);
-	}
-	static void ptr_set(void *r_base, const void *p_key, const void *p_value) {
-		Object *obj = PtrToArg<Object *>::convert(r_base);
-		NULL_TEST(obj);
-		obj->setvar(PtrToArg<Variant>::convert(p_key), PtrToArg<Variant>::convert(p_value));
 	}
 
 	static bool has(const Variant *p_base, const Variant *p_key, bool *r_valid) {
@@ -1082,23 +1028,12 @@ struct VariantKeyedSetGetObject {
 		obj->getvar(*p_key, &exists);
 		return exists;
 	}
-	static uint32_t ptr_has(const void *p_base, const void *p_key) {
-		const Object *obj = PtrToArg<Object *>::convert(p_base);
-		ERR_FAIL_NULL_V(obj, false);
-		bool valid;
-		obj->getvar(PtrToArg<Variant>::convert(p_key), &valid);
-		return valid;
-	}
 };
 
 struct VariantKeyedSetterGetterInfo {
 	Variant::ValidatedKeyedSetter validated_setter = nullptr;
 	Variant::ValidatedKeyedGetter validated_getter = nullptr;
 	Variant::ValidatedKeyedChecker validated_checker = nullptr;
-
-	Variant::PTRKeyedSetter ptr_setter = nullptr;
-	Variant::PTRKeyedGetter ptr_getter = nullptr;
-	Variant::PTRKeyedChecker ptr_checker = nullptr;
 
 	bool valid = false;
 };
@@ -1110,13 +1045,8 @@ static void register_keyed_member(Variant::Type p_type) {
 	VariantKeyedSetterGetterInfo &sgi = variant_keyed_setters_getters[p_type];
 
 	sgi.validated_setter = T::set;
-	sgi.ptr_setter = T::ptr_set;
-
 	sgi.validated_getter = T::get;
-	sgi.ptr_getter = T::ptr_get;
-
 	sgi.validated_checker = T::has;
-	sgi.ptr_checker = T::ptr_has;
 
 	sgi.valid = true;
 }
@@ -1141,19 +1071,6 @@ Variant::ValidatedKeyedGetter Variant::get_member_validated_keyed_getter(Variant
 Variant::ValidatedKeyedChecker Variant::get_member_validated_keyed_checker(Variant::Type p_type) {
 	ERR_FAIL_INDEX_V(p_type, VARIANT_MAX, nullptr);
 	return variant_keyed_setters_getters[p_type].validated_checker;
-}
-
-Variant::PTRKeyedSetter Variant::get_member_ptr_keyed_setter(Variant::Type p_type) {
-	ERR_FAIL_INDEX_V(p_type, VARIANT_MAX, nullptr);
-	return variant_keyed_setters_getters[p_type].ptr_setter;
-}
-Variant::PTRKeyedGetter Variant::get_member_ptr_keyed_getter(Variant::Type p_type) {
-	ERR_FAIL_INDEX_V(p_type, VARIANT_MAX, nullptr);
-	return variant_keyed_setters_getters[p_type].ptr_getter;
-}
-Variant::PTRKeyedChecker Variant::get_member_ptr_keyed_checker(Variant::Type p_type) {
-	ERR_FAIL_INDEX_V(p_type, VARIANT_MAX, nullptr);
-	return variant_keyed_setters_getters[p_type].ptr_checker;
 }
 
 void Variant::set_keyed(const Variant &p_key, const Variant &p_value, bool &r_valid) {

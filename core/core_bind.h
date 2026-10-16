@@ -497,8 +497,6 @@ public:
 	enum APIType {
 		API_CORE,
 		API_EDITOR,
-		API_EXTENSION,
-		API_EDITOR_EXTENSION,
 		API_NONE,
 	};
 

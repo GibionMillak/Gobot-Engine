@@ -502,9 +502,9 @@ class CSharpLanguage : public ScriptLanguage {
 
 	static void *_instance_binding_create_callback(void *p_token, void *p_instance);
 	static void _instance_binding_free_callback(void *p_token, void *p_instance, void *p_binding);
-	static GDExtensionBool _instance_binding_reference_callback(void *p_token, void *p_binding, GDExtensionBool p_reference);
+	static bool _instance_binding_reference_callback(void *p_token, void *p_binding, bool p_reference);
 
-	static GDExtensionInstanceBindingCallbacks _instance_binding_callbacks;
+	static Object::InstanceBindingCallbacks _instance_binding_callbacks;
 
 public:
 	static void *get_instance_binding(Object *p_object);

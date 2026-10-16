@@ -79,9 +79,6 @@ bool RefCounted::reference() {
 		if (get_script_instance()) {
 			get_script_instance()->refcount_incremented();
 		}
-		if (_get_extension() && _get_extension()->reference) {
-			_get_extension()->reference(_get_extension_instance());
-		}
 
 		_instance_binding_reference(true);
 	}
@@ -99,9 +96,6 @@ bool RefCounted::unreference() {
 			bool script_ret = get_script_instance()->refcount_decremented();
 			die = die && script_ret;
 		}
-		if (_get_extension() && _get_extension()->unreference) {
-			_get_extension()->unreference(_get_extension_instance());
-		}
 
 		bool binding_ret = _instance_binding_reference(false);
 		die = die && binding_ret;
@@ -111,8 +105,7 @@ bool RefCounted::unreference() {
 
 	// If we are going to be destroyed we need to ensure that no other thread
 	// is still inside our critical section. If they are they might see
-	// a (partially) destroyed Object for get_script_instance, _get_extension,
-	// or _instance_binding_reference.
+	// a (partially) destroyed Object for get_script_instance.
 	if (die) {
 		// It is unlikely that we will spin here for very long.
 		// Only threads that see die == true will spin, which should only

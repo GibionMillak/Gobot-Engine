@@ -113,7 +113,7 @@ public:
 
 	void alert(const String &p_alert, const String &p_title = "ALERT!") override;
 
-	Error open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data = nullptr) override;
+	Error open_dynamic_library(const String &p_path, void *&r_library_handle) override;
 
 	Error move_to_trash(const String &p_path) override;
 

@@ -430,7 +430,6 @@ class GDScriptLanguage : public ScriptLanguage {
 	static CallLevel *_get_stack_level(uint32_t p_level);
 
 	void _add_global(const StringName &p_name, const Variant &p_value);
-	void _remove_global(const StringName &p_name);
 
 	String _get_global_class_name(const String &p_path, String *r_base_type, String *r_icon_path, bool *r_is_abstract, bool *r_is_tool, LocalVector<String> &r_visited) const;
 
@@ -456,11 +455,6 @@ class GDScriptLanguage : public ScriptLanguage {
 #endif
 
 	HashMap<String, ObjectID> orphan_subclasses;
-
-#ifdef TOOLS_ENABLED
-	void _extension_loaded(const Ref<GDExtension> &p_extension);
-	void _extension_unloading(const Ref<GDExtension> &p_extension);
-#endif
 
 public:
 	bool debug_break(const String &p_error, bool p_allow_continue = true);

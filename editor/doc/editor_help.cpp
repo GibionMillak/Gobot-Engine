@@ -33,7 +33,6 @@
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
 #include "core/core_constants.h"
-#include "core/extension/gdextension.h"
 #include "core/input/input.h"
 #include "core/io/json.h"
 #include "core/io/resource_loader.h"
@@ -3079,28 +3078,6 @@ void EditorHelp::remove_script_doc_by_path(const String &p_path) {
 	get_doc_data()->remove_script_doc_by_path(p_path);
 }
 
-void EditorHelp::load_xml_buffer(const uint8_t *p_buffer, int p_size) {
-	if (!ext_doc) {
-		ext_doc = memnew(DocTools);
-	}
-
-	ext_doc->load_xml(p_buffer, p_size);
-
-	if (doc) {
-		doc->load_xml(p_buffer, p_size);
-	}
-}
-
-void EditorHelp::remove_class(const String &p_class) {
-	if (ext_doc && ext_doc->has_doc(p_class)) {
-		ext_doc->remove_doc(p_class);
-	}
-
-	if (doc && doc->has_doc(p_class)) {
-		remove_doc(p_class);
-	}
-}
-
 void EditorHelp::_load_doc_thread(void *p_udata) {
 	bool use_script_cache = (bool)p_udata;
 	Ref<Resource> cache_res = ResourceLoader::load(get_cache_full_path());
@@ -3112,8 +3089,6 @@ void EditorHelp::_load_doc_thread(void *p_udata) {
 		if (use_script_cache) {
 			callable_mp_static(&EditorHelp::load_script_doc_cache).call_deferred();
 		}
-		// Extensions' docs are not cached. Generate them now (on the main thread).
-		callable_mp_static(&EditorHelp::_gen_extensions_docs).call_deferred();
 	} else {
 		// We have to go back to the main thread to start from scratch, bypassing any possibly existing cache.
 		callable_mp_static(&EditorHelp::generate_doc).call_deferred(false, use_script_cache);
@@ -3132,12 +3107,6 @@ void EditorHelp::_gen_doc_thread(void *p_udata) {
 	cache_res->set_meta("version_hash", doc_version_hash);
 	Array classes;
 	for (const KeyValue<String, DocData::ClassDoc> &E : doc->class_list) {
-		if (ClassDB::class_exists(E.value.name)) {
-			ClassDB::APIType api = ClassDB::get_api_type(E.value.name);
-			if (api == ClassDB::API_EXTENSION || api == ClassDB::API_EDITOR_EXTENSION) {
-				continue;
-			}
-		}
 		classes.push_back(DocData::ClassDoc::to_dict(E.value));
 	}
 	cache_res->set_meta("classes", classes);
@@ -3153,15 +3122,6 @@ void EditorHelp::_gen_doc_thread(void *p_udata) {
 	}
 
 	OS::get_singleton()->benchmark_end_measure("EditorHelp", vformat("Generate Documentation (Run %d)", doc_generation_count));
-}
-
-void EditorHelp::_gen_extensions_docs() {
-	doc->generate((DocTools::GENERATE_FLAG_SKIP_BASIC_TYPES | DocTools::GENERATE_FLAG_EXTENSION_CLASSES_ONLY));
-
-	// Append extra doc data, as it gets overridden by the generation step.
-	if (ext_doc) {
-		doc->merge_from(*ext_doc);
-	}
 }
 static void _load_script_doc_cache(bool p_changes) {
 	EditorHelp::load_script_doc_cache();
@@ -3502,11 +3462,6 @@ void EditorHelp::_bind_methods() {
 
 	ADD_SIGNAL(MethodInfo("go_to_help"));
 	ADD_SIGNAL(MethodInfo("_request_save_new_history", PropertyInfo(Variant::DICTIONARY, "state")));
-}
-
-void EditorHelp::init_gdext_pointers() {
-	GDExtensionEditorHelp::editor_help_load_xml_buffer = &EditorHelp::load_xml_buffer;
-	GDExtensionEditorHelp::editor_help_remove_class = &EditorHelp::remove_class;
 }
 
 EditorHelp::EditorHelp() {

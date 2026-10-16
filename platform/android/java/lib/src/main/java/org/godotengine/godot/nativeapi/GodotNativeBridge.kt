@@ -272,17 +272,7 @@ internal class GodotNativeBridge(private val godot: Godot) {
 		return false
 	}
 
-	/**
-	 * Get the list of gdextension modules to register.
-	 */
-	private fun getGDExtensionConfigFiles(): Array<String> {
-		val configFiles = mutableSetOf<String>()
-		for (plugin in godot.pluginRegistry.allPlugins) {
-			configFiles.addAll(plugin.pluginGDExtensionLibrariesPaths)
-		}
 
-		return configFiles.toTypedArray()
-	}
 
 	private fun getCACertificates(): String {
 		return GodotNetUtils.getCACertificates()

@@ -81,7 +81,6 @@ GodotJavaWrapper::GodotJavaWrapper(JNIEnv *p_env, jobject p_godot_native_bridge)
 	_begin_benchmark_measure = p_env->GetMethodID(godot_native_bridge_class, "nativeBeginBenchmarkMeasure", "(Ljava/lang/String;Ljava/lang/String;)V");
 	_end_benchmark_measure = p_env->GetMethodID(godot_native_bridge_class, "nativeEndBenchmarkMeasure", "(Ljava/lang/String;Ljava/lang/String;)V");
 	_dump_benchmark = p_env->GetMethodID(godot_native_bridge_class, "nativeDumpBenchmark", "(Ljava/lang/String;)V");
-	_get_gdextension_list_config_file = p_env->GetMethodID(godot_native_bridge_class, "getGDExtensionConfigFiles", "()[Ljava/lang/String;");
 	_check_internal_feature_support = p_env->GetMethodID(godot_native_bridge_class, "checkInternalFeatureSupport", "(Ljava/lang/String;)Z");
 	_sign_apk = p_env->GetMethodID(godot_native_bridge_class, "nativeSignApk", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I");
 	_verify_apk = p_env->GetMethodID(godot_native_bridge_class, "nativeVerifyApk", "(Ljava/lang/String;)I");
@@ -428,25 +427,6 @@ Vector<String> GodotJavaWrapper::get_granted_permissions() const {
 		}
 	}
 	return permissions_list;
-}
-
-Vector<String> GodotJavaWrapper::get_gdextension_list_config_file() const {
-	Vector<String> config_file_list;
-	if (_get_gdextension_list_config_file) {
-		JNIEnv *env = get_jni_env();
-		ERR_FAIL_NULL_V(env, config_file_list);
-		jobject config_file_list_object = env->CallObjectMethod(godot_native_bridge, _get_gdextension_list_config_file);
-		jobjectArray *arr = reinterpret_cast<jobjectArray *>(&config_file_list_object);
-
-		jsize len = env->GetArrayLength(*arr);
-		for (int i = 0; i < len; i++) {
-			jstring j_config_file = (jstring)env->GetObjectArrayElement(*arr, i);
-			String config_file = jstring_to_string(j_config_file, env);
-			config_file_list.push_back(config_file);
-			env->DeleteLocalRef(j_config_file);
-		}
-	}
-	return config_file_list;
 }
 
 String GodotJavaWrapper::get_ca_certificates() const {

@@ -2826,31 +2826,6 @@ void VisualShaderEditor::_update_available_nodes() {
 		}
 	}
 
-	// Add GDExtension classes.
-	{
-		LocalVector<StringName> class_list;
-		ClassDB::get_class_list(class_list);
-
-		for (const StringName &class_name : class_list) {
-			if (ClassDB::get_parent_class(class_name) == "VisualShaderNodeCustom") {
-				Object *instance = ClassDB::instantiate(class_name);
-				Ref<VisualShaderNodeCustom> ref = Object::cast_to<VisualShaderNodeCustom>(instance);
-				ERR_CONTINUE(ref.is_null());
-				if (!_is_node_available_in_context(ref)) {
-					continue;
-				}
-				Dictionary dict = get_custom_node_data(ref);
-				dict["type"] = class_name;
-				dict["script"] = Ref<Script>();
-
-				String key;
-				key = String(dict["category"]) + "/" + String(dict["name"]);
-
-				added[key] = dict;
-			}
-		}
-	}
-
 	// Disables not-supported copied items.
 	{
 		for (CopyItem &item : copy_items_buffer) {

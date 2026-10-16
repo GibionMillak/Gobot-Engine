@@ -189,16 +189,9 @@ public:
 
 	virtual void alert(const String &p_alert, const String &p_title = "ALERT!");
 
-	struct GDExtensionData {
-		bool also_set_library_path = false;
-		String *r_resolved_path = nullptr;
-		bool generate_temp_files = false;
-		PackedStringArray *library_dependencies = nullptr;
-	};
-
-	virtual Error open_dynamic_library(const String &p_path, void *&p_library_handle, GDExtensionData *p_data = nullptr) { return ERR_UNAVAILABLE; }
+	virtual Error open_dynamic_library(const String &p_path, void *&r_library_handle) { return ERR_UNAVAILABLE; }
 	virtual Error close_dynamic_library(void *p_library_handle) { return ERR_UNAVAILABLE; }
-	virtual Error get_dynamic_library_symbol_handle(void *p_library_handle, const String &p_name, void *&p_symbol_handle, bool p_optional = false) { return ERR_UNAVAILABLE; }
+	virtual Error get_dynamic_library_symbol_handle(void *p_library_handle, const String &p_name, void *&r_symbol_handle, bool p_optional = false) { return ERR_UNAVAILABLE; }
 
 	virtual void set_low_processor_usage_mode(bool p_enabled);
 	virtual bool is_in_low_processor_usage_mode() const;
@@ -394,10 +387,6 @@ public:
 	};
 
 	virtual PreferredTextureFormat get_preferred_texture_format() const;
-
-	// Load GDExtensions specific to this platform.
-	// This is invoked by the GDExtensionManager after loading GDExtensions specified by the project.
-	virtual void load_platform_gdextensions() const {}
 
 	virtual String get_platform_string(PlatformString p_platform_string) const {
 		switch (p_platform_string) {

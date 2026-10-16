@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "core/variant/method_ptrcall.h"
+#include "core/variant/type_info.h"
 #include "core/variant/variant.h"
 #include "core/variant/variant_internal.h"
 
@@ -45,9 +45,6 @@
 		static inline void validated_get(const Variant *p_base, Variant *r_member) { \
 			VariantInternalAccessor<m_member_type>::get(r_member) = VariantInternalAccessor<m_base_type>::get(p_base).m_member; \
 		} \
-		static void ptr_get(const void *p_base, void *r_member) { \
-			PtrToArg<m_member_type>::encode(PtrToArg<m_base_type>::convert(p_base).m_member, r_member); \
-		} \
 		static void set(Variant *r_base, const Variant *p_value, bool &r_valid) { \
 			if (p_value->get_type() == GetTypeInfo<m_member_type>::VARIANT_TYPE) { \
 				VariantInternalAccessor<m_base_type>::get(r_base).m_member = VariantInternalAccessor<m_member_type>::get(p_value); \
@@ -58,11 +55,6 @@
 		} \
 		static inline void validated_set(Variant *r_base, const Variant *p_value) { \
 			VariantInternalAccessor<m_base_type>::get(r_base).m_member = VariantInternalAccessor<m_member_type>::get(p_value); \
-		} \
-		static void ptr_set(void *r_base, const void *p_member) { \
-			m_base_type b = PtrToArg<m_base_type>::convert(r_base); \
-			b.m_member = PtrToArg<m_member_type>::convert(p_member); \
-			PtrToArg<m_base_type>::encode(b, r_base); \
 		} \
 		static Variant::Type get_type() { \
 			return GetTypeInfo<m_member_type>::VARIANT_TYPE; \
@@ -78,9 +70,6 @@
 		static inline void validated_get(const Variant *p_base, Variant *r_member) { \
 			VariantInternalAccessor<m_member_type>::get(r_member) = VariantInternalAccessor<m_base_type>::get(p_base).m_member; \
 		} \
-		static void ptr_get(const void *p_base, void *r_member) { \
-			PtrToArg<m_member_type>::encode(PtrToArg<m_base_type>::convert(p_base).m_member, r_member); \
-		} \
 		static void set(Variant *r_base, const Variant *p_value, bool &r_valid) { \
 			if (p_value->get_type() == Variant::FLOAT) { \
 				VariantInternalAccessor<m_base_type>::get(r_base).m_member = VariantInternalAccessor<double>::get(p_value); \
@@ -94,11 +83,6 @@
 		} \
 		static inline void validated_set(Variant *r_base, const Variant *p_value) { \
 			VariantInternalAccessor<m_base_type>::get(r_base).m_member = VariantInternalAccessor<m_member_type>::get(p_value); \
-		} \
-		static void ptr_set(void *r_base, const void *p_member) { \
-			m_base_type b = PtrToArg<m_base_type>::convert(r_base); \
-			b.m_member = PtrToArg<m_member_type>::convert(p_member); \
-			PtrToArg<m_base_type>::encode(b, r_base); \
 		} \
 		static Variant::Type get_type() { \
 			return GetTypeInfo<m_member_type>::VARIANT_TYPE; \
@@ -114,9 +98,6 @@
 		static inline void validated_get(const Variant *p_base, Variant *r_member) { \
 			VariantInternalAccessor<m_member_type>::get(r_member) = VariantInternalAccessor<m_base_type>::get(p_base).m_custom; \
 		} \
-		static void ptr_get(const void *p_base, void *r_member) { \
-			PtrToArg<m_member_type>::encode(PtrToArg<m_base_type>::convert(p_base).m_custom, r_member); \
-		} \
 		static void set(Variant *r_base, const Variant *p_value, bool &r_valid) { \
 			if (p_value->get_type() == GetTypeInfo<m_member_type>::VARIANT_TYPE) { \
 				VariantInternalAccessor<m_base_type>::get(r_base).m_custom = VariantInternalAccessor<m_member_type>::get(p_value); \
@@ -127,11 +108,6 @@
 		} \
 		static inline void validated_set(Variant *r_base, const Variant *p_value) { \
 			VariantInternalAccessor<m_base_type>::get(r_base).m_custom = VariantInternalAccessor<m_member_type>::get(p_value); \
-		} \
-		static void ptr_set(void *r_base, const void *p_member) { \
-			m_base_type b = PtrToArg<m_base_type>::convert(r_base); \
-			b.m_custom = PtrToArg<m_member_type>::convert(p_member); \
-			PtrToArg<m_base_type>::encode(b, r_base); \
 		} \
 		static Variant::Type get_type() { \
 			return GetTypeInfo<m_member_type>::VARIANT_TYPE; \
@@ -147,9 +123,6 @@
 		static inline void validated_get(const Variant *p_base, Variant *r_member) { \
 			VariantInternalAccessor<m_member_type>::get(r_member) = VariantInternalAccessor<m_base_type>::get(p_base).m_custom; \
 		} \
-		static void ptr_get(const void *p_base, void *r_member) { \
-			PtrToArg<m_member_type>::encode(PtrToArg<m_base_type>::convert(p_base).m_custom, r_member); \
-		} \
 		static void set(Variant *r_base, const Variant *p_value, bool &r_valid) { \
 			if (p_value->get_type() == Variant::FLOAT) { \
 				VariantInternalAccessor<m_base_type>::get(r_base).m_custom = VariantInternalAccessor<double>::get(p_value); \
@@ -163,11 +136,6 @@
 		} \
 		static inline void validated_set(Variant *r_base, const Variant *p_value) { \
 			VariantInternalAccessor<m_base_type>::get(r_base).m_custom = VariantInternalAccessor<m_member_type>::get(p_value); \
-		} \
-		static void ptr_set(void *r_base, const void *p_member) { \
-			m_base_type b = PtrToArg<m_base_type>::convert(r_base); \
-			b.m_custom = PtrToArg<m_member_type>::convert(p_member); \
-			PtrToArg<m_base_type>::encode(b, r_base); \
 		} \
 		static Variant::Type get_type() { \
 			return GetTypeInfo<m_member_type>::VARIANT_TYPE; \
@@ -183,9 +151,6 @@
 		static inline void validated_get(const Variant *p_base, Variant *r_member) { \
 			VariantInternalAccessor<m_member_type>::get(r_member) = VariantInternalAccessor<m_base_type>::get(p_base).m_getter(); \
 		} \
-		static void ptr_get(const void *p_base, void *r_member) { \
-			PtrToArg<m_member_type>::encode(PtrToArg<m_base_type>::convert(p_base).m_getter(), r_member); \
-		} \
 		static void set(Variant *r_base, const Variant *p_value, bool &r_valid) { \
 			if (p_value->get_type() == GetTypeInfo<m_member_type>::VARIANT_TYPE) { \
 				VariantInternalAccessor<m_base_type>::get(r_base).m_setter(VariantInternalAccessor<m_member_type>::get(p_value)); \
@@ -196,11 +161,6 @@
 		} \
 		static inline void validated_set(Variant *r_base, const Variant *p_value) { \
 			VariantInternalAccessor<m_base_type>::get(r_base).m_setter(VariantInternalAccessor<m_member_type>::get(p_value)); \
-		} \
-		static void ptr_set(void *r_base, const void *p_member) { \
-			m_base_type b = PtrToArg<m_base_type>::convert(r_base); \
-			b.m_setter(PtrToArg<m_member_type>::convert(p_member)); \
-			PtrToArg<m_base_type>::encode(b, r_base); \
 		} \
 		static Variant::Type get_type() { \
 			return GetTypeInfo<m_member_type>::VARIANT_TYPE; \
@@ -216,9 +176,6 @@
 		static inline void validated_get(const Variant *p_base, Variant *r_member) { \
 			VariantInternalAccessor<m_member_type>::get(r_member) = VariantInternalAccessor<m_base_type>::get(p_base).m_getter(); \
 		} \
-		static void ptr_get(const void *p_base, void *r_member) { \
-			PtrToArg<m_member_type>::encode(PtrToArg<m_base_type>::convert(p_base).m_getter(), r_member); \
-		} \
 		static void set(Variant *r_base, const Variant *p_value, bool &r_valid) { \
 			if (p_value->get_type() == Variant::FLOAT) { \
 				VariantInternalAccessor<m_base_type>::get(r_base).m_setter(VariantInternalAccessor<double>::get(p_value)); \
@@ -232,11 +189,6 @@
 		} \
 		static inline void validated_set(Variant *r_base, const Variant *p_value) { \
 			VariantInternalAccessor<m_base_type>::get(r_base).m_setter(VariantInternalAccessor<m_member_type>::get(p_value)); \
-		} \
-		static void ptr_set(void *r_base, const void *p_member) { \
-			m_base_type b = PtrToArg<m_base_type>::convert(r_base); \
-			b.m_setter(PtrToArg<m_member_type>::convert(p_member)); \
-			PtrToArg<m_base_type>::encode(b, r_base); \
 		} \
 		static Variant::Type get_type() { \
 			return GetTypeInfo<m_member_type>::VARIANT_TYPE; \
@@ -252,9 +204,6 @@
 		static inline void validated_get(const Variant *p_base, Variant *r_member) { \
 			VariantInternalAccessor<m_member_type>::get(r_member) = VariantInternalAccessor<m_base_type>::get(p_base).m_getter(m_index); \
 		} \
-		static void ptr_get(const void *p_base, void *r_member) { \
-			PtrToArg<m_member_type>::encode(PtrToArg<m_base_type>::convert(p_base).m_getter(m_index), r_member); \
-		} \
 		static void set(Variant *r_base, const Variant *p_value, bool &r_valid) { \
 			if (p_value->get_type() == GetTypeInfo<m_member_type>::VARIANT_TYPE) { \
 				VariantInternalAccessor<m_base_type>::get(r_base).m_setter(m_index, VariantInternalAccessor<m_member_type>::get(p_value)); \
@@ -265,11 +214,6 @@
 		} \
 		static inline void validated_set(Variant *r_base, const Variant *p_value) { \
 			VariantInternalAccessor<m_base_type>::get(r_base).m_setter(m_index, VariantInternalAccessor<m_member_type>::get(p_value)); \
-		} \
-		static void ptr_set(void *r_base, const void *p_member) { \
-			m_base_type b = PtrToArg<m_base_type>::convert(r_base); \
-			b.m_setter(m_index, PtrToArg<m_member_type>::convert(p_member)); \
-			PtrToArg<m_base_type>::encode(b, r_base); \
 		} \
 		static Variant::Type get_type() { \
 			return GetTypeInfo<m_member_type>::VARIANT_TYPE; \

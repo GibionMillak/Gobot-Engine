@@ -64,7 +64,6 @@ private:
 	jmethodID _request_permission = nullptr;
 	jmethodID _request_permissions = nullptr;
 	jmethodID _get_granted_permissions = nullptr;
-	jmethodID _get_gdextension_list_config_file = nullptr;
 	jmethodID _get_ca_certificates = nullptr;
 	jmethodID _init_input_devices = nullptr;
 	jmethodID _vibrate = nullptr;
@@ -142,9 +141,6 @@ public:
 	bool is_screen_reader_active();
 	bool is_high_contrast_active();
 	bool is_animation_disabled();
-
-	// Return the list of gdextensions config file.
-	Vector<String> get_gdextension_list_config_file() const;
 
 	// Return true if the given feature is supported.
 	bool check_internal_feature_support(const String &p_feature) const;

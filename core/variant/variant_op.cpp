@@ -35,14 +35,12 @@ typedef void (*VariantEvaluatorFunction)(const Variant &p_left, const Variant &p
 static Variant::Type operator_return_type_table[Variant::OP_MAX][Variant::VARIANT_MAX][Variant::VARIANT_MAX];
 static VariantEvaluatorFunction operator_evaluator_table[Variant::OP_MAX][Variant::VARIANT_MAX][Variant::VARIANT_MAX];
 static Variant::ValidatedOperatorEvaluator validated_operator_evaluator_table[Variant::OP_MAX][Variant::VARIANT_MAX][Variant::VARIANT_MAX];
-static Variant::PTROperatorEvaluator ptr_operator_evaluator_table[Variant::OP_MAX][Variant::VARIANT_MAX][Variant::VARIANT_MAX];
 
 template <typename T>
 void register_op(Variant::Operator p_op, Variant::Type p_type_a, Variant::Type p_type_b) {
 	operator_return_type_table[p_op][p_type_a][p_type_b] = T::get_return_type();
 	operator_evaluator_table[p_op][p_type_a][p_type_b] = T::evaluate;
 	validated_operator_evaluator_table[p_op][p_type_a][p_type_b] = T::validated_evaluate;
-	ptr_operator_evaluator_table[p_op][p_type_a][p_type_b] = T::ptr_evaluate;
 }
 
 // Special cases that can't be done otherwise because of the forced casting to float.
@@ -53,9 +51,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector2>::get(r_ret) = Vector2(VariantInternalAccessor<Vector2i>::get(p_left).x, VariantInternalAccessor<Vector2i>::get(p_left).y) * VariantInternalAccessor<double>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector2>::encode(Vector2(PtrToArg<Vector2i>::convert(p_left).x, PtrToArg<Vector2i>::convert(p_left).y) * PtrToArg<double>::convert(p_right), r_ret);
-	}
 	using ReturnType = Vector2;
 };
 
@@ -64,9 +59,6 @@ class OperatorEvaluatorMul<Vector2, double, Vector2i> : public CommonEvaluate<Op
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector2>::get(r_ret) = Vector2(VariantInternalAccessor<Vector2i>::get(p_right).x, VariantInternalAccessor<Vector2i>::get(p_right).y) * VariantInternalAccessor<double>::get(p_left);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector2>::encode(Vector2(PtrToArg<Vector2i>::convert(p_right).x, PtrToArg<Vector2i>::convert(p_right).y) * PtrToArg<double>::convert(p_left), r_ret);
 	}
 	using ReturnType = Vector2;
 };
@@ -88,9 +80,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector2>::get(r_ret) = Vector2(VariantInternalAccessor<Vector2i>::get(p_left).x, VariantInternalAccessor<Vector2i>::get(p_left).y) / VariantInternalAccessor<double>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector2>::encode(Vector2(PtrToArg<Vector2i>::convert(p_left).x, PtrToArg<Vector2i>::convert(p_left).y) / PtrToArg<double>::convert(p_right), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<Vector2>::VARIANT_TYPE; }
 };
 
@@ -100,9 +89,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector3>::get(r_ret) = Vector3(VariantInternalAccessor<Vector3i>::get(p_left).x, VariantInternalAccessor<Vector3i>::get(p_left).y, VariantInternalAccessor<Vector3i>::get(p_left).z) * VariantInternalAccessor<double>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector3>::encode(Vector3(PtrToArg<Vector3i>::convert(p_left).x, PtrToArg<Vector3i>::convert(p_left).y, PtrToArg<Vector3i>::convert(p_left).z) * PtrToArg<double>::convert(p_right), r_ret);
-	}
 	using ReturnType = Vector3;
 };
 
@@ -111,9 +97,6 @@ class OperatorEvaluatorMul<Vector3, double, Vector3i> : public CommonEvaluate<Op
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector3>::get(r_ret) = Vector3(VariantInternalAccessor<Vector3i>::get(p_right).x, VariantInternalAccessor<Vector3i>::get(p_right).y, VariantInternalAccessor<Vector3i>::get(p_right).z) * VariantInternalAccessor<double>::get(p_left);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector3>::encode(Vector3(PtrToArg<Vector3i>::convert(p_right).x, PtrToArg<Vector3i>::convert(p_right).y, PtrToArg<Vector3i>::convert(p_right).z) * PtrToArg<double>::convert(p_left), r_ret);
 	}
 	using ReturnType = Vector3;
 };
@@ -135,9 +118,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector3>::get(r_ret) = Vector3(VariantInternalAccessor<Vector3i>::get(p_left).x, VariantInternalAccessor<Vector3i>::get(p_left).y, VariantInternalAccessor<Vector3i>::get(p_left).z) / VariantInternalAccessor<double>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector3>::encode(Vector3(PtrToArg<Vector3i>::convert(p_left).x, PtrToArg<Vector3i>::convert(p_left).y, PtrToArg<Vector3i>::convert(p_left).z) / PtrToArg<double>::convert(p_right), r_ret);
-	}
 	static Variant::Type get_return_type() { return GetTypeInfo<Vector3>::VARIANT_TYPE; }
 };
 
@@ -149,9 +129,6 @@ public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector4>::get(r_ret) = Vector4(VariantInternalAccessor<Vector4i>::get(p_left).x, VariantInternalAccessor<Vector4i>::get(p_left).y, VariantInternalAccessor<Vector4i>::get(p_left).z, VariantInternalAccessor<Vector4i>::get(p_left).w) * VariantInternalAccessor<double>::get(p_right);
 	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector4>::encode(Vector4(PtrToArg<Vector4i>::convert(p_left).x, PtrToArg<Vector4i>::convert(p_left).y, PtrToArg<Vector4i>::convert(p_left).z, PtrToArg<Vector4i>::convert(p_left).w) * PtrToArg<double>::convert(p_right), r_ret);
-	}
 	using ReturnType = Vector4;
 };
 
@@ -160,9 +137,6 @@ class OperatorEvaluatorMul<Vector4, double, Vector4i> : public CommonEvaluate<Op
 public:
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector4>::get(r_ret) = Vector4(VariantInternalAccessor<Vector4i>::get(p_right).x, VariantInternalAccessor<Vector4i>::get(p_right).y, VariantInternalAccessor<Vector4i>::get(p_right).z, VariantInternalAccessor<Vector4i>::get(p_right).w) * VariantInternalAccessor<double>::get(p_left);
-	}
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector4>::encode(Vector4(PtrToArg<Vector4i>::convert(p_right).x, PtrToArg<Vector4i>::convert(p_right).y, PtrToArg<Vector4i>::convert(p_right).z, PtrToArg<Vector4i>::convert(p_right).w) * PtrToArg<double>::convert(p_left), r_ret);
 	}
 	using ReturnType = Vector4;
 };
@@ -184,10 +158,6 @@ public:
 
 	static inline void validated_evaluate(const Variant *p_left, const Variant *p_right, Variant *r_ret) {
 		VariantInternalAccessor<Vector4>::get(r_ret) = Vector4(VariantInternalAccessor<Vector4i>::get(p_left).x, VariantInternalAccessor<Vector4i>::get(p_left).y, VariantInternalAccessor<Vector4i>::get(p_left).z, VariantInternalAccessor<Vector4i>::get(p_left).w) / VariantInternalAccessor<double>::get(p_right);
-	}
-
-	static void ptr_evaluate(const void *p_left, const void *p_right, void *r_ret) {
-		PtrToArg<Vector4>::encode(Vector4(PtrToArg<Vector4i>::convert(p_left).x, PtrToArg<Vector4i>::convert(p_left).y, PtrToArg<Vector4i>::convert(p_left).z, PtrToArg<Vector4i>::convert(p_left).w) / PtrToArg<double>::convert(p_right), r_ret);
 	}
 
 	static Variant::Type get_return_type() { return GetTypeInfo<Vector4>::VARIANT_TYPE; }
@@ -213,7 +183,6 @@ void Variant::_register_variant_operators() {
 	memset(operator_return_type_table, 0, sizeof(operator_return_type_table));
 	memset(operator_evaluator_table, 0, sizeof(operator_evaluator_table));
 	memset(validated_operator_evaluator_table, 0, sizeof(validated_operator_evaluator_table));
-	memset(ptr_operator_evaluator_table, 0, sizeof(ptr_operator_evaluator_table));
 
 	register_op<OperatorEvaluatorAdd<int64_t, int64_t, int64_t>>(Variant::OP_ADD, Variant::INT, Variant::INT);
 	register_op<OperatorEvaluatorAdd<double, int64_t, double>>(Variant::OP_ADD, Variant::INT, Variant::FLOAT);
@@ -1071,13 +1040,6 @@ Variant::ValidatedOperatorEvaluator Variant::get_validated_operator_evaluator(Op
 	ERR_FAIL_INDEX_V(p_type_a, Variant::VARIANT_MAX, nullptr);
 	ERR_FAIL_INDEX_V(p_type_b, Variant::VARIANT_MAX, nullptr);
 	return validated_operator_evaluator_table[p_operator][p_type_a][p_type_b];
-}
-
-Variant::PTROperatorEvaluator Variant::get_ptr_operator_evaluator(Operator p_operator, Type p_type_a, Type p_type_b) {
-	ERR_FAIL_INDEX_V(p_operator, Variant::OP_MAX, nullptr);
-	ERR_FAIL_INDEX_V(p_type_a, Variant::VARIANT_MAX, nullptr);
-	ERR_FAIL_INDEX_V(p_type_b, Variant::VARIANT_MAX, nullptr);
-	return ptr_operator_evaluator_table[p_operator][p_type_a][p_type_b];
 }
 
 static const char *_op_names[Variant::OP_MAX] = {

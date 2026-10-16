@@ -46,7 +46,6 @@
 
 class EditorVariantTypeOptionButton;
 class FileSystemDock;
-class ProjectSettingsGDExtension;
 
 class ProjectSettingsEditor : public AcceptDialog {
 	GDCLASS(ProjectSettingsEditor, AcceptDialog);
@@ -72,7 +71,6 @@ class ProjectSettingsEditor : public AcceptDialog {
 	GroupSettingsEditor *group_settings = nullptr;
 	TabContainer *addons_container = nullptr;
 	EditorPluginSettings *plugin_settings = nullptr;
-	ProjectSettingsGDExtension *gdextension_settings = nullptr;
 
 	LineEdit *search_box = nullptr;
 	CheckButton *advanced = nullptr;
