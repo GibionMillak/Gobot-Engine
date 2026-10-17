@@ -277,10 +277,11 @@
 		<member name="application/config/auto_accept_quit" type="bool" setter="" getter="" default="true">
 			If [code]true[/code], the application automatically accepts quitting requests.
 		</member>
-		<member name="application/config/custom_user_dir_name" type="String" setter="" getter="" default="&quot;&quot;">
-			This user directory is used for storing persistent data ([code]user://[/code] filesystem). If a custom directory name is defined, this name will be appended to the system-specific user data directory (same parent folder as the Godot configuration folder documented in [method OS.get_user_data_dir]).
-			The [member application/config/use_custom_user_dir] setting must be enabled for this to take effect.
-			[b]Note:[/b] If [member application/config/custom_user_dir_name] contains trailing periods, they will be stripped as folder names ending with a period are not allowed on Windows.
+		<member name="application/config/custom_user_directory" type="String" setter="" getter="" default="&quot;&quot;">
+			Custom directory used for storing persistent data ([code]user://[/code] filesystem), relative to the system-specific user data directory documented in [method OS.get_user_data_dir]. Directory separators are allowed, so a value such as [code]Studio/Game[/code] can group projects under a shared folder.
+			If this value is non-empty after sanitization, it is used directly without appending the project name. Otherwise, the project uses [code]&lt;OS user data directory&gt;/Godot/app_userdata/&lt;project name&gt;[/code], with [code]godot[/code] in lowercase on Linux and BSD. An empty sanitized project name falls back to [code][unnamed project][/code].
+			Invalid characters and parent-directory sequences ([code]..[/code]) are replaced, surrounding whitespace is stripped, and trailing periods are removed. This setting is only effective on desktop platforms.
+			See also [url=$DOCS_URL/tutorials/io/data_paths.html#accessing-persistent-user-data-user]File paths in Godot projects[/url].
 		</member>
 		<member name="application/config/description" type="String" setter="" getter="" default="&quot;&quot;">
 			The project's description, displayed as a tooltip in the Project Manager when hovering the project.
@@ -299,7 +300,7 @@
 		</member>
 		<member name="application/config/name" type="String" setter="" getter="" default="&quot;&quot;">
 			The project's name. It is used both by the Project Manager and by exporters. The project name can be translated by translating its value in localization files. The window title will be set to match the project name automatically on startup.
-			[b]Note:[/b] Changing this value will also change the user data folder's path if [member application/config/use_custom_user_dir] is [code]false[/code]. After renaming the project, you will no longer be able to access existing data in [code]user://[/code] unless you rename the old folder to match the new project name. See [url=$DOCS_URL/tutorials/io/data_paths.html]Data paths[/url] in the documentation for more information.
+			[b]Note:[/b] Changing this value will also change the user data folder's path if [member application/config/custom_user_directory] is empty after sanitization. After renaming the project, you will no longer be able to access existing data in [code]user://[/code] unless you rename the old folder to match the new project name. See [url=$DOCS_URL/tutorials/io/data_paths.html]Data paths[/url] in the documentation for more information.
 		</member>
 		<member name="application/config/name_localized" type="Dictionary" setter="" getter="" default="{}">
 			Translations of the project's name. This setting is used by OS tools to translate application name on Android, iOS and macOS.
@@ -311,10 +312,6 @@
 		</member>
 		<member name="application/config/quit_on_go_back" type="bool" setter="" getter="" default="true">
 			If [code]true[/code], the application quits automatically when navigating back (e.g. using the system "Back" button on Android).
-		</member>
-		<member name="application/config/use_custom_user_dir" type="bool" setter="" getter="" default="false">
-			If [code]true[/code], the project will save user data to its own user directory. If [member application/config/custom_user_dir_name] is empty, [code]&lt;OS user data directory&gt;/&lt;project name&gt;[/code] directory will be used. If [code]false[/code], the project will save user data to [code]&lt;OS user data directory&gt;/Godot/app_userdata/&lt;project name&gt;[/code].
-			See also [url=$DOCS_URL/tutorials/io/data_paths.html#accessing-persistent-user-data-user]File paths in Godot projects[/url]. This setting is only effective on desktop platforms.
 		</member>
 		<member name="application/config/use_hidden_project_data_directory" type="bool" setter="" getter="" default="true">
 			If [code]true[/code], the project will use a hidden directory ([code].godot[/code]) for storing project-specific data (metadata, shader cache, etc.).

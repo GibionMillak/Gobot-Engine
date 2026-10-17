@@ -6538,9 +6538,9 @@ bool EditorNode::ensure_main_scene(bool p_from_native) {
 }
 
 bool EditorNode::validate_custom_directory() {
-	bool use_custom_dir = GLOBAL_GET("application/config/use_custom_user_dir");
+	const String custom_dir = OS::get_singleton()->get_safe_dir_name(GLOBAL_GET("application/config/custom_user_directory"), true);
 
-	if (use_custom_dir) {
+	if (!custom_dir.is_empty()) {
 		String data_dir = OS::get_singleton()->get_user_data_dir();
 		Ref<DirAccess> dir = DirAccess::create(DirAccess::ACCESS_USERDATA);
 		if (dir->change_dir(data_dir) != OK) {

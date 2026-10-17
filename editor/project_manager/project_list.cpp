@@ -106,7 +106,6 @@ void ProjectListItemControl::_notification(int p_what) {
 			queue_redraw();
 		} break;
 
-
 		case NOTIFICATION_FOCUS_ENTER: {
 			ProjectList *pl = get_list();
 			if (pl) {
@@ -555,7 +554,6 @@ void ProjectList::_notification(int p_what) {
 				}
 			}
 		} break;
-
 	}
 }
 
@@ -682,23 +680,15 @@ ProjectList::Item ProjectList::load_project_data(const String &p_path, bool p_fa
 		ProjectManager::get_singleton()->add_new_tag(tag);
 	}
 
-	// We can't use OS::get_user_dir() because it attempts to load paths from the current loaded project through ProjectSettings,
+	// We can't use OS::get_user_data_dir() because it attempts to load paths from the current loaded project through ProjectSettings,
 	// while here we're parsing project files externally. Therefore, we have to replicate its behavior.
-	String user_dir;
-	if (!cf_project_name.is_empty()) {
+	String user_dir = OS::get_singleton()->get_safe_dir_name(cf->get_value("application", "config/custom_user_directory", ""), true);
+	if (user_dir.is_empty()) {
 		String appname = OS::get_singleton()->get_safe_dir_name(cf_project_name);
-		bool use_custom_dir = cf->get_value("application", "config/use_custom_user_dir", false);
-		if (use_custom_dir) {
-			String custom_dir = OS::get_singleton()->get_safe_dir_name(cf->get_value("application", "config/custom_user_dir_name", ""), true);
-			if (custom_dir.is_empty()) {
-				custom_dir = appname;
-			}
-			user_dir = custom_dir;
-		} else {
-			user_dir = OS::get_singleton()->get_godot_dir_name().path_join("app_userdata").path_join(appname);
+		if (appname.is_empty()) {
+			appname = "[Unnamed Project]";
 		}
-	} else {
-		user_dir = OS::get_singleton()->get_godot_dir_name().path_join("app_userdata").path_join("[unnamed project]");
+		user_dir = OS::get_singleton()->get_godot_dir_name().path_join("app_userdata").path_join(appname);
 	}
 
 	String recovery_mode_lock_file = OS::get_singleton()->get_user_data_dir(user_dir).path_join(".recovery_mode_lock");

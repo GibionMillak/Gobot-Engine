@@ -332,21 +332,16 @@ String OS::get_user_data_dir(const String &p_user_dir) const {
 }
 
 String OS::get_user_data_dir() const {
-	String appname = get_safe_dir_name(GLOBAL_GET("application/config/name"));
-	if (!appname.is_empty()) {
-		bool use_custom_dir = GLOBAL_GET("application/config/use_custom_user_dir");
-		if (use_custom_dir) {
-			String custom_dir = get_safe_dir_name(GLOBAL_GET("application/config/custom_user_dir_name"), true);
-			if (custom_dir.is_empty()) {
-				custom_dir = appname;
-			}
-			return get_user_data_dir(custom_dir);
-		} else {
-			return get_user_data_dir(get_godot_dir_name().path_join("app_userdata").path_join(appname));
-		}
-	} else {
-		return get_user_data_dir(get_godot_dir_name().path_join("app_userdata").path_join("[unnamed project]"));
+	const String custom_dir = get_safe_dir_name(GLOBAL_GET("application/config/custom_user_directory"), true);
+	if (!custom_dir.is_empty()) {
+		return get_user_data_dir(custom_dir);
 	}
+
+	String appname = get_safe_dir_name(GLOBAL_GET("application/config/name"));
+	if (appname.is_empty()) {
+		appname = "[Unnamed Project]";
+	}
+	return get_user_data_dir(get_godot_dir_name().path_join("app_userdata").path_join(appname));
 }
 
 // Absolute path to res://

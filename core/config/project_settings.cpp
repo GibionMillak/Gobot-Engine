@@ -1612,8 +1612,7 @@ ProjectSettings::ProjectSettings() {
 	GLOBAL_DEF("application/run/enable_alt_space_menu", false);
 	GLOBAL_DEF("application/run/use_game_mode", true);
 	GLOBAL_DEF_RST("application/config/use_hidden_project_data_directory", true);
-	GLOBAL_DEF("application/config/use_custom_user_dir", false);
-	GLOBAL_DEF("application/config/custom_user_dir_name", "");
+	GLOBAL_DEF("application/config/custom_user_directory", "");
 	GLOBAL_DEF("application/config/project_settings_override", "");
 	GLOBAL_DEF("application/config/disable_project_settings_override", false);
 
