@@ -54,7 +54,6 @@ class ScriptCreateDialog : public ConfirmationDialog {
 	LineEdit *parent_name = nullptr;
 	Button *parent_browse_button = nullptr;
 	Button *parent_search_button = nullptr;
-	OptionButton *language_menu = nullptr;
 	OptionButton *template_menu = nullptr;
 	LineEdit *file_path = nullptr;
 	LineEdit *built_in_name = nullptr;
@@ -77,7 +76,6 @@ class ScriptCreateDialog : public ConfirmationDialog {
 	bool is_using_templates = true;
 	bool built_in_enabled = true;
 	bool load_enabled = true;
-	int default_language;
 	bool re_check_path = false;
 	bool missing_base_dir = false;
 
@@ -85,14 +83,14 @@ class ScriptCreateDialog : public ConfirmationDialog {
 	Control *name_controls[2];
 
 	Vector<ScriptLanguage::ScriptTemplate> template_list;
-	ScriptLanguage *language = nullptr;
+	ScriptLanguage *_script_language = nullptr;
 
 	String base_type;
 
 	void _path_hbox_sorted();
 	bool _can_be_built_in();
 	void _path_changed(const String &p_path = String());
-	void _language_changed(int l = 0);
+	void _update_script_options();
 	void _built_in_pressed();
 	void _use_template_pressed();
 	bool _validate_parent(const String &p_string);

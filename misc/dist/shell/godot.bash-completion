@@ -85,7 +85,6 @@ _complete_godot_options() {
 --export-pack
 --doctool
 --no-docbase
---build-solutions
 --benchmark
 --benchmark-file
 --test

@@ -116,8 +116,7 @@ private:
 		Thread thread;
 		bool signaled : 1;
 		bool yield_is_over : 1;
-		bool pre_exited_languages : 1;
-		bool exited_languages : 1;
+		bool idle : 1;
 		bool has_pump_task : 1; // Threads can only have one pump task.
 		Task *current_task = nullptr;
 		Task *awaited_task = nullptr; // Null if not awaiting the condition variable, or special value (YIELDING).
@@ -127,26 +126,19 @@ private:
 		ThreadData() :
 				signaled(false),
 				yield_is_over(false),
-				pre_exited_languages(false),
-				exited_languages(false),
+				idle(false),
 				has_pump_task(false) {}
 	};
 
 	TightLocalVector<ThreadData> threads;
-	enum Runlevel {
-		RUNLEVEL_NORMAL,
-		RUNLEVEL_PRE_EXIT_LANGUAGES, // Block adding new tasks
-		RUNLEVEL_EXIT_LANGUAGES, // All threads detach from scripting threads.
-		RUNLEVEL_EXIT,
-	} runlevel = RUNLEVEL_NORMAL;
-	union { // Cleared on every runlevel change.
-		struct {
-			uint32_t num_idle_threads;
-		} pre_exit_languages;
-		struct {
-			uint32_t num_exited_threads;
-		} exit_languages;
-	} runlevel_data;
+	enum class Runlevel {
+		NORMAL,
+		DRAINING, // Wait for queued work to finish.
+		SUSPENDED, // Block new tasks until shutdown.
+		EXIT,
+	};
+	Runlevel _runlevel = Runlevel::NORMAL;
+	uint32_t _idle_thread_count = 0;
 	ConditionVariable control_cond_var;
 
 	HashMap<Thread::ID, int> thread_ids;
@@ -220,7 +212,7 @@ private:
 	void _wait_collaboratively(ThreadData *p_caller_pool_thread, Task *p_task);
 
 	void _switch_runlevel(Runlevel p_runlevel);
-	bool _handle_runlevel(ThreadData *p_thread_data, MutexLock<BinaryMutex> &p_lock);
+	bool _handle_runlevel(ThreadData *p_thread_data);
 
 #ifdef THREADS_ENABLED
 	static uint32_t _thread_enter_unlock_allowance_zone(THREADING_NAMESPACE::unique_lock<THREADING_NAMESPACE::mutex> &p_ulock);
@@ -296,7 +288,8 @@ public:
 #endif
 
 	void init(int p_thread_count = -1, float p_low_priority_task_ratio = 0.3);
-	void exit_languages_threads();
+	// Drain queued tasks and block new submissions until finish(). Call before tearing down systems used by tasks.
+	void prepare_for_shutdown();
 	void finish();
 	WorkerThreadPool(bool p_singleton = true);
 	~WorkerThreadPool();

@@ -238,9 +238,6 @@ xcuserdata/
 *.userosscache
 *.sln.docstates
 
-# User-specific files (MonoDevelop/Xamarin Studio)
-*.userprefs
-
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -297,7 +294,6 @@ Generated\ Files/
 *.tlh
 *.tmp
 *.tmp_proj
-*_wpftmp.csproj
 *.log
 *.tlog
 *.vspscc
@@ -327,11 +323,6 @@ ipch/
 # Visual Studio Trace Files
 *.e2e
 
-# ReSharper is a .NET coding add-in
-_ReSharper*/
-*.[Rr]e[Ss]harper
-*.DotSettings.user
-
 # Visual Studio cache files
 # files ending in .cache can be ignored
 *.[Cc]ache
@@ -345,7 +336,6 @@ enc_temp_folder/
 *.jfm
 *.pfx
 *.publishsettings
-orleans.codegen.cs
 
 # Backup & report files from converting an old project file
 # to a newer Visual Studio version. Backup files are not needed,

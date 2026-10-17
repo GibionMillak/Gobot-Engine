@@ -32,7 +32,6 @@
 
 #include "core/object/class_db.h"
 #include "core/object/message_queue.h"
-#include "core/object/script_language.h"
 #include "core/os/os.h"
 #include "core/os/safe_binary_mutex.h"
 #include "core/os/thread_safe.h"
@@ -67,12 +66,6 @@ void WorkerThreadPool::_process_task(Task *p_task) {
 		// Tasks must start with these at default values. They are free to set-and-forget otherwise.
 		set_current_thread_safe_for_nodes(false);
 		MessageQueue::set_thread_singleton_override(nullptr);
-
-		// Since the WorkerThreadPool is started before the script server,
-		// its pre-created threads can't have ScriptServer::thread_enter() called on them early.
-		// Therefore, we do it late at the first opportunity, so in case the task
-		// about to be run uses scripting, guarantees are held.
-		ScriptServer::thread_enter();
 
 		task_mutex.lock();
 		p_task->pool_thread_index = pool_thread_index;
@@ -195,7 +188,7 @@ void WorkerThreadPool::_thread_function(void *p_user) {
 			MutexLock lock(thread_data->pool->task_mutex);
 
 			while (true) {
-				bool exit = thread_data->pool->_handle_runlevel(thread_data, lock);
+				bool exit = thread_data->pool->_handle_runlevel(thread_data);
 				if (unlikely(exit)) {
 					return;
 				}
@@ -237,7 +230,7 @@ void WorkerThreadPool::_post_tasks(Task **p_tasks, uint32_t p_count, bool p_high
 		return;
 	}
 
-	while (runlevel == RUNLEVEL_EXIT_LANGUAGES) {
+	while (_runlevel == Runlevel::SUSPENDED) {
 		control_cond_var.wait(p_lock);
 	}
 
@@ -497,7 +490,7 @@ void WorkerThreadPool::_wait_collaboratively(ThreadData *p_caller_pool_thread, T
 			bool was_signaled = p_caller_pool_thread->signaled;
 			p_caller_pool_thread->signaled = false;
 
-			bool exit = _handle_runlevel(p_caller_pool_thread, lock);
+			bool exit = _handle_runlevel(p_caller_pool_thread);
 			if (unlikely(exit)) {
 				break;
 			}
@@ -571,9 +564,9 @@ void WorkerThreadPool::_wait_collaboratively(ThreadData *p_caller_pool_thread, T
 }
 
 void WorkerThreadPool::_switch_runlevel(Runlevel p_runlevel) {
-	DEV_ASSERT(p_runlevel > runlevel);
-	runlevel = p_runlevel;
-	memset(&runlevel_data, 0, sizeof(runlevel_data));
+	DEV_ASSERT(p_runlevel > _runlevel);
+	_runlevel = p_runlevel;
+	_idle_thread_count = 0;
 	for (uint32_t i = 0; i < threads.size(); i++) {
 		threads[i].cond_var.notify_one();
 		threads[i].signaled = true;
@@ -582,31 +575,23 @@ void WorkerThreadPool::_switch_runlevel(Runlevel p_runlevel) {
 }
 
 // Returns whether threads have to exit. This may perform the check about handling needed.
-bool WorkerThreadPool::_handle_runlevel(ThreadData *p_thread_data, MutexLock<BinaryMutex> &p_lock) {
+bool WorkerThreadPool::_handle_runlevel(ThreadData *p_thread_data) {
 	bool exit = false;
-	switch (runlevel) {
-		case RUNLEVEL_NORMAL: {
+	switch (_runlevel) {
+		case Runlevel::NORMAL: {
 		} break;
-		case RUNLEVEL_PRE_EXIT_LANGUAGES: {
-			if (!p_thread_data->pre_exited_languages) {
+		case Runlevel::DRAINING: {
+			if (!p_thread_data->idle) {
 				if (!task_queue.first() && !low_priority_task_queue.first()) {
-					p_thread_data->pre_exited_languages = true;
-					runlevel_data.pre_exit_languages.num_idle_threads++;
+					p_thread_data->idle = true;
+					_idle_thread_count++;
 					control_cond_var.notify_all();
 				}
 			}
 		} break;
-		case RUNLEVEL_EXIT_LANGUAGES: {
-			if (!p_thread_data->exited_languages) {
-				p_lock.temp_unlock();
-				ScriptServer::thread_exit();
-				p_lock.temp_relock();
-				p_thread_data->exited_languages = true;
-				runlevel_data.exit_languages.num_exited_threads++;
-				control_cond_var.notify_all();
-			}
+		case Runlevel::SUSPENDED: {
 		} break;
-		case RUNLEVEL_EXIT: {
+		case Runlevel::EXIT: {
 			exit = true;
 		} break;
 	}
@@ -617,18 +602,6 @@ void WorkerThreadPool::yield() {
 	int th_index = get_thread_index();
 	ERR_FAIL_COND_MSG(th_index == -1, "This function can only be called from a worker thread.");
 	_wait_collaboratively(&threads[th_index], ThreadData::YIELDING);
-
-	task_mutex.lock();
-	if (runlevel < RUNLEVEL_EXIT_LANGUAGES) {
-		// If this long-lived task started before the scripting server was initialized,
-		// now is a good time to have scripting languages ready for the current thread.
-		// Otherwise, such a piece of setup won't happen unless another task has been
-		// run during the collaborative wait.
-		task_mutex.unlock();
-		ScriptServer::thread_enter();
-	} else {
-		task_mutex.unlock();
-	}
 }
 
 void WorkerThreadPool::notify_yield_over(TaskID p_task_id) {
@@ -809,7 +782,7 @@ void WorkerThreadPool::thread_exit_unlock_allowance_zone(uint32_t p_zone_id) {
 void WorkerThreadPool::init(int p_thread_count, float p_low_priority_task_ratio) {
 	ERR_FAIL_COND(threads.size() > 0);
 
-	runlevel = RUNLEVEL_NORMAL;
+	_runlevel = Runlevel::NORMAL;
 
 	if (p_thread_count < 0) {
 		p_thread_count = OS::get_singleton()->get_default_thread_pool_size();
@@ -834,7 +807,7 @@ void WorkerThreadPool::init(int p_thread_count, float p_low_priority_task_ratio)
 	}
 }
 
-void WorkerThreadPool::exit_languages_threads() {
+void WorkerThreadPool::prepare_for_shutdown() {
 	if (threads.is_empty()) {
 		return;
 	}
@@ -842,16 +815,13 @@ void WorkerThreadPool::exit_languages_threads() {
 	MutexLock lock(task_mutex);
 
 	// Wait until all threads are idle.
-	_switch_runlevel(RUNLEVEL_PRE_EXIT_LANGUAGES);
-	while (runlevel_data.pre_exit_languages.num_idle_threads != threads.size()) {
+	_switch_runlevel(Runlevel::DRAINING);
+	while (_idle_thread_count != threads.size()) {
 		control_cond_var.wait(lock);
 	}
 
-	// Wait until all threads have detached from scripting languages.
-	_switch_runlevel(RUNLEVEL_EXIT_LANGUAGES);
-	while (runlevel_data.exit_languages.num_exited_threads != threads.size()) {
-		control_cond_var.wait(lock);
-	}
+	// Block new tasks until the pool is finished.
+	_switch_runlevel(Runlevel::SUSPENDED);
 }
 
 void WorkerThreadPool::finish() {
@@ -865,7 +835,7 @@ void WorkerThreadPool::finish() {
 			print_error("Task waiting was never re-claimed: " + task.description);
 		}
 
-		_switch_runlevel(RUNLEVEL_EXIT);
+		_switch_runlevel(Runlevel::EXIT);
 	}
 
 	for (ThreadData &data : threads) {

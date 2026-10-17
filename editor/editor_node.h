@@ -40,7 +40,6 @@
 
 typedef void (*EditorNodeInitCallback)();
 typedef void (*EditorPluginInitializeCallback)();
-typedef bool (*EditorBuildCallback)();
 
 #ifndef ANDROID_ENABLED
 class AndroidSDKManager;
@@ -249,7 +248,6 @@ private:
 
 	enum {
 		MAX_INIT_CALLBACKS = 128,
-		MAX_BUILD_CALLBACKS = 128,
 	};
 
 	struct ExportDefer {
@@ -510,9 +508,7 @@ private:
 	AndroidSDKManager *android_sdk_manager = nullptr;
 #endif
 
-	static EditorBuildCallback build_callbacks[MAX_BUILD_CALLBACKS];
 	static EditorPluginInitializeCallback plugin_init_callbacks[MAX_INIT_CALLBACKS];
-	static int build_callback_count;
 	static int plugin_init_callback_count;
 	static Vector<EditorNodeInitCallback> _init_callbacks;
 
@@ -774,7 +770,7 @@ public:
 	static Button *get_distraction_free_button() { return singleton->distraction_free; }
 
 	static String adjust_scene_name_casing(const String &p_root_name);
-	static String adjust_script_name_casing(const String &p_file_name, ScriptLanguage::ScriptNameCasing p_auto_casing);
+	static String adjust_script_name_casing(const String &p_file_name);
 
 	static bool has_unsaved_changes() { return singleton->unsaved_cache; }
 	static void disambiguate_filenames(const Vector<String> p_full_paths, Vector<String> &r_filenames);
@@ -795,7 +791,6 @@ public:
 
 	static void add_plugin_init_callback(EditorPluginInitializeCallback p_callback);
 	static void add_init_callback(EditorNodeInitCallback p_callback) { _init_callbacks.push_back(p_callback); }
-	static void add_build_callback(EditorBuildCallback p_callback);
 
 	static bool immediate_confirmation_dialog(const String &p_text, const String &p_ok_text = TTRC("OK"), const String &p_cancel_text = TTRC("Cancel"), uint32_t p_wrap_width = 0);
 

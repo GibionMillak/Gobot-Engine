@@ -26,11 +26,6 @@ allprojects {
     }
 }
 
-configurations {
-    // Initializes a placeholder for the monoImplementation dependency configuration.
-    monoImplementation {}
-}
-
 dependencies {
     // Android instrumented test dependencies
     androidTestImplementation "androidx.test.ext:junit:$versions.junitVersion"
@@ -95,11 +90,6 @@ dependencies {
         implementation fileTree(dir: "$addonsDirectory", include: ['*.jar', '*.aar'])
     }
 
-    // .NET dependencies
-    String jar = '../../../../modules/mono/thirdparty/libSystem.Security.Cryptography.Native.Android.jar'
-    if (file(jar).exists()) {
-        monoImplementation files(jar)
-    }
 }
 
 android {
@@ -238,39 +228,32 @@ android {
                 signingConfig = null
             }
         }
-    }
 
-    flavorDimensions 'edition'
-
-    productFlavors {
-        // Product flavor for the standard (no .net support) builds.
-        standard {
-            getIsDefault().set(true)
-        }
-
-        // Product flavor for the Mono (.net) builds.
-        mono {}
-
-        // Product flavor used for running instrumented tests.
         instrumented {
+            initWith debug
+            matchingFallbacks = ['debug']
             applicationIdSuffix ".instrumented"
             versionNameSuffix "-instrumented"
         }
     }
 
+    testBuildType "instrumented"
+
     sourceSets {
         main.res.srcDirs += ['res']
         debug.jniLibs.srcDirs = ['libs/debug', 'libs/debug/vulkan_validation_layers']
         release.jniLibs.srcDirs = ['libs/release']
+        instrumented.jniLibs.srcDirs = ['libs/debug', 'libs/debug/vulkan_validation_layers']
     }
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            String filenameSuffix = variant.flavorName == "mono" ? variant.name : variant.buildType.name
-            output.outputFileName = "android_${filenameSuffix}.apk"
+            output.outputFileName = "android_${variant.buildType.name}.apk"
         }
     }
 }
+
+configurations.instrumentedImplementation.extendsFrom(configurations.debugImplementation)
 
 task copyAndRenameBinary(type: Copy) {
     // The 'doNotTrackState' is added to disable gradle's up-to-date checks for output files
@@ -288,18 +271,14 @@ task copyAndRenameBinary(type: Copy) {
         def fusedDepsLibProject = findProject(":fusedDepsLib")
         sourceFilepath = "${fusedDepsLibProject.buildDir}/outputs/aar/$sourceFilename"
     } else {
-        String exportEdition = getExportEdition()
         String exportBuildType = getExportBuildType()
-        String exportBuildTypeCapitalized = exportBuildType.capitalize()
 
         if (exportFormat == "aab") {
-            String filenameSuffix = "${exportEdition}-${exportBuildType}"
-            sourceFilename = "${project.name}-${filenameSuffix}.aab"
-            sourceFilepath = "$buildDir/outputs/bundle/${exportEdition}${exportBuildTypeCapitalized}/$sourceFilename"
+            sourceFilename = "${project.name}-${exportBuildType}.aab"
+            sourceFilepath = "$buildDir/outputs/bundle/${exportBuildType}/$sourceFilename"
         } else {
-            String filenameSuffix = exportEdition == "mono" ? "${exportEdition}${exportBuildTypeCapitalized}" : exportBuildType
-            sourceFilename = "android_${filenameSuffix}.apk"
-            sourceFilepath = "$buildDir/outputs/apk/$exportEdition/$exportBuildType/$sourceFilename"
+            sourceFilename = "android_${exportBuildType}.apk"
+            sourceFilepath = "$buildDir/outputs/apk/$exportBuildType/$sourceFilename"
         }
     }
 

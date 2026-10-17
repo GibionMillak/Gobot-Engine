@@ -419,9 +419,6 @@ void ScriptTextEditor::_on_mouse_exited() {
 void ScriptTextEditor::add_callback(const String &p_function, const PackedStringArray &p_args) {
 	Ref<Script> script = edited_res;
 	ScriptLanguage *language = script->get_language();
-	if (!language->can_make_function()) {
-		return;
-	}
 	code_editor->get_text_editor()->begin_complex_operation();
 	code_editor->get_text_editor()->remove_secondary_carets();
 	code_editor->get_text_editor()->deselect();

@@ -173,8 +173,7 @@ ext.generateGodotLibraryVersion = { List<String> requiredKeys ->
 }
 
 ext.getGodotLibraryVersion = { ->
-    List<String> requiredKeys = ["major", "minor", "patch", "status", "module_config"]
-    return generateGodotLibraryVersion(requiredKeys)
+    return generateGodotLibraryVersion(["major", "minor", "patch", "status"])
 }
 
 ext.getGodotPublishVersion = { ->
@@ -219,14 +218,6 @@ ext.getExportFilename = {
         exportFilename = "godot_android"
     }
     return exportFilename
-}
-
-ext.getExportEdition = {
-    String exportEdition = project.hasProperty("export_edition") ? project.property("export_edition") : ""
-    if (exportEdition == null || exportEdition.isEmpty()) {
-        exportEdition = "standard"
-    }
-    return exportEdition
 }
 
 ext.getExportBuildType = {

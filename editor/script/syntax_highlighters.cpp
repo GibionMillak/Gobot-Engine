@@ -109,15 +109,13 @@ void EditorStandardSyntaxHighlighter::_update_cache() {
 		}
 	}
 
-	const ScriptLanguage *scr_lang = script_language;
+	const ScriptLanguage *scr_lang = nullptr;
 	StringName instance_base;
 
-	if (scr_lang == nullptr) {
-		const Ref<Script> scr = _get_edited_resource();
-		if (scr.is_valid()) {
-			scr_lang = scr->get_language();
-			instance_base = scr->get_instance_base_type();
-		}
+	const Ref<Script> scr = _get_edited_resource();
+	if (scr.is_valid()) {
+		scr_lang = scr->get_language();
+		instance_base = scr->get_instance_base_type();
 	}
 
 	/* Variant types. */

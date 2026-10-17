@@ -355,7 +355,6 @@ def generate_scu_files(max_includes_per_scu):
     process_folder(["modules/jolt_physics/spaces"])
     process_folder(["modules/lightmapper_rd"])
     process_folder(["modules/mbedtls"])
-    process_folder(["modules/mono"])
     process_folder(["modules/multiplayer"])
     process_folder(["modules/multiplayer/editor"])
     process_folder(["modules/navigation_3d"])

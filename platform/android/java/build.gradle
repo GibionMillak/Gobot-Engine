@@ -30,7 +30,6 @@ ext {
         "editor": ["debug", "release"],
         "template": ["debug", "release"]
     ]
-    supportedEditions = ["standard", "mono"]
 
     // Used by gradle to specify which architecture to build for by default when running
     // `./gradlew build` (this command is usually used by Android Studio).
@@ -57,7 +56,7 @@ def getSconsTaskName(String flavor, String buildType, String abi) {
  * The zip file also includes some gradle tools to enable gradle builds from the Godot Editor.
  */
 task zipGradleBuild(type: Zip) {
-    onlyIf { generateGodotTemplates.state.executed || generateGodotMonoTemplates.state.executed }
+    onlyIf { generateGodotTemplates.state.executed }
     doFirst {
         logger.lifecycle("Generating Godot gradle build template")
     }
@@ -98,23 +97,15 @@ def templateExcludedBuildTask() {
 /**
  * Generates the build tasks for the given flavor
  * @param flavor Must be one of the supported flavors ('template' / 'editor')
- * @param edition Must be one of the supported editions ('standard' / 'mono')
  * @param androidDistro Must be one of the supported Android distributions ('android')
  */
-def generateBuildTasks(String flavor = "template", String edition = "standard", String androidDistro = "android") {
+def generateBuildTasks(String flavor = "template", String androidDistro = "android") {
     if (!supportedFlavors.contains(flavor)) {
         throw new GradleException("Invalid build flavor: $flavor")
     }
     if (!supportedAndroidDistributions.contains(androidDistro)) {
         throw new GradleException("Invalid Android distribution: $androidDistro")
     }
-    if (!supportedEditions.contains(edition)) {
-        throw new GradleException("Invalid build edition: $edition")
-    }
-    if (edition == "mono" && flavor != "template") {
-        throw new GradleException("'mono' edition only supports the 'template' flavor.")
-    }
-
     String capitalizedAndroidDistro = androidDistro.capitalize()
     def buildTasks = []
 
@@ -143,7 +134,6 @@ def generateBuildTasks(String flavor = "template", String edition = "standard", 
             && targetLibs.listFiles().length > 0)) {
 
             String capitalizedTarget = target.capitalize()
-            String capitalizedEdition = edition.capitalize()
             if (isTemplate) {
                 // Copy the Godot android library archive file into the app module libs directory.
                 // Depends on the library build task to ensure the AAR file is generated prior to copying.
@@ -175,15 +165,14 @@ def generateBuildTasks(String flavor = "template", String edition = "standard", 
 
                 // Copy the generated binary template into the Godot bin directory.
                 // Depends on the app build task to ensure the binary is generated prior to copying.
-                String copyBinaryTaskName = "copy${capitalizedEdition}${capitalizedTarget}BinaryToBin"
+                String copyBinaryTaskName = "copy${capitalizedTarget}BinaryToBin"
                 if (tasks.findByName(copyBinaryTaskName) != null) {
                     buildTasks += tasks.getByName(copyBinaryTaskName)
                 } else {
                     buildTasks += tasks.create(name: copyBinaryTaskName, type: Copy) {
-                        String filenameSuffix = edition == "mono" ? "${edition}${capitalizedTarget}" : target
-                        dependsOn ":app:assemble${capitalizedEdition}${capitalizedTarget}"
-                        from("app/build/outputs/apk/${edition}/${target}") {
-                            include("android_${filenameSuffix}.apk")
+                        dependsOn ":app:assemble${capitalizedTarget}"
+                        from("app/build/outputs/apk/${target}") {
+                            include("android_${target}.apk")
                         }
                         into(binDir)
                     }
@@ -233,7 +222,7 @@ def generateBuildTasks(String flavor = "template", String edition = "standard", 
  */
 task generateGodotEditor {
     gradle.startParameter.excludedTaskNames += templateExcludedBuildTask()
-    dependsOn = generateBuildTasks("editor", "standard", "android")
+    dependsOn = generateBuildTasks("editor", "android")
 }
 
 /**
@@ -242,17 +231,6 @@ task generateGodotEditor {
 task generateGodotTemplates {
     gradle.startParameter.excludedTaskNames += templateExcludedBuildTask()
     dependsOn = generateBuildTasks("template")
-
-    finalizedBy 'zipGradleBuild'
-}
-
-/**
- * Master task used to coordinate the tasks defined above to generate the set of Godot templates
- * for the 'mono' edition of the engine.
- */
-task generateGodotMonoTemplates {
-    gradle.startParameter.excludedTaskNames += templateExcludedBuildTask()
-    dependsOn = generateBuildTasks("template", "mono")
 
     finalizedBy 'zipGradleBuild'
 }
@@ -301,8 +279,6 @@ task cleanGodotTemplates(type: Delete) {
     // Delete the Godot templates in the Godot bin directory
     delete("$binDir/android_debug.apk")
     delete("$binDir/android_release.apk")
-    delete("$binDir/android_monoDebug.apk")
-    delete("$binDir/android_monoRelease.apk")
     delete("$binDir/android_source.zip")
     delete("$binDir/godot-lib.template_debug.aar")
     delete("$binDir/godot-lib.template_release.aar")

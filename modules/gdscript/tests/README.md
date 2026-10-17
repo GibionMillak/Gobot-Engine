@@ -23,7 +23,6 @@ The config file contains two section:
 
 `[input]` contains keys that configure the test environment. The following keys are possible:
 
-- `cs: boolean = false`: If `true`, the test will be skipped when running a non C# build.
 - `use_single_quotes: boolean = false`: Configures the corresponding editor setting for the test.
 - `add_node_path_literals: boolean = false`: Configures the corresponding editor setting for the test.
 - `add_string_name_literals: boolean = false`: Configures the corresponding editor setting for the test.
@@ -43,12 +42,11 @@ Tests will only test against entries in `[output]` that were specified.
 
 To avoid failing edge cases a certain behavior needs to be tested multiple times. Some things that tests should account for:
 
-- All possible types: Test with all possible types that apply to the tested behavior. (For the last points testing against `SCRIPT` and `CLASS` should suffice. `CLASS` can be obtained through C#, `SCRIPT` through GDScript. Relying on autoloads to be of type `SCRIPT` is not good, since this might change in the future.)
+- All possible types: Test with all possible types that apply to the tested behavior.
 
   - `BUILTIN`
   - `NATIVE`
   - GDScripts (with `class_name` as well as `preload`ed)
-  - C# (as standin for all other language bindings) (with `class_name` as well as `preload`ed)
   - Autoloads
 
 - Possible contexts: the completion might be placed in different places of the program. e.g:

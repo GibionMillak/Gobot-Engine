@@ -215,7 +215,6 @@ void ConnectDialog::_tree_node_selected() {
 	cdbinds->update_base_node_relative(current);
 
 	_update_method_tree();
-	_update_warning_label();
 	_update_ok_enabled();
 }
 
@@ -484,30 +483,6 @@ void ConnectDialog::_update_ok_enabled() {
 	get_ok_button()->set_disabled(false);
 }
 
-void ConnectDialog::_update_warning_label() {
-	Node *dst = Object::cast_to<Node>(source)->get_node(dst_path);
-
-	if (dst == nullptr) {
-		warning_label->set_visible(false);
-		return;
-	}
-
-	Ref<Script> scr = dst->get_script();
-	if (scr.is_null()) {
-		warning_label->set_visible(false);
-		return;
-	}
-
-	ScriptLanguage *language = scr->get_language();
-	if (language->can_make_function()) {
-		warning_label->set_visible(false);
-		return;
-	}
-
-	warning_label->set_text(vformat(TTR("%s: Callback code won't be generated, please add it manually."), language->get_name()));
-	warning_label->set_visible(true);
-}
-
 void ConnectDialog::_post_popup() {
 	callable_mp((Control *)dst_method, &Control::grab_focus).call_deferred(false);
 	callable_mp(dst_method, &LineEdit::select_all).call_deferred();
@@ -735,7 +710,6 @@ void ConnectDialog::init(const ConnectionData &p_cd, const PackedStringArray &p_
 
 void ConnectDialog::popup_dialog(const String &p_for_signal) {
 	from_signal->set_text(p_for_signal);
-	warning_label->add_theme_color_override(SceneStringName(font_color), warning_label->get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 	error_label->add_theme_color_override(SceneStringName(font_color), error_label->get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 	filter_nodes->clear();
 
@@ -816,11 +790,6 @@ ConnectDialog::ConnectDialog() {
 	Node *mc = vbc_left->add_margin_child(TTR("Connect to Script:"), hbc_filter, false);
 	connect_to_label = Object::cast_to<Label>(vbc_left->get_child(mc->get_index() - 1));
 	vbc_left->add_child(tree);
-
-	warning_label = memnew(Label);
-	warning_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
-	vbc_left->add_child(warning_label);
-	warning_label->hide();
 
 	error_label = memnew(Label);
 	error_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);

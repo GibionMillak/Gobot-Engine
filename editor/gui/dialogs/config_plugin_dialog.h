@@ -35,8 +35,6 @@
 class EditorValidationPanel;
 class Label;
 class LineEdit;
-class OptionButton;
-class ScriptLanguage;
 class TextEdit;
 
 class ConfigPluginDialog : public ConfirmationDialog {
@@ -66,7 +64,7 @@ private:
 	void _validate();
 	String _get_subfolder() const;
 	Error _save_plugin();
-	Error _create_plugin_script(const String &p_script_path, ScriptLanguage *p_language);
+	Error _create_plugin_script(const String &p_script_path);
 
 	LineEdit *_name_edit = nullptr;
 	Label *_subfolder_lbl = nullptr;
@@ -74,9 +72,7 @@ private:
 	TextEdit *_description_edit = nullptr;
 	LineEdit *_author_edit = nullptr;
 	LineEdit *_version_edit = nullptr;
-	OptionButton *_language_option_btn = nullptr;
 	LineEdit *_script_edit = nullptr;
 	EditorValidationPanel *_validation_panel = nullptr;
 	String _config_path;
-	int _default_language = -1;
 };

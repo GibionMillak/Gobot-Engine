@@ -130,11 +130,7 @@ def force_optimization_on_debug(self):
         self["OPTIMIZELEVEL"] = "-O3"
 
 
-def add_module_version_string(self, s):
-    self.module_version_string += "." + s
-
-
-def get_version_info(module_version_string="", silent=False):
+def get_version_info(silent=False):
     build_name = "custom_build"
     if os.getenv("BUILD_NAME") is not None:
         build_name = str(os.getenv("BUILD_NAME"))
@@ -151,7 +147,6 @@ def get_version_info(module_version_string="", silent=False):
         "patch": int(version.patch),
         "status": str(version.status),
         "build": str(build_name),
-        "module_config": str(version.module_config) + module_version_string,
         "website": str(version.website),
         "docs_branch": str(version.docs),
     }

@@ -24,8 +24,7 @@
 				- [code]"name"[/code]: [String] (the property's name)
 				- [code]"type"[/code]: [int] (see [enum Variant.Type])
 				- optionally [code]"hint"[/code]: [int] (see [enum PropertyHint]) and [code]"hint_string"[/code]: [String]
-				[codeblocks]
-				[gdscript]
+				[codeblock]
 				ProjectSettings.set("category/property_name", 0)
 
 				var property_info = {
@@ -36,21 +35,7 @@
 				}
 
 				ProjectSettings.add_property_info(property_info)
-				[/gdscript]
-				[csharp]
-				ProjectSettings.Singleton.Set("category/property_name", 0);
-
-				var propertyInfo = new Godot.Collections.Dictionary
-				{
-					{ "name", "category/propertyName" },
-					{ "type", (int)Variant.Type.Int },
-					{ "hint", (int)PropertyHint.Enum },
-					{ "hint_string", "one,two,three" },
-				};
-
-				ProjectSettings.AddPropertyInfo(propertyInfo);
-				[/csharp]
-				[/codeblocks]
+				[/codeblock]
 				[b]Note:[/b] Setting [code]"usage"[/code] for the property is not supported. Use [method set_as_basic], [method set_restart_if_changed], and [method set_as_internal] to modify usage flags.
 			</description>
 		</method>
@@ -99,16 +84,10 @@
 			<param index="1" name="default_value" type="Variant" default="null" />
 			<description>
 				Returns the value of the setting identified by [param name]. If the setting doesn't exist and [param default_value] is specified, the value of [param default_value] is returned. Otherwise, [code]null[/code] is returned.
-				[codeblocks]
-				[gdscript]
+				[codeblock]
 				print(ProjectSettings.get_setting("application/config/name"))
 				print(ProjectSettings.get_setting("application/config/custom_description", "No description specified."))
-				[/gdscript]
-				[csharp]
-				GD.Print(ProjectSettings.GetSetting("application/config/name"));
-				GD.Print(ProjectSettings.GetSetting("application/config/custom_description", "No description specified."));
-				[/csharp]
-				[/codeblocks]
+				[/codeblock]
 				[b]Note:[/b] This method doesn't take potential feature overrides into account automatically. Use [method get_setting_with_override] to handle seamlessly.
 				See also [method has_setting] to check whether a setting exists.
 			</description>
@@ -119,14 +98,9 @@
 			<description>
 				Similar to [method get_setting], but applies feature tag overrides if any exists and is valid.
 				[b]Example:[/b] If the setting override [code]"application/config/name.windows"[/code] exists, and the following code is executed on a [i]Windows[/i] operating system, the overridden setting is printed instead:
-				[codeblocks]
-				[gdscript]
+				[codeblock]
 				print(ProjectSettings.get_setting_with_override("application/config/name"))
-				[/gdscript]
-				[csharp]
-				GD.Print(ProjectSettings.GetSettingWithOverride("application/config/name"));
-				[/csharp]
-				[/codeblocks]
+				[/codeblock]
 			</description>
 		</method>
 		<method name="get_setting_with_override_and_custom_features" qualifiers="const">
@@ -259,14 +233,9 @@
 			<param index="1" name="value" type="Variant" />
 			<description>
 				Sets the value of a setting.
-				[codeblocks]
-				[gdscript]
+				[codeblock]
 				ProjectSettings.set_setting("application/config/name", "Example")
-				[/gdscript]
-				[csharp]
-				ProjectSettings.SetSetting("application/config/name", "Example");
-				[/csharp]
-				[/codeblocks]
+				[/codeblock]
 				This can also be used to erase custom project settings. To do this change the setting value to [code]null[/code].
 			</description>
 		</method>
@@ -1103,16 +1072,6 @@
 			V-Sync can be disabled on the command line using the [code]--disable-vsync[/code] [url=$DOCS_URL/tutorials/editor/command_line_tutorial.html]command line argument[/url].
 			[b]Note:[/b] The [b]Adaptive[/b] and [b]Mailbox[/b] V-Sync modes are only supported in the Forward+ and Mobile rendering methods, not Compatibility.
 			[b]Note:[/b] This property is only read when the project starts. To change the V-Sync mode at runtime, call [method DisplayServer.window_set_vsync_mode] instead.
-		</member>
-		<member name="dotnet/project/assembly_name" type="String" setter="" getter="" default="&quot;&quot;">
-			Name of the .NET assembly. This name is used as the name of the [code].csproj[/code] and [code].sln[/code] files. By default, it's set to the name of the project ([member application/config/name]) allowing to change it in the future without affecting the .NET assembly.
-		</member>
-		<member name="dotnet/project/assembly_reload_attempts" type="int" setter="" getter="" default="3">
-			Number of times to attempt assembly reloading after rebuilding .NET assemblies. Effectively also the timeout in seconds to wait for unloading of script assemblies to finish.
-		</member>
-		<member name="dotnet/project/solution_directory" type="String" setter="" getter="" default="&quot;&quot;">
-			Directory that contains the [code].sln[/code] file. By default, the [code].sln[/code] files is in the root of the project directory, next to the [code]project.godot[/code] and [code].csproj[/code] files.
-			Change this value to set up a multi-project scenario where there are multiple [code].csproj[/code] files. Keep in mind that the Godot project is considered one of the C# projects in the workspace and its root directory should contain the [code]project.godot[/code] and [code].csproj[/code] files next to each other.
 		</member>
 		<member name="editor/export/convert_text_resources_to_binary" type="bool" setter="" getter="" default="true">
 			If [code]true[/code], text resource ([code]tres[/code]) and text scene ([code]tscn[/code]) files are converted to their corresponding binary format on export. This decreases file sizes and speeds up loading slightly.
@@ -2495,30 +2454,18 @@
 		<member name="physics/2d/default_gravity" type="float" setter="" getter="" default="980.0">
 			The default gravity strength in 2D (in pixels per second squared).
 			[b]Note:[/b] This property is only read when the project starts. To change the default gravity at runtime, use the following code sample:
-			[codeblocks]
-			[gdscript]
+			[codeblock]
 			# Set the default gravity strength to 980.
 			PhysicsServer2D.area_set_param(get_viewport().find_world_2d().space, PhysicsServer2D.AREA_PARAM_GRAVITY, 980)
-			[/gdscript]
-			[csharp]
-			// Set the default gravity strength to 980.
-			PhysicsServer2D.AreaSetParam(GetViewport().FindWorld2D().Space, PhysicsServer2D.AreaParameter.Gravity, 980);
-			[/csharp]
-			[/codeblocks]
+			[/codeblock]
 		</member>
 		<member name="physics/2d/default_gravity_vector" type="Vector2" setter="" getter="" default="Vector2(0, 1)">
 			The default gravity direction in 2D.
 			[b]Note:[/b] This property is only read when the project starts. To change the default gravity vector at runtime, use the following code sample:
-			[codeblocks]
-			[gdscript]
+			[codeblock]
 			# Set the default gravity direction to `Vector2(0, 1)`.
 			PhysicsServer2D.area_set_param(get_viewport().find_world_2d().space, PhysicsServer2D.AREA_PARAM_GRAVITY_VECTOR, Vector2.DOWN)
-			[/gdscript]
-			[csharp]
-			// Set the default gravity direction to `Vector2(0, 1)`.
-			PhysicsServer2D.AreaSetParam(GetViewport().FindWorld2D().Space, PhysicsServer2D.AreaParameter.GravityVector, Vector2.Down)
-			[/csharp]
-			[/codeblocks]
+			[/codeblock]
 		</member>
 		<member name="physics/2d/default_linear_damp" type="float" setter="" getter="" default="0.1">
 			The default linear motion damping in 2D. Damping is used to gradually slow down physical objects over time. RigidBodies will fall back to this value when combining their own damping values and no area damping value is present.
@@ -2578,30 +2525,18 @@
 		<member name="physics/3d/default_gravity" type="float" setter="" getter="" default="9.8">
 			The default gravity strength in 3D (in meters per second squared).
 			[b]Note:[/b] This property is only read when the project starts. To change the default gravity at runtime, use the following code sample:
-			[codeblocks]
-			[gdscript]
+			[codeblock]
 			# Set the default gravity strength to 9.8.
 			PhysicsServer3D.area_set_param(get_viewport().find_world_3d().space, PhysicsServer3D.AREA_PARAM_GRAVITY, 9.8)
-			[/gdscript]
-			[csharp]
-			// Set the default gravity strength to 9.8.
-			PhysicsServer3D.AreaSetParam(GetViewport().FindWorld3D().Space, PhysicsServer3D.AreaParameter.Gravity, 9.8);
-			[/csharp]
-			[/codeblocks]
+			[/codeblock]
 		</member>
 		<member name="physics/3d/default_gravity_vector" type="Vector3" setter="" getter="" default="Vector3(0, -1, 0)">
 			The default gravity direction in 3D.
 			[b]Note:[/b] This property is only read when the project starts. To change the default gravity vector at runtime, use the following code sample:
-			[codeblocks]
-			[gdscript]
+			[codeblock]
 			# Set the default gravity direction to `Vector3(0, -1, 0)`.
 			PhysicsServer3D.area_set_param(get_viewport().find_world_3d().space, PhysicsServer3D.AREA_PARAM_GRAVITY_VECTOR, Vector3.DOWN)
-			[/gdscript]
-			[csharp]
-			// Set the default gravity direction to `Vector3(0, -1, 0)`.
-			PhysicsServer3D.AreaSetParam(GetViewport().FindWorld3D().Space, PhysicsServer3D.AreaParameter.GravityVector, Vector3.Down)
-			[/csharp]
-			[/codeblocks]
+			[/codeblock]
 		</member>
 		<member name="physics/3d/default_linear_damp" type="float" setter="" getter="" default="0.1">
 			The default linear motion damping in 3D. Damping is used to gradually slow down physical objects over time. RigidBodies will fall back to this value when combining their own damping values and no area damping value is present.

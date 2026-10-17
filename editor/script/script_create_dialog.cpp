@@ -47,7 +47,6 @@
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/grid_container.h"
 #include "scene/gui/line_edit.h"
-#include "scene/theme/theme_db.h"
 
 static String _get_parent_class_of_script(const String &p_path) {
 	if (!ResourceLoader::exists(p_path, "Script")) {
@@ -116,31 +115,11 @@ static Vector<String> _get_hierarchy(const String &p_class_name) {
 void ScriptCreateDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
-			String last_language = EditorSettings::get_singleton()->get_project_metadata("script_setup", "last_selected_language", "");
-			if (!last_language.is_empty()) {
-				for (int i = 0; i < language_menu->get_item_count(); i++) {
-					if (language_menu->get_item_text(i) == last_language) {
-						language_menu->select(i);
-						break;
-					}
-				}
-			} else {
-				language_menu->select(default_language);
-			}
 			is_using_templates = EDITOR_GET("_script_setup_use_script_templates");
 			use_templates->set_pressed(is_using_templates);
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			for (int i = 0; i < ScriptServer::get_language_count(); i++) {
-				String script_type = ScriptServer::get_language(i)->get_type();
-				Ref<Texture2D> language_icon = get_editor_theme_icon(script_type);
-
-				if (language_icon.is_valid()) {
-					language_menu->set_item_icon(i, language_icon);
-				}
-			}
-
 			path_button->set_button_icon(get_editor_theme_icon(SNAME("Folder")));
 			parent_browse_button->set_button_icon(get_editor_theme_icon(SNAME("Folder")));
 			parent_search_button->set_button_icon(get_editor_theme_icon(SNAME("ClassList")));
@@ -171,14 +150,14 @@ bool ScriptCreateDialog::_can_be_built_in() {
 }
 
 String ScriptCreateDialog::_adjust_file_path(const String &p_base_path) const {
-	if (p_base_path.is_empty()) {
+	if (p_base_path.is_empty() || _script_language == nullptr) {
 		return p_base_path;
 	}
 
 	String base_dir = p_base_path.get_base_dir();
 	String file_name = p_base_path.get_file().get_basename();
-	file_name = EditorNode::adjust_script_name_casing(file_name, language->preferred_file_name_casing());
-	String extension = language->get_extension();
+	file_name = EditorNode::adjust_script_name_casing(file_name);
+	String extension = _script_language->get_extension();
 	return base_dir.path_join(file_name + "." + extension);
 }
 
@@ -193,7 +172,7 @@ void ScriptCreateDialog::config(const String &p_base_name, const String &p_base_
 	built_in_enabled = p_built_in_enabled;
 	load_enabled = p_load_enabled;
 
-	_language_changed(language_menu->get_selected());
+	_update_script_options();
 
 	if (_can_be_built_in()) {
 		built_in->set_pressed(EditorSettings::get_singleton()->get_project_metadata("script_setup", "create_built_in_script", false));
@@ -267,26 +246,13 @@ String ScriptCreateDialog::_validate_path(const String &p_path, bool p_file_must
 		*r_path_valid = true;
 	}
 
-	// Check file extension.
-	bool found = false;
-	bool match = false;
-	for (int l = 0; l < language_menu->get_item_count(); l++) {
-		if (p.has_extension(ScriptServer::get_language(l)->get_extension())) {
-			found = true;
-			match = l == language_menu->get_selected();
-			break;
-		}
+	if (_script_language == nullptr) {
+		return TTRC("GDScript is unavailable in this build.");
 	}
-
-	if (!found) {
+	if (!p.has_extension(_script_language->get_extension())) {
 		return TTRC("Invalid extension.");
 	}
-	if (!match) {
-		return TTRC("Extension doesn't match chosen language.");
-	}
-
-	// Let ScriptLanguage do custom validation.
-	return ScriptServer::get_language(language_menu->get_selected())->validate_path(p);
+	return _script_language->validate_path(p);
 }
 
 void ScriptCreateDialog::_parent_name_changed(const String &p_parent) {
@@ -367,7 +333,7 @@ void ScriptCreateDialog::_create_new() {
 	}
 
 	String class_name = file_path->get_text().get_file().get_basename();
-	scr = ScriptServer::get_language(language_menu->get_selected())->make_template(sinfo.content, class_name, parent_class);
+	scr = _script_language->make_template(sinfo.content, class_name, parent_class);
 
 	if (is_built_in) {
 		scr->set_name(built_in_name->get_text());
@@ -401,14 +367,13 @@ void ScriptCreateDialog::_load_exist() {
 	hide();
 }
 
-void ScriptCreateDialog::_language_changed(int l) {
-	language = ScriptServer::get_language(l);
-	if (language == nullptr) {
+void ScriptCreateDialog::_update_script_options() {
+	if (_script_language == nullptr) {
 		return;
 	}
 
-	can_inherit_from_file = language->can_inherit_from_file();
-	supports_built_in = language->supports_builtin_mode();
+	can_inherit_from_file = _script_language->can_inherit_from_file();
+	supports_built_in = _script_language->supports_builtin_mode();
 	if (!supports_built_in) {
 		is_built_in = false;
 	}
@@ -417,8 +382,6 @@ void ScriptCreateDialog::_language_changed(int l) {
 	path = _adjust_file_path(path);
 	_path_changed(path);
 	file_path->set_text(path);
-
-	EditorSettings::get_singleton()->set_project_metadata("script_setup", "last_selected_language", language_menu->get_item_text(language_menu->get_selected()));
 
 	_parent_name_changed(parent_name->get_text());
 	validation_panel->update();
@@ -456,7 +419,7 @@ void ScriptCreateDialog::_browse_path(bool browse_parent, bool p_save) {
 	file_browse->set_customization_flag_enabled(FileDialog::CUSTOMIZATION_OVERWRITE_WARNING, false);
 
 	file_browse->clear_filters();
-	file_browse->add_filter("*." + ScriptServer::get_language(language_menu->get_selected())->get_extension());
+	file_browse->add_filter("*." + _script_language->get_extension());
 
 	file_browse->set_current_path(file_path->get_text());
 	file_browse->popup_file_dialog();
@@ -514,10 +477,10 @@ void ScriptCreateDialog::_path_changed(const String &p_path) {
 }
 
 void ScriptCreateDialog::_update_template_menu() {
-	if (language == nullptr) {
+	if (_script_language == nullptr) {
 		return;
 	}
-	bool is_language_using_templates = language->is_using_templates();
+	bool is_language_using_templates = _script_language->is_using_templates();
 	template_menu->set_disabled(false);
 	template_menu->clear();
 	template_list.clear();
@@ -553,7 +516,7 @@ void ScriptCreateDialog::_update_template_menu() {
 			for (const String &current_node : hierarchy) {
 				Vector<ScriptLanguage::ScriptTemplate> templates_found;
 				if (template_location == ScriptLanguage::TEMPLATE_BUILT_IN) {
-					templates_found = language->get_built_in_templates(current_node);
+					templates_found = _script_language->get_built_in_templates(current_node);
 				} else {
 					String template_directory;
 					if (template_location == ScriptLanguage::TEMPLATE_PROJECT) {
@@ -561,7 +524,7 @@ void ScriptCreateDialog::_update_template_menu() {
 					} else {
 						template_directory = EditorPaths::get_singleton()->get_script_templates_dir();
 					}
-					templates_found = _get_user_templates(language, current_node, template_directory, template_location);
+					templates_found = _get_user_templates(_script_language, current_node, template_directory, template_location);
 				}
 				if (!templates_found.is_empty()) {
 					if (!separator) {
@@ -873,40 +836,15 @@ ScriptCreateDialog::ScriptCreateDialog() {
 	vb->add_child(validation_panel);
 	add_child(vb);
 
-	/* Language */
-
-	language_menu = memnew(OptionButton);
-	language_menu->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	language_menu->set_custom_minimum_size(Size2(350, 0) * EDSCALE);
-	language_menu->set_expand_icon(true);
-	language_menu->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	language_menu->set_accessibility_name(TTRC("Language:"));
-	gc->add_child(memnew(Label(TTR("Language:"))));
-	gc->add_child(language_menu);
-
-	default_language = -1;
 	for (int i = 0; i < ScriptServer::get_language_count(); i++) {
-		String lang = ScriptServer::get_language(i)->get_name();
-		language_menu->add_item(lang);
-		if (lang == "GDScript") {
-			default_language = i;
+		if (ScriptServer::get_language(i)->get_name() == "GDScript") {
+			_script_language = ScriptServer::get_language(i);
+			break;
 		}
 	}
-	if (ScriptServer::get_language_count() == 0) {
-		// Edge Case 1: No scripting languages exist at all.
-		get_ok_button()->set_disabled(true); // Explicitly disable the confirmation button to prevent downstream crashes.
-		language_menu->set_disabled(true);
-		language_menu->set_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
-		language_menu->add_item(TTR("No Scripting Languages Available"));
-	} else if (default_language >= 0) {
-		// Normal Case: GDScript is available, select it.
-		language_menu->select(default_language);
-	} else {
-		// Edge Case 2: Languages exist (like C#), but GDScript is disabled.
-		language_menu->select(0);
+	if (_script_language == nullptr) {
+		get_ok_button()->set_disabled(true);
 	}
-
-	language_menu->connect(SceneStringName(item_selected), callable_mp(this, &ScriptCreateDialog::_language_changed));
 
 	/* Inherits */
 

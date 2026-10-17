@@ -16,7 +16,6 @@
         android:required="true" />
 
     <application
-        android:name=".GodotApplication"
         android:allowBackup="false"
         android:appCategory="game"
         android:hasFragileUserData="false"

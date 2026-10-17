@@ -4087,13 +4087,11 @@
 			<description>
 				Copies the viewport to a region of the screen specified by [param rect]. If [method viewport_set_render_direct_to_screen] is [code]true[/code], then the viewport does not use a framebuffer and the contents of the viewport are rendered directly to screen. However, note that the root viewport is drawn last, therefore it will draw over the screen. Accordingly, you must set the root viewport to an area that does not cover the area that you have attached this viewport to.
 				For example, you can set the root viewport to not render at all with the following code:
-				[codeblocks]
-				[gdscript]
+				[codeblock]
 				func _ready():
 					RenderingServer.viewport_attach_to_screen(get_viewport().get_viewport_rid(), Rect2())
 					RenderingServer.viewport_attach_to_screen($Viewport.get_viewport_rid(), Rect2(0, 0, 600, 600))
-				[/gdscript]
-				[/codeblocks]
+				[/codeblock]
 				Using this can result in significant optimization, especially on lower-end devices. However, it comes at the cost of having to manage your viewports manually. For further optimization, see [method viewport_set_render_direct_to_screen].
 			</description>
 		</method>

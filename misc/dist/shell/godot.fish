@@ -105,7 +105,6 @@ complete -c godot -l export-debug -d "Export the project in debug mode using the
 complete -c godot -l export-pack -d "Export the project data only as a PCK or ZIP file using the given preset and output path" -x
 complete -c godot -l doctool -d "Dump the engine API reference to the given path in XML format, merging if existing files are found" -r
 complete -c godot -l no-docbase -d "Disallow dumping the base types (used with --doctool)"
-complete -c godot -l build-solutions -d "Build the scripting solutions (e.g. for C# projects)"
 complete -c godot -l benchmark -d "Benchmark the run time and print it to console"
 complete -c godot -l benchmark-file -d "Benchmark the run time and save it to a given file in JSON format" -x
 complete -c godot -l test -d "Run all unit tests; run with '--test --help' for more information" -x

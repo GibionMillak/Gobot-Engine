@@ -56,7 +56,6 @@ class ScriptServer {
 	static int _language_count;
 	static bool languages_ready;
 	static Mutex languages_mutex;
-	static thread_local bool thread_entered;
 
 	static bool scripting_enabled;
 	static bool reload_scripts_on_save;
@@ -85,9 +84,6 @@ public:
 	static void set_reload_scripts_on_save(bool p_enable);
 	static bool is_reload_scripts_on_save_enabled();
 
-	static void thread_enter();
-	static void thread_exit();
-
 	static void global_classes_clear();
 	static void add_global_class(const StringName &p_class, const StringName &p_base, const StringName &p_language, const String &p_path, bool p_is_abstract, bool p_is_tool);
 	static void remove_global_class(const StringName &p_class);
@@ -108,8 +104,6 @@ public:
 
 	static void init_languages();
 	static void finish_languages();
-	static bool are_languages_initialized();
-	static bool thread_is_entered();
 };
 
 class PlaceHolderScriptInstance;
@@ -267,20 +261,10 @@ public:
 	virtual bool supports_documentation() const { return false; }
 	virtual bool can_inherit_from_file() const { return false; }
 	virtual String make_function(const String &p_class, const String &p_name, const PackedStringArray &p_args) const = 0;
-	virtual bool can_make_function() const { return true; }
-	virtual Error open_in_external_editor(const Ref<Script> &p_script, int p_line, int p_col) { return ERR_UNAVAILABLE; }
-	virtual bool overrides_external_editor() { return false; }
-	virtual ScriptNameCasing preferred_file_name_casing() const { return SCRIPT_NAME_CASING_SNAKE_CASE; }
 
 	virtual void add_global_constant(const StringName &p_variable, const Variant &p_value) = 0;
 	virtual void add_named_global_constant(const StringName &p_name, const Variant &p_value) {}
 	virtual void remove_named_global_constant(const StringName &p_name) {}
-
-	/* MULTITHREAD FUNCTIONS */
-
-	//some VMs need to be notified of thread creation/exiting to allocate a stack
-	virtual void thread_enter() {}
-	virtual void thread_exit() {}
 
 	/* DEBUGGER FUNCTIONS */
 	struct StackInfo {

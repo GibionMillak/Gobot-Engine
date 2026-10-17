@@ -134,11 +134,7 @@
 #include "main/steam_tracker.h"
 #endif
 
-#include "modules/modules_enabled.gen.h" // For mono.
-
-#if defined(MODULE_MONO_ENABLED) && defined(TOOLS_ENABLED)
-#include "modules/mono/editor/bindings_generator.h"
-#endif
+#include "modules/modules_enabled.gen.h"
 
 #ifdef MODULE_GDSCRIPT_ENABLED
 #include "modules/gdscript/gdscript.h"
@@ -205,7 +201,6 @@ static uint64_t quit_after = 0;
 static ProcessID editor_pid = 0;
 static bool found_project = false;
 static bool recovery_mode = false;
-static bool auto_build_solutions = false;
 static String debug_server_uri;
 static bool wait_for_import = false;
 static bool restore_editor_window_layout = true;
@@ -627,7 +622,6 @@ void Main::print_help(const char *p_binary) {
 #ifdef MODULE_GDSCRIPT_ENABLED
 	print_help_option("--gdscript-docs <path>", "Rather than dumping the engine API, generate API reference from the inline documentation in the GDScript files found in <path> (used with --doctool).\n", CLI_OPTION_AVAILABILITY_EDITOR);
 #endif
-	print_help_option("--build-solutions", "Build the scripting solutions (e.g. for C# projects). Implies --editor and requires a valid project to edit.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--benchmark", "Benchmark the run time and print it to console.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--benchmark-file <path>", "Benchmark the run time and save it to a given file in JSON format. The path should be absolute.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 #endif // TOOLS_ENABLED
@@ -1513,11 +1507,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 			}
 		} else if (arg == "--single-threaded-scene") {
 			single_threaded_scene = true;
-		} else if (arg == "--build-solutions") { // Build the scripting solution such C#
-
-			auto_build_solutions = true;
-			editor = true;
-			cmdline_tool = true;
 		} else if (arg == "--import") {
 			editor = true;
 			cmdline_tool = true;
@@ -3605,15 +3594,6 @@ Error Main::setup2(bool p_show_boot_logo) {
 	theme_db->initialize_theme();
 	audio_server->load_default_bus_layout();
 
-#if defined(MODULE_MONO_ENABLED) && defined(TOOLS_ENABLED)
-	// Hacky to have it here, but we don't have good facility yet to let modules
-	// register command line options to call at the right time. This needs to happen
-	// after init'ing the ScriptServer, but also after init'ing the ThemeDB,
-	// for the C# docs generation in the bindings.
-	List<String> cmdline_args = OS::get_singleton()->get_cmdline_args();
-	BindingsGenerator::handle_cmdline_args(cmdline_args);
-#endif
-
 #ifdef DEBUG_ENABLED
 	if (use_debug_profiler && EngineDebugger::is_active()) {
 		// Start the "scripts" profiler, used in local debugging.
@@ -3910,15 +3890,6 @@ int Main::start() {
 				ERR_FAIL_COND_V_MSG(!da->dir_exists("doc"), EXIT_FAILURE, "--doctool must be run from the Godot repository's root folder, or specify a path that points there.");
 			}
 		}
-
-#ifndef MODULE_MONO_ENABLED
-		// Hack to define .NET-specific project settings even on non-.NET builds,
-		// so that we don't lose their descriptions and default values in DocTools.
-		// Default values should be synced with mono_gd/gd_mono.cpp.
-		GLOBAL_DEF("dotnet/project/assembly_name", "");
-		GLOBAL_DEF("dotnet/project/solution_directory", "");
-		GLOBAL_DEF(PropertyInfo(Variant::INT, "dotnet/project/assembly_reload_attempts", PROPERTY_HINT_RANGE, "1,16,1,or_greater"), 3);
-#endif
 
 		Error err;
 		DocTools doc;
@@ -4842,23 +4813,6 @@ bool Main::iteration() {
 	OS::get_singleton()->add_frame_delay(DisplayServer::get_singleton()->window_can_draw(), wake_for_events);
 
 #ifdef TOOLS_ENABLED
-	if (auto_build_solutions) {
-		auto_build_solutions = false;
-		// Only relevant when running the editor.
-		if (!editor) {
-			OS::get_singleton()->set_exit_code(EXIT_FAILURE);
-			ERR_FAIL_V_MSG(true,
-					"Command line option --build-solutions was passed, but no project is being edited. Aborting.");
-		}
-		if (!EditorNode::get_singleton()->call_build()) {
-			OS::get_singleton()->set_exit_code(EXIT_FAILURE);
-			ERR_FAIL_V_MSG(true,
-					"Command line option --build-solutions was passed, but the build callback failed. Aborting.");
-		}
-	}
-#endif
-
-#ifdef TOOLS_ENABLED
 	if (exit && quit_after_timeout && EditorNode::get_singleton()) {
 		EditorNode::get_singleton()->unload_editor_addons();
 	}
@@ -4930,7 +4884,7 @@ void Main::cleanup(bool p_force) {
 
 	ResourceLoader::clear_translation_remaps();
 
-	WorkerThreadPool::get_singleton()->exit_languages_threads();
+	WorkerThreadPool::get_singleton()->prepare_for_shutdown();
 
 	ScriptServer::finish_languages();
 

@@ -1866,36 +1866,10 @@ static String marked_documentation(const String &p_bbcode, const HashSet<String>
 
 	Vector<String> lines = markdown.split("\n");
 	bool in_codeblock_tag = false;
-	// This is for handling the special [codeblocks] syntax used by the built-in class reference.
-	bool in_codeblocks_tag = false;
-	bool in_codeblocks_gdscript_tag = false;
 
 	markdown = "";
 	for (int i = 0; i < lines.size(); i++) {
 		String line = lines[i];
-
-		// For [codeblocks] tags we locate a child [gdscript] tag and turn that
-		// into a GDScript code listing. Other languages and the surrounding tag
-		// are skipped.
-		if (line.contains("[codeblocks]")) {
-			in_codeblocks_tag = true;
-			continue;
-		}
-		if (in_codeblocks_tag && line.contains("[/codeblocks]")) {
-			in_codeblocks_tag = false;
-			continue;
-		}
-		if (in_codeblocks_tag) {
-			if (line.contains("[gdscript]")) {
-				in_codeblocks_gdscript_tag = true;
-				line = "```gdscript";
-			} else if (in_codeblocks_gdscript_tag && line.contains("[/gdscript]")) {
-				line = "```";
-				in_codeblocks_gdscript_tag = false;
-			} else if (!in_codeblocks_gdscript_tag) {
-				continue;
-			}
-		}
 
 		// We need to account for both [codeblock] and [codeblock lang=...].
 		String codeblock_lang = "gdscript";
@@ -1922,7 +1896,7 @@ static String marked_documentation(const String &p_bbcode, const HashSet<String>
 			in_codeblock_tag = false;
 		}
 
-		if (!in_codeblock_tag && !in_codeblocks_gdscript_tag) {
+		if (!in_codeblock_tag) {
 			line = line.strip_edges();
 			line = line.replace("[br]", "\n\n");
 

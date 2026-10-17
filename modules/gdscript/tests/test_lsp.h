@@ -513,16 +513,12 @@ TEST_SUITE("[Modules][GDScript][LSP][Editor]") {
 		// Code listings
 		CHECK_EQ(LSP::marked_documentation("[codeblock]\nfunc test():\n    print(\"Hello, Godot!\")\n[/codeblock]", {}),
 				"```gdscript\nfunc test():\n    print(\"Hello, Godot!\")\n```");
-		CHECK_EQ(LSP::marked_documentation("[codeblock lang=csharp]\npublic void Test()\n{\n    GD.Print(\"Hello, Godot!\");\n}\n[/codeblock]", {}),
-				"```csharp\npublic void Test()\n{\n    GD.Print(\"Hello, Godot!\");\n}\n```");
-		// Code listings with multiple languages (the codeblocks tag is used in the built-in reference)
-		// When [codeblocks] is used, we only convert the [gdscript] tag to a code block like the built-in editor.
-		// NOTE: There is always a GDScript code listing in the built-in class reference.
-		CHECK_EQ(LSP::marked_documentation("[codeblocks]\n[gdscript]\nprint(hash(\"a\")) # Prints 177670\n[/gdscript]\n[csharp]\nGD.Print(GD.Hash(\"a\")); // Prints 177670\n[/csharp]\n[/codeblocks]", {}),
-				"```gdscript\nprint(hash(\"a\")) # Prints 177670\n```\n");
-		// Indentation and brackets inside the [gdscript] listing must be preserved.
-		CHECK_EQ(LSP::marked_documentation("[codeblocks]\n[gdscript]\nfunc test(arr):\n\tfor i in 3:\n\t\tprint(arr[i])\n[/gdscript]\n[csharp]\npublic void Test()\n{\n}\n[/csharp]\n[/codeblocks]", {}),
-				"```gdscript\nfunc test(arr):\n\tfor i in 3:\n\t\tprint(arr[i])\n```\n");
+		// Class-reference examples use a single GDScript code block.
+		CHECK_EQ(LSP::marked_documentation("[codeblock]\nprint(hash(\"a\")) # Prints 177670\n[/codeblock]", {}),
+				"```gdscript\nprint(hash(\"a\")) # Prints 177670\n```");
+		// Indentation and brackets inside the code listing must be preserved.
+		CHECK_EQ(LSP::marked_documentation("[codeblock]\nfunc test(arr):\n\tfor i in 3:\n\t\tprint(arr[i])\n[/codeblock]", {}),
+				"```gdscript\nfunc test(arr):\n\tfor i in 3:\n\t\tprint(arr[i])\n```");
 
 		// lb and rb are used to insert literal square brackets in markdown.
 		CHECK_EQ(LSP::marked_documentation("[lb]literal brackets[rb]", {}), "\\[literal brackets\\]");

@@ -158,12 +158,6 @@ repos:
             modules/gdscript/tests/scripts/parser/warnings/empty_file_newline\.norun\.gd|
             tests/data/.*\.bin
           )$
-
-      - id: dotnet-format
-        name: dotnet-format
-        language: python
-        entry: python misc/scripts/dotnet_format.py
-        types_or: [c#]
 #
 # End of upstream Godot pre-commit hooks.
 #

@@ -1173,7 +1173,7 @@ void DocTools::generate(BitField<GenerateFlags> p_flags) {
 				c.annotations.push_back(atd);
 			}
 
-			// Skip adding the lang if it doesn't expose anything (e.g. C#).
+			// Skip languages that do not expose documentation.
 			if (c.methods.is_empty() && c.constants.is_empty() && c.annotations.is_empty()) {
 				continue;
 			}

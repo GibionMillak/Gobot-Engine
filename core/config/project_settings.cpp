@@ -51,7 +51,6 @@
 #ifdef TOOLS_ENABLED
 #include "core/config/engine.h"
 
-#include "modules/modules_enabled.gen.h" // IWYU pragma: keep. For mono.
 #endif // TOOLS_ENABLED
 
 ProjectSettings *ProjectSettings::get_singleton() {
@@ -89,10 +88,6 @@ const PackedStringArray ProjectSettings::get_required_features() {
 // Returns the features supported by this build of Godot. Includes all required features.
 const PackedStringArray ProjectSettings::_get_supported_features() {
 	PackedStringArray features = get_required_features();
-
-#ifdef MODULE_MONO_ENABLED
-	features.append("C#");
-#endif
 
 #ifdef RD_ENABLED
 #ifdef FORWARD_RD_ENABLED
@@ -1151,24 +1146,6 @@ Error ProjectSettings::_save_custom_bnd(const String &p_file) { // add other par
 	return save_custom(p_file);
 }
 
-#ifdef TOOLS_ENABLED
-bool _csproj_exists(const String &p_root_dir) {
-	Ref<DirAccess> dir = DirAccess::open(p_root_dir);
-	ERR_FAIL_COND_V(dir.is_null(), false);
-
-	dir->list_dir_begin();
-	String file_name = dir->_get_next();
-	while (file_name != "") {
-		if (!dir->current_is_dir() && file_name.get_extension() == "csproj") {
-			return true;
-		}
-		file_name = dir->_get_next();
-	}
-
-	return false;
-}
-#endif // TOOLS_ENABLED
-
 Error ProjectSettings::save_custom(const String &p_path, const CustomMap &p_custom, const Vector<String> &p_custom_features, bool p_merge_with_current) {
 	ERR_FAIL_COND_V_MSG(p_path.is_empty(), ERR_INVALID_PARAMETER, "Project settings save path cannot be empty.");
 
@@ -1177,18 +1154,6 @@ Error ProjectSettings::save_custom(const String &p_path, const CustomMap &p_cust
 	// If there is no feature list currently present, force one to generate.
 	if (project_features.is_empty()) {
 		project_features = ProjectSettings::get_required_features();
-	}
-	// Check for the existence of a csproj file.
-	if (_csproj_exists(get_resource_path())) {
-		// If there is a csproj file, add the C# feature if it doesn't already exist.
-		if (!project_features.has("C#")) {
-			project_features.append("C#");
-		}
-	} else {
-		// If there isn't a csproj file, remove the C# feature if it exists.
-		if (project_features.has("C#")) {
-			project_features.remove_at(project_features.find("C#"));
-		}
 	}
 	project_features = _trim_to_supported_features(project_features);
 	set_setting("application/config/features", project_features);

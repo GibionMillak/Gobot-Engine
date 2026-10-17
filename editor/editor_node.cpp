@@ -217,7 +217,7 @@
 #include "editor/export/android_sdk_manager.h"
 #endif // ANDROID_ENABLED
 
-#include "modules/modules_enabled.gen.h" // For gdscript, mono.
+#include "modules/modules_enabled.gen.h" // For gdscript.
 
 #include <cstdlib>
 
@@ -728,7 +728,7 @@ void EditorNode::_update_theme(bool p_skip_creation) {
 		theme = EditorThemeManager::generate_theme(theme);
 		DisplayServer::set_early_window_clear_color_override(true, theme->get_color(SNAME("background"), EditorStringName(Editor)));
 
-#if defined(MODULE_GDSCRIPT_ENABLED) || defined(MODULE_MONO_ENABLED)
+#if defined(MODULE_GDSCRIPT_ENABLED)
 		if (EditorHelpHighlighter::get_singleton()) {
 			// Update syntax colors.
 			EditorHelpHighlighter::get_singleton()->clear_cache();
@@ -909,7 +909,7 @@ void EditorNode::_notification(int p_what) {
 
 		case NOTIFICATION_POSTINITIALIZE: {
 			EditorHelp::generate_doc();
-#if defined(MODULE_GDSCRIPT_ENABLED) || defined(MODULE_MONO_ENABLED)
+#if defined(MODULE_GDSCRIPT_ENABLED)
 			EditorHelpHighlighter::create_singleton();
 #endif
 		} break;
@@ -4000,19 +4000,13 @@ String EditorNode::adjust_scene_name_casing(const String &p_root_name) {
 	return p_root_name;
 }
 
-String EditorNode::adjust_script_name_casing(const String &p_file_name, ScriptLanguage::ScriptNameCasing p_auto_casing) {
-	int editor_casing = GLOBAL_GET("editor/naming/script_name_casing");
-	if (editor_casing == ScriptLanguage::SCRIPT_NAME_CASING_AUTO) {
-		// Use the script language's preferred casing.
-		editor_casing = p_auto_casing;
-	}
+String EditorNode::adjust_script_name_casing(const String &p_file_name) {
+	const int editor_casing = GLOBAL_GET("editor/naming/script_name_casing");
 
 	switch (editor_casing) {
-		case ScriptLanguage::SCRIPT_NAME_CASING_AUTO:
-			// Script language has no preference, so do not adjust.
-			break;
 		case ScriptLanguage::SCRIPT_NAME_CASING_PASCAL_CASE:
 			return p_file_name.to_pascal_case();
+		case ScriptLanguage::SCRIPT_NAME_CASING_AUTO:
 		case ScriptLanguage::SCRIPT_NAME_CASING_SNAKE_CASE:
 			return p_file_name.to_snake_case();
 		case ScriptLanguage::SCRIPT_NAME_CASING_KEBAB_CASE:
@@ -4290,7 +4284,6 @@ void EditorNode::_discard_changes(const String &p_str) {
 			files_to_delete_on_exit = LocalVector<String>{
 				"res://.godot/imported",
 				"res://.godot/exported",
-				"res://.godot/mono",
 				"res://.godot/global_script_class_cache.cfg",
 				"res://.godot/scene_groups_cache.cfg",
 				"res://.godot/uid_cache.bin",
@@ -6594,13 +6587,7 @@ void EditorNode::run_editor_script(const Ref<Script> &p_script) {
 	if (!p_script->is_tool()) {
 		is_runnable = false;
 
-		if (p_script->get_class() == "GDScript") {
-			EditorToaster::get_singleton()->popup_str(TTR("Cannot run the script because it's not a tool script (add the @tool annotation at the top)."), EditorToaster::SEVERITY_WARNING);
-		} else if (p_script->get_class() == "CSharpScript") {
-			EditorToaster::get_singleton()->popup_str(TTR("Cannot run the script because it's not a tool script (add the [Tool] attribute above the class definition)."), EditorToaster::SEVERITY_WARNING);
-		} else {
-			EditorToaster::get_singleton()->popup_str(TTR("Cannot run the script because it's not a tool script."), EditorToaster::SEVERITY_WARNING);
-		}
+		EditorToaster::get_singleton()->popup_str(TTR("Cannot run the script because it's not a tool script (add the @tool annotation at the top)."), EditorToaster::SEVERITY_WARNING);
 	}
 	if (!is_runnable) {
 		return;
@@ -7680,29 +7667,11 @@ void EditorNode::add_plugin_init_callback(EditorPluginInitializeCallback p_callb
 
 EditorPluginInitializeCallback EditorNode::plugin_init_callbacks[EditorNode::MAX_INIT_CALLBACKS];
 
-int EditorNode::build_callback_count = 0;
-
-void EditorNode::add_build_callback(EditorBuildCallback p_callback) {
-	ERR_FAIL_COND(build_callback_count == MAX_INIT_CALLBACKS);
-
-	build_callbacks[build_callback_count++] = p_callback;
-}
-
-EditorBuildCallback EditorNode::build_callbacks[EditorNode::MAX_BUILD_CALLBACKS];
-
 bool EditorNode::call_build() {
-	bool builds_successful = true;
+	const bool builds_successful = editor_data.call_build();
 
-	for (int i = 0; i < build_callback_count && builds_successful; i++) {
-		if (!build_callbacks[i]()) {
-			ERR_PRINT("A Godot Engine build callback failed.");
-			builds_successful = false;
-		}
-	}
-
-	if (builds_successful && !editor_data.call_build()) {
+	if (!builds_successful) {
 		ERR_PRINT("An EditorPlugin build callback failed.");
-		builds_successful = false;
 	}
 
 	return builds_successful;
@@ -9709,7 +9678,7 @@ EditorNode::~EditorNode() {
 
 	remove_print_handler(&print_handler);
 	EditorHelp::cleanup_doc();
-#if defined(MODULE_GDSCRIPT_ENABLED) || defined(MODULE_MONO_ENABLED)
+#if defined(MODULE_GDSCRIPT_ENABLED)
 	EditorHelpHighlighter::free_singleton();
 #endif
 	memdelete(editor_selection);

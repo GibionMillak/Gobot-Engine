@@ -45,9 +45,14 @@
 #include "scene/gui/grid_container.h"
 #include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
-#include "scene/gui/option_button.h"
 #include "scene/gui/text_edit.h"
 #include "scene/scene_string_names.h"
+
+#include "modules/modules_enabled.gen.h"
+
+#ifdef MODULE_GDSCRIPT_ENABLED
+#include "modules/gdscript/gdscript.h"
+#endif
 
 ConfigPluginDialog::ConfigPluginDialog() {
 	get_ok_button()->set_disabled(true);
@@ -125,27 +130,6 @@ ConfigPluginDialog::ConfigPluginDialog() {
 			_version_edit->set_tooltip_text(TTR("Optional. A human-readable version identifier used for informational purposes only."));
 			fields_grid->add_child(_version_edit);
 
-			Label *language_lbl = memnew(Label);
-			language_lbl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
-			language_lbl->set_text(TTR("Language:"));
-			fields_grid->add_child(language_lbl);
-
-			_language_option_btn = memnew(OptionButton);
-			for (int i = 0; i < ScriptServer::get_language_count(); i++) {
-				ScriptLanguage *lang = ScriptServer::get_language(i);
-				_language_option_btn->add_item(lang->get_name());
-				if (_default_language == -1) {
-					_default_language = i;
-				}
-				if (lang->get_name() == "GDScript") {
-					_default_language = i;
-				}
-			}
-			_language_option_btn->select(_default_language);
-			_language_option_btn->set_accessibility_name(TTRC("Language:"));
-			_language_option_btn->set_tooltip_text(TTR("Required. The scripting language to use for the script.\nNote that a plugin may use several languages at once by adding more scripts to the plugin."));
-			fields_grid->add_child(_language_option_btn);
-
 			Label *script_name_lbl = memnew(Label);
 			script_name_lbl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 			script_name_lbl->set_text(TTR("Script Name:"));
@@ -173,7 +157,6 @@ ConfigPluginDialog::ConfigPluginDialog() {
 		content_vbox->add_child(_validation_panel);
 	}
 
-	_language_option_btn->connect(SceneStringName(item_selected), callable_mp(_validation_panel, &EditorValidationPanel::update).unbind(1));
 	_name_edit->connect(SceneStringName(text_changed), callable_mp(_validation_panel, &EditorValidationPanel::update).unbind(1));
 	_subfolder_edit->connect(SceneStringName(text_changed), callable_mp(_validation_panel, &EditorValidationPanel::update).unbind(1));
 	_script_edit->connect(SceneStringName(text_changed), callable_mp(_validation_panel, &EditorValidationPanel::update).unbind(1));
@@ -201,14 +184,6 @@ void ConfigPluginDialog::popup_edit(const String &p_config_path) {
 	_author_edit->set_text(config->get_value("plugin", "author", ""));
 	_version_edit->set_text(config->get_value("plugin", "version", ""));
 	_script_edit->set_text(config->get_value("plugin", "script", ""));
-
-	const String extension = _script_edit->get_text().get_extension();
-	for (int i = 0; i < ScriptServer::get_language_count(); i++) {
-		if (ScriptServer::get_language(i)->get_extension() == extension) {
-			_language_option_btn->select(i);
-			break;
-		}
-	}
 
 	_update_mode();
 	popup_centered();
@@ -239,7 +214,6 @@ void ConfigPluginDialog::_clear_fields() {
 	_author_edit->clear();
 	_version_edit->clear();
 	_script_edit->clear();
-	_language_option_btn->select(_default_language);
 }
 
 void ConfigPluginDialog::_update_mode() {
@@ -281,21 +255,15 @@ void ConfigPluginDialog::_validate() {
 		_validation_panel->set_message(SUBFOLDER, "", EditorValidationPanel::MSG_OK);
 	}
 
-	const int language_index = _language_option_btn->get_selected();
-	if (language_index < 0 || language_index >= ScriptServer::get_language_count()) {
-		_validation_panel->set_message(SCRIPT, TTRC("A scripting language must be selected."), EditorValidationPanel::MSG_ERROR);
-		return;
-	}
+#ifndef MODULE_GDSCRIPT_ENABLED
+	_validation_panel->set_message(SCRIPT, TTRC("GDScript is unavailable in this build."), EditorValidationPanel::MSG_ERROR);
+#endif
 
-	ScriptLanguage *language = ScriptServer::get_language(language_index);
-	const String extension = language->get_extension();
 	const String script = _script_edit->get_text();
-	if ((!script.get_extension().is_empty() && script.get_extension() != extension) || script.ends_with(".")) {
-		_validation_panel->set_message(SCRIPT, vformat(TTR("Script extension must match chosen language extension (.%s)."), extension), EditorValidationPanel::MSG_ERROR);
+	if ((!script.get_extension().is_empty() && script.get_extension() != "gd") || script.ends_with(".")) {
+		_validation_panel->set_message(SCRIPT, TTRC("Script extension must be .gd."), EditorValidationPanel::MSG_ERROR);
 	}
-	if (language->get_name() == "GDScript") {
-		_validation_panel->set_message(ENABLE_WARNINGS, TTRC("Consider enabling GDScript warnings for this plugin by adding an entry for it to the project setting Debug > GDScript > Warnings > Directory Rules."), EditorValidationPanel::MSG_INFO);
-	}
+	_validation_panel->set_message(ENABLE_WARNINGS, TTRC("Consider enabling GDScript warnings for this plugin by adding an entry for it to the project setting Debug > GDScript > Warnings > Directory Rules."), EditorValidationPanel::MSG_INFO);
 }
 
 String ConfigPluginDialog::_get_subfolder() const {
@@ -303,9 +271,6 @@ String ConfigPluginDialog::_get_subfolder() const {
 }
 
 Error ConfigPluginDialog::_save_plugin() {
-	const int language_index = _language_option_btn->get_selected();
-	ERR_FAIL_INDEX_V(language_index, ScriptServer::get_language_count(), ERR_INVALID_PARAMETER);
-	ScriptLanguage *language = ScriptServer::get_language(language_index);
 	const bool creating = _config_path.is_empty();
 	const String config_path = creating ? String("res://addons").path_join(_get_subfolder()).path_join("plugin.cfg") : _config_path;
 	const String plugin_path = config_path.get_base_dir();
@@ -330,13 +295,12 @@ Error ConfigPluginDialog::_save_plugin() {
 	if (script_name.is_empty()) {
 		script_name = creating ? _get_subfolder() : plugin_path.get_file();
 	}
-	const String extension = language->get_extension();
-	if (script_name.get_extension() != extension) {
-		script_name += "." + extension;
+	if (script_name.get_extension() != "gd") {
+		script_name += ".gd";
 	}
 
 	if (creating) {
-		const Error error = _create_plugin_script(plugin_path.path_join(script_name), language);
+		const Error error = _create_plugin_script(plugin_path.path_join(script_name));
 		if (error != OK) {
 			return error;
 		}
@@ -350,17 +314,23 @@ Error ConfigPluginDialog::_save_plugin() {
 	return config->save(config_path);
 }
 
-Error ConfigPluginDialog::_create_plugin_script(const String &p_script_path, ScriptLanguage *p_language) {
+Error ConfigPluginDialog::_create_plugin_script(const String &p_script_path) {
 	if (FileAccess::exists(p_script_path)) {
 		return OK;
 	}
 
+	ScriptLanguage *language = nullptr;
+#ifdef MODULE_GDSCRIPT_ENABLED
+	language = GDScriptLanguage::get_singleton();
+#endif
+	ERR_FAIL_NULL_V(language, ERR_UNAVAILABLE);
+
 	String template_content;
-	const Vector<ScriptLanguage::ScriptTemplate> templates = p_language->get_built_in_templates("EditorPlugin");
+	const Vector<ScriptLanguage::ScriptTemplate> templates = language->get_built_in_templates("EditorPlugin");
 	if (!templates.is_empty()) {
 		template_content = templates[0].content;
 	}
-	Ref<Script> script = p_language->make_template(template_content, p_script_path.get_file().get_basename(), "EditorPlugin");
+	Ref<Script> script = language->make_template(template_content, p_script_path.get_file().get_basename(), "EditorPlugin");
 	ERR_FAIL_COND_V(script.is_null(), ERR_CANT_CREATE);
 	script->set_path(p_script_path, true);
 	return ResourceSaver::save(script);

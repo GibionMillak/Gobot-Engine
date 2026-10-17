@@ -2822,9 +2822,6 @@ msgstr "Tamanho da Fonte de Código de Ajuda"
 msgid "Help Title Font Size"
 msgstr "Tamanho da Fonte de Título de Ajuda"
 
-msgid "Class Reference Examples"
-msgstr "Exemplos da Referência de Classe"
-
 msgid "Sort Functions Alphabetically"
 msgstr "Funções em Ordem Alfabética"
 
@@ -3707,20 +3704,8 @@ msgstr "Imagem"
 msgid "Minimum Display Time"
 msgstr "Tempo Mínimo de Exibição"
 
-msgid "Dotnet"
-msgstr "Dotnet"
-
 msgid "Project"
 msgstr "Projeto"
-
-msgid "Assembly Name"
-msgstr "Nome do Assembly"
-
-msgid "Solution Directory"
-msgstr "Diretório da Solução"
-
-msgid "Assembly Reload Attempts"
-msgstr "Tentativas de Recarregar Assembly"
 
 msgid "Time"
 msgstr "Tempo"

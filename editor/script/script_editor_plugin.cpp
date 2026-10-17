@@ -1589,7 +1589,9 @@ static void _find_changed_scripts_for_external_editor(Node *p_base, Node *p_curr
 }
 
 void DocumentEditorContainer::_update_modified_scripts_for_external_editor(Ref<Script> p_for_script) {
-	bool use_external_editor = bool(EDITOR_GET("text_editor/external/use_external_editor"));
+	if (!bool(EDITOR_GET("text_editor/external/use_external_editor"))) {
+		return;
+	}
 
 	ERR_FAIL_NULL(get_tree());
 
@@ -1602,10 +1604,6 @@ void DocumentEditorContainer::_update_modified_scripts_for_external_editor(Ref<S
 
 	for (const Ref<Script> &E : scripts) {
 		Ref<Script> scr = E;
-
-		if (!use_external_editor && !scr->get_language()->overrides_external_editor()) {
-			continue; // We're not using an external editor for this script.
-		}
 
 		if (p_for_script.is_valid() && p_for_script != scr) {
 			continue;
@@ -2481,16 +2479,6 @@ bool DocumentEditorContainer::edit(const Ref<Resource> &p_resource, int p_line, 
 
 	const bool should_open = (open_dominant && !use_external_editor) || !EditorNode::get_singleton()->is_changing_scene();
 
-	if (scr.is_valid() && scr->get_language()->overrides_external_editor()) {
-		if (should_open) {
-			Error err = scr->get_language()->open_in_external_editor(scr, p_line >= 0 ? p_line : 0, p_col);
-			if (err != OK) {
-				ERR_PRINT("Couldn't open script in the overridden external text editor");
-			}
-		}
-		return false;
-	}
-
 	if (use_external_editor &&
 			(EditorDebuggerNode::get_singleton()->get_dump_stack_script() != p_resource || (EditorDebuggerNode::get_singleton()->get_debug_with_external_editor() && scr.is_valid())) &&
 			p_resource->get_path().is_resource_file()) {
@@ -3012,10 +3000,6 @@ void DocumentEditorContainer::_add_callback(Object *p_obj, const String &p_funct
 	ERR_FAIL_NULL(p_obj);
 	Ref<Script> scr = p_obj->get_script();
 	ERR_FAIL_COND(scr.is_null());
-
-	if (!scr->get_language()->can_make_function()) {
-		return;
-	}
 
 	EditorNode::get_singleton()->push_item(scr.ptr());
 
@@ -4296,9 +4280,7 @@ void ScriptEditor::_notification(int p_what) {
 }
 
 bool ScriptEditor::should_use_external_editor(const Ref<Script> &p_for_script) {
-	bool use_external_editor = external_editor_active ||
-			(p_for_script.is_valid() && p_for_script->get_language()->overrides_external_editor());
-	return use_external_editor && !(p_for_script.is_valid() && p_for_script->is_built_in()); // Ignore external editor for built-in scripts.
+	return external_editor_active && !(p_for_script.is_valid() && p_for_script->is_built_in()); // Ignore external editor for built-in scripts.
 }
 
 void ScriptEditor::focus_editor() {
@@ -4612,7 +4594,7 @@ void ScriptEditorPlugin::edit(Object *p_object) {
 		String res_path = p_script->get_path().get_slice("::", 0);
 
 		// Only update main editor screen if using in-engine editor.
-		if (!p_script->is_built_in() && (bool(EDITOR_GET("text_editor/external/use_external_editor")) || p_script->get_language()->overrides_external_editor())) {
+		if (!p_script->is_built_in() && bool(EDITOR_GET("text_editor/external/use_external_editor"))) {
 			skip_visible = true;
 		} else if (p_script->is_built_in() && !res_path.is_empty()) {
 			EditorNode::get_singleton()->load_scene_or_resource(res_path, false, false);

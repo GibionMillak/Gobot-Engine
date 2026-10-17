@@ -185,7 +185,6 @@ public:
 	virtual String get_name() const;
 
 	virtual bool supports_platform(const Ref<EditorExportPlatform> &p_export_platform) const;
-	PackedStringArray get_export_features(const Ref<EditorExportPlatform> &p_export_platform, bool p_debug) const;
 
 	void end_generate_apple_embedded_project(const String &p_path, bool p_will_build_archive);
 

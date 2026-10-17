@@ -62,8 +62,6 @@
 #include "servers/display/display_server.h"
 #include "servers/rendering/rendering_server.h"
 
-#include "modules/modules_enabled.gen.h" // IWYU pragma: keep. For mono.
-
 void ExportTemplateManager::_request_mirrors() {
 	mirrors_list->clear();
 	mirrors_empty = true;
@@ -270,7 +268,7 @@ void ExportTemplateManager::_tpz_file_selected(const String &p_file) {
 			String data_str = String::utf8((const char *)uncomp_data.ptr(), uncomp_data.size());
 			data_str = data_str.strip_edges();
 
-			// Version number should be of the form major.minor[.patch].status[.module_config]
+			// Version number should be of the form major.minor[.patch].status[.double]
 			// so it can in theory have 3 or more slices.
 			if (data_str.get_slice_count(".") < 3) {
 				EditorNode::get_singleton()->show_warning(vformat(TTR("Invalid version.txt format inside the export templates file: %s."), data_str));

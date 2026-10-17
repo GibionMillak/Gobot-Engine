@@ -240,7 +240,6 @@ public:
 	static void remove_script_doc_by_path(const String &p_path);
 	static bool has_doc(const String &p_class_name);
 
-
 	void go_to_help(const String &p_help);
 	void go_to_class(const String &p_class);
 	void update_doc();
@@ -409,33 +408,24 @@ class EditorSyntaxHighlighter;
 
 class EditorHelpHighlighter {
 public:
-	enum Language {
-		LANGUAGE_GDSCRIPT,
-		LANGUAGE_CSHARP,
-		LANGUAGE_MAX,
-	};
+	EditorHelpHighlighter();
+	virtual ~EditorHelpHighlighter();
 
-private:
-	using HighlightData = Vector<Pair<int, Color>>;
-
-	static EditorHelpHighlighter *singleton;
-
-	HashMap<String, HighlightData> highlight_data_caches[LANGUAGE_MAX];
-
-	TextEdit *text_edits[LANGUAGE_MAX];
-	Ref<Script> scripts[LANGUAGE_MAX];
-	Ref<EditorSyntaxHighlighter> highlighters[LANGUAGE_MAX];
-
-	HighlightData _get_highlight_data(Language p_language, const String &p_source, bool p_use_cache);
-
-public:
 	static void create_singleton();
 	static void free_singleton();
 	static EditorHelpHighlighter *get_singleton();
 
-	void highlight(RichTextLabel *p_rich_text_label, Language p_language, const String &p_source, bool p_use_cache);
+	void highlight(RichTextLabel *p_rich_text_label, const String &p_source, bool p_use_cache);
 	void clear_cache();
 
-	EditorHelpHighlighter();
-	virtual ~EditorHelpHighlighter();
+private:
+	using HighlightData = Vector<Pair<int, Color>>;
+
+	HighlightData _get_highlight_data(const String &p_source, bool p_use_cache);
+
+	static EditorHelpHighlighter *_singleton;
+	HashMap<String, HighlightData> _highlight_data_cache;
+	TextEdit *_text_edit = nullptr;
+	Ref<Script> _script;
+	Ref<EditorSyntaxHighlighter> _highlighter;
 };

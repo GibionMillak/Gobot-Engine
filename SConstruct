@@ -119,11 +119,8 @@ if "TERM" in os.environ:  # Used for colored output.
     env["ENV"]["TERM"] = os.environ["TERM"]
 
 env.disabled_modules = set()
-env.module_version_string = ""
 env.msvc = False
 env.scons_version = env._get_major_minor_revision(scons_raw_version)
-
-env.__class__.add_module_version_string = methods.add_module_version_string
 
 env.__class__.add_source_files = methods.add_source_files
 env.__class__.use_windows_spawn_fix = methods.use_windows_spawn_fix
@@ -1133,8 +1130,8 @@ if env.editor_build:
         print_error("Not all modules required by editor builds are enabled.")
         Exit(255)
 
-env["PROGSUFFIX_WRAP"] = suffix + env.module_version_string + ".console" + env["PROGSUFFIX"]
-env["PROGSUFFIX"] = suffix + env.module_version_string + env["PROGSUFFIX"]
+env["PROGSUFFIX_WRAP"] = suffix + ".console" + env["PROGSUFFIX"]
+env["PROGSUFFIX"] = suffix + env["PROGSUFFIX"]
 env["OBJSUFFIX"] = suffix + env["OBJSUFFIX"]
 # (SH)LIBSUFFIX will be used for our own built libraries
 # LIBSUFFIXES contains LIBSUFFIX and SHLIBSUFFIX by default,
