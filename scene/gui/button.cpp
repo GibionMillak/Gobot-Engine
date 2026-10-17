@@ -34,7 +34,6 @@
 #include "core/object/class_db.h"
 #include "scene/gui/dialogs.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 
 Size2 Button::get_minimum_size() const {
 	Ref<Texture2D> _icon = icon;
@@ -153,30 +152,9 @@ Ref<StyleBox> Button::_get_current_stylebox() const {
 	return stylebox;
 }
 
-String Button::_get_accessibility_name() const {
-	const String &ac_name = Control::_get_accessibility_name();
-	if (!xl_text.is_empty() && ac_name.is_empty()) {
-		return xl_text;
-	} else if (!xl_text.is_empty() && !ac_name.is_empty() && ac_name != xl_text) {
-		return ac_name + ": " + xl_text;
-	} else if (xl_text.is_empty() && ac_name.is_empty() && !get_tooltip_text().is_empty()) {
-		return get_tooltip_text(); // Fall back to tooltip.
-	} else {
-		return ac_name;
-	}
-}
-
 void Button::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AcceptDialog *dlg = Object::cast_to<AcceptDialog>(get_parent());
-			if (dlg && dlg->get_ok_button() == this) {
-				AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_DEFAULT_BUTTON);
-			}
-		} break;
 
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
 			queue_redraw();
@@ -188,7 +166,6 @@ void Button::_notification(int p_what) {
 
 			update_minimum_size();
 			update_configuration_warnings();
-			queue_accessibility_update();
 			queue_redraw();
 		} break;
 
@@ -607,7 +584,6 @@ void Button::set_text(const String &p_text) {
 	_shape();
 
 	update_configuration_warnings();
-	queue_accessibility_update();
 	queue_redraw();
 	update_minimum_size();
 }
@@ -647,7 +623,6 @@ void Button::set_text_direction(Control::TextDirection p_text_direction) {
 	if (text_direction != p_text_direction) {
 		text_direction = p_text_direction;
 		_shape();
-		queue_accessibility_update();
 		queue_redraw();
 	}
 }
@@ -660,7 +635,6 @@ void Button::set_language(const String &p_language) {
 	if (language != p_language) {
 		language = p_language;
 		_shape();
-		queue_accessibility_update();
 		queue_redraw();
 	}
 }
@@ -746,7 +720,6 @@ bool Button::get_clip_text() const {
 void Button::set_text_alignment(HorizontalAlignment p_alignment) {
 	if (alignment != p_alignment) {
 		alignment = p_alignment;
-		queue_accessibility_update();
 		queue_redraw();
 	}
 }

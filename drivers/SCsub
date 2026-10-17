@@ -32,9 +32,6 @@ if env["platform"] in ["macos", "ios"]:
 if env["platform"] in ["ios"]:
     SConscript("apple_embedded/SCsub")
 
-# Accessibility
-if env["accesskit"] and env["platform"] in ["macos", "windows", "linuxbsd", "android", "ios"]:
-    SConscript("accesskit/SCsub")
 
 # Midi drivers
 SConscript("alsamidi/SCsub")

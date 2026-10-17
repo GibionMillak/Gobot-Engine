@@ -1146,7 +1146,7 @@ void Skeleton3DEditor::create_editors() {
 	topmenu_bar->add_child(edit_mode_button);
 	edit_mode_button->set_theme_type_variation(SceneStringName(FlatButton));
 	edit_mode_button->set_toggle_mode(true);
-	edit_mode_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	edit_mode_button->set_focus_mode(FOCUS_NONE);
 	edit_mode_button->set_tooltip_text(TTR("Edit Mode\nShow buttons on joints."));
 	edit_mode_button->connect(SceneStringName(toggled), callable_mp(this, &Skeleton3DEditor::edit_mode_toggled));
 
@@ -1167,7 +1167,7 @@ void Skeleton3DEditor::create_editors() {
 	key_loc_button->set_theme_type_variation(SceneStringName(FlatButton));
 	key_loc_button->set_toggle_mode(true);
 	key_loc_button->set_pressed(editor_plugin->loc_pressed);
-	key_loc_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	key_loc_button->set_focus_mode(FOCUS_NONE);
 	key_loc_button->set_tooltip_text(TTR("Translation mask for inserting keys."));
 	animation_hb->add_child(key_loc_button);
 	if (!key_loc_button->is_connected(SceneStringName(toggled), callable_mp(this, &Skeleton3DEditor::_loc_toggled))) {
@@ -1178,7 +1178,7 @@ void Skeleton3DEditor::create_editors() {
 	key_rot_button->set_theme_type_variation(SceneStringName(FlatButton));
 	key_rot_button->set_toggle_mode(true);
 	key_rot_button->set_pressed(editor_plugin->rot_pressed);
-	key_rot_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	key_rot_button->set_focus_mode(FOCUS_NONE);
 	key_rot_button->set_tooltip_text(TTR("Rotation mask for inserting keys."));
 	animation_hb->add_child(key_rot_button);
 	if (!key_rot_button->is_connected(SceneStringName(toggled), callable_mp(this, &Skeleton3DEditor::_rot_toggled))) {
@@ -1189,7 +1189,7 @@ void Skeleton3DEditor::create_editors() {
 	key_scale_button->set_theme_type_variation(SceneStringName(FlatButton));
 	key_scale_button->set_toggle_mode(true);
 	key_scale_button->set_pressed(editor_plugin->scl_pressed);
-	key_scale_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	key_scale_button->set_focus_mode(FOCUS_NONE);
 	key_scale_button->set_tooltip_text(TTR("Scale mask for inserting keys."));
 	animation_hb->add_child(key_scale_button);
 	if (!key_scale_button->is_connected(SceneStringName(toggled), callable_mp(this, &Skeleton3DEditor::_scl_toggled))) {
@@ -1198,7 +1198,7 @@ void Skeleton3DEditor::create_editors() {
 
 	key_insert_button = memnew(Button);
 	key_insert_button->set_theme_type_variation(SceneStringName(FlatButton));
-	key_insert_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	key_insert_button->set_focus_mode(FOCUS_NONE);
 	key_insert_button->connect(SceneStringName(pressed), callable_mp(this, &Skeleton3DEditor::insert_keys).bind(false, false));
 	key_insert_button->set_tooltip_text(TTRC("Insert key (based on mask) for bones with an existing track."));
 	key_insert_button->set_shortcut(ED_SHORTCUT("skeleton_3d_editor/insert_key_to_existing_tracks", TTRC("Insert Key (Existing Tracks)"), Key::INSERT));
@@ -1206,7 +1206,7 @@ void Skeleton3DEditor::create_editors() {
 
 	key_insert_new_button = memnew(Button);
 	key_insert_new_button->set_theme_type_variation(SceneStringName(FlatButton));
-	key_insert_new_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	key_insert_new_button->set_focus_mode(FOCUS_NONE);
 	key_insert_new_button->connect(SceneStringName(pressed), callable_mp(this, &Skeleton3DEditor::insert_keys).bind(true, false));
 	key_insert_new_button->set_tooltip_text(TTRC("Insert key (based on mask) for all bones."));
 	key_insert_new_button->set_shortcut(ED_SHORTCUT("skeleton_3d_editor/insert_key_of_all_bones", TTRC("Insert Key (All Bones)"), KeyModifierMask::CMD_OR_CTRL + Key::INSERT));
@@ -1214,7 +1214,7 @@ void Skeleton3DEditor::create_editors() {
 
 	key_mod_insert_button = memnew(Button);
 	key_mod_insert_button->set_theme_type_variation(SceneStringName(FlatButton));
-	key_mod_insert_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	key_mod_insert_button->set_focus_mode(FOCUS_NONE);
 	key_mod_insert_button->connect(SceneStringName(pressed), callable_mp(this, &Skeleton3DEditor::insert_keys).bind(false, true));
 	key_mod_insert_button->set_tooltip_text(TTRC("Insert key (based on mask) for modified bones with an existing track."));
 	key_mod_insert_button->set_shortcut(ED_SHORTCUT("skeleton_3d_editor/insert_key_to_existing_tracks", TTRC("Insert Key (Existing Tracks)"), Key::INSERT));
@@ -1222,7 +1222,7 @@ void Skeleton3DEditor::create_editors() {
 
 	key_mod_insert_new_button = memnew(Button);
 	key_mod_insert_new_button->set_theme_type_variation(SceneStringName(FlatButton));
-	key_mod_insert_new_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	key_mod_insert_new_button->set_focus_mode(FOCUS_NONE);
 	key_mod_insert_new_button->connect(SceneStringName(pressed), callable_mp(this, &Skeleton3DEditor::insert_keys).bind(true, true));
 	key_mod_insert_new_button->set_tooltip_text(TTRC("Insert new key (based on mask) for all modified bones."));
 	key_mod_insert_new_button->set_shortcut(ED_SHORTCUT("skeleton_3d_editor/insert_key_of_all_bones", TTRC("Insert Key (All Bones)"), KeyModifierMask::CMD_OR_CTRL + Key::INSERT));

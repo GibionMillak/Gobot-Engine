@@ -688,7 +688,7 @@ uint64_t OS::get_frame_delay(bool p_can_draw) const {
 	return frame_delay + dynamic_delay;
 }
 
-void OS::add_frame_delay(bool p_can_draw, bool p_wake_for_events) {
+void OS::add_frame_delay(bool p_can_draw) {
 	const uint32_t frame_delay = Engine::get_singleton()->get_frame_delay();
 	if (frame_delay) {
 		// Add fixed frame delay to decrease CPU/GPU usage. This doesn't take

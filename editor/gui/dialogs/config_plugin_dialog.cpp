@@ -74,7 +74,6 @@ ConfigPluginDialog::ConfigPluginDialog() {
 			fields_grid->add_child(name_lbl);
 
 			_name_edit = memnew(LineEdit);
-			_name_edit->set_accessibility_name(TTRC("Plugin Name:"));
 			_name_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 			_name_edit->set_placeholder("MyPlugin");
 			_name_edit->set_tooltip_text(TTR("Required. This name will be displayed in the list of plugins."));
@@ -86,7 +85,6 @@ ConfigPluginDialog::ConfigPluginDialog() {
 			fields_grid->add_child(_subfolder_lbl);
 
 			_subfolder_edit = memnew(LineEdit);
-			_subfolder_edit->set_accessibility_name(TTRC("Subfolder:"));
 			_subfolder_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 			_subfolder_edit->set_placeholder(U"\"my_plugin\" → res://addons/my_plugin");
 			_subfolder_edit->set_tooltip_text(TTR("Optional. The folder name should generally use `snake_case` naming (avoid spaces and special characters).\nIf left empty, the folder will be named after the plugin name converted to `snake_case`."));
@@ -98,7 +96,6 @@ ConfigPluginDialog::ConfigPluginDialog() {
 			fields_grid->add_child(description_lbl);
 
 			_description_edit = memnew(TextEdit);
-			_description_edit->set_accessibility_name(TTRC("Description:"));
 			_description_edit->set_custom_minimum_size(Size2(400, 80) * EDSCALE);
 			_description_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 			_description_edit->set_line_wrapping_mode(TextEdit::LineWrappingMode::LINE_WRAPPING_BOUNDARY);
@@ -112,7 +109,6 @@ ConfigPluginDialog::ConfigPluginDialog() {
 			fields_grid->add_child(author_lbl);
 
 			_author_edit = memnew(LineEdit);
-			_author_edit->set_accessibility_name(TTRC("Author:"));
 			_author_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 			_author_edit->set_placeholder("Godette");
 			_author_edit->set_tooltip_text(TTR("Optional. The author's username, full name, or organization name."));
@@ -124,7 +120,6 @@ ConfigPluginDialog::ConfigPluginDialog() {
 			fields_grid->add_child(version_lbl);
 
 			_version_edit = memnew(LineEdit);
-			_version_edit->set_accessibility_name(TTRC("Version:"));
 			_version_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 			_version_edit->set_placeholder("1.0");
 			_version_edit->set_tooltip_text(TTR("Optional. A human-readable version identifier used for informational purposes only."));
@@ -136,7 +131,6 @@ ConfigPluginDialog::ConfigPluginDialog() {
 			fields_grid->add_child(script_name_lbl);
 
 			_script_edit = memnew(LineEdit);
-			_script_edit->set_accessibility_name(TTRC("Script Name:"));
 			_script_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 			_script_edit->set_placeholder(U"\"plugin.gd\" → res://addons/my_plugin/plugin.gd");
 			_script_edit->set_tooltip_text(TTR("Optional. The name of the script file. If left empty, will default to the subfolder name."));

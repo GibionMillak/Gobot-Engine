@@ -43,7 +43,6 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 #include "scene/main/scene_tree.h"
 #include "scene/theme/theme_db.h"
 #include "scene/theme/theme_owner.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/rendering/rendering_server_enums.h"
@@ -782,7 +781,6 @@ void Window::_make_window() {
 	DisplayServer::get_singleton()->window_set_title(displayed_title, window_id);
 	DisplayServer::get_singleton()->window_attach_instance_id(get_instance_id(), window_id);
 	DisplayServer::get_singleton()->window_request_hdr_output(hdr_output_requested, window_id);
-	AccessibilityServer::get_singleton()->set_window_callbacks(window_id, callable_mp(this, &Window::_accessibility_activate), callable_mp(this, &Window::_accessibility_deactivate));
 
 	_update_window_size();
 
@@ -865,14 +863,6 @@ void Window::_rect_changed_callback(const Rect2i &p_callback) {
 		size = p_callback.size;
 		_update_viewport_size();
 	}
-	if (window_id != DisplayServerEnums::INVALID_WINDOW_ID && !DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_SELF_FITTING_WINDOWS)) {
-		Vector2 sz_out = DisplayServer::get_singleton()->window_get_size_with_decorations(window_id);
-		Vector2 pos_out = DisplayServer::get_singleton()->window_get_position_with_decorations(window_id);
-		Vector2 sz_in = DisplayServer::get_singleton()->window_get_size(window_id);
-		Vector2 pos_in = DisplayServer::get_singleton()->window_get_position(window_id);
-		AccessibilityServer::get_singleton()->set_window_rect(window_id, Rect2(pos_out, sz_out), Rect2(pos_in, sz_in));
-	}
-	queue_accessibility_update();
 }
 
 void Window::_propagate_window_notification(Node *p_node, int p_notification) {
@@ -934,17 +924,6 @@ void Window::_event_callback(DisplayServerEnums::WindowEvent p_event) {
 			focused_window = this;
 			_propagate_window_notification(this, NOTIFICATION_WM_WINDOW_FOCUS_IN);
 			emit_signal(SceneStringName(focus_entered));
-			if (get_tree() && get_tree()->is_accessibility_enabled()) {
-				Window *w = exclusive_child;
-				while (w) {
-					if (w->exclusive_child) {
-						w = w->exclusive_child;
-					} else {
-						w->grab_focus();
-						break;
-					}
-				}
-			}
 		} break;
 		case DisplayServerEnums::WINDOW_EVENT_FOCUS_OUT: {
 			focused = false;
@@ -1010,50 +989,6 @@ void Window::hide() {
 	set_visible(false);
 }
 
-void Window::_accessibility_activate() {
-	_accessibility_notify_enter(this);
-	if (!get_embedder()) {
-		AccessibilityServer::get_singleton()->window_activation_completed(get_window_id());
-	}
-}
-
-void Window::_accessibility_deactivate() {
-	_accessibility_notify_exit(this);
-	if (!get_embedder()) {
-		AccessibilityServer::get_singleton()->window_deactivation_completed(get_window_id());
-	}
-}
-
-void Window::_accessibility_notify_enter(Node *p_node) {
-	p_node->queue_accessibility_update();
-
-	if (p_node != this) {
-		const Window *window = Object::cast_to<Window>(p_node);
-		if (window) {
-			return;
-		}
-	}
-
-	for (int i = 0; i < p_node->get_child_count(); i++) {
-		_accessibility_notify_enter(p_node->get_child(i));
-	}
-}
-
-void Window::_accessibility_notify_exit(Node *p_node) {
-	p_node->notification(Node::NOTIFICATION_ACCESSIBILITY_INVALIDATE);
-
-	if (p_node != this) {
-		const Window *window = Object::cast_to<Window>(p_node);
-		if (window) {
-			return;
-		}
-	}
-
-	for (int i = 0; i < p_node->get_child_count(); i++) {
-		_accessibility_notify_exit(p_node->get_child(i));
-	}
-}
-
 void Window::set_visible(bool p_visible) {
 	ERR_MAIN_THREAD_GUARD;
 	if (visible == p_visible) {
@@ -1109,31 +1044,11 @@ void Window::set_visible(bool p_visible) {
 		_update_window_size();
 	}
 
-	if (visible) {
-		if (get_tree() && get_tree()->is_accessibility_supported()) {
-			get_tree()->_accessibility_force_update();
-			_accessibility_notify_enter(this);
-			if (!embedder_vp) {
-				AccessibilityServer::get_singleton()->window_activation_completed(get_window_id());
-			}
-		}
-	} else {
-		if (get_tree() && get_tree()->is_accessibility_supported()) {
-			_accessibility_notify_exit(this);
-			if (!embedder_vp) {
-				AccessibilityServer::get_singleton()->window_deactivation_completed(get_window_id());
-			}
-		}
+	if (!visible) {
 		focused = false;
 		if (focused_window == this) {
 			focused_window = nullptr;
 		}
-	}
-	if (get_parent()) {
-		get_parent()->queue_accessibility_update();
-	}
-	if (embedder) {
-		embedder->queue_accessibility_update();
 	}
 
 	notification(NOTIFICATION_VISIBILITY_CHANGED);
@@ -1540,132 +1455,10 @@ Viewport *Window::get_embedder() const {
 	return nullptr;
 }
 
-RID Window::get_accessibility_element() const {
-	if (!visible || is_part_of_edited_scene()) {
-		return RID();
-	}
-	if (get_embedder() || is_popup()) {
-		return Node::get_accessibility_element();
-	} else if (window_id != DisplayServerEnums::INVALID_WINDOW_ID) {
-		return AccessibilityServer::get_singleton()->get_window_root(window_id);
-	} else {
-		return RID();
-	}
-}
-
-RID Window::get_focused_accessibility_element() const {
-	if (window_id == DisplayServerEnums::MAIN_WINDOW_ID) {
-		if (get_child_count() > 0) {
-			return get_child(0)->get_focused_accessibility_element(); // Try scene tree root node.
-		}
-	}
-	return Node::get_focused_accessibility_element();
-}
-
-String Window::_get_accessibility_name() const {
-	if (accessibility_name.is_empty()) {
-		return displayed_title;
-	} else {
-		return accessibility_name;
-	}
-}
-
-PackedStringArray Window::get_accessibility_configuration_warnings() const {
-	ERR_READ_THREAD_GUARD_V(PackedStringArray());
-	PackedStringArray warnings = Node::get_accessibility_configuration_warnings();
-
-	String ac_name = _get_accessibility_name().strip_edges();
-	if (ac_name.is_empty()) {
-		warnings.push_back(RTR("Accessibility Name must not be empty, or contain only spaces."));
-	}
-	if (ac_name.contains(get_class_name())) {
-		warnings.push_back(RTR("Accessibility Name must not include Node class name."));
-	}
-	for (int i = 0; i < ac_name.length(); i++) {
-		if (is_control(ac_name[i])) {
-			warnings.push_back(RTR("Accessibility Name must not include control character."));
-			break;
-		}
-	}
-
-	return warnings;
-}
-
-Transform2D Window::get_accessibility_transform() const {
-	if (is_inside_tree() && get_parent()) {
-		Transform2D parent_tr = get_parent()->get_accessibility_transform();
-		Transform2D window_tr;
-		if (window_id == DisplayServerEnums::INVALID_WINDOW_ID) {
-			window_tr.set_origin(position);
-		} else {
-			Window *np = get_non_popup_window();
-			if (np) {
-				window_tr.set_origin(get_position() - np->get_position());
-			}
-		}
-		window_tr.set_scale(Vector2(1.f, 1.f) * get_content_scale_factor());
-		return parent_tr.affine_inverse() * window_tr;
-	} else {
-		return Transform2D();
-	}
-}
-
 void Window::_notification(int p_what) {
 	ERR_MAIN_THREAD_GUARD;
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_INVALIDATE: {
-			if (accessibility_title_element.is_valid()) {
-				AccessibilityServer::get_singleton()->free_element(accessibility_title_element);
-				accessibility_title_element = RID();
-			}
-			if (accessibility_announcement_element.is_valid()) {
-				AccessibilityServer::get_singleton()->free_element(accessibility_announcement_element);
-				accessibility_announcement_element = RID();
-			}
-		} break;
 
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
-
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_WINDOW);
-			AccessibilityServer::get_singleton()->update_set_name(ae, _get_accessibility_name());
-			AccessibilityServer::get_singleton()->update_set_description(ae, accessibility_description);
-			AccessibilityServer::get_singleton()->update_set_flag(ae, AccessibilityServerEnums::AccessibilityFlags::FLAG_MODAL, exclusive);
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_FOCUS, callable_mp(this, &Window::_accessibility_action_grab_focus));
-			AccessibilityServer::get_singleton()->update_set_flag(ae, AccessibilityServerEnums::AccessibilityFlags::FLAG_HIDDEN, !visible);
-
-			if (get_embedder() || is_popup()) {
-				AccessibilityServer::get_singleton()->update_set_transform(ae, get_accessibility_transform());
-				AccessibilityServer::get_singleton()->update_set_bounds(ae, Rect2(Point2(), Vector2(size) / get_content_scale_factor()));
-
-				if (accessibility_title_element.is_null()) {
-					accessibility_title_element = AccessibilityServer::get_singleton()->create_sub_element(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_TITLE_BAR);
-				}
-
-				int w = get_theme_constant(SNAME("title_height"));
-				AccessibilityServer::get_singleton()->update_set_name(accessibility_title_element, displayed_title);
-				AccessibilityServer::get_singleton()->update_set_bounds(accessibility_title_element, Rect2(Vector2(0, -w), Size2(size.x, w)));
-			} else {
-				AccessibilityServer::get_singleton()->update_set_transform(ae, get_final_transform());
-				if (_get_size_2d_override() != Size2()) {
-					AccessibilityServer::get_singleton()->update_set_bounds(ae, Rect2(Point2(), _get_size_2d_override()));
-				} else {
-					AccessibilityServer::get_singleton()->update_set_bounds(ae, Rect2(Point2(), _get_size()));
-				}
-
-				if (accessibility_announcement_element.is_null()) {
-					accessibility_announcement_element = AccessibilityServer::get_singleton()->create_sub_element(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_STATIC_TEXT);
-				}
-
-				if (announcement.is_empty()) {
-					AccessibilityServer::get_singleton()->update_set_live(accessibility_announcement_element, AccessibilityServerEnums::AccessibilityLiveMode::LIVE_OFF);
-				} else {
-					AccessibilityServer::get_singleton()->update_set_name(accessibility_announcement_element, announcement);
-					AccessibilityServer::get_singleton()->update_set_live(accessibility_announcement_element, AccessibilityServerEnums::AccessibilityLiveMode::LIVE_ASSERTIVE);
-				}
-			}
-		} break;
 
 		case NOTIFICATION_POSTINITIALIZE: {
 			initialized = true;
@@ -1727,7 +1520,6 @@ void Window::_notification(int p_what) {
 					fullscreen_shortcut_enabled = GLOBAL_GET("display/window/size/enable_toggle_fullscreen_shortcut");
 					focused_window = this;
 					DisplayServer::get_singleton()->window_attach_instance_id(get_instance_id(), window_id);
-					AccessibilityServer::get_singleton()->set_window_callbacks(window_id, callable_mp(this, &Window::_accessibility_activate), callable_mp(this, &Window::_accessibility_deactivate));
 					_update_from_window();
 					// Since this window already exists (created on start), we must update pos and size from it.
 					{
@@ -1763,22 +1555,9 @@ void Window::_notification(int p_what) {
 				_make_transient();
 			}
 			if (visible) {
-				if (window_id != DisplayServerEnums::MAIN_WINDOW_ID && get_tree() && get_tree()->is_accessibility_supported()) {
-					get_tree()->_accessibility_force_update();
-					_accessibility_notify_enter(this);
-					if (!embedder) {
-						AccessibilityServer::get_singleton()->window_activation_completed(get_window_id());
-					}
-				}
 				notification(NOTIFICATION_VISIBILITY_CHANGED);
 				emit_signal(SceneStringName(visibility_changed));
 				RS::get_singleton()->viewport_set_active(get_viewport_rid(), true);
-				if (get_parent()) {
-					get_parent()->queue_accessibility_update();
-				}
-				if (embedder) {
-					embedder->queue_accessibility_update();
-				}
 			}
 
 			// Emits NOTIFICATION_THEME_CHANGED internally.
@@ -1820,23 +1599,7 @@ void Window::_notification(int p_what) {
 
 			set_theme_context(nullptr, false);
 
-			if (visible && window_id != DisplayServerEnums::MAIN_WINDOW_ID) {
-				if (get_tree() && get_tree()->is_accessibility_supported()) {
-					_accessibility_notify_exit(this);
-					if (!embedder) {
-						AccessibilityServer::get_singleton()->window_deactivation_completed(get_window_id());
-					}
-					if (get_parent()) {
-						get_parent()->queue_accessibility_update();
-					}
-					if (embedder) {
-						embedder->queue_accessibility_update();
-					}
-				}
-			}
 
-			accessibility_title_element = RID();
-			accessibility_announcement_element = RID();
 
 			if (transient) {
 				_clear_transient();
@@ -2516,37 +2279,6 @@ Rect2i Window::get_usable_parent_rect() const {
 		parent_rect = DisplayServer::get_singleton()->screen_get_usable_rect(DisplayServer::get_singleton()->window_get_current_screen(w->get_window_id()));
 	}
 	return parent_rect;
-}
-
-void Window::set_accessibility_name(const String &p_name) {
-	ERR_MAIN_THREAD_GUARD;
-	if (accessibility_name != p_name) {
-		accessibility_name = p_name;
-		queue_accessibility_update();
-		update_configuration_warnings();
-	}
-}
-
-String Window::get_accessibility_name() const {
-	return tr(accessibility_name);
-}
-
-void Window::set_accessibility_description(const String &p_description) {
-	ERR_MAIN_THREAD_GUARD;
-	if (accessibility_description != p_description) {
-		accessibility_description = p_description;
-		queue_accessibility_update();
-	}
-}
-
-String Window::get_accessibility_description() const {
-	return tr(accessibility_description);
-}
-
-void Window::accessibility_announcement(const String &p_announcement) {
-	ERR_MAIN_THREAD_GUARD;
-	announcement = p_announcement;
-	queue_accessibility_update();
 }
 
 void Window::add_child_notify(Node *p_child) {
@@ -3456,7 +3188,6 @@ void Window::_update_displayed_title() {
 #endif
 
 	update_configuration_warnings();
-	queue_accessibility_update();
 }
 
 void Window::_bind_methods() {
@@ -3624,10 +3355,6 @@ void Window::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_window_id"), &Window::get_window_id);
 
-	ClassDB::bind_method(D_METHOD("set_accessibility_name", "name"), &Window::set_accessibility_name);
-	ClassDB::bind_method(D_METHOD("get_accessibility_name"), &Window::get_accessibility_name);
-	ClassDB::bind_method(D_METHOD("set_accessibility_description", "description"), &Window::set_accessibility_description);
-	ClassDB::bind_method(D_METHOD("get_accessibility_description"), &Window::get_accessibility_description);
 
 	ClassDB::bind_static_method("Window", D_METHOD("get_focused_window"), &Window::get_focused_window);
 
@@ -3698,9 +3425,6 @@ void Window::_bind_methods() {
 	ADD_GROUP("HDR Output", "hdr_output_");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "hdr_output_requested"), "set_hdr_output_requested", "is_hdr_output_requested");
 
-	ADD_GROUP("Accessibility", "accessibility_");
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "accessibility_name"), "set_accessibility_name", "get_accessibility_name");
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "accessibility_description"), "set_accessibility_description", "get_accessibility_description");
 
 	ADD_GROUP("Theme", "theme_");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "theme", PROPERTY_HINT_RESOURCE_TYPE, Theme::get_class_static()), "set_theme", "get_theme");

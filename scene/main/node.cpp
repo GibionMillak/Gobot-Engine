@@ -52,7 +52,6 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, Engine);
 #include "scene/main/viewport.h"
 #include "scene/main/window.h"
 #include "scene/resources/packed_scene.h"
-#include "servers/display/accessibility_server.h"
 
 #ifdef DEBUG_ENABLED
 #include "scene/debugger/scene_debugger.h"
@@ -66,34 +65,7 @@ thread_local Node *Node::current_process_thread_group = nullptr;
 
 void Node::_notification(int p_notification) {
 	switch (p_notification) {
-		case NOTIFICATION_ACCESSIBILITY_INVALIDATE: {
-			if (data.accessibility_element.is_valid()) {
-				AccessibilityServer::get_singleton()->free_element(data.accessibility_element);
-				data.accessibility_element = RID();
-			}
-		} break;
 
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
-
-			AccessibilityServer::get_singleton()->update_set_name(ae, get_name());
-
-			// Node children.
-			if (!accessibility_override_tree_hierarchy()) {
-				for (int i = 0; i < get_child_count(); i++) {
-					Node *child_node = get_child(i);
-					Window *child_wnd = Object::cast_to<Window>(child_node);
-					if (child_wnd && !(child_wnd->is_visible() && (child_wnd->is_embedded() || child_wnd->is_popup()))) {
-						continue;
-					}
-					if (child_node->is_part_of_edited_scene()) {
-						continue;
-					}
-					AccessibilityServer::get_singleton()->update_add_child(ae, child_node->get_accessibility_element());
-				}
-			}
-		} break;
 
 		case NOTIFICATION_PROCESS: {
 			GDVIRTUAL_CALL(_process, get_process_delta_time());
@@ -106,16 +78,6 @@ void Node::_notification(int p_notification) {
 		case NOTIFICATION_ENTER_TREE: {
 			ERR_FAIL_NULL(get_viewport());
 			ERR_FAIL_NULL(data.tree);
-
-			if (data.tree->is_accessibility_supported() && !is_part_of_edited_scene()) {
-				data.tree->_accessibility_force_update();
-				data.tree->_accessibility_notify_change(this);
-				if (data.parent) {
-					data.tree->_accessibility_notify_change(data.parent);
-				} else {
-					data.tree->_accessibility_notify_change(get_window()); // Root node.
-				}
-			}
 
 			// Update process mode.
 			if (data.process_mode == PROCESS_MODE_INHERIT) {
@@ -191,19 +153,6 @@ void Node::_notification(int p_notification) {
 		case NOTIFICATION_EXIT_TREE: {
 			ERR_FAIL_NULL(get_viewport());
 			ERR_FAIL_NULL(data.tree);
-
-			if (data.tree->is_accessibility_supported() && !is_part_of_edited_scene()) {
-				if (data.accessibility_element.is_valid()) {
-					AccessibilityServer::get_singleton()->free_element(data.accessibility_element);
-					data.accessibility_element = RID();
-				}
-				data.tree->_accessibility_notify_change(this, true);
-				if (data.parent) {
-					data.tree->_accessibility_notify_change(data.parent);
-				} else {
-					data.tree->_accessibility_notify_change(get_window()); // Root node.
-				}
-			}
 
 			data.tree->nodes_in_tree_count--;
 
@@ -3548,18 +3497,6 @@ void Node::clear_internal_tree_resource_paths() {
 	}
 }
 
-PackedStringArray Node::get_accessibility_configuration_warnings() const {
-	ERR_THREAD_GUARD_V(PackedStringArray());
-	PackedStringArray ret;
-
-	Vector<String> warnings;
-	if (GDVIRTUAL_CALL(_get_accessibility_configuration_warnings, warnings)) {
-		ret.append_array(warnings);
-	}
-
-	return ret;
-}
-
 PackedStringArray Node::get_configuration_warnings() const {
 	ERR_THREAD_GUARD_V(PackedStringArray());
 	PackedStringArray ret;
@@ -3757,42 +3694,6 @@ void Node::notify_thread_safe(int p_notification) {
 	}
 }
 
-RID Node::get_focused_accessibility_element() const {
-	RID id;
-	if (GDVIRTUAL_CALL(_get_focused_accessibility_element, id)) {
-		return id;
-	} else {
-		return get_accessibility_element();
-	}
-}
-
-Transform2D Node::get_accessibility_transform() const {
-	if (is_inside_tree() && data.parent) {
-		return data.parent->get_accessibility_transform();
-	} else {
-		return Transform2D();
-	}
-}
-
-void Node::queue_accessibility_update() {
-	if (is_inside_tree() && data.tree->is_accessibility_supported() && !is_part_of_edited_scene()) {
-		data.tree->_accessibility_notify_change(this);
-	}
-}
-
-RID Node::get_accessibility_element() const {
-	if (is_part_of_edited_scene()) {
-		return RID();
-	}
-	if (unlikely(data.accessibility_element.is_null())) {
-		Window *w = get_non_popup_window();
-		if (w && w->get_window_id() != DisplayServerEnums::INVALID_WINDOW_ID && get_window()->is_visible()) {
-			data.accessibility_element = AccessibilityServer::get_singleton()->create_element(w->get_window_id(), AccessibilityServerEnums::ROLE_CONTAINER);
-		}
-	}
-	return data.accessibility_element;
-}
-
 void Node::_bind_methods() {
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "editor/naming/node_name_num_separator", PROPERTY_HINT_ENUM, "None,Space,Underscore,Dash"), 0);
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "editor/naming/node_name_casing", PROPERTY_HINT_ENUM, "PascalCase,camelCase,snake_case,kebab-case"), NAME_CASING_PASCAL_CASE);
@@ -3872,8 +3773,6 @@ void Node::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_process_thread_group_order", "order"), &Node::set_process_thread_group_order);
 	ClassDB::bind_method(D_METHOD("get_process_thread_group_order"), &Node::get_process_thread_group_order);
 
-	ClassDB::bind_method(D_METHOD("queue_accessibility_update"), &Node::queue_accessibility_update);
-	ClassDB::bind_method(D_METHOD("get_accessibility_element"), &Node::get_accessibility_element);
 
 	ClassDB::bind_method(D_METHOD("set_display_folded", "fold"), &Node::set_display_folded);
 	ClassDB::bind_method(D_METHOD("is_displayed_folded"), &Node::is_displayed_folded);
@@ -4028,8 +3927,6 @@ void Node::_bind_methods() {
 	BIND_CONSTANT(NOTIFICATION_APPLICATION_PIP_MODE_ENTERED);
 	BIND_CONSTANT(NOTIFICATION_APPLICATION_PIP_MODE_EXITED);
 
-	BIND_CONSTANT(NOTIFICATION_ACCESSIBILITY_UPDATE);
-	BIND_CONSTANT(NOTIFICATION_ACCESSIBILITY_INVALIDATE);
 
 	BIND_ENUM_CONSTANT(PROCESS_MODE_INHERIT);
 	BIND_ENUM_CONSTANT(PROCESS_MODE_PAUSABLE);
@@ -4108,12 +4005,10 @@ void Node::_bind_methods() {
 	GDVIRTUAL_BIND(_exit_tree);
 	GDVIRTUAL_BIND(_ready);
 	GDVIRTUAL_BIND(_get_configuration_warnings);
-	GDVIRTUAL_BIND(_get_accessibility_configuration_warnings);
 	GDVIRTUAL_BIND(_input, "event");
 	GDVIRTUAL_BIND(_shortcut_input, "event");
 	GDVIRTUAL_BIND(_unhandled_input, "event");
 	GDVIRTUAL_BIND(_unhandled_key_input, "event");
-	GDVIRTUAL_BIND(_get_focused_accessibility_element);
 }
 
 String Node::_get_name_num_separator() {

@@ -35,7 +35,6 @@
 #include "core/object/class_db.h"
 #include "scene/main/scene_tree.h"
 #include "servers/audio/audio_server.h"
-#include "servers/display/accessibility_server.h"
 
 int VideoStreamPlayer::sp_get_channel_count() const {
 	if (playback.is_null()) {
@@ -131,12 +130,7 @@ void VideoStreamPlayer::_mix_audio() {
 
 void VideoStreamPlayer::_notification(int p_notification) {
 	switch (p_notification) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_VIDEO);
-		} break;
 
 		case NOTIFICATION_ENTER_TREE: {
 			AudioServer::get_singleton()->add_mix_callback(_mix_audios, this);

@@ -158,7 +158,6 @@ DirectoryCreateDialog::DirectoryCreateDialog() {
 	add_child(vb);
 
 	base_path_label = memnew(Label);
-	base_path_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	base_path_label->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_WORD_ELLIPSIS);
 	vb->add_child(base_path_label);
 
@@ -168,7 +167,6 @@ DirectoryCreateDialog::DirectoryCreateDialog() {
 	vb->add_child(name_label);
 
 	dir_path = memnew(LineEdit);
-	dir_path->set_accessibility_name(TTRC("Name:"));
 	vb->add_child(dir_path);
 	register_text_enter(dir_path);
 

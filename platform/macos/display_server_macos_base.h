@@ -145,10 +145,6 @@ public:
 	virtual void screen_set_keep_on(bool p_enable) override;
 	virtual bool screen_is_kept_on() const override;
 
-	virtual int accessibility_should_increase_contrast() const override;
-	virtual int accessibility_should_reduce_animation() const override;
-	virtual int accessibility_should_reduce_transparency() const override;
-	virtual int accessibility_screen_reader_active() const override;
 
 	void update_im_text(const Point2i &p_selection, const String &p_text);
 	virtual Point2i ime_get_selection() const override;

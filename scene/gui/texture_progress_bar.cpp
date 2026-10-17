@@ -33,7 +33,6 @@
 #include "core/config/engine.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/rendering/rendering_server.h"
 
 void TextureProgressBar::set_under_texture(const Ref<Texture2D> &p_texture) {
@@ -435,12 +434,7 @@ void TextureProgressBar::draw_nine_patch_stretched(const Ref<Texture2D> &p_textu
 
 void TextureProgressBar::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_PROGRESS_INDICATOR);
-		} break;
 
 		case NOTIFICATION_DRAW: {
 			if (under.is_valid()) {

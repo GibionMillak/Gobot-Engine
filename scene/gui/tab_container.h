@@ -179,8 +179,6 @@ protected:
 public:
 	static TabContainer *get_tab_bar_container(TabBar *p_tab_bar);
 
-	virtual bool accessibility_override_tree_hierarchy() const override { return true; }
-
 	HBoxContainer *get_internal_container() const { return internal_container; }
 	TabBar *get_tab_bar() const;
 

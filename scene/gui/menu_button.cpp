@@ -33,7 +33,6 @@
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "scene/main/window.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 #include "servers/rendering/rendering_server.h"
 
@@ -142,13 +141,7 @@ int MenuButton::get_item_count() const {
 
 void MenuButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_BUTTON);
-			AccessibilityServer::get_singleton()->update_set_popup_type(ae, AccessibilityServerEnums::AccessibilityPopupType::POPUP_MENU);
-		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED:
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
@@ -246,7 +239,7 @@ MenuButton::MenuButton(const String &p_text) :
 	set_toggle_mode(true);
 	set_disable_shortcuts(false);
 	set_process_shortcut_input(true);
-	set_focus_mode(FOCUS_ACCESSIBILITY);
+	set_focus_mode(FOCUS_NONE);
 	set_action_mode(ACTION_MODE_BUTTON_PRESS);
 
 	popup = memnew(PopupMenu);

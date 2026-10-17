@@ -34,7 +34,6 @@
 #include "core/object/class_db.h"
 #include "scene/main/scene_tree.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/text/text_server.h"
 
@@ -106,7 +105,6 @@ void Label::set_uppercase(bool p_uppercase) {
 	uppercase = p_uppercase;
 	text_dirty = true;
 
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -785,14 +783,7 @@ PackedStringArray Label::get_configuration_warnings() const {
 
 void Label::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_STATIC_TEXT);
-			AccessibilityServer::get_singleton()->update_set_value(ae, xl_text);
-			AccessibilityServer::get_singleton()->update_set_text_align(ae, horizontal_alignment);
-		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED: {
 			const String new_text = atr(text);
@@ -804,7 +795,6 @@ void Label::_notification(int p_what) {
 			}
 			text_dirty = true; // Language update might change the appearance of some characters.
 
-			queue_accessibility_update();
 			queue_redraw();
 			update_configuration_warnings();
 		} break;
@@ -1162,7 +1152,6 @@ void Label::set_horizontal_alignment(HorizontalAlignment p_alignment) {
 		}
 	}
 	horizontal_alignment = p_alignment;
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -1195,7 +1184,6 @@ void Label::set_text(const String &p_string) {
 	if (visible_ratio < 1) {
 		visible_chars = get_total_character_count() * visible_ratio;
 	}
-	queue_accessibility_update();
 	queue_redraw();
 	update_minimum_size();
 	update_desired_size();
@@ -1303,7 +1291,6 @@ void Label::set_paragraph_separator(const String &p_paragraph_separator) {
 	if (paragraph_separator != p_paragraph_separator) {
 		paragraph_separator = p_paragraph_separator;
 		text_dirty = true;
-		queue_accessibility_update();
 		queue_redraw();
 	}
 }
@@ -1463,7 +1450,6 @@ void Label::set_visible_characters(int p_amount) {
 		}
 		if (visible_chars_behavior == TextServer::VC_CHARS_BEFORE_SHAPING) {
 			text_dirty = true;
-			queue_accessibility_update();
 		}
 		queue_redraw();
 	}
@@ -1488,7 +1474,6 @@ void Label::set_visible_ratio(float p_ratio) {
 
 		if (visible_chars_behavior == TextServer::VC_CHARS_BEFORE_SHAPING) {
 			text_dirty = true;
-			queue_accessibility_update();
 		}
 		queue_redraw();
 	}
@@ -1506,7 +1491,6 @@ void Label::set_visible_characters_behavior(TextServer::VisibleCharactersBehavio
 	if (visible_chars_behavior != p_behavior) {
 		if (visible_chars_behavior == TextServer::VC_CHARS_BEFORE_SHAPING || p_behavior == TextServer::VC_CHARS_BEFORE_SHAPING) {
 			text_dirty = true;
-			queue_accessibility_update();
 		}
 		visible_chars_behavior = p_behavior;
 		queue_redraw();

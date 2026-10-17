@@ -408,13 +408,11 @@ Control *EditorToaster::popup(Control *p_control, Severity p_severity, double p_
 	// Add buttons.
 	if (p_time > 0.0) {
 		Button *copy_button = memnew(Button);
-		copy_button->set_accessibility_name(TTRC("Copy"));
 		copy_button->set_flat(true);
 		copy_button->connect(SceneStringName(pressed), callable_mp(this, &EditorToaster::copy).bind(panel));
 		hbox_container->add_child(copy_button);
 
 		Button *close_button = memnew(Button);
-		close_button->set_accessibility_name(TTRC("Close"));
 		close_button->set_flat(true);
 		close_button->connect(SceneStringName(pressed), callable_mp(this, &EditorToaster::instant_close).bind(panel));
 		hbox_container->add_child(close_button);
@@ -470,7 +468,6 @@ void EditorToaster::_popup_str(const String &p_message, Severity p_severity, con
 
 		Label *label = memnew(Label);
 		label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-		label->set_focus_mode(FOCUS_ACCESSIBILITY);
 		hb->add_child(label);
 
 		Label *count_label = memnew(Label);
@@ -613,7 +610,6 @@ EditorToaster::EditorToaster() {
 
 	// Main button.
 	main_button = memnew(Button);
-	main_button->set_accessibility_name(TTRC("Notifications:"));
 	main_button->set_tooltip_text(TTRC("No notifications."));
 	main_button->set_modulate(Color(0.5, 0.5, 0.5));
 	main_button->set_disabled(true);

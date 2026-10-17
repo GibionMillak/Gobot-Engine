@@ -1000,7 +1000,6 @@ CurveEditor::CurveEditor() {
 	snap_count_edit = memnew(EditorSpinSlider);
 	snap_count_edit->set_min(2);
 	snap_count_edit->set_max(100);
-	snap_count_edit->set_accessibility_name(TTRC("Snap Step"));
 	snap_count_edit->set_value(DEFAULT_SNAP);
 	snap_count_edit->set_custom_minimum_size(Size2(65 * EDSCALE, 0));
 	toolbar->add_child(snap_count_edit);

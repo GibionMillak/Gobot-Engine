@@ -96,7 +96,6 @@ ProjectExportTextureFormatError::ProjectExportTextureFormatError(ProjectExportDi
 	export_dialog = p_export_dialog;
 	// Set up the label.
 	texture_format_error_label = memnew(Label);
-	texture_format_error_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	add_child(texture_format_error_label);
 	// Set up the fix button.
 	fix_texture_format_button = memnew(LinkButton);
@@ -900,7 +899,6 @@ Variant ProjectExportDialog::get_drag_data_fw(const Point2 &p_point, Control *p_
 			tr->set_texture(presets->get_item_icon(pos));
 			drag->add_child(tr);
 			Label *label = memnew(Label);
-			label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 			label->set_text(presets->get_item_text(pos));
 			label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED); // Don't translate user input.
 			drag->add_child(label);
@@ -919,7 +917,6 @@ Variant ProjectExportDialog::get_drag_data_fw(const Point2 &p_point, Control *p_
 			d["patch"] = item_metadata;
 
 			Label *label = memnew(Label);
-			label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 			label->set_text(item->get_text(0));
 			patches->set_drag_preview(label);
 
@@ -1733,7 +1730,6 @@ ProjectExportDialog::ProjectExportDialog() {
 
 	options_filter = memnew(LineEdit);
 	options_filter->set_placeholder(TTRC("Filter Options"));
-	options_filter->set_accessibility_name(TTRC("Filter Options"));
 	options_filter->set_clear_button_enabled(true);
 	options_filter->set_virtual_keyboard_show_on_focus(false);
 	options_filter->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -1763,7 +1759,6 @@ ProjectExportDialog::ProjectExportDialog() {
 	resources_scroll_container->add_child(resources_vb);
 
 	export_filter = memnew(OptionButton);
-	export_filter->set_accessibility_name(TTRC("Export Mode"));
 	export_filter->add_item(TTRC("Export all resources in the project"));
 	export_filter->add_item(TTRC("Export selected scenes (and dependencies)"));
 	export_filter->add_item(TTRC("Export selected resources (and dependencies)"));
@@ -1789,7 +1784,6 @@ ProjectExportDialog::ProjectExportDialog() {
 	include_files->connect("custom_popup_edited", callable_mp(this, &ProjectExportDialog::_tree_popup_edited));
 
 	server_strip_message = memnew(Label);
-	server_strip_message->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	server_strip_message->set_visible(false);
 	server_strip_message->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	server_strip_message->set_custom_minimum_size(Size2(300 * EDSCALE, 1));
@@ -1820,14 +1814,12 @@ ProjectExportDialog::ProjectExportDialog() {
 	file_mode_popup->connect(SceneStringName(id_pressed), callable_mp(this, &ProjectExportDialog::_set_file_export_mode));
 
 	include_filters = memnew(LineEdit);
-	include_filters->set_accessibility_name(TTRC("Include Filters"));
 	resources_vb->add_margin_child(
 			TTRC("Filters to export non-resource files/folders\n(comma-separated, e.g: *.cfg, *.txt, docs/*)"),
 			include_filters);
 	include_filters->connect(SceneStringName(text_changed), callable_mp(this, &ProjectExportDialog::_filter_changed));
 
 	exclude_filters = memnew(LineEdit);
-	exclude_filters->set_accessibility_name(TTRC("Exclude Filters"));
 	resources_vb->add_margin_child(
 			TTRC("Filters to exclude files/folders from project\n(comma-separated, e.g: *.cfg, *.txt, docs/*)"),
 			exclude_filters);
@@ -1877,12 +1869,10 @@ ProjectExportDialog::ProjectExportDialog() {
 	patch_vb->add_margin_child(TTRC("Delta Encoding Minimum Size Reduction"), patch_delta_min_reduction);
 
 	patch_delta_include_filter = memnew(LineEdit);
-	patch_delta_include_filter->set_accessibility_name(TTRC("Delta Encoding Include Filters"));
 	patch_delta_include_filter->connect(SceneStringName(text_changed), callable_mp(this, &ProjectExportDialog::_patch_delta_include_filter_changed));
 	patch_vb->add_margin_child(TTRC("Filters to include files/folders from being delta-encoded\n(comma-separated, e.g: *.gdc, scripts/*)"), patch_delta_include_filter);
 
 	patch_delta_exclude_filter = memnew(LineEdit);
-	patch_delta_exclude_filter->set_accessibility_name(TTRC("Delta Encoding Exclude Filters"));
 	patch_delta_exclude_filter->connect(SceneStringName(text_changed), callable_mp(this, &ProjectExportDialog::_patch_delta_exclude_filter_changed));
 	patch_vb->add_margin_child(TTRC("Filters to exclude files/folders from being delta-encoded\n(comma-separated, e.g: *.ctex, textures/*)"), patch_delta_exclude_filter);
 
@@ -1953,14 +1943,12 @@ ProjectExportDialog::ProjectExportDialog() {
 	sec_vb->add_child(enc_directory);
 
 	enc_in_filters = memnew(LineEdit);
-	enc_in_filters->set_accessibility_name(TTRC("Include Filters"));
 	enc_in_filters->connect(SceneStringName(text_changed), callable_mp(this, &ProjectExportDialog::_enc_filters_changed));
 	sec_vb->add_margin_child(
 			TTRC("Filters to include files/folders\n(comma-separated, e.g: *.tscn, *.tres, scenes/*)"),
 			enc_in_filters);
 
 	enc_ex_filters = memnew(LineEdit);
-	enc_ex_filters->set_accessibility_name(TTRC("Exclude Filters"));
 	enc_ex_filters->connect(SceneStringName(text_changed), callable_mp(this, &ProjectExportDialog::_enc_filters_changed));
 	sec_vb->add_margin_child(
 			TTRC("Filters to exclude files/folders\n(comma-separated, e.g: *.ctex, *.import, music/*)"),
@@ -1968,7 +1956,6 @@ ProjectExportDialog::ProjectExportDialog() {
 
 	script_key = memnew(LineEdit);
 	script_key->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	script_key->set_accessibility_name(TTRC("Encryption Key (256-bits as hexadecimal):"));
 	script_key->connect(SceneStringName(text_changed), callable_mp(this, &ProjectExportDialog::_script_encryption_key_changed));
 	script_key->set_secret(true);
 
@@ -1981,18 +1968,15 @@ ProjectExportDialog::ProjectExportDialog() {
 	encryption_hb->add_child(show_script_key);
 
 	script_key_error = memnew(Label);
-	script_key_error->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	sec_vb->add_margin_child(TTRC("Encryption Key (256-bits as hexadecimal):"), encryption_hb);
 	sec_vb->add_child(script_key_error);
 	sections->add_child(sec_scroll_container);
 
 	seed_input = memnew(LineEdit);
-	seed_input->set_accessibility_name(TTRC("Initialization vector seed"));
 	seed_input->connect(SceneStringName(text_changed), callable_mp(this, &ProjectExportDialog::_seed_input_changed));
 	sec_vb->add_margin_child(TTRC("Initialization vector seed"), seed_input);
 
 	Label *sec_info = memnew(Label);
-	sec_info->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	sec_info->set_text(TTRC("Note: Encryption key needs to be stored in the binary,\nyou need to build the export templates from source."));
 	sec_vb->add_child(sec_info);
 
@@ -2007,7 +1991,6 @@ ProjectExportDialog::ProjectExportDialog() {
 	script_vb->set_name(TTRC("Scripts"));
 
 	script_mode = memnew(OptionButton);
-	script_mode->set_accessibility_name(TTRC("GDScript Export Mode:"));
 	script_vb->add_margin_child(TTRC("GDScript Export Mode:"), script_mode);
 	script_mode->add_item(TTRC("Text (easier debugging)"), (int)EditorExportPreset::MODE_SCRIPT_TEXT);
 	script_mode->add_item(TTRC("Binary tokens (faster loading)"), (int)EditorExportPreset::MODE_SCRIPT_BINARY_TOKENS);
@@ -2085,13 +2068,11 @@ ProjectExportDialog::ProjectExportDialog() {
 	export_texture_format_error->hide();
 
 	export_error = memnew(Label);
-	export_error->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	main_vb->add_child(export_error);
 	export_error->hide();
 	export_error->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_WORD_ELLIPSIS);
 
 	export_warning = memnew(Label);
-	export_warning->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	main_vb->add_child(export_warning);
 	export_warning->hide();
 	export_warning->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_WORD_ELLIPSIS);
@@ -2101,7 +2082,6 @@ ProjectExportDialog::ProjectExportDialog() {
 	export_templates_error->hide();
 
 	export_error2 = memnew(Label);
-	export_error2->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	export_templates_error->add_child(export_error2);
 	export_error2->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_WORD_ELLIPSIS);
 

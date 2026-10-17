@@ -32,7 +32,6 @@
 
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
-#include "servers/display/accessibility_server.h"
 
 void Container::_child_minsize_changed() {
 	update_minimum_size();
@@ -237,16 +236,7 @@ Vector<int> Container::get_allowed_size_flags_vertical() const {
 
 void Container::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			if (accessibility_region) {
-				AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_REGION);
-			} else {
-				AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_CONTAINER);
-			}
-		} break;
 
 		case NOTIFICATION_RESIZED:
 		case NOTIFICATION_THEME_CHANGED: {
@@ -259,18 +249,6 @@ void Container::_notification(int p_what) {
 			}
 		} break;
 	}
-}
-
-void Container::set_accessibility_region(bool p_region) {
-	ERR_MAIN_THREAD_GUARD;
-	if (accessibility_region != p_region) {
-		accessibility_region = p_region;
-		queue_accessibility_update();
-	}
-}
-
-bool Container::is_accessibility_region() const {
-	return accessibility_region;
 }
 
 PackedStringArray Container::get_configuration_warnings() const {
@@ -286,8 +264,6 @@ PackedStringArray Container::get_configuration_warnings() const {
 void Container::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("queue_sort"), &Container::queue_sort);
 	ClassDB::bind_method(D_METHOD("fit_child_in_rect", "child", "rect"), &Container::fit_child_in_rect);
-	ClassDB::bind_method(D_METHOD("set_accessibility_region", "region"), &Container::set_accessibility_region);
-	ClassDB::bind_method(D_METHOD("is_accessibility_region"), &Container::is_accessibility_region);
 
 	GDVIRTUAL_BIND(_get_allowed_size_flags_horizontal);
 	GDVIRTUAL_BIND(_get_allowed_size_flags_vertical);
@@ -298,7 +274,6 @@ void Container::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("pre_sort_children"));
 	ADD_SIGNAL(MethodInfo("sort_children"));
 
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "accessibility_region"), "set_accessibility_region", "is_accessibility_region");
 }
 
 Container::Container() {

@@ -121,7 +121,6 @@ private:
 	Point2 ime_selection;
 
 	RID text_rid;
-	RID accessibility_text_root_element;
 	float full_width = 0.0;
 
 	bool selecting_enabled = true;
@@ -298,12 +297,7 @@ protected:
 	virtual void unhandled_key_input(const Ref<InputEvent> &p_event) override;
 	virtual void gui_input(const Ref<InputEvent> &p_event) override;
 
-	void _accessibility_action_set_selection(const Variant &p_data);
-	void _accessibility_action_replace_selected(const Variant &p_data);
-	void _accessibility_action_set_value(const Variant &p_data);
-	void _accessibility_action_menu(const Variant &p_data);
 
-	virtual String _get_accessibility_name() const override;
 
 public:
 	void edit(bool p_hide_focus = false);

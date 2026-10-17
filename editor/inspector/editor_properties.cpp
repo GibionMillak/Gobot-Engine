@@ -60,6 +60,7 @@
 #include "scene/3d/gpu_particles_3d.h"
 #include "scene/gui/color_picker.h"
 #include "scene/gui/grid_container.h"
+#include "scene/gui/line_edit.h"
 #include "scene/gui/text_edit.h"
 #include "scene/gui/texture_button.h"
 #include "scene/main/scene_tree.h"
@@ -182,7 +183,6 @@ EditorPropertyVariant::EditorPropertyVariant() {
 	edit_button = memnew(Button);
 	edit_button->set_flat(true);
 	edit_button->set_theme_type_variation(SNAME("EditorInspectorButton"));
-	edit_button->set_accessibility_name(TTRC("Edit"));
 	edit_button->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyVariant::_popup_edit_menu));
 	content->add_child(edit_button);
 }
@@ -438,7 +438,6 @@ EditorPropertyMultilineText::EditorPropertyMultilineText(bool p_expression) :
 	hb->add_child(text);
 	text->set_h_size_flags(SIZE_EXPAND_FILL);
 	open_big_text = memnew(Button);
-	open_big_text->set_accessibility_name(TTRC("Open Text Edit Dialog"));
 	open_big_text->set_flat(true);
 	open_big_text->set_theme_type_variation(SNAME("EditorInspectorButton"));
 	open_big_text->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyMultilineText::_open_big_text));
@@ -587,7 +586,6 @@ EditorPropertyTextEnum::EditorPropertyTextEnum() {
 	hb->add_child(edit_custom_layout);
 
 	option_button = memnew(OptionButton);
-	option_button->set_accessibility_name(TTRC("Enum Options"));
 	option_button->set_h_size_flags(SIZE_EXPAND_FILL);
 	option_button->set_clip_text(true);
 	option_button->set_fit_to_longest_item(false);
@@ -600,7 +598,6 @@ EditorPropertyTextEnum::EditorPropertyTextEnum() {
 	option_button->connect(SceneStringName(item_selected), callable_mp(this, &EditorPropertyTextEnum::_option_selected));
 
 	edit_button = memnew(Button);
-	edit_button->set_accessibility_name(TTRC("Edit"));
 	edit_button->set_flat(true);
 	edit_button->set_theme_type_variation(SNAME("EditorInspectorButton"));
 	edit_button->hide();
@@ -608,20 +605,17 @@ EditorPropertyTextEnum::EditorPropertyTextEnum() {
 	edit_button->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyTextEnum::_edit_custom_value));
 
 	custom_value_edit = memnew(LineEdit);
-	custom_value_edit->set_accessibility_name(TTRC("Custom Value"));
 	custom_value_edit->set_h_size_flags(SIZE_EXPAND_FILL);
 	edit_custom_layout->add_child(custom_value_edit);
 	custom_value_edit->connect(SceneStringName(text_submitted), callable_mp(this, &EditorPropertyTextEnum::_custom_value_submitted));
 
 	accept_button = memnew(Button);
-	accept_button->set_accessibility_name(TTRC("Accept Custom Value Edit"));
 	accept_button->set_flat(true);
 	accept_button->set_theme_type_variation(SNAME("EditorInspectorButton"));
 	edit_custom_layout->add_child(accept_button);
 	accept_button->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyTextEnum::_custom_value_accepted));
 
 	cancel_button = memnew(Button);
-	cancel_button->set_accessibility_name(TTRC("Cancel Custom Value Edit"));
 	cancel_button->set_flat(true);
 	cancel_button->set_theme_type_variation(SNAME("EditorInspectorButton"));
 	edit_custom_layout->add_child(cancel_button);
@@ -678,14 +672,12 @@ EditorPropertyLocale::EditorPropertyLocale() {
 	HBoxContainer *locale_hb = memnew(HBoxContainer);
 	add_child(locale_hb);
 	locale = memnew(LineEdit);
-	locale->set_accessibility_name(TTRC("Locale"));
 	locale_hb->add_child(locale);
 	locale->connect(SceneStringName(text_submitted), callable_mp(this, &EditorPropertyLocale::_locale_selected));
 	locale->connect(SceneStringName(focus_exited), callable_mp(this, &EditorPropertyLocale::_locale_focus_exited));
 	locale->set_h_size_flags(SIZE_EXPAND_FILL);
 
 	locale_edit = memnew(Button);
-	locale_edit->set_accessibility_name(TTRC("Edit"));
 	locale_edit->set_clip_text(true);
 	locale_edit->set_theme_type_variation(SNAME("EditorInspectorButton"));
 	locale_hb->add_child(locale_edit);
@@ -853,7 +845,6 @@ EditorPropertyPath::EditorPropertyPath() {
 	HBoxContainer *path_hb = memnew(HBoxContainer);
 	add_child(path_hb);
 	path = memnew(LineEdit);
-	path->set_accessibility_name(TTRC("Path"));
 	SET_DRAG_FORWARDING_CDU(path, EditorPropertyPath);
 	path->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	path_hb->add_child(path);
@@ -862,7 +853,6 @@ EditorPropertyPath::EditorPropertyPath() {
 	path->set_h_size_flags(SIZE_EXPAND_FILL);
 
 	toggle_uid = memnew(Button);
-	toggle_uid->set_accessibility_name(TTRC("Toggle Display UID"));
 	toggle_uid->set_tooltip_text(TTRC("Toggles displaying between path and UID.\nThe UID is the actual value of this property."));
 	toggle_uid->set_pressed(false);
 	toggle_uid->set_theme_type_variation(SNAME("EditorInspectorButton"));
@@ -872,7 +862,6 @@ EditorPropertyPath::EditorPropertyPath() {
 
 	path_edit = memnew(Button);
 	path_edit->set_theme_type_variation(SNAME("EditorInspectorButton"));
-	path_edit->set_accessibility_name(TTRC("Edit"));
 	path_hb->add_child(path_edit);
 	add_focusable(path);
 	path_edit->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyPath::_path_pressed));
@@ -1575,7 +1564,6 @@ EditorPropertyLayers::EditorPropertyLayers() {
 	hb->add_child(grid);
 
 	button = memnew(TextureButton);
-	button->set_accessibility_name(TTRC("Layers"));
 	button->set_stretch_mode(TextureButton::STRETCH_KEEP_CENTERED);
 	button->set_toggle_mode(true);
 	button->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyLayers::_button_pressed));
@@ -1699,7 +1687,6 @@ void EditorPropertyObjectID::setup(const String &p_base_type) {
 EditorPropertyObjectID::EditorPropertyObjectID() {
 	edit = memnew(Button);
 	edit->set_theme_type_variation(SNAME("EditorInspectorButton"));
-	edit->set_accessibility_name(TTRC("Edit"));
 	add_child(edit);
 	add_focusable(edit);
 	edit->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
@@ -1724,7 +1711,6 @@ void EditorPropertySignal::update_property() {
 EditorPropertySignal::EditorPropertySignal() {
 	edit = memnew(Button);
 	edit->set_theme_type_variation(SNAME("EditorInspectorButton"));
-	edit->set_accessibility_name(TTRC("Edit"));
 	add_child(edit);
 	add_focusable(edit);
 	edit->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertySignal::_edit_pressed));
@@ -1743,7 +1729,6 @@ void EditorPropertyCallable::update_property() {
 EditorPropertyCallable::EditorPropertyCallable() {
 	edit = memnew(Button);
 	edit->set_theme_type_variation(SNAME("EditorInspectorButton"));
-	edit->set_accessibility_name(TTRC("Edit"));
 	add_child(edit);
 	add_focusable(edit);
 }
@@ -2101,7 +2086,6 @@ EditorPropertyRect2::EditorPropertyRect2(bool p_force_wide) {
 	for (int i = 0; i < 4; i++) {
 		spin[i] = memnew(EditorSpinSlider);
 		spin[i]->set_label(desc[i]);
-		spin[i]->set_accessibility_name(desc[i]);
 		spin[i]->set_flat(true);
 
 		if (grid) {
@@ -2195,7 +2179,6 @@ EditorPropertyRect2i::EditorPropertyRect2i(bool p_force_wide) {
 	for (int i = 0; i < 4; i++) {
 		spin[i] = memnew(EditorSpinSlider);
 		spin[i]->set_label(desc[i]);
-		spin[i]->set_accessibility_name(desc[i]);
 		spin[i]->set_flat(true);
 
 		if (grid) {
@@ -2288,7 +2271,6 @@ EditorPropertyPlane::EditorPropertyPlane(bool p_force_wide) {
 		spin[i] = memnew(EditorSpinSlider);
 		spin[i]->set_flat(true);
 		spin[i]->set_label(desc[i]);
-		spin[i]->set_accessibility_name(desc[i]);
 		bc->add_child(spin[i]);
 		add_focusable(spin[i]);
 		spin[i]->connect(SceneStringName(value_changed), callable_mp(this, &EditorPropertyPlane::_value_changed).bind(desc[i]));
@@ -2459,7 +2441,6 @@ EditorPropertyQuaternion::EditorPropertyQuaternion() {
 		spin[i] = memnew(EditorSpinSlider);
 		spin[i]->set_flat(true);
 		spin[i]->set_label(desc[i]);
-		spin[i]->set_accessibility_name(desc[i]);
 		default_layout->add_child(spin[i]);
 		add_focusable(spin[i]);
 		spin[i]->connect(SceneStringName(value_changed), callable_mp(this, &EditorPropertyQuaternion::_value_changed).bind(desc[i]));
@@ -2489,7 +2470,6 @@ EditorPropertyQuaternion::EditorPropertyQuaternion() {
 		euler[i] = memnew(EditorSpinSlider);
 		euler[i]->set_flat(true);
 		euler[i]->set_label(desc[i]);
-		euler[i]->set_accessibility_name(vformat(TTR("Temporary Euler %s"), desc[i]));
 		edit_custom_layout->add_child(euler[i]);
 		add_focusable(euler[i]);
 		euler[i]->connect(SceneStringName(value_changed), callable_mp(this, &EditorPropertyQuaternion::_custom_value_changed));
@@ -2499,7 +2479,6 @@ EditorPropertyQuaternion::EditorPropertyQuaternion() {
 	}
 
 	edit_button = memnew(Button);
-	edit_button->set_accessibility_name(TTRC("Edit"));
 	edit_button->set_flat(true);
 	edit_button->set_toggle_mode(true);
 	edit_button->set_theme_type_variation(SNAME("EditorInspectorButton"));
@@ -2576,7 +2555,6 @@ EditorPropertyAABB::EditorPropertyAABB() {
 	for (int i = 0; i < 6; i++) {
 		spin[i] = memnew(EditorSpinSlider);
 		spin[i]->set_label(desc[i]);
-		spin[i]->set_accessibility_name(desc[i]);
 		spin[i]->set_flat(true);
 
 		g->add_child(spin[i]);
@@ -2658,7 +2636,6 @@ EditorPropertyTransform2D::EditorPropertyTransform2D(bool p_include_origin) {
 	for (int i = 0; i < 6; i++) {
 		spin[i] = memnew(EditorSpinSlider);
 		spin[i]->set_label(desc[i]);
-		spin[i]->set_accessibility_name(desc[i]);
 		spin[i]->set_flat(true);
 		if (p_include_origin || i % 3 != 2) {
 			g->add_child(spin[i]);
@@ -2742,7 +2719,6 @@ EditorPropertyBasis::EditorPropertyBasis() {
 	for (int i = 0; i < 9; i++) {
 		spin[i] = memnew(EditorSpinSlider);
 		spin[i]->set_label(desc[i]);
-		spin[i]->set_accessibility_name(desc[i]);
 		spin[i]->set_flat(true);
 		g->add_child(spin[i]);
 		spin[i]->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -2833,7 +2809,6 @@ EditorPropertyTransform3D::EditorPropertyTransform3D() {
 	for (int i = 0; i < 12; i++) {
 		spin[i] = memnew(EditorSpinSlider);
 		spin[i]->set_label(desc[i]);
-		spin[i]->set_accessibility_name(desc[i]);
 		spin[i]->set_flat(true);
 		g->add_child(spin[i]);
 		spin[i]->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -2932,7 +2907,6 @@ EditorPropertyProjection::EditorPropertyProjection() {
 	for (int i = 0; i < 16; i++) {
 		spin[i] = memnew(EditorSpinSlider);
 		spin[i]->set_label(desc[i]);
-		spin[i]->set_accessibility_name(desc[i]);
 		spin[i]->set_flat(true);
 		g->add_child(spin[i]);
 		spin[i]->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -3384,7 +3358,6 @@ EditorPropertyNodePath::EditorPropertyNodePath() {
 	hbc->add_theme_constant_override("separation", 0);
 	add_child(hbc);
 	assign = memnew(Button);
-	assign->set_accessibility_name(TTRC("Assign Node"));
 	assign->set_flat(true);
 	assign->set_theme_type_variation(SNAME("EditorInspectorButton"));
 	assign->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -3403,7 +3376,6 @@ EditorPropertyNodePath::EditorPropertyNodePath() {
 	hbc->add_child(menu_button);
 
 	edit = memnew(LineEdit);
-	edit->set_accessibility_name(TTRC("Node Path"));
 	edit->set_h_size_flags(SIZE_EXPAND_FILL);
 	edit->hide();
 	edit->connect(SceneStringName(focus_exited), callable_mp(this, &EditorPropertyNodePath::_accept_text));

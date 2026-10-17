@@ -148,8 +148,7 @@ void TouchActionsPanel::_on_modifier_button_toggled(bool p_pressed, int p_modifi
 Button *TouchActionsPanel::_add_new_action_button(const String &p_shortcut, const String &p_name, Key p_keycode) {
 	Button *action_button = memnew(Button);
 	action_button->set_theme_type_variation("TouchActionsPanelButton");
-	action_button->set_accessibility_name(p_name);
-	action_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	action_button->set_focus_mode(FOCUS_NONE);
 	action_button->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	if (p_keycode == Key::NONE) {
 		action_button->connect(SceneStringName(pressed), callable_mp(this, &TouchActionsPanel::_simulate_editor_shortcut).bind(p_shortcut));
@@ -177,8 +176,7 @@ void TouchActionsPanel::_add_new_modifier_button(Modifier p_modifier) {
 	toggle_button->set_text(text);
 	toggle_button->set_toggle_mode(true);
 	toggle_button->set_theme_type_variation("TouchActionsPanelButton");
-	toggle_button->set_accessibility_name(text);
-	toggle_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	toggle_button->set_focus_mode(FOCUS_NONE);
 	toggle_button->connect(SceneStringName(toggled), callable_mp(this, &TouchActionsPanel::_on_modifier_button_toggled).bind((int)p_modifier));
 	box->add_child(toggle_button);
 }
@@ -279,8 +277,7 @@ TouchActionsPanel::TouchActionsPanel(bool p_floating) {
 
 		layout_toggle_button = memnew(Button);
 		layout_toggle_button->set_theme_type_variation("TouchActionsPanelButton");
-		layout_toggle_button->set_accessibility_name(TTRC("Switch Layout"));
-		layout_toggle_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+		layout_toggle_button->set_focus_mode(FOCUS_NONE);
 		layout_toggle_button->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 		layout_toggle_button->connect(SceneStringName(pressed), callable_mp(this, &TouchActionsPanel::_switch_layout));
 		box->add_child(layout_toggle_button);
@@ -288,16 +285,14 @@ TouchActionsPanel::TouchActionsPanel(bool p_floating) {
 		lock_panel_button = memnew(Button);
 		lock_panel_button->set_toggle_mode(true);
 		lock_panel_button->set_theme_type_variation("TouchActionsPanelButton");
-		lock_panel_button->set_accessibility_name(TTRC("Lock Panel"));
-		lock_panel_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+		lock_panel_button->set_focus_mode(FOCUS_NONE);
 		lock_panel_button->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 		lock_panel_button->connect(SceneStringName(toggled), callable_mp(this, &TouchActionsPanel::_lock_panel_toggled));
 		box->add_child(lock_panel_button);
 	} else {
 		panel_pos_button = memnew(Button);
 		panel_pos_button->set_theme_type_variation("TouchActionsPanelButton");
-		panel_pos_button->set_accessibility_name(TTRC("Switch Embedded Panel Position"));
-		panel_pos_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+		panel_pos_button->set_focus_mode(FOCUS_NONE);
 		panel_pos_button->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 		panel_pos_button->set_visible(!portrait_mode);
 		panel_pos_button->connect(SceneStringName(pressed), callable_mp(this, &TouchActionsPanel::_switch_embedded_panel_side));

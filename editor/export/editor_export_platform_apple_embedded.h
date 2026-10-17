@@ -147,7 +147,6 @@ protected:
 		String spm_package_refs;
 		String spm_package_products;
 		Vector<String> capabilities;
-		bool has_accesskit = false;
 	};
 
 	struct CodeSigningDetails {

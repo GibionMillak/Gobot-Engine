@@ -36,7 +36,6 @@
 #include "scene/gui/label.h"
 #include "scene/main/timer.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 
 void BaseButton::_unpress_group() {
 	if (button_group.is_null()) {
@@ -45,7 +44,6 @@ void BaseButton::_unpress_group() {
 
 	if (toggle_mode && !button_group->is_allow_unpress()) {
 		status.pressed = true;
-		queue_accessibility_update();
 	}
 
 	for (BaseButton *E : button_group->buttons) {
@@ -113,53 +111,20 @@ void BaseButton::gui_input(const Ref<InputEvent> &p_event) {
 	}
 }
 
-void BaseButton::_accessibility_action_click(const Variant &p_data) {
-	press();
-}
-
 void BaseButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_BUTTON);
-
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_CLICK, callable_mp(this, &BaseButton::_accessibility_action_click));
-			AccessibilityServer::get_singleton()->update_set_flag(ae, AccessibilityServerEnums::AccessibilityFlags::FLAG_DISABLED, status.disabled);
-			if (toggle_mode) {
-				AccessibilityServer::get_singleton()->update_set_checked(ae, status.pressed);
-			}
-			if (button_group.is_valid()) {
-				for (const BaseButton *btn : button_group->buttons) {
-					if (btn->is_part_of_edited_scene()) {
-						continue;
-					}
-					AccessibilityServer::get_singleton()->update_add_related_radio_group(ae, btn->get_accessibility_element());
-				}
-			}
-			if (shortcut_in_tooltip && shortcut.is_valid() && shortcut->has_valid_event()) {
-				String text = atr(shortcut->get_name()) + " (" + shortcut->get_as_text() + ")";
-				String tooltip = get_tooltip_text();
-				if (!tooltip.is_empty() && shortcut->get_name().nocasecmp_to(tooltip) != 0) {
-					text += "\n" + atr(tooltip);
-				}
-				AccessibilityServer::get_singleton()->update_set_tooltip(ae, text);
-			}
-		} break;
 
 		case NOTIFICATION_MOUSE_ENTER: {
 			status.hovering = true;
 			if (!status.disabled) {
 				play_theme_sound(theme_cache.hover_sound);
 			}
-			queue_accessibility_update();
 			queue_redraw();
 		} break;
 
 		case NOTIFICATION_MOUSE_EXIT: {
 			status.hovering = false;
-			queue_accessibility_update();
 			queue_redraw();
 		} break;
 
@@ -287,7 +252,6 @@ void BaseButton::on_action_event(Ref<InputEvent> p_event) {
 		}
 	}
 
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -314,7 +278,6 @@ void BaseButton::set_disabled(bool p_disabled) {
 			emit_signal(SNAME("button_up"));
 		}
 	}
-	queue_accessibility_update();
 	queue_redraw();
 	update_minimum_size();
 }
@@ -342,7 +305,6 @@ void BaseButton::press() {
 		_pressed();
 	}
 
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -371,7 +333,6 @@ void BaseButton::set_pressed_no_signal(bool p_pressed) {
 		return;
 	}
 	status.pressed = p_pressed;
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -437,7 +398,6 @@ void BaseButton::set_toggle_mode(bool p_on) {
 	if (!p_on) {
 		set_pressed(false);
 	}
-	queue_accessibility_update();
 
 	toggle_mode = p_on;
 	update_configuration_warnings();
@@ -450,7 +410,6 @@ bool BaseButton::is_toggle_mode() const {
 void BaseButton::set_shortcut_in_tooltip(bool p_on) {
 	if (shortcut_in_tooltip != p_on) {
 		shortcut_in_tooltip = p_on;
-		queue_accessibility_update();
 	}
 }
 
@@ -494,7 +453,6 @@ void BaseButton::set_shortcut(const Ref<Shortcut> &p_shortcut) {
 	if (shortcut != p_shortcut) {
 		shortcut = p_shortcut;
 		set_process_shortcut_input(shortcut.is_valid());
-		queue_accessibility_update();
 	}
 }
 
@@ -585,7 +543,6 @@ void BaseButton::set_button_group(const Ref<ButtonGroup> &p_group) {
 		button_group->buttons.insert(this);
 	}
 
-	queue_accessibility_update();
 	queue_redraw(); //checkbox changes to radio if set a buttongroup
 	update_configuration_warnings();
 }

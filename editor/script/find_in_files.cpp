@@ -644,7 +644,6 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 
 		search_text_line_edit = memnew(LineEdit);
 		search_text_line_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-		search_text_line_edit->set_accessibility_name(TTRC("Find"));
 		search_text_line_edit->set_placeholder(TTRC("Find"));
 		search_text_line_edit->set_keep_editing_on_text_submit(true);
 		search_text_line_edit->connect(SceneStringName(text_changed), callable_mp(this, &FindInFilesSearchPanel::_on_search_modified).unbind(1));
@@ -678,7 +677,6 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 
 		replace_line_edit = memnew(LineEdit);
 		replace_line_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-		replace_line_edit->set_accessibility_name(TTRC("Replace"));
 		replace_line_edit->set_placeholder(TTRC("Replace"));
 		replace_line_edit->set_keep_editing_on_text_submit(true);
 		replace_hbox->add_child(replace_line_edit);
@@ -731,13 +729,11 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 		folder_line_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 		folder_line_edit->connect(SceneStringName(text_changed), callable_mp(this, &FindInFilesSearchPanel::_on_search_modified).unbind(1));
 		folder_line_edit->connect(SceneStringName(text_submitted), callable_mp(this, &FindInFilesSearchPanel::_on_search_submitted).unbind(1));
-		folder_line_edit->set_accessibility_name(TTRC("Folder"));
 		folder_line_edit->set_placeholder(TTRC("Folder"));
 		folder_line_edit->set_keep_editing_on_text_submit(true);
 		folder_hbc->add_child(folder_line_edit);
 
 		Button *folder_button = memnew(Button);
-		folder_button->set_accessibility_name(TTRC("Select Folder"));
 		folder_button->set_text("...");
 		folder_button->connect(SceneStringName(pressed), callable_mp(this, &FindInFilesSearchPanel::_on_folder_button_pressed));
 		folder_hbc->add_child(folder_button);
@@ -757,7 +753,6 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 	excludes_line_edit = memnew(LineEdit);
 	excludes_line_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	excludes_line_edit->set_placeholder(TTRC("Example: res://addons,scenes/test/*.gd"));
-	excludes_line_edit->set_accessibility_name(TTRC("Excludes"));
 	excludes_line_edit->set_keep_editing_on_text_submit(true);
 	excludes_line_edit->connect(SceneStringName(text_changed), callable_mp(this, &FindInFilesSearchPanel::_on_search_modified).unbind(1));
 	excludes_line_edit->connect(SceneStringName(text_submitted), callable_mp(this, &FindInFilesSearchPanel::_on_search_submitted).unbind(1));
@@ -772,7 +767,6 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 	includes_line_edit = memnew(LineEdit);
 	includes_line_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	includes_line_edit->set_placeholder(TTRC("Example: scripts,scenes/*/test.gd"));
-	includes_line_edit->set_accessibility_name(TTRC("Includes"));
 	includes_line_edit->set_keep_editing_on_text_submit(true);
 	includes_line_edit->connect(SceneStringName(text_changed), callable_mp(this, &FindInFilesSearchPanel::_on_search_modified).unbind(1));
 	includes_line_edit->connect(SceneStringName(text_submitted), callable_mp(this, &FindInFilesSearchPanel::_on_search_submitted).unbind(1));
@@ -794,7 +788,6 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 		rename_view->add_child(rename_label);
 
 		renamed_symbol_name = memnew(LineEdit);
-		renamed_symbol_name->set_accessibility_name(TTRC("Symbol to Rename"));
 		renamed_symbol_name->set_editable(false);
 		rename_view->add_child(renamed_symbol_name);
 
@@ -803,7 +796,6 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 		rename_view->add_child(new_name_label);
 
 		rename_line_edit = memnew(LineEdit);
-		rename_line_edit->set_accessibility_name(TTRC("New Name"));
 		rename_view->add_child(rename_line_edit);
 		rename_line_edit->connect(SceneStringName(text_submitted), callable_mp(this, &FindInFilesSearchPanel::_on_rename_apply).bind(false).unbind(1));
 
@@ -1424,7 +1416,6 @@ FindInFilesResultsPanel::FindInFilesResultsPanel() {
 		search_text_label = memnew(Label);
 		search_text_label->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
 		search_text_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-		search_text_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 		search_text_label->set_mouse_filter(Control::MOUSE_FILTER_PASS);
 		search_text_label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 		hbc->add_child(search_text_label);
@@ -1441,7 +1432,6 @@ FindInFilesResultsPanel::FindInFilesResultsPanel() {
 		hbc->add_child(progress_bar_placeholder);
 
 		status_label = memnew(Label);
-		status_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 		hbc->add_child(status_label);
 
 		refresh_button = memnew(Button);
@@ -1465,7 +1455,6 @@ FindInFilesResultsPanel::FindInFilesResultsPanel() {
 	vbc->add_child(results_mc);
 
 	results_display = memnew(Tree);
-	results_display->set_accessibility_name(TTRC("Find in Files"));
 	results_display->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	results_display->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTH);
 	results_display->connect(SceneStringName(item_selected), callable_mp(this, &FindInFilesResultsPanel::_on_result_selected));

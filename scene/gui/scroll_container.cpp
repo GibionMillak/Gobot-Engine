@@ -37,7 +37,6 @@
 #include "scene/gui/texture_rect.h"
 #include "scene/main/window.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 
 Size2 ScrollContainer::_get_minimum_size(bool p_use_desired_sizes) const {
@@ -554,62 +553,9 @@ void ScrollContainer::_reposition_children() {
 	queue_redraw();
 }
 
-void ScrollContainer::_accessibility_action_scroll_set(const Variant &p_data) {
-	const Point2 &pos = p_data;
-	h_scroll->set_value(pos.x);
-	v_scroll->set_value(pos.y);
-}
-
-void ScrollContainer::_accessibility_action_scroll_up(const Variant &p_data) {
-	if ((AccessibilityServerEnums::AccessibilityScrollUnit)p_data == AccessibilityServerEnums::SCROLL_UNIT_ITEM) {
-		v_scroll->set_value(v_scroll->get_value() - v_scroll->get_page() / ScrollBar::PAGE_DIVISOR);
-	} else {
-		v_scroll->set_value(v_scroll->get_value() - v_scroll->get_page());
-	}
-}
-
-void ScrollContainer::_accessibility_action_scroll_down(const Variant &p_data) {
-	if ((AccessibilityServerEnums::AccessibilityScrollUnit)p_data == AccessibilityServerEnums::SCROLL_UNIT_ITEM) {
-		v_scroll->set_value(v_scroll->get_value() + v_scroll->get_page() / ScrollBar::PAGE_DIVISOR);
-	} else {
-		v_scroll->set_value(v_scroll->get_value() + v_scroll->get_page());
-	}
-}
-
-void ScrollContainer::_accessibility_action_scroll_left(const Variant &p_data) {
-	if ((AccessibilityServerEnums::AccessibilityScrollUnit)p_data == AccessibilityServerEnums::SCROLL_UNIT_ITEM) {
-		h_scroll->set_value(h_scroll->get_value() - h_scroll->get_page() / ScrollBar::PAGE_DIVISOR);
-	} else {
-		h_scroll->set_value(h_scroll->get_value() - h_scroll->get_page());
-	}
-}
-
-void ScrollContainer::_accessibility_action_scroll_right(const Variant &p_data) {
-	if ((AccessibilityServerEnums::AccessibilityScrollUnit)p_data == AccessibilityServerEnums::SCROLL_UNIT_ITEM) {
-		h_scroll->set_value(h_scroll->get_value() + h_scroll->get_page() / ScrollBar::PAGE_DIVISOR);
-	} else {
-		h_scroll->set_value(h_scroll->get_value() + h_scroll->get_page());
-	}
-}
-
 void ScrollContainer::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			if (is_accessibility_region()) {
-				AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_REGION);
-			} else {
-				AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_SCROLL_VIEW);
-			}
-
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SCROLL_DOWN, callable_mp(this, &ScrollContainer::_accessibility_action_scroll_down));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SCROLL_LEFT, callable_mp(this, &ScrollContainer::_accessibility_action_scroll_left));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SCROLL_RIGHT, callable_mp(this, &ScrollContainer::_accessibility_action_scroll_right));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SCROLL_UP, callable_mp(this, &ScrollContainer::_accessibility_action_scroll_up));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SET_SCROLL_OFFSET, callable_mp(this, &ScrollContainer::_accessibility_action_scroll_set));
-		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
 			_update_scroll_hints();

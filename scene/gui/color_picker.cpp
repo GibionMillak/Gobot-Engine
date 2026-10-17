@@ -59,7 +59,6 @@
 #include "scene/resources/style_box_flat.h"
 #include "scene/resources/style_box_texture.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 
 #ifdef MACOS_ENABLED
@@ -89,13 +88,7 @@ static inline String color_to_string(const Color &color, bool show_alpha = true,
 
 void ColorPicker::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_COLOR_PICKER);
-			AccessibilityServer::get_singleton()->update_set_color_value(ae, color);
-		} break;
 
 		case NOTIFICATION_ENTER_TREE: {
 			_update_color();
@@ -296,16 +289,10 @@ void ColorPicker::_update_controls() {
 
 	for (int i = 0; i < current_slider_count; i++) {
 		labels[i]->set_text(modes[current_mode]->get_slider_label(i));
-		sliders[i]->set_accessibility_name(modes[current_mode]->get_slider_label(i));
-		values[i]->set_accessibility_name(modes[current_mode]->get_slider_label(i));
 	}
 	alpha_label->set_text("A");
-	alpha_slider->set_accessibility_name(ETR("Alpha"));
-	alpha_value->set_accessibility_name(ETR("Alpha"));
 
 	intensity_label->set_text("I");
-	intensity_slider->set_accessibility_name(ETR("Intensity"));
-	intensity_value->set_accessibility_name(ETR("Intensity"));
 
 	alpha_value->set_visible(edit_alpha);
 	alpha_slider->set_visible(edit_alpha);
@@ -465,7 +452,7 @@ void ColorPicker::create_slider(GridContainer *gc, int idx) {
 
 	HSlider *slider = memnew(HSlider);
 	slider->set_v_size_flags(SIZE_SHRINK_CENTER);
-	slider->set_focus_mode(FOCUS_ACCESSIBILITY);
+	slider->set_focus_mode(FOCUS_NONE);
 	gc->add_child(slider);
 
 	SpinBox *val = memnew(SpinBox);
@@ -761,7 +748,6 @@ void ColorPicker::_update_color(bool p_update_sliders) {
 	}
 	alpha_slider->queue_redraw();
 	updating = false;
-	queue_accessibility_update();
 }
 
 void ColorPicker::_update_presets() {
@@ -2113,7 +2099,6 @@ ColorPicker::ColorPicker() {
 
 	btn_pick = memnew(Button);
 	btn_pick->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	btn_pick->set_accessibility_name(ETR("Pick"));
 	sample_hbc->add_child(btn_pick);
 
 	sample = memnew(TextureRect);
@@ -2178,7 +2163,6 @@ ColorPicker::ColorPicker() {
 	btn_mode->set_theme_type_variation("FlatMenuButton");
 	mode_hbc->add_child(btn_mode);
 	btn_mode->set_toggle_mode(true);
-	btn_mode->set_accessibility_name(ETR("Select a picker mode."));
 	btn_mode->set_tooltip_text(ETR("Select a picker mode."));
 	btn_mode->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	btn_mode->set_focus_mode(FOCUS_ALL);
@@ -2234,10 +2218,8 @@ ColorPicker::ColorPicker() {
 		text_type->set_tooltip_text(TTRC("Switch between hexadecimal and code values."));
 		text_type->connect(SceneStringName(pressed), callable_mp(this, &ColorPicker::_text_type_toggled));
 	} else {
-		text_type->set_accessibility_name(ETR("Hexadecimal Values"));
 #else
 	{
-		text_type->set_accessibility_name(ETR("Hexadecimal Values"));
 #endif // TOOLS_ENABLED
 		text_type->set_flat(true);
 	}
@@ -2246,7 +2228,6 @@ ColorPicker::ColorPicker() {
 	hex_hbc->add_child(c_text);
 	c_text->set_h_size_flags(SIZE_EXPAND_FILL);
 	c_text->set_select_all_on_focus(true);
-	c_text->set_accessibility_name(ETR("Hex code or named color"));
 	c_text->set_tooltip_text(ETR("Enter a hex code (\"#ff0000\") or named color (\"red\")."));
 	c_text->set_placeholder(ETR("Hex code or named color"));
 	c_text->connect(SceneStringName(text_submitted), callable_mp(this, &ColorPicker::_html_submitted));
@@ -2257,7 +2238,6 @@ ColorPicker::ColorPicker() {
 	hex_hbc->add_child(text_copy);
 	text_copy->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	text_copy->set_tooltip_text(ETR("Copy the color value."));
-	text_type->set_accessibility_name(ETR("Copy Color"));
 	text_copy->connect(SceneStringName(pressed), callable_mp(this, &ColorPicker::_text_copy_pressed));
 
 	_update_controls();
@@ -2381,7 +2361,6 @@ void ColorPickerButton::_about_to_popup() {
 
 void ColorPickerButton::_color_changed(const Color &p_color) {
 	color = p_color;
-	queue_accessibility_update();
 	queue_redraw();
 	emit_signal(SNAME("color_changed"), color);
 }
@@ -2451,14 +2430,7 @@ void ColorPickerButton::gui_input(const Ref<InputEvent> &p_event) {
 
 void ColorPickerButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_BUTTON);
-			AccessibilityServer::get_singleton()->update_set_popup_type(ae, AccessibilityServerEnums::AccessibilityPopupType::POPUP_DIALOG);
-			AccessibilityServer::get_singleton()->update_set_color_value(ae, color);
-		} break;
 
 		case NOTIFICATION_DRAW: {
 			const Rect2 r = Rect2(theme_cache.normal_style->get_offset(), get_size() - theme_cache.normal_style->get_minimum_size());
@@ -2493,7 +2465,6 @@ void ColorPickerButton::set_pick_color(const Color &p_color) {
 	if (picker) {
 		picker->set_pick_color(p_color);
 	}
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -2592,13 +2563,7 @@ ColorPickerButton::ColorPickerButton(const String &p_text) :
 
 void ColorPresetButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_BUTTON);
-			AccessibilityServer::get_singleton()->update_set_color_value(ae, preset_color);
-		} break;
 
 		case NOTIFICATION_DRAW: {
 			const Rect2 r = Rect2(Point2(0, 0), get_size());
@@ -2657,7 +2622,6 @@ void ColorPresetButton::_notification(int p_what) {
 
 void ColorPresetButton::set_preset_color(const Color &p_color) {
 	preset_color = p_color;
-	queue_accessibility_update();
 }
 
 Color ColorPresetButton::get_preset_color() const {
@@ -2684,7 +2648,6 @@ ColorPresetButton::ColorPresetButton(Color p_color, int p_size, bool p_recent) {
 	recent = p_recent;
 	set_toggle_mode(true);
 	set_custom_minimum_size(Size2(p_size, p_size));
-	set_accessibility_name(vformat(atr(ETR("Color: %s")), color_to_string(p_color, p_color.a < 1)));
 	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 }
 

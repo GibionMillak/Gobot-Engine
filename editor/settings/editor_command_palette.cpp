@@ -328,7 +328,6 @@ EditorCommandPalette::EditorCommandPalette() {
 
 	command_search_box = memnew(FilterLineEdit);
 	command_search_box->set_placeholder(TTRC("Filter Commands"));
-	command_search_box->set_accessibility_name(TTRC("Filter Commands"));
 	command_search_box->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	command_search_box->connect(SceneStringName(text_changed), callable_mp(this, &EditorCommandPalette::_update_command_search));
 	MarginContainer *margin_container_csb = memnew(MarginContainer);

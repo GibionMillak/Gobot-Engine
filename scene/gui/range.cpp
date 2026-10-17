@@ -30,9 +30,7 @@
 
 #include "range.h"
 
-#include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
-#include "servers/display/accessibility_server.h"
 
 #include <thirdparty/misc/r128.h>
 
@@ -90,45 +88,7 @@ void Range::_value_changed(double p_value) {
 void Range::_value_changed_notify() {
 	_value_changed(shared->val);
 	emit_signal(SceneStringName(value_changed), shared->val);
-	queue_accessibility_update();
 	queue_redraw();
-}
-
-void Range::_accessibility_action_inc(const Variant &p_data) {
-	double step = ((shared->step > 0) ? shared->step : 1);
-	set_value(shared->val + step);
-}
-
-void Range::_accessibility_action_dec(const Variant &p_data) {
-	double step = ((shared->step > 0) ? shared->step : 1);
-	set_value(shared->val - step);
-}
-
-void Range::_accessibility_action_set_value(const Variant &p_data) {
-	double new_val = p_data;
-	set_value(new_val);
-}
-
-void Range::_notification(int p_what) {
-	ERR_MAIN_THREAD_GUARD;
-	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
-
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_SPIN_BUTTON);
-			AccessibilityServer::get_singleton()->update_set_num_value(ae, shared->val);
-			AccessibilityServer::get_singleton()->update_set_num_range(ae, shared->min, shared->max);
-			if (shared->step > 0) {
-				AccessibilityServer::get_singleton()->update_set_num_step(ae, shared->step);
-			} else {
-				AccessibilityServer::get_singleton()->update_set_num_step(ae, 1);
-			}
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_DECREMENT, callable_mp(this, &Range::_accessibility_action_dec));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_INCREMENT, callable_mp(this, &Range::_accessibility_action_inc));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SET_VALUE, callable_mp(this, &Range::_accessibility_action_set_value));
-		} break;
-	}
 }
 
 void Range::Shared::emit_value_changed() {
@@ -164,7 +124,6 @@ void Range::Shared::redraw_owners() {
 		}
 
 		r->_value_changed(val);
-		r->queue_accessibility_update();
 		r->queue_redraw();
 	}
 }
@@ -176,7 +135,6 @@ void Range::set_value(double p_val) {
 	if (shared->val != prev_val && !(Math::is_nan(shared->val) && Math::is_nan(prev_val))) {
 		shared->emit_value_changed();
 	}
-	queue_accessibility_update();
 }
 
 void Range::_set_value_no_signal(double p_val) {
@@ -235,7 +193,6 @@ void Range::set_min(double p_min) {
 
 	update_configuration_warnings();
 
-	queue_accessibility_update();
 }
 
 void Range::set_max(double p_max) {
@@ -250,7 +207,6 @@ void Range::set_max(double p_max) {
 
 	shared->emit_changed();
 
-	queue_accessibility_update();
 }
 
 void Range::set_step(double p_step) {
@@ -261,7 +217,6 @@ void Range::set_step(double p_step) {
 	shared->step = p_step;
 	shared->emit_changed();
 
-	queue_accessibility_update();
 }
 
 void Range::set_page(double p_page) {
@@ -275,7 +230,6 @@ void Range::set_page(double p_page) {
 
 	shared->emit_changed();
 
-	queue_accessibility_update();
 }
 
 double Range::get_value() const {
@@ -363,7 +317,6 @@ void Range::unshare() {
 	nshared->allow_lesser = shared->allow_lesser;
 	_unref_shared();
 	_ref_shared(nshared);
-	queue_accessibility_update();
 }
 
 void Range::_ref_shared(Shared *p_shared) {

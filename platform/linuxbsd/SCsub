@@ -10,7 +10,6 @@ common_linuxbsd = [
     "os_linuxbsd.cpp",
     "freedesktop_portal_desktop.cpp",
     "freedesktop_screensaver.cpp",
-    "freedesktop_at_spi_monitor.cpp",
 ]
 
 common_linuxbsd += ["godot_linuxbsd.cpp"]

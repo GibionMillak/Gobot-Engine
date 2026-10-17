@@ -822,7 +822,6 @@ EditorVisualProfiler::EditorVisualProfiler() {
 	hb_measure->add_child(memnew(Label(TTRC("Measure:"))));
 
 	display_mode = memnew(OptionButton);
-	display_mode->set_accessibility_name(TTRC("Measure:"));
 	display_mode->add_item(TTRC("Frame Time (ms)"));
 	display_mode->add_item(TTRC("Frame %"));
 	display_mode->connect(SceneStringName(item_selected), callable_mp(this, &EditorVisualProfiler::_combo_changed));
@@ -846,7 +845,6 @@ EditorVisualProfiler::EditorVisualProfiler() {
 	hb_frame->add_child(memnew(Label(TTRC("Frame #:"))));
 
 	cursor_metric_edit = memnew(SpinBox);
-	cursor_metric_edit->set_accessibility_name(TTRC("Frame #:"));
 	cursor_metric_edit->set_h_size_flags(SIZE_FILL);
 	hb_frame->add_child(cursor_metric_edit);
 	cursor_metric_edit->connect(SceneStringName(value_changed), callable_mp(this, &EditorVisualProfiler::_cursor_metric_changed));

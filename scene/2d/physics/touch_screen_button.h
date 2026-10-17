@@ -71,7 +71,6 @@ protected:
 	void _notification(int p_what);
 	static void _bind_methods();
 
-	void _accessibility_action_click(const Variant &p_data);
 
 public:
 #ifdef DEBUG_ENABLED

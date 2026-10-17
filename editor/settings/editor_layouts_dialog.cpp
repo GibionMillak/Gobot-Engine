@@ -166,7 +166,6 @@ EditorLayoutsDialog::EditorLayoutsDialog() {
 	name = memnew(LineEdit);
 	makevb->add_child(name);
 	name->set_placeholder(TTRC("Or enter new layout name."));
-	name->set_accessibility_name(TTRC("New layout name"));
 	register_text_enter(name);
 	name->connect(SceneStringName(focus_entered), callable_mp(this, &EditorLayoutsDialog::_deselect_layout_names));
 	name->connect(SceneStringName(text_changed), callable_mp(validation, &EditorValidationPanel::update).unbind(1));

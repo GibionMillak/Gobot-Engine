@@ -235,8 +235,6 @@ protected:
 
 	void _update_property_bg();
 
-	void _accessibility_action_menu(const Variant &p_data);
-	void _accessibility_action_click(const Variant &p_data);
 
 public:
 	static String get_property_warning(Object *p_object, const StringName &p_property);
@@ -441,7 +439,6 @@ protected:
 	void _notification(int p_what);
 	virtual void gui_input(const Ref<InputEvent> &p_event) override;
 
-	void _accessibility_action_menu(const Variant &p_data);
 
 public:
 	void set_as_favorite();
@@ -454,7 +451,7 @@ public:
 	virtual Size2 get_minimum_size() const override;
 	virtual Control *make_custom_tooltip(const String &p_text) const override;
 
-	EditorInspectorCategory();
+	EditorInspectorCategory() = default;
 };
 
 class EditorInspectorSection : public Container {
@@ -560,8 +557,6 @@ protected:
 	static void _bind_methods();
 	virtual void gui_input(const Ref<InputEvent> &p_event) override;
 
-	void _accessibility_action_collapse(const Variant &p_data);
-	void _accessibility_action_expand(const Variant &p_data);
 
 public:
 	virtual Size2 get_minimum_size() const override;
@@ -593,18 +588,6 @@ public:
 
 	EditorInspectorSection();
 	~EditorInspectorSection();
-};
-
-class ArrayPanelContainer : public PanelContainer {
-	GDCLASS(ArrayPanelContainer, PanelContainer);
-
-protected:
-	void _notification(int p_what);
-
-	void _accessibility_action_menu(const Variant &p_data);
-
-public:
-	ArrayPanelContainer();
 };
 
 class EditorInspectorArray : public EditorInspectorSection {

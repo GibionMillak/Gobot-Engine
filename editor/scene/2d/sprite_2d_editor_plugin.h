@@ -39,8 +39,10 @@ class Button;
 class ConfirmationDialog;
 class EditorZoomWidget;
 class HBoxContainer;
+class HScrollBar;
 class MenuButton;
 class Panel;
+class VScrollBar;
 class ViewPanner;
 
 class Sprite2DEditor : public Control {

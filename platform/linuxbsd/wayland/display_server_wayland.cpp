@@ -44,7 +44,6 @@
 #include "core/input/input_event.h"
 #include "core/os/main_loop.h"
 #include "core/os/os.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/native_menu.h"
 #include "servers/rendering/dummy/rasterizer_dummy.h"
 #include "servers/rendering/rendering_server.h"
@@ -68,7 +67,6 @@
 #endif
 
 #ifdef DBUS_ENABLED
-#include "freedesktop_at_spi_monitor.h"
 #include "freedesktop_portal_desktop.h"
 #include "freedesktop_screensaver.h"
 
@@ -194,7 +192,6 @@ void DisplayServerWayland::_delete_window(DisplayServerEnums::WindowID p_window_
 		popup_menu_list.pop_back();
 	}
 
-	AccessibilityServer::get_singleton()->window_destroy(p_window_id);
 
 	if (wd.visible) {
 #ifdef VULKAN_ENABLED
@@ -322,9 +319,6 @@ bool DisplayServerWayland::has_feature(DisplayServerEnums::Feature p_feature) co
 		} break;
 #endif
 
-		case DisplayServerEnums::FEATURE_ACCESSIBILITY_SCREEN_READER: {
-			return AccessibilityServer::get_singleton()->is_supported();
-		} break;
 
 		default: {
 			return false;
@@ -826,11 +820,6 @@ DisplayServerEnums::WindowID DisplayServerWayland::create_sub_window(DisplayServ
 	wd.flags = p_flags;
 	wd.vsync_mode = p_vsync_mode;
 
-	if (!AccessibilityServer::get_singleton()->window_create(wd.id, nullptr)) {
-		if (OS::get_singleton()->is_stdout_verbose()) {
-			ERR_PRINT("Can't create an accessibility adapter for window, accessibility support disabled!");
-		}
-	}
 
 	// NOTE: Remember to clear its position if this window will be a toplevel. We
 	// can only know once we show it.
@@ -1430,25 +1419,6 @@ void DisplayServerWayland::window_set_ime_position(const Point2i &p_pos, Display
 	wayland_thread.window_set_ime_position(p_pos, p_window_id);
 }
 
-int DisplayServerWayland::accessibility_should_increase_contrast() const {
-#ifdef DBUS_ENABLED
-	if (!portal_desktop) {
-		return -1;
-	}
-	return portal_desktop->get_high_contrast();
-#endif
-	return -1;
-}
-
-int DisplayServerWayland::accessibility_screen_reader_active() const {
-#ifdef DBUS_ENABLED
-	if (atspi_monitor && atspi_monitor->is_supported()) {
-		return atspi_monitor->is_active();
-	}
-#endif
-	return -1;
-}
-
 Point2i DisplayServerWayland::ime_get_selection() const {
 	return ime_selection;
 }
@@ -1996,12 +1966,10 @@ void DisplayServerWayland::process_events() {
 			_send_window_event(winev_msg->event, winev_msg->id);
 
 			if (winev_msg->event == DisplayServerEnums::WINDOW_EVENT_FOCUS_IN) {
-				AccessibilityServer::get_singleton()->set_window_focused(winev_msg->id, true);
 				if (OS::get_singleton()->get_main_loop()) {
 					OS::get_singleton()->get_main_loop()->notification(MainLoop::NOTIFICATION_APPLICATION_FOCUS_IN);
 				}
 			} else if (winev_msg->event == DisplayServerEnums::WINDOW_EVENT_FOCUS_OUT) {
-				AccessibilityServer::get_singleton()->set_window_focused(winev_msg->id, false);
 				if (OS::get_singleton()->get_main_loop()) {
 					OS::get_singleton()->get_main_loop()->notification(MainLoop::NOTIFICATION_APPLICATION_FOCUS_OUT);
 				}
@@ -2499,11 +2467,6 @@ DisplayServerWayland::DisplayServerWayland(const String &p_rendering_driver, Dis
 	wd.rect.size = p_resolution;
 	wd.title = "Godot";
 
-	if (!AccessibilityServer::get_singleton()->window_create(wd.id, nullptr)) {
-		if (OS::get_singleton()->is_stdout_verbose()) {
-			ERR_PRINT("Can't create an accessibility adapter for window, accessibility support disabled!");
-		}
-	}
 
 	show_window(DisplayServerEnums::MAIN_WINDOW_ID);
 
@@ -2554,7 +2517,6 @@ DisplayServerWayland::DisplayServerWayland(const String &p_rendering_driver, Dis
 	if (dbus_ok) {
 		screensaver = memnew(FreeDesktopScreenSaver);
 		portal_desktop = memnew(FreeDesktopPortalDesktop);
-		atspi_monitor = memnew(FreeDesktopAtSPIMonitor);
 	}
 #endif // DBUS_ENABLED
 
@@ -2582,7 +2544,6 @@ DisplayServerWayland::~DisplayServerWayland() {
 		if (!window_get_flag(DisplayServerEnums::WINDOW_FLAG_POPUP_WM_HINT, id)) {
 			toplevels.push_back(id);
 		} else {
-			AccessibilityServer::get_singleton()->window_destroy(id);
 		}
 	}
 
@@ -2609,7 +2570,6 @@ DisplayServerWayland::~DisplayServerWayland() {
 #ifdef DBUS_ENABLED
 	memdelete(portal_desktop);
 	memdelete(screensaver);
-	memdelete(atspi_monitor);
 #endif
 }
 

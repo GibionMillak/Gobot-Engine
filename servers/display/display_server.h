@@ -472,14 +472,7 @@ public:
 	virtual void pip_mode_set_aspect_ratio(int p_numerator, int p_denominator, DisplayServerEnums::WindowID p_window = DisplayServerEnums::MAIN_WINDOW_ID) {}
 	virtual void pip_mode_set_auto_enter_on_background(bool p_auto_enter_on_background, DisplayServerEnums::WindowID p_window = DisplayServerEnums::MAIN_WINDOW_ID) {}
 
-	/* ACCESSIBILITY */
-
 public:
-	virtual int accessibility_should_increase_contrast() const { return -1; }
-	virtual int accessibility_should_reduce_animation() const { return -1; }
-	virtual int accessibility_should_reduce_transparency() const { return -1; }
-	virtual int accessibility_screen_reader_active() const { return -1; }
-
 };
 
 VARIANT_ENUM_CAST_EXT(DisplayServerEnums::Feature, DisplayServer::Feature)

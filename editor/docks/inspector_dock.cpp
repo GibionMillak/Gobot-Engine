@@ -795,7 +795,7 @@ InspectorDock::InspectorDock(EditorData &p_editor_data) {
 	resource_save_button->set_theme_type_variation("FlatMenuButton");
 	resource_save_button->set_tooltip_text(TTRC("Save the currently edited resource."));
 	resource_save_button->connect(SceneStringName(pressed), callable_mp(this, &InspectorDock::_save_resource).bind(false));
-	resource_save_button->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
+	resource_save_button->set_focus_mode(Control::FOCUS_NONE);
 	resource_save_button->set_disabled(true);
 	general_options_hb->add_child(resource_save_button);
 
@@ -855,7 +855,6 @@ InspectorDock::InspectorDock(EditorData &p_editor_data) {
 	info = memnew(Button);
 	main_vb->add_child(info);
 	info->set_clip_text(true);
-	info->set_accessibility_name(TTRC("Information"));
 	info->hide();
 	info->connect(SceneStringName(pressed), callable_mp(this, &InspectorDock::_info_pressed));
 
@@ -867,7 +866,6 @@ InspectorDock::InspectorDock(EditorData &p_editor_data) {
 
 	Label *unique_resources_label = memnew(Label);
 	unique_resources_label->set_text(TTRC("The following resources will be duplicated and embedded within this resource/object:"));
-	unique_resources_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	container->add_child(unique_resources_label);
 
 	unique_resources_list_tree = memnew(Tree);

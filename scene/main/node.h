@@ -222,7 +222,6 @@ private:
 
 		Viewport *viewport = nullptr;
 
-		mutable RID accessibility_element;
 
 		HashMap<StringName, GroupData> grouped;
 		List<Node *>::Element *OW = nullptr; // Owned element.
@@ -435,7 +434,7 @@ protected:
 	GDVIRTUAL0(_enter_tree)
 	GDVIRTUAL0(_exit_tree)
 	GDVIRTUAL0(_ready)
-	GDVIRTUAL0RC(Vector<String>, _get_accessibility_configuration_warnings)
+
 	GDVIRTUAL0RC(Vector<String>, _get_configuration_warnings)
 
 	GDVIRTUAL1(_input, RequiredParam<InputEvent>)
@@ -443,7 +442,6 @@ protected:
 	GDVIRTUAL1(_unhandled_input, RequiredParam<InputEvent>)
 	GDVIRTUAL1(_unhandled_key_input, RequiredParam<InputEvent>)
 
-	GDVIRTUAL0RC(RID, _get_focused_accessibility_element)
 
 public:
 	enum {
@@ -471,8 +469,6 @@ public:
 		NOTIFICATION_RESET_PHYSICS_INTERPOLATION = 2001, // A GodotSpace Odyssey.
 		// Keep these linked to Node.
 
-		NOTIFICATION_ACCESSIBILITY_UPDATE = 3000,
-		NOTIFICATION_ACCESSIBILITY_INVALIDATE = 3001,
 
 		NOTIFICATION_WM_MOUSE_ENTER = 1002,
 		NOTIFICATION_WM_MOUSE_EXIT = 1003,
@@ -714,14 +710,8 @@ public:
 	void set_process_thread_messages(BitField<ProcessThreadMessages> p_flags);
 	BitField<ProcessThreadMessages> get_process_thread_messages() const;
 
-	void queue_accessibility_update();
 
-	virtual RID get_accessibility_element() const;
-	virtual RID get_focused_accessibility_element() const;
-	virtual bool accessibility_override_tree_hierarchy() const { return false; }
-	virtual Transform2D get_accessibility_transform() const;
 
-	virtual PackedStringArray get_accessibility_configuration_warnings() const;
 
 	Node *duplicate(int p_flags = DUPLICATE_GROUPS | DUPLICATE_SIGNALS | DUPLICATE_SCRIPTS) const;
 #ifdef TOOLS_ENABLED

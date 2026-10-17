@@ -79,7 +79,6 @@ class GLManagerEGL_X11;
 
 #ifdef DBUS_ENABLED
 class FreeDesktopPortalDesktop;
-class FreeDesktopAtSPIMonitor;
 class FreeDesktopScreenSaver;
 #endif
 
@@ -139,7 +138,6 @@ class DisplayServerX11 : public DisplayServer {
 
 #if defined(DBUS_ENABLED)
 	FreeDesktopPortalDesktop *portal_desktop = nullptr;
-	FreeDesktopAtSPIMonitor *atspi_monitor = nullptr;
 #endif
 
 	struct WindowData {
@@ -531,8 +529,6 @@ public:
 	virtual void window_set_ime_active(const bool p_active, DisplayServerEnums::WindowID p_window = DisplayServerEnums::MAIN_WINDOW_ID) override;
 	virtual void window_set_ime_position(const Point2i &p_pos, DisplayServerEnums::WindowID p_window = DisplayServerEnums::MAIN_WINDOW_ID) override;
 
-	virtual int accessibility_should_increase_contrast() const override;
-	virtual int accessibility_screen_reader_active() const override;
 
 	virtual Point2i ime_get_selection() const override;
 	virtual String ime_get_text() const override;

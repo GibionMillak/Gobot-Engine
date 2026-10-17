@@ -52,7 +52,6 @@
 #include "drivers/png/png_driver_common.h"
 #include "main/main.h"
 #include "scene/resources/texture.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/rendering/dummy/rasterizer_dummy.h"
 #include "servers/rendering/renderer_rd/renderer_compositor_rd.h"
 
@@ -200,9 +199,7 @@ bool DisplayServerWindows::has_feature(DisplayServerEnums::Feature p_feature) co
 			return (os_ver.dwBuildNumber >= 19041); // Fully supported on Windows 10 Vibranium R1 (2004)+ only, captured as black rect on older versions.
 		case DisplayServerEnums::FEATURE_EMOJI_AND_SYMBOL_PICKER:
 			return (os_ver.dwBuildNumber >= 17134); // Windows 10 Redstone 4 (1803)+ only.
-		case DisplayServerEnums::FEATURE_ACCESSIBILITY_SCREEN_READER: {
-			return AccessibilityServer::get_singleton()->is_supported();
-		} break;
+
 		default:
 			return false;
 	}
@@ -3223,46 +3220,6 @@ bool DisplayServerWindows::can_any_window_draw() const {
 	return false;
 }
 
-int DisplayServerWindows::accessibility_should_increase_contrast() const {
-	HIGHCONTRASTA hc;
-	hc.cbSize = sizeof(HIGHCONTRAST);
-	if (!SystemParametersInfoA(SPI_GETHIGHCONTRAST, sizeof(HIGHCONTRAST), &hc, 0)) {
-		return -1;
-	}
-	return (hc.dwFlags & HCF_HIGHCONTRASTON);
-}
-
-int DisplayServerWindows::accessibility_should_reduce_animation() const {
-	BOOL anim_enabled = false; // Note: this should be BOOL (WinAPI), not bool (C++), since SystemParametersInfoA expect variable with specific size.
-	if (!SystemParametersInfoA(SPI_GETCLIENTAREAANIMATION, 0, &anim_enabled, 0)) {
-		return -1;
-	}
-	return (!anim_enabled);
-}
-
-int DisplayServerWindows::accessibility_should_reduce_transparency() const {
-	BOOL tr_enabled = false; // Note: this should be BOOL (WinAPI), not bool (C++), since SystemParametersInfoA expect variable with specific size.
-	if (!SystemParametersInfoA(SPI_GETDISABLEOVERLAPPEDCONTENT, 0, &tr_enabled, 0)) {
-		return -1;
-	}
-	return tr_enabled;
-}
-
-int DisplayServerWindows::accessibility_screen_reader_active() const {
-	BOOL sr_enabled = false; // Note: this should be BOOL (WinAPI), not bool (C++), since SystemParametersInfoA expect variable with specific size.
-	if (SystemParametersInfoA(SPI_GETSCREENREADER, 0, &sr_enabled, 0) && sr_enabled) {
-		return true;
-	}
-
-	static const WCHAR *narrator_mutex_name = L"NarratorRunning";
-	HANDLE narrator_mutex = OpenMutexW(MUTEX_ALL_ACCESS, false, narrator_mutex_name);
-	if (narrator_mutex) {
-		CloseHandle(narrator_mutex);
-		return true;
-	}
-	return false;
-}
-
 Vector2i DisplayServerWindows::ime_get_selection() const {
 	_THREAD_SAFE_METHOD_
 
@@ -5722,11 +5679,6 @@ LRESULT DisplayServerWindows::_handle_early_window_message(HWND hWnd, UINT uMsg,
 			// Fix this up so we can recognize the remaining messages.
 			pWindowData->hWnd = hWnd;
 
-			if (!AccessibilityServer::get_singleton()->window_create(pWindowData->id, (void *)hWnd)) {
-				if (OS::get_singleton()->is_stdout_verbose()) {
-					ERR_PRINT("Can't create an accessibility adapter for window, accessibility support disabled!");
-				}
-			}
 		} break;
 		default: {
 			// Additional messages during window creation should happen after we fixed
@@ -7009,7 +6961,6 @@ LRESULT DisplayServerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 
 		} break;
 		case WM_DESTROY: {
-			AccessibilityServer::get_singleton()->window_destroy(window_id);
 
 			Input::get_singleton()->flush_buffered_events();
 			if (window_mouseover_id == window_id) {
@@ -7064,7 +7015,6 @@ void DisplayServerWindows::_process_activate_event(DisplayServerEnums::WindowID 
 			SetFocus(wd.hWnd);
 		}
 		wd.window_focused = true;
-		AccessibilityServer::get_singleton()->set_window_focused(p_window_id, true);
 
 		_send_window_event(wd, DisplayServerEnums::WINDOW_EVENT_FOCUS_IN);
 	} else { // WM_INACTIVE.
@@ -7081,7 +7031,6 @@ void DisplayServerWindows::_process_activate_event(DisplayServerEnums::WindowID 
 			ReleaseCapture();
 		}
 		wd.window_focused = false;
-		AccessibilityServer::get_singleton()->set_window_focused(p_window_id, false);
 
 		_send_window_event(wd, DisplayServerEnums::WINDOW_EVENT_FOCUS_OUT);
 	}
@@ -8445,25 +8394,6 @@ DisplayServerWindows::DisplayServerWindows(const String &p_rendering_driver, Dis
 
 	windows[DisplayServerEnums::MAIN_WINDOW_ID].initialized = true;
 
-#ifdef ACCESSKIT_ENABLED
-	if (accessibility_screen_reader_active()) {
-		_THREAD_SAFE_LOCK_
-		uint64_t time_wait = OS::get_singleton()->get_ticks_msec();
-		while (true) {
-			MSG msg = {};
-			while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
-				TranslateMessage(&msg);
-				DispatchMessageW(&msg);
-			}
-
-			uint64_t delta = OS::get_singleton()->get_ticks_msec() - time_wait;
-			if (delta > 500 || get_object_received) {
-				break;
-			}
-		}
-		_THREAD_SAFE_UNLOCK_
-	}
-#endif
 
 #if defined(RD_ENABLED)
 	if (rendering_context) {

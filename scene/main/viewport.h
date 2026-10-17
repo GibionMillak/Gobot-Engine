@@ -398,7 +398,6 @@ private:
 		bool drag_attempted = false;
 		Variant drag_data; // Only used in root-Viewport and SubViewports, that are not children of a SubViewportContainer.
 		ObjectID drag_preview_id;
-		String drag_description;
 		Ref<SceneTreeTimer> tooltip_timer;
 		double tooltip_delay = 0.0;
 		bool roots_order_dirty = false;
@@ -467,7 +466,6 @@ private:
 	void _gui_update_mouse_over();
 
 	void _gui_force_drag_start();
-	void _gui_force_drag_cancel();
 	void _gui_force_drag(Control *p_base, const Variant &p_data, Control *p_control);
 	void _gui_set_drag_preview(Control *p_base, Control *p_control);
 	Control *_gui_get_drag_preview();
@@ -536,7 +534,6 @@ public:
 
 	uint64_t get_processed_events_count() const { return event_count; }
 
-	void cancel_tooltip();
 	void show_tooltip(Control *p_control);
 
 	void update_canvas_items();
@@ -649,8 +646,6 @@ public:
 #endif // !defined(PHYSICS_2D_DISABLED) || !defined(PHYSICS_3D_DISABLED)
 
 	Variant gui_get_drag_data() const;
-	String gui_get_drag_description() const;
-	void gui_set_drag_description(const String &p_description);
 
 	void gui_reset_canvas_sort_index();
 	int gui_get_canvas_sort_index();
@@ -658,7 +653,6 @@ public:
 	void gui_release_focus();
 	Control *gui_get_focus_owner() const;
 	Control *gui_get_hovered_control() const;
-	Window *get_focused_subwindow() const { return gui.subwindow_focused; }
 
 	PackedStringArray get_configuration_warnings() const override;
 
@@ -688,7 +682,6 @@ public:
 	bool gui_is_dragging() const;
 	bool gui_is_drag_successful() const;
 	void gui_cancel_drag();
-	void gui_perform_drop_at(const Point2 &p_pos, Control *p_control = nullptr);
 
 	Control *gui_find_control(const Point2 &p_global);
 

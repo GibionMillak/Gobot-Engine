@@ -702,7 +702,7 @@
 			If [code]true[/code], the label's minimum size will be automatically updated to fit its content, matching the behavior of [Label].
 			[b]Note:[/b] RichTextLabels with autowrapping and [member fit_content] enabled must have a custom maximum width configured to work correctly, either through the RichTextLabel's own [member Control.custom_maximum_size] or as a result of a propagated maximum size from a parent Control with [member Control.propagate_maximum_size] enabled.
 		</member>
-		<member name="focus_mode" type="int" setter="set_focus_mode" getter="get_focus_mode" overrides="Control" enum="Control.FocusMode" default="3" />
+		<member name="focus_mode" type="int" setter="set_focus_mode" getter="get_focus_mode" overrides="Control" enum="Control.FocusMode" default="0" />
 		<member name="hint_underlined" type="bool" setter="set_hint_underline" getter="is_hint_underlined" default="true">
 			If [code]true[/code], the label underlines hint tags such as [code skip-lint][hint=description]{text}[/hint][/code].
 		</member>

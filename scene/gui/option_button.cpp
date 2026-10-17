@@ -33,7 +33,6 @@
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 
 static const int NONE_SELECTED = -1;
 
@@ -81,13 +80,7 @@ Size2 OptionButton::get_minimum_size() const {
 
 void OptionButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_BUTTON);
-			AccessibilityServer::get_singleton()->update_set_popup_type(ae, AccessibilityServerEnums::AccessibilityPopupType::POPUP_LIST);
-		} break;
 
 		case NOTIFICATION_POSTINITIALIZE: {
 			_refresh_size_cache();

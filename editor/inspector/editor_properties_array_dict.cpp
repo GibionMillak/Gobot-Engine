@@ -333,7 +333,6 @@ void EditorPropertyArray::_create_new_property_slot() {
 	EditorProperty *prop = memnew(EditorPropertyNil);
 
 	Button *reorder_button = memnew(Button);
-	reorder_button->set_accessibility_name(TTRC("Reorder"));
 	reorder_button->set_button_icon(EditorIconManager::get_icon(SNAME("DragHandle")));
 	reorder_button->set_default_cursor_shape(Control::CURSOR_MOVE);
 	reorder_button->set_disabled(is_read_only());
@@ -351,7 +350,6 @@ void EditorPropertyArray::_create_new_property_slot() {
 	Button *remove_btn = nullptr;
 	if (is_untyped_array) {
 		edit_btn = memnew(Button);
-		edit_btn->set_accessibility_name(TTRC("Edit"));
 		edit_btn->set_button_icon(EditorIconManager::get_icon(SNAME("Edit")));
 		edit_btn->set_disabled(is_read_only());
 		edit_btn->set_theme_type_variation(SNAME("EditorInspectorFlatButton"));
@@ -359,7 +357,6 @@ void EditorPropertyArray::_create_new_property_slot() {
 		prop->add_inline_control(edit_btn, INLINE_CONTROL_RIGHT);
 	} else {
 		remove_btn = memnew(Button);
-		remove_btn->set_accessibility_name(TTRC("Remove"));
 		remove_btn->set_button_icon(EditorIconManager::get_icon(SNAME("Remove")));
 		remove_btn->set_disabled(is_read_only());
 		remove_btn->set_theme_type_variation(SNAME("EditorInspectorFlatButton"));
@@ -486,7 +483,6 @@ void EditorPropertyArray::update_property() {
 			size_slider->set_editing_integer(true);
 			size_slider->set_h_size_flags(SIZE_EXPAND_FILL);
 			size_slider->set_read_only(is_read_only());
-			size_slider->set_accessibility_name(TTRC("Size"));
 			size_slider->connect(SceneStringName(value_changed), callable_mp(this, &EditorPropertyArray::_length_changed));
 			hbox->add_child(size_slider);
 
@@ -500,7 +496,6 @@ void EditorPropertyArray::update_property() {
 			button_add_item->connect(SceneStringName(draw), callable_mp(this, &EditorPropertyArray::_button_add_item_draw));
 			SET_DRAG_FORWARDING_CD(button_add_item, EditorPropertyArray);
 			button_add_item->set_disabled(is_read_only());
-			button_add_item->set_accessibility_name(TTRC("Add"));
 			vbox->add_child(button_add_item);
 
 			paginator = memnew(EditorPaginator);
@@ -1019,7 +1014,6 @@ EditorPropertyArray::EditorPropertyArray() {
 	page_length = int(EDITOR_GET("interface/inspector/max_array_dictionary_items_per_page"));
 
 	edit = memnew(Button);
-	edit->set_accessibility_name(TTRC("Edit"));
 	edit->set_h_size_flags(SIZE_EXPAND_FILL);
 	edit->set_clip_text(true);
 	edit->set_theme_type_variation(SNAME("EditorInspectorButton"));
@@ -1135,7 +1129,6 @@ void EditorPropertyDictionary::_create_new_property_slot(int p_idx) {
 	Button *remove_btn = nullptr;
 	if (is_untyped_dict) {
 		edit_btn = memnew(Button);
-		edit_btn->set_accessibility_name(TTRC("Edit"));
 		edit_btn->set_button_icon(EditorIconManager::get_icon(SNAME("Edit")));
 		edit_btn->set_disabled(is_read_only());
 		edit_btn->set_theme_type_variation(SNAME("EditorInspectorFlatButton"));
@@ -1143,7 +1136,6 @@ void EditorPropertyDictionary::_create_new_property_slot(int p_idx) {
 		prop->add_inline_control(edit_btn, INLINE_CONTROL_RIGHT);
 	} else if (p_idx >= 0) {
 		remove_btn = memnew(Button);
-		remove_btn->set_accessibility_name(TTRC("Remove"));
 		remove_btn->set_button_icon(EditorIconManager::get_icon(SNAME("Remove")));
 		remove_btn->set_disabled(is_read_only());
 		remove_btn->set_theme_type_variation(SNAME("EditorInspectorFlatButton"));
@@ -1384,7 +1376,6 @@ void EditorPropertyDictionary::update_property() {
 
 			button_add_item = memnew(EditorInspectorActionButton(TTRC("Add Key/Value Pair"), SNAME("Add")));
 			button_add_item->set_disabled(is_read_only());
-			button_add_item->set_accessibility_name(TTRC("Add"));
 			button_add_item->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyDictionary::_add_key_value));
 			add_vbox->add_child(button_add_item);
 		}
@@ -1430,7 +1421,7 @@ void EditorPropertyDictionary::update_property() {
 					new_prop->set_read_only(true);
 					new_prop->set_selectable(false);
 					new_prop->connect(SNAME("object_id_selected"), callable_mp(this, &EditorPropertyDictionary::_object_id_selected));
-					new_prop->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
+					new_prop->set_focus_mode(Control::FOCUS_NONE);
 					new_prop->set_draw_background(false);
 					new_prop->set_use_folding(is_using_folding());
 					new_prop->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -1610,7 +1601,6 @@ EditorPropertyDictionary::EditorPropertyDictionary() {
 	page_length = int(EDITOR_GET("interface/inspector/max_array_dictionary_items_per_page"));
 
 	edit = memnew(Button);
-	edit->set_accessibility_name(TTRC("Edit"));
 	edit->set_h_size_flags(SIZE_EXPAND_FILL);
 	edit->set_clip_text(true);
 	edit->set_theme_type_variation(SNAME("EditorInspectorButton"));
@@ -1767,7 +1757,6 @@ void EditorPropertyLocalizableString::update_property() {
 			hbox->add_child(prop);
 			prop->set_h_size_flags(SIZE_EXPAND_FILL);
 			Button *edit_btn = memnew(Button);
-			edit_btn->set_accessibility_name(TTRC("Remove Translation"));
 			edit_btn->set_button_icon(EditorIconManager::get_icon(SNAME("Remove")));
 			hbox->add_child(edit_btn);
 			edit_btn->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyLocalizableString::_remove_item).bind(edit_btn, remove_index));
@@ -1777,7 +1766,6 @@ void EditorPropertyLocalizableString::update_property() {
 
 		if (page_index == max_page) {
 			button_add_item = memnew(EditorInspectorActionButton(TTRC("Add Translation"), SNAME("Add")));
-			button_add_item->set_accessibility_name(TTRC("Add Translation"));
 			button_add_item->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyLocalizableString::_add_locale_popup));
 			property_vbox->add_child(button_add_item);
 		}
@@ -1822,7 +1810,6 @@ EditorPropertyLocalizableString::EditorPropertyLocalizableString() {
 	page_length = int(EDITOR_GET("interface/inspector/max_array_dictionary_items_per_page"));
 
 	edit = memnew(Button);
-	edit->set_accessibility_name(TTRC("Edit"));
 	edit->set_h_size_flags(SIZE_EXPAND_FILL);
 	edit->set_clip_text(true);
 	edit->set_theme_type_variation(SNAME("EditorInspectorButton"));

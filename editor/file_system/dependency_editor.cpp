@@ -398,7 +398,6 @@ DependencyEditor::DependencyEditor() {
 	HBoxContainer *hbc_filter = memnew(HBoxContainer);
 	vb->add_child(hbc_filter);
 	filter = memnew(LineEdit);
-	filter->set_accessibility_name(TTRC("Filter Dependencies"));
 	filter->set_placeholder(TTRC("Filter Dependencies"));
 	filter->set_clear_button_enabled(true);
 	filter->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -409,7 +408,6 @@ DependencyEditor::DependencyEditor() {
 	menu_sort->set_flat(false);
 	menu_sort->set_theme_type_variation("FlatMenuButton");
 	menu_sort->set_tooltip_text(TTRC("Sort Dependencies"));
-	menu_sort->set_accessibility_name(TTRC("Sort Dependencies"));
 
 	PopupMenu *popup_sort = menu_sort->get_popup();
 	popup_sort->connect(SceneStringName(id_pressed), callable_mp(this, &DependencyEditor::_sort_option_selected));
@@ -895,7 +893,6 @@ DependencyRemoveDialog::DependencyRemoveDialog() {
 	add_child(vb);
 
 	text = memnew(Label);
-	text->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	vb->add_child(text);
 
 	Label *files_to_delete_label = memnew(Label);
@@ -911,7 +908,6 @@ DependencyRemoveDialog::DependencyRemoveDialog() {
 	files_to_delete_list = memnew(ItemList);
 	files_to_delete_list->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_BOTH);
 	files_to_delete_list->set_custom_minimum_size(Size2(0, 94) * EDSCALE);
-	files_to_delete_list->set_accessibility_name(TTRC("Files to be deleted:"));
 	mc->add_child(files_to_delete_list);
 
 	vb_owners = memnew(VBoxContainer);
@@ -934,7 +930,6 @@ DependencyRemoveDialog::DependencyRemoveDialog() {
 	owners->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTH);
 	owners->set_hide_root(true);
 	owners->set_custom_minimum_size(Size2(0, 94) * EDSCALE);
-	owners->set_accessibility_name(TTRC("Owners"));
 	mc->add_child(owners);
 	owners->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 }
@@ -1095,7 +1090,6 @@ DependencyErrorDialog::DependencyErrorDialog() {
 	set_cancel_button_text(TTRC("Close"));
 
 	Label *text = memnew(Label(TTRC("Which action should be taken?")));
-	text->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	vb->add_child(text);
 }
 

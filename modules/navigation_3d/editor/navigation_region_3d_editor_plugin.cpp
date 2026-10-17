@@ -247,7 +247,6 @@ NavigationRegion3DEditor::NavigationRegion3DEditor() {
 	button_reset->connect(SceneStringName(pressed), callable_mp(this, &NavigationRegion3DEditor::_clear_pressed));
 
 	bake_info = memnew(Label);
-	bake_info->set_focus_mode(FOCUS_ACCESSIBILITY);
 	bake_hbox->add_child(bake_info);
 
 	err_dialog = memnew(AcceptDialog);

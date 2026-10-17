@@ -90,7 +90,7 @@ public:
 		"--test",
 	};
 
-	virtual void add_frame_delay(bool p_can_draw, bool p_wake_for_events) override;
+	virtual void add_frame_delay(bool p_can_draw) override;
 
 	virtual void set_cmdline_platform_args(const List<String> &p_args);
 	virtual List<String> get_cmdline_platform_args() const override;

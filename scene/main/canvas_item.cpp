@@ -48,7 +48,6 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 #include "scene/resources/multimesh.h"
 #include "scene/resources/style_box.h"
 #include "scene/resources/world_2d.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/rendering/rendering_server.h"
 
 #define ERR_DRAW_GUARD \
@@ -107,7 +106,6 @@ void CanvasItem::_handle_visibility_change(bool p_visible) {
 	} else {
 		emit_signal(SceneStringName(hidden));
 	}
-	queue_accessibility_update();
 
 	_block();
 	for (int i = 0; i < get_child_count(); i++) {
@@ -370,12 +368,7 @@ void CanvasItem::set_oversampling_with_scale(CanvasItem::OversamplingWithScale p
 
 void CanvasItem::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_flag(ae, AccessibilityServerEnums::AccessibilityFlags::FLAG_HIDDEN, !is_visible_in_tree());
-		} break;
 
 		case NOTIFICATION_ENTER_TREE: {
 			ERR_MAIN_THREAD_GUARD;

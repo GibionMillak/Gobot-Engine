@@ -276,8 +276,6 @@ PackedSceneEditorTranslationParserPlugin::PackedSceneEditorTranslationParserPlug
 	lookup_properties.insert("filters");
 	lookup_properties.insert("script");
 	lookup_properties.insert("item_*/text");
-	lookup_properties.insert("accessibility_name");
-	lookup_properties.insert("accessibility_description");
 
 	// Exception list (to prevent false positives).
 	exception_list.insert("LineEdit", { "text" });

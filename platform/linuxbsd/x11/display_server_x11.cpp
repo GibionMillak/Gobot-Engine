@@ -46,7 +46,6 @@
 #include "drivers/png/png_driver_common.h"
 #include "drivers/unix/os_unix.h"
 #include "main/main.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/native_menu.h"
 #include "servers/rendering/dummy/rasterizer_dummy.h"
 
@@ -82,7 +81,6 @@
 #endif
 
 #ifdef DBUS_ENABLED
-#include "freedesktop_at_spi_monitor.h"
 #include "freedesktop_portal_desktop.h"
 #include "freedesktop_screensaver.h"
 
@@ -226,9 +224,6 @@ bool DisplayServerX11::has_feature(DisplayServerEnums::Feature p_feature) const 
 		} break;
 #endif
 
-		case DisplayServerEnums::FEATURE_ACCESSIBILITY_SCREEN_READER: {
-			return AccessibilityServer::get_singleton()->is_supported();
-		} break;
 
 		default: {
 			return false;
@@ -2146,7 +2141,6 @@ void DisplayServerX11::delete_sub_window(DisplayServerEnums::WindowID p_id) {
 	}
 #endif
 
-	AccessibilityServer::get_singleton()->window_destroy(p_id);
 
 	if (wd.xic) {
 		XDestroyIC(wd.xic);
@@ -3611,25 +3605,6 @@ void DisplayServerX11::window_set_ime_position(const Point2i &p_pos, DisplayServ
 			XMoveWindow(x11_display, wd.x11_xim_window, p_pos.x, p_pos.y);
 		}
 	}
-}
-
-int DisplayServerX11::accessibility_should_increase_contrast() const {
-#ifdef DBUS_ENABLED
-	if (!portal_desktop) {
-		return -1;
-	}
-	return portal_desktop->get_high_contrast();
-#endif
-	return -1;
-}
-
-int DisplayServerX11::accessibility_screen_reader_active() const {
-#ifdef DBUS_ENABLED
-	if (atspi_monitor && atspi_monitor->is_supported()) {
-		return atspi_monitor->is_active();
-	}
-#endif
-	return -1;
 }
 
 Point2i DisplayServerX11::ime_get_selection() const {
@@ -5270,7 +5245,6 @@ void DisplayServerX11::process_events() {
 				static unsigned int focus_order = 0;
 				wd.focus_order = ++focus_order;
 
-				AccessibilityServer::get_singleton()->set_window_focused(window_id, true);
 				_send_window_event(wd, DisplayServerEnums::WINDOW_EVENT_FOCUS_IN);
 
 				if (mouse_mode_grab) {
@@ -5321,7 +5295,6 @@ void DisplayServerX11::process_events() {
 				}
 				wd.focused = false;
 
-				AccessibilityServer::get_singleton()->set_window_focused(window_id, false);
 				_send_window_event(wd, DisplayServerEnums::WINDOW_EVENT_FOCUS_OUT);
 
 				if (mouse_mode_grab) {
@@ -6598,11 +6571,6 @@ DisplayServerEnums::WindowID DisplayServerX11::_create_window(DisplayServerEnums
 			wd.xkb_state = xkb_compose_state_new(dead_tbl, XKB_COMPOSE_STATE_NO_FLAGS);
 		}
 #endif
-		if (!AccessibilityServer::get_singleton()->window_create(id, nullptr)) {
-			if (OS::get_singleton()->is_stdout_verbose()) {
-				ERR_PRINT("Can't create an accessibility adapter for window, accessibility support disabled!");
-			}
-		}
 		// Enable receiving notification when the window is initialized (MapNotify)
 		// so the focus can be set at the right time.
 		if (!wd.no_focus && !wd.is_popup) {
@@ -7499,7 +7467,6 @@ DisplayServerX11::DisplayServerX11(const String &p_rendering_driver, DisplayServ
 	if (dbus_ok) {
 		screensaver = memnew(FreeDesktopScreenSaver);
 		portal_desktop = memnew(FreeDesktopPortalDesktop);
-		atspi_monitor = memnew(FreeDesktopAtSPIMonitor);
 	}
 #endif // DBUS_ENABLED
 
@@ -7544,7 +7511,6 @@ DisplayServerX11::~DisplayServerX11() {
 		}
 #endif
 
-		AccessibilityServer::get_singleton()->window_destroy(E.key);
 
 		WindowData &wd = E.value;
 		if (wd.xic) {
@@ -7628,7 +7594,6 @@ DisplayServerX11::~DisplayServerX11() {
 #ifdef DBUS_ENABLED
 	memdelete(screensaver);
 	memdelete(portal_desktop);
-	memdelete(atspi_monitor);
 #endif
 }
 

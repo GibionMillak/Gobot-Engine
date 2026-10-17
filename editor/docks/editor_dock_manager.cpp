@@ -988,9 +988,8 @@ DockContextPopup::DockContextPopup() {
 
 	HBoxContainer *header_hb = memnew(HBoxContainer);
 	tab_move_left_button = memnew(Button);
-	tab_move_left_button->set_accessibility_name(TTRC("Move Tab Left"));
 	tab_move_left_button->set_flat(true);
-	tab_move_left_button->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
+	tab_move_left_button->set_focus_mode(Control::FOCUS_NONE);
 	tab_move_left_button->connect(SceneStringName(pressed), callable_mp(this, &DockContextPopup::_tab_move_left));
 	header_hb->add_child(tab_move_left_button);
 
@@ -1001,9 +1000,8 @@ DockContextPopup::DockContextPopup() {
 	header_hb->add_child(position_label);
 
 	tab_move_right_button = memnew(Button);
-	tab_move_right_button->set_accessibility_name(TTRC("Move Tab Right"));
 	tab_move_right_button->set_flat(true);
-	tab_move_right_button->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
+	tab_move_right_button->set_focus_mode(Control::FOCUS_NONE);
 	tab_move_right_button->connect(SceneStringName(pressed), callable_mp(this, &DockContextPopup::_tab_move_right));
 
 	header_hb->add_child(tab_move_right_button);
@@ -1023,14 +1021,14 @@ DockContextPopup::DockContextPopup() {
 		make_float_button->set_disabled(true);
 		make_float_button->set_tooltip_text(EditorNode::get_singleton()->get_multiwindow_support_tooltip_text());
 	}
-	make_float_button->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
+	make_float_button->set_focus_mode(Control::FOCUS_NONE);
 	make_float_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	make_float_button->connect(SceneStringName(pressed), callable_mp(this, &DockContextPopup::_float_dock));
 	dock_select_popup_vb->add_child(make_float_button);
 
 	close_button = memnew(Button);
 	close_button->set_text(TTRC("Close"));
-	close_button->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
+	close_button->set_focus_mode(Control::FOCUS_NONE);
 	close_button->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	close_button->connect(SceneStringName(pressed), callable_mp(this, &DockContextPopup::_close_dock));
 	dock_select_popup_vb->add_child(close_button);

@@ -51,6 +51,7 @@
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme_manager.h"
 #include "scene/animation/animation_tree.h"
+#include "scene/gui/line_edit.h"
 #include "scene/gui/separator.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/window.h"
@@ -2155,7 +2156,6 @@ AnimationPlayerEditor::AnimationPlayerEditor(AnimationPlayerEditorPlugin *p_plug
 	hb->add_child(animation);
 	animation->set_search_bar_enabled(true);
 	animation->set_search_bar_min_item_count(10);
-	animation->set_accessibility_name(TTRC("Animation"));
 	animation->set_h_size_flags(SIZE_EXPAND_FILL);
 	animation->set_tooltip_text(TTRC("Display list of animations in player."));
 	animation->set_clip_text(true);
@@ -2182,7 +2182,6 @@ AnimationPlayerEditor::AnimationPlayerEditor(AnimationPlayerEditorPlugin *p_plug
 	hb->add_child(onion_toggle);
 
 	onion_skinning = memnew(MenuButton);
-	onion_skinning->set_accessibility_name(TTRC("Onion Skinning Options"));
 	onion_skinning->set_flat(false);
 	onion_skinning->set_theme_type_variation("FlatMenuButton");
 	onion_skinning->set_tooltip_text(TTRC("Onion Skinning Options"));

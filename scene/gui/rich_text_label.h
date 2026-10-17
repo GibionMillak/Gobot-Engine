@@ -167,8 +167,6 @@ private:
 		Ref<TextParagraph> text_buf;
 		Ref<TextParagraph> text_buf_disp;
 
-		RID accessibility_line_element;
-		RID accessibility_text_element;
 
 		Item *dc_item = nullptr;
 		Color dc_color;
@@ -184,7 +182,6 @@ private:
 		Line() {
 			text_buf.instantiate();
 		}
-		~Line();
 
 		_FORCE_INLINE_ float get_height(float p_line_separation, float p_paragraph_separation) const {
 			return offset.y + text_buf->get_size().y + text_buf->get_line_count() * p_line_separation + p_paragraph_separation;
@@ -201,7 +198,6 @@ private:
 		int line = 0; // `line` is the index number of the paragraph (Line) this item is inside of (zero if the first paragraph).
 		RID rid;
 
-		RID accessibility_item_element;
 
 		void _clear_children() { // Only ever called on main or a paragraph (Line).
 			while (subitems.size()) {
@@ -563,10 +559,8 @@ private:
 
 	Array custom_effects;
 
-	HashMap<RID, Rect2> ac_element_bounds_cache;
 
 	void _update_follow_vc();
-	void _invalidate_accessibility();
 	void _invalidate_current_line(ItemFrame *p_frame);
 
 	void _prepare_scroll_anchor();
@@ -628,10 +622,6 @@ private:
 	bool deselect_on_focus_loss_enabled = true;
 	bool drag_and_drop_selection_enabled = true;
 
-	ItemFrame *keyboard_focus_frame = nullptr;
-	int keyboard_focus_line = 0;
-	Item *keyboard_focus_item = nullptr;
-	bool keyboard_focus_on_text = true;
 
 	bool context_menu_enabled = false;
 	bool shortcut_keys_enabled = true;
@@ -664,7 +654,6 @@ private:
 	void _update_line_font(ItemFrame *p_frame, int p_line, const Ref<Font> &p_base_font, int p_base_font_size);
 	int _draw_line(ItemFrame *p_frame, int p_line, const Vector2 &p_ofs, int p_width, float p_vsep, const Color &p_base_color, int p_outline_size, const Color &p_outline_color, const Color &p_font_shadow_color, int p_shadow_outline_size, const Point2 &p_shadow_ofs, int &r_processed_glyphs);
 	float _find_click_in_line(ItemFrame *p_frame, int p_line, const Vector2 &p_ofs, int p_width, float p_vsep, const Point2i &p_click, ItemFrame **r_click_frame = nullptr, int *r_click_line = nullptr, Item **r_click_item = nullptr, int *r_click_char = nullptr, bool p_table = false, bool p_meta = false);
-	void _accessibility_update_line(RID p_id, ItemFrame *p_frame, int p_line, const Vector2 &p_ofs, int p_width, float p_vsep);
 
 	String _roman(int p_num, bool p_capitalize) const;
 	String _letters(int p_num, bool p_capitalize) const;
@@ -717,7 +706,6 @@ private:
 	virtual void gui_input(const Ref<InputEvent> &p_event) override;
 	virtual String get_tooltip(const Point2 &p_pos) const override;
 	Item *_get_next_item(Item *p_item, bool p_free = false) const;
-	Item *_get_prev_item(Item *p_item, bool p_free = false) const;
 
 	Rect2 _get_text_rect();
 	int _get_wrap_width(const Rect2 &p_text_rect) const;
@@ -746,14 +734,7 @@ private:
 	bool internal_stack_editing = false;
 	bool stack_externally_modified = false;
 
-	void _accessibility_action_menu(const Variant &p_data);
-	void _accessibility_scroll_down(const Variant &p_data);
-	void _accessibility_scroll_up(const Variant &p_data);
-	void _accessibility_scroll_set(const Variant &p_data);
-	void _accessibility_focus_item(const Variant &p_data, uint64_t p_item, bool p_line, bool p_foucs);
-	void _accessibility_scroll_to_item(const Variant &p_data, uint64_t p_item);
 
-	RID accessibility_scroll_element;
 
 	bool fit_content = false;
 
@@ -812,8 +793,6 @@ private:
 	} theme_cache;
 
 public:
-	virtual RID get_focused_accessibility_element() const override;
-	PackedStringArray get_accessibility_configuration_warnings() const override;
 
 	String get_parsed_text() const;
 	void add_text(const String &p_text);

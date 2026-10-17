@@ -153,7 +153,6 @@ public:
 	// -1: Unknown.
 	// 0: Disabled.
 	// 1: Enabled.
-	uint32_t get_high_contrast();
 
 	// org.freedesktop.portal.Screenshot methods.
 	bool color_picker(const String &p_xid, const Callable &p_callback);

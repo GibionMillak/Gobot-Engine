@@ -713,7 +713,6 @@ InputEventConfigurationDialog::InputEventConfigurationDialog() {
 	add_child(main_vbox);
 
 	event_as_text = memnew(Label);
-	event_as_text->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	event_as_text->set_custom_minimum_size(Size2(500, 0) * EDSCALE);
 	event_as_text->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	event_as_text->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
@@ -737,7 +736,6 @@ InputEventConfigurationDialog::InputEventConfigurationDialog() {
 	input_list_search = memnew(LineEdit);
 	input_list_search->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	input_list_search->set_placeholder(TTRC("Filter Inputs"));
-	input_list_search->set_accessibility_name(TTRC("Filter Inputs"));
 	input_list_search->set_clear_button_enabled(true);
 	input_list_search->connect(SceneStringName(text_changed), callable_mp(this, &InputEventConfigurationDialog::_search_term_updated));
 	manual_vbox->add_child(input_list_search);
@@ -781,7 +779,6 @@ InputEventConfigurationDialog::InputEventConfigurationDialog() {
 		device_id_option->add_item(EventListenerLineEdit::get_device_string(i));
 	}
 	device_id_option->connect(SceneStringName(item_selected), callable_mp(this, &InputEventConfigurationDialog::_device_selection_changed));
-	device_id_option->set_accessibility_name(TTRC("Device:"));
 	_set_current_device(InputMap::ALL_DEVICES);
 	device_container->add_child(device_id_option);
 
@@ -836,7 +833,6 @@ InputEventConfigurationDialog::InputEventConfigurationDialog() {
 	key_location->add_item(String(), (int)KeyLocation::LEFT);
 	key_location->add_item(String(), (int)KeyLocation::RIGHT);
 	key_location->connect(SceneStringName(item_selected), callable_mp(this, &InputEventConfigurationDialog::_key_location_selected));
-	key_location->set_accessibility_name(TTRC("Physical Location"));
 
 	location_container->add_child(key_location);
 	additional_options_container->add_child(location_container);

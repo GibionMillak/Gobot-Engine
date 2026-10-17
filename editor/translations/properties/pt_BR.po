@@ -250,14 +250,8 @@ msgstr "Encerrar Automaticamente ao Fechar"
 msgid "Quit on Go Back"
 msgstr "Encerrar ao Voltar"
 
-msgid "Accessibility"
-msgstr "Acessibilidade"
-
 msgid "General"
 msgstr "Geral"
-
-msgid "Accessibility Support"
-msgstr "Suporte de Acessibilidade"
 
 msgid "Updates per Second"
 msgstr "Atualizações por Segundo"
@@ -2530,9 +2524,6 @@ msgstr "Centralizar Nó ao Trocar Pai"
 
 msgid "Hide Filtered Out Parents"
 msgstr "Esconder Pais Filtrados"
-
-msgid "Accessibility Warnings"
-msgstr "Avisos de Acessibilidade"
 
 msgid "Always Show Folders"
 msgstr "Sempre Exibir Pastas"
@@ -8262,9 +8253,6 @@ msgstr "Comportamento de Scroll"
 
 msgid "Right Disconnects"
 msgstr "Direito Desconecta"
-
-msgid "Type Names"
-msgstr "Nomes de Tipo"
 
 msgid "Connection Lines"
 msgstr "Linhas de Conexão"

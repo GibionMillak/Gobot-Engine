@@ -69,7 +69,6 @@
 #include "servers/audio/audio_driver_dummy.h"
 #include "servers/audio/audio_server.h"
 #include "servers/camera/camera_server.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 #include "servers/movie_writer/movie_writer.h"
 #include "servers/register_server_types.h"
@@ -167,7 +166,6 @@ static SteamTracker *steam_tracker = nullptr;
 // Initialized in setup2()
 static AudioServer *audio_server = nullptr;
 static CameraServer *camera_server = nullptr;
-static AccessibilityServer *accessibility_server = nullptr;
 static DisplayServer *display_server = nullptr;
 static RenderingServer *rendering_server = nullptr;
 static TextServerManager *tsman = nullptr;
@@ -182,13 +180,9 @@ String tablet_driver = "";
 String text_driver = "";
 static int text_driver_idx = -1;
 static int audio_driver_idx = -1;
-static int accessibility_driver_idx = -1;
 
 // Engine config/tools
 
-static AccessibilityServerEnums::AccessibilityMode accessibility_mode = AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_AUTO;
-static String accessibility_driver_name;
-static bool accessibility_mode_set = false;
 static bool single_window = false;
 static bool editor = false;
 static bool project_manager = false;
@@ -329,8 +323,6 @@ void finalize_display() {
 	rendering_server = nullptr;
 	memdelete(display_server);
 	display_server = nullptr;
-	memdelete(accessibility_server);
-	accessibility_server = nullptr;
 }
 
 void initialize_theme_db() {
@@ -552,8 +544,6 @@ void Main::print_help(const char *p_binary) {
 	print_help_option("--screen <N>", "Request window screen.\n");
 	print_help_option("--single-window", "Use a single window (no separate subwindows).\n");
 	print_help_option("--wid <window_id>", "Request parented to window.\n");
-	print_help_option("--accessibility <mode>", "Select accessibility mode ['auto' (when screen reader is running, default), 'always', 'disabled'].\n");
-	print_help_option("--accessibility-driver <driver>", "Select accessibility driver ['accesskit', 'dummy'].\n");
 
 	print_help_title("Debug options");
 #ifdef DEBUG_ENABLED
@@ -1298,36 +1288,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		} else if (arg == "--single-window") { // force single window
 
 			single_window = true;
-		} else if (arg == "--accessibility") {
-			if (N) {
-				String string = N->get();
-				if (string == "auto") {
-					accessibility_mode = AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_AUTO;
-					accessibility_mode_set = true;
-				} else if (string == "always") {
-					accessibility_mode = AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_ALWAYS;
-					accessibility_mode_set = true;
-				} else if (string == "disabled") {
-					accessibility_mode = AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_DISABLED;
-					accessibility_mode_set = true;
-				} else {
-					OS::get_singleton()->print("Accessibility mode argument not recognized, aborting.\n");
-					goto error;
-				}
-				N = N->next();
-			} else {
-				OS::get_singleton()->print("Missing accessibility mode argument, aborting.\n");
-				goto error;
-			}
-		} else if (arg == "--accessibility-driver") {
-			if (N) {
-				String string = N->get();
-				accessibility_driver_name = string;
-				N = N->next();
-			} else {
-				OS::get_singleton()->print("Missing accessibility driver argument, aborting.\n");
-				goto error;
-			}
 		} else if (arg == "-t" || arg == "--always-on-top") { // force always-on-top window
 
 			init_always_on_top = true;
@@ -2670,55 +2630,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 
 	message_queue = memnew(MessageQueue);
 
-	// Init AccessibilityServer.
-	// Note: early setup is required for Android.
-	if (accessibility_driver_name.is_empty()) {
-		if (!editor && !project_manager) {
-			accessibility_driver_name = GLOBAL_GET("accessibility/general/accessibility_driver");
-		} else {
-			accessibility_driver_name = "accesskit";
-		}
-	}
-	if (display_driver == NULL_DISPLAY_DRIVER || display_driver == EMBEDDED_DISPLAY_DRIVER || accessibility_mode == AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_DISABLED) {
-		accessibility_driver_name = "dummy";
-	}
-
-	if (accessibility_driver_name.is_empty() || accessibility_driver_name == "default") {
-		accessibility_driver_idx = 0;
-	} else {
-		for (int i = 0; i < AccessibilityServer::get_create_function_count(); i++) {
-			String name = AccessibilityServer::get_create_function_name(i);
-			if (accessibility_driver_name == name) {
-				accessibility_driver_idx = i;
-				break;
-			}
-		}
-
-		if (accessibility_driver_idx < 0) {
-			// If the requested driver wasn't found, pick the first entry.
-			// If all else failed it would be the headless server.
-			accessibility_driver_idx = 0;
-		}
-	}
-
-	accessibility_server = AccessibilityServer::create(accessibility_driver_idx, err);
-	if (err != OK || accessibility_server == nullptr) {
-		String last_name = AccessibilityServer::get_create_function_name(accessibility_driver_idx);
-
-		for (int i = 0; i < AccessibilityServer::get_create_function_count(); i++) {
-			if (i == accessibility_driver_idx) {
-				continue; // Don't try the same twice.
-			}
-			String name = AccessibilityServer::get_create_function_name(i);
-			WARN_VERBOSE(vformat("Accessibility driver %s failed, falling back to %s.", last_name, name));
-
-			memdelete(accessibility_server);
-			accessibility_server = AccessibilityServer::create(i, err);
-			if (err == OK && accessibility_server != nullptr) {
-				break;
-			}
-		}
-	}
 
 #if defined(STEAMAPI_ENABLED)
 	if (editor || project_manager) {
@@ -2828,7 +2739,6 @@ Error Main::setup2(bool p_show_boot_logo) {
 	print_header(false);
 
 #ifdef TOOLS_ENABLED
-	int accessibility_mode_editor = 0;
 	int tablet_driver_editor = -1;
 	if (editor || project_manager || cmdline_tool) {
 		OS::get_singleton()->benchmark_begin_measure("Startup", "Initialize Early Settings");
@@ -2866,7 +2776,6 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 					bool tablet_found = false;
 
-					bool ac_found = false;
 
 					if (editor) {
 						screen_property = "interface/editor/appearance/editor_screen";
@@ -2882,7 +2791,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 						prefer_wayland_found = true;
 					}
 
-					while (!screen_found || !init_expand_to_title_found || !init_display_scale_found || !init_custom_scale_found || !prefer_wayland_found || !tablet_found || !ac_found) {
+					while (!screen_found || !init_expand_to_title_found || !init_display_scale_found || !init_custom_scale_found || !prefer_wayland_found || !tablet_found) {
 						assign = Variant();
 						next_tag.fields.clear();
 						next_tag.name = String();
@@ -2901,10 +2810,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 									restore_editor_window_layout = value.operator int() == EditorSettings::InitialScreen::INITIAL_SCREEN_AUTO;
 								}
 							}
-							if (!ac_found && assign == "interface/accessibility/accessibility_support") {
-								accessibility_mode_editor = value;
-								ac_found = true;
-							} else if (!init_expand_to_title_found && assign == "interface/editor/appearance/expand_to_title") {
+							if (!init_expand_to_title_found && assign == "interface/editor/appearance/expand_to_title") {
 								init_expand_to_title = value;
 								init_expand_to_title_found = true;
 							} else if (!init_display_scale_found && assign == "interface/editor/appearance/display_scale") {
@@ -3089,18 +2995,6 @@ Error Main::setup2(bool p_show_boot_logo) {
 		}
 #endif
 
-		if (!accessibility_mode_set) {
-#ifdef TOOLS_ENABLED
-			if (editor || project_manager || cmdline_tool) {
-				accessibility_mode = (AccessibilityServerEnums::AccessibilityMode)accessibility_mode_editor;
-			} else {
-#else
-			{
-#endif
-				accessibility_mode = (AccessibilityServerEnums::AccessibilityMode)GLOBAL_GET("accessibility/general/accessibility_support").operator int64_t();
-			}
-		}
-		accessibility_server->set_mode(accessibility_mode);
 
 		Error err;
 		String rendering_driver = OS::get_singleton()->get_current_rendering_driver_name();
@@ -4806,11 +4700,8 @@ bool Main::iteration() {
 		return exit;
 	}
 
-	SceneTree *scene_tree = SceneTree::get_singleton();
-	bool wake_for_events = scene_tree && scene_tree->is_accessibility_enabled();
-
 	GodotProfileZoneGrouped(_profile_zone, "OS::add_frame_delay");
-	OS::get_singleton()->add_frame_delay(DisplayServer::get_singleton()->window_can_draw(), wake_for_events);
+	OS::get_singleton()->add_frame_delay(DisplayServer::get_singleton()->window_can_draw());
 
 #ifdef TOOLS_ENABLED
 	if (exit && quit_after_timeout && EditorNode::get_singleton()) {

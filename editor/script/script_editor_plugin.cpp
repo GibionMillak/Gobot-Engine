@@ -77,6 +77,7 @@
 #include "editor/shader/shader_text_editor.h"
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme_manager.h"
+#include "scene/gui/line_edit.h"
 #include "scene/gui/separator.h"
 #include "scene/gui/tab_container.h"
 #include "scene/gui/texture_rect.h"
@@ -623,7 +624,6 @@ DocumentList::DocumentList(DocumentEditorContainer *p_document_editor_container)
 	filter = memnew(LineEdit);
 	filter->set_clear_button_enabled(true);
 	filter->set_placeholder(TTRC("Filter Documents"));
-	filter->set_accessibility_name(TTRC("Filter Documents"));
 	filter->connect(SceneStringName(text_changed), callable_mp(this, &DocumentList::update_list).unbind(1));
 	add_child(filter);
 
@@ -828,7 +828,6 @@ DocumentOutline::DocumentOutline(DocumentEditorContainer *p_document_editor_cont
 
 	filter = memnew(FilterLineEdit);
 	filter->set_placeholder(TTRC("Filter Methods"));
-	filter->set_accessibility_name(TTRC("Filter Methods"));
 	filter->set_clear_button_enabled(true);
 	filter->set_h_size_flags(SIZE_EXPAND_FILL);
 	filter->connect(SceneStringName(text_changed), callable_mp(this, &DocumentOutline::update_outline).unbind(1));
@@ -4031,7 +4030,6 @@ DocumentEditorContainer::DocumentEditorContainer(bool p_is_main_editor, const St
 	toggle_files_button->set_v_size_flags(SIZE_EXPAND | SIZE_SHRINK_CENTER);
 	toggle_files_button->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	toggle_files_button->connect(SceneStringName(toggled), callable_mp(this, &DocumentEditorContainer::_toggle_files_pressed));
-	toggle_files_button->set_accessibility_name(TTRC("Toggle Document List"));
 	toggle_files_button->set_toggle_mode(true);
 	toggle_files_button->set_flat(true);
 	toggle_files_button->set_shortcut_context(this);
@@ -4142,7 +4140,6 @@ DocumentEditorContainer::DocumentEditorContainer(bool p_is_main_editor, const St
 
 	site_search = memnew(Button);
 	site_search->set_theme_type_variation(SceneStringName(FlatButton));
-	site_search->set_accessibility_name(TTRC("Site Search"));
 	site_search->connect(SceneStringName(pressed), callable_mp(this, &DocumentEditorContainer::_menu_option).bind(SEARCH_WEBSITE));
 	menu_hb->add_child(site_search);
 
@@ -4217,7 +4214,6 @@ DocumentEditorContainer::DocumentEditorContainer(bool p_is_main_editor, const St
 		disk_changed_list = memnew(Tree);
 		disk_changed_list->set_hide_root(true);
 		disk_changed_list->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-		disk_changed_list->set_accessibility_name(TTRC("The following files are newer on disk:"));
 		disk_changed_list->set_v_size_flags(SIZE_EXPAND_FILL);
 		vbc->add_child(disk_changed_list);
 

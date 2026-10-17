@@ -415,7 +415,6 @@ static const _BuiltinActionDisplayName _builtin_action_display_names[] = {
 	{ "ui_swap_input_direction",                       TTRC("Swap Input Direction") },
 	{ "ui_unicode_start",                              TTRC("Start Unicode Character Input") },
 	{ "ui_colorpicker_delete_preset",                  TTRC("ColorPicker: Delete Preset") },
-	{ "ui_accessibility_drag_and_drop",                TTRC("Accessibility: Keyboard Drag and Drop") },
 	{ "ui_toggle_fullscreen",                          TTRC("Toggle Fullscreen") },
 	{ "",                                              ""}
 	/* clang-format on */
@@ -510,9 +509,6 @@ const HashMap<String, List<Ref<InputEvent>>> &InputMap::get_builtins() {
 	inputs = List<Ref<InputEvent>>();
 	inputs.push_back(InputEventKey::create_reference(Key::END));
 	default_builtin_cache.insert("ui_end", inputs);
-
-	inputs = List<Ref<InputEvent>>();
-	default_builtin_cache.insert("ui_accessibility_drag_and_drop", inputs);
 
 	// ///// UI basic Shortcuts /////
 

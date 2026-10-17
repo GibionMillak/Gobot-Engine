@@ -758,7 +758,6 @@ ConnectDialog::ConnectDialog() {
 	vbc_left->set_custom_minimum_size(Vector2(400 * EDSCALE, 0));
 
 	from_signal = memnew(LineEdit);
-	from_signal->set_accessibility_name(TTRC("From Signal:"));
 	vbc_left->add_margin_child(TTR("From Signal:"), from_signal);
 	from_signal->set_editable(false);
 
@@ -778,7 +777,6 @@ ConnectDialog::ConnectDialog() {
 	hbc_filter->add_child(filter_nodes);
 	filter_nodes->set_h_size_flags(Control::SIZE_FILL | Control::SIZE_EXPAND);
 	filter_nodes->set_placeholder(TTR("Filter Nodes"));
-	filter_nodes->set_accessibility_name(TTRC("Filter Nodes"));
 	filter_nodes->set_clear_button_enabled(true);
 	filter_nodes->connect(SceneStringName(text_changed), callable_mp(tree, &SceneTreeEditor::set_filter));
 
@@ -792,7 +790,6 @@ ConnectDialog::ConnectDialog() {
 	vbc_left->add_child(tree);
 
 	error_label = memnew(Label);
-	error_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	error_label->set_text(TTR("Scene does not contain any script."));
 	vbc_left->add_child(error_label);
 	error_label->hide();
@@ -808,13 +805,11 @@ ConnectDialog::ConnectDialog() {
 	method_search = memnew(LineEdit);
 	method_vbc->add_child(method_search);
 	method_search->set_placeholder(TTR("Filter Methods"));
-	method_search->set_accessibility_name(TTRC("Filter Methods"));
 	method_search->set_clear_button_enabled(true);
 	method_search->connect(SceneStringName(text_changed), callable_mp(this, &ConnectDialog::_update_method_tree).unbind(1));
 
 	method_tree = memnew(Tree);
 	method_vbc->add_child(method_tree);
-	method_tree->set_accessibility_name(TTRC("Methods"));
 	method_tree->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	method_tree->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	method_tree->set_hide_root(true);
@@ -848,7 +843,6 @@ ConnectDialog::ConnectDialog() {
 	HBoxContainer *add_bind_hb = memnew(HBoxContainer);
 
 	type_list = memnew(EditorVariantTypeOptionButton);
-	type_list->set_accessibility_name(TTRC("Type"));
 	type_list->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	type_list->populate({ Variant::NIL, Variant::OBJECT });
 	add_bind_hb->add_child(type_list);
@@ -863,7 +857,6 @@ ConnectDialog::ConnectDialog() {
 	vbc_right->add_margin_child(TTR("Add Extra Call Argument:"), add_bind_hb);
 
 	bind_editor = memnew(EditorInspector);
-	bind_editor->set_accessibility_name(TTRC("Extra Call Arguments:"));
 	bind_editor->set_theme_type_variation("ScrollContainerSecondary");
 	bind_editor->set_use_deletable_properties(true);
 	bind_controls.push_back(bind_editor);
@@ -873,7 +866,6 @@ ConnectDialog::ConnectDialog() {
 
 	unbind_count = memnew(SpinBox);
 	unbind_count->set_tooltip_text(TTR("Allows to drop arguments sent by signal emitter."));
-	unbind_count->set_accessibility_name(TTRC("Unbind Signal Arguments:"));
 
 	vbc_right->add_margin_child(TTR("Unbind Signal Arguments:"), unbind_count);
 
@@ -881,7 +873,6 @@ ConnectDialog::ConnectDialog() {
 	vbc_left->add_margin_child(TTR("Receiver Method:"), hbc_method);
 
 	dst_method = memnew(LineEdit);
-	dst_method->set_accessibility_name(TTRC("Receiver Method"));
 	dst_method->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	dst_method->connect(SceneStringName(text_changed), callable_mp(method_tree, &Tree::deselect_all).unbind(1));
 	hbc_method->add_child(dst_method);
@@ -1745,7 +1736,6 @@ ConnectionsDock::ConnectionsDock() {
 	search_box = memnew(LineEdit);
 	search_box->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	search_box->set_placeholder(TTR("Filter Signals"));
-	search_box->set_accessibility_name(TTRC("Filter Signals"));
 	search_box->set_clear_button_enabled(true);
 	search_box->connect(SceneStringName(text_changed), callable_mp(this, &ConnectionsDock::_filter_changed));
 	holder->add_child(search_box);
@@ -1756,7 +1746,6 @@ ConnectionsDock::ConnectionsDock() {
 	holder->add_child(mc);
 
 	tree = memnew(ConnectionsDockTree);
-	tree->set_accessibility_name(TTRC("Connections"));
 	tree->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	tree->set_columns(1);
 	tree->set_select_mode(Tree::SELECT_ROW);
@@ -1767,7 +1756,6 @@ ConnectionsDock::ConnectionsDock() {
 	mc->add_child(tree);
 
 	connect_button = memnew(Button);
-	connect_button->set_accessibility_name(TTRC("Connect"));
 	HBoxContainer *hb = memnew(HBoxContainer);
 	holder->add_child(hb);
 	hb->add_spacer();
@@ -1816,7 +1804,6 @@ ConnectionsDock::ConnectionsDock() {
 	add_theme_constant_override("separation", 3 * EDSCALE);
 
 	select_an_object = memnew(Label);
-	select_an_object->set_focus_mode(FOCUS_ACCESSIBILITY);
 	select_an_object->set_text(TTRC("Select a single node or resource to edit its signals."));
 	select_an_object->set_custom_minimum_size(Size2(100 * EDSCALE, 0));
 	select_an_object->set_v_size_flags(SIZE_EXPAND_FILL);

@@ -45,17 +45,8 @@ void EditorDock::_emit_changed() {
 	emit_signal(SNAME("_tab_style_changed"));
 }
 
-void EditorDock::_validate_property(PropertyInfo &p_property) const {
-	if (p_property.name == "accessibility_name") {
-		p_property.usage = PROPERTY_USAGE_NONE;
-	}
-}
-
 void EditorDock::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_READY: {
-			set_accessibility_name(get_display_title());
-		} break;
 
 		case NOTIFICATION_PARENTED: {
 			parent_dock_container = Object::cast_to<DockTabContainer>(get_parent());
@@ -189,7 +180,6 @@ void EditorDock::set_title(const String &p_title) {
 		return;
 	}
 	title = p_title;
-	set_accessibility_name(get_display_title());
 	_emit_changed();
 }
 
@@ -349,8 +339,4 @@ void EditorDock::update_layout(DockLayout p_layout, int p_slot) {
 		return;
 	}
 
-}
-
-EditorDock::EditorDock() {
-	set_accessibility_region(true);
 }

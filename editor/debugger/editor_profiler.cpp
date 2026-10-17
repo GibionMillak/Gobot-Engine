@@ -725,7 +725,6 @@ EditorProfiler::EditorProfiler() {
 	hb_measure->add_child(memnew(Label(TTRC("Measure:"))));
 
 	display_mode = memnew(OptionButton);
-	display_mode->set_accessibility_name(TTRC("Measure:"));
 	display_mode->add_item(TTRC("Frame Time (ms)"));
 	display_mode->add_item(TTRC("Average Time (ms)"));
 	display_mode->add_item(TTRC("Frame %"));
@@ -741,7 +740,6 @@ EditorProfiler::EditorProfiler() {
 	hb_time->add_child(memnew(Label(TTRC("Time:"))));
 
 	display_time = memnew(OptionButton);
-	display_time->set_accessibility_name(TTRC("Time:"));
 	// TRANSLATORS: This is an option in the profiler to display the time spent in a function, including the time spent in other functions called by that function.
 	display_time->add_item(TTRC("Inclusive"));
 	// TRANSLATORS: This is an option in the profiler to display the time spent in a function, exincluding the time spent in other functions called by that function.
@@ -764,7 +762,6 @@ EditorProfiler::EditorProfiler() {
 	hb_frame->add_child(memnew(Label(TTRC("Frame #:"))));
 
 	cursor_metric_edit = memnew(SpinBox);
-	cursor_metric_edit->set_accessibility_name(TTRC("Frame #:"));
 	cursor_metric_edit->set_h_size_flags(SIZE_FILL);
 	cursor_metric_edit->set_value(0);
 	cursor_metric_edit->set_editable(false);

@@ -35,7 +35,6 @@
 #include "core/object/class_db.h"
 #include "scene/gui/line_edit.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 
 // AcceptDialog
 
@@ -54,12 +53,7 @@ void AcceptDialog::_parent_focused() {
 
 void AcceptDialog::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_DIALOG);
-		} break;
 		case NOTIFICATION_POST_ENTER_TREE: {
 			if (is_visible()) {
 				get_ok_button()->grab_focus();
@@ -481,7 +475,6 @@ AcceptDialog::AcceptDialog() {
 	buttons_hbox = memnew(HBoxContainer);
 
 	message_label = memnew(Label);
-	message_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	message_label->set_anchor(SIDE_RIGHT, Control::ANCHOR_END);
 	message_label->set_anchor(SIDE_BOTTOM, Control::ANCHOR_END);
 	add_child(message_label, false, INTERNAL_MODE_FRONT);

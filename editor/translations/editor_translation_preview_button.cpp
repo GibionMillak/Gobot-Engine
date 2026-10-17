@@ -75,7 +75,6 @@ void EditorTranslationPreviewButton::_notification(int p_what) {
 EditorTranslationPreviewButton::EditorTranslationPreviewButton() {
 	set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
-	set_accessibility_name(TTRC("Disable Translation Preview"));
 	set_tooltip_text(TTRC("Previewing translation. Click to disable."));
 	set_focus_mode(FOCUS_NONE);
 	set_visible(false);

@@ -34,7 +34,6 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
-#include "core/input/input_map.h"
 #include "core/math/geometry_2d.h"
 #include "core/math/transform_2d.h"
 #include "core/object/callable_mp.h"
@@ -49,7 +48,6 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 #include "scene/resources/audio/audio_stream_randomizer.h"
 #include "scene/theme/theme_db.h"
 #include "scene/theme/theme_owner.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/text/text_server.h"
 
@@ -301,38 +299,6 @@ PackedStringArray Control::get_configuration_warnings() const {
 
 	if (data.mouse_filter == MOUSE_FILTER_IGNORE && !data.tooltip.is_empty()) {
 		warnings.push_back(RTR("The Hint Tooltip won't be displayed as the control's Mouse Filter is set to \"Ignore\". To solve this, set the Mouse Filter to \"Stop\" or \"Pass\"."));
-	}
-
-	return warnings;
-}
-
-String Control::_get_accessibility_name() const {
-	if (get_parent_control()) {
-		String container_info = get_parent_control()->get_accessibility_container_name(this);
-		return container_info.is_empty() ? get_accessibility_name() : get_accessibility_name() + " " + container_info;
-	} else {
-		return get_accessibility_name();
-	}
-}
-
-PackedStringArray Control::get_accessibility_configuration_warnings() const {
-	ERR_READ_THREAD_GUARD_V(PackedStringArray());
-	PackedStringArray warnings = Node::get_accessibility_configuration_warnings();
-
-	if (get_focus_mode_with_override() != FOCUS_NONE) {
-		String ac_name = _get_accessibility_name().strip_edges();
-		if (ac_name.is_empty()) {
-			warnings.push_back(RTR("Accessibility Name must not be empty, or contain only spaces."));
-		}
-		if (ac_name.contains(get_class_name())) {
-			warnings.push_back(RTR("Accessibility Name must not include Node class name."));
-		}
-		for (int i = 0; i < ac_name.length(); i++) {
-			if (is_control(ac_name[i])) {
-				warnings.push_back(RTR("Accessibility Name must not include control character."));
-				break;
-			}
-		}
 	}
 
 	return warnings;
@@ -1701,7 +1667,6 @@ void Control::set_scale(const Vector2 &p_scale) {
 	}
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 Vector2 Control::get_scale() const {
@@ -1718,7 +1683,6 @@ void Control::set_rotation(real_t p_radians) {
 	data.rotation = p_radians;
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 void Control::set_rotation_degrees(real_t p_degrees) {
@@ -1745,7 +1709,6 @@ void Control::set_pivot_offset_ratio(const Vector2 &p_ratio) {
 	data.pivot_offset_ratio = p_ratio;
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 Vector2 Control::get_pivot_offset_ratio() const {
@@ -1762,7 +1725,6 @@ void Control::set_pivot_offset(const Vector2 &p_pivot) {
 	data.pivot_offset = p_pivot;
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 Vector2 Control::get_pivot_offset() const {
@@ -2351,7 +2313,6 @@ void Control::_size_changed() {
 			_update_canvas_item_transform();
 		}
 
-		queue_accessibility_update();
 	} else if (pos_changed) {
 		_notify_transform();
 	}
@@ -2423,7 +2384,6 @@ void Control::set_offset_transform_enabled(bool p_enabled) {
 
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 bool Control::is_offset_transform_enabled() const {
@@ -2444,7 +2404,6 @@ void Control::set_offset_transform_position(const Vector2 &p_offset) {
 
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 Vector2 Control::get_offset_transform_position() const {
@@ -2469,7 +2428,6 @@ void Control::set_offset_transform_position_ratio(const Vector2 &p_offset) {
 
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 Vector2 Control::get_offset_transform_position_ratio() const {
@@ -2494,7 +2452,6 @@ void Control::set_offset_transform_scale(const Vector2 &p_scale) {
 
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 Vector2 Control::get_offset_transform_scale() const {
@@ -2519,7 +2476,6 @@ void Control::set_offset_transform_rotation(real_t p_rotation) {
 
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 real_t Control::get_offset_transform_rotation() const {
@@ -2544,7 +2500,6 @@ void Control::set_offset_transform_pivot(const Vector2 &p_pivot) {
 
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 Vector2 Control::get_offset_transform_pivot() const {
@@ -2569,7 +2524,6 @@ void Control::set_offset_transform_pivot_ratio(const Vector2 &p_pivot) {
 
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 Vector2 Control::get_offset_transform_pivot_ratio() const {
@@ -2594,7 +2548,6 @@ void Control::set_offset_transform_visual_only(bool p_enabled) {
 
 	queue_redraw();
 	_notify_transform();
-	queue_accessibility_update();
 }
 
 bool Control::is_offset_transform_visual_only() const {
@@ -2862,130 +2815,6 @@ void Control::force_drag(const Variant &p_data, Control *p_control) {
 	vp->_gui_force_drag(this, p_data, p_control);
 }
 
-void Control::accessibility_drag() {
-	ERR_MAIN_THREAD_GUARD;
-	ERR_FAIL_COND(!is_inside_tree());
-
-	Viewport *vp = get_viewport();
-
-	vp->_gui_force_drag_start();
-	Variant dnd_data = get_drag_data(Vector2(Math::INF, Math::INF));
-	if (dnd_data.get_type() != Variant::NIL) {
-		Window *w = Window::get_from_id(get_window()->get_window_id());
-		if (w) {
-			w->accessibility_announcement(vformat(RTR("%s grabbed. Select target and use %s to drop, use %s to cancel."), vp->gui_get_drag_description(), InputMap::get_singleton()->get_action_description("ui_accessibility_drag_and_drop"), InputMap::get_singleton()->get_action_description("ui_cancel")));
-		}
-		vp->_gui_force_drag(this, dnd_data, nullptr);
-		queue_accessibility_update();
-	} else {
-		vp->_gui_force_drag_cancel();
-	}
-}
-
-void Control::accessibility_drop() {
-	ERR_MAIN_THREAD_GUARD;
-	ERR_FAIL_COND(!is_inside_tree());
-	ERR_FAIL_COND(!get_viewport()->gui_is_dragging());
-
-	get_viewport()->gui_perform_drop_at(Vector2(Math::INF, Math::INF), this);
-
-	queue_accessibility_update();
-}
-
-String Control::get_accessibility_container_name(const Node *p_node) const {
-	String ret;
-	if (GDVIRTUAL_CALL(_get_accessibility_container_name, p_node, ret)) {
-	} else if (data.parent_control) {
-		ret = data.parent_control->get_accessibility_container_name(this);
-	}
-	return ret;
-}
-
-void Control::set_accessibility_name(const String &p_name) {
-	ERR_THREAD_GUARD
-	if (data.accessibility_name != p_name) {
-		data.accessibility_name = p_name;
-		queue_accessibility_update();
-		update_configuration_warnings();
-	}
-}
-
-String Control::get_accessibility_name() const {
-	return tr(data.accessibility_name);
-}
-
-void Control::set_accessibility_description(const String &p_description) {
-	ERR_THREAD_GUARD
-	if (data.accessibility_description != p_description) {
-		data.accessibility_description = p_description;
-		queue_accessibility_update();
-	}
-}
-
-String Control::get_accessibility_description() const {
-	return tr(data.accessibility_description);
-}
-
-void Control::set_accessibility_live(AccessibilityServerEnums::AccessibilityLiveMode p_mode) {
-	ERR_THREAD_GUARD
-	if (data.accessibility_live != p_mode) {
-		data.accessibility_live = p_mode;
-		queue_accessibility_update();
-	}
-}
-
-AccessibilityServerEnums::AccessibilityLiveMode Control::get_accessibility_live() const {
-	return data.accessibility_live;
-}
-
-void Control::set_accessibility_controls_nodes(const TypedArray<NodePath> &p_node_path) {
-	ERR_MAIN_THREAD_GUARD;
-	if (data.accessibility_controls_nodes != p_node_path) {
-		data.accessibility_controls_nodes = p_node_path;
-		queue_accessibility_update();
-	}
-}
-
-TypedArray<NodePath> Control::get_accessibility_controls_nodes() const {
-	return data.accessibility_controls_nodes;
-}
-
-void Control::set_accessibility_described_by_nodes(const TypedArray<NodePath> &p_node_path) {
-	ERR_MAIN_THREAD_GUARD;
-	if (data.accessibility_described_by_nodes != p_node_path) {
-		data.accessibility_described_by_nodes = p_node_path;
-		queue_accessibility_update();
-	}
-}
-
-TypedArray<NodePath> Control::get_accessibility_described_by_nodes() const {
-	return data.accessibility_described_by_nodes;
-}
-
-void Control::set_accessibility_labeled_by_nodes(const TypedArray<NodePath> &p_node_path) {
-	ERR_MAIN_THREAD_GUARD;
-	if (data.accessibility_labeled_by_nodes != p_node_path) {
-		data.accessibility_labeled_by_nodes = p_node_path;
-		queue_accessibility_update();
-	}
-}
-
-TypedArray<NodePath> Control::get_accessibility_labeled_by_nodes() const {
-	return data.accessibility_labeled_by_nodes;
-}
-
-void Control::set_accessibility_flow_to_nodes(const TypedArray<NodePath> &p_node_path) {
-	ERR_MAIN_THREAD_GUARD;
-	if (data.accessibility_flow_to_nodes != p_node_path) {
-		data.accessibility_flow_to_nodes = p_node_path;
-		queue_accessibility_update();
-	}
-}
-
-TypedArray<NodePath> Control::get_accessibility_flow_to_nodes() const {
-	return data.accessibility_flow_to_nodes;
-}
-
 void Control::set_drag_preview(Control *p_control) {
 	ERR_MAIN_THREAD_GUARD;
 	ERR_FAIL_COND(!is_inside_tree());
@@ -3002,7 +2831,7 @@ bool Control::is_drag_successful() const {
 
 void Control::set_focus_mode(FocusMode p_focus_mode) {
 	ERR_MAIN_THREAD_GUARD;
-	ERR_FAIL_INDEX((int)p_focus_mode, 4);
+	ERR_FAIL_INDEX((int)p_focus_mode, 3);
 
 	if (is_inside_tree() && p_focus_mode == FOCUS_NONE && data.focus_mode != FOCUS_NONE && has_focus()) {
 		release_focus();
@@ -3012,7 +2841,6 @@ void Control::set_focus_mode(FocusMode p_focus_mode) {
 		return;
 	}
 	data.focus_mode = p_focus_mode;
-	queue_accessibility_update();
 }
 
 Control::FocusMode Control::get_focus_mode() const {
@@ -3036,7 +2864,6 @@ void Control::set_focus_behavior_recursive(FocusBehaviorRecursive p_focus_behavi
 	}
 	data.focus_behavior_recursive = p_focus_behavior_recursive;
 	_update_focus_behavior_recursive();
-	queue_accessibility_update();
 }
 
 Control::FocusBehaviorRecursive Control::get_focus_behavior_recursive() const {
@@ -3045,8 +2872,7 @@ Control::FocusBehaviorRecursive Control::get_focus_behavior_recursive() const {
 }
 
 bool Control::_is_focusable() const {
-	bool ac_enabled = is_inside_tree() && get_tree()->is_accessibility_enabled();
-	return (is_visible_in_tree() && ((get_focus_mode_with_override() == FOCUS_ALL) || (get_focus_mode_with_override() == FOCUS_CLICK) || (ac_enabled && get_focus_mode_with_override() == FOCUS_ACCESSIBILITY)));
+	return is_visible_in_tree() && (get_focus_mode_with_override() == FOCUS_ALL || get_focus_mode_with_override() == FOCUS_CLICK);
 }
 
 bool Control::_is_focus_mode_enabled() const {
@@ -3100,12 +2926,6 @@ void Control::grab_focus(bool p_hide_focus) {
 	ERR_MAIN_THREAD_GUARD;
 	ERR_FAIL_COND(!is_inside_tree());
 
-	if (get_focus_mode_with_override() == FOCUS_ACCESSIBILITY) {
-		if (!get_tree()->is_accessibility_enabled()) {
-			WARN_PRINT("This control can grab focus only when screen reader is active. Use set_focus_mode() and set_focus_behavior_recursive() to allow a control to get focus. Use get_tree().is_accessibility_enabled() to check screen-reader state.");
-			return;
-		}
-	}
 
 	if (get_focus_mode_with_override() == FOCUS_NONE) {
 		WARN_PRINT("This control can't grab focus. Use set_focus_mode() and set_focus_behavior_recursive() to allow a control to get focus.");
@@ -3196,7 +3016,6 @@ Control *Control::find_next_valid_focus() const {
 
 	Control *from = const_cast<Control *>(this);
 	HashSet<Control *> checked;
-	bool ac_enabled = get_tree() && get_tree()->is_accessibility_enabled();
 
 	// Index of the current `Control` subtree within the containing `Window`.
 	int window_next = -1;
@@ -3258,7 +3077,7 @@ Control *Control::find_next_valid_focus() const {
 			break;
 		}
 
-		if ((next_child->get_focus_mode_with_override() == FOCUS_ALL) || (ac_enabled && next_child->get_focus_mode_with_override() == FOCUS_ACCESSIBILITY)) {
+		if ((next_child->get_focus_mode_with_override() == FOCUS_ALL)) {
 			return next_child;
 		}
 
@@ -3303,7 +3122,6 @@ Control *Control::find_prev_valid_focus() const {
 
 	Control *from = const_cast<Control *>(this);
 	HashSet<Control *> checked;
-	bool ac_enabled = get_tree() && get_tree()->is_accessibility_enabled();
 
 	// Index of the current `Control` subtree within the containing `Window`.
 	int window_prev = -1;
@@ -3359,7 +3177,7 @@ Control *Control::find_prev_valid_focus() const {
 			}
 		}
 
-		if ((prev_child->get_focus_mode_with_override() == FOCUS_ALL) || (ac_enabled && prev_child->get_focus_mode_with_override() == FOCUS_ACCESSIBILITY)) {
+		if ((prev_child->get_focus_mode_with_override() == FOCUS_ALL)) {
 			return prev_child;
 		}
 
@@ -3538,13 +3356,12 @@ void Control::_window_find_focus_neighbor(const Vector2 &p_dir, Node *p_at, cons
 		return; // Bye.
 	}
 
-	bool ac_enabled = get_tree() && get_tree()->is_accessibility_enabled();
 
 	Control *c = Object::cast_to<Control>(p_at);
 	Container *container = Object::cast_to<Container>(p_at);
 	bool in_container = container ? container->is_ancestor_of(this) : false;
 
-	if (c && c != this && ((c->get_focus_mode_with_override() == FOCUS_ALL) || (ac_enabled && c->get_focus_mode_with_override() == FOCUS_ACCESSIBILITY)) && !in_container && p_clamp.intersects(c->get_global_rect())) {
+	if (c && c != this && ((c->get_focus_mode_with_override() == FOCUS_ALL)) && !in_container && p_clamp.intersects(c->get_global_rect())) {
 		real_t score = NO_SCORE;
 		score = _focus_strategy_balloon(p_dir, *c, p_clamp);
 
@@ -4582,13 +4399,6 @@ String Control::get_tooltip(const Point2 &p_pos) const {
 	return data.tooltip;
 }
 
-String Control::accessibility_get_contextual_info() const {
-	ERR_READ_THREAD_GUARD_V(String());
-	String ret;
-	GDVIRTUAL_CALL(_accessibility_get_contextual_info, ret);
-	return ret;
-}
-
 Control *Control::make_custom_tooltip(const String &p_text) const {
 	ERR_READ_THREAD_GUARD_V(nullptr);
 	Object *ret = nullptr;
@@ -4606,35 +4416,6 @@ void Control::_ensure_allocated_offset_transform() {
 
 // Base object overrides.
 
-void Control::_accessibility_action_foucs(const Variant &p_data) {
-	grab_focus();
-}
-
-void Control::_accessibility_action_blur(const Variant &p_data) {
-	release_focus();
-}
-
-void Control::_accessibility_action_show_tooltip(const Variant &p_data) {
-	Viewport *vp = get_viewport();
-	if (vp) {
-		vp->show_tooltip(this);
-	}
-}
-
-void Control::_accessibility_action_hide_tooltip(const Variant &p_data) {
-	Viewport *vp = get_viewport();
-	if (vp) {
-		vp->cancel_tooltip();
-	}
-}
-
-void Control::_accessibility_action_scroll_into_view(const Variant &p_data) {
-	ScrollContainer *sc = Object::cast_to<ScrollContainer>(get_parent());
-	if (sc) {
-		sc->ensure_control_visible(this);
-	}
-}
-
 void Control::_notification(int p_notification) {
 	ERR_MAIN_THREAD_GUARD;
 	switch (p_notification) {
@@ -4647,74 +4428,6 @@ void Control::_notification(int p_notification) {
 		} break;
 #endif // TOOLS_ENABLED
 
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
-
-			// Base info.
-			AccessibilityServer::get_singleton()->update_set_name(ae, _get_accessibility_name());
-			AccessibilityServer::get_singleton()->update_set_description(ae, get_accessibility_description());
-			AccessibilityServer::get_singleton()->update_set_live(ae, get_accessibility_live());
-
-			AccessibilityServer::get_singleton()->update_set_transform(ae, get_transform());
-			AccessibilityServer::get_singleton()->update_set_bounds(ae, Rect2(Vector2(), data.size_cache));
-			AccessibilityServer::get_singleton()->update_set_tooltip(ae, data.tooltip);
-			AccessibilityServer::get_singleton()->update_set_flag(ae, AccessibilityServerEnums::AccessibilityFlags::FLAG_CLIPS_CHILDREN, data.clip_contents);
-			AccessibilityServer::get_singleton()->update_set_flag(ae, AccessibilityServerEnums::AccessibilityFlags::FLAG_TOUCH_PASSTHROUGH, data.mouse_filter == MOUSE_FILTER_PASS);
-
-			if (_is_focusable()) {
-				AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_FOCUS, callable_mp(this, &Control::_accessibility_action_foucs));
-				AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_BLUR, callable_mp(this, &Control::_accessibility_action_blur));
-			}
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SHOW_TOOLTIP, callable_mp(this, &Control::_accessibility_action_show_tooltip));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_HIDE_TOOLTIP, callable_mp(this, &Control::_accessibility_action_hide_tooltip));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SCROLL_INTO_VIEW, callable_mp(this, &Control::_accessibility_action_scroll_into_view));
-			if (is_inside_tree() && get_viewport()->gui_is_dragging()) {
-				if (can_drop_data(Vector2(Math::INF, Math::INF), get_viewport()->gui_get_drag_data())) {
-					AccessibilityServer::get_singleton()->update_set_extra_info(ae, vformat(RTR("%s can be dropped here. Use %s to drop, use %s to cancel."), get_viewport()->gui_get_drag_description(), InputMap::get_singleton()->get_action_description("ui_accessibility_drag_and_drop"), InputMap::get_singleton()->get_action_description("ui_cancel")));
-				} else {
-					AccessibilityServer::get_singleton()->update_set_extra_info(ae, vformat(RTR("%s can not be dropped here. Use %s to cancel."), get_viewport()->gui_get_drag_description(), InputMap::get_singleton()->get_action_description("ui_cancel")));
-				}
-			}
-
-			// Related nodes.
-			for (int i = 0; i < data.accessibility_controls_nodes.size(); i++) {
-				const NodePath &np = data.accessibility_controls_nodes[i];
-				if (!np.is_empty()) {
-					Node *n = get_node(np);
-					if (n && !n->is_part_of_edited_scene()) {
-						AccessibilityServer::get_singleton()->update_add_related_controls(ae, n->get_accessibility_element());
-					}
-				}
-			}
-			for (int i = 0; i < data.accessibility_described_by_nodes.size(); i++) {
-				const NodePath &np = data.accessibility_described_by_nodes[i];
-				if (!np.is_empty()) {
-					Node *n = get_node(np);
-					if (n && !n->is_part_of_edited_scene()) {
-						AccessibilityServer::get_singleton()->update_add_related_described_by(ae, n->get_accessibility_element());
-					}
-				}
-			}
-			for (int i = 0; i < data.accessibility_labeled_by_nodes.size(); i++) {
-				const NodePath &np = data.accessibility_labeled_by_nodes[i];
-				if (!np.is_empty()) {
-					Node *n = get_node(np);
-					if (n && !n->is_part_of_edited_scene()) {
-						AccessibilityServer::get_singleton()->update_add_related_labeled_by(ae, n->get_accessibility_element());
-					}
-				}
-			}
-			for (int i = 0; i < data.accessibility_flow_to_nodes.size(); i++) {
-				const NodePath &np = data.accessibility_flow_to_nodes[i];
-				if (!np.is_empty()) {
-					Node *n = get_node(np);
-					if (n && !n->is_part_of_edited_scene()) {
-						AccessibilityServer::get_singleton()->update_add_related_flow_to(ae, n->get_accessibility_element());
-					}
-				}
-			}
-		} break;
 
 		case NOTIFICATION_POSTINITIALIZE: {
 			data.initialized = true;
@@ -5080,24 +4793,8 @@ void Control::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("force_drag", "data", "preview"), &Control::force_drag);
 
-	ClassDB::bind_method(D_METHOD("accessibility_drag"), &Control::accessibility_drag);
-	ClassDB::bind_method(D_METHOD("accessibility_drop"), &Control::accessibility_drop);
 
-	ClassDB::bind_method(D_METHOD("set_accessibility_name", "name"), &Control::set_accessibility_name);
-	ClassDB::bind_method(D_METHOD("get_accessibility_name"), &Control::get_accessibility_name);
-	ClassDB::bind_method(D_METHOD("set_accessibility_description", "description"), &Control::set_accessibility_description);
-	ClassDB::bind_method(D_METHOD("get_accessibility_description"), &Control::get_accessibility_description);
-	ClassDB::bind_method(D_METHOD("set_accessibility_live", "mode"), &Control::set_accessibility_live);
-	ClassDB::bind_method(D_METHOD("get_accessibility_live"), &Control::get_accessibility_live);
 
-	ClassDB::bind_method(D_METHOD("set_accessibility_controls_nodes", "node_path"), &Control::set_accessibility_controls_nodes);
-	ClassDB::bind_method(D_METHOD("get_accessibility_controls_nodes"), &Control::get_accessibility_controls_nodes);
-	ClassDB::bind_method(D_METHOD("set_accessibility_described_by_nodes", "node_path"), &Control::set_accessibility_described_by_nodes);
-	ClassDB::bind_method(D_METHOD("get_accessibility_described_by_nodes"), &Control::get_accessibility_described_by_nodes);
-	ClassDB::bind_method(D_METHOD("set_accessibility_labeled_by_nodes", "node_path"), &Control::set_accessibility_labeled_by_nodes);
-	ClassDB::bind_method(D_METHOD("get_accessibility_labeled_by_nodes"), &Control::get_accessibility_labeled_by_nodes);
-	ClassDB::bind_method(D_METHOD("set_accessibility_flow_to_nodes", "node_path"), &Control::set_accessibility_flow_to_nodes);
-	ClassDB::bind_method(D_METHOD("get_accessibility_flow_to_nodes"), &Control::get_accessibility_flow_to_nodes);
 
 	ClassDB::bind_method(D_METHOD("set_mouse_filter", "filter"), &Control::set_mouse_filter);
 	ClassDB::bind_method(D_METHOD("get_mouse_filter"), &Control::get_mouse_filter);
@@ -5233,7 +4930,7 @@ void Control::_bind_methods() {
 	ADD_PROPERTYI(PropertyInfo(Variant::NODE_PATH, "focus_neighbor_bottom", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Control"), "set_focus_neighbor", "get_focus_neighbor", SIDE_BOTTOM);
 	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "focus_next", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Control"), "set_focus_next", "get_focus_next");
 	ADD_PROPERTY(PropertyInfo(Variant::NODE_PATH, "focus_previous", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Control"), "set_focus_previous", "get_focus_previous");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "focus_mode", PROPERTY_HINT_ENUM, "None,Click,All,Accessibility"), "set_focus_mode", "get_focus_mode");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "focus_mode", PROPERTY_HINT_ENUM, "None,Click,All"), "set_focus_mode", "get_focus_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "focus_behavior_recursive", PROPERTY_HINT_ENUM, "Inherited,Disabled,Enabled"), "set_focus_behavior_recursive", "get_focus_behavior_recursive");
 
 	ADD_GROUP("Mouse", "mouse_");
@@ -5245,14 +4942,6 @@ void Control::_bind_methods() {
 	ADD_GROUP("Input", "");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "shortcut_context", PROPERTY_HINT_NODE_TYPE, "Node"), "set_shortcut_context", "get_shortcut_context");
 
-	ADD_GROUP("Accessibility", "accessibility_");
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "accessibility_name"), "set_accessibility_name", "get_accessibility_name");
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "accessibility_description"), "set_accessibility_description", "get_accessibility_description");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "accessibility_live", PROPERTY_HINT_ENUM, "Off,Polite,Assertive"), "set_accessibility_live", "get_accessibility_live");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "accessibility_controls_nodes", PROPERTY_HINT_ARRAY_TYPE, "NodePath"), "set_accessibility_controls_nodes", "get_accessibility_controls_nodes");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "accessibility_described_by_nodes", PROPERTY_HINT_ARRAY_TYPE, "NodePath"), "set_accessibility_described_by_nodes", "get_accessibility_described_by_nodes");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "accessibility_labeled_by_nodes", PROPERTY_HINT_ARRAY_TYPE, "NodePath"), "set_accessibility_labeled_by_nodes", "get_accessibility_labeled_by_nodes");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "accessibility_flow_to_nodes", PROPERTY_HINT_ARRAY_TYPE, "NodePath"), "set_accessibility_flow_to_nodes", "get_accessibility_flow_to_nodes");
 
 	ADD_GROUP("Theme", "theme_");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "theme", PROPERTY_HINT_RESOURCE_TYPE, Theme::get_class_static()), "set_theme", "get_theme");
@@ -5261,7 +4950,6 @@ void Control::_bind_methods() {
 	BIND_ENUM_CONSTANT(FOCUS_NONE);
 	BIND_ENUM_CONSTANT(FOCUS_CLICK);
 	BIND_ENUM_CONSTANT(FOCUS_ALL);
-	BIND_ENUM_CONSTANT(FOCUS_ACCESSIBILITY);
 
 	BIND_ENUM_CONSTANT(FOCUS_BEHAVIOR_INHERITED);
 	BIND_ENUM_CONSTANT(FOCUS_BEHAVIOR_DISABLED);
@@ -5381,8 +5069,6 @@ void Control::_bind_methods() {
 
 	GDVIRTUAL_BIND(_get_cursor_shape, "at_position");
 
-	GDVIRTUAL_BIND(_accessibility_get_contextual_info);
-	GDVIRTUAL_BIND(_get_accessibility_container_name, "node");
 
 	GDVIRTUAL_BIND(_gui_input, "event");
 }

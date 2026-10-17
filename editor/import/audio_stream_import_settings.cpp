@@ -36,6 +36,7 @@
 #include "editor/file_system/editor_file_system.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/check_box.h"
+#include "scene/gui/scroll_bar.h"
 #include "servers/audio/audio_server.h"
 #include "servers/rendering/rendering_server.h"
 
@@ -584,7 +585,6 @@ AudioStreamImportSettingsDialog::AudioStreamImportSettingsDialog() {
 	loop_hb->add_spacer();
 	loop_hb->add_child(memnew(Label(TTR("Offset:"))));
 	loop_offset = memnew(SpinBox);
-	loop_offset->set_accessibility_name(TTRC("Offset:"));
 	loop_offset->set_max(10000);
 	loop_offset->set_step(0.001);
 	loop_offset->set_format("%s s");
@@ -604,7 +604,6 @@ AudioStreamImportSettingsDialog::AudioStreamImportSettingsDialog() {
 	bpm_edit = memnew(SpinBox);
 	bpm_edit->set_max(400);
 	bpm_edit->set_step(0.01);
-	bpm_edit->set_accessibility_name(TTRC("BPM:"));
 	bpm_edit->set_tooltip_text(TTR("The stream's tempo, in beats per minute, used for tempo-synced looping and interactive streams.\nThis is required in order to configure beat and bar information."));
 	bpm_edit->connect(SceneStringName(value_changed), callable_mp(this, &AudioStreamImportSettingsDialog::_settings_changed).unbind(1));
 	interactive_hb->add_child(bpm_edit);
@@ -616,7 +615,6 @@ AudioStreamImportSettingsDialog::AudioStreamImportSettingsDialog() {
 	beats_edit = memnew(SpinBox);
 	beats_edit->set_tooltip_text(TTR("The stream's length, in number of beats, used for tempo-synced looping and interactive streams.\nIf 0, the stream's duration will be used instead.\nIt is recommended to set this value (either manually or by clicking on a beat number in the preview) to ensure tempo-synced looping works properly."));
 	beats_edit->set_max(99999);
-	beats_edit->set_accessibility_name(TTRC("Beat Count:"));
 	beats_edit->connect(SceneStringName(value_changed), callable_mp(this, &AudioStreamImportSettingsDialog::_settings_changed).unbind(1));
 	interactive_hb->add_child(beats_edit);
 	bar_beats_label = memnew(Label(TTR("Bar Beats:")));
@@ -625,7 +623,6 @@ AudioStreamImportSettingsDialog::AudioStreamImportSettingsDialog() {
 	bar_beats_edit->set_tooltip_text(TTR("The number of beats in a single bar of the stream, used for beat-synced looping and interactive streams."));
 	bar_beats_edit->set_min(2);
 	bar_beats_edit->set_max(32);
-	bar_beats_edit->set_accessibility_name(TTRC("Bar Beats:"));
 	bar_beats_edit->connect(SceneStringName(value_changed), callable_mp(this, &AudioStreamImportSettingsDialog::_settings_changed).unbind(1));
 	interactive_hb->add_child(bar_beats_edit);
 	main_vbox->add_margin_child(TTR("Music Information:"), interactive_hb);
@@ -668,13 +665,11 @@ AudioStreamImportSettingsDialog::AudioStreamImportSettingsDialog() {
 	_preview->add_child(_indicator);
 
 	_play_button = memnew(Button);
-	_play_button->set_accessibility_name(TTRC("Play"));
 	_play_button->set_flat(true);
 	hbox->add_child(_play_button);
 	_play_button->connect(SceneStringName(pressed), callable_mp(this, &AudioStreamImportSettingsDialog::_play));
 
 	_stop_button = memnew(Button);
-	_stop_button->set_accessibility_name(TTRC("Stop"));
 	_stop_button->set_flat(true);
 	hbox->add_child(_stop_button);
 	_stop_button->connect(SceneStringName(pressed), callable_mp(this, &AudioStreamImportSettingsDialog::_stop));
@@ -689,13 +684,10 @@ AudioStreamImportSettingsDialog::AudioStreamImportSettingsDialog() {
 	hbox->add_child(_duration_label);
 
 	zoom_in = memnew(Button);
-	zoom_in->set_accessibility_name(TTRC("Zoom In"));
 	zoom_in->set_flat(true);
 	zoom_reset = memnew(Button);
-	zoom_reset->set_accessibility_name(TTRC("Reset Zoom"));
 	zoom_reset->set_flat(true);
 	zoom_out = memnew(Button);
-	zoom_out->set_accessibility_name(TTRC("Zoom Out"));
 	zoom_out->set_flat(true);
 	hbox->add_child(zoom_out);
 	hbox->add_child(zoom_reset);

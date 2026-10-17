@@ -534,9 +534,8 @@ EditorLog::EditorLog() {
 
 	// Clear.
 	clear_button = memnew(Button);
-	clear_button->set_accessibility_name(TTRC("Clear Log"));
 	clear_button->set_theme_type_variation("BottomPanelButton");
-	clear_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	clear_button->set_focus_mode(FOCUS_NONE);
 	clear_button->set_shortcut(ED_SHORTCUT("editor/clear_output", TTRC("Clear Output"), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::ALT | Key::K));
 	clear_button->connect(SceneStringName(pressed), callable_mp(this, &EditorLog::_clear_request));
 	bottom_hf->add_child(clear_button);
@@ -544,7 +543,7 @@ EditorLog::EditorLog() {
 	// Collapse.
 	collapse_button = memnew(Button);
 	collapse_button->set_theme_type_variation("BottomPanelButton");
-	collapse_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	collapse_button->set_focus_mode(FOCUS_NONE);
 	collapse_button->set_tooltip_text(TTR("Collapse duplicate messages into one log entry. Shows number of occurrences."));
 	collapse_button->set_toggle_mode(true);
 	collapse_button->set_pressed(false);
@@ -556,7 +555,6 @@ EditorLog::EditorLog() {
 	search_box->set_custom_minimum_size(Vector2(150 * EDSCALE, 0));
 	search_box->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	search_box->set_placeholder(TTRC("Filter Messages"));
-	search_box->set_accessibility_name(TTRC("Filter Messages"));
 	search_box->set_clear_button_enabled(true);
 	search_box->connect(SceneStringName(text_changed), callable_mp(this, &EditorLog::_search_changed));
 	bottom_hf->add_child(search_box);

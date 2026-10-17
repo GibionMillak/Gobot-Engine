@@ -35,7 +35,6 @@
 #import "godot_content_view.h"
 #import "godot_window.h"
 
-#include "servers/display/accessibility_server.h"
 
 @implementation GodotWindowDelegate {
 	DisplayServerEnums::WindowID window_id;
@@ -331,7 +330,6 @@
 
 	wd.focused = true;
 	ds->set_last_focused_window(window_id);
-	AccessibilityServer::get_singleton()->set_window_focused(window_id, true);
 
 	ds->send_window_event(wd, DisplayServerEnums::WINDOW_EVENT_FOCUS_IN);
 }
@@ -349,7 +347,6 @@
 
 	wd.focused = false;
 	ds->release_pressed_events();
-	AccessibilityServer::get_singleton()->set_window_focused(window_id, false);
 
 	ds->send_window_event(wd, DisplayServerEnums::WINDOW_EVENT_FOCUS_OUT);
 }
@@ -363,7 +360,6 @@
 
 	wd.focused = false;
 	ds->release_pressed_events();
-	AccessibilityServer::get_singleton()->set_window_focused(window_id, false);
 
 	ds->send_window_event(wd, DisplayServerEnums::WINDOW_EVENT_FOCUS_OUT);
 }
@@ -378,7 +374,6 @@
 	if ([wd.window_object isKeyWindow]) {
 		wd.focused = true;
 		ds->set_last_focused_window(window_id);
-		AccessibilityServer::get_singleton()->set_window_focused(window_id, true);
 
 		ds->send_window_event(wd, DisplayServerEnums::WINDOW_EVENT_FOCUS_IN);
 	}

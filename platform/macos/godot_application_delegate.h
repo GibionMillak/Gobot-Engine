@@ -39,8 +39,4 @@ class OS_MacOS_NSApp;
 
 - (GodotApplicationDelegate *)initWithOS:(OS_MacOS_NSApp *)os;
 
-- (bool)getHighContrast;
-- (bool)getReduceMotion;
-- (bool)getReduceTransparency;
-- (bool)getVoiceOver;
 @end

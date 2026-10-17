@@ -919,7 +919,6 @@ ScenePaint2DEditor::ScenePaint2DEditor() {
 
 	pin_node_button = memnew(Button);
 	pin_node_button->set_toggle_mode(true);
-	pin_node_button->set_accessibility_name(TTRC("Pin Node"));
 	pin_node_button->set_theme_type_variation(SceneStringName(FlatButton));
 	pin_node_button->set_tooltip_text(TTRC("When enabled, the painting parent node will not change when selecting other nodes in the scene."));
 	pin_node_button->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_pinned_toggled));
@@ -929,7 +928,6 @@ ScenePaint2DEditor::ScenePaint2DEditor() {
 
 	scene_picker_button = memnew(Button);
 	scene_picker_button->set_toggle_mode(true);
-	scene_picker_button->set_accessibility_name(TTRC("Scene Picker"));
 	scene_picker_button->set_theme_type_variation(SceneStringName(FlatButton));
 	scene_picker_button->set_tooltip_text(vformat(TTRC("When enabled, you can select scenes from the FileSystem dock, Scene dock, or 2D editor's viewport.\nHolding %s enables picking from the 2D editor's viewport."), keycode_get_string(Key::CMD_OR_CTRL)));
 	scene_picker_button->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_scene_picker_toggled));
@@ -950,7 +948,6 @@ ScenePaint2DEditor::ScenePaint2DEditor() {
 
 	edit_properties_button = memnew(Button);
 	edit_properties_button->set_toggle_mode(true);
-	edit_properties_button->set_accessibility_name(TTRC("Edit Properties"));
 	edit_properties_button->set_theme_type_variation(SceneStringName(FlatButton));
 	edit_properties_button->set_tooltip_text(TTRC("Edit properties of the selected scene."));
 	edit_properties_button->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_edit_properties_toggled));
@@ -959,7 +956,6 @@ ScenePaint2DEditor::ScenePaint2DEditor() {
 	toolbar->add_child(edit_properties_button);
 
 	advanced_settings_button = memnew(Button);
-	advanced_settings_button->set_accessibility_name(TTRC("Advanced Settings"));
 	advanced_settings_button->set_theme_type_variation(SceneStringName(FlatButton));
 	advanced_settings_button->connect(SceneStringName(pressed), callable_mp(this, &ScenePaint2DEditor::_advanced_settings_pressed));
 	toolbar->add_child(advanced_settings_button);

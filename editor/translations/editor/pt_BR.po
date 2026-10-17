@@ -761,9 +761,6 @@ msgstr "Iniciar Entrada de Caracteres Unicode"
 msgid "ColorPicker: Delete Preset"
 msgstr "Seletor de Cores: Excluir Predefinição"
 
-msgid "Accessibility: Keyboard Drag and Drop"
-msgstr "Acessibilidade: Arrastar e Soltar com Teclado"
-
 msgid "Invalid input %d (not passed) in expression"
 msgstr "Entrada inválida %d (não passada) na expressão"
 
@@ -4525,9 +4522,6 @@ msgstr ""
 
 msgid "Hide Filtered Out Parents"
 msgstr "Esconder Pais Filtrados"
-
-msgid "Show Accessibility Warnings"
-msgstr "Mostrar Alerta de Acessibilidade"
 
 msgid "All Scene Sub-Resources"
 msgstr "Todos os Sub-Recursos da Cena"
@@ -20601,15 +20595,6 @@ msgstr ""
 "A Dica de Ferramenta não será exibida se o Filtro do Mouse do Control estiver "
 "definido como \"Ignorar\". Para resolver isto, defina o Filtro do Mouse como "
 "\"Parar\" ou \"Passar\"."
-
-msgid "Accessibility Name must not be empty, or contain only spaces."
-msgstr "Nome Acessível não pode estar vazio, ou conter apenas espaços."
-
-msgid "Accessibility Name must not include Node class name."
-msgstr "Nome Acessível não pode incluir o nome da classe do nó."
-
-msgid "Accessibility Name must not include control character."
-msgstr "Nome Acessível não pode incluir caracteres de controle."
 
 msgid "%s grabbed. Select target and use %s to drop, use %s to cancel."
 msgstr ""

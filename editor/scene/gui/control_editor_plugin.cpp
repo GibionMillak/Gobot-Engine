@@ -1331,7 +1331,6 @@ ControlEditorToolbar::ControlEditorToolbar() {
 	anchor_mode_button->set_theme_type_variation(SceneStringName(FlatButton));
 	anchor_mode_button->set_toggle_mode(true);
 	anchor_mode_button->set_tooltip_text(TTRC("When active, moving Control nodes changes their anchors instead of their offsets."));
-	anchor_mode_button->set_accessibility_name(TTRC("Change Anchors"));
 	add_child(anchor_mode_button);
 	anchor_mode_button->connect(SceneStringName(toggled), callable_mp(this, &ControlEditorToolbar::_anchor_mode_toggled));
 

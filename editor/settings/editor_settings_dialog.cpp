@@ -53,6 +53,7 @@
 #include "editor/themes/editor_theme_manager.h"
 #include "scene/debugger/view_3d_controller.h"
 #include "scene/gui/check_button.h"
+#include "scene/gui/line_edit.h"
 #include "scene/gui/panel_container.h"
 #include "scene/gui/tab_container.h"
 #include "scene/gui/texture_rect.h"
@@ -1020,7 +1021,6 @@ EditorSettingsDialog::EditorSettingsDialog() {
 
 	search_box = memnew(LineEdit);
 	search_box->set_placeholder(TTRC("Filter Settings"));
-	search_box->set_accessibility_name(TTRC("Filter Settings"));
 	search_box->set_virtual_keyboard_show_on_focus(false);
 	search_box->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	hbc->add_child(search_box);
@@ -1053,7 +1053,6 @@ EditorSettingsDialog::EditorSettingsDialog() {
 	restart_icon->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
 	restart_hb->add_child(restart_icon);
 	restart_label = memnew(Label);
-	restart_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	if (_is_in_project_manager()) {
 		restart_label->set_text(TTRC("The Project Manager must be restarted for changes to take effect."));
 	} else {
@@ -1066,7 +1065,6 @@ EditorSettingsDialog::EditorSettingsDialog() {
 	restart_hb->add_child(restart_button);
 	restart_button->set_text(TTRC("Save & Restart"));
 	restart_close_button = memnew(Button);
-	restart_close_button->set_accessibility_name(TTRC("Close"));
 	restart_close_button->set_flat(true);
 	restart_close_button->connect(SceneStringName(pressed), callable_mp(this, &EditorSettingsDialog::_editor_restart_close));
 	restart_hb->add_child(restart_close_button);
@@ -1092,7 +1090,6 @@ EditorSettingsDialog::EditorSettingsDialog() {
 	tab_shortcuts->add_child(mc);
 
 	shortcuts = memnew(Tree);
-	shortcuts->set_accessibility_name(TTRC("Shortcuts"));
 	shortcuts->set_theme_type_variation("TreeTable");
 	shortcuts->set_columns(2);
 	shortcuts->set_hide_root(true);

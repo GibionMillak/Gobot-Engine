@@ -311,8 +311,6 @@ private:
 	HashMap<StringName, HashSet<StringName>> frame_attached_nodes;
 	HashMap<StringName, StringName> linked_parent_map;
 
-	Dictionary type_names;
-
 	void _pan_callback(Vector2 p_scroll_vec, Ref<InputEvent> p_event);
 	void _zoom_callback(float p_zoom_factor, Vector2 p_origin, Ref<InputEvent> p_event);
 
@@ -407,7 +405,6 @@ public:
 	int get_connection_count(const StringName &p_node, int p_port);
 	GraphNode *get_input_connection_target(const StringName &p_node, int p_port);
 	GraphNode *get_output_connection_target(const StringName &p_node, int p_port);
-	String get_connections_description(const StringName &p_node, int p_port);
 	void disconnect_node(const StringName &p_from, int p_from_port, const StringName &p_to, int p_to_port);
 
 	void force_connection_drag_end();
@@ -420,9 +417,6 @@ public:
 	bool is_keyboard_connecting() const { return keyboard_connecting; }
 	void start_keyboard_connecting(GraphNode *p_node, int p_in_port, int p_out_port);
 	void end_keyboard_connecting(GraphNode *p_node, int p_in_port, int p_out_port);
-
-	Dictionary get_type_names() const;
-	void set_type_names(const Dictionary &p_names);
 
 	virtual bool is_node_hover_valid(const StringName &p_from, int p_from_port, const StringName &p_to, int p_to_port);
 

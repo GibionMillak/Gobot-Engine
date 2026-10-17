@@ -146,7 +146,7 @@ void EditorAbout::_item_list_resized(ItemList *p_il) {
 Label *EditorAbout::_create_section(Control *p_parent, const String &p_name, const char *const *p_src, BitField<SectionFlags> p_flags) {
 	Label *lbl = memnew(Label(p_name));
 	lbl->set_theme_type_variation("HeaderSmall");
-	lbl->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
+	lbl->set_focus_mode(Control::FOCUS_NONE);
 	p_parent->add_child(lbl);
 
 	ItemList *il = memnew(ItemList);
@@ -236,7 +236,6 @@ EditorAbout::EditorAbout() {
 	version_info_vbc->add_child(memnew(EditorVersionButton(EditorVersionButton::FORMAT_WITH_NAME_AND_BUILD)));
 
 	_about_text_label = memnew(Label);
-	_about_text_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	_about_text_label->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
 	_about_text_label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	version_info_vbc->add_child(_about_text_label);
@@ -307,7 +306,7 @@ EditorAbout::EditorAbout() {
 	tc->add_child(license_thirdparty);
 
 	Label *tpl_label = memnew(Label(TTRC("Godot Engine relies on a number of third-party free and open source libraries, all compatible with the terms of its MIT license. The following is an exhaustive list of all such third-party components with their respective copyright statements and license terms.")));
-	tpl_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
+	tpl_label->set_focus_mode(Control::FOCUS_NONE);
 	tpl_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	tpl_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	tpl_label->set_size(Size2(630, 1) * EDSCALE);

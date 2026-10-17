@@ -3,7 +3,7 @@ import sys
 from typing import TYPE_CHECKING
 
 from methods import detect_darwin_sdk_path, get_compiler_version, is_apple_clang, print_error, print_warning
-from platform_methods import check_accesskit_version, detect_arch, detect_mvk, validate_arch
+from platform_methods import detect_arch, detect_mvk, validate_arch
 
 if TYPE_CHECKING:
     from SCons.Script.SConscript import SConsEnvironment
@@ -53,12 +53,8 @@ def get_opts():
         BoolVariable("use_asan", "Use LLVM/GCC compiler address sanitizer (ASAN)", False),
         BoolVariable("use_tsan", "Use LLVM/GCC compiler thread sanitizer (TSAN)", False),
         BoolVariable("use_coverage", "Use instrumentation codes in the binary (e.g. for code coverage)", False),
-        # Screen reader support.
-        (
-            "accesskit_sdk_path",
-            "Path to the AccessKit C SDK",
-            os.path.join(deps_folder, "accesskit"),
-        ),
+
+
         (
             "angle_libs",
             "Path to the ANGLE static libraries",
@@ -232,27 +228,6 @@ def configure(env: "SConsEnvironment"):
 
     ## Dependencies
 
-    if env["accesskit"]:
-        if os.path.exists(env["accesskit_sdk_path"]):
-            if check_accesskit_version(env["accesskit_sdk_path"]):
-                env.Prepend(CPPPATH=[env["accesskit_sdk_path"] + "/include"])
-                if env["arch"] == "arm64" or env["arch"] == "universal":
-                    env.Append(LINKFLAGS=["-L" + env["accesskit_sdk_path"] + "/lib/macos/arm64/static/"])
-                if env["arch"] == "x86_64" or env["arch"] == "universal":
-                    env.Append(LINKFLAGS=["-L" + env["accesskit_sdk_path"] + "/lib/macos/x86_64/static/"])
-                env.Append(LINKFLAGS=["-laccesskit"])
-                env.Append(CPPDEFINES=["ACCESSKIT_ENABLED"])
-            else:
-                env["accesskit"] = False
-        else:
-            print_warning(
-                "The screen reader support driver requires dependencies to be installed.\n"
-                f"You can install them by running `python3 {os.path.join('misc', 'scripts', 'install_accesskit.py')}`.\n"
-                "See the documentation for more information:\n\t"
-                "https://docs.godotengine.org/en/latest/engine_details/development/compiling/compiling_for_macos.html#compiling-with-accesskit-support"
-                "\nAlternatively, disable this driver by compiling with `accesskit=no` explicitly."
-            )
-            env["accesskit"] = False
 
     if env["builtin_libtheora"] and env["arch"] == "x86_64":
         env["x86_libtheora_opt_gcc"] = True

@@ -1975,7 +1975,6 @@ void FileDialog::_update_option_controls() {
 		if (opt.values.is_empty()) {
 			CheckBox *cb = memnew(CheckBox);
 			cb->set_text(opt.name);
-			cb->set_accessibility_name(opt.name);
 			cb->set_pressed(opt.default_idx);
 			flow_checkbox_options->add_child(cb);
 			cb->connect(SceneStringName(toggled), callable_mp(this, &FileDialog::_option_changed_checkbox_toggled).bind(opt.name));
@@ -1989,7 +1988,6 @@ void FileDialog::_update_option_controls() {
 			for (const String &val : opt.values) {
 				ob->add_item(val);
 			}
-			ob->set_accessibility_name(opt.name);
 			ob->select(opt.default_idx);
 			grid_select_options->add_child(ob);
 			ob->connect(SceneStringName(item_selected), callable_mp(this, &FileDialog::_option_changed_item_selected).bind(opt.name));
@@ -2390,11 +2388,9 @@ FileDialog::FileDialog() {
 	drives = memnew(MenuButton);
 	drives->set_flat(false);
 	drives->get_popup()->connect("index_pressed", callable_mp(this, &FileDialog::_select_drive));
-	drives->set_accessibility_name(ETR("Drive"));
 	top_toolbar->add_child(drives);
 
 	directory_edit = memnew(LineEdit);
-	directory_edit->set_accessibility_name(ETR("Path:"));
 	directory_edit->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	directory_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	top_toolbar->add_child(directory_edit);
@@ -2463,7 +2459,6 @@ FileDialog::FileDialog() {
 		favorite_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 		favorite_list->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 		favorite_list->set_theme_type_variation("ItemListSecondary");
-		favorite_list->set_accessibility_name(ETR("Favorites:"));
 		favorite_vbox->add_child(favorite_list);
 		favorite_list->connect(SceneStringName(item_selected), callable_mp(this, &FileDialog::_favorite_selected));
 
@@ -2481,7 +2476,6 @@ FileDialog::FileDialog() {
 		recent_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 		recent_list->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 		recent_list->set_theme_type_variation("ItemListSecondary");
-		recent_list->set_accessibility_name(ETR("Recent:"));
 		recent_vbox->add_child(recent_list);
 		recent_list->connect(SceneStringName(item_selected), callable_mp(this, &FileDialog::_recent_selected));
 	}
@@ -2565,7 +2559,6 @@ FileDialog::FileDialog() {
 	file_list->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	file_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	file_list->set_theme_type_variation("ItemListSecondary");
-	file_list->set_accessibility_name(ETR("Directories & Files:"));
 	file_list->set_allow_rmb_select(true);
 	file_vbox->add_child(file_list);
 	file_list->connect("multi_selected", callable_mp(this, &FileDialog::_file_list_multi_selected));
@@ -2575,7 +2568,6 @@ FileDialog::FileDialog() {
 	file_list->connect("empty_clicked", callable_mp(this, &FileDialog::_empty_clicked));
 
 	message = memnew(Label);
-	message->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	message->hide();
 	message->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
 	message->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
@@ -2596,7 +2588,6 @@ FileDialog::FileDialog() {
 	filename_filter->set_stretch_ratio(4);
 	filename_filter->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	filename_filter->set_clear_button_enabled(true);
-	filename_filter->set_accessibility_name(ETR("Filename Filter:"));
 	filename_filter_box->add_child(filename_filter);
 	filename_filter->connect(SceneStringName(text_changed), callable_mp(this, &FileDialog::_filename_filter_changed).unbind(1));
 	filename_filter->connect(SceneStringName(text_submitted), callable_mp(this, &FileDialog::_filename_filter_selected).unbind(1));
@@ -2610,7 +2601,6 @@ FileDialog::FileDialog() {
 	}
 
 	filename_edit = memnew(LineEdit);
-	filename_edit->set_accessibility_name(ETR("File:"));
 	filename_edit->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	filename_edit->set_stretch_ratio(4);
 	filename_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);

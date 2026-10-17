@@ -6979,7 +6979,6 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	view_display_menu->set_flat(false);
 	view_display_menu->set_h_size_flags(SIZE_SHRINK_BEGIN);
 	view_display_menu->set_shortcut_context(this);
-	view_display_menu->set_accessibility_name(TTRC("View"));
 	view_display_menu->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	view_display_menu->get_popup()->set_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
 	hbox->add_child(view_display_menu);
@@ -7173,7 +7172,6 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	info_panel->hide();
 
 	info_label = memnew(Label);
-	info_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	info_panel->add_child(info_label);
 
 	cinema_label = memnew(Label);
@@ -7207,7 +7205,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	tooltip_panel->set_h_grow_direction(GROW_DIRECTION_BEGIN);
 	tooltip_panel->set_v_grow_direction(GROW_DIRECTION_BEGIN);
 	tooltip_panel->set_mouse_filter(MOUSE_FILTER_IGNORE);
-	tooltip_panel->set_focus_mode(FOCUS_ACCESSIBILITY);
+	tooltip_panel->set_focus_mode(FOCUS_NONE);
 	tooltip_panel->set_use_bbcode(true);
 	tooltip_panel->set_fit_content(true);
 	tooltip_panel->set_scroll_active(false);

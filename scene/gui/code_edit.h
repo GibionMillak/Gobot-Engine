@@ -240,9 +240,6 @@ private:
 	bool is_code_completion_scroll_pressed = false;
 	bool is_code_completion_drag_started = false;
 	Vector<CodeCompletionOption> code_completion_options;
-	Vector<RID> code_completion_ac_items;
-	RID code_completion_ac_scroll_element;
-	RID code_completion_ac_root_element;
 	int code_completion_line_ofs = 0;
 	int code_completion_current_selected = 0;
 	int code_completion_force_item_center = -1;
@@ -364,7 +361,6 @@ protected:
 	virtual void _backspace_internal(int p_caret) override;
 	virtual void _cut_internal(int p_caret) override;
 
-	virtual RID get_focused_accessibility_element() const override;
 
 	GDVIRTUAL1(_confirm_code_completion, bool)
 	GDVIRTUAL1(_request_code_completion, bool)

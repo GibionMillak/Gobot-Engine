@@ -4210,7 +4210,6 @@ MenuButton *FileSystemDock::_create_file_menu_button() {
 	button->set_flat(false);
 	button->set_theme_type_variation("FlatMenuButton");
 	button->set_tooltip_text(TTRC("Sort Files"));
-	button->set_accessibility_name(TTRC("Sort Files"));
 
 	PopupMenu *p = button->get_popup();
 	p->connect(SceneStringName(id_pressed), callable_mp(this, &FileSystemDock::_file_sort_popup));
@@ -4522,27 +4521,26 @@ FileSystemDock::FileSystemDock() {
 	button_hist_prev = memnew(Button);
 	button_hist_prev->set_theme_type_variation(SceneStringName(FlatButton));
 	button_hist_prev->set_disabled(true);
-	button_hist_prev->set_focus_mode(FOCUS_ACCESSIBILITY);
+	button_hist_prev->set_focus_mode(FOCUS_NONE);
 	button_hist_prev->set_tooltip_text(TTRC("Go to previous selected folder/file."));
 	nav_hbc->add_child(button_hist_prev);
 
 	button_hist_next = memnew(Button);
 	button_hist_next->set_theme_type_variation(SceneStringName(FlatButton));
 	button_hist_next->set_disabled(true);
-	button_hist_next->set_focus_mode(FOCUS_ACCESSIBILITY);
+	button_hist_next->set_focus_mode(FOCUS_NONE);
 	button_hist_next->set_tooltip_text(TTRC("Go to next selected folder/file."));
 	nav_hbc->add_child(button_hist_next);
 
 	current_path_line_edit = memnew(LineEdit);
 	current_path_line_edit->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
-	current_path_line_edit->set_accessibility_name(TTRC("Path"));
 	current_path_line_edit->set_h_size_flags(SIZE_EXPAND_FILL);
 	_set_current_path_line_edit_text(current_path);
 	toolbar_hbc->add_child(current_path_line_edit);
 
 	button_toggle_display_mode = memnew(Button);
 	button_toggle_display_mode->connect(SceneStringName(pressed), callable_mp(this, &FileSystemDock::_change_split_mode));
-	button_toggle_display_mode->set_focus_mode(FOCUS_ACCESSIBILITY);
+	button_toggle_display_mode->set_focus_mode(FOCUS_NONE);
 	button_toggle_display_mode->set_tooltip_text(TTRC("Change Split Mode"));
 	button_toggle_display_mode->set_theme_type_variation("FlatMenuButton");
 	toolbar_hbc->add_child(button_toggle_display_mode);
@@ -4580,7 +4578,6 @@ FileSystemDock::FileSystemDock() {
 	tree_mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 
 	tree = memnew(FileSystemTree);
-	tree->set_accessibility_name(TTRC("Directories"));
 	tree->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	tree->set_hide_root(true);
 	tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_TOP);
@@ -4612,7 +4609,6 @@ FileSystemDock::FileSystemDock() {
 	file_list_search_box = memnew(LineEdit);
 	file_list_search_box->set_h_size_flags(SIZE_EXPAND_FILL);
 	file_list_search_box->set_placeholder(TTRC("Filter Files"));
-	file_list_search_box->set_accessibility_name(TTRC("Filter Files"));
 	file_list_search_box->set_clear_button_enabled(true);
 	file_list_search_box->connect(SceneStringName(text_changed), callable_mp(this, &FileSystemDock::_search_changed).bind(file_list_search_box));
 	path_hb->add_child(file_list_search_box);
@@ -4634,7 +4630,6 @@ FileSystemDock::FileSystemDock() {
 	thumbnail_size_slider->set_v_size_flags(SIZE_SHRINK_CENTER);
 	thumbnail_size_slider->set_h_size_flags(SIZE_EXPAND_FILL);
 	thumbnail_size_slider->connect(SceneStringName(value_changed), callable_mp(this, &FileSystemDock::_thumbnail_size_changed));
-	thumbnail_size_slider->set_accessibility_name(TTRC("Thumbnail Size"));
 	bottom_toolbar_hbc->add_child(thumbnail_size_slider);
 
 	thumbnail_debounce_timer = memnew(Timer);
@@ -4644,12 +4639,10 @@ FileSystemDock::FileSystemDock() {
 	bottom_toolbar_hbc->add_child(thumbnail_debounce_timer);
 
 	button_file_list_display_mode = memnew(Button);
-	button_file_list_display_mode->set_accessibility_name(TTRC("Display Mode"));
 	button_file_list_display_mode->set_theme_type_variation("FlatMenuButton");
 	bottom_toolbar_hbc->add_child(button_file_list_display_mode);
 
 	files = memnew(FileSystemList);
-	files->set_accessibility_name(TTRC("Files"));
 	files->set_select_mode(ItemList::SELECT_MULTI);
 	files->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_TOP);
 	files->set_allow_rmb_select(true);
@@ -4673,7 +4666,6 @@ FileSystemDock::FileSystemDock() {
 	scanning_vb->add_child(slabel);
 
 	scanning_progress = memnew(ProgressBar);
-	scanning_progress->set_accessibility_name(TTRC("Filesystem Scan"));
 	scanning_vb->add_child(scanning_progress);
 
 	deps_editor = memnew(DependencyEditor);
@@ -4751,7 +4743,6 @@ FileSystemDock::FileSystemDock() {
 	VBoxContainer *vb = memnew(VBoxContainer);
 	move_confirm_dialog->add_child(vb);
 	move_confirm_dialog_label = memnew(Label);
-	move_confirm_dialog_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	vb->add_child(move_confirm_dialog_label);
 	confirm_before_move_checkbox = memnew(CheckBox(TTRC("Don't Ask Again")));
 	confirm_before_move_checkbox->set_tooltip_text(TTRC("This dialog can be skipped by holding shift or enabled/disabled in the Editor Settings: Docks > FileSystem > Ask Before Moving Files."));

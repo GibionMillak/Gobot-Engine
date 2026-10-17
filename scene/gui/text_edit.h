@@ -148,7 +148,6 @@ private:
 			String data;
 			Array bidi_override;
 			Ref<TextParagraph> data_buf;
-			Vector<RID> accessibility_text_root_element;
 
 			String ime_data;
 			Array ime_bidi_override;
@@ -230,14 +229,6 @@ private:
 		void set_brk_flags(BitField<TextServer::LineBreakFlag> p_flags);
 		BitField<TextServer::LineBreakFlag> get_brk_flags() const;
 		int get_line_wrap_amount(int p_line) const;
-
-		const Vector<RID> get_accessibility_elements(int p_line);
-		void update_accessibility(int p_line, RID p_root);
-		void clear_accessibility() {
-			for (Line &line : text) {
-				line.accessibility_text_root_element.clear();
-			}
-		}
 
 		Vector<Vector2i> get_line_wrap_ranges(int p_line) const;
 		const Ref<TextParagraph> get_line_data(int p_line) const;
@@ -757,7 +748,6 @@ protected:
 	virtual void _draw_guidelines() {}
 	virtual void _update_theme_item_cache() override;
 
-	virtual String _get_accessibility_name() const override;
 
 	/* Internal API for CodeEdit, pending public API. */
 	// Brace matching.
@@ -809,16 +799,6 @@ protected:
 	virtual void _paste_internal(int p_caret);
 	virtual void _paste_primary_clipboard_internal(int p_caret);
 
-	void _accessibility_action_set_selection(const Variant &p_data);
-	void _accessibility_action_replace_selected(const Variant &p_data);
-	void _accessibility_action_set_value(const Variant &p_data);
-	void _accessibility_action_menu(const Variant &p_data);
-	void _accessibility_scroll_down(const Variant &p_data);
-	void _accessibility_scroll_left(const Variant &p_data);
-	void _accessibility_scroll_right(const Variant &p_data);
-	void _accessibility_scroll_up(const Variant &p_data);
-	void _accessibility_scroll_set(const Variant &p_data);
-	void _accessibility_action_scroll_into_view(const Variant &p_data, int p_line, int p_wrap);
 
 	GDVIRTUAL2(_handle_unicode_input, int, int)
 	GDVIRTUAL1(_backspace, int)

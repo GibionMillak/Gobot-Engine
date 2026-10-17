@@ -721,7 +721,6 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 
 	search_box = memnew(LineEdit);
 	search_box->set_placeholder(TTRC("Filter Settings"));
-	search_box->set_accessibility_name(TTRC("Filter Settings"));
 	search_box->set_clear_button_enabled(true);
 	search_box->set_virtual_keyboard_show_on_focus(false);
 	search_box->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -742,7 +741,6 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 
 	feature_box = memnew(OptionButton);
 	feature_box->set_custom_minimum_size(Size2(120, 0) * EDSCALE);
-	feature_box->set_accessibility_name(TTRC("Feature"));
 	feature_box->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	feature_box->connect(SceneStringName(item_selected), callable_mp(this, &ProjectSettingsEditor::_feature_selected));
 	custom_properties->add_child(feature_box);
@@ -750,7 +748,6 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	type_box = memnew(EditorVariantTypeOptionButton);
 	type_box->populate({ Variant::NIL, Variant::OBJECT });
 	type_box->set_custom_minimum_size(Size2(120, 0) * EDSCALE);
-	type_box->set_accessibility_name(TTRC("Type"));
 	custom_properties->add_child(type_box);
 
 	add_button = memnew(Button);
@@ -795,7 +792,6 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	restart_hb->add_child(restart_icon);
 
 	restart_label = memnew(Label);
-	restart_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	restart_label->set_text(TTRC("Changed settings will be applied to the editor after restarting."));
 	restart_hb->add_child(restart_label);
 	restart_hb->add_spacer();
@@ -808,7 +804,6 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	restart_close_button = memnew(Button);
 	restart_close_button->set_flat(true);
 	restart_close_button->connect(SceneStringName(pressed), callable_mp(this, &ProjectSettingsEditor::_editor_restart_close));
-	restart_close_button->set_accessibility_name(TTRC("Close"));
 	restart_hb->add_child(restart_close_button);
 
 	action_map_editor = memnew(ActionMapEditor);

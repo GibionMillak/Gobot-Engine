@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import methods
 from methods import print_error, print_warning
-from platform_methods import check_accesskit_version, detect_arch, validate_arch
+from platform_methods import detect_arch, validate_arch
 
 if TYPE_CHECKING:
     from SCons.Script.SConscript import SConsEnvironment
@@ -215,12 +215,8 @@ def get_opts():
         BoolVariable("debug_crt", "Compile with MSVC's debug CRT (/MDd)", False),
         BoolVariable("incremental_link", "Use MSVC incremental linking. May increase or decrease build times.", False),
         BoolVariable("silence_msvc", "Silence MSVC's cl/link stdout bloat, redirecting any errors to stderr.", True),
-        # Screen reader support.
-        (
-            "accesskit_sdk_path",
-            "Path to the AccessKit C SDK",
-            os.path.join(deps_folder, "accesskit"),
-        ),
+
+
         # OpenGL over Direct3D 11.
         (
             "angle_libs",
@@ -449,37 +445,6 @@ def configure_msvc(env: "SConsEnvironment"):
     if env.debug_features:
         LIBS += ["psapi", "dbghelp"]
 
-    if env["accesskit"]:
-        if os.path.exists(env["accesskit_sdk_path"]):
-            if check_accesskit_version(env["accesskit_sdk_path"]):
-                env.Prepend(CPPPATH=[env["accesskit_sdk_path"] + "/include"])
-                if env["arch"] == "arm64":
-                    env.Append(LIBPATH=[env["accesskit_sdk_path"] + "/lib/windows/arm64/msvc/static"])
-                elif env["arch"] == "x86_64":
-                    env.Append(LIBPATH=[env["accesskit_sdk_path"] + "/lib/windows/x86_64/msvc/static"])
-                elif env["arch"] == "x86_32":
-                    env.Append(LIBPATH=[env["accesskit_sdk_path"] + "/lib/windows/x86/msvc/static"])
-                LIBS += [
-                    "accesskit",
-                    "runtimeobject",
-                    "propsys",
-                    "oleaut32",
-                    "user32",
-                    "userenv",
-                    "ntdll",
-                ]
-                env.Append(CPPDEFINES=["ACCESSKIT_ENABLED"])
-            else:
-                env["accesskit"] = False
-        else:
-            print_error(
-                "The screen reader support driver requires dependencies to be installed.\n"
-                f"You can install them by running `python {os.path.join('misc', 'scripts', 'install_accesskit.py')}`.\n"
-                "See the documentation for more information:\n\t"
-                "https://docs.godotengine.org/en/latest/engine_details/development/compiling/compiling_for_windows.html#compiling-with-accesskit-support"
-                "\nAlternatively, disable this driver by compiling with `accesskit=no` explicitly."
-            )
-            env["accesskit"] = False
 
     if env["vulkan"]:
         env.AppendUnique(CPPDEFINES=["VULKAN_ENABLED"])
@@ -848,47 +813,6 @@ def configure_mingw(env: "SConsEnvironment"):
         ]
     )
 
-    if env["accesskit"]:
-        if os.path.exists(env["accesskit_sdk_path"]):
-            if check_accesskit_version(env["accesskit_sdk_path"]):
-                env.Prepend(CPPPATH=[env["accesskit_sdk_path"] + "/include"])
-                if env["use_llvm"]:
-                    if env["arch"] == "arm64":
-                        env.Append(LIBPATH=[env["accesskit_sdk_path"] + "/lib/windows/arm64/mingw-llvm/static/"])
-                    elif env["arch"] == "x86_64":
-                        env.Append(LIBPATH=[env["accesskit_sdk_path"] + "/lib/windows/x86_64/mingw-llvm/static/"])
-                    elif env["arch"] == "x86_32":
-                        env.Append(LIBPATH=[env["accesskit_sdk_path"] + "/lib/windows/x86/mingw-llvm/static/"])
-                else:
-                    if env["arch"] == "x86_64":
-                        env.Append(LIBPATH=[env["accesskit_sdk_path"] + "/lib/windows/x86_64/mingw/static/"])
-                    elif env["arch"] == "x86_32":
-                        env.Append(LIBPATH=[env["accesskit_sdk_path"] + "/lib/windows/x86/mingw/static/"])
-                env.Append(LIBPATH=["#bin/obj/platform/windows"])
-                env.Append(
-                    LIBS=[
-                        "accesskit",
-                        "runtimeobject",
-                        "propsys",
-                        "oleaut32",
-                        "user32",
-                        "userenv",
-                        "ntdll",
-                    ]
-                )
-                env.Append(LIBPATH=["#platform/windows"])
-                env.Append(CPPDEFINES=["ACCESSKIT_ENABLED"])
-            else:
-                env["accesskit"] = False
-        else:
-            print_warning(
-                "The screen reader support driver requires dependencies to be installed.\n"
-                f"You can install them by running `python {os.path.join('misc', 'scripts', 'install_accesskit.py')}`.\n"
-                "See the documentation for more information:\n\t"
-                "https://docs.godotengine.org/en/latest/engine_details/development/compiling/compiling_for_windows.html#compiling-with-accesskit-support"
-                "\nAlternatively, disable this driver by compiling with `accesskit=no` explicitly."
-            )
-            env["accesskit"] = False
 
     if env.debug_features:
         env.Append(LIBS=["psapi", "dbghelp"])

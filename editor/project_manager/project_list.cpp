@@ -53,7 +53,6 @@
 #include "scene/gui/texture_button.h"
 #include "scene/gui/texture_rect.h"
 #include "scene/resources/image_texture.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 
 void ProjectListItemControl::_notification(int p_what) {
@@ -100,35 +99,13 @@ void ProjectListItemControl::_notification(int p_what) {
 		case NOTIFICATION_MOUSE_ENTER: {
 			is_hovering = true;
 			queue_redraw();
-			queue_accessibility_update();
 		} break;
 
 		case NOTIFICATION_MOUSE_EXIT: {
 			is_hovering = false;
 			queue_redraw();
-			queue_accessibility_update();
 		} break;
 
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
-
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_LIST_BOX_OPTION);
-			AccessibilityServer::get_singleton()->update_set_name(ae, TTR("Project") + " " + project_title->get_text());
-			AccessibilityServer::get_singleton()->update_set_value(ae, project_title->get_text());
-
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_CLICK, callable_mp(this, &ProjectListItemControl::_accessibility_action_open));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SCROLL_INTO_VIEW, callable_mp(this, &ProjectListItemControl::_accessibility_action_scroll_into_view));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_FOCUS, callable_mp(this, &ProjectListItemControl::_accessibility_action_focus));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_BLUR, callable_mp(this, &ProjectListItemControl::_accessibility_action_blur));
-
-			ProjectList *pl = get_list();
-			if (pl) {
-				AccessibilityServer::get_singleton()->update_set_list_item_index(ae, pl->get_index(this));
-			}
-			AccessibilityServer::get_singleton()->update_set_list_item_level(ae, 0);
-			AccessibilityServer::get_singleton()->update_set_list_item_selected(ae, is_selected);
-		} break;
 
 		case NOTIFICATION_FOCUS_ENTER: {
 			ProjectList *pl = get_list();
@@ -173,44 +150,6 @@ ProjectList *ProjectListItemControl::get_list() const {
 	return pl;
 }
 
-void ProjectListItemControl::_accessibility_action_scroll_into_view(const Variant &p_data) {
-	ProjectList *pl = get_list();
-	if (pl) {
-		int idx = pl->get_index(this);
-		if (idx >= 0) {
-			pl->ensure_project_visible(idx);
-		}
-	}
-}
-
-void ProjectListItemControl::_accessibility_action_open(const Variant &p_data) {
-	ProjectList *pl = get_list();
-	if (pl && !pl->project_opening_initiated) {
-		pl->emit_signal(SNAME(ProjectList::SIGNAL_PROJECT_ASK_OPEN));
-	}
-}
-
-void ProjectListItemControl::_accessibility_action_focus(const Variant &p_data) {
-	ProjectList *pl = get_list();
-	if (pl) {
-		int idx = pl->get_index(this);
-		if (idx >= 0) {
-			pl->ensure_project_visible(idx);
-			pl->select_project(idx);
-		}
-	}
-}
-
-void ProjectListItemControl::_accessibility_action_blur(const Variant &p_data) {
-	ProjectList *pl = get_list();
-	if (pl) {
-		int idx = pl->get_index(this);
-		if (idx >= 0) {
-			pl->ensure_project_visible(idx);
-			pl->deselect_project(idx);
-		}
-	}
-}
 void ProjectListItemControl::_update_favorite_button_focus_color() {
 	if (favorite_button->has_focus()) {
 		favorite_button->set_self_modulate(favorite_focus_color);
@@ -233,14 +172,10 @@ void ProjectListItemControl::_request_menu() {
 
 void ProjectListItemControl::set_project_title(const String &p_title) {
 	project_title->set_text(p_title);
-	project_title->set_accessibility_name(TTRC("Project Name"));
-	queue_accessibility_update();
 }
 
 void ProjectListItemControl::set_project_path(const String &p_path) {
 	project_path->set_text(p_path);
-	project_path->set_accessibility_name(TTRC("Project Path"));
-	queue_accessibility_update();
 }
 
 void ProjectListItemControl::set_tags(const PackedStringArray &p_tags, ProjectList *p_parent_list) {
@@ -309,7 +244,7 @@ void ProjectListItemControl::set_project_version(const String &p_info) {
 	_update_version_icon();
 	project_version->set_tooltip_text(String());
 	if (p_info != GODOT_VERSION_NUMBER) {
-		project_different_version->set_focus_mode(FOCUS_ACCESSIBILITY);
+		project_different_version->set_focus_mode(FOCUS_NONE);
 		project_different_version->set_tooltip_text(vformat(TTR("This project was last saved with editor %s. This editor is %s. Open the project with the appropriate editor version."), p_info, GODOT_VERSION_NUMBER));
 		project_different_version->show();
 	}
@@ -321,7 +256,7 @@ void ProjectListItemControl::set_unsupported_features(PackedStringArray p_featur
 		return;
 	}
 	const String tooltip_text = TTR("This project uses features unsupported by the current build:") + "\n" + String(", ").join(p_features);
-	project_unsupported_features->set_focus_mode(FOCUS_ACCESSIBILITY);
+	project_unsupported_features->set_focus_mode(FOCUS_NONE);
 	project_unsupported_features->set_tooltip_text(tooltip_text);
 	project_unsupported_features->show();
 }
@@ -334,17 +269,14 @@ void ProjectListItemControl::set_selected(bool p_selected, bool p_hide_focus) {
 	is_selected = p_selected;
 	is_focus_hidden = is_selected && p_hide_focus;
 	queue_redraw();
-	queue_accessibility_update();
 }
 
 void ProjectListItemControl::set_is_favorite(bool p_favorite) {
 	is_favorite = p_favorite;
 	if (p_favorite) {
 		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("Favorites")));
-		favorite_button->set_accessibility_name(TTRC("Remove from Favorites"));
 	} else {
 		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("Unfavorite")));
-		favorite_button->set_accessibility_name(TTRC("Add to Favorites"));
 	}
 }
 
@@ -480,7 +412,6 @@ ProjectListItemControl::ProjectListItemControl() {
 		main_vbox->add_child(title_hb);
 
 		project_title = memnew(Label);
-		project_title->set_focus_mode(FOCUS_ACCESSIBILITY);
 		project_title->set_name("ProjectName");
 		project_title->set_h_size_flags(Control::SIZE_FILL);
 		title_hb->add_child(project_title);
@@ -508,7 +439,6 @@ ProjectListItemControl::ProjectListItemControl() {
 
 		project_path = memnew(Label);
 		project_path->set_name("ProjectPath");
-		project_path->set_focus_mode(FOCUS_ACCESSIBILITY);
 		project_path->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 		project_path->set_clip_text(true);
 		project_path->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -528,13 +458,11 @@ ProjectListItemControl::ProjectListItemControl() {
 		project_different_version->hide();
 
 		project_version = memnew(Label);
-		project_version->set_focus_mode(FOCUS_ACCESSIBILITY);
 		project_version->set_name("ProjectVersion");
 		project_version->set_mouse_filter(Control::MOUSE_FILTER_PASS);
 		path_hb->add_child(project_version);
 
 		last_edited_info = memnew(Label);
-		last_edited_info->set_focus_mode(FOCUS_ACCESSIBILITY);
 		last_edited_info->set_name("LastEditedInfo");
 		last_edited_info->set_mouse_filter(Control::MOUSE_FILTER_PASS);
 		last_edited_info->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
@@ -628,14 +556,6 @@ void ProjectList::_notification(int p_what) {
 			}
 		} break;
 
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
-
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_LIST_BOX);
-			AccessibilityServer::get_singleton()->update_set_list_item_count(ae, _projects.size());
-			AccessibilityServer::get_singleton()->update_set_flag(ae, AccessibilityServerEnums::AccessibilityFlags::FLAG_MULTISELECTABLE, false);
-		}
 	}
 }
 
@@ -847,7 +767,6 @@ void ProjectList::update_project_list() {
 
 	set_v_scroll(0);
 	emit_signal(SNAME(SIGNAL_LIST_CHANGED));
-	queue_accessibility_update();
 }
 
 void ProjectList::sort_projects() {
@@ -912,7 +831,6 @@ void ProjectList::sort_projects() {
 	// Rewind the coroutine because order of projects changed
 	_update_icons_async();
 	update_dock_menu();
-	queue_accessibility_update();
 }
 
 int ProjectList::get_project_count() const {
@@ -1002,7 +920,6 @@ void ProjectList::add_project(const String &dir_path, bool favorite) {
 	if (!_config.has_section(dir_path)) {
 		_config.set_value(dir_path, "favorite", favorite);
 	}
-	queue_accessibility_update();
 }
 
 int ProjectList::refresh_project(const String &dir_path) {
@@ -1143,7 +1060,6 @@ void ProjectList::_remove_project(int p_index, bool p_update_config) {
 		// Not actually saving the file, in case you are doing more changes to settings
 	}
 
-	queue_accessibility_update();
 	update_dock_menu();
 }
 
@@ -1318,21 +1234,18 @@ void ProjectList::_clear_project_selection() {
 	for (int i = 0; i < previous_selected_items.size(); ++i) {
 		previous_selected_items[i].control->set_selected(false);
 	}
-	queue_accessibility_update();
 }
 
 void ProjectList::_select_project_nocheck(int p_index, bool p_hide_focus) {
 	Item &item = _projects.write[p_index];
 	_selected_project_paths.insert(item.path);
 	item.control->set_selected(true, p_hide_focus);
-	queue_accessibility_update();
 }
 
 void ProjectList::_deselect_project_nocheck(int p_index) {
 	Item &item = _projects.write[p_index];
 	_selected_project_paths.erase(item.path);
 	item.control->set_selected(false);
-	queue_accessibility_update();
 }
 
 inline void _sort_project_range(int &a, int &b) {
@@ -1356,10 +1269,6 @@ void ProjectList::select_project(int p_index, bool p_hide_focus) {
 	// This method keeps only one project selected.
 	_clear_project_selection();
 	_select_project_nocheck(p_index, p_hide_focus);
-}
-
-void ProjectList::deselect_project(int p_index) {
-	_deselect_project_nocheck(p_index);
 }
 
 void ProjectList::select_first_visible_project() {

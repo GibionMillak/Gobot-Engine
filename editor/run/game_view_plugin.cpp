@@ -1531,7 +1531,6 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	suspend_button->set_toggle_mode(true);
 	suspend_button->set_theme_type_variation(SceneStringName(FlatButton));
 	suspend_button->connect(SceneStringName(toggled), callable_mp(this, &GameView::_suspend_button_toggled));
-	suspend_button->set_accessibility_name(TTRC("Suspend"));
 	suspend_button->set_shortcut(ED_GET_SHORTCUT("editor/suspend_resume_embedded_project"));
 	suspend_button->set_tooltip_text(TTRC("Force pause at SceneTree level. Stops all processing, but you can still interact with the game."));
 
@@ -1540,7 +1539,6 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	next_frame_button->set_button_icon(EditorIconManager::get_icon(SNAME("NextFrame")));
 	next_frame_button->set_theme_type_variation(SceneStringName(FlatButton));
 	next_frame_button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::next_frame));
-	next_frame_button->set_accessibility_name(TTRC("Next Frame"));
 	next_frame_button->set_shortcut(ED_GET_SHORTCUT("editor/next_frame_embedded_project"));
 
 	process_hb->add_child(memnew(VSeparator));
@@ -1551,7 +1549,6 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	speed_state_button->set_flat(false);
 	speed_state_button->set_theme_type_variation("FlatMenuButton");
 	speed_state_button->set_tooltip_text(TTRC("Change the game speed."));
-	speed_state_button->set_accessibility_name(TTRC("Speed State"));
 
 	PopupMenu *menu = speed_state_button->get_popup();
 	menu->connect(SceneStringName(id_pressed), callable_mp(this, &GameView::_speed_state_menu_pressed));

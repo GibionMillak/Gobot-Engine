@@ -189,18 +189,6 @@ Color FreeDesktopPortalDesktop::get_appearance_accent_color() {
 	}
 }
 
-uint32_t FreeDesktopPortalDesktop::get_high_contrast() {
-	if (unsupported) {
-		return -1;
-	}
-
-	dbus_bool_t value = false;
-	if (read_setting("org.gnome.desktop.a11y.interface", "high-contrast", VAR_TYPE_BOOL, &value)) {
-		return value;
-	}
-	return -1;
-}
-
 static const char *cs_empty = "";
 
 void FreeDesktopPortalDesktop::append_dbus_string(DBusMessageIter *p_iter, const String &p_string) {

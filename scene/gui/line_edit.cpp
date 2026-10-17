@@ -43,7 +43,6 @@
 #include "scene/gui/label.h"
 #include "scene/main/window.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/text/text_server.h"
@@ -565,7 +564,6 @@ void LineEdit::gui_input(const Ref<InputEvent> &p_event) {
 						if (!pass && DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_CLIPBOARD_PRIMARY)) {
 							DisplayServer::get_singleton()->clipboard_set_primary(text);
 						}
-						queue_accessibility_update();
 					} else if (b->is_double_click()) {
 						// Double-click select word.
 						last_dblclk = OS::get_singleton()->get_ticks_msec();
@@ -580,7 +578,6 @@ void LineEdit::gui_input(const Ref<InputEvent> &p_event) {
 								selection.creating = true;
 								selection.start_column = caret_column;
 								set_caret_column(selection.end);
-								queue_accessibility_update();
 								break;
 							}
 						}
@@ -1135,7 +1132,6 @@ Variant LineEdit::get_drag_data(const Point2 &p_point) {
 		String t = get_selected_text();
 		Label *l = memnew(Label);
 		l->set_text(t);
-		l->set_focus_mode(FOCUS_ACCESSIBILITY);
 		l->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED); // Don't translate user input.
 		l->add_theme_font_override(SceneStringName(font), theme_cache.font);
 		l->add_theme_font_size_override(SceneStringName(font_size), theme_cache.font_size);
@@ -1165,9 +1161,7 @@ void LineEdit::drop_data(const Point2 &p_point, const Variant &p_data) {
 	if (p_data.is_string() && is_editable()) {
 		apply_ime();
 
-		if (p_point != Vector2(Math::INF, Math::INF)) {
-			set_caret_at_pixel_pos(p_point.x);
-		}
+		set_caret_at_pixel_pos(p_point.x);
 		int caret_column_tmp = caret_column;
 		bool is_inside_sel = selection.enabled && caret_column >= selection.begin && caret_column <= selection.end;
 		if (Input::get_singleton()->is_key_pressed(Key::CMD_OR_CTRL)) {
@@ -1203,7 +1197,6 @@ void LineEdit::drop_data(const Point2 &p_point, const Variant &p_data) {
 			}
 			text_changed_dirty = true;
 		}
-		queue_accessibility_update();
 		queue_redraw();
 	}
 }
@@ -1229,42 +1222,6 @@ void LineEdit::_update_theme_item_cache() {
 	theme_cache.base_scale = get_theme_default_base_scale();
 }
 
-void LineEdit::_accessibility_action_set_selection(const Variant &p_data) {
-	Dictionary new_selection = p_data;
-	int sel_start_pos = new_selection["start_char"];
-	int sel_end_pos = new_selection["end_char"];
-	select(sel_start_pos, sel_end_pos);
-}
-
-void LineEdit::_accessibility_action_replace_selected(const Variant &p_data) {
-	String new_text = p_data;
-	insert_text_at_caret(new_text);
-}
-
-void LineEdit::_accessibility_action_set_value(const Variant &p_data) {
-	String new_text = p_data;
-	set_text(new_text);
-}
-
-void LineEdit::_accessibility_action_menu(const Variant &p_data) {
-	_update_context_menu();
-
-	Point2 pos = Point2(get_caret_pixel_pos().x, (get_size().y + theme_cache.font->get_height(theme_cache.font_size)) / 2);
-	menu->set_position(get_screen_position() + pos);
-	menu->reset_size();
-	menu->popup();
-	menu->grab_focus();
-}
-
-String LineEdit::_get_accessibility_name() const {
-	const String &ac_name = Control::_get_accessibility_name();
-	if (!placeholder.is_empty() && ac_name.is_empty()) {
-		return atr(placeholder);
-	} else {
-		return ac_name;
-	}
-}
-
 void LineEdit::_notification(int p_what) {
 	switch (p_what) {
 #ifdef TOOLS_ENABLED
@@ -1280,103 +1237,7 @@ void LineEdit::_notification(int p_what) {
 		} break;
 #endif
 		case NOTIFICATION_EXIT_TREE:
-		case NOTIFICATION_ACCESSIBILITY_INVALIDATE: {
-			accessibility_text_root_element = RID();
-		} break;
 
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
-
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_TEXT_FIELD);
-			bool using_placeholder = text.is_empty() && ime_text.is_empty();
-			if (using_placeholder && !placeholder.is_empty()) {
-				AccessibilityServer::get_singleton()->update_set_placeholder(ae, atr(placeholder));
-			}
-			AccessibilityServer::get_singleton()->update_set_flag(ae, AccessibilityServerEnums::AccessibilityFlags::FLAG_READONLY, !editable);
-
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SET_TEXT_SELECTION, callable_mp(this, &LineEdit::_accessibility_action_set_selection));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_REPLACE_SELECTED_TEXT, callable_mp(this, &LineEdit::_accessibility_action_replace_selected));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SET_VALUE, callable_mp(this, &LineEdit::_accessibility_action_set_value));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SHOW_CONTEXT_MENU, callable_mp(this, &LineEdit::_accessibility_action_menu));
-			const String &lang = language.is_empty() ? _get_locale() : language;
-			AccessibilityServer::get_singleton()->update_set_language(ae, lang);
-
-			bool rtl = is_layout_rtl();
-			Ref<StyleBox> style = theme_cache.normal;
-			Ref<Font> font = theme_cache.font;
-
-			Size2 size = get_size();
-
-			int x_ofs = 0;
-			float text_width = TS->shaped_text_get_size(text_rid).x;
-			float text_height = TS->shaped_text_get_size(text_rid).y;
-			int y_area = size.height - style->get_minimum_size().height;
-			int y_ofs = style->get_offset().y + (y_area - text_height) / 2;
-
-			switch (alignment) {
-				case HORIZONTAL_ALIGNMENT_FILL:
-				case HORIZONTAL_ALIGNMENT_LEFT: {
-					if (rtl) {
-						x_ofs = MAX(style->get_margin(SIDE_LEFT), int(size.width - Math::ceil(style->get_margin(SIDE_RIGHT) + (text_width))));
-					} else {
-						x_ofs = style->get_margin(SIDE_LEFT);
-					}
-				} break;
-				case HORIZONTAL_ALIGNMENT_CENTER: {
-					if (!Math::is_zero_approx(scroll_offset)) {
-						x_ofs = style->get_margin(SIDE_LEFT);
-					} else {
-						int total_margin = style->get_margin(SIDE_LEFT) + style->get_margin(SIDE_RIGHT);
-						int centered = int((size.width - total_margin - text_width)) / 2;
-						x_ofs = style->get_margin(SIDE_LEFT) + MAX(0, centered);
-					}
-				} break;
-				case HORIZONTAL_ALIGNMENT_RIGHT: {
-					if (rtl) {
-						x_ofs = style->get_margin(SIDE_LEFT);
-					} else {
-						x_ofs = MAX(style->get_margin(SIDE_LEFT), int(size.width - Math::ceil(style->get_margin(SIDE_RIGHT) + (text_width))));
-					}
-				} break;
-			}
-			bool display_clear_icon = !using_placeholder && is_editable() && clear_button_enabled;
-			if (right_icon.is_valid() || display_clear_icon) {
-				Ref<Texture2D> r_icon = display_clear_icon ? theme_cache.clear_icon : right_icon;
-				Point2 right_icon_size = _get_right_icon_size(r_icon);
-				if (alignment == HORIZONTAL_ALIGNMENT_CENTER) {
-					if (Math::is_zero_approx(scroll_offset)) {
-						int total_margin = style->get_margin(SIDE_LEFT) + style->get_margin(SIDE_RIGHT);
-						int center = int(size.width - total_margin - text_width - right_icon_size.width) / 2;
-						x_ofs = style->get_margin(SIDE_LEFT) + MAX(0, center);
-					}
-					if (rtl) {
-						x_ofs += right_icon_size.width;
-					}
-				} else {
-					if (rtl) {
-						x_ofs = MAX(style->get_margin(SIDE_LEFT) + right_icon_size.width, x_ofs);
-					} else {
-						x_ofs = MAX(style->get_margin(SIDE_LEFT), x_ofs - right_icon_size.width - style->get_margin(SIDE_RIGHT));
-					}
-				}
-			}
-
-			float text_off_x = x_ofs + scroll_offset;
-
-			if (accessibility_text_root_element.is_null()) {
-				accessibility_text_root_element = AccessibilityServer::get_singleton()->create_sub_text_edit_elements(ae, using_placeholder ? RID() : text_rid, text_height, -1, true);
-			}
-
-			Transform2D text_xform;
-			text_xform.set_origin(Vector2i(text_off_x, y_ofs));
-			AccessibilityServer::get_singleton()->update_set_transform(accessibility_text_root_element, text_xform);
-			if (selection.enabled) {
-				AccessibilityServer::get_singleton()->update_set_text_selection(ae, accessibility_text_root_element, selection.begin, accessibility_text_root_element, selection.end);
-			} else {
-				AccessibilityServer::get_singleton()->update_set_text_selection(ae, accessibility_text_root_element, caret_column, accessibility_text_root_element, caret_column);
-			}
-		} break;
 
 		case NOTIFICATION_RESIZED: {
 			_fit_to_width();
@@ -2337,7 +2198,6 @@ void LineEdit::set_caret_column(int p_column) {
 
 	caret_column = p_column;
 
-	queue_accessibility_update();
 
 	// Fit to window.
 
@@ -2425,7 +2285,6 @@ void LineEdit::set_caret_column(int p_column) {
 
 	scroll_offset = MIN(0, scroll_offset);
 
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -2545,7 +2404,6 @@ void LineEdit::deselect() {
 	selection.enabled = false;
 	selection.creating = false;
 	selection.double_click = false;
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -2604,7 +2462,6 @@ void LineEdit::selection_fill_at_caret() {
 	}
 
 	selection.enabled = (selection.begin != selection.end);
-	queue_accessibility_update();
 }
 
 void LineEdit::select_all() {
@@ -2620,7 +2477,6 @@ void LineEdit::select_all() {
 	selection.begin = 0;
 	selection.end = text.length();
 	selection.enabled = true;
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -2644,7 +2500,6 @@ void LineEdit::set_editable(bool p_editable) {
 	_validate_caret_can_draw();
 
 	update_minimum_size();
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -2716,7 +2571,6 @@ void LineEdit::select(int p_from, int p_to) {
 	selection.end = p_to;
 	selection.creating = false;
 	selection.double_click = false;
-	queue_accessibility_update();
 	queue_redraw();
 }
 
@@ -3184,12 +3038,7 @@ void LineEdit::_shape() {
 		update_minimum_size();
 	}
 
-	if (accessibility_text_root_element.is_valid()) {
-		AccessibilityServer::get_singleton()->free_element(accessibility_text_root_element);
-		accessibility_text_root_element = RID();
-	}
 
-	queue_accessibility_update();
 }
 
 void LineEdit::_fit_to_width() {

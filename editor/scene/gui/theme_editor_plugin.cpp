@@ -53,6 +53,7 @@
 #include "scene/gui/check_button.h"
 #include "scene/gui/color_picker.h"
 #include "scene/gui/item_list.h"
+#include "scene/gui/line_edit.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/panel_container.h"
 #include "scene/gui/scroll_container.h"
@@ -2959,7 +2960,6 @@ void ThemeTypeEditor::_update_type_items() {
 				pin_leader_button->set_toggle_mode(true);
 				pin_leader_button->set_button_icon(get_editor_theme_icon(SNAME("Pin")));
 				pin_leader_button->set_tooltip_text(TTRC("Pin this StyleBox as a main style. Editing its properties will update the same properties in all other StyleBoxes of this type."));
-				pin_leader_button->set_accessibility_name(TTRC("Pin this StyleBox as a main style."));
 				item_control->add_child(pin_leader_button);
 				pin_leader_button->connect(SceneStringName(pressed), callable_mp(this, &ThemeTypeEditor::_on_pin_leader_button_pressed).bind(item_editor, E.key));
 			} else {
@@ -3793,7 +3793,6 @@ ThemeTypeEditor::ThemeTypeEditor() {
 	theme_type_list->set_h_size_flags(SIZE_EXPAND_FILL);
 	theme_type_list->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
 	theme_type_list->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	theme_type_list->set_accessibility_name(TTRC("Type"));
 	theme_type_list->set_search_bar_enabled(true);
 	theme_type_list->set_search_bar_min_item_count(10);
 	type_list_hb->add_child(theme_type_list);
@@ -3894,7 +3893,6 @@ ThemeTypeEditor::ThemeTypeEditor() {
 	type_variation_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	type_variation_edit->connect(SceneStringName(text_changed), callable_mp(this, &ThemeTypeEditor::_type_variation_changed));
 	type_variation_edit->connect(SceneStringName(focus_exited), callable_mp(this, &ThemeTypeEditor::_update_type_items));
-	type_variation_edit->set_accessibility_name(TTRC("Base Type"));
 	type_variation_button = memnew(Button);
 	type_variation_hb->add_child(type_variation_button);
 	type_variation_button->set_tooltip_text(TTRC("Select the variation base type from a list of available types."));

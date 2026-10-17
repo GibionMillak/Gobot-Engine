@@ -36,7 +36,6 @@
 #include "core/object/class_db.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/viewport.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 
 #if defined(DEBUG_ENABLED) && !defined(PHYSICS_2D_DISABLED)
@@ -123,26 +122,9 @@ bool TouchScreenButton::is_shape_centered() const {
 	return shape_centered;
 }
 
-void TouchScreenButton::_accessibility_action_click(const Variant &p_data) {
-	_press(0);
-	_release();
-}
-
 void TouchScreenButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			Rect2 dst_rect(Point2(), texture_normal.is_valid() ? texture_normal->get_size() : Size2());
-
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_BUTTON);
-
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_CLICK, callable_mp(this, &TouchScreenButton::_accessibility_action_click));
-
-			AccessibilityServer::get_singleton()->update_set_transform(ae, get_transform());
-			AccessibilityServer::get_singleton()->update_set_bounds(ae, dst_rect);
-		} break;
 
 		case NOTIFICATION_DRAW: {
 			if (!is_inside_tree()) {

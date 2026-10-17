@@ -55,7 +55,6 @@ const char *EditorBuildProfile::build_option_identifiers[BUILD_OPTION_MAX] = {
 	"disable_3d",
 	"disable_navigation_2d",
 	"disable_navigation_3d",
-	"accesskit",
 	"sdl",
 	"wayland",
 	"x11",
@@ -87,7 +86,6 @@ const bool EditorBuildProfile::build_option_disabled_by_default[BUILD_OPTION_MAX
 	false, // 3D
 	false, // NAVIGATION_2D
 	false, // NAVIGATION_3D
-	false, // ACCESSKIT
 	false, // SDL
 	false, // WAYLAND
 	false, // X11
@@ -119,7 +117,6 @@ const bool EditorBuildProfile::build_option_disable_values[BUILD_OPTION_MAX] = {
 	true, // 3D
 	true, // NAVIGATION_2D
 	true, // NAVIGATION_3D
-	false, // ACCESSKIT
 	false, // SDL
 	false, // WAYLAND
 	false, // X11
@@ -151,7 +148,6 @@ const bool EditorBuildProfile::build_option_explicit_use[BUILD_OPTION_MAX] = {
 	false, // 3D
 	false, // NAVIGATION_2D
 	false, // NAVIGATION_3D
-	false, // ACCESSKIT
 	false, // SDL
 	false, // WAYLAND
 	false, // X11
@@ -182,7 +178,6 @@ const EditorBuildProfile::BuildOptionCategory EditorBuildProfile::build_option_c
 	BUILD_OPTION_CATEGORY_GENERAL, // 3D
 	BUILD_OPTION_CATEGORY_GENERAL, // NAVIGATION_2D
 	BUILD_OPTION_CATEGORY_GENERAL, // NAVIGATION_3D
-	BUILD_OPTION_CATEGORY_GENERAL, // ACCESSKIT
 	BUILD_OPTION_CATEGORY_GENERAL, // SDL
 	BUILD_OPTION_CATEGORY_GENERAL, // WAYLAND
 	BUILD_OPTION_CATEGORY_GENERAL, // X11
@@ -392,7 +387,6 @@ String EditorBuildProfile::get_build_option_name(BuildOption p_build_option) {
 		TTRC("3D Engine"),
 		TTRC("Navigation (2D)"),
 		TTRC("Navigation (3D)"),
-		TTRC("Accessibility Support (AccessKit)"),
 		TTRC("Improved Gamepad Support (SDL)"),
 		TTRC("Wayland"),
 		TTRC("X11"),
@@ -428,7 +422,6 @@ String EditorBuildProfile::get_build_option_description(BuildOption p_build_opti
 		TTRC("3D Nodes as well as RenderingServer access to 3D features.\nNote that the Geometry3D singleton remains available even with this item disabled."),
 		TTRC("NavigationServer and capabilities for 2D."),
 		TTRC("NavigationServer and capabilities for 3D."),
-		TTRC("Support for screen readers using the AccessKit library."),
 		TTRC("Improved gamepad support on Windows, macOS, and Linux using the SDL library.\nIf disabled, built-in custom code is used for gamepad support instead, which may be less reliable for certain controller models."),
 		TTRC("Wayland display server support (Linux only)."),
 		TTRC("X11 display server support (Linux only)."),
@@ -1348,7 +1341,6 @@ EditorBuildProfileManager::EditorBuildProfileManager() {
 	path_hbc->add_child(profile_label);
 	profile_label->set_text(TTR("[Unsaved Profile]"));
 	profile_label->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
-	profile_label->set_accessibility_name(TTRC("Profile Path"));
 	profile_label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	profile_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 
@@ -1436,7 +1428,6 @@ EditorBuildProfileManager::EditorBuildProfileManager() {
 	export_profile->set_access(EditorFileDialog::ACCESS_FILESYSTEM);
 
 	force_detect_classes = memnew(LineEdit);
-	force_detect_classes->set_accessibility_name(TTRC("Forced Classes on Detect:"));
 	main_vbc->add_margin_child(TTRC("Forced Classes on Detect:"), force_detect_classes);
 	force_detect_classes->connect(SceneStringName(text_changed), callable_mp(this, &EditorBuildProfileManager::_force_detect_classes_changed));
 

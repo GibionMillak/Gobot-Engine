@@ -37,7 +37,6 @@
 #include "scene/gui/texture_rect.h"
 #include "scene/main/viewport.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 
 void SplitContainerMultiDragger::_notification(int p_what) {
 	switch (p_what) {
@@ -217,36 +216,6 @@ Control::CursorShape SplitContainerDragger::get_cursor_shape(const Point2 &p_pos
 	return Control::get_cursor_shape(p_pos);
 }
 
-void SplitContainerDragger::_accessibility_action_inc(const Variant &p_data) {
-	SplitContainer *sc = Object::cast_to<SplitContainer>(get_parent());
-
-	if (sc->collapsed || sc->valid_children.size() < 2u || !sc->dragging_enabled) {
-		return;
-	}
-	sc->set_split_offset(sc->get_split_offset(dragger_index) - (sc->vertical ? sc->get_size().height : sc->get_size().width) * 0.1, dragger_index);
-	sc->clamp_split_offset(dragger_index);
-}
-
-void SplitContainerDragger::_accessibility_action_dec(const Variant &p_data) {
-	SplitContainer *sc = Object::cast_to<SplitContainer>(get_parent());
-
-	if (sc->collapsed || sc->valid_children.size() < 2u || !sc->dragging_enabled) {
-		return;
-	}
-	sc->set_split_offset(sc->get_split_offset(dragger_index) + (sc->vertical ? sc->get_size().height : sc->get_size().width) * 0.1, dragger_index);
-	sc->clamp_split_offset(dragger_index);
-}
-
-void SplitContainerDragger::_accessibility_action_set_value(const Variant &p_data) {
-	SplitContainer *sc = Object::cast_to<SplitContainer>(get_parent());
-
-	if (sc->collapsed || sc->valid_children.size() < 2u || !sc->dragging_enabled) {
-		return;
-	}
-	sc->set_split_offset(p_data, dragger_index);
-	sc->clamp_split_offset(dragger_index);
-}
-
 void SplitContainerDragger::_touch_dragger_mouse_exited() {
 	if (!dragging) {
 		SplitContainer *sc = Object::cast_to<SplitContainer>(get_parent());
@@ -321,32 +290,9 @@ void SplitContainerDragger::stop_dragging() {
 	}
 }
 
-String SplitContainerDragger::_get_accessibility_name() const {
-	return RTR("Drag to resize");
-}
-
 void SplitContainerDragger::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			if (dragger_index < 0) {
-				return;
-			}
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_SPLITTER);
-
-			SplitContainer *sc = Object::cast_to<SplitContainer>(get_parent());
-			if (sc->collapsed || sc->valid_children.size() < 2u || !sc->dragging_enabled) {
-				return;
-			}
-			sc->clamp_split_offset(dragger_index);
-			AccessibilityServer::get_singleton()->update_set_num_value(ae, sc->get_split_offset(dragger_index));
-
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_DECREMENT, callable_mp(this, &SplitContainerDragger::_accessibility_action_dec));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_INCREMENT, callable_mp(this, &SplitContainerDragger::_accessibility_action_inc));
-			AccessibilityServer::get_singleton()->update_add_action(ae, AccessibilityServerEnums::AccessibilityAction::ACTION_SET_VALUE, callable_mp(this, &SplitContainerDragger::_accessibility_action_set_value));
-		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
 			if (touch_dragger) {
@@ -397,10 +343,6 @@ void SplitContainerDragger::_notification(int p_what) {
 			}
 		} break;
 	}
-}
-
-SplitContainerDragger::SplitContainerDragger() {
-	set_focus_mode(FOCUS_ACCESSIBILITY);
 }
 
 Ref<Texture2D> SplitContainer::_get_grabber_icon() const {

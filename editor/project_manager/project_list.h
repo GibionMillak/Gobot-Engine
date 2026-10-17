@@ -89,10 +89,6 @@ class ProjectListItemControl : public HBoxContainer {
 
 	ProjectList *get_list() const;
 
-	void _accessibility_action_open(const Variant &p_data);
-	void _accessibility_action_scroll_into_view(const Variant &p_data);
-	void _accessibility_action_focus(const Variant &p_data);
-	void _accessibility_action_blur(const Variant &p_data);
 
 private:
 	// Caches for resizing project titles.
@@ -325,7 +321,6 @@ public:
 	// Project list selection.
 
 	void select_project(int p_index, bool p_hide_focus = false);
-	void deselect_project(int p_index);
 	void select_first_visible_project();
 	void select_all_visible_projects();
 	void deselect_all_visible_projects();

@@ -88,12 +88,6 @@ PackedStringArray SceneTreeEditor::_get_node_configuration_warnings(Node *p_node
 	return warnings;
 }
 
-PackedStringArray SceneTreeEditor::_get_node_accessibility_configuration_warnings(Node *p_node) {
-	PackedStringArray warnings = p_node->get_accessibility_configuration_warnings();
-
-	return warnings;
-}
-
 void SceneTreeEditor::_gui_input(const Ref<InputEvent> &p_event) {
 	if (connect_to_script_mode) {
 		return; // Don't do anything in this mode.
@@ -267,9 +261,6 @@ void SceneTreeEditor::_cell_button_pressed(Object *p_item, int p_column, int p_i
 		undo_redo->commit_action();
 	} else if (p_id == BUTTON_WARNING) {
 		PackedStringArray warnings = _get_node_configuration_warnings(n);
-		if (accessibility_warnings) {
-			warnings.append_array(_get_node_accessibility_configuration_warnings(n));
-		}
 		if (warnings.is_empty()) {
 			return;
 		}
@@ -593,9 +584,6 @@ void SceneTreeEditor::_update_node(Node *p_node, TreeItem *p_item, bool p_part_o
 
 	if (can_rename) { // TODO Should be can edit..
 		PackedStringArray warnings = _get_node_configuration_warnings(p_node);
-		if (accessibility_warnings) {
-			warnings.append_array(_get_node_accessibility_configuration_warnings(p_node));
-		}
 
 		const int num_warnings = warnings.size();
 		if (num_warnings > 0) {
@@ -2258,13 +2246,6 @@ void SceneTreeEditor::set_hide_filtered_out_parents(bool p_hide, bool p_update_s
 	}
 }
 
-void SceneTreeEditor::set_accessibility_warnings(bool p_enable, bool p_update_settings) {
-	if (p_update_settings) {
-		EditorSettings::get_singleton()->set("docks/scene_tree/accessibility_warnings", p_enable);
-	}
-	accessibility_warnings = p_enable;
-}
-
 void SceneTreeEditor::set_connect_to_script_mode(bool p_enable) {
 	connect_to_script_mode = p_enable;
 	_update_tree();
@@ -2370,7 +2351,6 @@ SceneTreeEditor::SceneTreeEditor(bool p_label, bool p_can_rename, bool p_can_ope
 	VBoxContainer *vb = memnew(VBoxContainer);
 	revoke_dialog->add_child(vb);
 	revoke_dialog_label = memnew(Label);
-	revoke_dialog_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	vb->add_child(revoke_dialog_label);
 	ask_before_revoke_checkbox = memnew(CheckBox(TTRC("Don't Ask Again")));
 	ask_before_revoke_checkbox->set_tooltip_text(TTRC("This dialog can also be enabled/disabled in the Editor Settings: Docks > Scene Tree > Ask Before Revoking Unique Name."));
@@ -2449,7 +2429,6 @@ void SceneTreeDialog::set_valid_types(const Vector<StringName> &p_valid) {
 
 		Label *label = memnew(Label);
 		hb->add_child(label);
-		label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 		label->set_text(name);
 		label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	}

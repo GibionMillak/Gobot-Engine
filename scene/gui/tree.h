@@ -32,7 +32,6 @@
 
 #include "scene/gui/control.h"
 #include "scene/resources/text_paragraph.h"
-#include "servers/display/accessibility_server.h"
 
 class VBoxContainer;
 class HScrollBar;
@@ -61,7 +60,6 @@ private:
 	friend class Tree;
 
 	struct Cell {
-		mutable RID accessibility_cell_element;
 		TreeCellMode mode = TreeItem::CELL_MODE_STRING;
 
 		Ref<Texture2D> icon;
@@ -114,7 +112,6 @@ private:
 		Callable custom_draw_callback;
 
 		struct Button {
-			mutable RID accessibility_button_element;
 			int id = 0;
 			bool disabled = false;
 			Ref<Texture2D> texture;
@@ -137,8 +134,6 @@ private:
 		void draw_icon(const RID &p_where, const Point2 &p_pos, const Size2 &p_size = Size2(), const Rect2i &p_region = Rect2i(), const Color &p_color = Color()) const;
 	};
 
-	mutable RID accessibility_row_element;
-	mutable bool accessibility_row_dirty = true;
 
 	Vector<Cell> cells;
 
@@ -187,22 +182,6 @@ private:
 	}
 
 	_FORCE_INLINE_ void _unlink_from_tree() {
-		if (accessibility_row_element.is_valid()) {
-			AccessibilityServer::get_singleton()->free_element(accessibility_row_element);
-			accessibility_row_element = RID();
-		}
-		for (Cell &cell : cells) {
-			if (cell.accessibility_cell_element.is_valid()) {
-				AccessibilityServer::get_singleton()->free_element(cell.accessibility_cell_element);
-				cell.accessibility_cell_element = RID();
-			}
-			for (Cell::Button &btn : cell.buttons) {
-				if (btn.accessibility_button_element.is_valid()) {
-					AccessibilityServer::get_singleton()->free_element(btn.accessibility_button_element);
-					btn.accessibility_button_element = RID();
-				}
-			}
-		}
 		TreeItem *p = get_prev();
 		if (p) {
 			p->next = next;
@@ -534,7 +513,6 @@ private:
 	static constexpr int COLUMN_NOT_FOUND = -100;
 
 	struct ColumnInfo {
-		mutable RID accessibility_col_element;
 		int custom_min_width = 0;
 		int expand_ratio = 1;
 		bool expand = true;
@@ -559,7 +537,6 @@ private:
 
 	bool popup_edit_committed = true;
 	int scroll_pending = 0;
-	RID accessibility_scroll_element;
 	RID stylebox_ci; // Separate canvas item for drawing native styleboxes.
 	RID custom_ci; // Separate canvas item for drawing custom content.
 	RID header_ci; // Separate canvas item for drawing column headers.
@@ -821,10 +798,7 @@ private:
 	Rect2 _get_content_rect() const; // Considering the background stylebox and scrollbars.
 	Rect2 _get_item_focus_rect(const TreeItem *p_item) const;
 
-	void _check_item_accessibility(TreeItem *p_item, PackedStringArray &r_warnings, int &r_row) const;
 
-	void _accessibility_clean_info(TreeItem *p_item);
-	void _accessibility_update_item(Point2 &r_ofs, TreeItem *p_item, int &r_row, int p_level);
 
 protected:
 	virtual void _update_theme_item_cache() override;
@@ -832,27 +806,8 @@ protected:
 	void _notification(int p_what);
 	static void _bind_methods();
 
-	void _accessibility_action_scroll_down(const Variant &p_data);
-	void _accessibility_action_scroll_left(const Variant &p_data);
-	void _accessibility_action_scroll_right(const Variant &p_data);
-	void _accessibility_action_scroll_up(const Variant &p_data);
-	void _accessibility_action_scroll_set(const Variant &p_data);
-	void _accessibility_action_scroll_into_view(const Variant &p_data, TreeItem *p_item, int p_col);
-	void _accessibility_action_focus(const Variant &p_data, TreeItem *p_item, int p_col);
-	void _accessibility_action_blur(const Variant &p_data, TreeItem *p_item, int p_col);
-	void _accessibility_action_collapse(const Variant &p_data, TreeItem *p_item);
-	void _accessibility_action_expand(const Variant &p_data, TreeItem *p_item);
-	void _accessibility_action_set_text_value(const Variant &p_data, TreeItem *p_item, int p_col);
-	void _accessibility_action_set_num_value(const Variant &p_data, TreeItem *p_item, int p_col);
-	void _accessibility_action_set_bool_value(const Variant &p_data, TreeItem *p_item, int p_col);
-	void _accessibility_action_set_inc(const Variant &p_data, TreeItem *p_item, int p_col);
-	void _accessibility_action_set_dec(const Variant &p_data, TreeItem *p_item, int p_col);
-	void _accessibility_action_edit_custom(const Variant &p_data, TreeItem *p_item, int p_col);
-	void _accessibility_action_button_press(const Variant &p_data, TreeItem *p_item, int p_col, int p_btn);
 
 public:
-	PackedStringArray get_accessibility_configuration_warnings() const override;
-	virtual RID get_focused_accessibility_element() const override;
 
 	virtual void set_self_modulate(const Color &p_self_modulate) override;
 

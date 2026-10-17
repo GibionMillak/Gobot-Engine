@@ -1561,10 +1561,6 @@ String Viewport::_gui_get_tooltip(Control *p_control, const Vector2 &p_pos, Cont
 	return tooltip;
 }
 
-void Viewport::cancel_tooltip() {
-	_gui_cancel_tooltip();
-}
-
 void Viewport::show_tooltip(Control *p_control) {
 	if (!p_control) {
 		return;
@@ -2321,13 +2317,6 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 					show_focus = true;
 				}
 
-				if (p_event->is_action_pressed(SNAME("ui_accessibility_drag_and_drop")) && input->is_action_just_pressed_by_event(SNAME("ui_accessibility_drag_and_drop"), p_event)) {
-					if (gui_is_dragging()) {
-						from->accessibility_drop();
-					} else {
-						from->accessibility_drag();
-					}
-				}
 
 				if (p_event->is_action_pressed(SNAME("ui_up")) && input->is_action_just_pressed_by_event(SNAME("ui_up"), p_event)) {
 					next = from->_get_focus_neighbor(SIDE_TOP);
@@ -2359,13 +2348,6 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 					show_focus = true;
 				}
 
-				if (p_event->is_action_pressed(SNAME("ui_accessibility_drag_and_drop"), true, true)) {
-					if (gui_is_dragging()) {
-						from->accessibility_drop();
-					} else {
-						from->accessibility_drag();
-					}
-				}
 
 				if (p_event->is_action_pressed(SNAME("ui_up"), true, true)) {
 					next = from->_get_focus_neighbor(SIDE_TOP);
@@ -2402,13 +2384,9 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 }
 
 void Viewport::_perform_drop(Control *p_control) {
-	gui_perform_drop_at(p_control ? p_control->get_local_mouse_position() : Vector2(), p_control);
-}
-
-void Viewport::gui_perform_drop_at(const Point2 &p_pos, Control *p_control) {
 	// Without any arguments, simply cancel Drag and Drop.
 	if (p_control) {
-		gui.drag_successful = _gui_drop(p_control, p_pos, false);
+		gui.drag_successful = _gui_drop(p_control, p_control->get_local_mouse_position(), false);
 	} else {
 		gui.drag_successful = false;
 	}
@@ -2422,7 +2400,6 @@ void Viewport::gui_perform_drop_at(const Point2 &p_pos, Control *p_control) {
 	Viewport *section_root = get_section_root_viewport();
 	section_root->gui.drag_data = Variant();
 	gui.dragging = false;
-	gui.drag_description = String();
 	section_root->gui.global_dragging = false;
 	gui.drag_mouse_over = nullptr;
 	Viewport::_propagate_drag_notification(section_root, NOTIFICATION_DRAG_END);
@@ -2454,11 +2431,6 @@ void Viewport::gui_set_root_order_dirty() {
 void Viewport::_gui_force_drag_start() {
 	Viewport *section_root = get_section_root_viewport();
 	section_root->gui.global_dragging = true;
-}
-
-void Viewport::_gui_force_drag_cancel() {
-	Viewport *section_root = get_section_root_viewport();
-	section_root->gui.global_dragging = false;
 }
 
 void Viewport::_gui_force_drag(Control *p_base, const Variant &p_data, Control *p_control) {
@@ -3690,19 +3662,6 @@ void Viewport::set_disable_input_override(bool p_disable) {
 		_gui_cancel_tooltip();
 	}
 	disable_input_override = p_disable;
-}
-
-String Viewport::gui_get_drag_description() const {
-	ERR_READ_THREAD_GUARD_V(String());
-	if (get_section_root_viewport()->gui.drag_description.is_empty()) {
-		return RTR("Drag-and-drop data");
-	} else {
-		return get_section_root_viewport()->gui.drag_description;
-	}
-}
-
-void Viewport::gui_set_drag_description(const String &p_description) {
-	gui.drag_description = p_description;
 }
 
 Variant Viewport::gui_get_drag_data() const {
@@ -5144,8 +5103,6 @@ void Viewport::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("gui_cancel_drag"), &Viewport::gui_cancel_drag);
 	ClassDB::bind_method(D_METHOD("gui_get_drag_data"), &Viewport::gui_get_drag_data);
-	ClassDB::bind_method(D_METHOD("gui_get_drag_description"), &Viewport::gui_get_drag_description);
-	ClassDB::bind_method(D_METHOD("gui_set_drag_description", "description"), &Viewport::gui_set_drag_description);
 	ClassDB::bind_method(D_METHOD("gui_is_dragging"), &Viewport::gui_is_dragging);
 	ClassDB::bind_method(D_METHOD("gui_is_drag_successful"), &Viewport::gui_is_drag_successful);
 
@@ -5271,8 +5228,8 @@ void Viewport::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_2d_transforms_to_pixel"), "set_snap_2d_transforms_to_pixel", "is_snap_2d_transforms_to_pixel_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_2d_vertices_to_pixel"), "set_snap_2d_vertices_to_pixel", "is_snap_2d_vertices_to_pixel_enabled");
 	ADD_GROUP("Rendering", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_2d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2× (Average),4× (Slow),8× (Slowest)")), "set_msaa_2d", "get_msaa_2d");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_3d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2× (Average),4× (Slow),8× (Slowest)")), "set_msaa_3d", "get_msaa_3d");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_2d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2Ã— (Average),4Ã— (Slow),8Ã— (Slowest)")), "set_msaa_2d", "get_msaa_2d");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_3d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2Ã— (Average),4Ã— (Slow),8Ã— (Slowest)")), "set_msaa_3d", "get_msaa_3d");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "screen_space_aa", PROPERTY_HINT_ENUM, "Disabled (Fastest),FXAA (Fast),SMAA (Average)"), "set_screen_space_aa", "get_screen_space_aa");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_taa"), "set_use_taa", "is_using_taa");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_debanding"), "set_use_debanding", "is_using_debanding");
@@ -5286,7 +5243,7 @@ void Viewport::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "scaling_3d_mode", PROPERTY_HINT_ENUM, "Nearest (Fastest):5,Bilinear (Fastest):0,FSR 1.0 (Fast):1,FSR 2.2 (Slow):2,MetalFX (Spatial - Fast):3,MetalFX (Temporal - Slow):4"), "set_scaling_3d_mode", "get_scaling_3d_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scaling_3d_scale", PROPERTY_HINT_RANGE, "0.1,2.0,0.0001"), "set_scaling_3d_scale", "get_scaling_3d_scale");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "texture_mipmap_bias", PROPERTY_HINT_RANGE, "-2,2,0.001"), "set_texture_mipmap_bias", "get_texture_mipmap_bias");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "anisotropic_filtering_level", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2× (Faster),4× (Fast),8× (Average),16x (Slow)")), "set_anisotropic_filtering_level", "get_anisotropic_filtering_level");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "anisotropic_filtering_level", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2Ã— (Faster),4Ã— (Fast),8Ã— (Average),16x (Slow)")), "set_anisotropic_filtering_level", "get_anisotropic_filtering_level");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "fsr_sharpness", PROPERTY_HINT_RANGE, "0,2,0.01"), "set_fsr_sharpness", "get_fsr_sharpness");
 	ADD_GROUP("Variable Rate Shading", "vrs_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "vrs_mode", PROPERTY_HINT_ENUM, "Disabled,Texture"), "set_vrs_mode", "get_vrs_mode");

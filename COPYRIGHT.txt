@@ -192,11 +192,6 @@ Copyright: 2013, Jorge Jimenez
  2013, Diego Gutierrez
 License: Expat
 
-Files: thirdparty/accesskit/*
-Comment: AccessKit
-Copyright: 2023, The AccessKit Authors.
-License: Expat
-
 Files: thirdparty/amd-fsr/*
 Comment: AMD FidelityFX Super Resolution
 Copyright: 2021, Advanced Micro Devices, Inc.

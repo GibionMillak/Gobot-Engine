@@ -34,7 +34,6 @@
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "scene/main/viewport.h"
-#include "servers/display/accessibility_server.h"
 
 #ifdef DEBUG_ENABLED
 Dictionary Sprite2D::_edit_get_state() const {
@@ -145,16 +144,7 @@ Point2 Sprite2D::_get_rect_offset(const Size2i &p_size) const {
 
 void Sprite2D::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			Rect2 dst_rect = get_rect();
-
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_IMAGE);
-			AccessibilityServer::get_singleton()->update_set_transform(ae, get_transform());
-			AccessibilityServer::get_singleton()->update_set_bounds(ae, dst_rect);
-		} break;
 
 		case NOTIFICATION_DRAW: {
 			if (texture.is_null()) {

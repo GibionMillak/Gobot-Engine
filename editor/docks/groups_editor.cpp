@@ -692,7 +692,6 @@ void GroupsEditor::_show_add_group_dialog() {
 		add_group_name = memnew(LineEdit);
 		add_group_name->set_custom_minimum_size(Size2(200 * EDSCALE, 0));
 		add_group_name->set_h_size_flags(SIZE_EXPAND_FILL);
-		add_group_name->set_accessibility_name(TTRC("Name:"));
 		hbc->add_child(add_group_name);
 
 		global_group_button = memnew(CheckButton);
@@ -706,7 +705,6 @@ void GroupsEditor::_show_add_group_dialog() {
 		add_group_description = memnew(LineEdit);
 		add_group_description->set_h_size_flags(SIZE_EXPAND_FILL);
 		add_group_description->set_editable(false);
-		add_group_description->set_accessibility_name(TTRC("Description:"));
 		gc->add_child(add_group_description);
 
 		global_group_button->connect(SceneStringName(toggled), callable_mp(add_group_description, &LineEdit::set_editable));
@@ -801,7 +799,6 @@ void GroupsEditor::_show_remove_group_dialog() {
 
 		VBoxContainer *vbox = memnew(VBoxContainer);
 		remove_label = memnew(Label);
-		remove_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 		vbox->add_child(remove_label);
 
 		remove_check_box = memnew(CheckBox);
@@ -918,7 +915,6 @@ GroupsEditor::GroupsEditor() {
 	filter = memnew(LineEdit);
 	filter->set_clear_button_enabled(true);
 	filter->set_placeholder(TTRC("Filter Groups"));
-	filter->set_accessibility_name(TTRC("Filter Groups"));
 	filter->set_h_size_flags(SIZE_EXPAND_FILL);
 	filter->connect(SceneStringName(text_changed), callable_mp(this, &GroupsEditor::_update_tree).unbind(1));
 	hbc->add_child(filter);
@@ -944,7 +940,6 @@ GroupsEditor::GroupsEditor() {
 	add_child(menu);
 
 	select_a_node = memnew(Label);
-	select_a_node->set_focus_mode(FOCUS_ACCESSIBILITY);
 	select_a_node->set_text(TTRC("Select one or more nodes to edit their groups."));
 	select_a_node->set_custom_minimum_size(Size2(100 * EDSCALE, 0));
 	select_a_node->set_v_size_flags(SIZE_EXPAND_FILL);

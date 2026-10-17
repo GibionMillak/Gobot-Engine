@@ -266,9 +266,6 @@ Error EditorExportPlatformWindows::export_project(const Ref<EditorExportPreset> 
 			da->copy(template_path.get_base_dir().path_join("libGLESv2." + arch + ".dll"), path.get_base_dir().path_join("libGLESv2.dll"), get_chmod_flags());
 		}
 	}
-	if (da->file_exists(template_path.get_base_dir().path_join("accesskit." + arch + ".dll"))) {
-		da->copy(template_path.get_base_dir().path_join("accesskit." + arch + ".dll"), path.get_base_dir().path_join("accesskit." + arch + ".dll"), get_chmod_flags());
-	}
 
 	int export_d3d12 = p_preset->get("application/export_d3d12");
 	bool agility_sdk_multiarch = p_preset->get("application/d3d12_agility_sdk_multiarch");

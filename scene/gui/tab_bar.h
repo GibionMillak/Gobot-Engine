@@ -72,8 +72,6 @@ public:
 
 private:
 	struct Tab {
-		mutable RID accessibility_item_element;
-		mutable bool accessibility_item_dirty = true;
 
 		// Corresponds to color overrides for the DrawMode enum
 		Color font_color_overrides[DrawMode::DRAW_MAX] = { Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 0) };
@@ -224,8 +222,6 @@ private:
 	void _shape(int p_tab);
 	void _draw_tab(Ref<StyleBox> &p_tab_style, const Color &p_font_color, const Color &p_icon_color, int p_index, float p_x, bool p_focus);
 
-	void _accessibility_action_scroll_into_view(const Variant &p_data, int p_index);
-	void _accessibility_action_focus(const Variant &p_data, int p_index);
 
 	bool _select_previous_available(bool p_play_sound);
 	bool _select_next_available(bool p_play_sound);
@@ -251,8 +247,6 @@ protected:
 	void _move_tab_from(TabBar *p_from_tabbar, int p_from_index, int p_to_index);
 
 public:
-	RID get_tab_accessibility_element(int p_tab) const;
-	virtual RID get_focused_accessibility_element() const override;
 
 	Variant _handle_get_drag_data(const String &p_type, const Point2 &p_point);
 	bool _handle_can_drop_data(const String &p_type, const Point2 &p_point, const Variant &p_data) const;

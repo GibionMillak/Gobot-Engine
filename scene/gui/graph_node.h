@@ -70,18 +70,12 @@ class GraphNode : public GraphElement {
 		float stretch_ratio = 0.0;
 	};
 
-	enum CustomAccessibilityAction {
-		ACTION_CONNECT_INPUT,
-		ACTION_CONNECT_OUTPUT,
-		ACTION_FOLLOW_INPUT,
-		ACTION_FOLLOW_OUTPUT,
-	};
-	void _accessibility_action_slot(const Variant &p_data);
 
 	HBoxContainer *titlebar_hbox = nullptr;
 	Label *title_label = nullptr;
 
 	String title;
+	Control::FocusMode _slots_focus_mode = Control::FOCUS_CLICK;
 
 	Vector<PortCache> left_port_cache;
 	Vector<PortCache> right_port_cache;
@@ -89,7 +83,6 @@ class GraphNode : public GraphElement {
 	HashMap<int, Slot> slot_table;
 	Vector<int> slot_y_cache;
 
-	Control::FocusMode slots_focus_mode = Control::FOCUS_ACCESSIBILITY;
 	int slot_count = 0;
 	int selected_slot = -1;
 
@@ -131,10 +124,8 @@ protected:
 	bool _get(const StringName &p_name, Variant &r_ret) const;
 	void _get_property_list(List<PropertyInfo> *p_list) const;
 
-	virtual String _get_accessibility_name() const override;
 
 public:
-	virtual String get_accessibility_container_name(const Node *p_node) const override;
 	virtual void gui_input(const Ref<InputEvent> &p_event) override;
 
 	void set_title(const String &p_title);

@@ -1026,7 +1026,6 @@ ProjectDialog::ProjectDialog() {
 	project_name = memnew(LineEdit);
 	project_name->set_virtual_keyboard_show_on_focus(false);
 	project_name->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	project_name->set_accessibility_name(TTRC("Project Name:"));
 	name_container->add_child(project_name);
 
 	project_path_container = memnew(VBoxContainer);
@@ -1051,7 +1050,6 @@ ProjectDialog::ProjectDialog() {
 
 	project_path = memnew(LineEdit);
 	project_path->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	project_path->set_accessibility_name(TTRC("Project Path:"));
 	project_path->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	pphb->add_child(project_path);
 
@@ -1067,7 +1065,6 @@ ProjectDialog::ProjectDialog() {
 
 	install_path = memnew(LineEdit);
 	install_path->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	install_path->set_accessibility_name(TTRC("Project Installation Path:"));
 	install_path->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	iphb->add_child(install_path);
 
@@ -1092,8 +1089,6 @@ ProjectDialog::ProjectDialog() {
 	iphb->add_child(install_browse);
 
 	msg = memnew(Label);
-	msg->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
-	msg->set_accessibility_live(AccessibilityServerEnums::LIVE_POLITE);
 	msg->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	msg->set_custom_minimum_size(Size2(200, 0) * EDSCALE);
 	msg->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
@@ -1121,7 +1116,6 @@ ProjectDialog::ProjectDialog() {
 	Button *rs_button = memnew(CheckBox);
 	rs_button->set_button_group(renderer_button_group);
 	rs_button->set_text(TTRC("Forward+"));
-	rs_button->set_accessibility_name(TTRC("Renderer:"));
 #if !defined(RD_ENABLED) || !defined(FORWARD_RD_ENABLED)
 	rs_button->set_disabled(true);
 	rs_button->set_tooltip_text(TTRC("Either RenderingDevice or the Forward+ rendering method was disabled at compile time."));
@@ -1135,7 +1129,6 @@ ProjectDialog::ProjectDialog() {
 	rs_button = memnew(CheckBox);
 	rs_button->set_button_group(renderer_button_group);
 	rs_button->set_text(TTRC("Mobile"));
-	rs_button->set_accessibility_name(TTRC("Renderer:"));
 #if !defined(RD_ENABLED) || !defined(MOBILE_RD_ENABLED)
 	rs_button->set_disabled(true);
 	rs_button->set_tooltip_text(TTRC("Either RenderingDevice or the Mobile rendering method was disabled at compile time."));
@@ -1149,7 +1142,6 @@ ProjectDialog::ProjectDialog() {
 	rs_button = memnew(CheckBox);
 	rs_button->set_button_group(renderer_button_group);
 	rs_button->set_text(TTRC("Compatibility"));
-	rs_button->set_accessibility_name(TTRC("Renderer:"));
 #if !defined(GLES3_ENABLED)
 	rs_button->set_disabled(true);
 #endif
@@ -1174,12 +1166,10 @@ ProjectDialog::ProjectDialog() {
 	rshc->add_child(rvb);
 	renderer_info = memnew(Label);
 	renderer_info->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	renderer_info->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	renderer_info->set_modulate(Color(1, 1, 1, 0.7));
 	rvb->add_child(renderer_info);
 
 	rd_not_supported = memnew(Label);
-	rd_not_supported->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	rd_not_supported->set_text(vformat(TTR("RenderingDevice-based methods not available on this GPU:\n%s\nPlease use the Compatibility renderer."), RenderingServer::get_singleton()->get_video_adapter_name()));
 	rd_not_supported->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	rd_not_supported->set_custom_minimum_size(Size2(200, 0) * EDSCALE);
@@ -1188,7 +1178,6 @@ ProjectDialog::ProjectDialog() {
 	renderer_container->add_child(rd_not_supported);
 
 	l = memnew(Label);
-	l->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	l->set_text(TTRC("The renderer can be changed later, but scenes may need to be adjusted."));
 	// Add some extra spacing to separate it from the list above and the buttons below.
 	l->set_custom_minimum_size(Size2(0, 40) * EDSCALE);
@@ -1207,7 +1196,6 @@ ProjectDialog::ProjectDialog() {
 	vcs_metadata_selection->add_item(TTRC("None"), (int)EditorVCSInterface::VCSMetadata::NONE);
 	vcs_metadata_selection->add_item(TTRC("Git"), (int)EditorVCSInterface::VCSMetadata::GIT);
 	vcs_metadata_selection->select((int)EditorVCSInterface::VCSMetadata::GIT);
-	vcs_metadata_selection->set_accessibility_name(TTRC("Version Control Metadata:"));
 	default_files_container->add_child(vcs_metadata_selection);
 	Control *spacer = memnew(Control);
 	spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);

@@ -770,7 +770,6 @@ Variant EditorAudioBus::get_drag_data_fw(const Point2 &p_point, Control *p_from)
 		fxd["effect"] = md;
 
 		Label *l = memnew(Label);
-		l->set_focus_mode(FOCUS_ACCESSIBILITY);
 		l->set_text(item->get_text(0));
 		l->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 		effects->set_drag_preview(l);
@@ -921,7 +920,6 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	set_v_size_flags(SIZE_EXPAND_FILL);
 
 	track_name = memnew(LineEdit);
-	track_name->set_accessibility_name(TTRC("Track Name"));
 	track_name->connect(SceneStringName(text_submitted), callable_mp(this, &EditorAudioBus::_name_changed));
 	track_name->connect(SceneStringName(focus_exited), callable_mp(this, &EditorAudioBus::_name_focus_exit));
 	vb->add_child(track_name);
@@ -932,21 +930,21 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	solo->set_theme_type_variation(SceneStringName(FlatButton));
 	solo->set_toggle_mode(true);
 	solo->set_tooltip_text(TTR("Solo"));
-	solo->set_focus_mode(FOCUS_ACCESSIBILITY);
+	solo->set_focus_mode(FOCUS_NONE);
 	solo->connect(SceneStringName(pressed), callable_mp(this, &EditorAudioBus::_solo_toggled));
 	hbc->add_child(solo);
 	mute = memnew(Button);
 	mute->set_theme_type_variation(SceneStringName(FlatButton));
 	mute->set_toggle_mode(true);
 	mute->set_tooltip_text(TTR("Mute"));
-	mute->set_focus_mode(FOCUS_ACCESSIBILITY);
+	mute->set_focus_mode(FOCUS_NONE);
 	mute->connect(SceneStringName(pressed), callable_mp(this, &EditorAudioBus::_mute_toggled));
 	hbc->add_child(mute);
 	bypass = memnew(Button);
 	bypass->set_theme_type_variation(SceneStringName(FlatButton));
 	bypass->set_toggle_mode(true);
 	bypass->set_tooltip_text(TTR("Bypass"));
-	bypass->set_focus_mode(FOCUS_ACCESSIBILITY);
+	bypass->set_focus_mode(FOCUS_NONE);
 	bypass->connect(SceneStringName(pressed), callable_mp(this, &EditorAudioBus::_bypass_toggled));
 	hbc->add_child(bypass);
 	hbc->add_spacer();
@@ -993,7 +991,6 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	slider->set_max(1.0);
 	slider->set_step(0.0001);
 	slider->set_clip_contents(false);
-	slider->set_accessibility_name(TTRC("Volume"));
 
 	audio_value_preview_box = memnew(Panel);
 	slider->add_child(audio_value_preview_box);
@@ -1007,7 +1004,6 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	audio_value_preview_box->add_child(audioprev_hbc);
 
 	audio_value_preview_label = memnew(Label);
-	audio_value_preview_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	audio_value_preview_label->set_v_size_flags(SIZE_EXPAND_FILL);
 	audio_value_preview_label->set_h_size_flags(SIZE_EXPAND_FILL);
 	audio_value_preview_label->set_mouse_filter(MOUSE_FILTER_PASS);
@@ -1065,7 +1061,6 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 		channel[i].vu_l->set_min(0);
 		channel[i].vu_l->set_max(1);
 		channel[i].vu_l->set_step(0.0001);
-		channel[i].vu_l->set_accessibility_name(vformat(TTR("Channel %d, Left VU"), i));
 
 		channel[i].peak_indicator_l = memnew(Panel);
 		channel[i].peak_indicator_l->set_custom_minimum_size(Size2(vu_width * EDSCALE, 2.0));
@@ -1091,7 +1086,6 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 		channel[i].vu_r->set_min(0);
 		channel[i].vu_r->set_max(1);
 		channel[i].vu_r->set_step(0.0001);
-		channel[i].vu_r->set_accessibility_name(vformat(TTR("Channel %d, Right VU"), i));
 
 		channel[i].peak_indicator_r = memnew(Panel);
 		channel[i].peak_indicator_r->set_custom_minimum_size(Size2(vu_width * EDSCALE, 2.0));
@@ -1119,7 +1113,6 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	hb->add_child(scale);
 
 	effects = memnew(Tree);
-	effects->set_accessibility_name(TTRC("Effects"));
 	effects->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	effects->set_hide_root(true);
 	effects->set_custom_minimum_size(Size2(0, 80) * EDSCALE);
@@ -1139,7 +1132,6 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	effects->connect(SceneStringName(gui_input), callable_mp(this, &EditorAudioBus::_effects_gui_input));
 
 	send = memnew(OptionButton);
-	send->set_accessibility_name(TTRC("Send"));
 	send->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	send->set_clip_text(true);
 	send->set_fit_to_longest_item(false);

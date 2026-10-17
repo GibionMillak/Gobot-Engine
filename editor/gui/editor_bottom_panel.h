@@ -66,7 +66,7 @@ class EditorBottomPanel : public DockTabContainer {
 	HashMap<String, int> dock_offsets;
 
 	void _repaint();
-	void _on_tab_changed(int p_idx);
+	void _on_tab_changed();
 	void _pin_button_toggled(bool p_pressed);
 	void _expand_button_toggled(bool p_pressed);
 	void _update_center_split_offset();

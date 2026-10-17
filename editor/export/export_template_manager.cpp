@@ -1563,7 +1563,6 @@ ExportTemplateManager::ExportTemplateManager() {
 	download_header->add_child(memnew(Label(TTRC("Download from:"))));
 
 	mirrors_list = memnew(OptionButton);
-	mirrors_list->set_accessibility_name(TTRC("Mirror"));
 	download_header->add_child(mirrors_list);
 
 	open_mirror = memnew(Button);
@@ -1603,7 +1602,6 @@ ExportTemplateManager::ExportTemplateManager() {
 	side_vb->add_child(version_header);
 
 	version_list = memnew(ItemList);
-	version_list->set_accessibility_name(TTRC("Godot Version List"));
 	version_list->set_theme_type_variation("ItemListSecondary");
 	version_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	side_vb->add_child(version_list);
@@ -1624,7 +1622,6 @@ ExportTemplateManager::ExportTemplateManager() {
 	available_templates_container->add_child(template_header2);
 
 	available_templates_tree = memnew(Tree);
-	available_templates_tree->set_accessibility_name(TTRC("Available Templates"));
 	available_templates_tree->set_hide_root(true);
 	available_templates_tree->set_theme_type_variation("TreeSecondary");
 	available_templates_tree->set_v_size_flags(Control::SIZE_EXPAND_FILL);
@@ -1656,7 +1653,6 @@ ExportTemplateManager::ExportTemplateManager() {
 	delete_all_button->connect(SceneStringName(pressed), callable_mp(this, &ExportTemplateManager::_delete_all));
 
 	installed_templates_tree = memnew(Tree);
-	installed_templates_tree->set_accessibility_name(TTRC("Installed Templates"));
 	installed_templates_tree->set_hide_root(true);
 	installed_templates_tree->set_theme_type_variation("TreeSecondary");
 	installed_templates_tree->set_v_size_flags(Control::SIZE_EXPAND_FILL);

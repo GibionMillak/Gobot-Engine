@@ -116,7 +116,6 @@ ConnectionInfoDialog::ConnectionInfoDialog() {
 	add_child(vbc);
 
 	method = memnew(Label);
-	method->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	method->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	method->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	vbc->add_child(method);
@@ -2708,7 +2707,6 @@ ScriptTextEditor::ScriptTextEditor() {
 
 	drag_info_label = memnew(Label);
 	drag_info_label->set_anchors_preset(Control::PRESET_BOTTOM_RIGHT);
-	drag_info_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	drag_info_label->add_theme_constant_override("line_spacing", 0);
 
 	Ref<StyleBoxFlat> drag_info_sb;

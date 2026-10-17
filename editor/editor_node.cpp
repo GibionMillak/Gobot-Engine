@@ -1538,19 +1538,6 @@ void EditorNode::_sources_changed(bool p_exist) {
 			EditorResourcePreview::get_singleton()->start();
 		}
 
-		// Set initial focus for screen reader users.
-		if (get_tree()->is_accessibility_enabled()) {
-			if (SceneTreeDock::get_singleton()->is_visible_in_tree()) {
-				SceneTreeDock::get_singleton()->get_tree_editor()->get_scene_tree()->grab_focus();
-			} else {
-				TabContainer *tab_container = SceneTreeDock::get_singleton()->get_parent_container();
-				if (tab_container) {
-					// Another tab is active (e.g., Import) - focus the tab bar so user can switch.
-					tab_container->get_tab_bar()->grab_focus();
-				}
-			}
-		}
-
 		get_tree()->create_timer(1.0f)->connect("timeout", callable_mp(this, &EditorNode::_remove_lock_file));
 	}
 }
@@ -6926,7 +6913,6 @@ Dictionary EditorNode::drag_resource(const Ref<Resource> &p_res, Control *p_from
 	Control *drag_control = memnew(Control);
 	TextureRect *drag_preview = memnew(TextureRect);
 	Label *label = memnew(Label);
-	label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 
 	Ref<Texture2D> preview;
@@ -6982,7 +6968,6 @@ Dictionary EditorNode::drag_files_and_dirs(const Vector<String> &p_paths, Contro
 		HBoxContainer *hbox = memnew(HBoxContainer);
 		TextureRect *icon = memnew(TextureRect);
 		Label *label = memnew(Label);
-		label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 		label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 
 		if (p_paths[i].ends_with("/")) {
@@ -7001,7 +6986,6 @@ Dictionary EditorNode::drag_files_and_dirs(const Vector<String> &p_paths, Contro
 
 	if (p_paths.size() > num_rows) {
 		Label *label = memnew(Label);
-		label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 		if (has_file && has_folder) {
 			label->set_text(vformat(TTR("%d more files or folders"), p_paths.size() - num_rows));
 		} else if (has_folder) {
@@ -9135,11 +9119,10 @@ EditorNode::EditorNode() {
 	renderer->set_flat(true);
 	renderer->set_theme_type_variation("TopBarOptionButton");
 	renderer->set_fit_to_longest_item(false);
-	renderer->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
+	renderer->set_focus_mode(Control::FOCUS_NONE);
 	renderer->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	renderer->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
 	renderer->set_tooltip_text(TTRC("Choose a renderer.\n\nOn mobile platforms, the Mobile renderer is used if Forward+ is selected here."));
-	renderer->set_accessibility_name(TTRC("Renderer"));
 
 	right_menu_hb->add_child(renderer);
 
@@ -9191,7 +9174,6 @@ EditorNode::EditorNode() {
 	right_menu_hb->add_child(update_spinner);
 	update_spinner->set_button_icon(theme->get_icon(SNAME("Progress1"), EditorStringName(EditorIcons)));
 	update_spinner->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
-	update_spinner->set_accessibility_name(TTRC("Update Mode"));
 	PopupMenu *p = update_spinner->get_popup();
 	p->add_radio_check_item(TTRC("Update Continuously"), SPINNER_UPDATE_CONTINUOUSLY);
 	p->add_radio_check_item(TTRC("Update When Changed"), SPINNER_UPDATE_WHEN_CHANGED);
@@ -9286,7 +9268,6 @@ EditorNode::EditorNode() {
 	{
 		VBoxContainer *vbox = memnew(VBoxContainer);
 		install_android_build_template_message = memnew(Label);
-		install_android_build_template_message->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 		install_android_build_template_message->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 		install_android_build_template_message->set_custom_minimum_size(Size2(300 * EDSCALE, 1));
 		vbox->add_child(install_android_build_template_message);
@@ -9360,7 +9341,6 @@ EditorNode::EditorNode() {
 		vbc->add_child(dl);
 
 		disk_changed_list = memnew(Tree);
-		disk_changed_list->set_accessibility_name(TTRC("The following files are newer on disk:"));
 		vbc->add_child(disk_changed_list);
 		disk_changed_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 

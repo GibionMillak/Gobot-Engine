@@ -49,6 +49,7 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/grid_container.h"
+#include "scene/gui/line_edit.h"
 #include "scene/gui/split_container.h"
 #include "scene/main/scene_tree.h"
 
@@ -2210,7 +2211,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	select_tool_button->set_button_group(tool_buttons_group);
 	select_tool_button->set_shortcut(ED_SHORTCUT("tiles_editor/selection_tool", TTRC("Selection Tool"), Key::S));
 	select_tool_button->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_update_toolbar));
-	select_tool_button->set_accessibility_name(TTRC("Selection Tool"));
 	tilemap_tiles_tools_buttons->add_child(select_tool_button);
 	viewport_shortcut_buttons.push_back(select_tool_button);
 
@@ -2221,7 +2221,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	paint_tool_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/paint_tool"));
 	paint_tool_button->set_tooltip_auto_translate_mode(Node::AUTO_TRANSLATE_MODE_DISABLED);
 	paint_tool_button->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_update_toolbar));
-	paint_tool_button->set_accessibility_name(TTRC("Paint Tool"));
 	tilemap_tiles_tools_buttons->add_child(paint_tool_button);
 	viewport_shortcut_buttons.push_back(paint_tool_button);
 
@@ -2232,7 +2231,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	// TRANSLATORS: This refers to the line tool in the tilemap editor.
 	line_tool_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/line_tool"));
 	line_tool_button->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_update_toolbar));
-	line_tool_button->set_accessibility_name(TTRC("Line Tool"));
 	tilemap_tiles_tools_buttons->add_child(line_tool_button);
 	viewport_shortcut_buttons.push_back(line_tool_button);
 
@@ -2242,7 +2240,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	rect_tool_button->set_button_group(tool_buttons_group);
 	rect_tool_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/rect_tool"));
 	rect_tool_button->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_update_toolbar));
-	rect_tool_button->set_accessibility_name(TTRC("Rect Tool"));
 	tilemap_tiles_tools_buttons->add_child(rect_tool_button);
 	viewport_shortcut_buttons.push_back(rect_tool_button);
 
@@ -2252,7 +2249,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	bucket_tool_button->set_button_group(tool_buttons_group);
 	bucket_tool_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/bucket_tool"));
 	bucket_tool_button->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_update_toolbar));
-	bucket_tool_button->set_accessibility_name(TTRC("Bucket Tool"));
 	tilemap_tiles_tools_buttons->add_child(bucket_tool_button);
 	viewport_shortcut_buttons.push_back(bucket_tool_button);
 
@@ -2268,7 +2264,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	picker_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/picker"));
 	picker_button->set_tooltip_text(vformat(TTRC("Alternatively hold %s with other tools to pick tile."), keycode_get_string(Key::CMD_OR_CTRL)));
 	picker_button->connect(SceneStringName(pressed), callable_mp(CanvasItemEditor::get_singleton(), &CanvasItemEditor::update_viewport));
-	picker_button->set_accessibility_name(TTRC("Pick"));
 	tools_settings->add_child(picker_button);
 	viewport_shortcut_buttons.push_back(picker_button);
 
@@ -2279,7 +2274,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	erase_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/eraser"));
 	erase_button->set_tooltip_text(TTRC("Alternatively use RMB to erase tiles."));
 	erase_button->connect(SceneStringName(pressed), callable_mp(CanvasItemEditor::get_singleton(), &CanvasItemEditor::update_viewport));
-	erase_button->set_accessibility_name(TTRC("Erase"));
 	tools_settings->add_child(erase_button);
 	viewport_shortcut_buttons.push_back(erase_button);
 
@@ -2295,7 +2289,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	transform_button_rotate_left->set_shortcut(ED_SHORTCUT("tiles_editor/rotate_tile_left", TTRC("Rotate Tile Left"), Key::Z));
 	transform_toolbar->add_child(transform_button_rotate_left);
 	transform_button_rotate_left->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_apply_transform).bind(TRANSFORM_ROTATE_LEFT));
-	transform_button_rotate_left->set_accessibility_name(TTRC("Rotate Tile Left"));
 	viewport_shortcut_buttons.push_back(transform_button_rotate_left);
 
 	transform_button_rotate_right = memnew(Button);
@@ -2303,7 +2296,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	transform_button_rotate_right->set_shortcut(ED_SHORTCUT("tiles_editor/rotate_tile_right", TTRC("Rotate Tile Right"), Key::X));
 	transform_toolbar->add_child(transform_button_rotate_right);
 	transform_button_rotate_right->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_apply_transform).bind(TRANSFORM_ROTATE_RIGHT));
-	transform_button_rotate_right->set_accessibility_name(TTRC("Rotate Tile Right"));
 	viewport_shortcut_buttons.push_back(transform_button_rotate_right);
 
 	transform_button_flip_h = memnew(Button);
@@ -2311,7 +2303,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	transform_button_flip_h->set_shortcut(ED_SHORTCUT("tiles_editor/flip_tile_horizontal", TTRC("Flip Tile Horizontally"), Key::C));
 	transform_toolbar->add_child(transform_button_flip_h);
 	transform_button_flip_h->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_apply_transform).bind(TRANSFORM_FLIP_H));
-	transform_button_flip_h->set_accessibility_name(TTRC("Flip Tile Horizontally"));
 	viewport_shortcut_buttons.push_back(transform_button_flip_h);
 
 	transform_button_flip_v = memnew(Button);
@@ -2319,7 +2310,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	transform_button_flip_v->set_shortcut(ED_SHORTCUT("tiles_editor/flip_tile_vertical", TTRC("Flip Tile Vertically"), Key::V));
 	transform_toolbar->add_child(transform_button_flip_v);
 	transform_button_flip_v->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_apply_transform).bind(TRANSFORM_FLIP_V));
-	transform_button_flip_v->set_accessibility_name(TTRC("Flip Tile Vertically"));
 	viewport_shortcut_buttons.push_back(transform_button_flip_v);
 
 	// Continuous checkbox.
@@ -2354,7 +2344,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	scatter_spinbox->set_tooltip_text(TTRC("Modifies the chance of painting nothing instead of a randomly selected tile."));
 	scatter_spinbox->get_line_edit()->add_theme_constant_override("minimum_character_width", 4);
 	scatter_spinbox->connect(SceneStringName(value_changed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_on_scattering_spinbox_changed));
-	scatter_spinbox->set_accessibility_name(TTRC("Scattering:"));
 	scatter_controls_container->add_child(scatter_spinbox);
 	tools_settings->add_child(scatter_controls_container);
 
@@ -2375,7 +2364,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	tiles_bottom_panel->set_name(TTRC("Tiles"));
 
 	missing_source_label = memnew(Label);
-	missing_source_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	missing_source_label->set_text(TTRC("This TileMap's TileSet has no Tile Source configured. Go to the TileSet bottom panel to add one."));
 	missing_source_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	missing_source_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -2457,7 +2445,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 
 	// Invalid source label.
 	invalid_source_label = memnew(Label);
-	invalid_source_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	invalid_source_label->set_text(TTRC("Invalid source selected."));
 	invalid_source_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	invalid_source_label->set_v_size_flags(Control::SIZE_EXPAND_FILL);
@@ -2487,7 +2474,6 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	patterns_mc->add_child(patterns_item_list);
 
 	patterns_help_label = memnew(Label);
-	patterns_help_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	patterns_help_label->set_text(TTRC("Drag and drop or paste a TileMap selection here to store a pattern."));
 	patterns_help_label->set_auto_translate_mode(Node::AUTO_TRANSLATE_MODE_ALWAYS);
 	patterns_help_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
@@ -3602,7 +3588,6 @@ TileMapLayerEditorTerrainsPlugin::TileMapLayerEditorTerrainsPlugin() {
 	paint_tool_button->set_pressed(true);
 	paint_tool_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/paint_tool"));
 	paint_tool_button->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTerrainsPlugin::_update_toolbar));
-	paint_tool_button->set_accessibility_name(TTRC("Paint Tool"));
 	tilemap_tiles_tools_buttons->add_child(paint_tool_button);
 	viewport_shortcut_buttons.push_back(paint_tool_button);
 
@@ -3612,7 +3597,6 @@ TileMapLayerEditorTerrainsPlugin::TileMapLayerEditorTerrainsPlugin() {
 	line_tool_button->set_button_group(tool_buttons_group);
 	line_tool_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/line_tool"));
 	line_tool_button->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTerrainsPlugin::_update_toolbar));
-	line_tool_button->set_accessibility_name(TTRC("Line Tool"));
 	tilemap_tiles_tools_buttons->add_child(line_tool_button);
 	viewport_shortcut_buttons.push_back(line_tool_button);
 
@@ -3622,7 +3606,6 @@ TileMapLayerEditorTerrainsPlugin::TileMapLayerEditorTerrainsPlugin() {
 	rect_tool_button->set_button_group(tool_buttons_group);
 	rect_tool_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/rect_tool"));
 	rect_tool_button->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTerrainsPlugin::_update_toolbar));
-	rect_tool_button->set_accessibility_name(TTRC("Rect Tool"));
 	tilemap_tiles_tools_buttons->add_child(rect_tool_button);
 	viewport_shortcut_buttons.push_back(rect_tool_button);
 
@@ -3632,7 +3615,6 @@ TileMapLayerEditorTerrainsPlugin::TileMapLayerEditorTerrainsPlugin() {
 	bucket_tool_button->set_button_group(tool_buttons_group);
 	bucket_tool_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/bucket_tool"));
 	bucket_tool_button->connect(SceneStringName(pressed), callable_mp(this, &TileMapLayerEditorTerrainsPlugin::_update_toolbar));
-	bucket_tool_button->set_accessibility_name(TTRC("Bucket Tool"));
 	tilemap_tiles_tools_buttons->add_child(bucket_tool_button);
 	viewport_shortcut_buttons.push_back(bucket_tool_button);
 
@@ -3649,7 +3631,6 @@ TileMapLayerEditorTerrainsPlugin::TileMapLayerEditorTerrainsPlugin() {
 	picker_button->set_toggle_mode(true);
 	picker_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/picker"));
 	picker_button->connect(SceneStringName(pressed), callable_mp(CanvasItemEditor::get_singleton(), &CanvasItemEditor::update_viewport));
-	picker_button->set_accessibility_name(TTRC("Pick"));
 	tools_settings->add_child(picker_button);
 	viewport_shortcut_buttons.push_back(picker_button);
 
@@ -3659,7 +3640,6 @@ TileMapLayerEditorTerrainsPlugin::TileMapLayerEditorTerrainsPlugin() {
 	erase_button->set_toggle_mode(true);
 	erase_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/eraser"));
 	erase_button->connect(SceneStringName(pressed), callable_mp(CanvasItemEditor::get_singleton(), &CanvasItemEditor::update_viewport));
-	erase_button->set_accessibility_name(TTRC("Erase"));
 	tools_settings->add_child(erase_button);
 	viewport_shortcut_buttons.push_back(erase_button);
 
@@ -4682,7 +4662,6 @@ TileMapLayerEditor::TileMapLayerEditor() {
 
 	// A label for editing errors.
 	cant_edit_label = memnew(Label);
-	cant_edit_label->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	cant_edit_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	cant_edit_label->set_anchors_and_offsets_preset(Control::PRESET_HCENTER_WIDE);
 	cant_edit_label->set_h_size_flags(SIZE_EXPAND_FILL);

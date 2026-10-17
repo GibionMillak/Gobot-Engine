@@ -34,7 +34,6 @@
 #include "core/object/class_db.h"
 #include "scene/main/window.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 
 bool ScrollBar::focus_by_default = false;
@@ -293,12 +292,7 @@ void ScrollBar::gui_input(const Ref<InputEvent> &p_event) {
 
 void ScrollBar::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_SCROLL_BAR);
-		} break;
 
 		case NOTIFICATION_DRAW: {
 			RID ci = get_canvas_item();
@@ -767,7 +761,6 @@ ScrollBar::ScrollBar(Orientation p_orientation) {
 	if (focus_by_default) {
 		set_focus_mode(FOCUS_ALL);
 	} else {
-		set_focus_mode(FOCUS_ACCESSIBILITY);
 	}
 	set_step(0);
 }

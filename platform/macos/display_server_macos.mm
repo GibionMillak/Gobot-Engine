@@ -58,7 +58,6 @@
 #include "drivers/png/png_driver_common.h"
 #include "main/main.h"
 #include "scene/resources/image_texture.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/rendering/dummy/rasterizer_dummy.h"
 
 #ifdef TOOLS_ENABLED
@@ -157,11 +156,6 @@ DisplayServerEnums::WindowID DisplayServerMacOS::_create_window(DisplayServerEnu
 		[wd.window_object setRestorable:NO];
 		[wd.window_object setColorSpace:[NSColorSpace sRGBColorSpace]];
 
-		if (!AccessibilityServer::get_singleton()->window_create(id, (__bridge void *)wd.window_object)) {
-			if (OS::get_singleton()->is_stdout_verbose()) {
-				ERR_PRINT("Can't create an accessibility adapter for window, accessibility support disabled!");
-			}
-		}
 
 		if ([wd.window_object respondsToSelector:@selector(setTabbingMode:)]) {
 			[wd.window_object setTabbingMode:NSWindowTabbingModeDisallowed];
@@ -205,9 +199,6 @@ DisplayServerEnums::WindowID DisplayServerMacOS::_create_window(DisplayServerEnu
 #endif
 			Error err = rendering_context->window_create(window_id_counter, &wpd);
 
-			if (err != OK) {
-				AccessibilityServer::get_singleton()->window_destroy(id);
-			}
 
 			ERR_FAIL_COND_V_MSG(err != OK, DisplayServerEnums::INVALID_WINDOW_ID, vformat("Can't create a %s context", rendering_driver));
 
@@ -233,7 +224,6 @@ DisplayServerEnums::WindowID DisplayServerMacOS::_create_window(DisplayServerEnu
 		}
 #endif
 		if (gl_failed) {
-			AccessibilityServer::get_singleton()->window_destroy(id);
 
 			windows.erase(id);
 			ERR_FAIL_V_MSG(DisplayServerEnums::INVALID_WINDOW_ID, "Can't create an OpenGL context.");
@@ -790,7 +780,6 @@ void DisplayServerMacOS::window_destroy(DisplayServerEnums::WindowID p_window) {
 		rendering_context->window_destroy(p_window);
 	}
 #endif
-	AccessibilityServer::get_singleton()->window_destroy(p_window);
 
 	windows.erase(p_window);
 
@@ -850,9 +839,7 @@ bool DisplayServerMacOS::has_feature(DisplayServerEnums::Feature p_feature) cons
 		case DisplayServerEnums::FEATURE_WINDOW_EMBEDDING:
 		case DisplayServerEnums::FEATURE_HDR_OUTPUT:
 			return true;
-		case DisplayServerEnums::FEATURE_ACCESSIBILITY_SCREEN_READER: {
-			return AccessibilityServer::get_singleton()->is_supported();
-		} break;
+
 		default: {
 		}
 	}

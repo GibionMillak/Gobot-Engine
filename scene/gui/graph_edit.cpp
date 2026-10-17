@@ -372,38 +372,6 @@ GraphNode *GraphEdit::get_output_connection_target(const StringName &p_node, int
 	return nullptr;
 }
 
-String GraphEdit::get_connections_description(const StringName &p_node, int p_port) {
-	String out;
-	for (const Ref<Connection> &conn : connections) {
-		if (conn->from_node == p_node && conn->from_port == p_port) {
-			GraphNode *to = Object::cast_to<GraphNode>(get_node(NodePath(conn->to_node)));
-			if (to) {
-				if (!out.is_empty()) {
-					out += ", ";
-				}
-				String name = to->get_accessibility_name();
-				if (name.is_empty()) {
-					name = to->get_name();
-				}
-				out += vformat(ETR("connection to %s (%s) port %d"), name, to->get_title(), conn->to_port);
-			}
-		} else if (conn->to_node == p_node && conn->to_port == p_port) {
-			GraphNode *from = Object::cast_to<GraphNode>(get_node(NodePath(conn->from_node)));
-			if (from) {
-				if (!out.is_empty()) {
-					out += ", ";
-				}
-				String name = from->get_accessibility_name();
-				if (name.is_empty()) {
-					name = from->get_name();
-				}
-				out += vformat(ETR("connection from %s (%s) port %d"), name, from->get_title(), conn->from_port);
-			}
-		}
-	}
-	return out;
-}
-
 void GraphEdit::set_scroll_offset(const Vector2 &p_offset) {
 	setting_scroll_offset = true;
 	scroll_offset = p_offset.clamp(min_scroll_offset, max_scroll_offset - get_size());
@@ -1187,14 +1155,6 @@ void GraphEdit::end_keyboard_connecting(GraphNode *p_node, int p_in_port, int p_
 	if (connecting) {
 		force_connection_drag_end();
 	}
-}
-
-Dictionary GraphEdit::get_type_names() const {
-	return type_names;
-}
-
-void GraphEdit::set_type_names(const Dictionary &p_names) {
-	type_names = p_names;
 }
 
 void GraphEdit::_top_connection_layer_input(const Ref<InputEvent> &p_ev) {
@@ -3065,8 +3025,6 @@ void GraphEdit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_right_disconnects", "enable"), &GraphEdit::set_right_disconnects);
 	ClassDB::bind_method(D_METHOD("is_right_disconnects_enabled"), &GraphEdit::is_right_disconnects_enabled);
 
-	ClassDB::bind_method(D_METHOD("set_type_names", "type_names"), &GraphEdit::set_type_names);
-	ClassDB::bind_method(D_METHOD("get_type_names"), &GraphEdit::get_type_names);
 
 	GDVIRTUAL_BIND(_is_in_input_hotzone, "in_node", "in_port", "mouse_position");
 	GDVIRTUAL_BIND(_is_in_output_hotzone, "in_node", "in_port", "mouse_position");
@@ -3088,7 +3046,6 @@ void GraphEdit::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "panning_scheme", PROPERTY_HINT_ENUM, "Scroll Zooms,Scroll Pans"), "set_panning_scheme", "get_panning_scheme");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "right_disconnects"), "set_right_disconnects", "is_right_disconnects_enabled");
 
-	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "type_names", PROPERTY_HINT_DICTIONARY_TYPE, "int;String"), "set_type_names", "get_type_names");
 
 	ADD_GROUP("Connection Lines", "connection_lines");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "connection_lines_curvature"), "set_connection_lines_curvature", "get_connection_lines_curvature");
@@ -3271,7 +3228,7 @@ GraphEdit::GraphEdit() {
 	zoom_minus_button->set_theme_type_variation(SceneStringName(FlatButton));
 	zoom_minus_button->set_visible(show_zoom_buttons);
 	zoom_minus_button->set_tooltip_text(ETR("Zoom Out"));
-	zoom_minus_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	zoom_minus_button->set_focus_mode(FOCUS_NONE);
 	zoom_minus_button->set_use_parent_material(true);
 	menu_hbox->add_child(zoom_minus_button);
 	zoom_minus_button->connect(SceneStringName(pressed), callable_mp(this, &GraphEdit::_zoom_minus));
@@ -3281,7 +3238,7 @@ GraphEdit::GraphEdit() {
 	zoom_reset_button->set_theme_type_variation(SceneStringName(FlatButton));
 	zoom_reset_button->set_visible(show_zoom_buttons);
 	zoom_reset_button->set_tooltip_text(ETR("Zoom Reset"));
-	zoom_reset_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	zoom_reset_button->set_focus_mode(FOCUS_NONE);
 	zoom_reset_button->set_use_parent_material(true);
 	menu_hbox->add_child(zoom_reset_button);
 	zoom_reset_button->connect(SceneStringName(pressed), callable_mp(this, &GraphEdit::_zoom_reset));
@@ -3291,7 +3248,7 @@ GraphEdit::GraphEdit() {
 	zoom_plus_button->set_theme_type_variation(SceneStringName(FlatButton));
 	zoom_plus_button->set_visible(show_zoom_buttons);
 	zoom_plus_button->set_tooltip_text(ETR("Zoom In"));
-	zoom_plus_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	zoom_plus_button->set_focus_mode(FOCUS_NONE);
 	zoom_plus_button->set_use_parent_material(true);
 	menu_hbox->add_child(zoom_plus_button);
 	zoom_plus_button->connect(SceneStringName(pressed), callable_mp(this, &GraphEdit::_zoom_plus));
@@ -3305,7 +3262,7 @@ GraphEdit::GraphEdit() {
 	toggle_grid_button->set_toggle_mode(true);
 	toggle_grid_button->set_pressed(true);
 	toggle_grid_button->set_tooltip_text(ETR("Toggle the visual grid."));
-	toggle_grid_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	toggle_grid_button->set_focus_mode(FOCUS_NONE);
 	toggle_grid_button->set_use_parent_material(true);
 	menu_hbox->add_child(toggle_grid_button);
 	toggle_grid_button->connect(SceneStringName(pressed), callable_mp(this, &GraphEdit::_show_grid_toggled));
@@ -3317,7 +3274,7 @@ GraphEdit::GraphEdit() {
 	toggle_snapping_button->set_toggle_mode(true);
 	toggle_snapping_button->set_tooltip_text(ETR("Toggle snapping to the grid."));
 	toggle_snapping_button->set_pressed(snapping_enabled);
-	toggle_snapping_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	toggle_snapping_button->set_focus_mode(FOCUS_NONE);
 	menu_hbox->add_child(toggle_snapping_button);
 	toggle_snapping_button->connect(SceneStringName(pressed), callable_mp(this, &GraphEdit::_snapping_toggled));
 
@@ -3342,7 +3299,7 @@ GraphEdit::GraphEdit() {
 	minimap_button->set_toggle_mode(true);
 	minimap_button->set_tooltip_text(ETR("Toggle the graph minimap."));
 	minimap_button->set_pressed(show_grid);
-	minimap_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	minimap_button->set_focus_mode(FOCUS_NONE);
 	minimap_button->set_use_parent_material(true);
 	menu_hbox->add_child(minimap_button);
 	minimap_button->connect(SceneStringName(pressed), callable_mp(this, &GraphEdit::_minimap_toggled));
@@ -3353,7 +3310,7 @@ GraphEdit::GraphEdit() {
 	arrange_button->set_visible(show_arrange_button);
 	arrange_button->set_tooltip_text(ETR("Automatically arrange selected nodes."));
 	arrange_button->connect(SceneStringName(pressed), callable_mp(this, &GraphEdit::arrange_nodes));
-	arrange_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	arrange_button->set_focus_mode(FOCUS_NONE);
 	arrange_button->set_use_parent_material(true);
 	menu_hbox->add_child(arrange_button);
 

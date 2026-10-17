@@ -558,9 +558,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	open_in_new_inspector_defaults.push_back("Script"); // Required for the script editor to work.
 	_initial_set("interface/inspector/resources_to_open_in_new_inspector", open_in_new_inspector_defaults);
 
-	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "interface/accessibility/accessibility_support", 0, "Auto (When Screen Reader is Running),Always Active,Disabled")
-	set_restart_if_changed("interface/accessibility/accessibility_support", true);
-	EDITOR_SETTING_BASIC(Variant::BOOL, PROPERTY_HINT_NONE, "interface/accessibility/property_descriptions", true, "")
+
 
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "interface/inspector/default_color_picker_mode", (int32_t)ColorPicker::MODE_RGB, "RGB,HSV,RAW,OKHSL")
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "interface/inspector/default_color_picker_shape", (int32_t)ColorPicker::SHAPE_VHS_CIRCLE, "HSV Rectangle,HSV Rectangle Wheel,VHS Circle,OKHSL Circle,OK HS Rectangle:5,OK HL Rectangle") // `SHAPE_NONE` is 4.
@@ -675,7 +673,6 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	_initial_set("docks/scene_tree/auto_expand_to_selected", true);
 	_initial_set("docks/scene_tree/center_node_on_reparent", false);
 	_initial_set("docks/scene_tree/hide_filtered_out_parents", true);
-	_initial_set("docks/scene_tree/accessibility_warnings", false);
 
 	// FileSystem
 	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_RANGE, "docks/filesystem/thumbnail_size", 64, "32,224,16")

@@ -33,7 +33,6 @@
 #include "core/object/gdvirtual.gen.h"
 #include "scene/main/canvas_item.h"
 #include "scene/resources/theme.h"
-#include "servers/display/accessibility_server_enums.h"
 
 class Label;
 class Panel;
@@ -67,7 +66,6 @@ public:
 		FOCUS_NONE,
 		FOCUS_CLICK,
 		FOCUS_ALL,
-		FOCUS_ACCESSIBILITY,
 	};
 
 	enum FocusBehaviorRecursive {
@@ -296,16 +294,8 @@ private:
 
 		ObjectID shortcut_context;
 
-		// Accessibility.
 
-		String accessibility_name;
-		String accessibility_description;
-		AccessibilityServerEnums::AccessibilityLiveMode accessibility_live = AccessibilityServerEnums::AccessibilityLiveMode::LIVE_OFF;
 
-		TypedArray<NodePath> accessibility_controls_nodes;
-		TypedArray<NodePath> accessibility_described_by_nodes;
-		TypedArray<NodePath> accessibility_labeled_by_nodes;
-		TypedArray<NodePath> accessibility_flow_to_nodes;
 
 		// Theming.
 
@@ -450,11 +440,6 @@ protected:
 	void _notification(int p_notification);
 	static void _bind_methods();
 
-	void _accessibility_action_foucs(const Variant &p_data);
-	void _accessibility_action_blur(const Variant &p_data);
-	void _accessibility_action_show_tooltip(const Variant &p_data);
-	void _accessibility_action_hide_tooltip(const Variant &p_data);
-	void _accessibility_action_scroll_into_view(const Variant &p_data);
 
 	// Focus.
 	bool _is_focusable() const;
@@ -480,8 +465,6 @@ protected:
 
 	GDVIRTUAL1RC(int, _get_cursor_shape, Vector2)
 
-	GDVIRTUAL0RC(String, _accessibility_get_contextual_info);
-	GDVIRTUAL1RC(String, _get_accessibility_container_name, RequiredParam<const Node>)
 
 	GDVIRTUAL1(_gui_input, RequiredParam<InputEvent>)
 
@@ -535,7 +518,6 @@ public:
 	static void set_root_layout_direction(int p_root_dir);
 
 	PackedStringArray get_configuration_warnings() const override;
-	PackedStringArray get_accessibility_configuration_warnings() const override;
 #ifdef TOOLS_ENABLED
 	virtual void get_argument_options(const StringName &p_function, int p_idx, List<String> *r_options) const override;
 #endif //TOOLS_ENABLED
@@ -705,8 +687,6 @@ public:
 	virtual void drop_data(const Point2 &p_point, const Variant &p_data);
 	void set_drag_preview(Control *p_control);
 	void force_drag(const Variant &p_data, Control *p_control);
-	void accessibility_drag();
-	void accessibility_drop();
 	bool is_drag_successful() const;
 
 	// Focus.
@@ -737,34 +717,15 @@ public:
 
 	void play_theme_sound(const Ref<AudioStream> &p_stream);
 
-	// Accessibility.
 
-	virtual String get_accessibility_container_name(const Node *p_node) const;
 
-	void set_accessibility_name(const String &p_name);
-	String get_accessibility_name() const;
 
-	virtual String _get_accessibility_name() const;
 
-	void set_accessibility_description(const String &p_description);
-	String get_accessibility_description() const;
 
-	void set_accessibility_live(AccessibilityServerEnums::AccessibilityLiveMode p_mode);
-	AccessibilityServerEnums::AccessibilityLiveMode get_accessibility_live() const;
 
-	void set_accessibility_controls_nodes(const TypedArray<NodePath> &p_node_path);
-	TypedArray<NodePath> get_accessibility_controls_nodes() const;
 
-	void set_accessibility_described_by_nodes(const TypedArray<NodePath> &p_node_path);
-	TypedArray<NodePath> get_accessibility_described_by_nodes() const;
 
-	void set_accessibility_labeled_by_nodes(const TypedArray<NodePath> &p_node_path);
-	TypedArray<NodePath> get_accessibility_labeled_by_nodes() const;
 
-	void set_accessibility_flow_to_nodes(const TypedArray<NodePath> &p_node_path);
-	TypedArray<NodePath> get_accessibility_flow_to_nodes() const;
-
-	virtual Transform2D get_accessibility_transform() const override { return get_global_transform(); }
 
 	// Rendering.
 
@@ -866,7 +827,6 @@ public:
 	virtual String get_tooltip(const Point2 &p_pos) const;
 	virtual Control *make_custom_tooltip(const String &p_text) const;
 
-	virtual String accessibility_get_contextual_info() const;
 
 	Control();
 	~Control();

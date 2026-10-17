@@ -69,6 +69,7 @@
 #include "scene/audio/audio_stream_player.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/check_box.h"
+#include "scene/gui/line_edit.h"
 #include "scene/gui/panel_container.h"
 #include "scene/main/missing_node.h"
 #include "scene/main/scene_tree.h"
@@ -1360,9 +1361,6 @@ void SceneTreeDock::_tool_selected(int p_tool, bool p_confirm_override) {
 		case TOOL_HIDE_FILTERED_OUT_PARENTS: {
 			scene_tree->set_hide_filtered_out_parents(!EDITOR_GET("docks/scene_tree/hide_filtered_out_parents"), true);
 		} break;
-		case TOOL_ACCESSIBILITY_WARNINGS: {
-			scene_tree->set_accessibility_warnings(!EDITOR_GET("docks/scene_tree/accessibility_warnings"), true);
-		} break;
 		case TOOL_SCENE_EDITABLE_CHILDREN: {
 			if (!profile_allow_editing) {
 				break;
@@ -1716,7 +1714,6 @@ void SceneTreeDock::_notification(int p_what) {
 
 			node_shortcuts_toggle = memnew(Button);
 			node_shortcuts_toggle->set_flat(true);
-			node_shortcuts_toggle->set_accessibility_name(TTRC("Favorite Nodes"));
 			node_shortcuts_toggle->set_button_icon(get_editor_theme_icon(SNAME("Favorites")));
 			node_shortcuts_toggle->set_toggle_mode(true);
 			node_shortcuts_toggle->set_tooltip_text(TTRC("Toggle the display of favorite nodes."));
@@ -1781,7 +1778,6 @@ void SceneTreeDock::_notification(int p_what) {
 			clear_inherit_confirm->connect(SceneStringName(confirmed), callable_mp(this, &SceneTreeDock::_tool_selected).bind(TOOL_SCENE_CLEAR_INHERITANCE_CONFIRM, false));
 			scene_tree->set_auto_expand_selected(EDITOR_GET("docks/scene_tree/auto_expand_to_selected"), false);
 			scene_tree->set_hide_filtered_out_parents(EDITOR_GET("docks/scene_tree/hide_filtered_out_parents"), false);
-			scene_tree->set_accessibility_warnings(EDITOR_GET("docks/scene_tree/accessibility_warnings"), false);
 		} break;
 
 		case NOTIFICATION_EXIT_TREE: {
@@ -1792,7 +1788,6 @@ void SceneTreeDock::_notification(int p_what) {
 			if (EditorSettings::get_singleton()->check_changed_settings_in_group("docks/scene_tree")) {
 				scene_tree->set_auto_expand_selected(EDITOR_GET("docks/scene_tree/auto_expand_to_selected"), false);
 				scene_tree->set_hide_filtered_out_parents(EDITOR_GET("docks/scene_tree/hide_filtered_out_parents"), false);
-				scene_tree->set_accessibility_warnings(EDITOR_GET("docks/scene_tree/accessibility_warnings"), false);
 			}
 			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/editor/timers")) {
 				inspect_hovered_node_delay->set_wait_time(EDITOR_GET("interface/editor/timers/dragging_hover_wait_seconds"));
@@ -4408,7 +4403,6 @@ void SceneTreeDock::_setup_tree_menu() {
 	tree_menu->add_check_item(TTRC("Hide Filtered Out Parents"), TOOL_HIDE_FILTERED_OUT_PARENTS);
 
 	tree_menu->add_separator();
-	tree_menu->add_check_item(TTRC("Show Accessibility Warnings"), TOOL_ACCESSIBILITY_WARNINGS);
 
 	PopupMenu *resource_list = memnew(PopupMenu);
 	resource_list->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
@@ -4424,7 +4418,6 @@ void SceneTreeDock::_update_tree_menu() {
 	tree_menu->set_item_checked(tree_menu->get_item_index(TOOL_AUTO_EXPAND), EDITOR_GET("docks/scene_tree/auto_expand_to_selected"));
 	tree_menu->set_item_checked(tree_menu->get_item_index(TOOL_CENTER_PARENT), EDITOR_GET("docks/scene_tree/center_node_on_reparent"));
 	tree_menu->set_item_checked(tree_menu->get_item_index(TOOL_HIDE_FILTERED_OUT_PARENTS), EDITOR_GET("docks/scene_tree/hide_filtered_out_parents"));
-	tree_menu->set_item_checked(tree_menu->get_item_index(TOOL_ACCESSIBILITY_WARNINGS), EDITOR_GET("docks/scene_tree/accessibility_warnings"));
 }
 
 void SceneTreeDock::_filter_changed(const String &p_filter) {
@@ -5281,7 +5274,6 @@ SceneTreeDock::SceneTreeDock(Node *p_scene_root, EditorSelection *p_editor_selec
 	filter = memnew(LineEdit);
 	filter->set_h_size_flags(SIZE_EXPAND_FILL);
 	filter->set_placeholder(TTRC("Filter Nodes"));
-	filter->set_accessibility_name(TTRC("Filter Nodes"));
 	filter->set_tooltip_text(TTRC("Filter nodes by entering a part of their name, type (if prefixed with \"type:\" or \"t:\")\nor group (if prefixed with \"group:\" or \"g:\"). Filtering is case-insensitive."));
 	filter_hbc->add_child(filter);
 	filter->add_theme_constant_override("minimum_character_width", 0);
@@ -5429,7 +5421,6 @@ SceneTreeDock::SceneTreeDock(Node *p_scene_root, EditorSelection *p_editor_selec
 	delete_dialog->add_child(vb);
 
 	delete_dialog_label = memnew(Label);
-	delete_dialog_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	vb->add_child(delete_dialog_label);
 
 	delete_tracks_checkbox = memnew(CheckBox(TTRC("Delete Related Animation Tracks")));

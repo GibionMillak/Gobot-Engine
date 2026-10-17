@@ -29,6 +29,7 @@
 /**************************************************************************/
 
 #include "tile_set_editor.h"
+#include "scene/gui/line_edit.h"
 
 #include "tile_data_editors.h"
 #include "tiles_editor_plugin.h"
@@ -930,7 +931,6 @@ TileSetEditor::TileSetEditor() {
 	sources_advanced_menu_button->get_popup()->add_item(TTRC("Open Atlas Merging Tool"));
 	sources_advanced_menu_button->get_popup()->add_item(TTRC("Manage Tile Proxies"));
 	sources_advanced_menu_button->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &TileSetEditor::_sources_advanced_menu_id_pressed));
-	sources_advanced_menu_button->set_accessibility_name(TTRC("Advanced"));
 	sources_bottom_actions->add_child(sources_advanced_menu_button);
 	sources_bottom_actions->add_child(source_sort_button);
 
@@ -948,7 +948,6 @@ TileSetEditor::TileSetEditor() {
 
 	// No source selected.
 	no_source_selected_label = memnew(Label);
-	no_source_selected_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	no_source_selected_label->set_text(TTRC("No TileSet source selected. Select or create a TileSet source.\nYou can create a new source by using the Add button on the left or by dropping a tileset texture onto the source list."));
 	no_source_selected_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	no_source_selected_label->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
@@ -995,7 +994,6 @@ TileSetEditor::TileSetEditor() {
 	patterns_mc->add_child(patterns_item_list);
 
 	patterns_help_label = memnew(Label);
-	patterns_help_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	patterns_help_label->set_text(TTRC("Add new patterns in the TileMap editing mode."));
 	patterns_help_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	patterns_help_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);

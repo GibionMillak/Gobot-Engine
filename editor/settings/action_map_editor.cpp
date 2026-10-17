@@ -38,6 +38,7 @@
 #include "editor/settings/input_event_configuration_dialog.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/check_button.h"
+#include "scene/gui/line_edit.h"
 #include "scene/gui/margin_container.h"
 #include "scene/gui/separator.h"
 #include "scene/gui/tree.h"
@@ -266,7 +267,6 @@ Variant ActionMapEditor::get_drag_data_fw(const Point2 &p_point, Control *p_from
 	label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	action_tree->set_drag_preview(label);
 
-	get_viewport()->gui_set_drag_description(vformat(RTR("Action %s"), name));
 
 	Dictionary drag_data;
 
@@ -600,7 +600,6 @@ ActionMapEditor::ActionMapEditor() {
 	add_edit = memnew(LineEdit);
 	add_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	add_edit->set_placeholder(TTRC("Add New Action"));
-	add_edit->set_accessibility_name(TTRC("Add New Action"));
 	add_edit->set_clear_button_enabled(true);
 	add_edit->set_keep_editing_on_text_submit(true);
 	add_edit->connect(SceneStringName(text_changed), callable_mp(this, &ActionMapEditor::_add_edit_text_changed));
@@ -633,7 +632,6 @@ ActionMapEditor::ActionMapEditor() {
 
 	// Action Editor Tree
 	action_tree = memnew(Tree);
-	action_tree->set_accessibility_name(TTRC("Action Map"));
 	action_tree->set_theme_type_variation("TreeTable");
 	action_tree->set_columns(3);
 	action_tree->set_hide_root(true);

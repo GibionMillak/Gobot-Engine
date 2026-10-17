@@ -34,7 +34,6 @@
 #include "core/input/input.h"
 #include "core/object/class_db.h"
 #include "scene/theme/theme_db.h"
-#include "servers/display/accessibility_server.h"
 
 Size2 Slider::get_minimum_size() const {
 	Size2i ss = theme_cache.slider_style->get_minimum_size();
@@ -257,12 +256,6 @@ void Slider::_notification(int p_what) {
 			}
 		} break;
 
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
-
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_SLIDER);
-		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
 			update_minimum_size();

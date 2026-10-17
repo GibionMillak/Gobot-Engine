@@ -90,7 +90,6 @@ EditorEventSearchBar::EditorEventSearchBar() {
 	search_by_name = memnew(LineEdit);
 	search_by_name->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	search_by_name->set_placeholder(TTRC("Filter by Name"));
-	search_by_name->set_accessibility_name(TTRC("Filter by Name"));
 	search_by_name->set_clear_button_enabled(true);
 	search_by_name->connect(SceneStringName(text_changed), callable_mp(this, &EditorEventSearchBar::_value_changed).unbind(1));
 	add_child(search_by_name);
@@ -98,7 +97,6 @@ EditorEventSearchBar::EditorEventSearchBar() {
 	search_by_event = memnew(EventListenerLineEdit);
 	search_by_event->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	search_by_event->set_stretch_ratio(0.75);
-	search_by_event->set_accessibility_name(TTRC("Action Event"));
 	search_by_event->connect("event_changed", callable_mp(this, &EditorEventSearchBar::_on_event_changed));
 	add_child(search_by_event);
 

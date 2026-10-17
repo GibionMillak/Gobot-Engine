@@ -39,7 +39,6 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 #include "core/object/class_db.h"
 #include "core/os/os.h"
 #include "scene/resources/texture.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server_headless.h"
 #include "servers/display/native_menu.h"
 #include "servers/rendering/rendering_server.h"
@@ -48,7 +47,7 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 #include "servers/rendering/rendering_device.h"
 #endif
 
-#if defined(VULKAN_ENABLED)
+#if defined(VULKAN_ENABLED) && !defined(WINDOWS_ENABLED)
 #include "drivers/vulkan/rendering_context_driver_vulkan.h"
 #endif
 #if defined(D3D12_ENABLED)
@@ -707,11 +706,6 @@ void DisplayServer::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("window_set_color", "color"), &DisplayServer::window_set_color);
 
-	ClassDB::bind_method(D_METHOD("accessibility_should_increase_contrast"), &DisplayServer::accessibility_should_increase_contrast);
-	ClassDB::bind_method(D_METHOD("accessibility_should_reduce_animation"), &DisplayServer::accessibility_should_reduce_animation);
-	ClassDB::bind_method(D_METHOD("accessibility_should_reduce_transparency"), &DisplayServer::accessibility_should_reduce_transparency);
-	ClassDB::bind_method(D_METHOD("accessibility_screen_reader_active"), &DisplayServer::accessibility_screen_reader_active);
-
 	ClassDB::bind_method(D_METHOD("ime_get_selection"), &DisplayServer::ime_get_selection);
 	ClassDB::bind_method(D_METHOD("ime_get_text"), &DisplayServer::ime_get_text);
 
@@ -815,7 +809,6 @@ void DisplayServer::_bind_methods() {
 	BIND_ENUM_CONSTANT(DisplayServerEnums::FEATURE_EMOJI_AND_SYMBOL_PICKER);
 	BIND_ENUM_CONSTANT(DisplayServerEnums::FEATURE_NATIVE_COLOR_PICKER);
 	BIND_ENUM_CONSTANT(DisplayServerEnums::FEATURE_SELF_FITTING_WINDOWS);
-	BIND_ENUM_CONSTANT(DisplayServerEnums::FEATURE_ACCESSIBILITY_SCREEN_READER);
 	BIND_ENUM_CONSTANT(DisplayServerEnums::FEATURE_HDR_OUTPUT);
 	BIND_ENUM_CONSTANT(DisplayServerEnums::FEATURE_PIP_MODE);
 	BIND_ENUM_CONSTANT(DisplayServerEnums::FEATURE_EMBEDDED);

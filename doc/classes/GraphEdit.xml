@@ -400,9 +400,6 @@
 		<member name="snapping_enabled" type="bool" setter="set_snapping_enabled" getter="is_snapping_enabled" default="true">
 			If [code]true[/code], enables snapping.
 		</member>
-		<member name="type_names" type="Dictionary" setter="set_type_names" getter="get_type_names" default="{}">
-			[Dictionary] of human-readable port type names.
-		</member>
 		<member name="zoom" type="float" setter="set_zoom" getter="get_zoom" default="1.0">
 			The current zoom value.
 		</member>

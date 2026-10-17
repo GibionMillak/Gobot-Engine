@@ -445,22 +445,6 @@ void DisplayServerMacOSBase::screen_set_keep_on(bool p_enable) {
 	}
 }
 
-int DisplayServerMacOSBase::accessibility_should_increase_contrast() const {
-	return [(GodotApplicationDelegate *)[[NSApplication sharedApplication] delegate] getHighContrast];
-}
-
-int DisplayServerMacOSBase::accessibility_should_reduce_animation() const {
-	return [(GodotApplicationDelegate *)[[NSApplication sharedApplication] delegate] getReduceMotion];
-}
-
-int DisplayServerMacOSBase::accessibility_should_reduce_transparency() const {
-	return [(GodotApplicationDelegate *)[[NSApplication sharedApplication] delegate] getReduceTransparency];
-}
-
-int DisplayServerMacOSBase::accessibility_screen_reader_active() const {
-	return [(GodotApplicationDelegate *)[[NSApplication sharedApplication] delegate] getVoiceOver];
-}
-
 void DisplayServerMacOSBase::update_im_text(const Point2i &p_selection, const String &p_text) {
 	im_selection = p_selection;
 	im_text = p_text;

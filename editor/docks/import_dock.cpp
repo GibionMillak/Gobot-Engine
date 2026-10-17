@@ -771,7 +771,6 @@ ImportDock::ImportDock() {
 	content->hide();
 
 	imported = memnew(Label);
-	imported->set_focus_mode(FOCUS_ACCESSIBILITY);
 	imported->add_theme_style_override(CoreStringName(normal), EditorNode::get_singleton()->get_editor_theme()->get_stylebox(CoreStringName(normal), SNAME("LineEdit")));
 	imported->set_clip_text(true);
 	content->add_child(imported);
@@ -783,7 +782,6 @@ ImportDock::ImportDock() {
 	import_as->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
 	import_as->set_h_size_flags(SIZE_EXPAND_FILL);
 	import_as->connect(SceneStringName(item_selected), callable_mp(this, &ImportDock::_importer_selected));
-	import_as->set_accessibility_name(TTRC("Import As:"));
 	hb->add_child(import_as);
 	import_as->set_h_size_flags(SIZE_EXPAND_FILL);
 	preset = memnew(MenuButton);
@@ -838,7 +836,6 @@ ImportDock::ImportDock() {
 	params = memnew(ImportDockParameters);
 
 	select_a_resource = memnew(Label);
-	select_a_resource->set_focus_mode(FOCUS_ACCESSIBILITY);
 	select_a_resource->set_text(TTRC("Select a resource file in the filesystem or in the inspector to adjust import settings."));
 	select_a_resource->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 	select_a_resource->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_WORD_ELLIPSIS);

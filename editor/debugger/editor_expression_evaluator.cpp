@@ -156,7 +156,6 @@ EditorExpressionEvaluator::EditorExpressionEvaluator() {
 	expression_input = memnew(LineEdit);
 	expression_input->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	expression_input->set_placeholder(TTRC("Expression to evaluate (Up/Down: Navigate history)"));
-	expression_input->set_accessibility_name(TTRC("Expression to evaluate"));
 	expression_input->set_clear_button_enabled(true);
 	expression_input->set_keep_editing_on_text_submit(true);
 	expression_input->connect(SceneStringName(gui_input), callable_mp(this, &EditorExpressionEvaluator::_line_edit_gui_input));

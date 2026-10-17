@@ -1012,7 +1012,6 @@ AnimationNodeBlendSpace1DEditor::AnimationNodeBlendSpace1DEditor() {
 	snap_value->set_min(0.01);
 	snap_value->set_step(0.01);
 	snap_value->set_max(1000);
-	snap_value->set_accessibility_name(TTRC("Grid Step"));
 	snap_value->get_line_edit()->add_theme_constant_override("minimum_character_width", 2);
 	snap_value->get_line_edit()->set_expand_to_text_length_enabled(true);
 
@@ -1032,7 +1031,6 @@ AnimationNodeBlendSpace1DEditor::AnimationNodeBlendSpace1DEditor() {
 	cyclic_length_value->set_step(0.001);
 	cyclic_length_value->set_allow_greater(true);
 	cyclic_length_value->set_format("%s s");
-	cyclic_length_value->set_accessibility_name(TTRC("Cyclic Length"));
 	cyclic_length_value->set_tooltip_text(TTR("Cycle length in seconds for cyclic sync. All animations are time-scaled to complete one cycle in this duration."));
 	top_hf->add_child(cyclic_length_value);
 	cyclic_length_value->connect(SceneStringName(value_changed), callable_mp(this, &AnimationNodeBlendSpace1DEditor::_config_changed));
@@ -1067,7 +1065,6 @@ AnimationNodeBlendSpace1DEditor::AnimationNodeBlendSpace1DEditor() {
 	index_edit->set_step(1);
 	index_edit->set_allow_greater(false);
 	index_edit->set_allow_lesser(false);
-	index_edit->set_accessibility_name(TTRC("Blend Point Index"));
 	index_edit->get_line_edit()->add_theme_constant_override("minimum_character_width", 1);
 	index_edit->get_line_edit()->set_expand_to_text_length_enabled(true);
 	index_edit->set_tooltip_text(TTR("Index of the blend point.\nValues outside of the valid range will be clamped to the nearest index."));
@@ -1083,7 +1080,6 @@ AnimationNodeBlendSpace1DEditor::AnimationNodeBlendSpace1DEditor() {
 	edit_value->set_min(-ABS_MAX);
 	edit_value->set_max(ABS_MAX);
 	edit_value->set_step(STEP_UNIT);
-	edit_value->set_accessibility_name(TTRC("Blend Point Position"));
 	edit_value->get_line_edit()->add_theme_constant_override("minimum_character_width", 3);
 	edit_value->get_line_edit()->set_expand_to_text_length_enabled(true);
 	edit_value->connect(SceneStringName(value_changed), callable_mp(this, &AnimationNodeBlendSpace1DEditor::_edit_point_pos));
@@ -1122,7 +1118,6 @@ AnimationNodeBlendSpace1DEditor::AnimationNodeBlendSpace1DEditor() {
 		min_value->set_step(STEP_UNIT);
 		min_value->get_line_edit()->set_expand_to_text_length_enabled(true);
 		min_value->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
-		min_value->set_accessibility_name(TTRC("Min"));
 
 		max_value = memnew(SpinBox);
 		max_value->set_min(-ABS_MAX + STEP_UNIT);
@@ -1130,12 +1125,10 @@ AnimationNodeBlendSpace1DEditor::AnimationNodeBlendSpace1DEditor() {
 		max_value->set_step(STEP_UNIT);
 		max_value->get_line_edit()->set_expand_to_text_length_enabled(true);
 		max_value->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
-		max_value->set_accessibility_name(TTRC("Max"));
 
 		label_value = memnew(LineEdit);
 		label_value->set_expand_to_text_length_enabled(true);
 		label_value->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-		label_value->set_accessibility_name(TTRC("Value"));
 
 		// now add
 

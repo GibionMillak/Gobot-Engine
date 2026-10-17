@@ -33,7 +33,6 @@
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "scene/main/viewport.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/rendering/rendering_server.h"
 
 #ifdef DEBUG_ENABLED
@@ -434,12 +433,7 @@ Point2 Node2D::to_global(const Point2 &p_local) const {
 
 void Node2D::_notification(int p_notification) {
 	switch (p_notification) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_CONTAINER);
-		} break;
 
 		case NOTIFICATION_ENTER_TREE: {
 			ERR_MAIN_THREAD_GUARD;

@@ -995,7 +995,6 @@ CreateDialog::CreateDialog() {
 	vsc->add_child(fav_vb);
 
 	favorites = memnew(Tree);
-	favorites->set_accessibility_name(TTRC("Favorites:"));
 	favorites->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	favorites->set_hide_root(true);
 	favorites->set_hide_folding(true);
@@ -1014,7 +1013,6 @@ CreateDialog::CreateDialog() {
 	rec_vb->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 
 	recent = memnew(ItemList);
-	recent->set_accessibility_name(TTRC("Recent:"));
 	recent->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	rec_vb->add_margin_child(TTR("Recent:"), recent, true);
 	recent->set_allow_reselect(true);
@@ -1030,7 +1028,6 @@ CreateDialog::CreateDialog() {
 	vsc_right->add_child(vbc);
 
 	search_box = memnew(FilterLineEdit);
-	search_box->set_accessibility_name(TTRC("Search"));
 	search_box->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	search_box->connect(SceneStringName(text_changed), callable_mp(this, &CreateDialog::_text_changed));
 
@@ -1077,7 +1074,6 @@ CreateDialog::CreateDialog() {
 	search_options = memnew(Tree);
 	search_box->set_forward_control(search_options);
 	search_options->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_TOP);
-	search_options->set_accessibility_name(TTRC("Matches:"));
 	search_options->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	search_options->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	search_options->set_theme_type_variation("TreeSecondary");
@@ -1087,7 +1083,6 @@ CreateDialog::CreateDialog() {
 	search_options->connect("button_clicked", callable_mp(this, &CreateDialog::_script_button_clicked));
 
 	help_bit = memnew(EditorHelpBit);
-	help_bit->set_accessibility_name(TTRC("Description:"));
 	help_bit->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	help_bit->set_content_height_limits(80 * EDSCALE, 80 * EDSCALE);
 	help_bit->connect("request_hide", callable_mp(this, &CreateDialog::_hide_requested));

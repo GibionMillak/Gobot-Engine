@@ -135,7 +135,6 @@ GotoLinePopup::GotoLinePopup() {
 	line_input->set_select_all_on_focus(true);
 	line_input->connect(SceneStringName(text_changed), callable_mp(this, &GotoLinePopup::_goto_line).unbind(1));
 	line_input->connect(SceneStringName(text_submitted), callable_mp(this, &GotoLinePopup::_submit).unbind(1));
-	line_input->set_accessibility_name(TTRC("Line Number:"));
 	vbc->add_child(line_input);
 }
 
@@ -764,8 +763,7 @@ FindReplaceBar::FindReplaceBar() {
 	toggle_replace_button = memnew(Button);
 	toggle_replace_button->set_theme_type_variation(SceneStringName(FlatButton));
 	add_child(toggle_replace_button);
-	toggle_replace_button->set_accessibility_name(TTRC("Replace Mode"));
-	toggle_replace_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	toggle_replace_button->set_focus_mode(FOCUS_NONE);
 	toggle_replace_button->connect(SceneStringName(pressed), callable_mp(this, &FindReplaceBar::_toggle_replace_pressed));
 
 	VBoxContainer *vbc_lineedit = memnew(VBoxContainer);
@@ -797,14 +795,12 @@ FindReplaceBar::FindReplaceBar() {
 	vbc_lineedit->add_child(search_text);
 	search_text->set_placeholder(TTRC("Find"));
 	search_text->set_tooltip_text(TTRC("Find"));
-	search_text->set_accessibility_name(TTRC("Find"));
 	search_text->set_custom_minimum_size(Size2(100 * EDSCALE, 0));
 	search_text->connect(SceneStringName(text_changed), callable_mp(this, &FindReplaceBar::_search_text_changed));
 	search_text->connect(SceneStringName(text_submitted), callable_mp(this, &FindReplaceBar::_search_text_submitted));
 
 	matches_label = memnew(Label);
 	hbc_button_search->add_child(matches_label);
-	matches_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	matches_label->hide();
 
 	find_prev = memnew(Button);
@@ -812,7 +808,7 @@ FindReplaceBar::FindReplaceBar() {
 	find_prev->set_disabled(results_count < 1);
 	find_prev->set_tooltip_text(TTRC("Previous Match"));
 	hbc_button_search->add_child(find_prev);
-	find_prev->set_focus_mode(FOCUS_ACCESSIBILITY);
+	find_prev->set_focus_mode(FOCUS_NONE);
 	find_prev->connect(SceneStringName(pressed), callable_mp(this, &FindReplaceBar::search_prev));
 
 	find_next = memnew(Button);
@@ -820,19 +816,19 @@ FindReplaceBar::FindReplaceBar() {
 	find_next->set_disabled(results_count < 1);
 	find_next->set_tooltip_text(TTRC("Next Match"));
 	hbc_button_search->add_child(find_next);
-	find_next->set_focus_mode(FOCUS_ACCESSIBILITY);
+	find_next->set_focus_mode(FOCUS_NONE);
 	find_next->connect(SceneStringName(pressed), callable_mp(this, &FindReplaceBar::search_next));
 
 	case_sensitive = memnew(CheckBox);
 	hbc_option_search->add_child(case_sensitive);
 	case_sensitive->set_text(TTRC("Match Case"));
-	case_sensitive->set_focus_mode(FOCUS_ACCESSIBILITY);
+	case_sensitive->set_focus_mode(FOCUS_NONE);
 	case_sensitive->connect(SceneStringName(toggled), callable_mp(this, &FindReplaceBar::_search_options_changed));
 
 	whole_words = memnew(CheckBox);
 	hbc_option_search->add_child(whole_words);
 	whole_words->set_text(TTRC("Whole Words"));
-	whole_words->set_focus_mode(FOCUS_ACCESSIBILITY);
+	whole_words->set_focus_mode(FOCUS_NONE);
 	whole_words->connect(SceneStringName(toggled), callable_mp(this, &FindReplaceBar::_search_options_changed));
 
 	// Replace toolbar.
@@ -841,7 +837,6 @@ FindReplaceBar::FindReplaceBar() {
 	vbc_lineedit->add_child(replace_text);
 	replace_text->set_placeholder(TTRC("Replace"));
 	replace_text->set_tooltip_text(TTRC("Replace"));
-	replace_text->set_accessibility_name(TTRC("Replace"));
 	replace_text->set_custom_minimum_size(Size2(100 * EDSCALE, 0));
 	replace_text->connect(SceneStringName(text_submitted), callable_mp(this, &FindReplaceBar::_replace_text_submitted));
 
@@ -858,13 +853,13 @@ FindReplaceBar::FindReplaceBar() {
 	selection_only = memnew(CheckBox);
 	hbc_option_replace->add_child(selection_only);
 	selection_only->set_text(TTRC("Selection Only"));
-	selection_only->set_focus_mode(FOCUS_ACCESSIBILITY);
+	selection_only->set_focus_mode(FOCUS_NONE);
 	selection_only->connect(SceneStringName(toggled), callable_mp(this, &FindReplaceBar::_search_options_changed));
 
 	hide_button = memnew(Button);
 	hide_button->set_theme_type_variation(SceneStringName(FlatButton));
 	hide_button->set_tooltip_text(TTRC("Hide"));
-	hide_button->set_focus_mode(FOCUS_ACCESSIBILITY);
+	hide_button->set_focus_mode(FOCUS_NONE);
 	hide_button->connect(SceneStringName(pressed), callable_mp(this, &FindReplaceBar::_hide_bar));
 	hide_button->set_v_size_flags(SIZE_SHRINK_CENTER);
 	add_child(hide_button);
@@ -2033,7 +2028,6 @@ CodeTextEditor::CodeTextEditor() {
 	zoom_button->set_theme_type_variation("FlatMenuButton");
 	zoom_button->set_v_size_flags(SIZE_EXPAND | SIZE_SHRINK_CENTER);
 	zoom_button->set_text("100 %");
-	zoom_button->set_accessibility_name(TTRC("Zoom Factor"));
 
 	PopupMenu *zoom_menu = zoom_button->get_popup();
 	constexpr int preset_count = std_size(ZOOM_FACTOR_PRESETS);
@@ -2055,7 +2049,6 @@ CodeTextEditor::CodeTextEditor() {
 	line_and_col_button->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	line_and_col_button->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
 	line_and_col_button->set_tooltip_text(TTRC("Line and column numbers."));
-	line_and_col_button->set_accessibility_name(TTRC("Line and column numbers."));
 	line_and_col_button->connect(SceneStringName(pressed), callable_mp(this, &CodeTextEditor::_show_goto_popup_request));
 	line_and_col_button->set_shortcut(ED_GET_SHORTCUT("script_text_editor/goto_line"));
 	line_and_col_button->set_shortcut_context(this);
@@ -2070,8 +2063,6 @@ CodeTextEditor::CodeTextEditor() {
 	indentation_txt->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	indentation_txt->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
 	indentation_txt->set_tooltip_text(TTRC("Indentation"));
-	indentation_txt->set_accessibility_name(TTRC("Indentation"));
-	indentation_txt->set_focus_mode(FOCUS_ACCESSIBILITY);
 	indentation_txt->set_mouse_filter(MOUSE_FILTER_STOP);
 
 	text_editor->connect(SceneStringName(gui_input), callable_mp(this, &CodeTextEditor::_text_editor_gui_input));

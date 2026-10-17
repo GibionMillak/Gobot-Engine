@@ -38,7 +38,6 @@
 #include "scene/main/scene_tree.h"
 #include "scene/main/viewport.h"
 #include "scene/property_utils.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/rendering/rendering_server.h"
 
 /*
@@ -141,12 +140,7 @@ void Node3D::_propagate_transform_changed(Node3D *p_origin) {
 
 void Node3D::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
-			RID ae = get_accessibility_element();
-			ERR_FAIL_COND(ae.is_null());
 
-			AccessibilityServer::get_singleton()->update_set_role(ae, AccessibilityServerEnums::AccessibilityRole::ROLE_CONTAINER);
-		} break;
 
 		case NOTIFICATION_ENTER_TREE: {
 			ERR_MAIN_THREAD_GUARD;

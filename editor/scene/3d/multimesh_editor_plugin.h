@@ -37,6 +37,7 @@
 
 class AcceptDialog;
 class ConfirmationDialog;
+class LineEdit;
 class MenuButton;
 class OptionButton;
 class SceneTreeDialog;

@@ -42,7 +42,6 @@
 #include "scene/theme/theme_db.h"
 #include "servers/audio/audio_driver.h"
 #include "servers/audio/audio_server.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/rendering/rendering_server.h"
 #include "tests/display_server_mock.h"
 #include "tests/force_link.gen.h"
@@ -185,13 +184,6 @@ struct GodotTestCaseListener : public doctest::IReporter {
 
 			Error err = OK;
 			OS::get_singleton()->set_has_server_feature_callback(nullptr);
-
-			for (int i = 0; i < AccessibilityServer::get_create_function_count(); i++) {
-				if (String("dummy") == AccessibilityServer::get_create_function_name(i)) {
-					AccessibilityServer::create(i, err);
-					break;
-				}
-			}
 
 			for (int i = 0; i < DisplayServer::get_create_function_count(); i++) {
 				if (String("mock") == DisplayServer::get_create_function_name(i)) {
@@ -340,7 +332,6 @@ struct GodotTestCaseListener : public doctest::IReporter {
 			ThemeDB::get_singleton()->finalize_theme();
 		}
 
-		memdelete(AccessibilityServer::get_singleton());
 		memdelete(DisplayServer::get_singleton());
 		memdelete(InputMap::get_singleton());
 

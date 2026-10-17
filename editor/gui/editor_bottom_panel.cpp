@@ -49,9 +49,6 @@
 
 void EditorBottomPanel::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_READY: {
-			set_accessibility_region(true);
-		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
 			pin_button->set_button_icon(get_editor_theme_icon(SNAME("Pin")));
@@ -60,12 +57,9 @@ void EditorBottomPanel::_notification(int p_what) {
 	}
 }
 
-void EditorBottomPanel::_on_tab_changed(int p_idx) {
+void EditorBottomPanel::_on_tab_changed() {
 	_update_center_split_offset();
 	_repaint();
-	if (p_idx >= 0 && p_idx < get_tab_count()) {
-		set_accessibility_name(get_tab_title(p_idx));
-	}
 }
 
 void EditorBottomPanel::_theme_changed() {
@@ -243,7 +237,7 @@ EditorBottomPanel::EditorBottomPanel() :
 	layout = EditorDock::DOCK_LAYOUT_HORIZONTAL;
 	grid_rect = Rect2i(2, 4, 4, 2);
 
-	get_tab_bar()->connect("tab_changed", callable_mp(this, &EditorBottomPanel::_on_tab_changed));
+	get_tab_bar()->connect("tab_changed", callable_mp(this, &EditorBottomPanel::_on_tab_changed).unbind(1));
 	set_tabs_position(TabPosition::POSITION_BOTTOM);
 	set_deselect_enabled(true);
 	set_theme_type_variation("BottomPanel");
@@ -280,7 +274,6 @@ EditorBottomPanel::EditorBottomPanel() :
 	expand_button->hide();
 	expand_button->set_theme_type_variation("BottomPanelButton");
 	expand_button->set_toggle_mode(true);
-	expand_button->set_accessibility_name(TTRC("Expand Bottom Panel"));
 	expand_button->set_shortcut(ED_SHORTCUT_AND_COMMAND("editor/bottom_panel_expand", TTRC("Expand Bottom Panel"), KeyModifierMask::SHIFT | Key::F12));
 	expand_button->connect(SceneStringName(toggled), callable_mp(this, &EditorBottomPanel::_expand_button_toggled));
 

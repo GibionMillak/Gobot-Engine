@@ -56,7 +56,6 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 #include "scene/resources/mesh.h"
 #include "scene/resources/packed_scene.h"
 #include "scene/resources/world_2d.h"
-#include "servers/display/accessibility_server.h"
 #include "servers/display/display_server.h"
 #include "servers/rendering/rendering_server.h"
 
@@ -208,113 +207,6 @@ void SceneTree::flush_transform_notifications() {
 		xform_change_list.remove(n);
 		n = nx;
 		node->notification(NOTIFICATION_TRANSFORM_CHANGED);
-	}
-}
-
-bool SceneTree::is_accessibility_enabled() const {
-	if (!DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_ACCESSIBILITY_SCREEN_READER)) {
-		return false;
-	}
-
-	AccessibilityServerEnums::AccessibilityMode accessibility_mode = AccessibilityServer::get_singleton()->get_mode();
-	int screen_reader_active = DisplayServer::get_singleton()->accessibility_screen_reader_active();
-	if ((accessibility_mode == AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_DISABLED) || ((accessibility_mode == AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_AUTO) && (screen_reader_active != 1))) {
-		return false;
-	}
-	return true;
-}
-
-bool SceneTree::is_accessibility_supported() const {
-	if (!DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_ACCESSIBILITY_SCREEN_READER)) {
-		return false;
-	}
-
-	AccessibilityServerEnums::AccessibilityMode accessibility_mode = AccessibilityServer::get_singleton()->get_mode();
-	if (accessibility_mode == AccessibilityServerEnums::AccessibilityMode::ACCESSIBILITY_DISABLED) {
-		return false;
-	}
-	return true;
-}
-
-void SceneTree::_accessibility_force_update() {
-	accessibility_force_update = true;
-}
-
-void SceneTree::_accessibility_notify_change(const Node *p_node, bool p_remove) {
-	if (p_node) {
-		if (p_remove) {
-			accessibility_change_queue.erase(p_node->get_instance_id());
-		} else {
-			accessibility_change_queue.insert(p_node->get_instance_id());
-		}
-	}
-}
-
-void SceneTree::_process_accessibility_changes(DisplayServerEnums::WindowID p_window_id) {
-	// Process NOTIFICATION_ACCESSIBILITY_UPDATE.
-	Vector<ObjectID> processed;
-	for (const ObjectID &id : accessibility_change_queue) {
-		Node *node = Object::cast_to<Node>(ObjectDB::get_instance(id));
-		if (!node || !node->get_non_popup_window() || !node->get_window()->is_visible()) {
-			processed.push_back(id);
-			continue; // Invalid node, remove from list and skip.
-		} else if (node->get_non_popup_window()->get_window_id() != p_window_id) {
-			continue; // Another window, skip.
-		}
-		node->notification(Node::NOTIFICATION_ACCESSIBILITY_UPDATE);
-		processed.push_back(id);
-	}
-
-	// Track focus change.
-	// Note: Do not use `Window::get_focused_window()`, it returns both native and embedded windows, and we only care about focused element in the currently processed native window.
-	// Native window focus is handled in the DisplayServer, or AccessKit subclassing adapter.
-	ObjectID oid = DisplayServer::get_singleton()->window_get_attached_instance_id(p_window_id);
-	Window *w_this = (Window *)ObjectDB::get_instance(oid);
-	if (w_this) {
-		Window *w_focus = w_this->get_focused_subwindow();
-		if (w_focus && !w_focus->is_part_of_edited_scene()) {
-			w_this = w_focus;
-		}
-
-		// Popups have no native window focus, but have focused element.
-		DisplayServerEnums::WindowID popup_id = DisplayServer::get_singleton()->window_get_active_popup();
-		if (popup_id != DisplayServerEnums::INVALID_WINDOW_ID) {
-			Window *popup_w = Window::get_from_id(popup_id);
-			if (popup_w && w_this->is_ancestor_of(popup_w)) {
-				w_this = popup_w;
-			}
-		}
-
-		RID new_focus_element;
-		Control *n_focus = w_this->gui_get_focus_owner();
-		if (n_focus && !n_focus->is_part_of_edited_scene()) {
-			new_focus_element = n_focus->get_focused_accessibility_element();
-		} else {
-			new_focus_element = w_this->get_focused_accessibility_element();
-		}
-
-		AccessibilityServer::get_singleton()->update_set_focus(new_focus_element);
-	}
-
-	// Cleanup.
-	for (const ObjectID &id : processed) {
-		accessibility_change_queue.erase(id);
-	}
-}
-
-void SceneTree::_flush_accessibility_changes() {
-	if (is_accessibility_enabled()) {
-		uint64_t time = OS::get_singleton()->get_ticks_msec();
-		if (!accessibility_force_update) {
-			if (time - accessibility_last_update < 1000 / accessibility_upd_per_sec) {
-				return;
-			}
-		}
-		accessibility_force_update = false;
-		accessibility_last_update = time;
-
-		// Push update to the accessibility driver.
-		AccessibilityServer::get_singleton()->update_if_active(callable_mp(this, &SceneTree::_process_accessibility_changes));
 	}
 }
 
@@ -735,7 +627,6 @@ bool SceneTree::process(double p_time) {
 	// This should happen last because any processing that deletes something beforehand might expect the object to be removed in the same frame.
 	_flush_delete_queue();
 
-	_flush_accessibility_changes();
 
 	_call_idle_callbacks();
 
@@ -1918,8 +1809,6 @@ void SceneTree::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_root"), &SceneTree::get_root);
 	ClassDB::bind_method(D_METHOD("has_group", "name"), &SceneTree::has_group);
 
-	ClassDB::bind_method(D_METHOD("is_accessibility_enabled"), &SceneTree::is_accessibility_enabled);
-	ClassDB::bind_method(D_METHOD("is_accessibility_supported"), &SceneTree::is_accessibility_supported);
 
 	ClassDB::bind_method(D_METHOD("is_auto_accept_quit"), &SceneTree::is_auto_accept_quit);
 	ClassDB::bind_method(D_METHOD("set_auto_accept_quit", "enabled"), &SceneTree::set_auto_accept_quit);
@@ -2083,7 +1972,6 @@ SceneTree::SceneTree() {
 	debug_paths_color = GLOBAL_DEF("debug/shapes/paths/geometry_color", Color(0.1, 1.0, 0.7, 0.4));
 	debug_paths_width = GLOBAL_DEF(PropertyInfo(Variant::FLOAT, "debug/shapes/paths/geometry_width", PROPERTY_HINT_RANGE, "0.01,10,0.001,or_greater"), 2.0);
 	collision_debug_contacts = GLOBAL_DEF(PropertyInfo(Variant::INT, "debug/shapes/collision/max_contacts_displayed", PROPERTY_HINT_RANGE, "0,20000,1"), 10000);
-	accessibility_upd_per_sec = GLOBAL_GET(SNAME("accessibility/general/updates_per_second"));
 	gui_theme_bus = GLOBAL_GET("audio/buses/gui_theme_bus");
 
 	GLOBAL_DEF("debug/shapes/collision/draw_2d_outlines", true);

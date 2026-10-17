@@ -352,7 +352,6 @@ EditorNetworkProfiler::EditorNetworkProfiler() {
 	container->add_child(hb);
 
 	down_label = memnew(Label);
-	down_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	down_label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	hb->add_child(down_label);
 
@@ -360,7 +359,6 @@ EditorNetworkProfiler::EditorNetworkProfiler() {
 	incoming_bandwidth_text->set_editable(false);
 	incoming_bandwidth_text->set_custom_minimum_size(Size2(120, 0) * EDSCALE);
 	incoming_bandwidth_text->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
-	incoming_bandwidth_text->set_accessibility_name(TTRC("Incoming Bandwidth"));
 	hb->add_child(incoming_bandwidth_text);
 
 	Control *down_up_spacer = memnew(Control);
@@ -368,7 +366,6 @@ EditorNetworkProfiler::EditorNetworkProfiler() {
 	hb->add_child(down_up_spacer);
 
 	up_label = memnew(Label);
-	up_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	up_label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	hb->add_child(up_label);
 
@@ -376,7 +373,6 @@ EditorNetworkProfiler::EditorNetworkProfiler() {
 	outgoing_bandwidth_text->set_editable(false);
 	outgoing_bandwidth_text->set_custom_minimum_size(Size2(120, 0) * EDSCALE);
 	outgoing_bandwidth_text->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
-	outgoing_bandwidth_text->set_accessibility_name(TTRC("Outgoing Bandwidth"));
 	hb->add_child(outgoing_bandwidth_text);
 
 	HSplitContainer *sc = memnew(HSplitContainer);

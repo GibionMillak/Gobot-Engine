@@ -687,7 +687,6 @@ PropertySelector::PropertySelector() {
 	add_child(vbc);
 
 	search_box = memnew(FilterLineEdit);
-	search_box->set_accessibility_name(TTRC("Search:"));
 	vbc->add_margin_child(TTRC("Search:"), search_box);
 	search_box->connect(SceneStringName(text_changed), callable_mp(this, &PropertySelector::_text_changed));
 

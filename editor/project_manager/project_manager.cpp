@@ -1301,14 +1301,12 @@ ProjectManager::ProjectManager() {
 			hb->add_child(scan_btn);
 
 			loading_label = memnew(Label(TTRC("Loading, please wait...")));
-			loading_label->set_accessibility_live(AccessibilityServerEnums::AccessibilityLiveMode::LIVE_ASSERTIVE);
 			loading_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 			loading_label->hide();
 			hb->add_child(loading_label);
 
 			search_box = memnew(LineEdit);
 			search_box->set_placeholder(TTRC("Filter Projects"));
-			search_box->set_accessibility_name(TTRC("Filter Projects"));
 			search_box->set_tooltip_text(TTRC("This field filters projects by name and last path component.\nTo filter projects by name and full path, the query must contain at least one `/` character."));
 			search_box->set_clear_button_enabled(true);
 			search_box->connect(SceneStringName(text_changed), callable_mp(this, &ProjectManager::_on_search_term_changed));
@@ -1325,7 +1323,6 @@ ProjectManager::ProjectManager() {
 			filter_option->set_fit_to_longest_item(false);
 			filter_option->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 			filter_option->set_stretch_ratio(0.3);
-			filter_option->set_accessibility_name(TTRC("Sort:"));
 			filter_option->connect(SceneStringName(item_selected), callable_mp(this, &ProjectManager::_on_order_option_changed));
 			hb->add_child(filter_option);
 
@@ -1417,7 +1414,6 @@ ProjectManager::ProjectManager() {
 			open_btn_container->add_child(memnew(VSeparator));
 
 			open_options_btn = memnew(Button);
-			open_options_btn->set_accessibility_name(TTRC("Options"));
 			open_options_btn->set_icon_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
 			open_options_btn->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_open_options_popup));
 			open_btn_container->add_child(open_options_btn);
@@ -1519,7 +1515,6 @@ ProjectManager::ProjectManager() {
 		erase_ask->add_child(erase_ask_vb);
 
 		erase_ask_label = memnew(Label);
-		erase_ask_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 		erase_ask_vb->add_child(erase_ask_label);
 
 		// Comment out for now until we have a better warning system to
@@ -1619,7 +1614,6 @@ ProjectManager::ProjectManager() {
 
 		new_tag_name = memnew(LineEdit);
 		tag_vb->add_child(new_tag_name);
-		new_tag_name->set_accessibility_name(TTRC("New Tag Name"));
 		new_tag_name->set_placeholder(TTRC("example_tag (will display as Example Tag)"));
 		new_tag_name->connect(SceneStringName(text_changed), callable_mp(this, &ProjectManager::_set_new_tag_name));
 		new_tag_name->connect(SceneStringName(text_submitted), callable_mp(this, &ProjectManager::_create_new_tag).unbind(1));
@@ -1627,11 +1621,9 @@ ProjectManager::ProjectManager() {
 		create_tag_dialog->connect("about_to_popup", callable_mp((Control *)new_tag_name, &Control::grab_focus).bind(false), CONNECT_DEFERRED);
 
 		tag_error = memnew(Label);
-		tag_error->set_focus_mode(FOCUS_ACCESSIBILITY);
 		tag_vb->add_child(tag_error);
 
 		create_tag_btn = memnew(Button);
-		create_tag_btn->set_accessibility_name(TTRC("Create Tag"));
 		all_tags->add_child(create_tag_btn);
 		create_tag_btn->connect(SceneStringName(pressed), callable_mp((Window *)create_tag_dialog, &Window::popup_centered).bind(Vector2i(500, 0) * EDSCALE));
 

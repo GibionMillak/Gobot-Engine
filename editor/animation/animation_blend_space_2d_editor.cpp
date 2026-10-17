@@ -1269,7 +1269,6 @@ AnimationNodeBlendSpace2DEditor::AnimationNodeBlendSpace2DEditor() {
 	snap_x->set_min(0.01);
 	snap_x->set_step(0.01);
 	snap_x->set_max(1000);
-	snap_x->set_accessibility_name(TTRC("Grid X Step"));
 	snap_x->get_line_edit()->add_theme_constant_override("minimum_character_width", 2);
 	snap_x->get_line_edit()->set_expand_to_text_length_enabled(true);
 
@@ -1279,7 +1278,6 @@ AnimationNodeBlendSpace2DEditor::AnimationNodeBlendSpace2DEditor() {
 	snap_y->set_min(0.01);
 	snap_y->set_step(0.01);
 	snap_y->set_max(1000);
-	snap_y->set_accessibility_name(TTRC("Grid Y Step"));
 	snap_y->get_line_edit()->add_theme_constant_override("minimum_character_width", 2);
 	snap_y->get_line_edit()->set_expand_to_text_length_enabled(true);
 
@@ -1300,7 +1298,6 @@ AnimationNodeBlendSpace2DEditor::AnimationNodeBlendSpace2DEditor() {
 	cyclic_length_value->set_step(0.001);
 	cyclic_length_value->set_allow_greater(true);
 	cyclic_length_value->set_format("%s s");
-	cyclic_length_value->set_accessibility_name(TTRC("Cyclic Length"));
 	cyclic_length_value->set_tooltip_text(TTR("Cycle length in seconds for cyclic sync. All animations are time-scaled to complete one cycle in this duration."));
 	top_hf->add_child(cyclic_length_value);
 	cyclic_length_value->connect(SceneStringName(value_changed), callable_mp(this, &AnimationNodeBlendSpace2DEditor::_config_changed));
@@ -1335,7 +1332,6 @@ AnimationNodeBlendSpace2DEditor::AnimationNodeBlendSpace2DEditor() {
 	index_edit->set_step(1);
 	index_edit->set_allow_greater(false);
 	index_edit->set_allow_lesser(false);
-	index_edit->set_accessibility_name(TTRC("Blend Point Index"));
 	index_edit->get_line_edit()->add_theme_constant_override("minimum_character_width", 1);
 	index_edit->get_line_edit()->set_expand_to_text_length_enabled(true);
 	index_edit->set_tooltip_text(TTR("Index of the blend point.\nValues outside of the valid range will be clamped to the nearest index."));
@@ -1351,7 +1347,6 @@ AnimationNodeBlendSpace2DEditor::AnimationNodeBlendSpace2DEditor() {
 	edit_x->set_min(-ABS_MAX);
 	edit_x->set_max(ABS_MAX);
 	edit_x->set_step(STEP_UNIT);
-	edit_x->set_accessibility_name(TTRC("Blend Point X Position"));
 	edit_x->get_line_edit()->add_theme_constant_override("minimum_character_width", 3);
 	edit_x->get_line_edit()->set_expand_to_text_length_enabled(true);
 	edit_x->connect(SceneStringName(value_changed), callable_mp(this, &AnimationNodeBlendSpace2DEditor::_edit_point_pos));
@@ -1360,7 +1355,6 @@ AnimationNodeBlendSpace2DEditor::AnimationNodeBlendSpace2DEditor() {
 	edit_y->set_min(-ABS_MAX);
 	edit_y->set_max(ABS_MAX);
 	edit_y->set_step(STEP_UNIT);
-	edit_y->set_accessibility_name(TTRC("Blend Point Y Position"));
 	edit_y->get_line_edit()->add_theme_constant_override("minimum_character_width", 3);
 	edit_y->get_line_edit()->set_expand_to_text_length_enabled(true);
 	edit_y->connect(SceneStringName(value_changed), callable_mp(this, &AnimationNodeBlendSpace2DEditor::_edit_point_pos));
@@ -1382,19 +1376,16 @@ AnimationNodeBlendSpace2DEditor::AnimationNodeBlendSpace2DEditor() {
 		main_grid->add_child(left_vbox);
 		left_vbox->set_v_size_flags(SIZE_EXPAND_FILL);
 		max_y_value = memnew(SpinBox);
-		max_y_value->set_accessibility_name(TTRC("Max Y"));
 		max_y_value->get_line_edit()->set_expand_to_text_length_enabled(true);
 		max_y_value->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 		left_vbox->add_child(max_y_value);
 		left_vbox->add_spacer();
 		label_y = memnew(LineEdit);
-		label_y->set_accessibility_name(TTRC("Y Value"));
 		label_y->set_expand_to_text_length_enabled(true);
 		label_y->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 		left_vbox->add_child(label_y);
 		left_vbox->add_spacer();
 		min_y_value = memnew(SpinBox);
-		min_y_value->set_accessibility_name(TTRC("Min Y"));
 		min_y_value->get_line_edit()->set_expand_to_text_length_enabled(true);
 		min_y_value->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 		left_vbox->add_child(min_y_value);
@@ -1428,19 +1419,16 @@ AnimationNodeBlendSpace2DEditor::AnimationNodeBlendSpace2DEditor() {
 		main_grid->add_child(bottom_vbox);
 		bottom_vbox->set_h_size_flags(SIZE_EXPAND_FILL);
 		min_x_value = memnew(SpinBox);
-		min_x_value->set_accessibility_name(TTRC("Min X"));
 		min_x_value->get_line_edit()->set_expand_to_text_length_enabled(true);
 		min_x_value->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 		bottom_vbox->add_child(min_x_value);
 		bottom_vbox->add_spacer();
 		label_x = memnew(LineEdit);
-		label_x->set_accessibility_name(TTRC("X Value"));
 		label_x->set_expand_to_text_length_enabled(true);
 		label_x->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 		bottom_vbox->add_child(label_x);
 		bottom_vbox->add_spacer();
 		max_x_value = memnew(SpinBox);
-		max_x_value->set_accessibility_name(TTRC("Max X"));
 		max_x_value->get_line_edit()->set_expand_to_text_length_enabled(true);
 		max_x_value->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 		bottom_vbox->add_child(max_x_value);

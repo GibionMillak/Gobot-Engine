@@ -2145,7 +2145,7 @@ ScriptEditorDebugger::ScriptEditorDebugger() {
 		vbc->add_child(hbc);
 
 		reason = memnew(RichTextLabel);
-		reason->set_focus_mode(FOCUS_ACCESSIBILITY);
+		reason->set_focus_mode(FOCUS_NONE);
 		reason->set_selection_enabled(true);
 		reason->set_context_menu_enabled(true);
 		reason->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -2257,7 +2257,6 @@ ScriptEditorDebugger::ScriptEditorDebugger() {
 		search = memnew(LineEdit);
 		search->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 		search->set_placeholder(TTRC("Filter Stack Variables"));
-		search->set_accessibility_name(TTRC("Filter Stack Variables"));
 		search->set_clear_button_enabled(true);
 		tools_hb->add_child(search);
 
@@ -2418,11 +2417,9 @@ Instead, use the monitors tab to obtain more precise VRAM usage.
 		vmem_hb->add_child(memnew(Label(TTRC("Total:"))));
 		vmem_total = memnew(LineEdit);
 		vmem_total->set_editable(false);
-		vmem_total->set_accessibility_name(TTRC("Video RAM Total"));
 		vmem_total->set_custom_minimum_size(Size2(100, 0) * EDSCALE);
 		vmem_hb->add_child(vmem_total);
 		vmem_refresh = memnew(Button);
-		vmem_refresh->set_accessibility_name(TTRC("Refresh Video RAM"));
 		vmem_refresh->set_theme_type_variation(SceneStringName(FlatButton));
 		vmem_hb->add_child(vmem_refresh);
 		vmem_export = memnew(Button);
@@ -2479,13 +2476,11 @@ Instead, use the monitors tab to obtain more precise VRAM usage.
 		misc->add_child(info_left);
 		clicked_ctrl = memnew(LineEdit);
 		clicked_ctrl->set_editable(false);
-		clicked_ctrl->set_accessibility_name(TTRC("Clicked Control:"));
 		clicked_ctrl->set_h_size_flags(SIZE_EXPAND_FILL);
 		info_left->add_child(memnew(Label(TTRC("Clicked Control:"))));
 		info_left->add_child(clicked_ctrl);
 		clicked_ctrl_type = memnew(LineEdit);
 		clicked_ctrl_type->set_editable(false);
-		clicked_ctrl_type->set_accessibility_name(TTRC("Clicked Control Type:"));
 		info_left->add_child(memnew(Label(TTRC("Clicked Control Type:"))));
 		info_left->add_child(clicked_ctrl_type);
 
@@ -2493,7 +2488,6 @@ Instead, use the monitors tab to obtain more precise VRAM usage.
 		live_edit_root = memnew(LineEdit);
 		live_edit_root->set_editable(false);
 		live_edit_root->set_h_size_flags(SIZE_EXPAND_FILL);
-		live_edit_root->set_accessibility_name(TTRC("Live Edit Root:"));
 
 		{
 			HBoxContainer *lehb = memnew(HBoxContainer);

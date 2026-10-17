@@ -45,6 +45,7 @@
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/control.h"
 #include "scene/gui/label.h"
+#include "scene/gui/line_edit.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/separator.h"
@@ -958,7 +959,6 @@ GenericTilePolygonEditor::GenericTilePolygonEditor() {
 
 	button_advanced_menu = memnew(MenuButton);
 	button_advanced_menu->set_flat(false);
-	button_advanced_menu->set_accessibility_name(TTRC("Advanced"));
 	button_advanced_menu->set_theme_type_variation("FlatMenuButton");
 	button_advanced_menu->set_toggle_mode(true);
 	button_advanced_menu->get_popup()->add_item(TTR("Reset to default tile shape"), RESET_TO_DEFAULT_TILE, Key::F);
@@ -978,7 +978,6 @@ GenericTilePolygonEditor::GenericTilePolygonEditor() {
 	button_pixel_snap = memnew(MenuButton);
 	toolbar->add_child(button_pixel_snap);
 	button_pixel_snap->set_flat(false);
-	button_pixel_snap->set_accessibility_name(TTRC("Snap"));
 	button_pixel_snap->set_theme_type_variation("FlatMenuButton");
 	button_pixel_snap->set_tooltip_text(TTR("Toggle Grid Snap"));
 	button_pixel_snap->get_popup()->add_item(TTR("Disable Snap"), SNAP_NONE);
@@ -988,7 +987,6 @@ GenericTilePolygonEditor::GenericTilePolygonEditor() {
 
 	snap_subdivision = memnew(SpinBox);
 	toolbar->add_child(snap_subdivision);
-	snap_subdivision->set_accessibility_name(TTRC("Subdivision"));
 	snap_subdivision->get_line_edit()->add_theme_constant_override("minimum_character_width", 2);
 	snap_subdivision->set_min(1);
 	snap_subdivision->set_max(99);
@@ -2910,7 +2908,6 @@ TileDataTerrainsEditor::TileDataTerrainsEditor() {
 	picker_button->set_theme_type_variation(SceneStringName(FlatButton));
 	picker_button->set_toggle_mode(true);
 	picker_button->set_shortcut(ED_GET_SHORTCUT("tiles_editor/picker"));
-	picker_button->set_accessibility_name(TTRC("Pick"));
 	toolbar->add_child(picker_button);
 
 	// Setup

@@ -245,7 +245,6 @@ ReplicationEditor::ReplicationEditor() {
 
 	np_line_edit = memnew(LineEdit);
 	np_line_edit->set_placeholder(":property");
-	np_line_edit->set_accessibility_name(TTRC("Path:"));
 	np_line_edit->set_h_size_flags(SIZE_EXPAND_FILL);
 	np_line_edit->connect(SceneStringName(text_submitted), callable_mp(this, &ReplicationEditor::_np_text_submitted));
 	hb->add_child(np_line_edit);
@@ -289,7 +288,6 @@ ReplicationEditor::ReplicationEditor() {
 	tree_mc->add_child(tree);
 
 	drop_label = memnew(Label(TTRC("Add properties using the options above, or\ndrag them from the inspector and drop them here.")));
-	drop_label->set_focus_mode(FOCUS_ACCESSIBILITY);
 	drop_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	drop_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	tree->add_child(drop_label);

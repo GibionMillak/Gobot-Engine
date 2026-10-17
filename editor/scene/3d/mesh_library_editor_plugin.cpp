@@ -724,7 +724,6 @@ MeshLibraryEditor::MeshLibraryEditor() {
 
 	search_box = memnew(FilterLineEdit);
 	search_box->set_placeholder(TTRC("Filter Meshes"));
-	search_box->set_accessibility_name(TTRC("Filter Meshes"));
 	search_box->add_theme_constant_override("minimum_character_width", 10);
 	search_box->set_h_size_flags(SIZE_EXPAND_FILL);
 	toolbar->add_child(search_box);
@@ -765,7 +764,6 @@ MeshLibraryEditor::MeshLibraryEditor() {
 
 	empty_lib = memnew(Label);
 	empty_lib->set_text(TTRC("No items found inside the MeshLibrary.\nYou can add some by using the Add button on the left, or by importing them from a scene file via the Import menu."));
-	empty_lib->set_focus_mode(FOCUS_ACCESSIBILITY);
 	empty_lib->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	empty_lib->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
 	empty_lib->set_v_size_flags(SIZE_EXPAND_FILL);

@@ -159,20 +159,12 @@ private:
 	ContentScaleStretch content_scale_stretch = CONTENT_SCALE_STRETCH_FRACTIONAL;
 	real_t content_scale_factor = 1.0;
 
-	RID accessibility_title_element;
-	RID accessibility_announcement_element;
 	String announcement;
-	String accessibility_name;
-	String accessibility_description;
 
 	void _make_window();
 	void _clear_window();
 	void _update_from_window();
-	void _accessibility_notify_enter(Node *p_node);
-	void _accessibility_notify_exit(Node *p_node);
 
-	void _accessibility_activate();
-	void _accessibility_deactivate();
 
 	bool _try_parent_dialog(Node *p_from_node);
 
@@ -284,14 +276,9 @@ protected:
 	void _get_property_list(List<PropertyInfo> *p_list) const;
 	void _validate_property(PropertyInfo &p_property) const;
 
-	void _accessibility_action_grab_focus(const Variant &p_data) {
-		grab_focus();
-	}
-
 	virtual void add_child_notify(Node *p_child) override;
 	virtual void remove_child_notify(Node *p_child) override;
 
-	virtual String _get_accessibility_name() const;
 
 	GDVIRTUAL0RC(Vector2, _get_contents_minimum_size)
 
@@ -302,13 +289,10 @@ public:
 		NOTIFICATION_THEME_CHANGED = 32
 	};
 
-	PackedStringArray get_accessibility_configuration_warnings() const override;
 
 	static void set_root_layout_direction(int p_root_dir);
 	static Window *get_from_id(DisplayServerEnums::WindowID p_window_id);
 
-	RID get_accessibility_element() const override;
-	virtual RID get_focused_accessibility_element() const override;
 
 	void set_title(const String &p_title);
 	void set_default_title(const String &p_title);
@@ -454,15 +438,9 @@ public:
 
 	Rect2i get_usable_parent_rect() const;
 
-	void set_accessibility_name(const String &p_name);
-	String get_accessibility_name() const;
 
-	void set_accessibility_description(const String &p_description);
-	String get_accessibility_description() const;
 
-	void accessibility_announcement(const String &p_announcement);
 
-	virtual Transform2D get_accessibility_transform() const override;
 
 	// Internationalization.
 

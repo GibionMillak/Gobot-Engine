@@ -185,9 +185,7 @@
 		<member name="permissions/battery_stats" type="bool" setter="" getter="">
 			Allows an application to collect battery statistics. See [url=https://developer.android.com/reference/android/Manifest.permission#BATTERY_STATS]BATTERY_STATS[/url].
 		</member>
-		<member name="permissions/bind_accessibility_service" type="bool" setter="" getter="">
-			Must be required by an AccessibilityService, to ensure that only the system can bind to it. See [url=https://developer.android.com/reference/android/Manifest.permission#BIND_ACCESSIBILITY_SERVICE]BIND_ACCESSIBILITY_SERVICE[/url].
-		</member>
+
 		<member name="permissions/bind_appwidget" type="bool" setter="" getter="">
 			Allows an application to tell the AppWidget service which application can access AppWidget's data. See [url=https://developer.android.com/reference/android/Manifest.permission#BIND_APPWIDGET]BIND_APPWIDGET[/url].
 		</member>
