@@ -61,7 +61,6 @@ check-hidden = true
 quiet-level = 3
 builtin = ["clear", "rare", "en-GB_to_en-US"]
 skip = [
-	".mailmap",
 	"*.desktop",
 	"*.gitignore",
 	"*.po",

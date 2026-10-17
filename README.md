@@ -52,9 +52,6 @@ developers. The main community channels are listed [on the homepage](https://god
 The best way to get in touch with the core engine developers is to join the
 [Godot Contributors Chat](https://chat.godotengine.org).
 
-To get started contributing to the project, see the [contributing guide](CONTRIBUTING.md).
-This document also includes guidelines for reporting bugs.
-
 ## Documentation and demos
 
 The official documentation is hosted on [Read the Docs](https://docs.godotengine.org).
