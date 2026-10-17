@@ -510,10 +510,8 @@ Error EditorExportPlatformWindows::_add_data(const Ref<EditorExportPreset> &p_pr
 	String icon_path;
 	if (p_preset->get("application/icon") != "") {
 		icon_path = p_preset->get("application/icon");
-	} else if (get_project_setting(p_preset, "application/config/windows_native_icon") != "") {
-		icon_path = get_project_setting(p_preset, "application/config/windows_native_icon");
 	} else {
-		icon_path = get_project_setting(p_preset, "application/config/icon");
+		icon_path = get_project_icon_path(p_preset);
 	}
 	icon_path = ProjectSettings::get_singleton()->globalize_path(icon_path);
 

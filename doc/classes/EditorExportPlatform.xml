@@ -124,7 +124,7 @@
 			<return type="PackedStringArray" />
 			<param index="0" name="preset" type="EditorExportPreset" default="null" />
 			<description>
-				Returns array of core file names that always should be exported regardless of preset config.
+				Returns an array of core file names that must be exported regardless of preset configuration, including the project thumbnail, the platform icon, and the boot splash image. If [param preset] is [code]null[/code], includes icons for all platforms for remote filesystem clients.
 			</description>
 		</method>
 		<method name="get_internal_export_files">

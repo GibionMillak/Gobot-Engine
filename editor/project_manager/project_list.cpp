@@ -58,10 +58,10 @@
 void ProjectListItemControl::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			if (icon_needs_reload) {
-				// The project icon may not be loaded by the time the control is displayed,
+			if (_thumbnail_needs_reload) {
+				// The project thumbnail may not be loaded by the time the control is displayed,
 				// so use a loading placeholder.
-				project_icon->set_texture(get_editor_theme_icon(SNAME("ProjectIconLoading")));
+				_project_thumbnail->set_texture(get_editor_theme_icon(SNAME("ProjectThumbnailLoading")));
 			}
 
 			project_title->begin_bulk_theme_override();
@@ -185,16 +185,16 @@ void ProjectListItemControl::set_tags(const PackedStringArray &p_tags, ProjectLi
 	}
 }
 
-void ProjectListItemControl::set_project_icon(const Ref<Texture2D> &p_icon) {
-	icon_needs_reload = false;
+void ProjectListItemControl::set_project_thumbnail(const Ref<Texture2D> &p_thumbnail) {
+	_thumbnail_needs_reload = false;
 
-	// The default project icon is 128×128 to look crisp on hiDPI displays,
+	// The default project thumbnail is 128×128 to look crisp on hiDPI displays,
 	// but we want the actual displayed size to be 64×64 on loDPI displays.
-	project_icon->set_expand_mode(TextureRect::EXPAND_IGNORE_SIZE);
-	project_icon->set_custom_minimum_size(Size2(64, 64) * EDSCALE);
-	project_icon->set_stretch_mode(TextureRect::STRETCH_KEEP_ASPECT_CENTERED);
+	_project_thumbnail->set_expand_mode(TextureRect::EXPAND_IGNORE_SIZE);
+	_project_thumbnail->set_custom_minimum_size(Size2(64, 64) * EDSCALE);
+	_project_thumbnail->set_stretch_mode(TextureRect::STRETCH_KEEP_ASPECT_CENTERED);
 
-	project_icon->set_texture(p_icon);
+	_project_thumbnail->set_texture(p_thumbnail);
 }
 
 void ProjectListItemControl::set_last_edited_info(const String &p_info) {
@@ -260,8 +260,8 @@ void ProjectListItemControl::set_unsupported_features(PackedStringArray p_featur
 	project_unsupported_features->show();
 }
 
-bool ProjectListItemControl::should_load_project_icon() const {
-	return icon_needs_reload;
+bool ProjectListItemControl::should_load_project_thumbnail() const {
+	return _thumbnail_needs_reload;
 }
 
 void ProjectListItemControl::set_selected(bool p_selected, bool p_hide_focus) {
@@ -283,8 +283,6 @@ void ProjectListItemControl::set_is_missing(bool p_missing) {
 	project_is_missing = p_missing;
 
 	if (project_is_missing) {
-		project_icon->set_modulate(Color(1, 1, 1, 0.5));
-
 		explore_button->set_button_icon(get_editor_theme_icon(SNAME("FileBroken")));
 		explore_button->set_tooltip_text(TTRC("Error: Project is missing on the filesystem."));
 	} else {
@@ -301,7 +299,7 @@ void ProjectListItemControl::set_is_missing(bool p_missing) {
 void ProjectListItemControl::set_is_grayed(bool p_grayed) {
 	if (p_grayed) {
 		main_vbox->set_modulate(Color(1, 1, 1, 0.5));
-		// Don't make the icon less prominent if the parent is already grayed out.
+		// Don't make the thumbnail less prominent if the parent is already grayed out.
 		explore_button->set_modulate(Color(1, 1, 1, 1.0));
 	} else {
 		main_vbox->set_modulate(Color(1, 1, 1, 1.0));
@@ -391,10 +389,10 @@ ProjectListItemControl::ProjectListItemControl() {
 	favorite_button->connect(SceneStringName(focus_entered), callable_mp(this, &ProjectListItemControl::_update_favorite_button_focus_color));
 	favorite_button->connect(SceneStringName(focus_exited), callable_mp(this, &ProjectListItemControl::_update_favorite_button_focus_color));
 
-	project_icon = memnew(TextureRect);
-	project_icon->set_name("ProjectIcon");
-	project_icon->set_v_size_flags(SIZE_SHRINK_CENTER);
-	add_child(project_icon);
+	_project_thumbnail = memnew(TextureRect);
+	_project_thumbnail->set_name("ProjectThumbnail");
+	_project_thumbnail->set_v_size_flags(SIZE_SHRINK_CENTER);
+	add_child(_project_thumbnail);
 
 	main_vbox = memnew(VBoxContainer);
 	main_vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -536,13 +534,13 @@ void ProjectList::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_PROCESS: {
-			// Load icons as a coroutine to speed up launch when you have hundreds of projects.
-			if (_icon_load_index < _projects.size()) {
-				Item &item = _projects.write[_icon_load_index];
-				if (item.control->should_load_project_icon()) {
-					_load_project_icon(_icon_load_index);
+			// Load thumbnails as a coroutine to speed up launch when you have hundreds of projects.
+			if (_thumbnail_load_index < _projects.size()) {
+				Item &item = _projects.write[_thumbnail_load_index];
+				if (item.control->should_load_project_thumbnail()) {
+					_load_project_thumbnail(_thumbnail_load_index);
 				}
-				_icon_load_index++;
+				_thumbnail_load_index++;
 
 				// Scan directories in thread to avoid blocking the window.
 			} else if (scan_data && scan_data->scan_in_progress.is_set()) {
@@ -637,18 +635,18 @@ ProjectList::Item ProjectList::load_project_data(const String &p_path, bool p_fa
 	const PackedStringArray tags = cf->get_value("application", "config/tags", PackedStringArray());
 	const String main_scene = cf->get_value("application", "run/main_scene", "");
 
-	String icon = cf->get_value("application", "config/icon", "");
-	if (icon.begins_with("uid://")) {
+	String thumbnail = cf->get_value("application", "config/thumbnail", "");
+	if (thumbnail.begins_with("uid://")) {
 		Error err;
 		Ref<FileAccess> file = FileAccess::open(p_path.path_join(".godot/uid_cache.bin"), FileAccess::READ, &err);
 		if (err == OK) {
-			icon = ResourceUID::get_path_from_cache(file, icon);
-			if (icon.is_empty()) {
-				WARN_PRINT(vformat("Could not load icon from UID for project at path \"%s\". Make sure UID cache exists.", p_path));
+			thumbnail = ResourceUID::get_path_from_cache(file, thumbnail);
+			if (thumbnail.is_empty()) {
+				WARN_PRINT(vformat("Could not load thumbnail from UID for project at path \"%s\". Make sure UID cache exists.", p_path));
 			}
 		} else {
-			// Cache does not exist yet, so ignore and fallback to default icon.
-			icon = "";
+			// Cache does not exist yet, so ignore and fallback to default thumbnail.
+			thumbnail = "";
 		}
 	}
 
@@ -694,40 +692,40 @@ ProjectList::Item ProjectList::load_project_data(const String &p_path, bool p_fa
 	String recovery_mode_lock_file = OS::get_singleton()->get_user_data_dir(user_dir).path_join(".recovery_mode_lock");
 	recovery_mode = FileAccess::exists(recovery_mode_lock_file);
 
-	return Item(project_name, description, project_version, tags, p_path, icon, main_scene, unsupported_features, last_edited, p_favorite, grayed, missing, recovery_mode, config_version);
+	return Item(project_name, description, project_version, tags, p_path, thumbnail, main_scene, unsupported_features, last_edited, p_favorite, grayed, missing, recovery_mode, config_version);
 }
 
-void ProjectList::_update_icons_async() {
-	_icon_load_index = 0;
+void ProjectList::_update_thumbnails_async() {
+	_thumbnail_load_index = 0;
 	set_process(true);
 }
 
-void ProjectList::_load_project_icon(int p_index) {
+void ProjectList::_load_project_thumbnail(int p_index) {
 	Item &item = _projects.write[p_index];
 
-	Ref<Texture2D> default_icon = get_editor_theme_icon(SNAME("DefaultProjectIcon"));
-	Ref<Texture2D> icon;
-	if (!item.icon.is_empty()) {
+	Ref<Texture2D> default_thumbnail = get_editor_theme_icon(SNAME("ProjectThumbnailDefault"));
+	Ref<Texture2D> thumbnail;
+	if (!item.missing && !item.thumbnail.is_empty()) {
 		Ref<Image> img;
 		img.instantiate();
-		Error err = img->load(item.icon.replace_first("res://", item.path + "/"));
+		Error err = img->load(item.thumbnail.replace_first("res://", item.path + "/"));
 		if (err == OK) {
-			img->resize(default_icon->get_width(), default_icon->get_height(), Image::INTERPOLATE_LANCZOS);
-			icon = ImageTexture::create_from_image(img);
+			img->resize(default_thumbnail->get_width(), default_thumbnail->get_height(), Image::INTERPOLATE_LANCZOS);
+			thumbnail = ImageTexture::create_from_image(img);
 		}
 	}
-	if (icon.is_null()) {
-		icon = default_icon;
+	if (thumbnail.is_null()) {
+		thumbnail = item.missing ? get_editor_theme_icon(SNAME("ProjectThumbnailMissing")) : default_thumbnail;
 	}
 
-	item.control->set_project_icon(icon);
+	item.control->set_project_thumbnail(thumbnail);
 }
 
 // Project list updates.
 
 void ProjectList::update_project_list() {
 	// This is a full, hard reload of the list. Don't call this unless really required, it's expensive.
-	// If you have 150 projects, it may read through 150 files on your disk at once + load 150 icons.
+	// If you have 150 projects, it may read through 150 files on your disk at once + load 150 thumbnails.
 	// FIXME: Does it really have to be a full, hard reload? Runtime updates should be made much cheaper.
 
 	if (ProjectManager::get_singleton()->is_initialized()) {
@@ -752,7 +750,7 @@ void ProjectList::update_project_list() {
 	}
 
 	sort_projects();
-	_update_icons_async();
+	_update_thumbnails_async();
 	update_dock_menu();
 
 	set_v_scroll(0);
@@ -819,7 +817,7 @@ void ProjectList::sort_projects() {
 	}
 
 	// Rewind the coroutine because order of projects changed
-	_update_icons_async();
+	_update_thumbnails_async();
 	update_dock_menu();
 }
 
@@ -953,7 +951,7 @@ int ProjectList::refresh_project(const String &dir_path) {
 				if (was_selected) {
 					ensure_project_visible(i);
 				}
-				_load_project_icon(i);
+				_load_project_thumbnail(i);
 
 				index = i;
 				break;

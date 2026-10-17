@@ -307,6 +307,8 @@ public:
 
 	Dictionary get_internal_export_files(const Ref<EditorExportPreset> &p_preset, bool p_debug);
 
+	// Resolves the platform icon, falling back to the project thumbnail.
+	static String get_project_icon_path(const Ref<EditorExportPreset> &p_preset);
 	static Vector<String> get_forced_export_files(const Ref<EditorExportPreset> &p_preset);
 
 	virtual bool fill_log_messages(RichTextLabel *p_log, Error p_err);

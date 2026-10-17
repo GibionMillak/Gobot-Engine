@@ -50,7 +50,7 @@ class ProjectListItemControl : public HBoxContainer {
 	TextureButton *favorite_button = nullptr;
 	Button *explore_button = nullptr;
 
-	TextureRect *project_icon = nullptr;
+	TextureRect *_project_thumbnail = nullptr;
 	Label *project_title = nullptr;
 	Label *project_path = nullptr;
 	Label *last_edited_info = nullptr;
@@ -65,7 +65,7 @@ class ProjectListItemControl : public HBoxContainer {
 	int project_title_index = -1;
 
 	bool project_is_missing = false;
-	bool icon_needs_reload = true;
+	bool _thumbnail_needs_reload = true;
 	bool is_selected = false;
 	bool is_focus_hidden = false;
 	bool is_hovering = false;
@@ -104,12 +104,12 @@ public:
 	void set_project_title(const String &p_title);
 	void set_project_path(const String &p_path);
 	void set_tags(const PackedStringArray &p_tags, ProjectList *p_parent_list);
-	void set_project_icon(const Ref<Texture2D> &p_icon);
+	void set_project_thumbnail(const Ref<Texture2D> &p_thumbnail);
 	void set_last_edited_info(const String &p_info);
 	void set_project_version(const String &p_version);
 	void set_unsupported_features(PackedStringArray p_features);
 
-	bool should_load_project_icon() const;
+	bool should_load_project_thumbnail() const;
 	void set_selected(bool p_selected, bool p_hide_focus = false);
 
 	void set_is_favorite(bool p_favorite);
@@ -157,7 +157,7 @@ public:
 		PackedStringArray tags;
 		String tag_sort_string;
 		String path;
-		String icon;
+		String thumbnail;
 		String main_scene;
 		PackedStringArray unsupported_features;
 		uint64_t last_edited = 0;
@@ -177,7 +177,7 @@ public:
 				const String &p_project_version,
 				const PackedStringArray &p_tags,
 				const String &p_path,
-				const String &p_icon,
+				const String &p_thumbnail,
 				const String &p_main_scene,
 				const PackedStringArray &p_unsupported_features,
 				uint64_t p_last_edited,
@@ -191,7 +191,7 @@ public:
 			project_version = p_project_version;
 			tags = p_tags;
 			path = p_path;
-			icon = p_icon;
+			thumbnail = p_thumbnail;
 			main_scene = p_main_scene;
 			unsupported_features = p_unsupported_features;
 			last_edited = p_last_edited;
@@ -225,7 +225,7 @@ private:
 	Vector<Item> _projects;
 	static inline HashMap<String, int> modified_time_cache;
 
-	int _icon_load_index = 0;
+	int _thumbnail_load_index = 0;
 	bool project_opening_initiated = false;
 
 	String _search_term;
@@ -253,8 +253,8 @@ private:
 	// Initialization & loading.
 
 	static Item load_project_data(const String &p_property_key, bool p_favorite);
-	void _update_icons_async();
-	void _load_project_icon(int p_index);
+	void _update_thumbnails_async();
+	void _load_project_thumbnail(int p_index);
 
 	// Project list updates.
 

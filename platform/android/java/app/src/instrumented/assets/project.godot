@@ -14,7 +14,7 @@ config/editor_version="4.8"
 
 config/name="Godot App Instrumentation Tests"
 run/main_scene="res://main.tscn"
-config/icon="res://icon.svg"
+config/thumbnail="res://icon.svg"
 
 [debug]
 

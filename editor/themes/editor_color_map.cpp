@@ -173,7 +173,9 @@ void EditorColorMap::create() {
 	add_conversion_exception("Godot");
 	add_conversion_exception("Sky");
 	add_conversion_exception("EditorControlAnchor");
-	add_conversion_exception("DefaultProjectIcon");
+	add_conversion_exception("ProjectThumbnailDefault");
+	add_conversion_exception("ProjectThumbnailLoading");
+	add_conversion_exception("ProjectThumbnailMissing");
 	add_conversion_exception("ZoomMore");
 	add_conversion_exception("ZoomLess");
 	add_conversion_exception("ZoomReset");

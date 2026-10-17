@@ -1200,17 +1200,56 @@ Dictionary EditorExportPlatform::get_internal_export_files(const Ref<EditorExpor
 	return files;
 }
 
+String EditorExportPlatform::get_project_icon_path(const Ref<EditorExportPreset> &p_preset) {
+	const String os_name = p_preset.is_valid() ? p_preset->get_platform()->get_os_name() : OS::get_singleton()->get_name();
+	String platform;
+	if (os_name == "Windows") {
+		platform = "desktop/windows";
+	} else if (os_name == "macOS") {
+		platform = "desktop/macos";
+	} else if (os_name == "Linux") {
+		platform = "desktop/linux";
+	} else if (os_name == "Android") {
+		platform = "mobile/android";
+	} else if (os_name == "iOS") {
+		platform = "mobile/ios";
+	}
+
+	String icon_path;
+	if (!platform.is_empty()) {
+		icon_path = get_project_setting(p_preset, "application/config/platform/" + platform + "_icon");
+	}
+	if (icon_path.is_empty()) {
+		icon_path = get_project_setting(p_preset, "application/config/thumbnail");
+	}
+	return ResourceUID::ensure_path(icon_path);
+}
+
 Vector<String> EditorExportPlatform::get_forced_export_files(const Ref<EditorExportPreset> &p_preset) {
 	Vector<String> files;
 
 	files.push_back(ProjectSettings::get_singleton()->get_global_class_list_path());
 
-	String icon = ResourceUID::ensure_path(get_project_setting(p_preset, "application/config/icon"));
-	String splash = ResourceUID::ensure_path(get_project_setting(p_preset, "application/boot_splash/image"));
+	const String icon = get_project_icon_path(p_preset);
+	const String thumbnail = ResourceUID::ensure_path(get_project_setting(p_preset, "application/config/thumbnail"));
+	const String splash = ResourceUID::ensure_path(get_project_setting(p_preset, "application/boot_splash/image"));
 	if (!icon.is_empty() && FileAccess::exists(icon)) {
 		files.push_back(icon);
 	}
-	if (!splash.is_empty() && FileAccess::exists(splash) && icon != splash) {
+	if (p_preset.is_null()) {
+		// Remote filesystem clients can run on a different platform than the editor.
+		const char *const platforms[] = { "desktop/windows", "desktop/macos", "desktop/linux", "mobile/android", "mobile/ios" };
+		for (const char *platform : platforms) {
+			const String platform_icon = ResourceUID::ensure_path(GLOBAL_GET(String("application/config/platform/") + platform + "_icon"));
+			if (!platform_icon.is_empty() && !files.has(platform_icon) && FileAccess::exists(platform_icon)) {
+				files.push_back(platform_icon);
+			}
+		}
+	}
+	if (!thumbnail.is_empty() && !files.has(thumbnail) && FileAccess::exists(thumbnail)) {
+		files.push_back(thumbnail);
+	}
+	if (!splash.is_empty() && FileAccess::exists(splash) && !files.has(splash)) {
 		files.push_back(splash);
 	}
 

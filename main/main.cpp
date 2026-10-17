@@ -956,11 +956,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	GDREGISTER_CLASS(Performance);
 	engine->add_singleton(Engine::Singleton("Performance", performance));
 
-	// Only flush stdout in debug builds by default, as spamming `print()` will
-	// decrease performance if this is enabled.
-	GLOBAL_DEF_RST("application/run/flush_stdout_on_print", false);
-	GLOBAL_DEF_RST("application/run/flush_stdout_on_print.debug", true);
-
 	MAIN_PRINT("Main: Parse CMDLine");
 
 	/* argument parsing and main creation */
@@ -2001,7 +1996,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	Engine::get_singleton()->set_physics_ticks_per_second(GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "physics/common/physics_ticks_per_second", PROPERTY_HINT_RANGE, "1,1000,1"), 60));
 	Engine::get_singleton()->set_max_physics_steps_per_frame(GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "physics/common/max_physics_steps_per_frame", PROPERTY_HINT_RANGE, "1,100,1"), 8));
 	Engine::get_singleton()->set_physics_jitter_fix(GLOBAL_DEF(PropertyInfo(Variant::FLOAT, "physics/common/physics_jitter_fix", PROPERTY_HINT_RANGE, "0,2,0.001,or_greater"), 0.5));
-	Engine::get_singleton()->set_max_fps(GLOBAL_DEF(PropertyInfo(Variant::INT, "application/run/max_fps", PROPERTY_HINT_RANGE, "0,1000,1"), 0));
+	Engine::get_singleton()->set_max_fps(GLOBAL_GET("application/run/max_fps"));
 	if (max_fps >= 0) {
 		Engine::get_singleton()->set_max_fps(max_fps);
 	}
@@ -2009,11 +2004,10 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	// Initialize user data dir.
 	OS::get_singleton()->ensure_user_data_dir();
 
-	OS::get_singleton()->set_low_processor_usage_mode(GLOBAL_DEF("application/run/low_processor_mode", false));
+	OS::get_singleton()->set_low_processor_usage_mode(GLOBAL_GET("application/run/low_processor_mode"));
 	OS::get_singleton()->set_low_processor_usage_mode_sleep_usec(
-			GLOBAL_DEF(PropertyInfo(Variant::INT, "application/run/low_processor_mode_sleep_usec", PROPERTY_HINT_RANGE, "0,33200,1,or_greater"), 6900)); // Roughly 144 FPS
+			GLOBAL_GET("application/run/low_processor_mode_sleep_usec")); // Roughly 144 FPS
 
-	GLOBAL_DEF("application/run/delta_smoothing", true);
 	if (!delta_smoothing_override) {
 		OS::get_singleton()->set_delta_smoothing(GLOBAL_GET("application/run/delta_smoothing"));
 	}
@@ -2520,7 +2514,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	OS::get_singleton()->_allow_hidpi = GLOBAL_DEF("display/window/dpi/allow_hidpi", true);
 	OS::get_singleton()->_allow_layered = GLOBAL_DEF_RST("display/window/per_pixel_transparency/allowed", false);
 
-	load_shell_env = GLOBAL_DEF("application/run/load_shell_environment", false);
+	load_shell_env = GLOBAL_GET("application/run/load_shell_environment");
 
 #ifdef TOOLS_ENABLED
 	if (editor || project_manager) {
@@ -2611,7 +2605,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 #endif
 
 	if (frame_delay == 0) {
-		frame_delay = GLOBAL_DEF(PropertyInfo(Variant::INT, "application/run/frame_delay_msec", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), 0);
+		frame_delay = GLOBAL_GET("application/run/frame_delay_msec");
 		if (Engine::get_singleton()->is_editor_hint()) {
 			frame_delay = 0;
 		}
@@ -2967,7 +2961,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 			window_position = &position;
 		}
 
-		Color boot_bg_color = GLOBAL_DEF_BASIC("application/boot_splash/bg_color", boot_splash_bg_color);
+		Color boot_bg_color = GLOBAL_GET("application/boot_splash/bg_color");
 		DisplayServer::set_early_window_clear_color_override(true, boot_bg_color);
 
 		DisplayServerEnums::Context context;
@@ -3262,10 +3256,6 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 		DisplayServer::set_early_window_clear_color_override(false);
 
-		GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/config/icon", PROPERTY_HINT_FILE, "*.png,*.hdr,*.jpg,*.jpeg,*.svg,*.exr,*.webp"), String());
-		GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/macos_native_icon", PROPERTY_HINT_FILE, "*.icns"), String());
-		GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/windows_native_icon", PROPERTY_HINT_FILE, "*.ico"), String());
-
 		MAIN_PRINT("Main: Touch Input");
 
 		Input *id = Input::get_singleton();
@@ -3524,11 +3514,11 @@ void Main::setup_boot_logo() {
 	MAIN_PRINT("Main: Load Boot Image");
 
 	{
-		const bool boot_logo_image = GLOBAL_DEF_BASIC("application/boot_splash/show_image", true);
+		const bool boot_logo_image = GLOBAL_GET("application/boot_splash/show_image");
 
-		const RSE::SplashStretchMode boot_stretch_mode = GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "application/boot_splash/stretch_mode", PROPERTY_HINT_ENUM, "Disabled,Keep,Keep Width,Keep Height,Cover,Ignore"), 1);
-		const bool boot_logo_filter = GLOBAL_DEF_BASIC("application/boot_splash/use_filter", true);
-		String boot_logo_path = GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/boot_splash/image", PROPERTY_HINT_FILE, "*.png"), String());
+		const RSE::SplashStretchMode boot_stretch_mode = GLOBAL_GET("application/boot_splash/stretch_mode");
+		const bool boot_logo_filter = GLOBAL_GET("application/boot_splash/use_filter");
+		String boot_logo_path = GLOBAL_GET("application/boot_splash/image");
 
 		// If the UID cache is missing or invalid, it could be 'normal' for the UID to not exist in memory.
 		// It's too soon to scan the project files since the ResourceFormatImporter is not loaded yet,
@@ -3562,9 +3552,6 @@ void Main::setup_boot_logo() {
 
 		Color boot_bg_color = GLOBAL_GET("application/boot_splash/bg_color");
 
-#if defined(TOOLS_ENABLED) && !defined(NO_EDITOR_SPLASH)
-		boot_bg_color = GLOBAL_DEF_BASIC("application/boot_splash/bg_color", (editor || project_manager) ? boot_splash_editor_bg_color : boot_splash_bg_color);
-#endif
 		if (boot_logo.is_valid()) {
 			RenderingServer::get_singleton()->set_boot_image_with_stretch(boot_logo, boot_bg_color, boot_stretch_mode, boot_logo_filter);
 
@@ -3756,7 +3743,7 @@ int Main::start() {
 #endif
 	}
 
-	uint64_t minimum_time_msec = GLOBAL_DEF(PropertyInfo(Variant::INT, "application/boot_splash/minimum_display_time", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:ms"), 0);
+	uint64_t minimum_time_msec = GLOBAL_GET("application/boot_splash/minimum_display_time");
 	if (Engine::get_singleton()->is_editor_hint()) {
 		minimum_time_msec = 0;
 	}
@@ -4304,26 +4291,40 @@ int Main::start() {
 #ifdef MACOS_ENABLED
 #ifndef TOOLS_ENABLED
 				if ((FileAccess::exists(OS::get_singleton()->get_bundle_resource_dir().path_join("Assets.car")) && !OS::get_singleton()->get_bundle_icon_name().is_empty()) || (!OS::get_singleton()->get_bundle_icon_path().is_empty())) {
-					has_icon = true; // Bundle has embedded icon, do not override with project icon.
+					has_icon = true; // Preserve the icon embedded in the exported bundle.
 				}
 #endif
-				String mac_icon_path = GLOBAL_GET("application/config/macos_native_icon");
-				if (DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_NATIVE_ICON) && !mac_icon_path.is_empty() && !has_icon) {
-					DisplayServer::get_singleton()->set_native_icon(mac_icon_path);
-					has_icon = true;
-				}
 #endif
 
-#ifdef WINDOWS_ENABLED
-				String win_icon_path = GLOBAL_GET("application/config/windows_native_icon");
-				if (DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_NATIVE_ICON) && !win_icon_path.is_empty()) {
-					DisplayServer::get_singleton()->set_native_icon(win_icon_path);
+				String platform_icon_path;
+				String native_icon_extension;
+#if defined(WINDOWS_ENABLED)
+				platform_icon_path = GLOBAL_GET("application/config/platform/desktop/windows_icon");
+				native_icon_extension = "ico";
+#elif defined(MACOS_ENABLED)
+				platform_icon_path = GLOBAL_GET("application/config/platform/desktop/macos_icon");
+				native_icon_extension = "icns";
+#elif defined(ANDROID_ENABLED)
+				platform_icon_path = GLOBAL_GET("application/config/platform/mobile/android_icon");
+#elif defined(IOS_ENABLED)
+				platform_icon_path = GLOBAL_GET("application/config/platform/mobile/ios_icon");
+#elif defined(LINUXBSD_ENABLED)
+				platform_icon_path = GLOBAL_GET("application/config/platform/desktop/linux_icon");
+#endif
+				platform_icon_path = ResourceUID::ensure_path(platform_icon_path);
+				if (!has_icon && !native_icon_extension.is_empty() && platform_icon_path.get_extension().to_lower() == native_icon_extension && DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_NATIVE_ICON) && FileAccess::exists(platform_icon_path)) {
+					DisplayServer::get_singleton()->set_native_icon(platform_icon_path);
 					has_icon = true;
 				}
-#endif
 
-				String icon_path = GLOBAL_GET("application/config/icon");
-				if (DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_ICON) && !icon_path.is_empty() && !has_icon) {
+				const String icon_paths[] = { platform_icon_path, ResourceUID::ensure_path(GLOBAL_GET("application/config/thumbnail")) };
+				for (const String &icon_path : icon_paths) {
+					if (has_icon || !DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_ICON)) {
+						break;
+					}
+					if (icon_path.is_empty()) {
+						continue;
+					}
 					Ref<Image> icon;
 					icon.instantiate();
 					if (ImageLoader::load_image(icon_path, icon) == OK) {

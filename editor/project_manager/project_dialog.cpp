@@ -590,7 +590,7 @@ void ProjectDialog::ok_pressed() {
 		initial_settings["application/config/features"] = project_features;
 		initial_settings["application/config/editor_version"] = GODOT_VERSION_NUMBER;
 		initial_settings["application/config/name"] = project_name->get_text().strip_edges();
-		initial_settings["application/config/icon"] = "res://icon.svg";
+		initial_settings["application/config/thumbnail"] = "res://thumbnail.svg";
 		ProjectSettings::CustomMap extra_settings = EditorNode::get_initial_settings();
 		for (const KeyValue<String, Variant> &extra_setting : extra_settings) {
 			// Merge with other initial settings defined above.
@@ -603,13 +603,13 @@ void ProjectDialog::ok_pressed() {
 			return;
 		}
 
-		// Store default project icon in SVG format.
-		Ref<FileAccess> fa_icon = FileAccess::open(path.path_join("icon.svg"), FileAccess::WRITE, &err);
+		// Store default project thumbnail in SVG format.
+		Ref<FileAccess> fa_thumbnail = FileAccess::open(path.path_join("thumbnail.svg"), FileAccess::WRITE, &err);
 		if (err != OK) {
-			_set_message(TTRC("Couldn't create icon.svg in project path."), MESSAGE_ERROR);
+			_set_message(TTRC("Couldn't create thumbnail.svg in project path."), MESSAGE_ERROR);
 			return;
 		}
-		fa_icon->store_string(get_default_project_icon());
+		fa_thumbnail->store_string(get_default_project_thumbnail());
 
 		EditorVCSInterface::create_vcs_metadata_files(EditorVCSInterface::VCSMetadata(vcs_metadata_selection->get_selected()), path);
 

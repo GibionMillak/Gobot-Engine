@@ -1757,7 +1757,7 @@ void EditorExportPlatformAndroid::_process_launcher_icons(const String &p_file_n
 }
 
 void EditorExportPlatformAndroid::load_icon_refs(const Ref<EditorExportPreset> &p_preset, Ref<Image> &icon, Ref<Image> &foreground, Ref<Image> &background, Ref<Image> &monochrome, Ref<Image> &splash_icon, Ref<Image> &splash_branding_image) {
-	String project_icon_path = get_project_setting(p_preset, "application/config/icon");
+	const String project_icon_path = get_project_icon_path(p_preset);
 
 	Error err = OK;
 
@@ -1772,7 +1772,7 @@ void EditorExportPlatformAndroid::load_icon_refs(const Ref<EditorExportPreset> &
 		if (!project_icon_path.is_empty()) {
 			icon = _load_icon_or_splash_image(project_icon_path, &err);
 		} else {
-			ERR_PRINT("No project icon specified. Please specify one in the Project Settings under Application -> Config -> Icon");
+			ERR_PRINT("No project icon specified. Please specify one in the Project Settings under Application -> Config -> Platform -> Mobile -> Android Icon or Application -> Config -> Thumbnail");
 		}
 	}
 

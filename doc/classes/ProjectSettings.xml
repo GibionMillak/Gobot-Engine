@@ -292,12 +292,6 @@
 		<member name="application/config/editor_version" type="String" setter="" getter="" default="&quot;&quot;">
 			The editor version that last saved the project settings. The editor maintains this metadata automatically. Project Manager uses it for version indicators and compatibility warnings. An empty value means the editor version is unknown; no version is inferred from [code]application/config/features[/code].
 		</member>
-		<member name="application/config/icon" type="String" setter="" getter="" default="&quot;&quot;">
-			Icon used for the project, set when project loads. Exporters will also use this icon as a fallback if necessary.
-		</member>
-		<member name="application/config/macos_native_icon" type="String" setter="" getter="" default="&quot;&quot;">
-			Icon set in [code].icns[/code] format used on macOS to set the game's icon. This is done automatically on start by calling [method DisplayServer.set_native_icon].
-		</member>
 		<member name="application/config/name" type="String" setter="" getter="" default="&quot;&quot;">
 			The project's name. It is used both by the Project Manager and by exporters. The project name can be translated by translating its value in localization files. The window title will be set to match the project name automatically on startup.
 			[b]Note:[/b] Changing this value will also change the user data folder's path if [member application/config/custom_user_directory] is empty after sanitization. After renaming the project, you will no longer be able to access existing data in [code]user://[/code] unless you rename the old folder to match the new project name. See [url=$DOCS_URL/tutorials/io/data_paths.html]Data paths[/url] in the documentation for more information.
@@ -306,12 +300,30 @@
 			Translations of the project's name. This setting is used by OS tools to translate application name on Android, iOS and macOS.
 			[b]Note:[/b] When left empty, the application name is translated using the project translations.
 		</member>
+		<member name="application/config/platform/desktop/linux_icon" type="String" setter="" getter="" default="&quot;&quot;">
+			Application icon for Linux and BSD. Export preset icons take precedence. If empty, falls back to [member application/config/thumbnail].
+		</member>
+		<member name="application/config/platform/desktop/macos_icon" type="String" setter="" getter="" default="&quot;&quot;">
+			Application icon for macOS. Export preset icons take precedence. If empty, falls back to [member application/config/thumbnail]. Native [code].icns[/code] files and PNG, WebP, and SVG images are supported.
+		</member>
+		<member name="application/config/platform/desktop/windows_icon" type="String" setter="" getter="" default="&quot;&quot;">
+			Application icon for Windows. Export preset icons take precedence. If empty, falls back to [member application/config/thumbnail]. Native [code].ico[/code] files and PNG, WebP, and SVG images are supported.
+		</member>
+		<member name="application/config/platform/mobile/android_icon" type="String" setter="" getter="" default="&quot;&quot;">
+			Application icon for Android. Export preset icons take precedence. If empty, falls back to [member application/config/thumbnail].
+		</member>
+		<member name="application/config/platform/mobile/ios_icon" type="String" setter="" getter="" default="&quot;&quot;">
+			Application icon for iOS. Export preset icons take precedence. If empty, falls back to [member application/config/thumbnail].
+		</member>
 		<member name="application/config/project_settings_override" type="String" setter="" getter="" default="&quot;&quot;">
 			Specifies a file to override project settings. For example: [code]user://custom_settings.cfg[/code]. See "Overriding" in the [ProjectSettings] class description at the top for more information.
 			[b]Note:[/b] Regardless of this setting's value, [code]res://override.cfg[/code] will still be read to override the project settings.
 		</member>
 		<member name="application/config/quit_on_go_back" type="bool" setter="" getter="" default="true">
 			If [code]true[/code], the application quits automatically when navigating back (e.g. using the system "Back" button on Android).
+		</member>
+		<member name="application/config/thumbnail" type="String" setter="" getter="" default="&quot;&quot;">
+			Project thumbnail displayed in the Project Manager. Also used as the fallback application icon when the platform icon is empty. New projects use [code]res://thumbnail.svg[/code].
 		</member>
 		<member name="application/config/use_hidden_project_data_directory" type="bool" setter="" getter="" default="true">
 			If [code]true[/code], the project will use a hidden directory ([code].godot[/code]) for storing project-specific data (metadata, shader cache, etc.).
@@ -321,9 +333,6 @@
 		</member>
 		<member name="application/config/version" type="String" setter="" getter="" default="&quot;&quot;">
 			The project's human-readable version identifier. This is used by exporters if the version identifier isn't overridden there. If [member application/config/version] is an empty string and the version identifier isn't overridden in an exporter, the exporter will use [code]1.0.0[/code] as a version identifier.
-		</member>
-		<member name="application/config/windows_native_icon" type="String" setter="" getter="" default="&quot;&quot;">
-			Icon set in [code].ico[/code] format used on Windows to set the game's icon. This is done automatically on start by calling [method DisplayServer.set_native_icon].
 		</member>
 		<member name="application/run/delta_smoothing" type="bool" setter="" getter="" default="true">
 			Time samples for frame deltas are subject to random variation introduced by the platform, even when frames are displayed at regular intervals thanks to V-Sync. This can lead to jitter. Delta smoothing can often give a better result by filtering the input deltas to correct for minor fluctuations from the refresh rate.

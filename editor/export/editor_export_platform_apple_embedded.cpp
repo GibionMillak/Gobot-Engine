@@ -2398,7 +2398,7 @@ Error EditorExportPlatformAppleEmbedded::_export_icons(const Ref<EditorExportPre
 					continue;
 				}
 				// Resize main app icon.
-				icon_path = get_project_setting(p_preset, "application/config/icon");
+				icon_path = get_project_icon_path(p_preset);
 				Error err = OK;
 				Ref<Image> img = _load_icon_or_splash_image(icon_path, &err);
 				if (err != OK || img.is_null() || img->is_empty()) {

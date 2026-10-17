@@ -1604,21 +1604,43 @@ ProjectSettings::ProjectSettings() {
 	GLOBAL_DEF(PropertyInfo(Variant::DICTIONARY, "application/config/name_localized", PROPERTY_HINT_LOCALIZABLE_STRING), Dictionary());
 	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/config/description", PROPERTY_HINT_MULTILINE_TEXT), "");
 	GLOBAL_DEF_BASIC("application/config/version", "");
+	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/config/thumbnail", PROPERTY_HINT_FILE, "*.png,*.hdr,*.jpg,*.jpeg,*.svg,*.exr,*.webp"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/desktop/windows_icon", PROPERTY_HINT_FILE, "*.ico,*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/desktop/macos_icon", PROPERTY_HINT_FILE, "*.icns,*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/desktop/linux_icon", PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/mobile/android_icon", PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/mobile/ios_icon", PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), String());
 	GLOBAL_DEF_INTERNAL(PropertyInfo(Variant::STRING, "application/config/tags"), PackedStringArray());
+	GLOBAL_DEF_RST("application/config/use_hidden_project_data_directory", true);
+	GLOBAL_DEF("application/config/custom_user_directory", "");
+	GLOBAL_DEF("application/config/project_settings_override", "");
+	GLOBAL_DEF("application/config/disable_project_settings_override", false);
+	GLOBAL_DEF("application/config/auto_accept_quit", true);
+	GLOBAL_DEF("application/config/quit_on_go_back", true);
+
+	// Flushing every print is useful for debugging but reduces release performance.
+	GLOBAL_DEF_RST("application/run/flush_stdout_on_print", false);
+	GLOBAL_DEF_RST("application/run/flush_stdout_on_print.debug", true);
+	GLOBAL_DEF(PropertyInfo(Variant::INT, "application/run/max_fps", PROPERTY_HINT_RANGE, "0,1000,1"), 0);
+	GLOBAL_DEF("application/run/low_processor_mode", false);
+	GLOBAL_DEF(PropertyInfo(Variant::INT, "application/run/low_processor_mode_sleep_usec", PROPERTY_HINT_RANGE, "0,33200,1,or_greater"), 6900);
+	GLOBAL_DEF("application/run/delta_smoothing", true);
+	GLOBAL_DEF("application/run/load_shell_environment", false);
+	GLOBAL_DEF(PropertyInfo(Variant::INT, "application/run/frame_delay_msec", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), 0);
 	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/run/main_scene", PROPERTY_HINT_FILE, "*.tscn,*.scn,*.res"), "");
 	GLOBAL_DEF("application/run/disable_stdout", false);
 	GLOBAL_DEF("application/run/disable_stderr", false);
 	GLOBAL_DEF("application/run/print_header", true);
 	GLOBAL_DEF("application/run/enable_alt_space_menu", false);
 	GLOBAL_DEF("application/run/use_game_mode", true);
-	GLOBAL_DEF_RST("application/config/use_hidden_project_data_directory", true);
-	GLOBAL_DEF("application/config/custom_user_directory", "");
-	GLOBAL_DEF("application/config/project_settings_override", "");
-	GLOBAL_DEF("application/config/disable_project_settings_override", false);
-
 	GLOBAL_DEF("application/run/main_loop_type", "SceneTree");
-	GLOBAL_DEF("application/config/auto_accept_quit", true);
-	GLOBAL_DEF("application/config/quit_on_go_back", true);
+
+	GLOBAL_DEF_BASIC("application/boot_splash/bg_color", Color(0.14, 0.14, 0.14));
+	GLOBAL_DEF_BASIC("application/boot_splash/show_image", true);
+	GLOBAL_DEF_BASIC(PropertyInfo(Variant::INT, "application/boot_splash/stretch_mode", PROPERTY_HINT_ENUM, "Disabled,Keep,Keep Width,Keep Height,Cover,Ignore"), 1);
+	GLOBAL_DEF_BASIC("application/boot_splash/use_filter", true);
+	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/boot_splash/image", PROPERTY_HINT_FILE, "*.png"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::INT, "application/boot_splash/minimum_display_time", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:ms"), 0);
 
 	// The default window size is tuned to:
 	// - Have a 16:9 aspect ratio,

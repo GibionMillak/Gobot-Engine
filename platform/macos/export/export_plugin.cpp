@@ -2317,10 +2317,8 @@ Error EditorExportPlatformMacOS::export_project(const Ref<EditorExportPreset> &p
 			String icon_path;
 			if (p_preset->get("application/icon") != "") {
 				icon_path = p_preset->get("application/icon");
-			} else if (get_project_setting(p_preset, "application/config/macos_native_icon") != "") {
-				icon_path = get_project_setting(p_preset, "application/config/macos_native_icon");
 			} else {
-				icon_path = get_project_setting(p_preset, "application/config/icon");
+				icon_path = get_project_icon_path(p_preset);
 			}
 
 			if (!icon_path.is_empty()) {

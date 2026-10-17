@@ -33,7 +33,7 @@
 			If set to [code]1[/code], ANGLE libraries are exported with the exported application. If set to [code]0[/code], ANGLE libraries are exported only if [member ProjectSettings.rendering/gl_compatibility/driver] is set to [code]"opengl3_angle"[/code].
 		</member>
 		<member name="application/icon" type="String" setter="" getter="">
-			Application icon file. If left empty, it will fall back to [member ProjectSettings.application/config/macos_native_icon], and then to [member ProjectSettings.application/config/icon].
+			Application icon file. If left empty, it will fall back to [member ProjectSettings.application/config/platform/desktop/macos_icon], then to [member ProjectSettings.application/config/thumbnail].
 		</member>
 		<member name="application/icon_interpolation" type="int" setter="" getter="">
 			Interpolation method used to resize application icon.

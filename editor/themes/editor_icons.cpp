@@ -108,7 +108,9 @@ void editor_register_icons(const Ref<Theme> &p_theme, bool p_dark_theme, float p
 
 	// The names of the icons to exclude when adjusting for saturation.
 	HashSet<StringName> saturation_exceptions;
-	saturation_exceptions.insert("DefaultProjectIcon");
+	saturation_exceptions.insert("ProjectThumbnailDefault");
+	saturation_exceptions.insert("ProjectThumbnailLoading");
+	saturation_exceptions.insert("ProjectThumbnailMissing");
 	saturation_exceptions.insert("Godot");
 	saturation_exceptions.insert("GodotFile");
 	saturation_exceptions.insert("Logo");
@@ -215,11 +217,11 @@ void editor_copy_icons(const Ref<Theme> &p_theme, const Ref<Theme> &p_old_theme)
 	}
 }
 
-// Returns the SVG code for the default project icon.
-String get_default_project_icon() {
+// Returns the SVG code for the default project thumbnail.
+String get_default_project_thumbnail() {
 	// FIXME: This icon can probably be predefined in editor_icons.gen.h so we don't have to look up.
 	for (int i = 0; i < editor_icons_count; i++) {
-		if (strcmp(editor_icons_names[i], "DefaultProjectIcon") == 0) {
+		if (strcmp(editor_icons_names[i], "ProjectThumbnailDefault") == 0) {
 			return String(editor_icons_sources[i]);
 		}
 	}
