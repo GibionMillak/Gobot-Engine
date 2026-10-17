@@ -3865,8 +3865,8 @@ void EditorInspector::initialize_section_theme(EditorInspectorSection::ThemeCach
 	p_cache.icon_gui_checked = p_control->get_editor_theme_icon(SNAME("GuiChecked"));
 	p_cache.icon_gui_unchecked = p_control->get_editor_theme_icon(SNAME("GuiUnchecked"));
 	p_cache.icon_gui_animation_key = p_control->get_editor_theme_icon(SNAME("Key"));
-	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("ActionCopy"));
-	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("ActionPaste"));
+	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("Copy"));
+	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("Paste"));
 	p_cache.icon_copy_path = p_control->get_editor_theme_icon(SNAME("CopyNodePath"));
 	p_cache.help_icon = p_control->get_editor_theme_icon(SNAME("Help"));
 
@@ -3890,8 +3890,8 @@ void EditorInspector::initialize_category_theme(EditorInspectorCategory::ThemeCa
 	p_cache.bold_font = p_control->get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
 	p_cache.bold_font_size = p_control->get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
 
-	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("ActionCopy"));
-	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("ActionPaste"));
+	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("Copy"));
+	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("Paste"));
 
 	p_cache.icon_favorites = p_control->get_editor_theme_icon(SNAME("Favorites"));
 	p_cache.icon_unfavorite = p_control->get_editor_theme_icon(SNAME("Unfavorite"));
@@ -3929,9 +3929,9 @@ void EditorInspector::initialize_property_theme(EditorProperty::ThemeCache &p_ca
 	p_cache.unchecked_icon = p_control->get_editor_theme_icon(SNAME("GuiUnchecked"));
 	p_cache.revert_icon = p_control->get_editor_theme_icon(SNAME("ReloadSmall"));
 	p_cache.pin_icon = p_control->get_editor_theme_icon(SNAME("Pin"));
-	p_cache.copy_icon = p_control->get_editor_theme_icon(SNAME("ActionCopy"));
+	p_cache.copy_icon = p_control->get_editor_theme_icon(SNAME("Copy"));
 	p_cache.copy_node_path_icon = p_control->get_editor_theme_icon(SNAME("CopyNodePath"));
-	p_cache.paste_icon = p_control->get_editor_theme_icon(SNAME("ActionPaste"));
+	p_cache.paste_icon = p_control->get_editor_theme_icon(SNAME("Paste"));
 	p_cache.unfavorite_icon = p_control->get_editor_theme_icon(SNAME("Unfavorite"));
 	p_cache.favorite_icon = p_control->get_editor_theme_icon(SNAME("Favorites"));
 	p_cache.override_icon = p_control->get_editor_theme_icon(SNAME("Override"));

@@ -711,8 +711,8 @@ void SpriteFramesEditor::_notification(int p_what) {
 
 			load->set_button_icon(get_editor_theme_icon(SNAME("Load")));
 			load_sheet->set_button_icon(get_editor_theme_icon(SNAME("SpriteSheet")));
-			copy->set_button_icon(get_editor_theme_icon(SNAME("ActionCopy")));
-			paste->set_button_icon(get_editor_theme_icon(SNAME("ActionPaste")));
+			copy->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
+			paste->set_button_icon(get_editor_theme_icon(SNAME("Paste")));
 			empty_before->set_button_icon(get_editor_theme_icon(SNAME("InsertBefore")));
 			empty_after->set_button_icon(get_editor_theme_icon(SNAME("InsertAfter")));
 			move_up->set_button_icon(get_editor_theme_icon(SNAME("MoveLeft")));
@@ -723,9 +723,9 @@ void SpriteFramesEditor::_notification(int p_what) {
 			zoom_in->set_button_icon(get_editor_theme_icon(SNAME("ZoomMore")));
 			add_anim->set_button_icon(get_editor_theme_icon(SNAME("New")));
 			duplicate_anim->set_button_icon(get_editor_theme_icon(SNAME("Duplicate")));
-			cut_anim->set_button_icon(get_editor_theme_icon(SNAME("ActionCut")));
-			copy_anim->set_button_icon(get_editor_theme_icon(SNAME("ActionCopy")));
-			paste_anim->set_button_icon(get_editor_theme_icon(SNAME("ActionPaste")));
+			cut_anim->set_button_icon(get_editor_theme_icon(SNAME("Cut")));
+			copy_anim->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
+			paste_anim->set_button_icon(get_editor_theme_icon(SNAME("Paste")));
 			delete_anim->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
 			anim_search_box->set_right_icon(get_editor_theme_icon(SNAME("Search")));
 			split_sheet_zoom_out->set_button_icon(get_editor_theme_icon(SNAME("ZoomLess")));

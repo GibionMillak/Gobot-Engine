@@ -712,7 +712,7 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 #endif
 
 	help_menu->set_item_icon(help_menu->get_item_index(HELP_SEARCH), get_editor_theme_native_menu_icon(SNAME("HelpSearch"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-	help_menu->set_item_icon(help_menu->get_item_index(HELP_COPY_SYSTEM_INFO), get_editor_theme_native_menu_icon(SNAME("ActionCopy"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
+	help_menu->set_item_icon(help_menu->get_item_index(HELP_COPY_SYSTEM_INFO), get_editor_theme_native_menu_icon(SNAME("Copy"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 #ifdef MACOS_ENABLED
 	if (menu_type != MENU_TYPE_GLOBAL) {
 		help_menu->set_item_icon(help_menu->get_item_index(HELP_ABOUT), get_editor_theme_native_menu_icon(SNAME("Godot"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
@@ -8138,7 +8138,7 @@ void EditorNode::_build_help_menu(bool p_dark_mode) {
 	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/forum"), HELP_FORUM);
 	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/community"), HELP_COMMUNITY);
 	help_menu->add_separator();
-	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("ActionCopy"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/copy_system_info"), HELP_COPY_SYSTEM_INFO);
+	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("Copy"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/copy_system_info"), HELP_COPY_SYSTEM_INFO);
 	help_menu->set_item_tooltip(-1, TTRC("Copies the system info as a single-line text into the clipboard."));
 	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/report_a_bug"), HELP_REPORT_A_BUG);
 	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/suggest_a_feature"), HELP_SUGGEST_A_FEATURE);

@@ -1374,12 +1374,12 @@ void AnimationBezierTrackEdit::gui_input(const Ref<InputEvent> &p_event) {
 				if (selected || selection.size()) {
 					menu->add_separator();
 					menu->add_icon_item(get_editor_theme_icon(SNAME("Duplicate")), TTR("Duplicate Selected Key(s)"), MENU_KEY_DUPLICATE);
-					menu->add_icon_item(get_editor_theme_icon(SNAME("ActionCut")), TTR("Cut Selected Key(s)"), MENU_KEY_CUT);
-					menu->add_icon_item(get_editor_theme_icon(SNAME("ActionCopy")), TTR("Copy Selected Key(s)"), MENU_KEY_COPY);
+					menu->add_icon_item(get_editor_theme_icon(SNAME("Cut")), TTR("Cut Selected Key(s)"), MENU_KEY_CUT);
+					menu->add_icon_item(get_editor_theme_icon(SNAME("Copy")), TTR("Copy Selected Key(s)"), MENU_KEY_COPY);
 				}
 
 				if (editor->is_key_clipboard_active()) {
-					menu->add_icon_item(get_editor_theme_icon(SNAME("ActionPaste")), TTR("Paste Key(s)"), MENU_KEY_PASTE);
+					menu->add_icon_item(get_editor_theme_icon(SNAME("Paste")), TTR("Paste Key(s)"), MENU_KEY_PASTE);
 				}
 
 				if (selected || selection.size()) {

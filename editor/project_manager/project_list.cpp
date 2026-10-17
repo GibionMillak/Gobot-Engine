@@ -1218,7 +1218,7 @@ void ProjectList::_update_menu_icons() {
 #if !defined(ANDROID_ENABLED)
 	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_SHOW_IN_FILE_MANAGER), get_editor_theme_icon("Load"));
 #endif
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_COPY_PATH), get_editor_theme_icon("ActionCopy"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_COPY_PATH), get_editor_theme_icon("Copy"));
 	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_RENAME), get_editor_theme_icon("Rename"));
 	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_MANAGE_TAGS), get_editor_theme_icon("Script"));
 	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_DUPLICATE), get_editor_theme_icon("Duplicate"));

@@ -1064,7 +1064,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_icon("favorite_down", "FileDialog", p_theme->get_icon("MoveDown", EditorStringName(EditorIcons)));
 		p_theme->set_icon("create_folder", "FileDialog", p_theme->get_icon("FolderCreate", EditorStringName(EditorIcons)));
 
-		p_theme->set_icon("menu_copy_path", "FileDialog", p_theme->get_icon("ActionCopy", EditorStringName(EditorIcons)));
+		p_theme->set_icon("menu_copy_path", "FileDialog", p_theme->get_icon("Copy", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_delete", "FileDialog", p_theme->get_icon("Remove", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_refresh", "FileDialog", p_theme->get_icon("Reload", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_new_folder", "FileDialog", p_theme->get_icon("Folder", EditorStringName(EditorIcons)));
@@ -1549,7 +1549,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_icon("picker_cursor", "ColorPicker", p_theme->get_icon(SNAME("PickerCursor"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("picker_cursor_bg", "ColorPicker", p_theme->get_icon(SNAME("PickerCursorBg"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("color_script", "ColorPicker", p_theme->get_icon(SNAME("Script"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("color_copy", "ColorPicker", p_theme->get_icon(SNAME("ActionCopy"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("color_copy", "ColorPicker", p_theme->get_icon(SNAME("Copy"), EditorStringName(EditorIcons)));
 
 		// ColorPickerButton.
 		p_theme->set_icon("bg", "ColorPickerButton", p_theme->get_icon(SNAME("GuiMiniCheckerboard"), EditorStringName(EditorIcons)));

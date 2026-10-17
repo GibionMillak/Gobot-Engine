@@ -737,7 +737,7 @@ void AnimationLibraryEditor::update_tree() {
 
 		libitem->add_button(0, get_editor_theme_icon("Add"), LIB_BUTTON_ADD, animation_library_is_foreign, TTR("Add animation to library."));
 		libitem->add_button(0, get_editor_theme_icon("Load"), LIB_BUTTON_LOAD, animation_library_is_foreign, TTR("Load animation from file and add to library."));
-		libitem->add_button(0, get_editor_theme_icon("ActionPaste"), LIB_BUTTON_PASTE, animation_library_is_foreign, TTR("Paste animation to library from clipboard."));
+		libitem->add_button(0, get_editor_theme_icon("Paste"), LIB_BUTTON_PASTE, animation_library_is_foreign, TTR("Paste animation to library from clipboard."));
 
 		libitem->add_button(1, get_editor_theme_icon("Save"), LIB_BUTTON_FILE, false, TTR("Save animation library to resource on disk."));
 		libitem->add_button(1, get_editor_theme_icon("Remove"), LIB_BUTTON_DELETE, false, TTR("Remove animation library."));
@@ -752,7 +752,7 @@ void AnimationLibraryEditor::update_tree() {
 			anitem->set_editable(0, !animation_library_is_foreign);
 			anitem->set_metadata(0, L);
 			anitem->set_icon(0, get_editor_theme_icon("Animation"));
-			anitem->add_button(0, get_editor_theme_icon("ActionCopy"), ANIM_BUTTON_COPY, animation_library_is_foreign, TTR("Copy animation to clipboard."));
+			anitem->add_button(0, get_editor_theme_icon("Copy"), ANIM_BUTTON_COPY, animation_library_is_foreign, TTR("Copy animation to clipboard."));
 
 			Ref<Animation> anim = al->get_animation(L);
 			String anim_path = anim->get_path();

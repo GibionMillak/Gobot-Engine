@@ -1544,8 +1544,8 @@ void GridMapEditor::_update_theme() {
 	paint_mode_button->set_button_icon(get_theme_icon(SNAME("Paint"), EditorStringName(EditorIcons)));
 	pick_mode_button->set_button_icon(get_theme_icon(SNAME("ColorPick"), EditorStringName(EditorIcons)));
 	fill_action_button->set_button_icon(get_theme_icon(SNAME("Bucket"), EditorStringName(EditorIcons)));
-	move_action_button->set_button_icon(get_theme_icon(SNAME("ActionCut"), EditorStringName(EditorIcons)));
-	duplicate_action_button->set_button_icon(get_theme_icon(SNAME("ActionCopy"), EditorStringName(EditorIcons)));
+	move_action_button->set_button_icon(get_theme_icon(SNAME("Cut"), EditorStringName(EditorIcons)));
+	duplicate_action_button->set_button_icon(get_theme_icon(SNAME("Copy"), EditorStringName(EditorIcons)));
 	delete_action_button->set_button_icon(get_theme_icon(SNAME("Clear"), EditorStringName(EditorIcons)));
 	rotate_x_button->set_button_icon(get_theme_icon(SNAME("RotateLeft"), EditorStringName(EditorIcons)));
 	rotate_y_button->set_button_icon(get_theme_icon(SNAME("ToolRotate"), EditorStringName(EditorIcons)));

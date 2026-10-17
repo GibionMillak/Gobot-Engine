@@ -3621,11 +3621,11 @@ void AnimationTrackEdit::_popup_key_context_menu(int p_hovering_key_idx, Vector2
 	if (editor->is_selection_active()) {
 		menu->add_separator();
 		menu->add_icon_item(get_editor_theme_icon(SNAME("Duplicate")), TTR("Duplicate Key(s)"), MENU_KEY_DUPLICATE);
-		menu->add_icon_item(get_editor_theme_icon(SNAME("ActionCut")), TTR("Cut Key(s)"), MENU_KEY_CUT);
-		menu->add_icon_item(get_editor_theme_icon(SNAME("ActionCopy")), TTR("Copy Key(s)"), MENU_KEY_COPY);
+		menu->add_icon_item(get_editor_theme_icon(SNAME("Cut")), TTR("Cut Key(s)"), MENU_KEY_CUT);
+		menu->add_icon_item(get_editor_theme_icon(SNAME("Copy")), TTR("Copy Key(s)"), MENU_KEY_COPY);
 	}
 	if (editor->is_key_clipboard_active()) {
-		menu->add_icon_item(get_editor_theme_icon(SNAME("ActionPaste")), TTR("Paste Key(s)"), MENU_KEY_PASTE);
+		menu->add_icon_item(get_editor_theme_icon(SNAME("Paste")), TTR("Paste Key(s)"), MENU_KEY_PASTE);
 	}
 	if (editor->is_selection_active()) {
 		AnimationPlayerEditor *ape = AnimationPlayerEditor::get_singleton();

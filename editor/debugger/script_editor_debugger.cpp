@@ -1115,7 +1115,7 @@ void ScriptEditorDebugger::_notification(int p_what) {
 			ignore_error_breaks->add_theme_color_override("icon_hover_color", get_theme_color(SNAME("error_color"), SNAME("Editor")));
 			ignore_error_breaks->add_theme_color_override("icon_pressed_color", get_theme_color(SNAME("error_color"), SNAME("Editor")));
 			ignore_error_breaks->add_theme_color_override("icon_focus_color", get_theme_color(SNAME("error_color"), SNAME("Editor")));
-			copy->set_button_icon(get_editor_theme_icon(SNAME("ActionCopy")));
+			copy->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
 			step->set_button_icon(get_editor_theme_icon(SNAME("DebugStep")));
 			next->set_button_icon(get_editor_theme_icon(SNAME("DebugNext")));
 			out->set_button_icon(get_editor_theme_icon(SNAME("DebugOut")));
@@ -1945,7 +1945,7 @@ void ScriptEditorDebugger::_error_tree_item_rmb_selected(const Vector2 &p_pos, M
 	item_menu->reset_size();
 
 	if (error_tree->is_anything_selected()) {
-		item_menu->add_icon_item(get_editor_theme_icon(SNAME("ActionCopy")), TTRC("Copy Error"), ACTION_COPY_ERROR);
+		item_menu->add_icon_item(get_editor_theme_icon(SNAME("Copy")), TTRC("Copy Error"), ACTION_COPY_ERROR);
 		item_menu->add_icon_item(get_editor_theme_icon(SNAME("ExternalLink")), TTRC("Open C++ Source on GitHub"), ACTION_OPEN_SOURCE);
 	}
 

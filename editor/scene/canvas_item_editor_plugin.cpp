@@ -604,7 +604,7 @@ void CanvasItemEditor::_tool_menu_requested(const Point2 &p_pos) {
 	add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("Instance")), TTRC("Instantiate Scene Here..."), ADD_INSTANCE);
 	for (Node *node : SceneTreeDock::get_singleton()->get_node_clipboard()) {
 		if (Object::cast_to<CanvasItem>(node)) {
-			add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("ActionPaste")), TTRC("Paste Node(s) Here"), ADD_PASTE);
+			add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("Paste")), TTRC("Paste Node(s) Here"), ADD_PASTE);
 			break;
 		}
 	}

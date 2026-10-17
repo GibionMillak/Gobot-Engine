@@ -69,9 +69,9 @@ void TouchActionsPanel::_notification(int p_what) {
 			delete_button->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
 			undo_button->set_button_icon(get_editor_theme_icon(SNAME("UndoRedo")));
 			redo_button->set_button_icon(get_editor_theme_icon(SNAME("Redo")));
-			cut_button->set_button_icon(get_editor_theme_icon(SNAME("ActionCut")));
-			copy_button->set_button_icon(get_editor_theme_icon(SNAME("ActionCopy")));
-			paste_button->set_button_icon(get_editor_theme_icon(SNAME("ActionPaste")));
+			cut_button->set_button_icon(get_editor_theme_icon(SNAME("Cut")));
+			copy_button->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
+			paste_button->set_button_icon(get_editor_theme_icon(SNAME("Paste")));
 			tab_button->set_button_icon(get_editor_theme_icon(SNAME("KeyboardTab")));
 		} break;
 	}

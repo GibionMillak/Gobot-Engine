@@ -3279,7 +3279,7 @@ void EditorPropertyNodePath::_notification(int p_what) {
 			menu_button->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
 			if (menu) {
 				menu->set_item_icon(ACTION_CLEAR, get_editor_theme_icon(SNAME("Clear")));
-				menu->set_item_icon(ACTION_COPY, get_editor_theme_icon(SNAME("ActionCopy")));
+				menu->set_item_icon(ACTION_COPY, get_editor_theme_icon(SNAME("Copy")));
 				menu->set_item_icon(ACTION_EDIT, get_editor_theme_icon(SNAME("Edit")));
 				menu->set_item_icon(ACTION_SELECT, get_editor_theme_icon(SNAME("ExternalLink")));
 			}

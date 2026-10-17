@@ -466,8 +466,8 @@ void InspectorDock::_notification(int p_what) {
 			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_NEW), get_editor_theme_icon(SNAME("New")));
 			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_LOAD), get_editor_theme_icon(SNAME("Load")));
 			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_SAVE), get_editor_theme_icon(SNAME("Save")));
-			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_EDIT_CLIPBOARD), get_editor_theme_icon(SNAME("ActionPaste")));
-			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_COPY), get_editor_theme_icon(SNAME("ActionCopy")));
+			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_EDIT_CLIPBOARD), get_editor_theme_icon(SNAME("Paste")));
+			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_COPY), get_editor_theme_icon(SNAME("Copy")));
 			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_SHOW_IN_FILESYSTEM), get_editor_theme_icon(SNAME("ShowInFileSystem")));
 			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(OBJECT_REQUEST_HELP), get_editor_theme_icon(SNAME("Help")));
 
