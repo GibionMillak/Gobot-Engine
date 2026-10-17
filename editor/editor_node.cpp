@@ -78,6 +78,7 @@
 #include "editor/export/register_exporters.h"
 #include "editor/file_system/dependency_editor.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/dialogs/project_autoloads_dialog.h"
 #include "editor/gui/dialogs/project_plugins_dialog.h"
 #include "editor/gui/editor_about.h"
 #include "editor/gui/editor_bottom_panel.h"
@@ -116,6 +117,8 @@
 #include "editor/inspector/editor_resource_picker.h"
 #include "editor/inspector/editor_resource_preview.h"
 #include "editor/inspector/multi_node_edit.h"
+#include "editor/managers/editor_managers.h"
+#include "editor/managers/project_autoload_manager.h"
 #include "editor/plugins/editor_plugin.h"
 #include "editor/plugins/editor_plugin_list.h"
 #include "editor/plugins/editor_resource_conversion_plugin.h"
@@ -916,6 +919,9 @@ EditorNode::EditorNode() {
 	editor_settings_dialog = memnew(EditorSettingsDialog);
 	gui_base->add_child(editor_settings_dialog);
 	editor_settings_dialog->connect("restart_requested", callable_mp(this, &EditorNode::restart_editor).bind(false));
+
+	EditorManagers *editor_managers = memnew(EditorManagers);
+	add_child(editor_managers);
 
 	_project_plugins_dialog = memnew(ProjectPluginsDialog);
 	gui_base->add_child(_project_plugins_dialog);
@@ -5521,6 +5527,7 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_PLUGINS), get_editor_theme_native_menu_icon(SNAME("Plugin"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_SETTINGS), get_editor_theme_native_menu_icon(SNAME("ClassList"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
+	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_AUTOLOADS), get_editor_theme_native_menu_icon(SNAME("Autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_EXPORT), get_editor_theme_native_menu_icon(SNAME("ResourcePreloader"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_QUIT_TO_PROJECT_MANAGER), get_editor_theme_native_menu_icon(SNAME("Close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 
@@ -6375,6 +6382,14 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 
 		case PROJECT_OPEN_PLUGINS: {
 			_project_plugins_dialog->popup_plugins();
+		} break;
+
+		case PROJECT_OPEN_AUTOLOADS: {
+			if (!_project_autoloads_dialog) {
+				_project_autoloads_dialog = memnew(ProjectAutoloadsDialog);
+				gui_base->add_child(_project_autoloads_dialog);
+			}
+			_project_autoloads_dialog->popup_autoloads();
 		} break;
 
 		case PROJECT_OPEN_SETTINGS: {
@@ -9074,7 +9089,9 @@ void EditorNode::_reload_modified_scenes() {
 }
 
 void EditorNode::_reload_project_settings() {
-	ProjectSettings::get_singleton()->setup(ProjectSettings::get_singleton()->get_resource_path(), String(), true, true);
+	const Error error = ProjectSettings::get_singleton()->setup(ProjectSettings::get_singleton()->get_resource_path(), String(), true, true);
+	ERR_FAIL_COND_MSG(error != OK, "Failed to reload project settings.");
+	EditorManagers::get_singleton()->get_project_autoload_manager()->refresh_autoloads();
 }
 
 void EditorNode::_resave_externally_modified_scenes(String p_str) {
@@ -9407,6 +9424,7 @@ void EditorNode::_build_project_menu(bool p_dark_mode) {
 	project_menu->clear(false);
 
 	project_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("ClassList"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/project_settings"), PROJECT_OPEN_SETTINGS);
+	project_menu->add_icon_item(get_editor_theme_native_menu_icon(SNAME("Autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), TTRC("Autoloads"), PROJECT_OPEN_AUTOLOADS);
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/find_in_files"), PROJECT_FIND_IN_FILES);
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/replace_in_files"), PROJECT_REPLACE_IN_FILES);
 	project_menu->add_separator();

@@ -36,7 +36,6 @@
 #include "editor/inspector/editor_sectioned_inspector.h"
 #include "editor/scene/group_settings_editor.h"
 #include "editor/settings/action_map_editor.h"
-#include "editor/settings/editor_autoload_settings.h"
 #include "editor/shader/shader_globals_editor.h"
 #include "editor/translations/localization_editor.h"
 #include "scene/gui/dialogs.h"
@@ -66,7 +65,6 @@ class ProjectSettingsEditor : public AcceptDialog {
 	SectionedInspector *general_settings_inspector = nullptr;
 	ActionMapEditor *action_map_editor = nullptr;
 	LocalizationEditor *localization_editor = nullptr;
-	EditorAutoloadSettings *autoload_settings = nullptr;
 	ShaderGlobalsEditor *shaders_global_shader_uniforms_editor = nullptr;
 	GroupSettingsEditor *group_settings = nullptr;
 
@@ -139,11 +137,9 @@ public:
 	void popup_for_override(const String &p_override);
 
 	void set_general_page(const String &p_category);
-	void init_autoloads();
 
 	void set_filter(const String &p_filter);
 
-	EditorAutoloadSettings *get_autoload_settings() { return autoload_settings; }
 	GroupSettingsEditor *get_group_settings() { return group_settings; }
 	TabContainer *get_tabs() { return tab_container; }
 	SectionedInspector *get_inspector() { return general_settings_inspector; }

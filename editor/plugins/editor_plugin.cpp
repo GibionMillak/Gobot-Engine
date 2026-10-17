@@ -51,6 +51,8 @@
 #include "editor/import/3d/resource_importer_scene.h"
 #include "editor/import/editor_import_plugin.h"
 #include "editor/inspector/editor_inspector.h"
+#include "editor/managers/editor_managers.h"
+#include "editor/managers/project_autoload_manager.h"
 #include "editor/plugins/editor_plugin_list.h"
 #include "editor/plugins/editor_resource_conversion_plugin.h"
 #include "editor/scene/3d/node_3d_editor_plugin.h"
@@ -71,18 +73,19 @@ void EditorPlugin::remove_custom_type(const String &p_type) {
 }
 
 void EditorPlugin::add_autoload_singleton(const String &p_name, const String &p_path) {
-	if (p_path.begins_with("res://")) {
-		EditorNode::get_singleton()->get_project_settings()->get_autoload_settings()->autoload_add(p_name, p_path, false);
-	} else {
+	String path = p_path;
+	if (!path.begins_with("res://")) {
 		const Ref<Script> plugin_script = static_cast<Ref<Script>>(get_script());
 		ERR_FAIL_COND(plugin_script.is_null());
-		const String script_base_path = plugin_script->get_path().get_base_dir();
-		EditorNode::get_singleton()->get_project_settings()->get_autoload_settings()->autoload_add(p_name, script_base_path.path_join(p_path), false);
+		path = plugin_script->get_path().get_base_dir().path_join(p_path);
 	}
+	String error;
+	const bool added = EditorManagers::get_singleton()->get_project_autoload_manager()->add_autoload(p_name, path, false, &error);
+	ERR_FAIL_COND_MSG(!added, error);
 }
 
 void EditorPlugin::remove_autoload_singleton(const String &p_name) {
-	EditorNode::get_singleton()->get_project_settings()->get_autoload_settings()->autoload_remove(p_name);
+	EditorManagers::get_singleton()->get_project_autoload_manager()->remove_autoload(p_name, false);
 }
 
 void EditorPlugin::add_dock(EditorDock *p_dock) {

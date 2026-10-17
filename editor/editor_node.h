@@ -103,6 +103,7 @@ class FileSystemDock;
 class HistoryDock;
 class OrphanResourcesDialog;
 class ProgressDialog;
+class ProjectAutoloadsDialog;
 class ProjectExportDialog;
 class ProjectPluginsDialog;
 class ProjectSettingsEditor;
@@ -170,6 +171,7 @@ public:
 
 		// Project menu.
 		PROJECT_OPEN_SETTINGS,
+		PROJECT_OPEN_AUTOLOADS,
 		PROJECT_OPEN_PLUGINS,
 		PROJECT_FIND_IN_FILES,
 		PROJECT_REPLACE_IN_FILES,
@@ -828,6 +830,7 @@ private:
 	HistoryDock *history_dock = nullptr;
 
 	ProjectExportDialog *project_export = nullptr;
+	ProjectAutoloadsDialog *_project_autoloads_dialog = nullptr;
 	ProjectPluginsDialog *_project_plugins_dialog = nullptr;
 	ProjectSettingsEditor *project_settings_editor = nullptr;
 

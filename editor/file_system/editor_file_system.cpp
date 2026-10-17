@@ -45,9 +45,10 @@
 #include "editor/editor_node.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/inspector/editor_resource_preview.h"
+#include "editor/managers/editor_managers.h"
+#include "editor/managers/project_autoload_manager.h"
 #include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
-#include "editor/settings/project_settings_editor.h"
 #include "scene/main/scene_tree.h"
 #include "scene/resources/packed_scene.h"
 #include "servers/display/display_server.h"
@@ -336,7 +337,7 @@ void EditorFileSystem::_first_scan_filesystem() {
 	// This is done after loading the global class names because autoloads and plugins can use
 	// global class names.
 	ep.step(TTR("Creating autoload scripts..."), 2, true);
-	ProjectSettingsEditor::get_singleton()->init_autoloads();
+	EditorManagers::get_singleton()->get_project_autoload_manager()->init_autoloads();
 
 	ep.step(TTR("Initializing plugins..."), 3, true);
 	EditorNode::get_singleton()->init_plugins();

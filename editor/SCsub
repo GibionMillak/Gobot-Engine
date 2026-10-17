@@ -79,6 +79,7 @@ if env.editor_build:
     SConscript("icons/SCsub")
     SConscript("inspector/SCsub")
     SConscript("import/SCsub")
+    SConscript("managers/SCsub")
     SConscript("plugins/SCsub")
     SConscript("project_manager/SCsub")
     SConscript("run/SCsub")

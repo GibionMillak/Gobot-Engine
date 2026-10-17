@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_autoload_settings.h                                            */
+/*  project_autoloads_dialog.h                                            */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,70 +30,47 @@
 
 #pragma once
 
-#include "scene/gui/box_container.h"
+#include "scene/gui/dialogs.h"
 
 class Button;
-class ConfirmationDialog;
+class Control;
 class EditorValidationPanel;
 class FileDialog;
 class LineEdit;
+class ProjectAutoloadManager;
 class SceneCreateDialog;
+class Script;
 class ScriptCreateDialog;
 class Tree;
 
-class EditorAutoloadSettings : public VBoxContainer {
-	GDCLASS(EditorAutoloadSettings, VBoxContainer);
+class ProjectAutoloadsDialog : public AcceptDialog {
+	GDCLASS(ProjectAutoloadsDialog, AcceptDialog);
 
-	enum {
-		BUTTON_MOVE_UP,
-		BUTTON_MOVE_DOWN,
-		BUTTON_DELETE,
+public:
+	ProjectAutoloadsDialog();
+
+	void popup_autoloads();
+
+protected:
+	void _notification(int p_what);
+
+private:
+	enum ButtonId {
+		MOVE_UP,
+		MOVE_DOWN,
+		DELETE,
 	};
 
-	String path = "res://";
-	const StringName autoload_changed = "autoload_changed";
-	String pending_autoload_path;
+	static constexpr int PREVIEW_LIST_MAX_SIZE = 10;
 
-	struct AutoloadInfo {
-		String name;
-		String path;
-		bool is_singleton = false;
-		bool in_editor = false;
-		int order = 0;
-		Node *node = nullptr;
-
-		bool operator==(const AutoloadInfo &p_info) const {
-			return order == p_info.order;
-		}
-	};
-
-	List<AutoloadInfo> autoload_cache;
-
-	bool updating_autoload = false;
-	String selected_autoload;
-
-	Tree *tree = nullptr;
-	Button *browse_button = nullptr;
-	Button *create_script_autoload = nullptr;
-	Button *create_scene_autoload = nullptr;
-	FileDialog *autoload_file_dialog = nullptr;
-	FileDialog *scene_file_dialog = nullptr;
-	ScriptCreateDialog *script_create_dialog = nullptr;
-	SceneCreateDialog *scene_create_dialog = nullptr;
-
-	ConfirmationDialog *name_dialog = nullptr;
-	LineEdit *name_edit = nullptr;
-	EditorValidationPanel *name_validator = nullptr;
-
-	bool _autoload_name_is_valid(const String &p_name, String *r_error = nullptr);
 	void _validate_autoload_name();
 
+	void _refresh_tree();
 	void _autoload_selected();
 	void _autoload_edited();
 	void _autoload_button_pressed(Object *p_item, int p_column, int p_button, MouseButton p_mouse_button);
 	void _autoload_activated();
-	void _autoload_open(const String &fpath);
-	Node *_create_autoload(const String &p_path);
+	void _autoload_open(const String &p_path);
 
 	void _create_script_autoload();
 	void _create_scene_autoload();
@@ -106,20 +83,25 @@ class EditorAutoloadSettings : public VBoxContainer {
 	void _try_add_autoload(const String &p_name, const String &p_path);
 	void _confirm_autoload_name();
 
-	Variant get_drag_data_fw(const Point2 &p_point, Control *p_control);
-	bool can_drop_data_fw(const Point2 &p_point, const Variant &p_data, Control *p_control) const;
-	void drop_data_fw(const Point2 &p_point, const Variant &p_data, Control *p_control);
+	Variant _get_drag_data_fw(const Point2 &p_point, Control *p_control);
+	bool _can_drop_data_fw(const Point2 &p_point, const Variant &p_data, Control *p_control) const;
+	void _drop_data_fw(const Point2 &p_point, const Variant &p_data, Control *p_control);
 
-protected:
-	void _notification(int p_what);
-	static void _bind_methods();
+	// Owned by EditorManagers for the editor session.
+	ProjectAutoloadManager *_manager = nullptr;
+	String _pending_autoload_path;
+	String _selected_autoload;
+	bool _updating_tree = false;
 
-public:
-	void init_autoloads();
-	void update_autoload();
-	bool autoload_add(const String &p_name, const String &p_path, bool p_use_undo);
-	void autoload_remove(const StringName &p_name);
-
-	EditorAutoloadSettings();
-	~EditorAutoloadSettings();
+	Tree *_tree = nullptr;
+	Button *_browse_btn = nullptr;
+	Button *_create_script_autoload_btn = nullptr;
+	Button *_create_scene_autoload_btn = nullptr;
+	FileDialog *_autoload_file_dialog = nullptr;
+	FileDialog *_scene_file_dialog = nullptr;
+	ScriptCreateDialog *_script_create_dialog = nullptr;
+	SceneCreateDialog *_scene_create_dialog = nullptr;
+	ConfirmationDialog *_name_dialog = nullptr;
+	LineEdit *_name_edit = nullptr;
+	EditorValidationPanel *_name_validator = nullptr;
 };

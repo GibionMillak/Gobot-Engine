@@ -73,7 +73,6 @@ void ProjectSettingsEditor::popup_project_settings(bool p_clear_filter) {
 	set_process_shortcut_input(true);
 
 	localization_editor->update_translations();
-	autoload_settings->update_autoload();
 	group_settings->update_groups();
 	import_defaults_editor->clear();
 
@@ -113,10 +112,6 @@ void ProjectSettingsEditor::_save() {
 void ProjectSettingsEditor::set_general_page(const String &p_category) {
 	tab_container->set_current_tab(tab_container->get_tab_idx_from_control(general_editor));
 	general_settings_inspector->set_current_section(p_category);
-}
-
-void ProjectSettingsEditor::init_autoloads() {
-	autoload_settings->init_autoloads();
 }
 
 void ProjectSettingsEditor::_setting_edited(const String &p_name) {
@@ -824,11 +819,6 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	globals_container->set_theme_type_variation("TabContainerInner");
 	globals_container->set_name(TTRC("Globals"));
 	tab_container->add_child(globals_container);
-
-	autoload_settings = memnew(EditorAutoloadSettings);
-	autoload_settings->set_name(TTRC("Autoload"));
-	autoload_settings->connect("autoload_changed", callable_mp(this, &ProjectSettingsEditor::queue_save));
-	globals_container->add_child(autoload_settings);
 
 	shaders_global_shader_uniforms_editor = memnew(ShaderGlobalsEditor);
 	shaders_global_shader_uniforms_editor->set_name(TTRC("Shader Globals"));
