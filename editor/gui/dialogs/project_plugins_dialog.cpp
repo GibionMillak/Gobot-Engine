@@ -31,14 +31,11 @@
 #include "project_plugins_dialog.h"
 
 #include "core/config/engine.h"
-#include "core/config/project_settings.h"
-#include "core/io/config_file.h"
-#include "core/io/dir_access.h"
-#include "core/io/file_access.h"
 #include "core/object/callable_mp.h"
-#include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/dialogs/config_plugin_dialog.h"
+#include "editor/managers/editor_managers.h"
+#include "editor/managers/project_plugin_manager.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
@@ -49,11 +46,11 @@
 #include "servers/text/text_server.h"
 
 ProjectPluginsDialog::ProjectPluginsDialog() {
+	_manager = EditorManagers::get_singleton()->get_project_plugin_manager();
+
 	set_flag(Window::FLAG_RESIZE_DISABLED, false);
 	set_ok_button_text(TTRC("Close"));
 	set_title(TTRC("Project Plugins"));
-
-	ProjectSettings::get_singleton()->add_hidden_prefix("editor_plugins/");
 
 	_config_plugin_dialog = memnew(ConfigPluginDialog);
 	_config_plugin_dialog->connect("plugin_saved", callable_mp(this, &ProjectPluginsDialog::update_plugins));
@@ -123,6 +120,8 @@ ProjectPluginsDialog::ProjectPluginsDialog() {
 		_plugin_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 		content_vbox->add_child(_plugin_list);
 	}
+
+	_manager->connect("plugins_changed", callable_mp(this, &ProjectPluginsDialog::update_plugins), CONNECT_DEFERRED);
 }
 
 void ProjectPluginsDialog::popup_plugins() {
@@ -131,75 +130,40 @@ void ProjectPluginsDialog::popup_plugins() {
 }
 
 void ProjectPluginsDialog::update_plugins() {
-	_plugin_list->clear();
 	_updating = true;
+	_plugin_list->clear();
 	TreeItem *root = _plugin_list->create_item();
-
-	Vector<String> plugins = _get_plugins("res://addons");
-	plugins.sort();
-
-	for (int i = 0; i < plugins.size(); i++) {
-		Ref<ConfigFile> cfg;
-		cfg.instantiate();
-		const String &path = plugins[i];
-
-		Error err = cfg->load(path);
-
-		if (err != OK) {
-			WARN_PRINT("Can't load plugin config at: " + path);
-		} else {
-			Vector<String> missing_keys;
-			for (const String required_key : { "name", "author", "version", "description", "script" }) {
-				if (!cfg->has_section_key("plugin", required_key)) {
-					missing_keys.append("\"plugin/" + required_key + "\"");
-				}
-			}
-
-			if (!missing_keys.is_empty()) {
-				WARN_PRINT(vformat("Plugin config at \"%s\" is missing the following keys: %s", path, String(",").join(missing_keys)));
-			} else {
-				String name = cfg->get_value("plugin", "name");
-				String author = cfg->get_value("plugin", "author");
-				String version = cfg->get_value("plugin", "version");
-				String description = cfg->get_value("plugin", "description");
-				String scr = cfg->get_value("plugin", "script");
-
-				bool is_enabled = EditorNode::get_singleton()->is_addon_plugin_enabled(path);
-				Color disabled_color = get_theme_color(SNAME("font_disabled_color"), EditorStringName(Editor));
-
-				const PackedInt32Array boundaries = TS->string_get_word_breaks(description, "", 80);
-				String wrapped_description;
-
-				for (int j = 0; j < boundaries.size(); j += 2) {
-					const int start = boundaries[j];
-					const int end = boundaries[j + 1];
-					wrapped_description += "\n" + description.substr(start, end - start).rstrip("\n");
-				}
-
-				TreeItem *item = _plugin_list->create_item(root);
-				item->set_text(NAME, name);
-				item->set_auto_translate_mode(NAME, AUTO_TRANSLATE_MODE_DISABLED);
-				if (!is_enabled) {
-					item->set_custom_color(NAME, disabled_color);
-				}
-				item->set_tooltip_text(NAME, vformat(TTR("Name: %s\nPath: %s\nMain Script: %s\n\n%s"), name, path, scr, wrapped_description));
-				item->set_metadata(NAME, path);
-				item->set_text(VERSION, version);
-				item->set_auto_translate_mode(VERSION, AUTO_TRANSLATE_MODE_DISABLED);
-				item->set_custom_font(VERSION, get_theme_font("source", EditorStringName(EditorFonts)));
-				item->set_metadata(VERSION, scr);
-				item->set_text(AUTHOR, author);
-				item->set_auto_translate_mode(AUTHOR, AUTO_TRANSLATE_MODE_DISABLED);
-				item->set_metadata(AUTHOR, description);
-				item->set_cell_mode(STATUS, TreeItem::CELL_MODE_CHECK);
-				item->set_text(STATUS, TTRC("On"));
-				item->set_checked(STATUS, is_enabled);
-				item->set_editable(STATUS, true);
-				item->add_button(EDIT, get_editor_theme_icon(SNAME("Edit")), EDIT_PLUGIN, false, TTRC("Edit Plugin"));
-			}
+	const Color disabled_color = get_theme_color(SNAME("font_disabled_color"), EditorStringName(Editor));
+	for (const ProjectPluginManager::PluginEntry &entry : _manager->get_plugins()) {
+		const PackedInt32Array boundaries = TS->string_get_word_breaks(entry.description, "", 80);
+		String wrapped_description;
+		for (int i = 0; i < boundaries.size(); i += 2) {
+			const int start = boundaries[i];
+			const int end = boundaries[i + 1];
+			wrapped_description += "\n" + entry.description.substr(start, end - start).rstrip("\n");
 		}
-	}
 
+		TreeItem *item = _plugin_list->create_item(root);
+		item->set_text(NAME, entry.name);
+		item->set_auto_translate_mode(NAME, AUTO_TRANSLATE_MODE_DISABLED);
+		if (!entry.enabled) {
+			item->set_custom_color(NAME, disabled_color);
+		}
+		item->set_tooltip_text(NAME, vformat(TTR("Name: %s\nPath: %s\nMain Script: %s\n\n%s"), entry.name, entry.config_path, entry.script, wrapped_description));
+		item->set_metadata(NAME, entry.config_path);
+		item->set_text(VERSION, entry.version);
+		item->set_auto_translate_mode(VERSION, AUTO_TRANSLATE_MODE_DISABLED);
+		item->set_custom_font(VERSION, get_theme_font("source", EditorStringName(EditorFonts)));
+		item->set_metadata(VERSION, entry.script);
+		item->set_text(AUTHOR, entry.author);
+		item->set_auto_translate_mode(AUTHOR, AUTO_TRANSLATE_MODE_DISABLED);
+		item->set_metadata(AUTHOR, entry.description);
+		item->set_cell_mode(STATUS, TreeItem::CELL_MODE_CHECK);
+		item->set_text(STATUS, TTRC("On"));
+		item->set_checked(STATUS, entry.enabled);
+		item->set_editable(STATUS, true);
+		item->add_button(EDIT, get_editor_theme_icon(SNAME("Edit")), EDIT_PLUGIN, false, TTRC("Edit Plugin"));
+	}
 	_updating = false;
 }
 
@@ -237,9 +201,9 @@ void ProjectPluginsDialog::_plugin_activity_changed() {
 	bool checked = ti->is_checked(STATUS);
 	String name = ti->get_metadata(NAME);
 
-	EditorNode::get_singleton()->set_addon_plugin_enabled(name, checked, true);
+	_manager->set_plugin_enabled(name, checked, true);
 
-	bool is_enabled = EditorNode::get_singleton()->is_addon_plugin_enabled(name);
+	bool is_enabled = _manager->is_plugin_enabled(name);
 
 	if (is_enabled != checked) {
 		_updating = true;
@@ -271,31 +235,4 @@ void ProjectPluginsDialog::_cell_button_pressed(Object *p_item, int p_column, in
 			_config_plugin_dialog->popup_edit(dir);
 		}
 	}
-}
-
-Vector<String> ProjectPluginsDialog::_get_plugins(const String &p_dir) {
-	Ref<DirAccess> da = DirAccess::create(DirAccess::ACCESS_RESOURCES);
-	Error err = da->change_dir(p_dir);
-	if (err != OK) {
-		return Vector<String>();
-	}
-
-	Vector<String> plugins;
-	da->list_dir_begin();
-	for (String path = da->get_next(); !path.is_empty(); path = da->get_next()) {
-		if (path[0] == '.' || !da->current_is_dir()) {
-			continue;
-		}
-
-		const String full_path = p_dir.path_join(path);
-		const String plugin_config = full_path.path_join("plugin.cfg");
-		if (FileAccess::exists(plugin_config)) {
-			plugins.push_back(plugin_config);
-		} else {
-			plugins.append_array(_get_plugins(full_path));
-		}
-	}
-
-	da->list_dir_end();
-	return plugins;
 }

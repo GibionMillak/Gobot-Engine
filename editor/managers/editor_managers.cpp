@@ -32,6 +32,7 @@
 
 #include "core/error/error_macros.h"
 #include "editor/managers/project_autoload_manager.h"
+#include "editor/managers/project_plugin_manager.h"
 
 EditorManagers::EditorManagers() {
 	ERR_FAIL_COND_MSG(_singleton != nullptr, "EditorManagers already exists.");
@@ -39,6 +40,9 @@ EditorManagers::EditorManagers() {
 
 	_project_autoload_manager = memnew(ProjectAutoloadManager);
 	add_child(_project_autoload_manager);
+
+	_project_plugin_manager = memnew(ProjectPluginManager);
+	add_child(_project_plugin_manager);
 }
 
 EditorManagers::~EditorManagers() {
@@ -53,4 +57,8 @@ EditorManagers *EditorManagers::get_singleton() {
 
 ProjectAutoloadManager *EditorManagers::get_project_autoload_manager() const {
 	return _project_autoload_manager;
+}
+
+ProjectPluginManager *EditorManagers::get_project_plugin_manager() const {
+	return _project_plugin_manager;
 }

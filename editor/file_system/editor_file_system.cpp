@@ -47,6 +47,7 @@
 #include "editor/inspector/editor_resource_preview.h"
 #include "editor/managers/editor_managers.h"
 #include "editor/managers/project_autoload_manager.h"
+#include "editor/managers/project_plugin_manager.h"
 #include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/main/scene_tree.h"
@@ -340,7 +341,7 @@ void EditorFileSystem::_first_scan_filesystem() {
 	EditorManagers::get_singleton()->get_project_autoload_manager()->init_autoloads();
 
 	ep.step(TTR("Initializing plugins..."), 3, true);
-	EditorNode::get_singleton()->init_plugins();
+	EditorManagers::get_singleton()->get_project_plugin_manager()->init_plugins();
 
 	ep.step(TTR("Starting file scan..."), 4, true);
 }

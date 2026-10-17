@@ -81,6 +81,7 @@
 #include "editor/inspector/tool_button_editor_plugin.h"
 #include "editor/managers/editor_managers.h"
 #include "editor/managers/project_autoload_manager.h"
+#include "editor/managers/project_plugin_manager.h"
 #include "editor/scene/2d/camera_2d_editor_plugin.h"
 #include "editor/scene/2d/light_occluder_2d_editor_plugin.h"
 #include "editor/scene/2d/line_2d_editor_plugin.h"
@@ -159,6 +160,7 @@ void register_editor_types() {
 	GDREGISTER_CLASS(EditorFileDialog);
 	GDREGISTER_INTERNAL_CLASS(EditorManagers);
 	GDREGISTER_INTERNAL_CLASS(ProjectAutoloadManager);
+	GDREGISTER_INTERNAL_CLASS(ProjectPluginManager);
 	GDREGISTER_VIRTUAL_CLASS(EditorSettings);
 	GDREGISTER_ABSTRACT_CLASS(EditorToaster);
 	GDREGISTER_ABSTRACT_CLASS(EditorResourcePreview);

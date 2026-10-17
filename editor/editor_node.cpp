@@ -119,6 +119,7 @@
 #include "editor/inspector/multi_node_edit.h"
 #include "editor/managers/editor_managers.h"
 #include "editor/managers/project_autoload_manager.h"
+#include "editor/managers/project_plugin_manager.h"
 #include "editor/plugins/editor_plugin.h"
 #include "editor/plugins/editor_plugin_list.h"
 #include "editor/plugins/editor_resource_conversion_plugin.h"
@@ -923,8 +924,7 @@ EditorNode::EditorNode() {
 	EditorManagers *editor_managers = memnew(EditorManagers);
 	add_child(editor_managers);
 
-	_project_plugins_dialog = memnew(ProjectPluginsDialog);
-	gui_base->add_child(_project_plugins_dialog);
+	EditorManagers::get_singleton()->get_project_plugin_manager()->connect("plugin_load_failed", callable_mp(this, &EditorNode::show_warning).bind(TTRC("Warning!")));
 
 	project_settings_editor = memnew(ProjectSettingsEditor(&editor_data));
 	gui_base->add_child(project_settings_editor);
@@ -1698,23 +1698,6 @@ EditorNode::~EditorNode() {
 	singleton = nullptr;
 }
 
-void EditorNode::init_plugins() {
-	_initializing_plugins = true;
-	Vector<String> addons;
-	if (ProjectSettings::get_singleton()->has_setting("editor_plugins/enabled")) {
-		addons = GLOBAL_GET("editor_plugins/enabled");
-	}
-
-	for (const String &addon : addons) {
-		set_addon_plugin_enabled(addon, true);
-	}
-	_initializing_plugins = false;
-
-	if (!pending_addons.is_empty()) {
-		EditorFileSystem::get_singleton()->connect("script_classes_updated", callable_mp(this, &EditorNode::_enable_pending_addons), CONNECT_ONE_SHOT);
-	}
-}
-
 bool EditorNode::call_build() {
 	const bool builds_successful = editor_data.call_build();
 
@@ -2184,111 +2167,6 @@ void EditorNode::update_distraction_free_button_theme() {
 
 void EditorNode::set_center_split_offset(int p_offset) {
 	center_split->set_split_offset(p_offset);
-}
-
-void EditorNode::set_addon_plugin_enabled(const String &p_addon, bool p_enabled, bool p_config_changed) {
-	String addon_path = p_addon;
-
-	if (!addon_path.begins_with("res://")) {
-		addon_path = "res://addons/" + addon_path + "/plugin.cfg";
-	}
-
-	ERR_FAIL_COND(p_enabled && addon_name_to_plugin.has(addon_path));
-	ERR_FAIL_COND(!p_enabled && !addon_name_to_plugin.has(addon_path));
-
-	if (!p_enabled) {
-		EditorPlugin *addon = addon_name_to_plugin[addon_path];
-		remove_editor_plugin(addon, p_config_changed);
-		memdelete(addon);
-		addon_name_to_plugin.erase(addon_path);
-		_update_addon_config();
-		return;
-	}
-
-	Ref<ConfigFile> cf;
-	cf.instantiate();
-	if (!DirAccess::exists(addon_path.get_base_dir())) {
-		_remove_plugin_from_enabled(addon_path);
-		WARN_PRINT("Addon '" + addon_path + "' failed to load. No directory found. Removing from enabled plugins.");
-		return;
-	}
-	Error err = cf->load(addon_path);
-	if (err != OK) {
-		show_warning(vformat(TTR("Unable to enable addon plugin at: '%s' parsing of config failed."), addon_path));
-		return;
-	}
-
-	String plugin_version;
-	if (cf->has_section_key("plugin", "version")) {
-		plugin_version = cf->get_value("plugin", "version");
-	}
-
-	if (!cf->has_section_key("plugin", "script")) {
-		show_warning(vformat(TTR("Unable to find script field for addon plugin at: '%s'."), addon_path));
-		return;
-	}
-
-	String script_path = cf->get_value("plugin", "script");
-	Ref<Script> scr; // We need to save it for creating "ep" below.
-
-	// Only try to load the script if it has a name. Else, the plugin has no init script.
-	EditorPlugin *ep = nullptr;
-	if (script_path.length() > 0) {
-		script_path = addon_path.get_base_dir().path_join(script_path);
-		// We should not use the cached version on startup to prevent a script reload
-		// if it is already loaded and potentially running from autoloads. See GH-100750.
-		scr = ResourceLoader::load(script_path, "Script", EditorFileSystem::get_singleton()->doing_first_scan() ? ResourceFormatLoader::CACHE_MODE_REUSE : ResourceFormatLoader::CACHE_MODE_IGNORE);
-
-		if (scr.is_null()) {
-			show_warning(vformat(TTR("Unable to load addon script from path: '%s'."), script_path));
-			return;
-		}
-
-		// Errors in the script cause the base_type to be an empty StringName.
-		if (scr->get_instance_base_type() == StringName()) {
-			if (_initializing_plugins) {
-				// However, if it happens during initialization, waiting for file scan might help.
-				pending_addons.push_back(p_addon);
-				return;
-			}
-
-			show_warning(vformat(TTR("Unable to load addon script from path: '%s'. This might be due to a code error in that script.\nDisabling the addon at '%s' to prevent further errors."), script_path, addon_path));
-			_remove_plugin_from_enabled(addon_path);
-			return;
-		}
-
-		// Plugin init scripts must inherit from EditorPlugin and be tools.
-		if (!ClassDB::is_parent_class(scr->get_instance_base_type(), "EditorPlugin")) {
-			show_warning(vformat(TTR("Unable to load addon script from path: '%s'. Base type is not 'EditorPlugin'."), script_path));
-			return;
-		}
-
-		if (!scr->is_tool()) {
-			show_warning(vformat(TTR("Unable to load addon script from path: '%s'. Script is not in tool mode."), script_path));
-			return;
-		}
-
-		Object *obj = ClassDB::instantiate(scr->get_instance_base_type());
-		ep = Object::cast_to<EditorPlugin>(obj);
-		ERR_FAIL_NULL(ep);
-		ep->set_script(scr);
-	} else {
-		ep = memnew(EditorPlugin);
-	}
-
-	ep->set_plugin_version(plugin_version);
-	addon_name_to_plugin[addon_path] = ep;
-	add_editor_plugin(ep, p_config_changed);
-
-	_update_addon_config();
-}
-
-bool EditorNode::is_addon_plugin_enabled(const String &p_addon) const {
-	if (p_addon.begins_with("res://")) {
-		return addon_name_to_plugin.has(p_addon);
-	}
-
-	return addon_name_to_plugin.has("res://addons/" + p_addon + "/plugin.cfg");
 }
 
 void EditorNode::edit_node(Node *p_node) {
@@ -4610,16 +4488,6 @@ void EditorNode::restart_editor(bool p_goto_project_manager) {
 	_menu_option_confirm(p_goto_project_manager ? PROJECT_QUIT_TO_PROJECT_MANAGER : PROJECT_RELOAD_CURRENT_PROJECT, false);
 }
 
-void EditorNode::unload_editor_addons() {
-	for (const KeyValue<String, EditorPlugin *> &E : addon_name_to_plugin) {
-		print_verbose(vformat("Unloading addon: %s", E.key));
-		remove_editor_plugin(E.value, false);
-		memdelete(E.value);
-	}
-
-	addon_name_to_plugin.clear();
-}
-
 void EditorNode::open_setting_override(const String &p_property) {
 	editor_settings_dialog->hide();
 	project_settings_editor->popup_for_override(p_property);
@@ -5637,13 +5505,6 @@ void EditorNode::_build_icon_type_cache() {
 	}
 }
 
-void EditorNode::_enable_pending_addons() {
-	for (uint32_t i = 0; i < pending_addons.size(); i++) {
-		set_addon_plugin_enabled(pending_addons[i], true);
-	}
-	pending_addons.clear();
-}
-
 void EditorNode::_dialog_action(String p_file) {
 	switch (current_menu_option) {
 		case SCENE_NEW_INHERITED_SCENE: {
@@ -6381,6 +6242,10 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 		} break;
 
 		case PROJECT_OPEN_PLUGINS: {
+			if (!_project_plugins_dialog) {
+				_project_plugins_dialog = memnew(ProjectPluginsDialog);
+				gui_base->add_child(_project_plugins_dialog);
+			}
 			_project_plugins_dialog->popup_plugins();
 		} break;
 
@@ -6912,18 +6777,6 @@ void EditorNode::_palette_quick_open_dialog() {
 
 void EditorNode::_clear_cache_confirmed() {
 	_menu_option_confirm(TOOLS_CLEAR_PROJECT_CACHE, false);
-}
-
-void EditorNode::_remove_plugin_from_enabled(const String &p_name) {
-	ProjectSettings *ps = ProjectSettings::get_singleton();
-	PackedStringArray enabled_plugins = ps->get("editor_plugins/enabled");
-	for (int i = 0; i < enabled_plugins.size(); ++i) {
-		if (enabled_plugins.get(i) == p_name) {
-			enabled_plugins.remove_at(i);
-			break;
-		}
-	}
-	ps->set("editor_plugins/enabled", enabled_plugins);
 }
 
 void EditorNode::_plugin_over_edit(EditorPlugin *p_plugin, Object *p_object, bool p_set_current) {
@@ -8172,7 +8025,7 @@ void EditorNode::_exit_editor(int p_exit_code) {
 	dim_editor(true);
 
 	// Unload addons before quitting to allow cleanup.
-	unload_editor_addons();
+	EditorManagers::get_singleton()->get_project_plugin_manager()->unload_plugins();
 
 	if (!files_to_delete_on_exit.is_empty()) {
 		Ref<DirAccess> da = DirAccess::create(DirAccess::ACCESS_RESOURCES);
@@ -8895,27 +8748,6 @@ void EditorNode::_layout_menu_option(int p_id) {
 			}
 		}
 	}
-}
-
-void EditorNode::_update_addon_config() {
-	if (_initializing_plugins) {
-		return;
-	}
-
-	Vector<String> enabled_addons;
-
-	for (const KeyValue<String, EditorPlugin *> &E : addon_name_to_plugin) {
-		enabled_addons.push_back(E.key);
-	}
-
-	if (enabled_addons.is_empty()) {
-		ProjectSettings::get_singleton()->set("editor_plugins/enabled", Variant());
-	} else {
-		enabled_addons.sort();
-		ProjectSettings::get_singleton()->set("editor_plugins/enabled", enabled_addons);
-	}
-
-	project_settings_editor->queue_save();
 }
 
 void EditorNode::_toggle_distraction_free_mode() {

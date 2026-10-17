@@ -118,6 +118,8 @@
 #include "editor/file_system/editor_file_system.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/gui/progress_dialog.h"
+#include "editor/managers/editor_managers.h"
+#include "editor/managers/project_plugin_manager.h"
 #include "editor/project_manager/project_manager.h"
 #include "editor/register_editor_types.h"
 #include "editor/settings/editor_settings.h"
@@ -4706,7 +4708,7 @@ bool Main::iteration() {
 
 #ifdef TOOLS_ENABLED
 	if (exit && quit_after_timeout && EditorNode::get_singleton()) {
-		EditorNode::get_singleton()->unload_editor_addons();
+		EditorManagers::get_singleton()->get_project_plugin_manager()->unload_plugins();
 	}
 #endif
 

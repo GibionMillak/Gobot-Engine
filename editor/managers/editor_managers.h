@@ -33,6 +33,7 @@
 #include "scene/main/node.h"
 
 class ProjectAutoloadManager;
+class ProjectPluginManager;
 
 class EditorManagers : public Node {
 	GDCLASS(EditorManagers, Node);
@@ -43,9 +44,11 @@ public:
 
 	static EditorManagers *get_singleton();
 	ProjectAutoloadManager *get_project_autoload_manager() const;
+	ProjectPluginManager *get_project_plugin_manager() const;
 
 private:
 	inline static EditorManagers *_singleton = nullptr;
 
 	ProjectAutoloadManager *_project_autoload_manager = nullptr;
+	ProjectPluginManager *_project_plugin_manager = nullptr;
 };

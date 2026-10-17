@@ -33,6 +33,7 @@
 #include "scene/gui/dialogs.h"
 
 class ConfigPluginDialog;
+class ProjectPluginManager;
 class TextureRect;
 class Tree;
 
@@ -65,8 +66,9 @@ private:
 	void _plugin_activity_changed();
 	void _create_clicked();
 	void _cell_button_pressed(Object *p_item, int p_column, int p_id, MouseButton p_button);
-	static Vector<String> _get_plugins(const String &p_dir);
 
+	// Owned by EditorManagers for the editor session.
+	ProjectPluginManager *_manager = nullptr;
 	ConfigPluginDialog *_config_plugin_dialog = nullptr;
 	TextureRect *_recovery_mode_icon = nullptr;
 	Tree *_plugin_list = nullptr;

@@ -290,8 +290,6 @@ public:
 
 	static EditorNode *get_singleton() { return singleton; }
 
-	void init_plugins();
-
 	bool call_build();
 	void call_run_scene(const String &p_scene, Vector<String> &r_args);
 
@@ -349,7 +347,6 @@ public:
 	EditorSelection *get_editor_selection() { return editor_selection; }
 	EditorSelectionHistory *get_editor_selection_history() { return &editor_history; }
 
-	ProjectPluginsDialog *get_project_plugins_dialog() { return _project_plugins_dialog; }
 	ProjectSettingsEditor *get_project_settings() { return project_settings_editor; }
 
 	void trigger_menu_option(int p_option, bool p_confirmed);
@@ -363,9 +360,6 @@ public:
 	void update_distraction_free_button_theme();
 
 	void set_center_split_offset(int p_offset);
-
-	void set_addon_plugin_enabled(const String &p_addon, bool p_enabled, bool p_config_changed = false);
-	bool is_addon_plugin_enabled(const String &p_addon) const;
 
 	void edit_node(Node *p_node);
 	void edit_resource(const Ref<Resource> &p_resource);
@@ -522,7 +516,6 @@ public:
 	void save_before_run();
 	void try_autosave();
 	void restart_editor(bool p_goto_project_manager = false);
-	void unload_editor_addons();
 
 	void open_setting_override(const String &p_property);
 	void notify_settings_overrides_changed();
@@ -611,7 +604,6 @@ private:
 	void _update_system_menu_icons(bool p_dark_mode);
 	void _update_theme(bool p_skip_creation = false);
 	void _build_icon_type_cache();
-	void _enable_pending_addons();
 
 	void _dialog_action(String p_file);
 
@@ -644,7 +636,6 @@ private:
 	void _palette_quick_open_dialog();
 	void _clear_cache_confirmed();
 
-	void _remove_plugin_from_enabled(const String &p_name);
 	void _plugin_over_edit(EditorPlugin *p_plugin, Object *p_object, bool p_set_current = true);
 	void _plugin_over_self_own(EditorPlugin *p_plugin);
 
@@ -756,8 +747,6 @@ private:
 	void _update_layouts_menu();
 	void _layout_menu_option(int p_id);
 
-	void _update_addon_config();
-
 	void _toggle_distraction_free_mode();
 
 	void _inherit_imported(const String &p_action);
@@ -837,9 +826,6 @@ private:
 	FBXImporterManager *fbx_importer_manager = nullptr;
 
 	Vector<EditorPlugin *> editor_plugins;
-	bool _initializing_plugins = false;
-	HashMap<String, EditorPlugin *> addon_name_to_plugin;
-	LocalVector<String> pending_addons;
 	HashMap<ObjectID, HashSet<EditorPlugin *>> active_plugins;
 
 	Control *gui_base = nullptr;

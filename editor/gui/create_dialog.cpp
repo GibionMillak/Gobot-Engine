@@ -38,6 +38,8 @@
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/gui/filter_line_edit.h"
+#include "editor/managers/editor_managers.h"
+#include "editor/managers/project_plugin_manager.h"
 #include "editor/settings/editor_feature_profile.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
@@ -228,7 +230,7 @@ bool CreateDialog::_should_hide_type(const StringName &p_type) const {
 			while (i > -1) {
 				const String plugin_path = script_path.substr(0, i).path_join("plugin.cfg");
 				if (FileAccess::exists(plugin_path)) {
-					return !EditorNode::get_singleton()->is_addon_plugin_enabled(plugin_path);
+					return !EditorManagers::get_singleton()->get_project_plugin_manager()->is_plugin_enabled(plugin_path);
 				}
 				i = script_path.find_char('/', i + 1);
 			}

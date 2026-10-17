@@ -48,6 +48,8 @@
 #include "editor/inspector/editor_preview_plugins.h"
 #include "editor/inspector/editor_resource_preview.h"
 #include "editor/inspector/property_selector.h"
+#include "editor/managers/editor_managers.h"
+#include "editor/managers/project_plugin_manager.h"
 #include "editor/run/editor_run_bar.h"
 #include "editor/scene/2d/scene_paint_2d_editor_plugin.h"
 #include "editor/scene/3d/node_3d_editor_plugin.h"
@@ -404,11 +406,11 @@ void EditorInterface::add_root_node(Node *p_node) {
 }
 
 void EditorInterface::set_plugin_enabled(const String &p_plugin, bool p_enabled) {
-	EditorNode::get_singleton()->set_addon_plugin_enabled(p_plugin, p_enabled, true);
+	EditorManagers::get_singleton()->get_project_plugin_manager()->set_plugin_enabled(p_plugin, p_enabled, true);
 }
 
 bool EditorInterface::is_plugin_enabled(const String &p_plugin) const {
-	return EditorNode::get_singleton()->is_addon_plugin_enabled(p_plugin);
+	return EditorManagers::get_singleton()->get_project_plugin_manager()->is_plugin_enabled(p_plugin);
 }
 
 // Editor GUI.
