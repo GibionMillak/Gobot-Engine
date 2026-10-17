@@ -317,7 +317,7 @@ Error AudioDriverPulseAudio::init() {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		context_name = GODOT_VERSION_NAME " Editor";
 	} else {
-		context_name = GLOBAL_GET("application/config/name");
+		context_name = GLOBAL_GET("application/config/about/name");
 		if (context_name.is_empty()) {
 			context_name = GODOT_VERSION_NAME " Project";
 		}

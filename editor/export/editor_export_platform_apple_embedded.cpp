@@ -249,7 +249,6 @@ bool EditorExportPlatformAppleEmbedded::get_export_option_visibility(const Edito
 			p_option == "custom_template/release" ||
 			p_option == "application/additional_plist_content" ||
 			p_option == "application/delete_old_export_files_unconditionally" ||
-			p_option == "application/icon_interpolation" ||
 			p_option == "application/signature") {
 		return advanced_options_enabled;
 	}
@@ -279,12 +278,9 @@ void EditorExportPlatformAppleEmbedded::get_export_options(List<ExportOption> *r
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/bundle_identifier", PROPERTY_HINT_PLACEHOLDER_TEXT, "com.example.game"), "", false, true));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/signature"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/short_version", PROPERTY_HINT_PLACEHOLDER_TEXT, "Leave empty to use project version"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/version", PROPERTY_HINT_PLACEHOLDER_TEXT, "Leave empty to use project version"), ""));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/additional_plist_content", PROPERTY_HINT_MULTILINE_TEXT, "monospace,no_wrap"), ""));
 
-	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "application/icon_interpolation", PROPERTY_HINT_ENUM, "Nearest neighbor,Bilinear,Cubic,Trilinear,Lanczos"), 4));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "application/export_project_only"), false));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "application/delete_old_export_files_unconditionally"), false));
@@ -432,9 +428,9 @@ String EditorExportPlatformAppleEmbedded::_process_config_file_line(const Ref<Ed
 	} else if (p_line.contains("$bundle_identifier")) {
 		strnew += p_line.replace("$bundle_identifier", p_preset->get("application/bundle_identifier")) + "\n";
 	} else if (p_line.contains("$short_version")) {
-		strnew += p_line.replace("$short_version", p_preset->get_version("application/short_version")) + "\n";
+		strnew += p_line.replace("$short_version", p_preset->get_project_version()) + "\n";
 	} else if (p_line.contains("$version")) {
-		strnew += p_line.replace("$version", p_preset->get_version("application/version")) + "\n";
+		strnew += p_line.replace("$version", p_preset->get_project_version()) + "\n";
 	} else if (p_line.contains("$signature")) {
 		strnew += p_line.replace("$signature", p_preset->get("application/signature")) + "\n";
 	} else if (p_line.contains("$team_id")) {
@@ -1848,8 +1844,8 @@ Error EditorExportPlatformAppleEmbedded::_export_project_helper(const Ref<Editor
 
 	print_line("Static framework: " + library_to_use);
 	String pkg_name;
-	if (String(get_project_setting(p_preset, "application/config/name")) != "") {
-		pkg_name = String(get_project_setting(p_preset, "application/config/name"));
+	if (String(get_project_setting(p_preset, "application/config/about/name")) != "") {
+		pkg_name = String(get_project_setting(p_preset, "application/config/about/name"));
 	} else {
 		pkg_name = "Unnamed";
 	}
@@ -2062,8 +2058,8 @@ Error EditorExportPlatformAppleEmbedded::_export_project_helper(const Ref<Editor
 	List<UsageDescription> usage_descriptions;
 	get_usage_descriptions(&usage_descriptions);
 
-	const String project_name = get_project_setting(p_preset, "application/config/name");
-	const Dictionary appnames = get_project_setting(p_preset, "application/config/name_localized");
+	const String project_name = get_project_setting(p_preset, "application/config/about/name");
+	const Dictionary appnames = get_project_setting(p_preset, "application/config/about/name_localized");
 	const StringName domain_name = "godot.project_name_localization";
 	Ref<TranslationDomain> domain = TranslationServer::get_singleton()->get_or_add_domain(domain_name);
 	TranslationServer::get_singleton()->load_project_translations(domain);
@@ -2405,13 +2401,13 @@ Error EditorExportPlatformAppleEmbedded::_export_icons(const Ref<EditorExportPre
 					add_message(EXPORT_MESSAGE_ERROR, TTR("Export Icons"), vformat("Invalid icon (%s): '%s'.", info.preset_key, icon_path));
 					return ERR_UNCONFIGURED;
 				} else if (info.force_opaque && img->detect_alpha() != Image::ALPHA_NONE) {
-					img->resize(side_size, side_size, (Image::Interpolation)(p_preset->get("application/icon_interpolation").operator int()));
+					img->resize(side_size, side_size, (Image::Interpolation)(get_project_setting(p_preset, "application/platform/mobile/ios_icon_interpolation").operator int()));
 					Ref<Image> new_img = Image::create_empty(side_size, side_size, false, Image::FORMAT_RGBA8);
 					new_img->fill(boot_bg_color);
 					_blend_and_rotate(new_img, img, false);
 					err = new_img->save_png(p_iconset_dir + exp_name);
 				} else {
-					img->resize(side_size, side_size, (Image::Interpolation)(p_preset->get("application/icon_interpolation").operator int()));
+					img->resize(side_size, side_size, (Image::Interpolation)(get_project_setting(p_preset, "application/platform/mobile/ios_icon_interpolation").operator int()));
 					err = img->save_png(p_iconset_dir + exp_name);
 				}
 				if (err) {
@@ -2429,7 +2425,7 @@ Error EditorExportPlatformAppleEmbedded::_export_icons(const Ref<EditorExportPre
 					if (resize_waning) {
 						add_message(EXPORT_MESSAGE_WARNING, TTR("Export Icons"), vformat("Icon (%s) must be opaque.", info.preset_key));
 					}
-					img->resize(side_size, side_size, (Image::Interpolation)(p_preset->get("application/icon_interpolation").operator int()));
+					img->resize(side_size, side_size, (Image::Interpolation)(get_project_setting(p_preset, "application/platform/mobile/ios_icon_interpolation").operator int()));
 					Ref<Image> new_img = Image::create_empty(side_size, side_size, false, Image::FORMAT_RGBA8);
 					new_img->fill(boot_bg_color);
 					_blend_and_rotate(new_img, img, false);
@@ -2438,7 +2434,7 @@ Error EditorExportPlatformAppleEmbedded::_export_icons(const Ref<EditorExportPre
 					if (resize_waning) {
 						add_message(EXPORT_MESSAGE_WARNING, TTR("Export Icons"), vformat("Icon (%s): '%s' has incorrect size %s and was automatically resized to %s.", info.preset_key, icon_path, img->get_size(), Vector2i(side_size, side_size)));
 					}
-					img->resize(side_size, side_size, (Image::Interpolation)(p_preset->get("application/icon_interpolation").operator int()));
+					img->resize(side_size, side_size, (Image::Interpolation)(get_project_setting(p_preset, "application/platform/mobile/ios_icon_interpolation").operator int()));
 					err = img->save_png(p_iconset_dir + exp_name);
 				} else if (!icon_path.ends_with(".png")) {
 					err = img->save_png(p_iconset_dir + exp_name);

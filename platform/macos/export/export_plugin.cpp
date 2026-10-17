@@ -358,7 +358,6 @@ bool EditorExportPlatformMacOS::get_export_option_visibility(const EditorExportP
 				p_option == "custom_template/release" ||
 				p_option == "application/additional_plist_content" ||
 				p_option == "application/export_angle" ||
-				p_option == "application/icon_interpolation" ||
 				p_option == "application/signature" ||
 				p_option == "display/high_res" ||
 				p_option == "xcode/platform_build" ||
@@ -467,15 +466,9 @@ void EditorExportPlatformMacOS::get_export_options(List<ExportOption> *r_options
 	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "debug/export_console_wrapper", PROPERTY_HINT_ENUM, "No,Debug Only,Debug and Release"), 1));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "debug/export_debug_symbols", PROPERTY_HINT_ENUM, "No,Debug Only,Debug and Release"), 1));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/liquid_glass_icon", PROPERTY_HINT_FILE, "*.icon"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/icon", PROPERTY_HINT_FILE, "*.icns,*.png,*.webp,*.svg"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "application/icon_interpolation", PROPERTY_HINT_ENUM, "Nearest neighbor,Bilinear,Cubic,Trilinear,Lanczos"), 4));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/bundle_identifier", PROPERTY_HINT_PLACEHOLDER_TEXT, "com.example.game"), "", false, true));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/signature"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/app_category", PROPERTY_HINT_ENUM, "Business,Developer-tools,Education,Entertainment,Finance,Games,Action-games,Adventure-games,Arcade-games,Board-games,Card-games,Casino-games,Dice-games,Educational-games,Family-games,Kids-games,Music-games,Puzzle-games,Racing-games,Role-playing-games,Simulation-games,Sports-games,Strategy-games,Trivia-games,Word-games,Graphics-design,Healthcare-fitness,Lifestyle,Medical,Music,News,Photography,Productivity,Reference,Social-networking,Sports,Travel,Utilities,Video,Weather"), "Games"));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/short_version", PROPERTY_HINT_PLACEHOLDER_TEXT, "Leave empty to use project version"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/version", PROPERTY_HINT_PLACEHOLDER_TEXT, "Leave empty to use project version"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/copyright"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::DICTIONARY, "application/copyright_localized", PROPERTY_HINT_LOCALIZABLE_STRING), Dictionary()));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/min_macos_version_x86_64"), "11.00"));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/min_macos_version_arm64"), "13.00"));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "application/export_angle", PROPERTY_HINT_ENUM, "Auto,Yes,No"), 0, true));
@@ -689,7 +682,7 @@ void EditorExportPlatformMacOS::_make_icon(const Ref<EditorExportPreset> &p_pres
 	for (uint64_t i = 0; i < std_size(icon_infos); ++i) {
 		Ref<Image> copy = p_icon->duplicate();
 		copy->convert(Image::FORMAT_RGBA8);
-		copy->resize(icon_infos[i].size, icon_infos[i].size, (Image::Interpolation)(p_preset->get("application/icon_interpolation").operator int()));
+		copy->resize(icon_infos[i].size, icon_infos[i].size, (Image::Interpolation)(get_project_setting(p_preset, "application/platform/desktop/macos_icon_interpolation").operator int()));
 
 		if (icon_infos[i].is_png) {
 			// Encode PNG icon.
@@ -832,25 +825,26 @@ void EditorExportPlatformMacOS::_fix_plist(const Ref<EditorExportPreset> &p_pres
 	String str = String::utf8((const char *)plist.ptr(), plist.size());
 	String arch = p_preset->get("binary_format/architecture");
 	String strnew;
+	const String copyright_notice = get_project_setting(p_preset, "application/config/legal/copyright_notice");
 	Vector<String> lines = str.split("\n");
 	for (int i = 0; i < lines.size(); i++) {
 		if (lines[i].contains("$binary")) {
 			strnew += lines[i].replace("$binary", p_binary) + "\n";
 		} else if (lines[i].contains("$name")) {
-			strnew += lines[i].replace("$name", get_project_setting(p_preset, "application/config/name").operator String().xml_escape(true)) + "\n";
+			strnew += lines[i].replace("$name", get_project_setting(p_preset, "application/config/about/name").operator String().xml_escape(true)) + "\n";
 		} else if (lines[i].contains("$bundle_identifier")) {
 			strnew += lines[i].replace("$bundle_identifier", p_preset->get("application/bundle_identifier")) + "\n";
 		} else if (lines[i].contains("$short_version")) {
-			strnew += lines[i].replace("$short_version", p_preset->get_version("application/short_version")) + "\n";
+			strnew += lines[i].replace("$short_version", p_preset->get_project_version()) + "\n";
 		} else if (lines[i].contains("$version")) {
-			strnew += lines[i].replace("$version", p_preset->get_version("application/version")) + "\n";
+			strnew += lines[i].replace("$version", p_preset->get_project_version()) + "\n";
 		} else if (lines[i].contains("$signature")) {
 			strnew += lines[i].replace("$signature", p_preset->get("application/signature")) + "\n";
 		} else if (lines[i].contains("$app_category")) {
 			String cat = p_preset->get("application/app_category");
 			strnew += lines[i].replace("$app_category", cat.to_lower()) + "\n";
 		} else if (lines[i].contains("$copyright")) {
-			strnew += lines[i].replace("$copyright", p_preset->get("application/copyright").operator String().xml_escape(true)) + "\n";
+			strnew += lines[i].replace("$copyright", copyright_notice.xml_escape(true)) + "\n";
 		} else if (lines[i].contains("$arch_priority")) {
 			String arch_pr;
 			if (arch == "universal" || arch == "arm64") {
@@ -1974,8 +1968,8 @@ Error EditorExportPlatformMacOS::export_project(const Ref<EditorExportPreset> &p
 	String binary_to_use_base = "godot_macos_" + String(p_debug ? "debug" : "release") + ".";
 
 	String pkg_name;
-	if (String(get_project_setting(p_preset, "application/config/name")) != "") {
-		pkg_name = String(get_project_setting(p_preset, "application/config/name"));
+	if (String(get_project_setting(p_preset, "application/config/about/name")) != "") {
+		pkg_name = String(get_project_setting(p_preset, "application/config/about/name"));
 	} else {
 		pkg_name = "Unnamed";
 	}
@@ -2090,10 +2084,11 @@ Error EditorExportPlatformMacOS::export_project(const Ref<EditorExportPreset> &p
 	Dictionary downloads_folder_usage_descriptions = p_preset->get("privacy/downloads_folder_usage_description_localized");
 	Dictionary network_volumes_usage_descriptions = p_preset->get("privacy/network_volumes_usage_description_localized");
 	Dictionary removable_volumes_usage_descriptions = p_preset->get("privacy/removable_volumes_usage_description_localized");
-	Dictionary copyrights = p_preset->get("application/copyright_localized");
+	const Dictionary copyrights = get_project_setting(p_preset, "application/config/legal/copyright_notice_localized");
+	const String copyright_notice = get_project_setting(p_preset, "application/config/legal/copyright_notice");
 
-	const String project_name = get_project_setting(p_preset, "application/config/name");
-	const Dictionary appnames = get_project_setting(p_preset, "application/config/name_localized");
+	const String project_name = get_project_setting(p_preset, "application/config/about/name");
+	const Dictionary appnames = get_project_setting(p_preset, "application/config/about/name_localized");
 	const StringName domain_name = "godot.project_name_localization";
 	Ref<TranslationDomain> domain = TranslationServer::get_singleton()->get_or_add_domain(domain_name);
 	TranslationServer::get_singleton()->load_project_translations(domain);
@@ -2140,7 +2135,7 @@ Error EditorExportPlatformMacOS::export_project(const Ref<EditorExportPreset> &p
 			if (!((String)p_preset->get("privacy/removable_volumes_usage_description")).is_empty()) {
 				f->store_line("NSRemovableVolumesUsageDescription = \"" + p_preset->get("privacy/removable_volumes_usage_description").operator String().xml_escape(true) + "\";");
 			}
-			f->store_line("NSHumanReadableCopyright = \"" + p_preset->get("application/copyright").operator String().xml_escape(true) + "\";");
+			f->store_line("NSHumanReadableCopyright = \"" + copyright_notice.xml_escape(true) + "\";");
 		}
 
 		for (const String &lang : locales) {
@@ -2314,12 +2309,7 @@ Error EditorExportPlatformMacOS::export_project(const Ref<EditorExportPreset> &p
 
 		if (file == "Contents/Resources/icon.icns") {
 			// See if there is an icon.
-			String icon_path;
-			if (p_preset->get("application/icon") != "") {
-				icon_path = p_preset->get("application/icon");
-			} else {
-				icon_path = get_project_icon_path(p_preset);
-			}
+			const String icon_path = get_project_icon_path(p_preset);
 
 			if (!icon_path.is_empty()) {
 				if (icon_path.get_extension() == "icns") {
@@ -3061,8 +3051,8 @@ Error EditorExportPlatformMacOS::run(const Ref<EditorExportPreset> &p_preset, in
 	}
 
 	String pkg_name;
-	if (String(get_project_setting(p_preset, "application/config/name")) != "") {
-		pkg_name = String(get_project_setting(p_preset, "application/config/name"));
+	if (String(get_project_setting(p_preset, "application/config/about/name")) != "") {
+		pkg_name = String(get_project_setting(p_preset, "application/config/about/name"));
 	} else {
 		pkg_name = "Unnamed";
 	}

@@ -101,7 +101,7 @@ void MovieWriter::get_supported_extensions(List<String> *r_extensions) const {
 }
 
 void MovieWriter::begin(const Size2i &p_movie_size, uint32_t p_fps, const String &p_base_path) {
-	project_name = GLOBAL_GET("application/config/name");
+	project_name = GLOBAL_GET("application/config/about/name");
 	movie_size = p_movie_size;
 
 	print_line(vformat(U"Movie Maker mode enabled, recording movie in %s×%s @ %d FPS...", movie_size.width, movie_size.height, p_fps));

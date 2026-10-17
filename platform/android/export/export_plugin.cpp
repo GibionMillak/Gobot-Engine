@@ -472,19 +472,9 @@ void EditorExportPlatformAndroid::_stop_check_for_changes_poll_thread() {
 }
 #endif
 
-String EditorExportPlatformAndroid::get_project_name(const Ref<EditorExportPreset> &p_preset, const String &p_name) const {
-	String aname;
-	if (!p_name.is_empty()) {
-		aname = p_name;
-	} else {
-		aname = get_project_setting(p_preset, "application/config/name");
-	}
-
-	if (aname.is_empty()) {
-		aname = GODOT_VERSION_NAME;
-	}
-
-	return aname;
+String EditorExportPlatformAndroid::_get_project_name(const Ref<EditorExportPreset> &p_preset) const {
+	const String project_name = get_project_setting(p_preset, "application/config/about/name");
+	return project_name.is_empty() ? GODOT_VERSION_NAME : project_name;
 }
 
 String EditorExportPlatformAndroid::get_package_name(const Ref<EditorExportPreset> &p_preset, const String &p_package) const {
@@ -497,7 +487,7 @@ String EditorExportPlatformAndroid::get_package_name(const Ref<EditorExportPrese
 // Returns the project name without invalid characters
 // or the "noname" string if all characters are invalid.
 String EditorExportPlatformAndroid::get_valid_basename(const Ref<EditorExportPreset> &p_preset) const {
-	String basename = get_project_setting(p_preset, "application/config/name");
+	String basename = get_project_setting(p_preset, "application/config/about/name");
 	basename = basename.to_lower();
 
 	String name;
@@ -590,7 +580,7 @@ bool EditorExportPlatformAndroid::is_package_name_valid(const Ref<EditorExportPr
 
 bool EditorExportPlatformAndroid::is_project_name_valid(const Ref<EditorExportPreset> &p_preset) const {
 	// Get the original project name and convert to lowercase.
-	String basename = get_project_setting(p_preset, "application/config/name");
+	String basename = get_project_setting(p_preset, "application/config/about/name");
 	basename = basename.to_lower();
 	// Check if there are invalid characters.
 	if (basename != get_valid_basename(p_preset)) {
@@ -1077,7 +1067,7 @@ void EditorExportPlatformAndroid::_fix_manifest(const Ref<EditorExportPreset> &p
 	uint32_t string_table_ends = 0;
 	Vector<uint8_t> stable_extra;
 
-	String version_name = p_preset->get_version("version/name");
+	String version_name = p_preset->get_project_version();
 	int version_code = p_preset->get("version/code");
 	String package_name = p_preset->get("package/unique_name");
 
@@ -1661,8 +1651,8 @@ void EditorExportPlatformAndroid::_fix_resources(const Ref<EditorExportPreset> &
 
 	Vector<String> string_table;
 
-	const String project_name = get_project_name(p_preset, p_preset->get("package/name"));
-	const Dictionary appnames = get_project_setting(p_preset, "application/config/name_localized");
+	const String project_name = _get_project_name(p_preset);
+	const Dictionary appnames = get_project_setting(p_preset, "application/config/about/name_localized");
 	const StringName domain_name = "godot.project_name_localization";
 	Ref<TranslationDomain> domain = TranslationServer::get_singleton()->get_or_add_domain(domain_name);
 	TranslationServer::get_singleton()->load_project_translations(domain);
@@ -1772,7 +1762,7 @@ void EditorExportPlatformAndroid::load_icon_refs(const Ref<EditorExportPreset> &
 		if (!project_icon_path.is_empty()) {
 			icon = _load_icon_or_splash_image(project_icon_path, &err);
 		} else {
-			ERR_PRINT("No project icon specified. Please specify one in the Project Settings under Application -> Config -> Platform -> Mobile -> Android Icon or Application -> Config -> Thumbnail");
+			ERR_PRINT("No project icon specified. Please specify one in the Project Settings under Application -> Platform -> Mobile -> Android Icon or Application -> Config -> About -> Thumbnail");
 		}
 	}
 
@@ -2067,10 +2057,8 @@ void EditorExportPlatformAndroid::get_export_options(List<ExportOption> *r_optio
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "keystore/release_password", PROPERTY_HINT_PASSWORD, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SECRET), ""));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "version/code", PROPERTY_HINT_RANGE, "1,4096,1,or_greater"), 1));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "version/name", PROPERTY_HINT_PLACEHOLDER_TEXT, "Leave empty to use project version"), ""));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "package/unique_name", PROPERTY_HINT_PLACEHOLDER_TEXT, "ext.domain.name"), "com.example.$genname", false, true));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "package/name", PROPERTY_HINT_PLACEHOLDER_TEXT, "Game Name [default if blank]"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "package/signed"), true));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "package/retain_data_on_uninstall"), false));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "package/exclude_from_recents"), false));
@@ -3374,9 +3362,8 @@ Error EditorExportPlatformAndroid::export_project_helper(const Ref<EditorExportP
 			export_src_dir = gradle_build_directory.path_join((p_debug ? APK_AAB_DEBUG_SRC_DIR : APK_AAB_RELEASE_SRC_DIR));
 		}
 
-		// TODO: should we use "package/name" or "application/config/name"?
-		String project_name = get_project_name(p_preset, p_preset->get("package/name"));
-		err = _create_project_name_strings_files(p_preset, project_name, export_src_dir, get_project_setting(p_preset, "application/config/name_localized")); //project name localization.
+		String project_name = _get_project_name(p_preset);
+		err = _create_project_name_strings_files(p_preset, project_name, export_src_dir, get_project_setting(p_preset, "application/config/about/name_localized")); //project name localization.
 		if (err != OK) {
 			add_message(EXPORT_MESSAGE_ERROR, TTR("Export"), TTR("Unable to overwrite res/*.xml files with project name."));
 		}
@@ -3461,7 +3448,7 @@ Error EditorExportPlatformAndroid::export_project_helper(const Ref<EditorExportP
 
 		String package_name = get_package_name(p_preset, p_preset->get("package/unique_name"));
 		String version_code = itos(p_preset->get("version/code"));
-		String version_name = p_preset->get_version("version/name");
+		String version_name = p_preset->get_project_version();
 		String min_sdk_version = p_preset->get("gradle_build/min_sdk");
 		if (!min_sdk_version.is_valid_int()) {
 			min_sdk_version = _uses_vulkan(p_preset) ? itos(AndroidSDKManager::VULKAN_MIN_SDK_VERSION) : itos(AndroidSDKManager::DEFAULT_MIN_SDK_VERSION);

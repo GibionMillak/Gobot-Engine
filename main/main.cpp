@@ -3839,7 +3839,7 @@ int Main::start() {
 
 #if defined(OVERRIDE_PATH_ENABLED)
 #ifndef TOOLS_ENABLED
-	bool disable_override = GLOBAL_GET("application/config/disable_project_settings_override");
+	bool disable_override = GLOBAL_GET("application/config/settings/disable_project_settings_override");
 	if (disable_override) {
 		script = String();
 		game_path = String();
@@ -4139,8 +4139,8 @@ int Main::start() {
 			OS::get_singleton()->benchmark_end_measure("Startup", "Editor");
 		}
 #endif
-		sml->set_auto_accept_quit(GLOBAL_GET("application/config/auto_accept_quit"));
-		sml->set_quit_on_go_back(GLOBAL_GET("application/config/quit_on_go_back"));
+		sml->set_auto_accept_quit(GLOBAL_GET("application/config/settings/auto_accept_quit"));
+		sml->set_quit_on_go_back(GLOBAL_GET("application/config/settings/quit_on_go_back"));
 
 		if (!editor && !project_manager) {
 			//standard helpers that can be changed from main config
@@ -4181,9 +4181,9 @@ int Main::start() {
 			sml->get_root()->set_content_scale_size(stretch_size);
 			sml->get_root()->set_content_scale_factor(stretch_scale);
 
-			sml->set_auto_accept_quit(GLOBAL_GET("application/config/auto_accept_quit"));
-			sml->set_quit_on_go_back(GLOBAL_GET("application/config/quit_on_go_back"));
-			String appname = GLOBAL_GET("application/config/name");
+			sml->set_auto_accept_quit(GLOBAL_GET("application/config/settings/auto_accept_quit"));
+			sml->set_quit_on_go_back(GLOBAL_GET("application/config/settings/quit_on_go_back"));
+			String appname = GLOBAL_GET("application/config/about/name");
 			appname = TranslationServer::get_singleton()->translate(appname);
 #ifdef DEBUG_ENABLED
 			// Append a suffix to the window title to denote that the project is running
@@ -4299,17 +4299,17 @@ int Main::start() {
 				String platform_icon_path;
 				String native_icon_extension;
 #if defined(WINDOWS_ENABLED)
-				platform_icon_path = GLOBAL_GET("application/config/platform/desktop/windows_icon");
+				platform_icon_path = GLOBAL_GET("application/platform/desktop/windows_icon");
 				native_icon_extension = "ico";
 #elif defined(MACOS_ENABLED)
-				platform_icon_path = GLOBAL_GET("application/config/platform/desktop/macos_icon");
+				platform_icon_path = GLOBAL_GET("application/platform/desktop/macos_icon");
 				native_icon_extension = "icns";
 #elif defined(ANDROID_ENABLED)
-				platform_icon_path = GLOBAL_GET("application/config/platform/mobile/android_icon");
+				platform_icon_path = GLOBAL_GET("application/platform/mobile/android_icon");
 #elif defined(IOS_ENABLED)
-				platform_icon_path = GLOBAL_GET("application/config/platform/mobile/ios_icon");
+				platform_icon_path = GLOBAL_GET("application/platform/mobile/ios_icon");
 #elif defined(LINUXBSD_ENABLED)
-				platform_icon_path = GLOBAL_GET("application/config/platform/desktop/linux_icon");
+				platform_icon_path = GLOBAL_GET("application/platform/desktop/linux_icon");
 #endif
 				platform_icon_path = ResourceUID::ensure_path(platform_icon_path);
 				if (!has_icon && !native_icon_extension.is_empty() && platform_icon_path.get_extension().to_lower() == native_icon_extension && DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_NATIVE_ICON) && FileAccess::exists(platform_icon_path)) {
@@ -4317,7 +4317,7 @@ int Main::start() {
 					has_icon = true;
 				}
 
-				const String icon_paths[] = { platform_icon_path, ResourceUID::ensure_path(GLOBAL_GET("application/config/thumbnail")) };
+				const String icon_paths[] = { platform_icon_path, ResourceUID::ensure_path(GLOBAL_GET("application/config/about/thumbnail")) };
 				for (const String &icon_path : icon_paths) {
 					if (has_icon || !DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_ICON)) {
 						break;

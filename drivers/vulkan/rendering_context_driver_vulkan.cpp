@@ -696,7 +696,7 @@ Error RenderingContextDriverVulkan::_initialize_instance() {
 	// to anything but 1.0. Note that this value is only used by validation layers to warn us about version issues.
 	uint32_t application_api_version = instance_api_version == VK_API_VERSION_1_0 ? VK_API_VERSION_1_0 : VK_API_VERSION_1_2;
 
-	CharString cs = GLOBAL_GET("application/config/name").operator String().utf8();
+	CharString cs = GLOBAL_GET("application/config/about/name").operator String().utf8();
 	VkApplicationInfo app_info = {};
 	app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	app_info.pApplicationName = cs.get_data();

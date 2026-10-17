@@ -503,10 +503,10 @@
 		<method name="get_user_data_dir" qualifiers="const">
 			<return type="String" />
 			<description>
-				Returns the absolute directory path where user data is written (the [code]user://[/code] directory in Godot). The path depends on the project name and [member ProjectSettings.application/config/custom_user_directory].
-				- On Windows, this is [code]%AppData%\Godot\app_userdata\[project_name][/code], or [code]%AppData%\[custom_name][/code] if [member ProjectSettings.application/config/custom_user_directory] is non-empty after sanitization. [code]%AppData%[/code] expands to [code]%UserProfile%\AppData\Roaming[/code].
-				- On macOS, this is [code]~/Library/Application Support/Godot/app_userdata/[project_name][/code], or [code]~/Library/Application Support/[custom_name][/code] if [member ProjectSettings.application/config/custom_user_directory] is non-empty after sanitization.
-				- On Linux and BSD, this is [code]~/.local/share/godot/app_userdata/[project_name][/code], or [code]~/.local/share/[custom_name][/code] if [member ProjectSettings.application/config/custom_user_directory] is non-empty after sanitization.
+				Returns the absolute directory path where user data is written (the [code]user://[/code] directory in Godot). The path depends on the project name and [member ProjectSettings.application/config/settings/custom_user_directory].
+				- On Windows, this is [code]%AppData%\Godot\app_userdata\[project_name][/code], or [code]%AppData%\[custom_name][/code] if [member ProjectSettings.application/config/settings/custom_user_directory] is non-empty after sanitization. [code]%AppData%[/code] expands to [code]%UserProfile%\AppData\Roaming[/code].
+				- On macOS, this is [code]~/Library/Application Support/Godot/app_userdata/[project_name][/code], or [code]~/Library/Application Support/[custom_name][/code] if [member ProjectSettings.application/config/settings/custom_user_directory] is non-empty after sanitization.
+				- On Linux and BSD, this is [code]~/.local/share/godot/app_userdata/[project_name][/code], or [code]~/.local/share/[custom_name][/code] if [member ProjectSettings.application/config/settings/custom_user_directory] is non-empty after sanitization.
 				- On Android and iOS, this is a sandboxed directory in either internal or external storage, depending on the user's configuration.
 				Custom directory values are sanitized and used without appending the project name. If the sanitized project name is empty, [code][project_name][/code] falls back to [code][Unnamed Project][/code].
 				Not to be confused with [method get_data_dir], which returns the [i]global[/i] (non-project-specific) user home directory.

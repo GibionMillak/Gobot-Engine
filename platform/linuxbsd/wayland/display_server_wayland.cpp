@@ -98,7 +98,7 @@ String DisplayServerWayland::_get_app_id_from_context(DisplayServerEnums::Contex
 
 		case DisplayServerEnums::CONTEXT_ENGINE:
 		default: {
-			String config_name = GLOBAL_GET("application/config/name");
+			String config_name = GLOBAL_GET("application/config/about/name");
 			if (config_name.length() != 0) {
 				app_id = config_name;
 			} else {

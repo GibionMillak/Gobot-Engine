@@ -589,8 +589,8 @@ void ProjectDialog::ok_pressed() {
 		project_features.sort();
 		initial_settings["application/config/features"] = project_features;
 		initial_settings["application/config/editor_version"] = GODOT_VERSION_NUMBER;
-		initial_settings["application/config/name"] = project_name->get_text().strip_edges();
-		initial_settings["application/config/thumbnail"] = "res://thumbnail.svg";
+		initial_settings["application/config/about/name"] = project_name->get_text().strip_edges();
+		initial_settings["application/config/about/thumbnail"] = "res://thumbnail.svg";
 		ProjectSettings::CustomMap extra_settings = EditorNode::get_initial_settings();
 		for (const KeyValue<String, Variant> &extra_setting : extra_settings) {
 			// Merge with other initial settings defined above.
@@ -778,7 +778,7 @@ void ProjectDialog::ok_pressed() {
 			dialog_error->popup_centered();
 			return;
 		}
-		cfg.set_value("application", "config/name", project_name->get_text().strip_edges());
+		cfg.set_value("application", "config/about/name", project_name->get_text().strip_edges());
 		err = cfg.save(project_godot);
 		if (err != OK) {
 			dialog_error->set_text(vformat(TTR("Couldn't save project at '%s' (error %d)."), project_godot, err));

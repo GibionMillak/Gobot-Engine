@@ -119,7 +119,7 @@ void EditorExportPreset::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_script_export_mode"), &EditorExportPreset::get_script_export_mode);
 
 	ClassDB::bind_method(D_METHOD("get_or_env", "name", "env_var"), &EditorExportPreset::_get_or_env);
-	ClassDB::bind_method(D_METHOD("get_version", "name", "windows_version"), &EditorExportPreset::get_version);
+	ClassDB::bind_method(D_METHOD("get_project_version", "windows_version"), &EditorExportPreset::get_project_version, DEFVAL(false));
 
 	BIND_ENUM_CONSTANT(EXPORT_ALL_RESOURCES);
 	BIND_ENUM_CONSTANT(EXPORT_SELECTED_SCENES);
@@ -674,49 +674,46 @@ _FORCE_INLINE_ bool _check_digits(const String &p_str) {
 	return true;
 }
 
-String EditorExportPreset::get_version(const StringName &p_preset_string, bool p_windows_version) const {
-	String result = get(p_preset_string);
-	if (result.is_empty()) {
-		result = GLOBAL_GET("application/config/version");
+String EditorExportPreset::get_project_version(bool p_windows_version) {
+	String result = get_project_setting("application/config/about/version");
 
-		// Split and validate version number components.
-		const PackedStringArray result_split = result.split(".", false);
-		bool valid_version = !result_split.is_empty();
+	// Split and validate version number components.
+	const PackedStringArray result_split = result.split(".", false);
+	bool valid_version = !result_split.is_empty();
 
-		// Android supports non-numeric characters for version name.
-		if (!platform->is_class("EditorExportPlatformAndroid")) {
-			for (const String &E : result_split) {
-				if (!_check_digits(E)) {
-					valid_version = false;
-					break;
-				}
+	// Android supports non-numeric characters for version name.
+	if (!platform->is_class("EditorExportPlatformAndroid")) {
+		for (const String &E : result_split) {
+			if (!_check_digits(E)) {
+				valid_version = false;
+				break;
 			}
 		}
+	}
 
-		if (valid_version) {
-			if (p_windows_version) {
-				// Modify version number to match Windows constraints (version numbers must have 4 components).
-				if (result_split.size() == 1) {
-					result = result + ".0.0.0";
-				} else if (result_split.size() == 2) {
-					result = result + ".0.0";
-				} else if (result_split.size() == 3) {
-					result = result + ".0";
-				} else {
-					result = vformat("%s.%s.%s.%s", result_split[0], result_split[1], result_split[2], result_split[3]);
-				}
+	if (valid_version) {
+		if (p_windows_version) {
+			// Modify version number to match Windows constraints (version numbers must have 4 components).
+			if (result_split.size() == 1) {
+				result = result + ".0.0.0";
+			} else if (result_split.size() == 2) {
+				result = result + ".0.0";
+			} else if (result_split.size() == 3) {
+				result = result + ".0";
 			} else {
-				result = String(".").join(result_split);
+				result = vformat("%s.%s.%s.%s", result_split[0], result_split[1], result_split[2], result_split[3]);
 			}
 		} else {
-			if (!result.is_empty()) {
-				WARN_PRINT(vformat("Invalid version number \"%s\". The version number can only contain numeric characters (0-9) and non-consecutive periods (.).", result));
-			}
-			if (p_windows_version) {
-				result = "1.0.0.0";
-			} else {
-				result = "1.0.0";
-			}
+			result = String(".").join(result_split);
+		}
+	} else {
+		if (!result.is_empty()) {
+			WARN_PRINT(vformat("Invalid version number \"%s\". The version number can only contain numeric characters (0-9) and non-consecutive periods (.).", result));
+		}
+		if (p_windows_version) {
+			result = "1.0.0.0";
+		} else {
+			result = "1.0.0";
 		}
 	}
 

@@ -872,8 +872,8 @@ String DisplayServerWindows::_get_app_id() const {
 		if (Engine::get_singleton()->is_editor_hint()) {
 			appname = "Godot.GodotEditor." + String(GODOT_VERSION_FULL_CONFIG);
 		} else {
-			String name = GLOBAL_GET("application/config/name");
-			String version = GLOBAL_GET("application/config/version");
+			String name = GLOBAL_GET("application/config/about/name");
+			String version = GLOBAL_GET("application/config/about/version");
 			if (version.is_empty()) {
 				version = "0";
 			}
@@ -896,7 +896,7 @@ String DisplayServerWindows::_get_app_name() const {
 		if (Engine::get_singleton()->is_editor_hint()) {
 			appname = "Godot";
 		} else {
-			appname = GLOBAL_GET("application/config/name");
+			appname = GLOBAL_GET("application/config/about/name");
 		}
 	}
 	return appname;
@@ -8032,8 +8032,8 @@ DisplayServerWindows::DisplayServerWindows(const String &p_rendering_driver, Dis
 	if (Engine::get_singleton()->is_editor_hint()) {
 		appname = "Godot.GodotEditor." + String(GODOT_VERSION_FULL_CONFIG);
 	} else {
-		String name = GLOBAL_GET("application/config/name");
-		String version = GLOBAL_GET("application/config/version");
+		String name = GLOBAL_GET("application/config/about/name");
+		String version = GLOBAL_GET("application/config/about/version");
 		if (version.is_empty()) {
 			version = "0";
 		}

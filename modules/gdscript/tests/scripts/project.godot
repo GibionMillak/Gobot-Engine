@@ -9,7 +9,7 @@ config_version=6
 
 config/editor_version="4.8"
 
-config/name="GDScript Integration Test Suite"
+config/about/name="GDScript Integration Test Suite"
 
 [debug]
 

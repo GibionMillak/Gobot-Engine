@@ -2134,7 +2134,7 @@ ProjectExportDialog::ProjectExportDialog() {
 	// If no default set, use project name
 	if (default_filename.is_empty()) {
 		// If no project name defined, use a sane default
-		default_filename = GLOBAL_GET("application/config/name");
+		default_filename = GLOBAL_GET("application/config/about/name");
 		if (default_filename.is_empty()) {
 			default_filename = "UnnamedProject";
 		}

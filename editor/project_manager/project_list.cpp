@@ -619,7 +619,7 @@ ProjectList::Item ProjectList::load_project_data(const String &p_path, bool p_fa
 	String cf_project_name;
 	String project_name = TTR("Unnamed Project");
 	if (cf_err == OK) {
-		cf_project_name = cf->get_value("application", "config/name", "");
+		cf_project_name = cf->get_value("application", "config/about/name", "");
 		if (!cf_project_name.is_empty()) {
 			project_name = cf_project_name.xml_unescape();
 		}
@@ -631,11 +631,11 @@ ProjectList::Item ProjectList::load_project_data(const String &p_path, bool p_fa
 		grayed = true;
 	}
 
-	const String description = cf->get_value("application", "config/description", "");
+	const String description = cf->get_value("application", "config/about/description", "");
 	const PackedStringArray tags = cf->get_value("application", "config/tags", PackedStringArray());
 	const String main_scene = cf->get_value("application", "run/main_scene", "");
 
-	String thumbnail = cf->get_value("application", "config/thumbnail", "");
+	String thumbnail = cf->get_value("application", "config/about/thumbnail", "");
 	if (thumbnail.begins_with("uid://")) {
 		Error err;
 		Ref<FileAccess> file = FileAccess::open(p_path.path_join(".godot/uid_cache.bin"), FileAccess::READ, &err);
@@ -680,7 +680,7 @@ ProjectList::Item ProjectList::load_project_data(const String &p_path, bool p_fa
 
 	// We can't use OS::get_user_data_dir() because it attempts to load paths from the current loaded project through ProjectSettings,
 	// while here we're parsing project files externally. Therefore, we have to replicate its behavior.
-	String user_dir = OS::get_singleton()->get_safe_dir_name(cf->get_value("application", "config/custom_user_directory", ""), true);
+	String user_dir = OS::get_singleton()->get_safe_dir_name(cf->get_value("application", "config/settings/custom_user_directory", ""), true);
 	if (user_dir.is_empty()) {
 		String appname = OS::get_singleton()->get_safe_dir_name(cf_project_name);
 		if (appname.is_empty()) {

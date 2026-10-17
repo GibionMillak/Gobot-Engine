@@ -525,7 +525,7 @@ void GameView::_instance_starting(int p_idx, List<String> &r_arguments) {
 
 	if (p_idx == 0 && embed_on_play && make_floating_on_play && window_wrapper->is_window_available() && !window_wrapper->get_window_enabled() && _get_embed_available() == EMBED_AVAILABLE) {
 		// Set the Floating Window default title. Always considered in DEBUG mode, same as in Window::set_title.
-		String appname = GLOBAL_GET("application/config/name");
+		String appname = GLOBAL_GET("application/config/about/name");
 		appname = vformat("%s (DEBUG)", TranslationServer::get_singleton()->translate(appname));
 		window_wrapper->set_window_title(appname);
 

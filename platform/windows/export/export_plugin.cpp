@@ -37,6 +37,7 @@
 #include "core/config/project_settings.h"
 #include "core/io/dir_access.h"
 #include "core/io/file_access.h"
+#include "core/io/resource_uid.h"
 #include "core/io/zip_io.h"
 #include "core/os/os.h"
 #include "editor/editor_node.h"
@@ -85,7 +86,7 @@ Error EditorExportPlatformWindows::_process_icon(const Ref<EditorExportPreset> &
 	HashMap<uint8_t, IconData> images;
 	Error err;
 
-	if (p_src_path.get_extension() == "ico") {
+	if (p_src_path.get_extension().to_lower() == "ico") {
 		Ref<FileAccess> f = FileAccess::open(p_src_path, FileAccess::READ, &err);
 		if (err != OK) {
 			return err;
@@ -95,7 +96,7 @@ Error EditorExportPlatformWindows::_process_icon(const Ref<EditorExportPreset> &
 		f->get_16(); // Reserved.
 		uint16_t icon_type = f->get_16(); // Image type: 1 - ICO.
 		uint16_t icon_count = f->get_16(); // Number of images.
-		ERR_FAIL_COND_V(icon_type != 1, ERR_CANT_OPEN);
+		ERR_FAIL_COND_V(icon_type != 1 || icon_count == 0 || f->get_length() < 6 + 16 * uint64_t(icon_count), ERR_FILE_CORRUPT);
 
 		for (uint16_t i = 0; i < icon_count; i++) {
 			// Read ICONDIRENTRY.
@@ -107,6 +108,7 @@ Error EditorExportPlatformWindows::_process_icon(const Ref<EditorExportPreset> &
 			uint16_t bpp = f->get_16(); // Bits per pixel.
 			uint32_t img_size = f->get_32(); // Image data size in bytes.
 			uint32_t img_offset = f->get_32(); // Image data offset.
+			ERR_FAIL_COND_V(img_size == 0 || uint64_t(img_offset) + img_size > f->get_length(), ERR_FILE_CORRUPT);
 			if (w != h) {
 				continue;
 			}
@@ -118,7 +120,7 @@ Error EditorExportPlatformWindows::_process_icon(const Ref<EditorExportPreset> &
 			images[w].bpp = bpp;
 			images[w].data.resize(img_size);
 			f->seek(img_offset);
-			f->get_buffer(images[w].data.ptrw(), img_size);
+			ERR_FAIL_COND_V(f->get_buffer(images[w].data.ptrw(), img_size) != img_size, ERR_FILE_CANT_READ);
 			f->seek(prev_offset);
 		}
 	} else {
@@ -130,7 +132,7 @@ Error EditorExportPlatformWindows::_process_icon(const Ref<EditorExportPreset> &
 
 			Ref<Image> res_image = src_image->duplicate();
 			ERR_FAIL_COND_V(res_image.is_null() || res_image->is_empty(), ERR_CANT_OPEN);
-			res_image->resize(size, size, (Image::Interpolation)(p_preset->get("application/icon_interpolation").operator int()));
+			res_image->resize(size, size, (Image::Interpolation)(get_project_setting(p_preset, "application/platform/desktop/windows_icon_interpolation").operator int()));
 			images[icon_size[i]].data = res_image->save_png_to_buffer();
 		}
 	}
@@ -152,23 +154,23 @@ Error EditorExportPlatformWindows::_process_icon(const Ref<EditorExportPreset> &
 	}
 
 	// Write ICONDIR.
-	fw->store_16(0); // Reserved.
-	fw->store_16(1); // Image type: 1 - ICO.
-	fw->store_16(valid_icon_count); // Number of images.
+	ERR_FAIL_COND_V(!fw->store_16(0), ERR_FILE_CANT_WRITE); // Reserved.
+	ERR_FAIL_COND_V(!fw->store_16(1), ERR_FILE_CANT_WRITE); // Image type: 1 - ICO.
+	ERR_FAIL_COND_V(!fw->store_16(valid_icon_count), ERR_FILE_CANT_WRITE); // Number of images.
 
 	// Write ICONDIRENTRY.
 	uint32_t img_offset = 6 + 16 * valid_icon_count;
 	for (size_t i = 0; i < std_size(icon_size); ++i) {
 		if (images.has(icon_size[i])) {
 			const IconData &di = images[icon_size[i]];
-			fw->store_8(icon_size[i]); // Width in pixels.
-			fw->store_8(icon_size[i]); // Height in pixels.
-			fw->store_8(di.pal_colors); // Number of colors in the palette (0 - no palette).
-			fw->store_8(0); // Reserved.
-			fw->store_16(di.planes); // Number of color planes.
-			fw->store_16(di.bpp); // Bits per pixel.
-			fw->store_32(di.data.size()); // Image data size in bytes.
-			fw->store_32(img_offset); // Image data offset.
+			ERR_FAIL_COND_V(!fw->store_8(icon_size[i]), ERR_FILE_CANT_WRITE); // Width in pixels.
+			ERR_FAIL_COND_V(!fw->store_8(icon_size[i]), ERR_FILE_CANT_WRITE); // Height in pixels.
+			ERR_FAIL_COND_V(!fw->store_8(di.pal_colors), ERR_FILE_CANT_WRITE); // Number of colors in the palette (0 - no palette).
+			ERR_FAIL_COND_V(!fw->store_8(0), ERR_FILE_CANT_WRITE); // Reserved.
+			ERR_FAIL_COND_V(!fw->store_16(di.planes), ERR_FILE_CANT_WRITE); // Number of color planes.
+			ERR_FAIL_COND_V(!fw->store_16(di.bpp), ERR_FILE_CANT_WRITE); // Bits per pixel.
+			ERR_FAIL_COND_V(!fw->store_32(di.data.size()), ERR_FILE_CANT_WRITE); // Image data size in bytes.
+			ERR_FAIL_COND_V(!fw->store_32(img_offset), ERR_FILE_CANT_WRITE); // Image data offset.
 
 			img_offset += di.data.size();
 		}
@@ -178,10 +180,11 @@ Error EditorExportPlatformWindows::_process_icon(const Ref<EditorExportPreset> &
 	for (size_t i = 0; i < std_size(icon_size); ++i) {
 		if (images.has(icon_size[i])) {
 			const IconData &di = images[icon_size[i]];
-			fw->store_buffer(di.data.ptr(), di.data.size());
+			ERR_FAIL_COND_V(!fw->store_buffer(di.data.ptr(), di.data.size()), ERR_FILE_CANT_WRITE);
 		}
 	}
-	return OK;
+	fw->flush();
+	return fw->get_error();
 }
 
 Error EditorExportPlatformWindows::sign_shared_object(const Ref<EditorExportPreset> &p_preset, bool p_debug, const String &p_path) {
@@ -193,12 +196,13 @@ Error EditorExportPlatformWindows::sign_shared_object(const Ref<EditorExportPres
 }
 
 Error EditorExportPlatformWindows::modify_template(const Ref<EditorExportPreset> &p_preset, bool p_debug, const String &p_path, BitField<EditorExportPlatform::DebugFlags> p_flags) {
-	if (p_preset->get("application/modify_resources")) {
-		_add_data(p_preset, p_path, false);
-		String wrapper_path = p_path.get_basename() + ".console.exe";
-		if (FileAccess::exists(wrapper_path)) {
-			_add_data(p_preset, wrapper_path, true);
-		}
+	Error err = _add_data(p_preset, p_path, false);
+	if (err != OK) {
+		return err;
+	}
+	const String wrapper_path = p_path.get_basename() + ".console.exe";
+	if (FileAccess::exists(wrapper_path)) {
+		return _add_data(p_preset, wrapper_path, true);
 	}
 	return OK;
 }
@@ -224,8 +228,8 @@ Error EditorExportPlatformWindows::export_project(const Ref<EditorExportPreset> 
 	bool embedded = p_preset->get("binary_format/embed_pck");
 
 	String pkg_name;
-	if (String(get_project_setting(p_preset, "application/config/name")) != "") {
-		pkg_name = String(get_project_setting(p_preset, "application/config/name"));
+	if (String(get_project_setting(p_preset, "application/config/about/name")) != "") {
+		pkg_name = String(get_project_setting(p_preset, "application/config/about/name"));
 	} else {
 		pkg_name = "Unnamed";
 	}
@@ -379,38 +383,6 @@ List<String> EditorExportPlatformWindows::get_binary_extensions(const Ref<Editor
 	return list;
 }
 
-String EditorExportPlatformWindows::get_export_option_warning(const EditorExportPreset *p_preset, const StringName &p_name) const {
-	if (p_preset) {
-		if (p_name == "application/icon") {
-			String icon_path = ProjectSettings::get_singleton()->globalize_path(p_preset->get("application/icon"));
-			if (!icon_path.is_empty() && !FileAccess::exists(icon_path)) {
-				return TTR("Invalid icon path.");
-			}
-		} else if (p_name == "application/file_version") {
-			String file_version = p_preset->get("application/file_version");
-			if (!file_version.is_empty()) {
-				PackedStringArray version_array = file_version.split(".", false);
-				if (version_array.size() != 4 || !version_array[0].is_valid_int() ||
-						!version_array[1].is_valid_int() || !version_array[2].is_valid_int() ||
-						!version_array[3].is_valid_int() || file_version.contains_char('-')) {
-					return TTR("Invalid file version.");
-				}
-			}
-		} else if (p_name == "application/product_version") {
-			String product_version = p_preset->get("application/product_version");
-			if (!product_version.is_empty()) {
-				PackedStringArray version_array = product_version.split(".", false);
-				if (version_array.size() != 4 || !version_array[0].is_valid_int() ||
-						!version_array[1].is_valid_int() || !version_array[2].is_valid_int() ||
-						!version_array[3].is_valid_int() || product_version.contains_char('-')) {
-					return TTR("Invalid product version.");
-				}
-			}
-		}
-	}
-	return EditorExportPlatformPC::get_export_option_warning(p_preset, p_name);
-}
-
 bool EditorExportPlatformWindows::get_export_option_visibility(const EditorExportPreset *p_preset, const String &p_option) const {
 	if (p_preset == nullptr) {
 		return true;
@@ -429,12 +401,6 @@ bool EditorExportPlatformWindows::get_export_option_visibility(const EditorExpor
 		return false;
 	}
 
-	// Hide resources.
-	bool mod_res = p_preset->get("application/modify_resources");
-	if (!mod_res && p_option != "application/modify_resources" && p_option != "application/export_angle" && p_option != "application/export_d3d12" && p_option != "application/d3d12_agility_sdk_multiarch" && p_option.begins_with("application/")) {
-		return false;
-	}
-
 	// Hide SSH options.
 	bool ssh = p_preset->get("ssh_remote_deploy/enabled");
 	if (!ssh && p_option != "ssh_remote_deploy/enabled" && p_option.begins_with("ssh_remote_deploy/")) {
@@ -445,8 +411,7 @@ bool EditorExportPlatformWindows::get_export_option_visibility(const EditorExpor
 			p_option == "custom_template/release" ||
 			p_option == "application/d3d12_agility_sdk_multiarch" ||
 			p_option == "application/export_angle" ||
-			p_option == "application/export_d3d12" ||
-			p_option == "application/icon_interpolation") {
+			p_option == "application/export_d3d12") {
 		return advanced_options_enabled;
 	}
 	return true;
@@ -467,17 +432,6 @@ void EditorExportPlatformWindows::get_export_options(List<ExportOption> *r_optio
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "codesign/description"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::PACKED_STRING_ARRAY, "codesign/custom_options"), PackedStringArray()));
 
-	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "application/modify_resources"), true, true));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/icon", PROPERTY_HINT_FILE, "*.ico,*.png,*.webp,*.svg"), "", false, true));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/console_wrapper_icon", PROPERTY_HINT_FILE, "*.ico,*.png,*.webp,*.svg"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "application/icon_interpolation", PROPERTY_HINT_ENUM, "Nearest neighbor,Bilinear,Cubic,Trilinear,Lanczos"), 4));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/file_version", PROPERTY_HINT_PLACEHOLDER_TEXT, "Leave empty to use project version"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/product_version", PROPERTY_HINT_PLACEHOLDER_TEXT, "Leave empty to use project version"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/company_name", PROPERTY_HINT_PLACEHOLDER_TEXT, "Company Name"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/product_name", PROPERTY_HINT_PLACEHOLDER_TEXT, "Game Name"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/file_description"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/copyright"), ""));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "application/trademarks"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "application/export_angle", PROPERTY_HINT_ENUM, "Auto,Yes,No"), 0, true));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "application/export_d3d12", PROPERTY_HINT_ENUM, "Auto,Yes,No"), 0, true));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "application/d3d12_agility_sdk_multiarch"), true, true));
@@ -507,36 +461,33 @@ void EditorExportPlatformWindows::get_export_options(List<ExportOption> *r_optio
 }
 
 Error EditorExportPlatformWindows::_add_data(const Ref<EditorExportPreset> &p_preset, const String &p_path, bool p_console_icon) {
-	String icon_path;
-	if (p_preset->get("application/icon") != "") {
-		icon_path = p_preset->get("application/icon");
-	} else {
-		icon_path = get_project_icon_path(p_preset);
-	}
-	icon_path = ProjectSettings::get_singleton()->globalize_path(icon_path);
-
+	String icon_path = get_project_icon_path(p_preset);
 	if (p_console_icon) {
-		String console_icon_path = ProjectSettings::get_singleton()->globalize_path(p_preset->get("application/console_wrapper_icon"));
-		if (!console_icon_path.is_empty() && FileAccess::exists(console_icon_path)) {
+		const String console_icon_path = ResourceUID::ensure_path(get_project_setting(p_preset, "application/platform/desktop/windows_console_icon"));
+		if (!console_icon_path.is_empty()) {
 			icon_path = console_icon_path;
 		}
 	}
+	icon_path = ProjectSettings::get_singleton()->globalize_path(icon_path);
 
-	String tmp_icon_path = EditorPaths::get_singleton()->get_temp_dir().path_join("_tmp.ico");
+	const String tmp_icon_path = EditorPaths::get_singleton()->get_temp_dir().path_join("_tmp.ico");
+	Error err = OK;
 	if (!icon_path.is_empty()) {
-		if (_process_icon(p_preset, icon_path, tmp_icon_path) != OK) {
-			add_message(EXPORT_MESSAGE_WARNING, TTR("Resources Modification"), vformat(TTR("Invalid icon file \"%s\"."), icon_path));
-			icon_path = String();
+		err = _process_icon(p_preset, icon_path, tmp_icon_path);
+		if (err != OK) {
+			add_message(EXPORT_MESSAGE_ERROR, TTR("Resources Modification"), vformat(TTR("Invalid icon file \"%s\"."), icon_path));
 		}
 	}
-
-	TemplateModifier::modify(p_preset, p_path, tmp_icon_path);
-
+	if (err == OK) {
+		err = TemplateModifier::modify(p_preset, p_path, icon_path.is_empty() ? String() : tmp_icon_path);
+		if (err != OK) {
+			add_message(EXPORT_MESSAGE_ERROR, TTR("Resources Modification"), vformat(TTR("Failed to update executable resources in \"%s\" (error %d)."), p_path, err));
+		}
+	}
 	if (FileAccess::exists(tmp_icon_path)) {
 		DirAccess::remove_file_or_error(tmp_icon_path);
 	}
-
-	return OK;
+	return err;
 }
 
 Error EditorExportPlatformWindows::_code_sign(const Ref<EditorExportPreset> &p_preset, const String &p_path) {

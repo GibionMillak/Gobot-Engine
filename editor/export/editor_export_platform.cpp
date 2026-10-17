@@ -1217,10 +1217,10 @@ String EditorExportPlatform::get_project_icon_path(const Ref<EditorExportPreset>
 
 	String icon_path;
 	if (!platform.is_empty()) {
-		icon_path = get_project_setting(p_preset, "application/config/platform/" + platform + "_icon");
+		icon_path = get_project_setting(p_preset, "application/platform/" + platform + "_icon");
 	}
 	if (icon_path.is_empty()) {
-		icon_path = get_project_setting(p_preset, "application/config/thumbnail");
+		icon_path = get_project_setting(p_preset, "application/config/about/thumbnail");
 	}
 	return ResourceUID::ensure_path(icon_path);
 }
@@ -1231,7 +1231,7 @@ Vector<String> EditorExportPlatform::get_forced_export_files(const Ref<EditorExp
 	files.push_back(ProjectSettings::get_singleton()->get_global_class_list_path());
 
 	const String icon = get_project_icon_path(p_preset);
-	const String thumbnail = ResourceUID::ensure_path(get_project_setting(p_preset, "application/config/thumbnail"));
+	const String thumbnail = ResourceUID::ensure_path(get_project_setting(p_preset, "application/config/about/thumbnail"));
 	const String splash = ResourceUID::ensure_path(get_project_setting(p_preset, "application/boot_splash/image"));
 	if (!icon.is_empty() && FileAccess::exists(icon)) {
 		files.push_back(icon);
@@ -1240,7 +1240,7 @@ Vector<String> EditorExportPlatform::get_forced_export_files(const Ref<EditorExp
 		// Remote filesystem clients can run on a different platform than the editor.
 		const char *const platforms[] = { "desktop/windows", "desktop/macos", "desktop/linux", "mobile/android", "mobile/ios" };
 		for (const char *platform : platforms) {
-			const String platform_icon = ResourceUID::ensure_path(GLOBAL_GET(String("application/config/platform/") + platform + "_icon"));
+			const String platform_icon = ResourceUID::ensure_path(GLOBAL_GET(String("application/platform/") + platform + "_icon"));
 			if (!platform_icon.is_empty() && !files.has(platform_icon) && FileAccess::exists(platform_icon)) {
 				files.push_back(platform_icon);
 			}

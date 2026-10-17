@@ -668,7 +668,7 @@ Error ProjectSettings::_setup(const String &p_path, const String &p_main_pack, b
 		if (err == OK && !p_ignore_override) {
 			// Load override from location of the main pack
 			// Optional, we don't mind if it fails
-			bool disable_override = GLOBAL_GET("application/config/disable_project_settings_override");
+			bool disable_override = GLOBAL_GET("application/config/settings/disable_project_settings_override");
 			if (!disable_override) {
 				_load_settings_text(p_main_pack.get_base_dir().path_join("override.cfg"));
 			}
@@ -723,7 +723,7 @@ Error ProjectSettings::_setup(const String &p_path, const String &p_main_pack, b
 			if (err == OK && !p_ignore_override) {
 				// Load overrides from the PCK and the executable location.
 				// Optional, we don't mind if either fails.
-				bool disable_override = GLOBAL_GET("application/config/disable_project_settings_override");
+				bool disable_override = GLOBAL_GET("application/config/settings/disable_project_settings_override");
 				if (!disable_override) {
 					_load_settings_text("res://override.cfg");
 					_load_settings_text(exec_path.get_base_dir().path_join("override.cfg"));
@@ -747,7 +747,7 @@ Error ProjectSettings::_setup(const String &p_path, const String &p_main_pack, b
 #ifdef OVERRIDE_ENABLED
 		if (err == OK && !p_ignore_override) {
 			// Optional, we don't mind if it fails.
-			bool disable_override = GLOBAL_GET("application/config/disable_project_settings_override");
+			bool disable_override = GLOBAL_GET("application/config/settings/disable_project_settings_override");
 			if (!disable_override) {
 				_load_settings_text("res://override.cfg");
 			}
@@ -773,7 +773,7 @@ Error ProjectSettings::_setup(const String &p_path, const String &p_main_pack, b
 		if (err == OK && !p_ignore_override) {
 			// Optional, we don't mind if it fails.
 #ifdef OVERRIDE_ENABLED
-			bool disable_override = GLOBAL_GET("application/config/disable_project_settings_override");
+			bool disable_override = GLOBAL_GET("application/config/settings/disable_project_settings_override");
 			if (!disable_override) {
 				_load_settings_text(resource_path.path_join("override.cfg"));
 			}
@@ -803,7 +803,7 @@ Error ProjectSettings::_setup(const String &p_path, const String &p_main_pack, b
 #ifdef OVERRIDE_ENABLED
 			if (!p_ignore_override) {
 				// Optional, we don't mind if it fails.
-				bool disable_override = GLOBAL_GET("application/config/disable_project_settings_override");
+				bool disable_override = GLOBAL_GET("application/config/settings/disable_project_settings_override");
 				if (!disable_override) {
 					_load_settings_text(current_dir.path_join("override.cfg"));
 				}
@@ -844,9 +844,9 @@ Error ProjectSettings::setup(const String &p_path, const String &p_main_pack, bo
 	Error err = _setup(p_path, p_main_pack, p_upwards, p_ignore_override);
 #ifdef OVERRIDE_ENABLED
 	if (err == OK && !p_ignore_override) {
-		bool disable_override = GLOBAL_GET("application/config/disable_project_settings_override");
+		bool disable_override = GLOBAL_GET("application/config/settings/disable_project_settings_override");
 		if (!disable_override) {
-			String custom_settings = GLOBAL_GET("application/config/project_settings_override");
+			String custom_settings = GLOBAL_GET("application/config/settings/project_settings_override");
 			if (!custom_settings.is_empty()) {
 				_load_settings_text(custom_settings);
 			}
@@ -855,7 +855,7 @@ Error ProjectSettings::setup(const String &p_path, const String &p_main_pack, bo
 #endif
 
 	// Updating the default value after the project settings have loaded.
-	bool use_hidden_directory = GLOBAL_GET("application/config/use_hidden_project_data_directory");
+	bool use_hidden_directory = GLOBAL_GET("application/config/settings/use_hidden_project_data_directory");
 	project_data_dir_name = (use_hidden_directory ? "." : "") + PROJECT_DATA_DIR_NAME_SUFFIX;
 
 	// Using GLOBAL_GET on every block for compressing can be slow, so assigning here.
@@ -1600,23 +1600,38 @@ ProjectSettings::ProjectSettings() {
 #endif
 
 	GLOBAL_DEF_INTERNAL("application/config/editor_version", "");
-	GLOBAL_DEF_BASIC("application/config/name", "");
-	GLOBAL_DEF(PropertyInfo(Variant::DICTIONARY, "application/config/name_localized", PROPERTY_HINT_LOCALIZABLE_STRING), Dictionary());
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/config/description", PROPERTY_HINT_MULTILINE_TEXT), "");
-	GLOBAL_DEF_BASIC("application/config/version", "");
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/config/thumbnail", PROPERTY_HINT_FILE, "*.png,*.hdr,*.jpg,*.jpeg,*.svg,*.exr,*.webp"), String());
-	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/desktop/windows_icon", PROPERTY_HINT_FILE, "*.ico,*.png,*.webp,*.svg"), String());
-	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/desktop/macos_icon", PROPERTY_HINT_FILE, "*.icns,*.png,*.webp,*.svg"), String());
-	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/desktop/linux_icon", PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), String());
-	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/mobile/android_icon", PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), String());
-	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/platform/mobile/ios_icon", PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), String());
 	GLOBAL_DEF_INTERNAL(PropertyInfo(Variant::STRING, "application/config/tags"), PackedStringArray());
-	GLOBAL_DEF_RST("application/config/use_hidden_project_data_directory", true);
-	GLOBAL_DEF("application/config/custom_user_directory", "");
-	GLOBAL_DEF("application/config/project_settings_override", "");
-	GLOBAL_DEF("application/config/disable_project_settings_override", false);
-	GLOBAL_DEF("application/config/auto_accept_quit", true);
-	GLOBAL_DEF("application/config/quit_on_go_back", true);
+
+	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/config/about/thumbnail", PROPERTY_HINT_FILE, "*.png,*.hdr,*.jpg,*.jpeg,*.svg,*.exr,*.webp"), String());
+	GLOBAL_DEF_BASIC("application/config/about/name", "");
+	GLOBAL_DEF(PropertyInfo(Variant::DICTIONARY, "application/config/about/name_localized", PROPERTY_HINT_LOCALIZABLE_STRING), Dictionary());
+	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "application/config/about/description", PROPERTY_HINT_MULTILINE_TEXT), "");
+	GLOBAL_DEF_BASIC("application/config/about/version", "");
+
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/publisher/company_name", PROPERTY_HINT_PLACEHOLDER_TEXT, "Company Name"), "");
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/publisher/homepage", PROPERTY_HINT_PLACEHOLDER_TEXT, "https://example.com"), "");
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/config/publisher/support_contact", PROPERTY_HINT_PLACEHOLDER_TEXT, "support@example.com"), "");
+
+	GLOBAL_DEF("application/config/legal/copyright_notice", "");
+	GLOBAL_DEF(PropertyInfo(Variant::DICTIONARY, "application/config/legal/copyright_notice_localized", PROPERTY_HINT_LOCALIZABLE_STRING), Dictionary());
+	GLOBAL_DEF("application/config/legal/trademarks", "");
+
+	GLOBAL_DEF("application/config/settings/auto_accept_quit", true);
+	GLOBAL_DEF("application/config/settings/custom_user_directory", "");
+	GLOBAL_DEF("application/config/settings/disable_project_settings_override", false);
+	GLOBAL_DEF("application/config/settings/project_settings_override", "");
+	GLOBAL_DEF("application/config/settings/quit_on_go_back", true);
+	GLOBAL_DEF_RST("application/config/settings/use_hidden_project_data_directory", true);
+
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/platform/desktop/windows_icon", PROPERTY_HINT_FILE, "*.ico,*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::INT, "application/platform/desktop/windows_icon_interpolation", PROPERTY_HINT_ENUM, "Nearest neighbor,Bilinear,Cubic,Trilinear,Lanczos"), 4);
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/platform/desktop/windows_console_icon", PROPERTY_HINT_FILE, "*.ico,*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/platform/desktop/macos_icon", PROPERTY_HINT_FILE, "*.icns,*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::INT, "application/platform/desktop/macos_icon_interpolation", PROPERTY_HINT_ENUM, "Nearest neighbor,Bilinear,Cubic,Trilinear,Lanczos"), 4);
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/platform/desktop/linux_icon", PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/platform/mobile/android_icon", PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::STRING, "application/platform/mobile/ios_icon", PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), String());
+	GLOBAL_DEF(PropertyInfo(Variant::INT, "application/platform/mobile/ios_icon_interpolation", PROPERTY_HINT_ENUM, "Nearest neighbor,Bilinear,Cubic,Trilinear,Lanczos"), 4);
 
 	// Flushing every print is useful for debugging but reduces release performance.
 	GLOBAL_DEF_RST("application/run/flush_stdout_on_print", false);

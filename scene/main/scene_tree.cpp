@@ -1994,7 +1994,7 @@ SceneTree::SceneTree() {
 	}
 
 	// Set after auto translate mode to avoid changing the displayed title back and forth.
-	root->set_title(GLOBAL_GET("application/config/name"));
+	root->set_title(GLOBAL_GET("application/config/about/name"));
 
 #ifndef _3D_DISABLED
 	if (root->get_world_3d().is_null()) {

@@ -379,7 +379,7 @@ void EditorNode::_version_control_menu_option(int p_idx) {
 }
 
 void EditorNode::_update_title() {
-	const String appname = GLOBAL_GET("application/config/name");
+	const String appname = GLOBAL_GET("application/config/about/name");
 	String title = (appname.is_empty() ? TTR("Unnamed Project") : appname);
 	const String edited = editor_data.get_edited_scene_root() ? editor_data.get_edited_scene_root()->get_scene_file_path() : String();
 	if (!edited.is_empty()) {
@@ -6538,7 +6538,7 @@ bool EditorNode::ensure_main_scene(bool p_from_native) {
 }
 
 bool EditorNode::validate_custom_directory() {
-	const String custom_dir = OS::get_singleton()->get_safe_dir_name(GLOBAL_GET("application/config/custom_user_directory"), true);
+	const String custom_dir = OS::get_singleton()->get_safe_dir_name(GLOBAL_GET("application/config/settings/custom_user_directory"), true);
 
 	if (!custom_dir.is_empty()) {
 		String data_dir = OS::get_singleton()->get_user_data_dir();

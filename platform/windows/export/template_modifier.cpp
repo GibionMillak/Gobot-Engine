@@ -30,7 +30,6 @@
 
 #include "template_modifier.h"
 
-#include "core/io/dir_access.h"
 #include "core/io/image.h"
 #include "editor/export/editor_export_preset.h"
 
@@ -548,49 +547,28 @@ TemplateModifier::ManifestInfo TemplateModifier::_create_manifest_info() const {
 	return manifest_info;
 }
 
-TemplateModifier::GroupIcon TemplateModifier::_create_group_icon(const String &p_icon_path) const {
-	GroupIcon group_icon;
-
-	Ref<FileAccess> icon_file = FileAccess::open(p_icon_path, FileAccess::READ);
-	if (icon_file.is_null()) {
-		group_icon.fill_with_godot_blue();
-		return group_icon;
+Error TemplateModifier::_create_group_icon(const String &p_icon_path, GroupIcon &r_group_icon) const {
+	if (p_icon_path.is_empty()) {
+		r_group_icon.fill_with_godot_blue();
+		return OK;
 	}
-
-	group_icon.load(icon_file);
-
-	return group_icon;
-}
-
-Error TemplateModifier::_truncate(const String &p_path, uint32_t p_size) const {
-	Error error;
-
-	Ref<FileAccess> file = FileAccess::open(p_path, FileAccess::READ, &error);
-	ERR_FAIL_COND_V(error != OK, ERR_CANT_OPEN);
-
-	String truncated_path = p_path + ".truncated";
-	Ref<FileAccess> truncated = FileAccess::open(truncated_path, FileAccess::WRITE, &error);
-	ERR_FAIL_COND_V(error != OK, ERR_CANT_CREATE);
-
-	truncated->store_buffer(file->get_buffer(p_size));
-
-	file->close();
-	truncated->close();
-
-	DirAccess::remove_absolute(p_path);
-	DirAccess::rename_absolute(truncated_path, p_path);
-
-	return error;
+	Error err = OK;
+	Ref<FileAccess> icon_file = FileAccess::open(p_icon_path, FileAccess::READ, &err);
+	ERR_FAIL_COND_V(err != OK, err);
+	ERR_FAIL_COND_V(icon_file->get_length() < 6 || icon_file->get_32() != 0x10000, ERR_FILE_CORRUPT);
+	icon_file->seek(0);
+	r_group_icon.load(icon_file);
+	return icon_file->get_error();
 }
 
 HashMap<String, String> TemplateModifier::_get_strings(const Ref<EditorExportPreset> &p_preset) const {
-	String file_version = p_preset->get_version("application/file_version", true);
-	String product_version = p_preset->get_version("application/product_version", true);
-	String company_name = p_preset->get("application/company_name");
-	String product_name = p_preset->get("application/product_name");
-	String file_description = p_preset->get("application/file_description");
-	String copyright = p_preset->get("application/copyright");
-	String trademarks = p_preset->get("application/trademarks");
+	const String file_version = p_preset->get_project_version(true);
+	const String product_version = file_version;
+	const String company_name = p_preset->get_project_setting("application/config/publisher/company_name");
+	const String product_name = p_preset->get_project_setting("application/config/about/name");
+	const String file_description = p_preset->get_project_setting("application/config/about/description");
+	const String copyright = p_preset->get_project_setting("application/config/legal/copyright_notice");
+	const String trademarks = p_preset->get_project_setting("application/config/legal/trademarks");
 
 	HashMap<String, String> strings;
 	if (!file_version.is_empty()) {
@@ -642,7 +620,9 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 
 	uint64_t original_template_size = template_file->get_length();
 
-	GroupIcon group_icon = _create_group_icon(p_icon_path);
+	GroupIcon group_icon;
+	error = _create_group_icon(p_icon_path, group_icon);
+	ERR_FAIL_COND_V(error != OK, error);
 
 	VersionInfo version_info = _create_version_info(_get_strings(p_preset));
 	ManifestInfo manifest_info = _create_manifest_info();
@@ -668,6 +648,7 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 		SectionEntry &section_entry = section_entries.write[i];
 		template_file->seek(section_entry.pointer_to_raw_data);
 		Vector<uint8_t> data = template_file->get_buffer(section_entry.size_of_raw_data);
+		ERR_FAIL_COND_V(uint64_t(data.size()) != section_entry.size_of_raw_data, ERR_FILE_CANT_READ);
 		moved_section_data.push_back(data);
 		section_entry.pointer_to_raw_data += raw_size_delta;
 		section_entry.virtual_address = prev_virtual_address + _snap(prev_virtual_size, PE_PAGE_SIZE);
@@ -681,6 +662,7 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 	Vector<uint8_t> footer;
 	if (footer_size > 0) {
 		footer = template_file->get_buffer(footer_size);
+		ERR_FAIL_COND_V(uint64_t(footer.size()) != footer_size, ERR_FILE_CANT_READ);
 	}
 
 	uint32_t pe_header_offset = _get_pe_header_offset(template_file);
@@ -690,7 +672,7 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 	uint32_t symbols_offset = template_file->get_32();
 	if (symbols_offset > resources_section_entry.pointer_to_raw_data) {
 		template_file->seek(pe_header_offset + 12);
-		template_file->store_32(symbols_offset + raw_size_delta);
+		ERR_FAIL_COND_V(!template_file->store_32(symbols_offset + raw_size_delta), ERR_FILE_CANT_WRITE);
 	}
 
 	template_file->seek(pe_header_offset + MAGIC_NUMBER_OFFSET);
@@ -703,47 +685,49 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 	uint32_t size_of_initialized_data = template_file->get_32();
 	size_of_initialized_data += resources_section_entry.size_of_raw_data - old_resources_size_of_raw_data;
 	template_file->seek(pe_header_offset + SIZE_OF_INITIALIZED_DATA_OFFSET);
-	template_file->store_32(size_of_initialized_data);
+	ERR_FAIL_COND_V(!template_file->store_32(size_of_initialized_data), ERR_FILE_CANT_WRITE);
 
 	template_file->seek(pe_header_offset + SIZE_OF_IMAGE_OFFSET);
 	uint32_t size_of_image = template_file->get_32();
 	size_of_image += section_entries.get(section_entries.size() - 1).virtual_address - old_last_section_virtual_address;
 	template_file->seek(pe_header_offset + SIZE_OF_IMAGE_OFFSET);
-	template_file->store_32(size_of_image);
+	ERR_FAIL_COND_V(!template_file->store_32(size_of_image), ERR_FILE_CANT_WRITE);
 
 	uint32_t optional_header_offset = pe_header_offset + COFF_HEADER_SIZE;
 
 	// Update resource section size.
 	template_file->seek(optional_header_offset + (pe32plus ? 132 : 116));
-	template_file->store_32(resources_section_entry.virtual_size);
+	ERR_FAIL_COND_V(!template_file->store_32(resources_section_entry.virtual_size), ERR_FILE_CANT_WRITE);
 
 	// Update relocation section size and pointer.
 	template_file->seek(optional_header_offset + (pe32plus ? 152 : 136));
-	template_file->store_32(section_entries[relocations_index].virtual_address);
-	template_file->store_32(section_entries[relocations_index].virtual_size);
+	ERR_FAIL_COND_V(!template_file->store_32(section_entries[relocations_index].virtual_address), ERR_FILE_CANT_WRITE);
+	ERR_FAIL_COND_V(!template_file->store_32(section_entries[relocations_index].virtual_size), ERR_FILE_CANT_WRITE);
 
 	template_file->seek(optional_header_offset + (pe32plus ? 240 : 224) + SectionEntry::SIZE * resource_index);
-	template_file->store_buffer(resources_section_entry.save());
+	ERR_FAIL_COND_V(!template_file->store_buffer(resources_section_entry.save()), ERR_FILE_CANT_WRITE);
 	for (int i = resource_index + 1; i < section_entries.size(); i++) {
 		template_file->seek(optional_header_offset + (pe32plus ? 240 : 224) + SectionEntry::SIZE * i);
-		template_file->store_buffer(section_entries[i].save());
+		ERR_FAIL_COND_V(!template_file->store_buffer(section_entries[i].save()), ERR_FILE_CANT_WRITE);
 	}
 
 	// Write new resource section.
 	template_file->seek(resources_section_entry.pointer_to_raw_data);
-	template_file->store_buffer(resources);
+	ERR_FAIL_COND_V(!template_file->store_buffer(resources), ERR_FILE_CANT_WRITE);
 	// Write the rest of sections.
 	for (const Vector<uint8_t> &data : moved_section_data) {
-		template_file->store_buffer(data);
+		ERR_FAIL_COND_V(!template_file->store_buffer(data), ERR_FILE_CANT_WRITE);
 	}
 	// Write footer data.
 	if (footer_size > 0) {
-		template_file->store_buffer(footer);
+		ERR_FAIL_COND_V(!template_file->store_buffer(footer), ERR_FILE_CANT_WRITE);
 	}
 
+	template_file->flush();
+	error = template_file->get_error();
+	ERR_FAIL_COND_V(error != OK, error);
 	if (template_file->get_position() < original_template_size) {
-		template_file->close();
-		_truncate(p_template_path, section_entries.get(section_entries.size() - 1).pointer_to_raw_data + section_entries.get(section_entries.size() - 1).size_of_raw_data + footer_size);
+		return template_file->resize(section_entries.get(section_entries.size() - 1).pointer_to_raw_data + section_entries.get(section_entries.size() - 1).size_of_raw_data + footer_size);
 	}
 
 	return OK;

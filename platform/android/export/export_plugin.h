@@ -102,7 +102,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 	AndroidEditorGradleRunner *android_editor_gradle_runner = nullptr;
 #endif // ANDROID_ENABLED
 
-	String get_project_name(const Ref<EditorExportPreset> &p_preset, const String &p_name) const;
+	String _get_project_name(const Ref<EditorExportPreset> &p_preset) const;
 
 	String get_package_name(const Ref<EditorExportPreset> &p_preset, const String &p_package) const;
 

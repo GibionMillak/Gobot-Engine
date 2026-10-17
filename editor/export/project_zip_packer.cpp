@@ -43,7 +43,7 @@ String ProjectZIPPacker::get_project_zip_safe_name() {
 	// Replace characters not allowed (or risky) in Windows file names with safe characters.
 	// In the project name, all invalid characters become an empty string so that a name
 	// like "Platformer 2: Godette's Revenge" becomes "platformer_2-_godette-s_revenge".
-	const String project_name = GLOBAL_GET("application/config/name");
+	const String project_name = GLOBAL_GET("application/config/about/name");
 	const String project_name_safe = project_name.to_lower().replace_char(' ', '_');
 	const String datetime_safe =
 			Time::get_singleton()->get_datetime_string_from_system(false, true).replace_char(' ', '_');

@@ -332,12 +332,12 @@ String OS::get_user_data_dir(const String &p_user_dir) const {
 }
 
 String OS::get_user_data_dir() const {
-	const String custom_dir = get_safe_dir_name(GLOBAL_GET("application/config/custom_user_directory"), true);
+	const String custom_dir = get_safe_dir_name(GLOBAL_GET("application/config/settings/custom_user_directory"), true);
 	if (!custom_dir.is_empty()) {
 		return get_user_data_dir(custom_dir);
 	}
 
-	String appname = get_safe_dir_name(GLOBAL_GET("application/config/name"));
+	String appname = get_safe_dir_name(GLOBAL_GET("application/config/about/name"));
 	if (appname.is_empty()) {
 		appname = "[Unnamed Project]";
 	}

@@ -41,9 +41,6 @@
 		<member name="application/export_project_only" type="bool" setter="" getter="">
 			If [code]true[/code], exports iOS project files without building an XCArchive or [code].ipa[/code] file. If [code]false[/code], exports iOS project files and builds an XCArchive and [code].ipa[/code] file at the same time. When combining Godot with Fastlane or other build pipelines, you may want to set this to [code]true[/code].
 		</member>
-		<member name="application/icon_interpolation" type="int" setter="" getter="">
-			Interpolation method used to resize application icon.
-		</member>
 		<member name="application/min_ios_version" type="String" setter="" getter="">
 			Minimum version of iOS required for this application to run in the [code]major.minor.patch[/code] or [code]major.minor[/code] format, can only contain numeric characters ([code]0-9[/code]) and periods ([code].[/code]).
 		</member>
@@ -63,19 +60,11 @@
 			UUID of the provisioning profile. If left empty, Xcode will download or create a provisioning profile automatically. See [url=https://developer.apple.com/help/account/manage-profiles/edit-download-or-delete-profiles]Edit, download, or delete provisioning profiles[/url].
 			Can be overridden with the environment variable [code]GODOT_APPLE_PLATFORM_PROVISIONING_PROFILE_UUID_RELEASE[/code].
 		</member>
-		<member name="application/short_version" type="String" setter="" getter="">
-			Application version visible to the user. Can only contain numeric characters ([code]0-9[/code]) and periods ([code].[/code]). Falls back to [member ProjectSettings.application/config/version] if left empty.
-			[b]Note:[/b] This value is used for the [i]Identity &gt; Version[/i] value in the generated Xcode project.
-		</member>
 		<member name="application/signature" type="String" setter="" getter="">
 			A four-character creator code that is specific to the bundle. Optional.
 		</member>
 		<member name="application/targeted_device_family" type="int" setter="" getter="">
 			Supported device family.
-		</member>
-		<member name="application/version" type="String" setter="" getter="">
-			Machine-readable application version in the [code]major.minor.patch[/code] format. Can only contain numeric characters ([code]0-9[/code]) and periods ([code].[/code]). This must be incremented with every new release pushed to the App Store. Falls back to [member ProjectSettings.application/config/version] if left empty.
-			[b]Note:[/b] This value is used for the [i]Identity &gt; Build[/i] value in the generated Xcode project.
 		</member>
 		<member name="architectures/arm64" type="bool" setter="" getter="">
 			If [code]true[/code], [code]arm64[/code] binaries are included in the exported project.
@@ -117,7 +106,7 @@
 			Environment for Apple Push Notification service. See [url=https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment]aps-environment[/url].
 		</member>
 		<member name="icons/app_store_1024x1024" type="String" setter="" getter="">
-			App Store application icon file. If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			App Store application icon file. If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/app_store_1024x1024_dark" type="String" setter="" getter="">
 			App Store application icon file, dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -126,7 +115,7 @@
 			App Store application icon file, tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/icon_1024x1024" type="String" setter="" getter="">
-			Base application icon used to generate other icons. If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Base application icon used to generate other icons. If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/icon_1024x1024_dark" type="String" setter="" getter="">
 			Base application icon used to generate other icons, dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -135,7 +124,7 @@
 			Base application icon used to generate other icons, tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ios_128x128" type="String" setter="" getter="">
-			iOS application 64×64 icon file (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			iOS application 64×64 icon file (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ios_128x128_dark" type="String" setter="" getter="">
 			iOS application 64×64 icon file (2× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -144,7 +133,7 @@
 			iOS application 64×64 icon file (2× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ios_136x136" type="String" setter="" getter="">
-			iOS application 68×68 icon file (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			iOS application 68×68 icon file (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ios_136x136_dark" type="String" setter="" getter="">
 			iOS application 68×68 icon file (2× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -153,7 +142,7 @@
 			iOS application 68×68 icon file (2× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ios_192x192" type="String" setter="" getter="">
-			iOS application 64×64 icon file (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			iOS application 64×64 icon file (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ios_192x192_dark" type="String" setter="" getter="">
 			iOS application 64×64 icon file (3× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -162,7 +151,7 @@
 			iOS application 64×64 icon file (3× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ipad_152x152" type="String" setter="" getter="">
-			Home screen application icon file on iPad (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Home screen application icon file on iPad (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ipad_152x152_dark" type="String" setter="" getter="">
 			Home screen application icon file on iPad (2× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -171,7 +160,7 @@
 			Home screen application icon file on iPad (2× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ipad_167x167" type="String" setter="" getter="">
-			Home screen application icon file on iPad (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Home screen application icon file on iPad (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/ipad_167x167_dark" type="String" setter="" getter="">
 			Home screen application icon file on iPad (3× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -180,7 +169,7 @@
 			Home screen application icon file on iPad (3× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/iphone_120x120" type="String" setter="" getter="">
-			Home screen application icon file on iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Home screen application icon file on iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/iphone_120x120_dark" type="String" setter="" getter="">
 			Home screen application icon file on iPhone (2× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -189,7 +178,7 @@
 			Home screen application icon file on iPhone (2× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/iphone_180x180" type="String" setter="" getter="">
-			Home screen application icon file on iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Home screen application icon file on iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/iphone_180x180_dark" type="String" setter="" getter="">
 			Home screen application icon file on iPhone (3× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -198,7 +187,7 @@
 			Home screen application icon file on iPhone (3× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/notification_40x40" type="String" setter="" getter="">
-			Notification icon file on iPad and iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Notification icon file on iPad and iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/notification_40x40_dark" type="String" setter="" getter="">
 			Notification icon file on iPad and iPhone (2× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -207,7 +196,7 @@
 			Notification icon file on iPad and iPhone (2× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/notification_60x60" type="String" setter="" getter="">
-			Notification icon file on iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Notification icon file on iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/notification_60x60_dark" type="String" setter="" getter="">
 			Notification icon file on iPhone (3× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -216,7 +205,7 @@
 			Notification icon file on iPhone (3× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/notification_76x76" type="String" setter="" getter="">
-			Notification icon file on iPad and iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Notification icon file on iPad and iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/notification_76x76_dark" type="String" setter="" getter="">
 			Notification icon file on iPad and iPhone (2× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -225,7 +214,7 @@
 			Notification icon file on iPad and iPhone (2× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/notification_114x114" type="String" setter="" getter="">
-			Notification icon file on iPad and iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Notification icon file on iPad and iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/notification_114x114_dark" type="String" setter="" getter="">
 			Notification icon file on iPad and iPhone (3× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -234,7 +223,7 @@
 			Notification icon file on iPad and iPhone (3× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/settings_58x58" type="String" setter="" getter="">
-			Application settings icon file on iPad and iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Application settings icon file on iPad and iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/settings_58x58_dark" type="String" setter="" getter="">
 			Application settings icon file on iPad and iPhone (2× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -243,7 +232,7 @@
 			Application settings icon file on iPad and iPhone (2× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/settings_87x87" type="String" setter="" getter="">
-			Application settings icon file on iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Application settings icon file on iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/settings_87x87_dark" type="String" setter="" getter="">
 			Application settings icon file on iPhone (3× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -252,7 +241,7 @@
 			Application settings icon file on iPhone (3× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/spotlight_80x80" type="String" setter="" getter="">
-			Spotlight icon file on iPad and iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Spotlight icon file on iPad and iPhone (2× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/spotlight_80x80_dark" type="String" setter="" getter="">
 			Spotlight icon file on iPad and iPhone (2× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
@@ -261,7 +250,7 @@
 			Spotlight icon file on iPad and iPhone (2× DPI), tinted version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/spotlight_120x120" type="String" setter="" getter="">
-			Spotlight icon file on iPad and iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/config/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
+			Spotlight icon file on iPad and iPhone (3× DPI). If left empty, it will fall back to [member ProjectSettings.application/platform/mobile/ios_icon], then to [member ProjectSettings.application/config/about/thumbnail]. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
 		</member>
 		<member name="icons/spotlight_120x120_dark" type="String" setter="" getter="">
 			Spotlight icon file on iPad and iPhone (3× DPI), dark version. See [url=https://developer.apple.com/design/human-interface-guidelines/foundations/app-icons]App icons[/url].
