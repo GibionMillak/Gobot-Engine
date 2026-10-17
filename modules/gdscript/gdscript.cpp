@@ -56,10 +56,6 @@
 #include "scene/resources/packed_scene.h"
 #include "scene/scene_string_names.h"
 
-#ifdef TOOLS_ENABLED
-#include "editor/file_system/editor_paths.h"
-#endif
-
 ///////////////////////////
 
 GDScriptNativeClass::GDScriptNativeClass(const StringName &p_name) {
@@ -754,24 +750,6 @@ Error GDScript::reload(bool p_keep_state) {
 
 		ERR_FAIL_V_MSG(ERR_ALREADY_IN_USE, "Cannot reload script while instances exist.");
 	}
-
-	String basedir = path;
-
-	if (basedir.is_empty()) {
-		basedir = get_path();
-	}
-
-	if (!basedir.is_empty()) {
-		basedir = basedir.get_base_dir();
-	}
-
-	// Loading a template, don't parse.
-#ifdef TOOLS_ENABLED
-	if (EditorPaths::get_singleton() && basedir.begins_with(EditorPaths::get_singleton()->get_project_script_templates_dir())) {
-		reloading = false;
-		return OK;
-	}
-#endif
 
 	{
 		String source_path = path;

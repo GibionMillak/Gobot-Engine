@@ -52,6 +52,7 @@
 #include "editor/themes/editor_theme_manager.h"
 #include "scene/animation/animation_tree.h"
 #include "scene/gui/line_edit.h"
+#include "scene/gui/option_button.h"
 #include "scene/gui/separator.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/window.h"

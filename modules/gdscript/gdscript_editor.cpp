@@ -38,7 +38,6 @@
 #ifdef TOOLS_ENABLED
 #include "editor/gdscript_docgen.h"
 #include "editor/gdscript_editor_language.h"
-#include "editor/script_templates/templates.gen.h"
 #endif
 
 #include "core/config/engine.h"
@@ -100,59 +99,11 @@ Vector<String> GDScriptLanguage::get_string_delimiters() const {
 	return delimiters;
 }
 
-bool GDScriptLanguage::is_using_templates() {
-	return true;
-}
-
-Ref<Script> GDScriptLanguage::make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const {
-	Ref<GDScript> scr;
-	scr.instantiate();
-
-	String processed_template = p_template;
-
-#ifdef TOOLS_ENABLED
-	const bool type_hints = EditorSettings::get_singleton()->get_setting("text_editor/completion/add_type_hints");
-#else
-	const bool type_hints = true;
-#endif
-
-	if (!type_hints) {
-		processed_template = processed_template.replace(": int", "")
-									 .replace(": Shader.Mode", "")
-									 .replace(": VisualShader.Type", "")
-									 .replace(": float", "")
-									 .replace(": String", "")
-									 .replace(": Array[String]", "")
-									 .replace(": Node", "")
-									 .replace(": CharFXTransform", "")
-									 .replace(":=", "=")
-									 .replace(" -> void", "")
-									 .replace(" -> bool", "")
-									 .replace(" -> int", "")
-									 .replace(" -> PortType", "")
-									 .replace(" -> String", "")
-									 .replace(" -> Object", "");
-	}
-
-	processed_template = processed_template.replace("_BASE_", p_base_class_name)
-								 .replace("_CLASS_SNAKE_CASE_", p_class_name.to_snake_case().validate_unicode_identifier())
-								 .replace("_CLASS_", p_class_name.to_pascal_case().validate_unicode_identifier())
-								 .replace("_TS_", _get_indentation());
-	scr->set_source_code(processed_template);
-
-	return scr;
-}
-
-Vector<ScriptLanguage::ScriptTemplate> GDScriptLanguage::get_built_in_templates(const StringName &p_object) {
-	Vector<ScriptLanguage::ScriptTemplate> templates;
-#ifdef TOOLS_ENABLED
-	for (int i = 0; i < TEMPLATES_ARRAY_SIZE; i++) {
-		if (TEMPLATES[i].inherit == p_object) {
-			templates.append(TEMPLATES[i]);
-		}
-	}
-#endif
-	return templates;
+Ref<Script> GDScriptLanguage::make_script(const String &p_base_class_name) const {
+	Ref<GDScript> script;
+	script.instantiate();
+	script->set_source_code("extends " + p_base_class_name + "\n");
+	return script;
 }
 
 #ifdef TOOLS_ENABLED

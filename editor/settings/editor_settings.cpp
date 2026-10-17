@@ -1846,27 +1846,6 @@ void EditorSettings::update_text_editor_themes_list() {
 	add_property_hint(PropertyInfo(Variant::STRING, "text_editor/theme/color_theme", PROPERTY_HINT_ENUM, themes));
 }
 
-Vector<String> EditorSettings::get_script_templates(const String &p_extension, const String &p_custom_path) {
-	Vector<String> templates;
-	String template_dir = EditorPaths::get_singleton()->get_script_templates_dir();
-	if (!p_custom_path.is_empty()) {
-		template_dir = p_custom_path;
-	}
-	Ref<DirAccess> d = DirAccess::open(template_dir);
-	if (d.is_valid()) {
-		d->list_dir_begin();
-		String file = d->get_next();
-		while (!file.is_empty()) {
-			if (file.get_extension() == p_extension) {
-				templates.push_back(file.get_basename());
-			}
-			file = d->get_next();
-		}
-		d->list_dir_end();
-	}
-	return templates;
-}
-
 String EditorSettings::get_editor_layouts_config() const {
 	return EditorPaths::get_singleton()->get_config_dir().path_join("editor_layouts.cfg");
 }

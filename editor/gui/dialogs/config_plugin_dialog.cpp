@@ -319,12 +319,7 @@ Error ConfigPluginDialog::_create_plugin_script(const String &p_script_path) {
 #endif
 	ERR_FAIL_NULL_V(language, ERR_UNAVAILABLE);
 
-	String template_content;
-	const Vector<ScriptLanguage::ScriptTemplate> templates = language->get_built_in_templates("EditorPlugin");
-	if (!templates.is_empty()) {
-		template_content = templates[0].content;
-	}
-	Ref<Script> script = language->make_template(template_content, p_script_path.get_file().get_basename(), "EditorPlugin");
+	Ref<Script> script = language->make_script("EditorPlugin");
 	ERR_FAIL_COND_V(script.is_null(), ERR_CANT_CREATE);
 	script->set_path(p_script_path, true);
 	return ResourceSaver::save(script);

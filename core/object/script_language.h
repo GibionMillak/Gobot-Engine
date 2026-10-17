@@ -221,12 +221,6 @@ public:
 	virtual EditorLanguage *get_editor_language() = 0;
 #endif // TOOLS_ENABLED
 
-	enum TemplateLocation {
-		TEMPLATE_BUILT_IN,
-		TEMPLATE_EDITOR,
-		TEMPLATE_PROJECT
-	};
-
 	enum ScriptNameCasing {
 		SCRIPT_NAME_CASING_AUTO,
 		SCRIPT_NAME_CASING_PASCAL_CASE,
@@ -235,27 +229,13 @@ public:
 		SCRIPT_NAME_CASING_CAMEL_CASE,
 	};
 
-	struct ScriptTemplate {
-		String inherit = "Object";
-		String name;
-		String description;
-		String content;
-		int id = 0;
-		TemplateLocation origin = TemplateLocation::TEMPLATE_BUILT_IN;
-
-		String get_hash() const {
-			return itos(origin) + inherit + name;
-		}
-	};
-
 	virtual Vector<String> get_reserved_words() const = 0;
 	virtual bool is_control_flow_keyword(const String &p_string) const = 0;
 	virtual Vector<String> get_comment_delimiters() const = 0;
 	virtual Vector<String> get_doc_comment_delimiters() const = 0;
 	virtual Vector<String> get_string_delimiters() const = 0;
-	virtual Ref<Script> make_template(const String &p_template, const String &p_class_name, const String &p_base_class_name) const { return Ref<Script>(); }
-	virtual Vector<ScriptTemplate> get_built_in_templates(const StringName &p_object) { return Vector<ScriptTemplate>(); }
-	virtual bool is_using_templates() { return false; }
+	// The base is a class name or a quoted script path, as written in an extends declaration.
+	virtual Ref<Script> make_script(const String &p_base_class_name) const = 0;
 	virtual String validate_path(const String &p_path) const { return ""; }
 	virtual bool supports_builtin_mode() const = 0;
 	virtual bool supports_documentation() const { return false; }

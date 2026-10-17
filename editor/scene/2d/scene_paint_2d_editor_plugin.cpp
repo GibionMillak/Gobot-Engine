@@ -51,6 +51,7 @@
 #endif
 #include "scene/gui/box_container.h"
 #include "scene/gui/item_list.h"
+#include "scene/gui/option_button.h"
 #include "scene/gui/tree.h"
 
 void ScenePaint2DEditor::_can_handle(bool p_is_node_2d, bool p_edit) {

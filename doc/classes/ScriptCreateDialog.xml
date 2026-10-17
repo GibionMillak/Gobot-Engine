@@ -4,7 +4,7 @@
 		Godot editor's popup dialog for creating new [Script] files.
 	</brief_description>
 	<description>
-		The [ScriptCreateDialog] creates script files according to a given template for a given scripting language. The standard use is to configure its fields prior to calling one of the [method Window.popup] methods.
+		The [ScriptCreateDialog] creates GDScript files containing an [code]extends[/code] declaration for the configured base class or script. The standard use is to configure its fields prior to calling one of the [method Window.popup] methods.
 		[codeblock]
 		func _ready():
 			var dialog = ScriptCreateDialog.new();
