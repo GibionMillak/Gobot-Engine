@@ -59,6 +59,7 @@ class Panel;
 class PanelContainer;
 class RichTextLabel;
 class SubViewport;
+class SystemInformationDialog;
 class TextureProgressBar;
 class Timer;
 class Translation;
@@ -208,15 +209,9 @@ public:
 
 		// Help menu.
 		HELP_SEARCH,
-		HELP_DOCS,
-		HELP_FORUM,
-		HELP_COMMUNITY,
-		HELP_COPY_SYSTEM_INFO,
+		HELP_SYSTEM_INFORMATION,
 		HELP_REPORT_A_BUG,
-		HELP_SUGGEST_A_FEATURE,
-		HELP_SEND_DOCS_FEEDBACK,
 		HELP_ABOUT,
-		HELP_SUPPORT_GODOT_DEVELOPMENT,
 
 		// Update spinner menu.
 		SPINNER_UPDATE_CONTINUOUSLY,
@@ -576,8 +571,6 @@ private:
 		MENU_TYPE_FULL,
 	};
 
-	String _get_system_info() const;
-
 	static void _dependency_error_report(const String &p_path, const String &p_dep, const String &p_type) {
 		DEV_ASSERT(Thread::get_caller_id() == Thread::get_main_id());
 		if (!singleton->dependency_errors.has(p_path)) {
@@ -929,6 +922,7 @@ private:
 	Button *select_current_scene_button = nullptr;
 	AcceptDialog *save_accept = nullptr;
 	EditorAbout *about = nullptr;
+	SystemInformationDialog *_system_information_dialog = nullptr;
 	AcceptDialog *warning = nullptr;
 	EditorPlugin *plugin_to_save = nullptr;
 

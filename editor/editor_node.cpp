@@ -80,6 +80,7 @@
 #include "editor/file_system/editor_paths.h"
 #include "editor/gui/dialogs/project_autoloads_dialog.h"
 #include "editor/gui/dialogs/project_plugins_dialog.h"
+#include "editor/gui/dialogs/system_information_dialog.h"
 #include "editor/gui/editor_about.h"
 #include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_file_dialog.h"
@@ -182,7 +183,6 @@
 #include "scene/resources/portable_compressed_texture.h"
 #include "scene/theme/theme_db.h"
 #include "servers/audio/audio_server.h"
-#include "servers/audio/audio_server_enums.h"
 #include "servers/display/display_server.h"
 #include "servers/display/display_server_enums.h"
 #include "servers/navigation_2d/navigation_server_2d.h"
@@ -1028,18 +1028,12 @@ EditorNode::EditorNode() {
 	ED_SHORTCUT_AND_COMMAND("editor/fullscreen_mode", TTRC("Toggle Fullscreen"), KeyModifierMask::SHIFT | Key::F11);
 	ED_SHORTCUT_OVERRIDE("editor/fullscreen_mode", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::F);
 
-	ED_SHORTCUT_AND_COMMAND("editor/editor_help", TTRC("Search Help..."), Key::F1);
+	ED_SHORTCUT_AND_COMMAND("editor/editor_help", TTRC("Documentation"), Key::F1);
 	ED_SHORTCUT_OVERRIDE("editor/editor_help", "macos", KeyModifierMask::ALT | Key::SPACE);
-	ED_SHORTCUT_AND_COMMAND("editor/online_docs", TTRC("Online Documentation"));
-	ED_SHORTCUT_AND_COMMAND("editor/forum", TTRC("Forum"));
-	ED_SHORTCUT_AND_COMMAND("editor/community", TTRC("Community"));
 
-	ED_SHORTCUT_AND_COMMAND("editor/copy_system_info", TTRC("Copy System Info"));
+	ED_SHORTCUT_AND_COMMAND("editor/system_information", TTRC("System Information"));
 	ED_SHORTCUT_AND_COMMAND("editor/report_a_bug", TTRC("Report a Bug"));
-	ED_SHORTCUT_AND_COMMAND("editor/suggest_a_feature", TTRC("Suggest a Feature"));
-	ED_SHORTCUT_AND_COMMAND("editor/send_docs_feedback", TTRC("Send Docs Feedback"));
-	ED_SHORTCUT_AND_COMMAND("editor/about", TTRC("About Godot..."));
-	ED_SHORTCUT_AND_COMMAND("editor/support_development", TTRC("Support Godot Development"));
+	ED_SHORTCUT_AND_COMMAND("editor/about", TTRC("About Gobot"));
 
 	// Use the Ctrl modifier so F2 can be used to rename nodes in the scene tree dock.
 	ED_SHORTCUT_AND_COMMAND("editor/editor_2d", TTRC("Open 2D Workspace"), KeyModifierMask::CTRL | Key::F1);
@@ -5119,178 +5113,6 @@ void EditorNode::_notification(int p_what) {
 	}
 }
 
-String EditorNode::_get_system_info() const {
-	String distribution_name = OS::get_singleton()->get_distribution_name();
-	if (distribution_name.is_empty()) {
-		distribution_name = OS::get_singleton()->get_name();
-	}
-	if (distribution_name.is_empty()) {
-		distribution_name = "Other";
-	}
-	const String distribution_version = OS::get_singleton()->get_version_alias();
-
-	String godot_version = "Godot v" + String(GODOT_VERSION_FULL_CONFIG);
-	if (String(GODOT_VERSION_BUILD) != "official") {
-		String hash = String(GODOT_VERSION_HASH);
-		hash = hash.is_empty() ? String("unknown") : vformat("(%s)", hash.left(9));
-		godot_version += " " + hash;
-	}
-
-	String display_session_type;
-#ifdef LINUXBSD_ENABLED
-	// `remove_char` is necessary, because `capitalize` introduces a whitespace between "x" and "11".
-	display_session_type = OS::get_singleton()->get_environment("XDG_SESSION_TYPE").capitalize().remove_char(' ');
-#endif // LINUXBSD_ENABLED
-	String driver_name = OS::get_singleton()->get_current_rendering_driver_name().to_lower();
-	String rendering_method = OS::get_singleton()->get_current_rendering_method().to_lower();
-
-	const String rendering_device_name = RenderingServer::get_singleton()->get_video_adapter_name();
-
-	String device_type_string;
-#ifdef RD_ENABLED
-	RenderingDeviceEnums::DeviceType device_type = RenderingServer::get_singleton()->get_video_adapter_type();
-	switch (device_type) {
-		case RenderingDeviceEnums::DeviceType::DEVICE_TYPE_INTEGRATED_GPU:
-			device_type_string = "integrated";
-			break;
-		case RenderingDeviceEnums::DeviceType::DEVICE_TYPE_DISCRETE_GPU:
-			device_type_string = "dedicated";
-			break;
-		case RenderingDeviceEnums::DeviceType::DEVICE_TYPE_VIRTUAL_GPU:
-			device_type_string = "virtual";
-			break;
-		case RenderingDeviceEnums::DeviceType::DEVICE_TYPE_CPU:
-			device_type_string = "(software emulation on CPU)";
-			break;
-		case RenderingDeviceEnums::DeviceType::DEVICE_TYPE_OTHER:
-		case RenderingDeviceEnums::DeviceType::DEVICE_TYPE_MAX:
-			break; // Can't happen, but silences warning for DEVICE_TYPE_MAX
-	}
-#endif // RD_ENABLED
-
-	const Vector<String> video_adapter_driver_info = OS::get_singleton()->get_video_adapter_driver_info();
-
-	const String processor_name = OS::get_singleton()->get_processor_name();
-	const int processor_count = OS::get_singleton()->get_processor_count();
-
-	const String audio_driver_name = AudioServer::get_singleton()->get_driver_name();
-	const float mix_rate = AudioServer::get_singleton()->get_mix_rate();
-
-	AuSE::SpeakerMode speaker_mode = AudioServer::get_singleton()->get_speaker_mode();
-	String speaker_mode_string;
-	switch (speaker_mode) {
-		case AuSE::SpeakerMode::SPEAKER_MODE_STEREO:
-			speaker_mode_string = "Stereo/mono";
-			break;
-		case AuSE::SpeakerMode::SPEAKER_SURROUND_31:
-			speaker_mode_string = "Surround 3.1";
-			break;
-		case AuSE::SpeakerMode::SPEAKER_SURROUND_51:
-			speaker_mode_string = "Surround 5.1";
-			break;
-		case AuSE::SpeakerMode::SPEAKER_SURROUND_71:
-			speaker_mode_string = "Surround 7.1";
-			break;
-	}
-
-	// Prettify
-	if (rendering_method == "forward_plus") {
-		rendering_method = "Forward+";
-	} else if (rendering_method == "mobile") {
-		rendering_method = "Mobile";
-	} else if (rendering_method == "gl_compatibility") {
-		rendering_method = "Compatibility";
-	}
-	if (driver_name == "vulkan") {
-		driver_name = "Vulkan";
-	} else if (driver_name == "d3d12") {
-		driver_name = "Direct3D 12";
-	} else if (driver_name == "opengl3_angle") {
-		driver_name = "OpenGL ES 3/ANGLE";
-	} else if (driver_name == "opengl3_es") {
-		driver_name = "OpenGL ES 3";
-	} else if (driver_name == "opengl3") {
-		if (OS::get_singleton()->get_gles_over_gl()) {
-			driver_name = "OpenGL 3";
-		} else {
-			driver_name = "OpenGL ES 3";
-		}
-	} else if (driver_name == "metal") {
-		driver_name = "Metal";
-	}
-
-	// Join info.
-	Vector<String> info;
-	info.push_back(godot_version);
-	String distribution_display_session_type = distribution_name;
-	if (!distribution_version.is_empty()) {
-		distribution_display_session_type += " " + distribution_version;
-	}
-	if (!display_session_type.is_empty()) {
-		distribution_display_session_type += " on " + display_session_type;
-	}
-	info.push_back(distribution_display_session_type);
-
-	String display_driver_window_mode;
-#ifdef LINUXBSD_ENABLED
-	// `remove_char` is necessary, because `capitalize` introduces a whitespace between "x" and "11".
-	display_driver_window_mode = DisplayServer::get_singleton()->get_name().capitalize().remove_char(' ') + " display driver";
-#endif // LINUXBSD_ENABLED
-	if (!display_driver_window_mode.is_empty()) {
-		display_driver_window_mode += ", ";
-	}
-	display_driver_window_mode += get_viewport()->is_embedding_subwindows() ? "Single-window" : "Multi-window";
-
-	if (DisplayServer::get_singleton()->get_screen_count() == 1) {
-		display_driver_window_mode += ", " + itos(DisplayServer::get_singleton()->get_screen_count()) + " monitor";
-	} else {
-		display_driver_window_mode += ", " + itos(DisplayServer::get_singleton()->get_screen_count()) + " monitors";
-	}
-
-	// List resolution and refresh rate for each monitor.
-	display_driver_window_mode += " (";
-	for (int i = 0; i < DisplayServer::get_singleton()->get_screen_count(); i++) {
-		const Size2i screen_size = DisplayServer::get_singleton()->screen_get_size(i);
-		display_driver_window_mode += vformat("%dx%d @ %.2f Hz", screen_size.x, screen_size.y, DisplayServer::get_singleton()->screen_get_refresh_rate(i));
-		if (i < DisplayServer::get_singleton()->get_screen_count() - 1) {
-			display_driver_window_mode += ", ";
-		}
-	}
-	display_driver_window_mode += ")";
-
-	info.push_back(display_driver_window_mode);
-
-	info.push_back(vformat("%s (%s)", driver_name, rendering_method));
-
-	String graphics;
-	if (!device_type_string.is_empty()) {
-		graphics = device_type_string + " ";
-	}
-	graphics += rendering_device_name;
-	if (video_adapter_driver_info.size() == 2) { // This vector is always either of length 0 or 2.
-		const String &vad_name = video_adapter_driver_info[0];
-		const String &vad_version = video_adapter_driver_info[1]; // Version could be potentially empty on Linux/BSD.
-		if (!vad_version.is_empty()) {
-			graphics += vformat(" (%s; %s)", vad_name, vad_version);
-		} else if (!vad_name.is_empty()) {
-			graphics += vformat(" (%s)", vad_name);
-		}
-	}
-	info.push_back(graphics);
-
-	info.push_back(vformat("%s (%d threads)", processor_name, processor_count));
-
-	const int64_t system_ram = OS::get_singleton()->get_memory_info()["physical"];
-	if (system_ram > 0) {
-		// If the memory info is available, display it.
-		info.push_back(vformat("%s memory", String::humanize_size(system_ram)));
-	}
-
-	info.push_back(vformat("%s (%d Hz, %s)", audio_driver_name, int(mix_rate), speaker_mode_string));
-
-	return String(" - ").join(info);
-}
-
 Ref<Texture2D> EditorNode::_file_dialog_get_icon(const String &p_path) {
 	EditorFileSystemDirectory *efsd = EditorFileSystem::get_singleton()->get_filesystem_path(p_path.get_base_dir());
 	if (efsd) {
@@ -5410,7 +5232,7 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 #endif
 
 	help_menu->set_item_icon(help_menu->get_item_index(HELP_SEARCH), get_editor_theme_native_menu_icon(SNAME("HelpSearch"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-	help_menu->set_item_icon(help_menu->get_item_index(HELP_COPY_SYSTEM_INFO), get_editor_theme_native_menu_icon(SNAME("Copy"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
+	help_menu->set_item_icon(help_menu->get_item_index(HELP_SYSTEM_INFORMATION), get_editor_theme_native_menu_icon(SNAME("Info"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 #ifdef MACOS_ENABLED
 	if (menu_type != MENU_TYPE_GLOBAL) {
 		help_menu->set_item_icon(help_menu->get_item_index(HELP_ABOUT), get_editor_theme_native_menu_icon(SNAME("Godot"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
@@ -5418,7 +5240,6 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 #else
 	help_menu->set_item_icon(help_menu->get_item_index(HELP_ABOUT), get_editor_theme_native_menu_icon(SNAME("Godot"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 #endif
-	help_menu->set_item_icon(help_menu->get_item_index(HELP_SUPPORT_GODOT_DEVELOPMENT), get_editor_theme_native_menu_icon(SNAME("Heart"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 }
 
 void EditorNode::_update_theme(bool p_skip_creation) {
@@ -6482,27 +6303,15 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 		case EDITOR_COMMAND_PALETTE: {
 			command_palette->open_popup();
 		} break;
-		case HELP_DOCS: {
-			OS::get_singleton()->shell_open(GODOT_VERSION_DOCS_URL "/");
-		} break;
-		case HELP_FORUM: {
-			OS::get_singleton()->shell_open("https://forum.godotengine.org/");
-		} break;
 		case HELP_REPORT_A_BUG: {
-			OS::get_singleton()->shell_open("https://github.com/godotengine/godot/issues");
+			OS::get_singleton()->shell_open("https://github.com/GibionMillak/Gobot-Engine/issues");
 		} break;
-		case HELP_COPY_SYSTEM_INFO: {
-			String info = _get_system_info();
-			DisplayServer::get_singleton()->clipboard_set(info);
-		} break;
-		case HELP_SUGGEST_A_FEATURE: {
-			OS::get_singleton()->shell_open("https://github.com/godotengine/godot-proposals#readme");
-		} break;
-		case HELP_SEND_DOCS_FEEDBACK: {
-			OS::get_singleton()->shell_open("https://github.com/godotengine/godot-docs/issues");
-		} break;
-		case HELP_COMMUNITY: {
-			OS::get_singleton()->shell_open("https://godotengine.org/community");
+		case HELP_SYSTEM_INFORMATION: {
+			if (!_system_information_dialog) {
+				_system_information_dialog = memnew(SystemInformationDialog);
+				gui_base->add_child(_system_information_dialog);
+			}
+			_system_information_dialog->show_information();
 		} break;
 		case HELP_ABOUT: {
 			if (!about) {
@@ -6510,9 +6319,6 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 				gui_base->add_child(about);
 			}
 			about->popup_centered(Size2(780, 500) * EDSCALE);
-		} break;
-		case HELP_SUPPORT_GODOT_DEVELOPMENT: {
-			OS::get_singleton()->shell_open("https://fund.godotengine.org/?ref=help_menu");
 		} break;
 	}
 }
@@ -9359,15 +9165,8 @@ void EditorNode::_build_help_menu(bool p_dark_mode) {
 
 	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("HelpSearch"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/editor_help"), HELP_SEARCH);
 	help_menu->add_separator();
-	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/online_docs"), HELP_DOCS);
-	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/forum"), HELP_FORUM);
-	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/community"), HELP_COMMUNITY);
-	help_menu->add_separator();
-	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("Copy"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/copy_system_info"), HELP_COPY_SYSTEM_INFO);
-	help_menu->set_item_tooltip(-1, TTRC("Copies the system info as a single-line text into the clipboard."));
+	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("Info"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/system_information"), HELP_SYSTEM_INFORMATION);
 	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/report_a_bug"), HELP_REPORT_A_BUG);
-	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/suggest_a_feature"), HELP_SUGGEST_A_FEATURE);
-	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/send_docs_feedback"), HELP_SEND_DOCS_FEEDBACK);
 	help_menu->add_separator();
 #ifdef MACOS_ENABLED
 	if (menu_type != MENU_TYPE_GLOBAL) {
@@ -9377,7 +9176,6 @@ void EditorNode::_build_help_menu(bool p_dark_mode) {
 #else
 	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("Godot"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/about"), HELP_ABOUT);
 #endif
-	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("Heart"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/support_development"), HELP_SUPPORT_GODOT_DEVELOPMENT);
 }
 
 void EditorNode::_update_main_menu_type() {
