@@ -3707,8 +3707,7 @@ void ThemeTypeEditor::_notification(int p_what) {
 			rename_type_button->set_button_icon(get_editor_theme_icon(SNAME("Rename")));
 			remove_type_button->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
 
-			const String theme_style = EDITOR_GET("interface/theme/style");
-			data_type_tabs->set_theme_type_variation(theme_style == "Classic" ? "TabContainerOdd" : "TabContainerInner");
+			data_type_tabs->set_theme_type_variation("TabContainerOdd");
 
 			data_type_tabs->set_tab_icon(0, get_editor_theme_icon(SNAME("Color")));
 			data_type_tabs->set_tab_icon(1, get_editor_theme_icon(SNAME("MemberConstant")));
@@ -4167,11 +4166,9 @@ void ThemeEditor::_notification(int p_what) {
 			theme_edit_button->set_button_icon(get_editor_theme_icon(SNAME("Tools")));
 			theme_close_button->set_button_icon(get_editor_theme_icon(SNAME("Close")));
 
-			if (EDITOR_GET("interface/theme/style") == "Classic") {
-				preview_tabs->add_theme_style_override("tab_selected", get_theme_stylebox(SNAME("ThemeEditorPreviewFG"), EditorStringName(EditorStyles)));
-				preview_tabs->add_theme_style_override("tab_unselected", get_theme_stylebox(SNAME("ThemeEditorPreviewBG"), EditorStringName(EditorStyles)));
-				preview_tabs_content->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("TabContainerOdd")));
-			}
+			preview_tabs->add_theme_style_override("tab_selected", get_theme_stylebox(SNAME("ThemeEditorPreviewFG"), EditorStringName(EditorStyles)));
+			preview_tabs->add_theme_style_override("tab_unselected", get_theme_stylebox(SNAME("ThemeEditorPreviewBG"), EditorStringName(EditorStyles)));
+			preview_tabs_content->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("TabContainerOdd")));
 
 			add_preview_button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
 			add_preview_button_ph->set_custom_minimum_size(add_preview_button->get_minimum_size());

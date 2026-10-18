@@ -628,8 +628,7 @@ void DynamicFontImportSettingsDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			const String theme_style = EDITOR_GET("interface/theme/style");
-			const String type_variation = theme_style == "Classic" ? "TabContainerOdd" : "TabContainerInner";
+			const String type_variation = "TabContainerOdd";
 			main_pages->set_theme_type_variation(type_variation);
 			preload_pages->set_theme_type_variation(type_variation);
 

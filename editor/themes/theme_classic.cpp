@@ -2093,7 +2093,6 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 
 		// PanelContainerTabbarInner.
 		{
-			// Used by Modern theme.
 			p_theme->set_type_variation("PanelContainerTabbarInner", "PanelContainer");
 			p_theme->set_stylebox(SceneStringName(panel), "PanelContainerTabbarInner", EditorThemeManager::make_empty_stylebox(0, 0, 0, 0));
 		}

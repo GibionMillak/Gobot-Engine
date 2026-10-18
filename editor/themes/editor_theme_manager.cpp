@@ -43,7 +43,6 @@
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme.h"
 #include "editor/themes/theme_classic.h"
-#include "editor/themes/theme_modern.h"
 #include "scene/resources/style_box_flat.h"
 #include "scene/resources/style_box_line.h"
 #include "scene/resources/style_box_texture.h"
@@ -58,7 +57,6 @@ uint32_t EditorThemeManager::ThemeConfiguration::hash() {
 
 	// Basic properties.
 
-	hash = hash_murmur3_one_32(style.hash(), hash);
 	hash = hash_murmur3_one_32(preset.hash(), hash);
 	hash = hash_murmur3_one_32(spacing_preset.hash(), hash);
 
@@ -177,12 +175,7 @@ Ref<EditorTheme> EditorThemeManager::_create_base_theme(const Ref<EditorTheme> &
 
 	print_verbose(vformat("EditorTheme: Generating new theme for the config '%d'.", theme->get_generated_hash()));
 
-	bool is_default_style = config.style == "Modern";
-	if (is_default_style) {
-		ThemeModern::populate_shared_styles(theme, config);
-	} else {
-		ThemeClassic::populate_shared_styles(theme, config);
-	}
+	ThemeClassic::populate_shared_styles(theme, config);
 
 	// Register icons.
 	{
@@ -222,13 +215,8 @@ Ref<EditorTheme> EditorThemeManager::_create_base_theme(const Ref<EditorTheme> &
 
 	print_verbose("EditorTheme: Generating new styles.");
 
-	if (is_default_style) {
-		ThemeModern::populate_standard_styles(theme, config);
-		ThemeModern::populate_editor_styles(theme, config);
-	} else {
-		ThemeClassic::populate_standard_styles(theme, config);
-		ThemeClassic::populate_editor_styles(theme, config);
-	}
+	ThemeClassic::populate_standard_styles(theme, config);
+	ThemeClassic::populate_editor_styles(theme, config);
 
 	_populate_text_editor_styles(theme, config);
 	_populate_visual_shader_styles(theme, config);
@@ -242,7 +230,6 @@ EditorThemeManager::ThemeConfiguration EditorThemeManager::_create_theme_config(
 
 	// Basic properties.
 
-	config.style = EDITOR_GET("interface/theme/style");
 	config.preset = EDITOR_GET("interface/theme/color_preset");
 	config.spacing_preset = EDITOR_GET("interface/theme/spacing_preset");
 
@@ -270,15 +257,10 @@ EditorThemeManager::ThemeConfiguration EditorThemeManager::_create_theme_config(
 	config.dragging_hover_wait_msec = (float)EDITOR_GET("interface/editor/timers/dragging_hover_wait_seconds") * 1000;
 	config.max_sticky_tree_items = EDITOR_GET("interface/editor/appearance/max_sticky_tree_items");
 
-	// Handle theme style.
+	// Apply built-in theme defaults.
 	if (config.preset != "Custom") {
-		if (config.style == "Classic") {
-			config.draw_relationship_lines = RELATIONSHIP_ALL;
-			config.corner_radius = 3;
-		} else { // Default
-			config.draw_relationship_lines = config.default_relationship_lines;
-			config.corner_radius = config.default_corner_radius;
-		}
+		config.draw_relationship_lines = RELATIONSHIP_ALL;
+		config.corner_radius = 3;
 
 		EditorSettings::get_singleton()->set_initial_value("interface/theme/draw_relationship_lines", config.draw_relationship_lines);
 		EditorSettings::get_singleton()->set_initial_value("interface/theme/corner_radius", config.corner_radius);

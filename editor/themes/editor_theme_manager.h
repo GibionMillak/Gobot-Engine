@@ -53,7 +53,6 @@ public:
 	struct ThemeConfiguration {
 		// Basic properties.
 
-		String style;
 		String preset;
 		String spacing_preset;
 
@@ -84,9 +83,7 @@ public:
 
 		// Make sure to keep those in sync with the definitions in the editor settings.
 		const float default_icon_saturation = 2.0;
-		const int default_relationship_lines = RELATIONSHIP_SELECTED_ONLY;
 		const float default_contrast = 0.3;
-		const int default_corner_radius = 4;
 
 		// Generated properties.
 
@@ -103,7 +100,6 @@ public:
 
 		Color mono_color;
 		Color mono_color_font;
-		Color mono_color_inv;
 		Color dark_color_1;
 		Color dark_color_2;
 		Color dark_color_3;
@@ -136,32 +132,10 @@ public:
 		Color font_dark_background_hover_pressed_color;
 
 		Color icon_normal_color;
-		Color icon_secondary_color;
 		Color icon_focus_color;
 		Color icon_hover_color;
 		Color icon_pressed_color;
 		Color icon_disabled_color;
-
-		Color surface_popup_color;
-		Color surface_lowest_color;
-		Color surface_lower_color;
-		Color surface_low_color;
-		Color surface_base_color;
-		Color surface_high_color;
-		Color surface_higher_color;
-		Color surface_highest_color;
-
-		Color button_normal_color;
-		Color button_hover_color;
-		Color button_pressed_color;
-		Color button_disabled_color;
-		Color button_border_normal_color;
-		Color button_border_hover_color;
-		Color button_border_pressed_color;
-
-		Color flat_button_pressed_color;
-		Color flat_button_hover_pressed_color;
-		Color flat_button_hover_color;
 
 		Color shadow_color;
 		Color selection_color;
@@ -170,9 +144,7 @@ public:
 		Color separator_color;
 
 		Ref<StyleBoxFlat> base_style;
-		Ref<StyleBoxFlat> focus_style;
 		Ref<StyleBoxEmpty> base_empty_style;
-		Ref<StyleBoxEmpty> base_empty_wide_style;
 
 		Ref<StyleBoxFlat> button_style;
 		Ref<StyleBoxFlat> button_style_disabled;
@@ -180,22 +152,14 @@ public:
 		Ref<StyleBoxFlat> button_style_pressed;
 		Ref<StyleBoxFlat> button_style_hover;
 
-		Ref<StyleBoxFlat> flat_button;
-		Ref<StyleBoxFlat> flat_button_pressed;
-		Ref<StyleBoxFlat> flat_button_hover_pressed;
-		Ref<StyleBoxFlat> flat_button_hover;
-
 		Ref<StyleBoxFlat> popup_style;
 		Ref<StyleBoxFlat> popup_border_style;
-		Ref<StyleBoxFlat> popup_panel_style;
 		Ref<StyleBoxFlat> window_style;
-		Ref<StyleBoxFlat> window_complex_style;
 		Ref<StyleBoxFlat> dialog_style;
 		Ref<StyleBoxFlat> panel_container_style;
 		Ref<StyleBoxFlat> content_panel_style;
 		Ref<StyleBoxFlat> tree_panel_style;
 		Ref<StyleBoxFlat> tab_container_style;
-		Ref<StyleBoxFlat> foreground_panel;
 
 		Vector2 widget_margin;
 
