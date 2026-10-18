@@ -54,7 +54,6 @@ public:
 		// Basic properties.
 
 		String preset;
-		String spacing_preset;
 
 		Color base_color;
 		Color accent_color;
@@ -63,13 +62,11 @@ public:
 
 		// Extra properties.
 
-		int base_spacing = 4;
-		int extra_spacing = 0;
+		int padding = 4;
 		Size2 dialogs_buttons_min_size = Size2(105, 34);
 		int border_width = 0;
-		int corner_radius = 3;
+		int border_radius = 3;
 
-		bool draw_extra_borders = false;
 		int draw_relationship_lines;
 		float relationship_line_opacity = 1.0;
 		int thumb_size = 16;
@@ -111,8 +108,6 @@ public:
 		Color success_color;
 		Color warning_color;
 		Color error_color;
-		Color extra_border_color_1;
-		Color extra_border_color_2;
 
 		Color font_color;
 		Color font_secondary_color;

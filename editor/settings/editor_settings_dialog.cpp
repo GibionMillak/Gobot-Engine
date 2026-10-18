@@ -81,10 +81,8 @@ void EditorSettingsDialog::_settings_property_edited() {
 
 	// Set theme presets to Custom when controlled settings change.
 
-	if (full_name == "interface/theme/accent_color" || full_name == "interface/theme/base_color" || full_name == "interface/theme/contrast" || full_name == "interface/theme/draw_extra_borders" || full_name == "interface/theme/icon_saturation" || full_name == "interface/theme/draw_relationship_lines" || full_name == "interface/theme/corner_radius") {
+	if (full_name == "interface/theme/accent_color" || full_name == "interface/theme/base_color" || full_name == "interface/theme/contrast" || full_name == "interface/theme/icon_saturation" || full_name == "interface/theme/draw_relationship_lines" || full_name == "interface/theme/border_radius") {
 		EditorSettings::get_singleton()->set_manually("interface/theme/color_preset", "Custom");
-	} else if (full_name == "interface/theme/base_spacing" || full_name == "interface/theme/additional_spacing") {
-		EditorSettings::get_singleton()->set_manually("interface/theme/spacing_preset", "Custom");
 	} else if (full_name.begins_with("text_editor/theme/highlighting")) {
 		EditorSettings::get_singleton()->set_manually("text_editor/theme/color_theme", "Custom");
 	} else if (full_name.begins_with("editors/visual_editors/connection_colors") || full_name.begins_with("editors/visual_editors/category_colors")) {

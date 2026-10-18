@@ -99,12 +99,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_color("error_color", EditorStringName(Editor), p_config.error_color);
 		p_theme->set_color("ruler_color", EditorStringName(Editor), p_config.dark_color_2);
 
-		// Only used when the Draw Extra Borders editor setting is enabled.
-		p_config.extra_border_color_1 = Color(0.5, 0.5, 0.5);
-		p_config.extra_border_color_2 = p_config.dark_theme ? Color(0.3, 0.3, 0.3) : Color(0.7, 0.7, 0.7);
-
-		p_theme->set_color("extra_border_color_1", EditorStringName(Editor), p_config.extra_border_color_1);
-		p_theme->set_color("extra_border_color_2", EditorStringName(Editor), p_config.extra_border_color_2);
+		p_theme->set_color("texture_preview_outline_color", EditorStringName(Editor), Color(0.5, 0.5, 0.5));
 
 		// Font colors.
 
@@ -231,7 +226,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 	// Styleboxes.
 	{
 		// This is the basic stylebox, used as a base for most other styleboxes (through `duplicate()`).
-		p_config.base_style = EditorThemeManager::make_flat_stylebox(p_config.base_color, p_config.base_margin, p_config.base_margin, p_config.base_margin, p_config.base_margin, p_config.corner_radius);
+		p_config.base_style = EditorThemeManager::make_flat_stylebox(p_config.base_color, p_config.base_margin, p_config.base_margin, p_config.base_margin, p_config.base_margin, p_config.border_radius);
 		p_config.base_style->set_border_width_all(p_config.border_width);
 		p_config.base_style->set_border_color(p_config.base_color);
 
@@ -244,20 +239,11 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_config.button_style = p_config.base_style->duplicate();
 			p_config.button_style->set_content_margin_individual(p_config.widget_margin.x, p_config.widget_margin.y, p_config.widget_margin.x, p_config.widget_margin.y);
 			p_config.button_style->set_bg_color(p_config.dark_color_1);
-			if (p_config.draw_extra_borders) {
-				p_config.button_style->set_border_width_all(EDSCALE_RND(1));
-				p_config.button_style->set_border_color(p_config.extra_border_color_1);
-			} else {
-				p_config.button_style->set_border_color(p_config.dark_color_2);
-			}
+			p_config.button_style->set_border_color(p_config.dark_color_2);
 
 			p_config.button_style_disabled = p_config.button_style->duplicate();
 			p_config.button_style_disabled->set_bg_color(p_config.disabled_bg_color);
-			if (p_config.draw_extra_borders) {
-				p_config.button_style_disabled->set_border_color(p_config.extra_border_color_2);
-			} else {
-				p_config.button_style_disabled->set_border_color(p_config.disabled_border_color);
-			}
+			p_config.button_style_disabled->set_border_color(p_config.disabled_border_color);
 
 			p_config.button_style_focus = p_config.button_style->duplicate();
 			p_config.button_style_focus->set_draw_center(false);
@@ -269,11 +255,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 
 			p_config.button_style_hover = p_config.button_style->duplicate();
 			p_config.button_style_hover->set_bg_color(p_config.mono_color * Color(1, 1, 1, 0.11));
-			if (p_config.draw_extra_borders) {
-				p_config.button_style_hover->set_border_color(p_config.extra_border_color_1);
-			} else {
-				p_config.button_style_hover->set_border_color(p_config.mono_color * Color(1, 1, 1, 0.05));
-			}
+			p_config.button_style_hover->set_border_color(p_config.mono_color * Color(1, 1, 1, 0.05));
 		}
 
 		// Windows and popups.
@@ -291,11 +273,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_config.popup_border_style->set_content_margin_all(MAX(EDSCALE_RND(1), p_config.border_width) + 2 + EDSCALE_RND(p_config.base_margin * 1.5));
 			// Always display a border for popups like PopupMenus so they can be distinguished from their background.
 			p_config.popup_border_style->set_border_width_all(MAX(EDSCALE_RND(1), p_config.border_width));
-			if (p_config.draw_extra_borders) {
-				p_config.popup_border_style->set_border_color(p_config.extra_border_color_2);
-			} else {
-				p_config.popup_border_style->set_border_color(p_config.dark_color_2);
-			}
+			p_config.popup_border_style->set_border_color(p_config.dark_color_2);
 
 			p_config.window_style = p_config.popup_style->duplicate();
 			p_config.window_style->set_border_color(p_config.base_color);
@@ -337,12 +315,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_config.tree_panel_style = p_config.base_style->duplicate();
 			// Make Trees easier to distinguish from other controls by using a darker background color.
 			p_config.tree_panel_style->set_bg_color(p_config.dark_color_1.lerp(p_config.dark_color_2, 0.5));
-			if (p_config.draw_extra_borders) {
-				p_config.tree_panel_style->set_border_width_all(EDSCALE_RND(1));
-				p_config.tree_panel_style->set_border_color(p_config.extra_border_color_2);
-			} else {
-				p_config.tree_panel_style->set_border_color(p_config.dark_color_3);
-			}
+			p_config.tree_panel_style->set_border_color(p_config.dark_color_3);
 		}
 	}
 }
@@ -351,7 +324,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 	// Panels.
 	{
 		// Panel.
-		p_theme->set_stylebox(SceneStringName(panel), "Panel", EditorThemeManager::make_flat_stylebox(p_config.dark_color_1, 6, 4, 6, 4, p_config.corner_radius));
+		p_theme->set_stylebox(SceneStringName(panel), "Panel", EditorThemeManager::make_flat_stylebox(p_config.dark_color_1, 6, 4, 6, 4, p_config.border_radius));
 
 		// PanelContainer.
 		p_theme->set_stylebox(SceneStringName(panel), "PanelContainer", p_config.panel_container_style);
@@ -368,12 +341,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			Ref<StyleBoxFlat> style_tooltip = p_config.popup_style->duplicate();
 			style_tooltip->set_shadow_size(0);
 			style_tooltip->set_bg_color(p_config.dark_color_3 * Color(0.8, 0.8, 0.8, 0.9));
-			if (p_config.draw_extra_borders) {
-				style_tooltip->set_border_width_all(EDSCALE_RND(1));
-				style_tooltip->set_border_color(p_config.extra_border_color_2);
-			} else {
-				style_tooltip->set_border_width_all(0);
-			}
+			style_tooltip->set_border_width_all(0);
 			p_theme->set_stylebox(SceneStringName(panel), "TooltipPanel", style_tooltip);
 		}
 
@@ -730,13 +698,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			style_itemlist_bg->set_content_margin_all(p_config.separation_margin);
 			style_itemlist_bg->set_bg_color(p_config.dark_color_1);
 
-			if (p_config.draw_extra_borders) {
-				style_itemlist_bg->set_border_width_all(EDSCALE_RND(1));
-				style_itemlist_bg->set_border_color(p_config.extra_border_color_2);
-			} else {
-				style_itemlist_bg->set_border_width_all(p_config.border_width);
-				style_itemlist_bg->set_border_color(p_config.dark_color_3);
-			}
+			style_itemlist_bg->set_border_width_all(p_config.border_width);
+			style_itemlist_bg->set_border_color(p_config.dark_color_3);
 
 			Ref<StyleBoxFlat> style_itemlist_cursor = p_config.base_style->duplicate();
 			style_itemlist_cursor->set_draw_center(false);
@@ -777,18 +740,18 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 
 	// Table.
 	{
-		Ref<StyleBoxFlat> table_background = EditorThemeManager::make_flat_stylebox(p_config.dark_color_3, 1, 1, 1, 1, p_config.corner_radius);
+		Ref<StyleBoxFlat> table_background = EditorThemeManager::make_flat_stylebox(p_config.dark_color_3, 1, 1, 1, 1, p_config.border_radius);
 		table_background->set_border_color(p_config.dark_color_3);
 		table_background->set_border_width_all(1);
 
-		Ref<StyleBoxFlat> table_header = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(p_config.font_color, 0.08), 0, 0, 0, 0, p_config.corner_radius);
+		Ref<StyleBoxFlat> table_header = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(p_config.font_color, 0.08), 0, 0, 0, 0, p_config.border_radius);
 		table_header->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
 		table_header->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
 
 		Ref<StyleBoxFlat> table_row_even = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1, 0, 0, 0, 0, 0);
 		Ref<StyleBoxFlat> table_row_odd = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(p_config.font_color, 0.035), 0, 0, 0, 0, 0);
 
-		Ref<StyleBoxFlat> table_footer = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(p_config.font_color, 0.05), 4, 4, 4, 4, p_config.corner_radius);
+		Ref<StyleBoxFlat> table_footer = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(p_config.font_color, 0.05), 4, 4, 4, 4, p_config.border_radius);
 		table_footer->set_corner_radius(CORNER_TOP_LEFT, 0);
 		table_footer->set_corner_radius(CORNER_TOP_RIGHT, 0);
 
@@ -858,7 +821,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 
 		Ref<StyleBoxFlat> style_tab_focus = p_config.button_style_focus->duplicate();
 
-		Ref<StyleBoxFlat> style_tabbar_background = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1, 0, 0, 0, 0, p_config.corner_radius);
+		Ref<StyleBoxFlat> style_tabbar_background = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1, 0, 0, 0, 0, p_config.border_radius);
 		style_tabbar_background->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
 		style_tabbar_background->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
 		p_theme->set_stylebox("tabbar_background", "TabContainer", style_tabbar_background);
@@ -929,15 +892,10 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		text_editor_style->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
 		text_editor_style->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
 
-		if (p_config.draw_extra_borders) {
-			text_editor_style->set_border_width_all(EDSCALE_RND(1));
-			text_editor_style->set_border_color(p_config.extra_border_color_1);
-		} else {
-			// Add a bottom line to make LineEdits more visible, especially in sectioned inspectors
-			// such as the Project Settings.
-			text_editor_style->set_border_width(SIDE_BOTTOM, Math::round(EDSCALE_RND(2)));
-			text_editor_style->set_border_color(p_config.dark_color_2);
-		}
+		// Add a bottom line to make LineEdits more visible, especially in sectioned inspectors
+		// such as the Project Settings.
+		text_editor_style->set_border_width(SIDE_BOTTOM, Math::round(EDSCALE_RND(2)));
+		text_editor_style->set_border_color(p_config.dark_color_2);
 
 		Ref<StyleBoxFlat> text_editor_disabled_style = text_editor_style->duplicate();
 		text_editor_disabled_style->set_border_color(p_config.disabled_border_color);
@@ -1229,8 +1187,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		// HSlider.
 		p_theme->set_icon("grabber_highlight", "HSlider", p_theme->get_icon(SNAME("GuiSliderGrabberHl"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("grabber", "HSlider", p_theme->get_icon(SNAME("GuiSliderGrabber"), EditorStringName(EditorIcons)));
-		p_theme->set_stylebox("slider", "HSlider", EditorThemeManager::make_flat_stylebox(p_config.dark_color_3, 0, background_margin, 0, background_margin, p_config.corner_radius));
-		p_theme->set_stylebox("grabber_area", "HSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, 0, background_margin, 0, background_margin, p_config.corner_radius));
+		p_theme->set_stylebox("slider", "HSlider", EditorThemeManager::make_flat_stylebox(p_config.dark_color_3, 0, background_margin, 0, background_margin, p_config.border_radius));
+		p_theme->set_stylebox("grabber_area", "HSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, 0, background_margin, 0, background_margin, p_config.border_radius));
 		p_theme->set_stylebox("grabber_area_highlight", "HSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, 0, background_margin, 0, background_margin));
 		p_theme->set_constant("center_grabber", "HSlider", 0);
 		p_theme->set_constant("grabber_offset", "HSlider", 0);
@@ -1238,8 +1196,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		// VSlider.
 		p_theme->set_icon("grabber", "VSlider", p_theme->get_icon(SNAME("GuiSliderGrabber"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("grabber_highlight", "VSlider", p_theme->get_icon(SNAME("GuiSliderGrabberHl"), EditorStringName(EditorIcons)));
-		p_theme->set_stylebox("slider", "VSlider", EditorThemeManager::make_flat_stylebox(p_config.dark_color_3, background_margin, 0, background_margin, 0, p_config.corner_radius));
-		p_theme->set_stylebox("grabber_area", "VSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, background_margin, 0, background_margin, 0, p_config.corner_radius));
+		p_theme->set_stylebox("slider", "VSlider", EditorThemeManager::make_flat_stylebox(p_config.dark_color_3, background_margin, 0, background_margin, 0, p_config.border_radius));
+		p_theme->set_stylebox("grabber_area", "VSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, background_margin, 0, background_margin, 0, p_config.border_radius));
 		p_theme->set_stylebox("grabber_area_highlight", "VSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, background_margin, 0, background_margin, 0));
 		p_theme->set_constant("center_grabber", "VSlider", 0);
 		p_theme->set_constant("grabber_offset", "VSlider", 0);
@@ -1416,13 +1374,11 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			const Color gn_selected_border_color = p_config.dark_theme ? Color(1, 1, 1) : Color(0, 0, 0);
 			const Color gn_frame_bg = gn_bg_color.lerp(p_config.tree_panel_style->get_bg_color(), 0.3);
 
-			const bool high_contrast_borders = p_config.draw_extra_borders && p_config.dark_theme;
-
-			Ref<StyleBoxFlat> gn_panel_style = EditorThemeManager::make_flat_stylebox(gn_frame_bg, gn_margin_side, gn_margin_top, gn_margin_side, gn_margin_bottom, p_config.corner_radius);
+			Ref<StyleBoxFlat> gn_panel_style = EditorThemeManager::make_flat_stylebox(gn_frame_bg, gn_margin_side, gn_margin_top, gn_margin_side, gn_margin_bottom, p_config.border_radius);
 			gn_panel_style->set_border_width(SIDE_BOTTOM, EDSCALE_RND(2));
 			gn_panel_style->set_border_width(SIDE_LEFT, EDSCALE_RND(2));
 			gn_panel_style->set_border_width(SIDE_RIGHT, EDSCALE_RND(2));
-			gn_panel_style->set_border_color(high_contrast_borders ? gn_bg_color.lightened(0.2) : gn_bg_color.darkened(0.3));
+			gn_panel_style->set_border_color(gn_bg_color.darkened(0.3));
 			gn_panel_style->set_corner_radius_individual(0, 0, EDSCALE_RND(gn_corner_radius), EDSCALE_RND(gn_corner_radius));
 			gn_panel_style->set_anti_aliased(true);
 
@@ -1438,11 +1394,11 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			const int gn_titlebar_margin_side = 12;
 			const int gn_titlebar_margin_bottom = 8;
 
-			Ref<StyleBoxFlat> gn_titlebar_style = EditorThemeManager::make_flat_stylebox(gn_bg_color, gn_titlebar_margin_side, gn_titlebar_margin_top, gn_titlebar_margin_side, gn_titlebar_margin_bottom, p_config.corner_radius);
+			Ref<StyleBoxFlat> gn_titlebar_style = EditorThemeManager::make_flat_stylebox(gn_bg_color, gn_titlebar_margin_side, gn_titlebar_margin_top, gn_titlebar_margin_side, gn_titlebar_margin_bottom, p_config.border_radius);
 			gn_titlebar_style->set_border_width(SIDE_TOP, EDSCALE_RND(2));
 			gn_titlebar_style->set_border_width(SIDE_LEFT, EDSCALE_RND(2));
 			gn_titlebar_style->set_border_width(SIDE_RIGHT, EDSCALE_RND(2));
-			gn_titlebar_style->set_border_color(high_contrast_borders ? gn_bg_color.lightened(0.2) : gn_bg_color.darkened(0.3));
+			gn_titlebar_style->set_border_color(gn_bg_color.darkened(0.3));
 			gn_titlebar_style->set_expand_margin(SIDE_TOP, EDSCALE_RND(2));
 			gn_titlebar_style->set_corner_radius_individual(EDSCALE_RND(gn_corner_radius), EDSCALE_RND(gn_corner_radius), 0, 0);
 			gn_titlebar_style->set_anti_aliased(true);
@@ -1507,7 +1463,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			Ref<StyleBoxFlat> graphframe_sb = EditorThemeManager::make_flat_stylebox(Color(0.0, 0.0, 0.0, 0.2), gn_margin_side, gn_margin_side, gn_margin_side, gn_margin_bottom, gf_corner_width);
 			graphframe_sb->set_expand_margin(SIDE_TOP, EDSCALE_RND(38));
 			graphframe_sb->set_border_width_all(gf_border_width);
-			graphframe_sb->set_border_color(high_contrast_borders ? gn_bg_color.lightened(0.2) : gn_bg_color.darkened(0.3));
+			graphframe_sb->set_border_color(gn_bg_color.darkened(0.3));
 			graphframe_sb->set_shadow_size(EDSCALE_RND(8));
 			graphframe_sb->set_shadow_color(Color(p_config.shadow_color, p_config.shadow_color.a * 0.25));
 			graphframe_sb->set_anti_aliased(true);
@@ -1765,7 +1721,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		// Bottom panel.
 		Ref<StyleBoxFlat> style_bottom_panel = p_config.content_panel_style->duplicate();
 		style_bottom_panel->set_border_width(SIDE_BOTTOM, 0);
-		style_bottom_panel->set_corner_radius_all(EDSCALE_RND(p_config.corner_radius));
+		style_bottom_panel->set_corner_radius_all(EDSCALE_RND(p_config.border_radius));
 		style_bottom_panel->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
 		style_bottom_panel->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
 
@@ -1838,8 +1794,8 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_constant("line_edit_margin_empty", "EditorSpinSlider", EDSCALE_RND(16));
 
 		// Launch Pad and Play buttons.
-		Ref<StyleBoxFlat> style_launch_pad = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1, EDSCALE_RND(2), 0, EDSCALE_RND(2), 0, p_config.corner_radius);
-		style_launch_pad->set_corner_radius_all(EDSCALE_RND(p_config.corner_radius));
+		Ref<StyleBoxFlat> style_launch_pad = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1, EDSCALE_RND(2), 0, EDSCALE_RND(2), 0, p_config.border_radius);
+		style_launch_pad->set_corner_radius_all(EDSCALE_RND(p_config.border_radius));
 		p_theme->set_stylebox("LaunchPadNormal", EditorStringName(EditorStyles), style_launch_pad);
 		Ref<StyleBoxFlat> style_launch_pad_movie = style_launch_pad->duplicate();
 		style_launch_pad_movie->set_bg_color(p_config.accent_color * Color(1, 1, 1, 0.1));
@@ -1855,7 +1811,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_stylebox("MovieWriterButtonNormal", EditorStringName(EditorStyles), EditorThemeManager::make_empty_stylebox(0, 0, 0, 0));
 		Ref<StyleBoxFlat> style_write_movie_button = p_config.button_style_pressed->duplicate();
 		style_write_movie_button->set_bg_color(p_config.accent_color);
-		style_write_movie_button->set_corner_radius_all(EDSCALE_RND(p_config.corner_radius));
+		style_write_movie_button->set_corner_radius_all(EDSCALE_RND(p_config.border_radius));
 		style_write_movie_button->set_content_margin(SIDE_TOP, 0);
 		style_write_movie_button->set_content_margin(SIDE_BOTTOM, 0);
 		style_write_movie_button->set_content_margin(SIDE_LEFT, 0);
@@ -1874,10 +1830,10 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		// Recovery mode button style
 		Ref<StyleBoxFlat> style_recovery_mode_button = p_config.button_style_pressed->duplicate();
 		style_recovery_mode_button->set_bg_color(p_config.warning_color);
-		style_recovery_mode_button->set_corner_radius_all(EDSCALE_RND(p_config.corner_radius));
+		style_recovery_mode_button->set_corner_radius_all(EDSCALE_RND(p_config.border_radius));
 		style_recovery_mode_button->set_content_margin_all(0);
 		// Recovery mode button is implicitly styled from the panel's background.
-		// So, remove any existing borders. (e.g. from draw_extra_borders config)
+		// So, remove any existing borders.
 		style_recovery_mode_button->set_border_width_all(0);
 		style_recovery_mode_button->set_expand_margin(SIDE_RIGHT, EDSCALE_RND(2));
 		p_theme->set_stylebox("RecoveryModeButton", EditorStringName(EditorStyles), style_recovery_mode_button);
@@ -2103,7 +2059,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 
 			Ref<StyleBoxFlat> style_button_group = p_theme->get_stylebox(SNAME("tabbar_background"), SNAME("TabContainer"))->duplicate();
 			style_button_group->set_content_margin_all(p_config.base_margin * EDSCALE);
-			style_button_group->set_corner_radius_all(p_config.corner_radius);
+			style_button_group->set_corner_radius_all(p_config.border_radius);
 			style_button_group->set_bg_color(p_config.dark_color_1.lerp(p_config.mono_color, 0.15));
 
 			p_theme->set_stylebox(SceneStringName(panel), "PanelContainerButtonGroup", style_button_group);
@@ -2263,7 +2219,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_theme->set_stylebox("sub_inspector_bg" + itos(i + 1), EditorStringName(EditorStyles), sub_inspector_bg);
 
 			// EditorProperty background while it has a sub-inspector open.
-			Ref<StyleBoxFlat> bg_color = EditorThemeManager::make_flat_stylebox(si_base_color * Color(0.7, 0.7, 0.7, 0.8), 0, 0, 0, 0, p_config.corner_radius);
+			Ref<StyleBoxFlat> bg_color = EditorThemeManager::make_flat_stylebox(si_base_color * Color(0.7, 0.7, 0.7, 0.8), 0, 0, 0, 0, p_config.border_radius);
 			bg_color->set_anti_aliased(false);
 			bg_color->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
 			bg_color->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
@@ -2282,7 +2238,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			// Dictionary editor add item.
 			// Expand to the left and right by 4px to compensate for the dictionary editor margins.
 			Color style_dictionary_bg_color = p_config.dark_color_3.lerp(si_base_color, 0.08);
-			Ref<StyleBoxFlat> style_dictionary_add_item = EditorThemeManager::make_flat_stylebox(style_dictionary_bg_color, 0, 4, 0, 4, p_config.corner_radius);
+			Ref<StyleBoxFlat> style_dictionary_add_item = EditorThemeManager::make_flat_stylebox(style_dictionary_bg_color, 0, 4, 0, 4, p_config.border_radius);
 			style_dictionary_add_item->set_expand_margin(SIDE_LEFT, EDSCALE_RND(2));
 			style_dictionary_add_item->set_expand_margin(SIDE_RIGHT, EDSCALE_RND(2));
 			p_theme->set_stylebox("DictionaryAddItem" + itos(i + 1), EditorStringName(EditorStyles), style_dictionary_add_item);
@@ -2313,7 +2269,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_stylebox("sub_inspector_bg_no_border", EditorStringName(EditorStyles), sub_inspector_bg_no_border);
 
 		// EditorProperty background while it has a sub-inspector open.
-		Ref<StyleBoxFlat> bg_color = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(si_base_color, 0.15), 0, 0, 0, 0, p_config.corner_radius);
+		Ref<StyleBoxFlat> bg_color = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(si_base_color, 0.15), 0, 0, 0, 0, p_config.border_radius);
 		bg_color->set_anti_aliased(false);
 		bg_color->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
 		bg_color->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
@@ -2325,7 +2281,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		// Dictionary editor.
 
 		// Expand to the left and right by 4px to compensate for the dictionary editor margins.
-		Ref<StyleBoxFlat> style_dictionary_add_item = EditorThemeManager::make_flat_stylebox(prop_subsection_color, 0, 4, 0, 4, p_config.corner_radius);
+		Ref<StyleBoxFlat> style_dictionary_add_item = EditorThemeManager::make_flat_stylebox(prop_subsection_color, 0, 4, 0, 4, p_config.border_radius);
 		style_dictionary_add_item->set_expand_margin(SIDE_LEFT, EDSCALE_RND(2));
 		style_dictionary_add_item->set_expand_margin(SIDE_RIGHT, EDSCALE_RND(2));
 		p_theme->set_stylebox("DictionaryAddItem0", EditorStringName(EditorStyles), style_dictionary_add_item);
@@ -2365,8 +2321,8 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 
 		// AnimationTrackEdit.
 
-		Ref<StyleBoxFlat> style_animation_track_odd = EditorThemeManager::make_flat_stylebox(Color(0.5, 0.5, 0.5, 0.05), 0, 0, 0, 0, p_config.corner_radius);
-		Ref<StyleBoxFlat> style_animation_track_hover = EditorThemeManager::make_flat_stylebox(Color(0.5, 0.5, 0.5, 0.1), 0, 0, 0, 0, p_config.corner_radius);
+		Ref<StyleBoxFlat> style_animation_track_odd = EditorThemeManager::make_flat_stylebox(Color(0.5, 0.5, 0.5, 0.05), 0, 0, 0, 0, p_config.border_radius);
+		Ref<StyleBoxFlat> style_animation_track_hover = EditorThemeManager::make_flat_stylebox(Color(0.5, 0.5, 0.5, 0.1), 0, 0, 0, 0, p_config.border_radius);
 
 		p_theme->set_stylebox("odd", "AnimationTrackEdit", style_animation_track_odd);
 		p_theme->set_stylebox(SceneStringName(hover), "AnimationTrackEdit", style_animation_track_hover);
@@ -2379,7 +2335,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 
 		// AnimationTrackEditGroup.
 
-		Ref<StyleBoxFlat> style_animation_track_header = EditorThemeManager::make_flat_stylebox(p_config.dark_color_2 * Color(1, 1, 1, 0.6), p_config.increased_margin * 3, 0, 0, 0, p_config.corner_radius);
+		Ref<StyleBoxFlat> style_animation_track_header = EditorThemeManager::make_flat_stylebox(p_config.dark_color_2 * Color(1, 1, 1, 0.6), p_config.increased_margin * 3, 0, 0, 0, p_config.border_radius);
 
 		p_theme->set_stylebox("header", "AnimationTrackEditGroup", style_animation_track_header);
 
@@ -2448,13 +2404,6 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		Ref<StyleBoxFlat> style = p_config.tree_panel_style->duplicate();
 		style->set_bg_color(p_config.dark_theme ? style->get_bg_color().lightened(0.04) : style->get_bg_color().darkened(0.04));
 		style->set_border_color(p_config.dark_theme ? style->get_border_color().lightened(0.04) : style->get_border_color().darkened(0.04));
-		if (p_config.draw_extra_borders) {
-			// A tooltip border is already drawn for all tooltips when Draw Extra Borders is enabled.
-			// Hide borders that don't serve in drawing a line between the title and content to prevent the border from being doubled.
-			style->set_border_width(SIDE_TOP, 0);
-			style->set_border_width(SIDE_LEFT, 0);
-			style->set_border_width(SIDE_RIGHT, 0);
-		}
 		style->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
 		style->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
 
@@ -2465,13 +2414,6 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 	// EditorHelpBitContent.
 	{
 		Ref<StyleBoxFlat> style = p_config.tree_panel_style->duplicate();
-		if (p_config.draw_extra_borders) {
-			// A tooltip border is already drawn for all tooltips when Draw Extra Borders is enabled.
-			// Hide borders that don't serve in drawing a line between the title and content to prevent the border from being doubled.
-			style->set_border_width(SIDE_BOTTOM, 0);
-			style->set_border_width(SIDE_LEFT, 0);
-			style->set_border_width(SIDE_RIGHT, 0);
-		}
 		style->set_corner_radius(CORNER_TOP_LEFT, 0);
 		style->set_corner_radius(CORNER_TOP_RIGHT, 0);
 
@@ -2548,11 +2490,11 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			const int sm_margin_bottom = 2;
 			const Color sm_bg_color = p_config.dark_theme ? p_config.dark_color_3 : p_config.dark_color_1.lerp(p_config.mono_color, 0.09);
 
-			Ref<StyleBoxFlat> sm_node_style = EditorThemeManager::make_flat_stylebox(p_config.dark_color_3 * Color(1, 1, 1, 0.7), sm_margin_side, EDSCALE_RND(24), sm_margin_side, sm_margin_bottom, p_config.corner_radius);
+			Ref<StyleBoxFlat> sm_node_style = EditorThemeManager::make_flat_stylebox(p_config.dark_color_3 * Color(1, 1, 1, 0.7), sm_margin_side, EDSCALE_RND(24), sm_margin_side, sm_margin_bottom, p_config.border_radius);
 			sm_node_style->set_border_width_all(p_config.border_width);
 			sm_node_style->set_border_color(sm_bg_color);
 
-			Ref<StyleBoxFlat> sm_node_selected_style = EditorThemeManager::make_flat_stylebox(sm_bg_color * Color(1, 1, 1, 0.9), sm_margin_side, EDSCALE_RND(24), sm_margin_side, sm_margin_bottom, p_config.corner_radius);
+			Ref<StyleBoxFlat> sm_node_selected_style = EditorThemeManager::make_flat_stylebox(sm_bg_color * Color(1, 1, 1, 0.9), sm_margin_side, EDSCALE_RND(24), sm_margin_side, sm_margin_bottom, p_config.border_radius);
 			sm_node_selected_style->set_border_width_all(EDSCALE_RND(2) + p_config.border_width);
 			sm_node_selected_style->set_border_color(p_config.accent_color * Color(1, 1, 1, 0.9));
 			sm_node_selected_style->set_shadow_size(EDSCALE_RND(8));

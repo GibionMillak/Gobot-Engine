@@ -58,7 +58,6 @@ uint32_t EditorThemeManager::ThemeConfiguration::hash() {
 	// Basic properties.
 
 	hash = hash_murmur3_one_32(preset.hash(), hash);
-	hash = hash_murmur3_one_32(spacing_preset.hash(), hash);
 
 	hash = hash_murmur3_one_32(base_color.to_rgba32(), hash);
 	hash = hash_murmur3_one_32(accent_color.to_rgba32(), hash);
@@ -67,12 +66,10 @@ uint32_t EditorThemeManager::ThemeConfiguration::hash() {
 
 	// Extra properties.
 
-	hash = hash_murmur3_one_32(base_spacing, hash);
-	hash = hash_murmur3_one_32(extra_spacing, hash);
+	hash = hash_murmur3_one_32(padding, hash);
 	hash = hash_murmur3_one_32(border_width, hash);
-	hash = hash_murmur3_one_32(corner_radius, hash);
+	hash = hash_murmur3_one_32(border_radius, hash);
 
-	hash = hash_murmur3_one_32((int)draw_extra_borders, hash);
 	hash = hash_murmur3_one_float(relationship_line_opacity, hash);
 	hash = hash_murmur3_one_32(thumb_size, hash);
 	hash = hash_murmur3_one_32(class_icon_size, hash);
@@ -231,22 +228,19 @@ EditorThemeManager::ThemeConfiguration EditorThemeManager::_create_theme_config(
 	// Basic properties.
 
 	config.preset = EDITOR_GET("interface/theme/color_preset");
-	config.spacing_preset = EDITOR_GET("interface/theme/spacing_preset");
 
 	config.base_color = EDITOR_GET("interface/theme/base_color");
 	config.accent_color = EDITOR_GET("interface/theme/accent_color");
 	config.contrast = EDITOR_GET("interface/theme/contrast");
 	config.icon_saturation = EDITOR_GET("interface/theme/icon_saturation");
-	config.corner_radius = EDITOR_GET("interface/theme/corner_radius");
+	config.border_radius = EDITOR_GET("interface/theme/border_radius");
 
 	// Extra properties.
 
-	config.base_spacing = EDITOR_GET("interface/theme/base_spacing");
-	config.extra_spacing = EDITOR_GET("interface/theme/additional_spacing");
+	config.padding = EDITOR_GET("interface/theme/padding");
 	// Ensure borders are visible when using an editor scale below 100%.
 	config.border_width = CLAMP((int)EDITOR_GET("interface/theme/border_size"), 0, 2) * MAX(1, EDSCALE);
 
-	config.draw_extra_borders = EDITOR_GET("interface/theme/draw_extra_borders");
 	config.draw_relationship_lines = EDITOR_GET("interface/theme/draw_relationship_lines");
 	config.relationship_line_opacity = EDITOR_GET("interface/theme/relationship_line_opacity");
 	config.thumb_size = EDITOR_GET("filesystem/file_dialog/thumbnail_size");
@@ -260,14 +254,14 @@ EditorThemeManager::ThemeConfiguration EditorThemeManager::_create_theme_config(
 	// Apply built-in theme defaults.
 	if (config.preset != "Custom") {
 		config.draw_relationship_lines = RELATIONSHIP_ALL;
-		config.corner_radius = 3;
+		config.border_radius = 3;
 
 		EditorSettings::get_singleton()->set_initial_value("interface/theme/draw_relationship_lines", config.draw_relationship_lines);
-		EditorSettings::get_singleton()->set_initial_value("interface/theme/corner_radius", config.corner_radius);
+		EditorSettings::get_singleton()->set_initial_value("interface/theme/border_radius", config.border_radius);
 
 		// Enforce values in case they were adjusted or overridden.
 		EditorSettings::get_singleton()->set_manually("interface/theme/draw_relationship_lines", config.draw_relationship_lines);
-		EditorSettings::get_singleton()->set_manually("interface/theme/corner_radius", config.corner_radius);
+		EditorSettings::get_singleton()->set_manually("interface/theme/border_radius", config.border_radius);
 	}
 
 	// Handle color preset.
@@ -299,7 +293,6 @@ EditorThemeManager::ThemeConfiguration EditorThemeManager::_create_theme_config(
 			Color preset_accent_color;
 			Color preset_base_color;
 			float preset_contrast = config.default_contrast;
-			bool preset_draw_extra_borders = false;
 			float preset_icon_saturation = config.default_icon_saturation;
 
 			// A negative contrast rate looks better for light themes, since it better follows the natural order of UI "elevation".
@@ -311,7 +304,6 @@ EditorThemeManager::ThemeConfiguration EditorThemeManager::_create_theme_config(
 				preset_base_color = Color(0, 0, 0);
 				// The contrast rate value is irrelevant on a fully black theme.
 				preset_contrast = 0.0;
-				preset_draw_extra_borders = true;
 			} else if (config.preset == "Breeze Dark") {
 				preset_accent_color = Color(0.239, 0.682, 0.914);
 				preset_base_color = Color(0.1255, 0.1373, 0.149);
@@ -347,13 +339,11 @@ EditorThemeManager::ThemeConfiguration EditorThemeManager::_create_theme_config(
 			config.accent_color = preset_accent_color;
 			config.base_color = preset_base_color;
 			config.contrast = preset_contrast;
-			config.draw_extra_borders = preset_draw_extra_borders;
 			config.icon_saturation = preset_icon_saturation;
 
 			EditorSettings::get_singleton()->set_initial_value("interface/theme/accent_color", config.accent_color);
 			EditorSettings::get_singleton()->set_initial_value("interface/theme/base_color", config.base_color);
 			EditorSettings::get_singleton()->set_initial_value("interface/theme/contrast", config.contrast);
-			EditorSettings::get_singleton()->set_initial_value("interface/theme/draw_extra_borders", config.draw_extra_borders);
 			EditorSettings::get_singleton()->set_initial_value("interface/theme/icon_saturation", config.icon_saturation);
 		}
 
@@ -367,43 +357,7 @@ EditorThemeManager::ThemeConfiguration EditorThemeManager::_create_theme_config(
 		EditorSettings::get_singleton()->set_manually("interface/theme/accent_color", config.accent_color);
 		EditorSettings::get_singleton()->set_manually("interface/theme/base_color", config.base_color);
 		EditorSettings::get_singleton()->set_manually("interface/theme/contrast", config.contrast);
-		EditorSettings::get_singleton()->set_manually("interface/theme/draw_extra_borders", config.draw_extra_borders);
 		EditorSettings::get_singleton()->set_manually("interface/theme/icon_saturation", config.icon_saturation);
-	}
-
-	// Handle theme spacing preset.
-	{
-		if (config.spacing_preset != "Custom") {
-			int preset_base_spacing = 0;
-			int preset_extra_spacing = 0;
-			Size2 preset_dialogs_buttons_min_size;
-
-			if (config.spacing_preset == "Compact") {
-				preset_base_spacing = 2;
-				preset_extra_spacing = 2;
-				preset_dialogs_buttons_min_size = Size2(90, 26);
-			} else if (config.spacing_preset == "Spacious") {
-				preset_base_spacing = 6;
-				preset_extra_spacing = 2;
-				preset_dialogs_buttons_min_size = Size2(112, 36);
-			} else { // Default
-				preset_base_spacing = 4;
-				preset_extra_spacing = 0;
-				preset_dialogs_buttons_min_size = Size2(105, 34);
-			}
-
-			config.base_spacing = preset_base_spacing;
-			config.extra_spacing = preset_extra_spacing;
-			config.dialogs_buttons_min_size = preset_dialogs_buttons_min_size;
-
-			EditorSettings::get_singleton()->set_initial_value("interface/theme/base_spacing", config.base_spacing);
-			EditorSettings::get_singleton()->set_initial_value("interface/theme/additional_spacing", config.extra_spacing);
-		}
-
-		// Enforce values in case they were adjusted or overridden.
-		EditorSettings::get_singleton()->set_manually("interface/theme/spacing_preset", config.spacing_preset);
-		EditorSettings::get_singleton()->set_manually("interface/theme/base_spacing", config.base_spacing);
-		EditorSettings::get_singleton()->set_manually("interface/theme/additional_spacing", config.extra_spacing);
 	}
 
 	// Generated properties.
@@ -411,9 +365,9 @@ EditorThemeManager::ThemeConfiguration EditorThemeManager::_create_theme_config(
 	config.dark_theme = is_dark_theme();
 	config.dark_icon_and_font = is_dark_icon_and_font();
 
-	config.base_margin = config.base_spacing;
-	config.increased_margin = config.base_spacing + config.extra_spacing * 0.75;
-	config.separation_margin = (config.base_spacing + config.extra_spacing / 2) * EDSCALE;
+	config.base_margin = config.padding;
+	config.increased_margin = config.padding;
+	config.separation_margin = config.padding * EDSCALE;
 	config.popup_margin = config.base_margin * 2.4 * EDSCALE;
 	// Make sure content doesn't stick to window decorations; this can be fixed in future with layout changes.
 	config.window_border_margin = MAX(1, config.base_margin * EDSCALE);
@@ -579,7 +533,7 @@ void EditorThemeManager::_populate_text_editor_styles(const Ref<EditorTheme> &p_
 	p_theme->set_constant("line_spacing", "CodeEdit", EDITOR_GET("text_editor/appearance/whitespace/line_spacing"));
 
 	const Color background_color = EDITOR_GET("text_editor/theme/highlighting/background_color");
-	Ref<StyleBoxFlat> code_edit_stylebox = make_flat_stylebox(background_color, 0, p_config.widget_margin.y, p_config.widget_margin.x, p_config.widget_margin.y, p_config.corner_radius);
+	Ref<StyleBoxFlat> code_edit_stylebox = make_flat_stylebox(background_color, 0, p_config.widget_margin.y, p_config.widget_margin.x, p_config.widget_margin.y, p_config.border_radius);
 	p_theme->set_stylebox(CoreStringName(normal), "CodeEdit", code_edit_stylebox);
 	p_theme->set_stylebox("read_only", "CodeEdit", code_edit_stylebox);
 	p_theme->set_stylebox("focus", "CodeEdit", memnew(StyleBoxEmpty));

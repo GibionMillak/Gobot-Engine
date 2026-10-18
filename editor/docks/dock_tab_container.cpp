@@ -133,7 +133,7 @@ void EditorDockDragHint::_notification(int p_what) {
 	switch (p_what) {
 		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {
 			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/theme")) {
-				dock_drop_highlight->set_corner_radius_all(EDSCALE * EDITOR_GET("interface/theme/corner_radius").operator int());
+				dock_drop_highlight->set_corner_radius_all(EDSCALE * EDITOR_GET("interface/theme/border_radius").operator int());
 				if (mouse_inside) {
 					queue_redraw();
 				}
@@ -206,7 +206,7 @@ EditorDockDragHint::EditorDockDragHint() {
 	hide();
 
 	dock_drop_highlight.instantiate();
-	dock_drop_highlight->set_corner_radius_all(EDSCALE * EDITOR_GET("interface/theme/corner_radius").operator int());
+	dock_drop_highlight->set_corner_radius_all(EDSCALE * EDITOR_GET("interface/theme/border_radius").operator int());
 	dock_drop_highlight->set_border_width_all(Math::round(2 * EDSCALE));
 }
 

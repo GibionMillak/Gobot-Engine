@@ -121,7 +121,7 @@ void TexturePreview::_notification(int p_what) {
 
 			bg_rect->set_color(get_theme_color(SNAME("dark_color_2"), EditorStringName(Editor)));
 			checkerboard->set_texture(get_editor_theme_icon(SNAME("Checkerboard")));
-			theme_cache.outline_color = get_theme_color(SNAME("extra_border_color_1"), EditorStringName(Editor));
+			theme_cache.outline_color = get_theme_color(SNAME("texture_preview_outline_color"), EditorStringName(Editor));
 		} break;
 	}
 }

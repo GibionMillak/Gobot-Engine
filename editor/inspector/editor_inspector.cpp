@@ -3840,7 +3840,7 @@ void EditorInspector::initialize_section_theme(EditorInspectorSection::ThemeCach
 	p_cache.vertical_separation = p_control->get_theme_constant(SNAME("separation"), SNAME("EditorPropertyContainer"));
 	p_cache.inspector_margin = p_control->get_theme_constant(SNAME("inspector_margin"), EditorStringName(Editor));
 	p_cache.indent_size = p_control->get_theme_constant(SNAME("indent_size"), SNAME("EditorInspectorSection"));
-	p_cache.padding_size = int(EDITOR_GET("interface/theme/base_spacing")) * 2;
+	p_cache.padding_size = int(EDITOR_GET("interface/theme/padding")) * 2;
 
 	p_cache.warning_color = p_control->get_theme_color(SNAME("warning_color"), EditorStringName(Editor));
 	p_cache.prop_subsection = p_control->get_theme_color(SNAME("prop_subsection"), EditorStringName(Editor));
@@ -3942,7 +3942,7 @@ void EditorInspector::initialize_property_theme(EditorProperty::ThemeCache &p_ca
 	p_cache.font_offset = p_control->get_theme_constant(SNAME("font_offset"), SNAME("EditorProperty"));
 	p_cache.horizontal_separation = p_control->get_theme_constant(SNAME("h_separation"), SNAME("Tree"));
 	p_cache.vertical_separation = p_control->get_theme_constant(SNAME("separation"), SNAME("EditorPropertyContainer"));
-	p_cache.padding = int(EDITOR_GET("interface/theme/base_spacing")) * 2;
+	p_cache.padding = int(EDITOR_GET("interface/theme/padding")) * 2;
 	p_cache.inspector_property_height = p_control->get_theme_constant(SNAME("inspector_property_height"), EditorStringName(Editor));
 
 	p_cache.property_color = p_control->get_theme_color(SNAME("property_color"), SNAME("EditorProperty"));

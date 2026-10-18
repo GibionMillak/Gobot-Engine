@@ -53,7 +53,7 @@ void BitMapEditor::setup(const Ref<BitMap> &p_bitmap) {
 void BitMapEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			cached_outline_color = get_theme_color(SNAME("extra_border_color_1"), EditorStringName(Editor));
+			cached_outline_color = get_theme_color(SNAME("texture_preview_outline_color"), EditorStringName(Editor));
 		} break;
 	}
 }
