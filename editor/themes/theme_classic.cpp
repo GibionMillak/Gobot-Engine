@@ -775,6 +775,42 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		}
 	}
 
+	// Table.
+	{
+		Ref<StyleBoxFlat> table_background = EditorThemeManager::make_flat_stylebox(p_config.dark_color_3, 1, 1, 1, 1, p_config.corner_radius);
+		table_background->set_border_color(p_config.dark_color_3);
+		table_background->set_border_width_all(1);
+
+		Ref<StyleBoxFlat> table_header = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(p_config.font_color, 0.08), 0, 0, 0, 0, p_config.corner_radius);
+		table_header->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
+		table_header->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
+
+		Ref<StyleBoxFlat> table_row_even = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1, 0, 0, 0, 0, 0);
+		Ref<StyleBoxFlat> table_row_odd = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(p_config.font_color, 0.035), 0, 0, 0, 0, 0);
+
+		Ref<StyleBoxFlat> table_footer = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1.lerp(p_config.font_color, 0.05), 4, 4, 4, 4, p_config.corner_radius);
+		table_footer->set_corner_radius(CORNER_TOP_LEFT, 0);
+		table_footer->set_corner_radius(CORNER_TOP_RIGHT, 0);
+
+		p_theme->set_stylebox("background", "Table", table_background);
+		p_theme->set_stylebox("header", "Table", table_header);
+		p_theme->set_stylebox("row_even", "Table", table_row_even);
+		p_theme->set_stylebox("row_odd", "Table", table_row_odd);
+		p_theme->set_stylebox("footer", "Table", table_footer);
+
+		p_theme->set_font("font", "Table", Ref<Font>());
+		p_theme->set_font_size("font_size", "Table", -1);
+
+		p_theme->set_color("font_color", "Table", p_theme->get_color("font_color", "Tree"));
+		p_theme->set_color("header_font_color", "Table", p_theme->get_color("title_button_color", "Tree"));
+
+		p_theme->set_constant("gap", "Table", 1 * EDSCALE);
+		p_theme->set_constant("horizontal_cell_padding", "Table", 8 * EDSCALE);
+		p_theme->set_constant("vertical_cell_padding", "Table", 4 * EDSCALE);
+		p_theme->set_constant("icon_gap", "Table", 8 * EDSCALE);
+		p_theme->set_constant("icon_max_width", "Table", 24 * EDSCALE);
+	}
+
 	// TabBar & TabContainer.
 	{
 		Ref<StyleBoxFlat> style_tab_base = p_config.button_style->duplicate();

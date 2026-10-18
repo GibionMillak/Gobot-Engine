@@ -957,6 +957,35 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_constant("scrollbar_h_separation", "Tree", Math::round(4 * scale));
 	theme->set_constant("scrollbar_v_separation", "Tree", Math::round(4 * scale));
 
+	// Table
+
+	Ref<StyleBoxFlat> table_background = make_flat_stylebox(style_normal_color, 1, 1, 1, 1, 8);
+	table_background->set_border_color(Color(0.4, 0.4, 0.4, 0.5));
+	table_background->set_border_width_all(1);
+	Ref<StyleBoxFlat> table_header = make_flat_stylebox(Color(0.2, 0.2, 0.2, 0.9), 0, 0, 0, 0, 8);
+	const int table_header_radius = MAX(0, int(Math::round(8 * scale)) - 1);
+	table_header->set_corner_radius_individual(table_header_radius, table_header_radius, 0, 0);
+	Ref<StyleBoxFlat> table_row_even = make_flat_stylebox(style_normal_color, 0, 0, 0, 0, 0);
+	Ref<StyleBoxFlat> table_row_odd = make_flat_stylebox(Color(0.16, 0.16, 0.16, 0.7), 0, 0, 0, 0, 0);
+	Ref<StyleBoxFlat> table_footer = make_flat_stylebox(Color(0.18, 0.18, 0.18, 0.9), 8, 4, 8, 4, 4);
+	const int table_footer_radius = MAX(0, int(Math::round(4 * scale)) - 1);
+	table_footer->set_corner_radius_individual(0, 0, table_footer_radius, table_footer_radius);
+	theme->set_stylebox("background", "Table", table_background);
+	theme->set_stylebox("header", "Table", table_header);
+	theme->set_stylebox("row_even", "Table", table_row_even);
+	theme->set_stylebox("row_odd", "Table", table_row_odd);
+	theme->set_stylebox("footer", "Table", table_footer);
+	theme->set_stylebox("cell", "Table", make_empty_stylebox());
+	theme->set_font("font", "Table", Ref<Font>());
+	theme->set_font_size("font_size", "Table", -1);
+	theme->set_color("font_color", "Table", theme->get_color("font_color", "Tree"));
+	theme->set_color("header_font_color", "Table", theme->get_color("title_button_color", "Tree"));
+	theme->set_constant("gap", "Table", 4 * scale);
+	theme->set_constant("horizontal_cell_padding", "Table", 8 * scale);
+	theme->set_constant("vertical_cell_padding", "Table", 4 * scale);
+	theme->set_constant("icon_gap", "Table", 4 * scale);
+	theme->set_constant("icon_max_width", "Table", 24 * scale);
+
 	// ItemList
 
 	theme->set_stylebox(SceneStringName(panel), "ItemList", make_flat_stylebox(style_normal_color));

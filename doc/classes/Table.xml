@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Table" inherits="Control" api_type="core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+		A table of cells with header roles, row and column spans, frozen rows, and a control footer.
+	</brief_description>
+	<description>
+		Each grid position belongs to an anchor cell. Cells have text, an optional icon, a data or header role, alignment, wrapping, and a rectangular span. Header cells use the header theme style; they do not imply frozen rows. Set [member frozen_rows] separately when leading rows should stay visible.
+		All coordinates are zero-based. A span is expressed as (columns, rows). Covered positions are not independently editable: use [method get_cell_owner] to find their anchor before reading or modifying them. Merges are atomic and never discard configured cells. Clear covered cells before merging, or split an existing merged cell first. Spans cannot cross the frozen-row boundary.
+		The standard Inspector exposes [member column_count] and [member row_count], followed by grouped column and cell properties. All data is stored directly on the Table node. Covered positions are hidden until their anchor span is reduced.
+		[codeblock]
+		var table := Table.new()
+		table.set_column_count(2)
+		table.set_row_count(2)
+		table.set_cell(0, 0, "Application")
+		table.set_cell_role(0, 0, Table.HEADER)
+		table.set_cell_span(0, 0, 2, 1)
+		table.set_cell(1, 0, "Version")
+		table.set_cell(1, 1, "4.8")
+		[/codeblock]
+		Add buttons or other controls to the internal [HBoxContainer] returned by [method get_footer]. The footer is always visible and shows the total row count on its left when [member show_row_count] is enabled, including header rows. Optional footer controls occupy the remaining space to the right. The gap theme constant separates the grid from the footer. It stays outside the scrolling grid. Table cells themselves are drawn internally and do not contain arbitrary Control nodes.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_row">
+			<return type="int" />
+			<description>
+				Appends an empty row and returns its index.
+			</description>
+		</method>
+		<method name="clear">
+			<return type="void" />
+			<description>
+				Removes all rows, clears frozen rows, and resets scrolling. Column configuration and footer controls remain.
+			</description>
+		</method>
+		<method name="clear_cell">
+			<return type="void" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Resets an anchor cell to empty data with default alignment and wrapping, and splits any span. Use this to explicitly clear cells before merging without silently discarding data.
+			</description>
+		</method>
+		<method name="get_cell_at_position" qualifiers="const">
+			<return type="Vector2i" />
+			<param index="0" name="position" type="Vector2" />
+			<description>
+				Returns the visible anchor coordinate (column, row) at a table-local position. Returns (-1, -1) outside the grid, in a gap, or while layout is pending.
+			</description>
+		</method>
+		<method name="get_cell_horizontal_alignment" qualifiers="const">
+			<return type="int" enum="@GlobalScope.HorizontalAlignment" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Returns alignment of the combined icon and text block: left, center, or right. Requires an anchor position.
+			</description>
+		</method>
+		<method name="get_cell_icon" qualifiers="const">
+			<return type="Texture2D" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Returns the optional cell icon. Icons preserve their aspect ratio. Requires an anchor position.
+			</description>
+		</method>
+		<method name="get_cell_owner" qualifiers="const">
+			<return type="Vector2i" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Returns the anchor coordinate as (column, row), including when the requested position is covered by another cell.
+			</description>
+		</method>
+		<method name="get_cell_rect" qualifiers="const">
+			<return type="Rect2" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Returns the anchor rectangle in table-local coordinates after scrolling and layout. Returns an empty rectangle while layout is pending.
+			</description>
+		</method>
+		<method name="get_cell_role" qualifiers="const">
+			<return type="int" enum="Table.CellRole" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Returns whether the cell is a data cell or header cell. Requires an anchor position.
+			</description>
+		</method>
+		<method name="get_cell_span" qualifiers="const">
+			<return type="Vector2i" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Returns the anchor span as (columns, rows).
+			</description>
+		</method>
+		<method name="get_cell_text" qualifiers="const">
+			<return type="String" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Returns the cell text. Requires an anchor position.
+			</description>
+		</method>
+		<method name="get_cell_vertical_alignment" qualifiers="const">
+			<return type="int" enum="@GlobalScope.VerticalAlignment" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Returns vertical alignment of the icon and text block: top, center, or bottom. Requires an anchor position.
+			</description>
+		</method>
+		<method name="get_cell_wrap_mode" qualifiers="const">
+			<return type="int" enum="Table.CellWrapMode" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Returns whether to inherit, disable, or enable cell wrapping. Requires an anchor position.
+			</description>
+		</method>
+		<method name="get_column_expand_ratio" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="column" type="int" />
+			<description>
+				Returns the positive relative share of remaining width for an expanding column.
+			</description>
+		</method>
+		<method name="get_column_width" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="column" type="int" />
+			<description>
+				Returns the configured width; for CONTENT and EXPAND this is a minimum.
+			</description>
+		</method>
+		<method name="get_column_width_mode" qualifiers="const">
+			<return type="int" enum="Table.ColumnWidthMode" />
+			<param index="0" name="column" type="int" />
+			<description>
+				Returns the column sizing mode.
+			</description>
+		</method>
+		<method name="get_footer">
+			<return type="HBoxContainer" />
+			<description>
+				Returns the internal footer container owned by this Table. Add buttons or other controls to it in code. Do not free or reparent the returned container. Controls align to the end by default.
+			</description>
+		</method>
+		<method name="insert_column">
+			<return type="int" />
+			<param index="0" name="at" type="int" default="-1" />
+			<description>
+				Inserts an empty column before [param at], or appends when negative. Spans containing the insertion point expand. Returns the inserted column index.
+			</description>
+		</method>
+		<method name="insert_row">
+			<return type="int" />
+			<param index="0" name="at" type="int" default="-1" />
+			<description>
+				Inserts an empty row before [param at], or appends when negative. Spans containing the insertion point expand. Inserting inside the frozen prefix also expands [member frozen_rows]. Returns the inserted row index.
+			</description>
+		</method>
+		<method name="remove_column">
+			<return type="void" />
+			<param index="0" name="column" type="int" />
+			<description>
+				Removes a column. Intersecting spans shrink; if an anchor is removed, its content moves to the surviving top-left position. The table must retain at least one column.
+			</description>
+		</method>
+		<method name="remove_row">
+			<return type="void" />
+			<param index="0" name="row" type="int" />
+			<description>
+				Removes a row. Intersecting spans shrink; if an anchor is removed, its content moves to the surviving top-left position. Frozen rows are adjusted to preserve the boundary.
+			</description>
+		</method>
+		<method name="set_cell">
+			<return type="void" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<param index="2" name="text" type="String" />
+			<param index="3" name="icon" type="Texture2D" default="null" />
+			<description>
+				Sets the anchor cell text and icon together. Omitting the icon removes an existing icon; other cell properties remain unchanged.
+			</description>
+		</method>
+		<method name="set_cell_horizontal_alignment">
+			<return type="void" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<param index="2" name="horizontal_alignment" type="int" enum="@GlobalScope.HorizontalAlignment" />
+			<description>
+				Sets alignment of the combined icon and text block: left, center, or right. Requires an anchor position.
+			</description>
+		</method>
+		<method name="set_cell_icon">
+			<return type="void" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<param index="2" name="icon" type="Texture2D" />
+			<description>
+				Sets the optional cell icon. Icons preserve their aspect ratio. Requires an anchor position.
+			</description>
+		</method>
+		<method name="set_cell_role">
+			<return type="void" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<param index="2" name="role" type="int" enum="Table.CellRole" />
+			<description>
+				Sets whether the cell is a data cell or header cell. Requires an anchor position.
+			</description>
+		</method>
+		<method name="set_cell_span">
+			<return type="bool" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<param index="2" name="column_span" type="int" />
+			<param index="3" name="row_span" type="int" />
+			<description>
+				Changes an anchor cell span. Returns false without modifying data if the span covers configured cells, overlaps another span, or crosses the frozen-row boundary. Spans must be positive and remain within the grid. Setting both spans to one splits the cell; newly exposed positions are empty.
+			</description>
+		</method>
+		<method name="set_cell_text">
+			<return type="void" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<param index="2" name="text" type="String" />
+			<description>
+				Sets the cell text. Requires an anchor position.
+			</description>
+		</method>
+		<method name="set_cell_vertical_alignment">
+			<return type="void" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<param index="2" name="vertical_alignment" type="int" enum="@GlobalScope.VerticalAlignment" />
+			<description>
+				Sets vertical alignment of the icon and text block: top, center, or bottom. Requires an anchor position.
+			</description>
+		</method>
+		<method name="set_cell_wrap_mode">
+			<return type="void" />
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<param index="2" name="wrap_mode" type="int" enum="Table.CellWrapMode" />
+			<description>
+				Sets whether to inherit, disable, or enable cell wrapping. Requires an anchor position.
+			</description>
+		</method>
+		<method name="set_column_expand_ratio">
+			<return type="void" />
+			<param index="0" name="column" type="int" />
+			<param index="1" name="ratio" type="float" />
+			<description>
+				Sets the positive relative share of remaining width for an expanding column.
+			</description>
+		</method>
+		<method name="set_column_width">
+			<return type="void" />
+			<param index="0" name="column" type="int" />
+			<param index="1" name="width" type="int" />
+			<description>
+				Sets the configured width; for CONTENT and EXPAND this is a minimum.
+			</description>
+		</method>
+		<method name="set_column_width_mode">
+			<return type="void" />
+			<param index="0" name="column" type="int" />
+			<param index="1" name="mode" type="int" enum="Table.ColumnWidthMode" />
+			<description>
+				Sets the column sizing mode.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="column_count" type="int" setter="set_column_count" getter="get_column_count" default="2">
+			Number of columns. Must be at least one.
+		</member>
+		<member name="row_count" type="int" setter="set_row_count" getter="get_row_count" default="0">
+			Number of rows. Increasing adds empty rows; decreasing removes trailing rows.
+		</member>
+		<member name="fit_content_height" type="bool" setter="set_fit_content_height" getter="is_fitting_content_height" default="true">
+			Fits the minimum height to every row, including wrapping, spans, and footer controls. Disables internal vertical scrolling. Use when stacking tables in a ScrollContainer.
+		</member>
+		<member name="frozen_rows" type="int" setter="set_frozen_rows" getter="get_frozen_rows" default="0">
+			Number of leading rows kept visible during vertical scrolling. Header roles do not automatically freeze rows. Changes crossing an existing rowspan are rejected.
+		</member>
+		<member name="show_row_count" type="bool" setter="set_show_row_count" getter="is_row_count_visible" default="true">
+			Shows the total row count on the left of the footer. Disabling it releases the count's horizontal space for footer controls. The footer remains visible.
+		</member>
+		<member name="wrap_cells" type="bool" setter="set_wrap_cells" getter="is_wrapping_cells" default="true">
+			Default wrapping for cells using INHERIT. Disabled wrapping limits text to one line and uses an ellipsis.
+		</member>
+	</members>
+	<signals>
+		<signal name="cell_clicked">
+			<param index="0" name="row" type="int" />
+			<param index="1" name="column" type="int" />
+			<description>
+				Emitted when an anchor cell is left-clicked.
+			</description>
+		</signal>
+		<signal name="cell_layout_changed">
+			<description>
+				Emitted when cell geometry or scroll offsets change.
+			</description>
+		</signal>
+		<signal name="table_changed">
+			<description>
+				Emitted after a successful grid or table-setting edit. Footer child changes are normal scene-tree changes.
+			</description>
+		</signal>
+	</signals>
+	<constants>
+		<constant name="FIXED" value="0" enum="ColumnWidthMode">
+			Uses the configured width, including horizontal padding.
+		</constant>
+		<constant name="CONTENT" value="1" enum="ColumnWidthMode">
+			Grows to fit content requirements, including constraints from spanning cells.
+		</constant>
+		<constant name="EXPAND" value="2" enum="ColumnWidthMode">
+			Uses the configured minimum width and shares extra space according to expand ratio.
+		</constant>
+		<constant name="DATA" value="0" enum="CellRole">
+			A data cell styled with its row panel and optional cell style.
+		</constant>
+		<constant name="HEADER" value="1" enum="CellRole">
+			A header cell styled with the header panel and header text color. It can appear anywhere in the grid.
+		</constant>
+		<constant name="INHERIT" value="0" enum="CellWrapMode">
+			Uses the table wrap_cells setting.
+		</constant>
+		<constant name="DISABLED" value="1" enum="CellWrapMode">
+			Displays one line, truncating with an ellipsis when necessary.
+		</constant>
+		<constant name="ENABLED" value="2" enum="CellWrapMode">
+			Wraps text to the resolved span width and grows participating rows to fit.
+		</constant>
+	</constants>
+	<theme_items>
+		<theme_item name="background" data_type="style" type="StyleBox">
+			Background, outer border, and content margins for the whole table. The default style rounds all four corners.
+		</theme_item>
+		<theme_item name="cell" data_type="style" type="StyleBox">
+			Optional data-cell style above the row background. Content insets are defined by the cell padding constants.
+		</theme_item>
+		<theme_item name="font" data_type="font" type="Font">
+			Font for all cells.
+		</theme_item>
+		<theme_item name="font_color" data_type="color" type="Color">
+			Data-cell text color.
+		</theme_item>
+		<theme_item name="font_size" data_type="font_size" type="int">
+			Font size for all cells.
+		</theme_item>
+		<theme_item name="footer" data_type="style" type="StyleBox">
+			Always-visible footer panel with rounded bottom corners. Its content margins inset the controls and row count.
+		</theme_item>
+		<theme_item name="gap" data_type="constant" type="int" default="4">
+			Space between rows and columns. Internal gaps are absorbed into merged cells.
+		</theme_item>
+		<theme_item name="header" data_type="style" type="StyleBox">
+			Panel for each header cell, covering its entire span. The default style rounds only the top corners.
+		</theme_item>
+		<theme_item name="header_font_color" data_type="color" type="Color">
+			Header-cell text color.
+		</theme_item>
+		<theme_item name="horizontal_cell_padding" data_type="constant" type="int" default="8">
+			Left and right padding inside cells, including header cells.
+		</theme_item>
+		<theme_item name="icon_gap" data_type="constant" type="int" default="4">
+			Space between a cell icon and its text.
+		</theme_item>
+		<theme_item name="icon_max_width" data_type="constant" type="int" default="24">
+			Maximum icon width; zero disables the limit.
+		</theme_item>
+		<theme_item name="row_even" data_type="style" type="StyleBox">
+			Panel for even body rows. Header-only rows do not advance the alternating-row counter.
+		</theme_item>
+		<theme_item name="row_odd" data_type="style" type="StyleBox">
+			Panel for odd body rows. A data rowspan uses its anchor row panel across its full span.
+		</theme_item>
+		<theme_item name="vertical_cell_padding" data_type="constant" type="int" default="4">
+			Top and bottom padding inside cells, including header cells.
+		</theme_item>
+	</theme_items>
+</class>
