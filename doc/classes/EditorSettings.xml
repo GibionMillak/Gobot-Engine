@@ -1285,11 +1285,11 @@
 			The port to listen to when starting the remote debugger. Godot will try to use port numbers above the configured number if the configured number is already taken by another application.
 		</member>
 		<member name="network/http_proxy/host" type="String" setter="" getter="">
-			The host to use to contact the HTTP and HTTPS proxy in the editor (for export template downloads). See also [member network/http_proxy/port].
+			The host to use to contact the HTTP and HTTPS proxy in the editor. See also [member network/http_proxy/port].
 			[b]Note:[/b] Godot currently doesn't automatically use system proxy settings, so you have to enter them manually here if needed.
 		</member>
 		<member name="network/http_proxy/port" type="int" setter="" getter="">
-			The port number to use to contact the HTTP and HTTPS proxy in the editor (for export template downloads). See also [member network/http_proxy/host].
+			The port number to use to contact the HTTP and HTTPS proxy in the editor. See also [member network/http_proxy/host].
 			[b]Note:[/b] Godot currently doesn't automatically use system proxy settings, so you have to enter them manually here if needed.
 		</member>
 		<member name="network/language_server/enable_smart_resolve" type="bool" setter="" getter="">
@@ -1320,7 +1320,7 @@
 			If [code]true[/code] the language server will run in a separate thread, if [code]false[/code] it will run on the main thread.
 		</member>
 		<member name="network/tls/editor_tls_certificates" type="String" setter="" getter="">
-			The TLS certificate bundle to use for HTTP requests made within the editor (e.g. for export template downloads). If left empty, the [url=https://github.com/godotengine/godot/blob/master/thirdparty/certs/ca-bundle.crt]included Mozilla certificate bundle[/url] will be used.
+			The TLS certificate bundle to use for HTTP requests made within the editor. If left empty, the [url=https://github.com/godotengine/godot/blob/master/thirdparty/certs/ca-bundle.crt]included Mozilla certificate bundle[/url] will be used.
 		</member>
 		<member name="network/tls/enable_tls_v1.3" type="bool" setter="" getter="">
 			If [code]true[/code], enable TLSv1.3 negotiation.

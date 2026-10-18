@@ -2094,11 +2094,11 @@ ProjectExportDialog::ProjectExportDialog() {
 	main_vb->add_child(result_dialog);
 	result_dialog->hide();
 
-	LinkButton *download_templates = memnew(LinkButton);
-	download_templates->set_text(TTRC("Manage Export Templates"));
-	download_templates->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
-	export_templates_error->add_child(download_templates);
-	download_templates->connect(SceneStringName(pressed), callable_mp(this, &ProjectExportDialog::_open_export_template_manager));
+	LinkButton *manage_templates_btn = memnew(LinkButton);
+	manage_templates_btn->connect(SceneStringName(pressed), callable_mp(this, &ProjectExportDialog::_open_export_template_manager));
+	manage_templates_btn->set_text(TTRC("Manage Export Templates"));
+	manage_templates_btn->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
+	export_templates_error->add_child(manage_templates_btn);
 
 #ifndef ANDROID_ENABLED
 	// Android SDK errors bottom section.
