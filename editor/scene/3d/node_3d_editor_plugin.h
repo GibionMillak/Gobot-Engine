@@ -40,11 +40,10 @@
 
 #include "modules/modules_enabled.gen.h"
 
-class AcceptDialog;
+class Dialog;
 class Button;
 class CheckBox;
 class ColorPickerButton;
-class ConfirmationDialog;
 class DirectionalLight3D;
 class EditorSelection;
 class EditorSpinSlider;
@@ -229,11 +228,11 @@ private:
 	MenuButton *textures_layout_menu = nullptr;
 #endif
 
-	AcceptDialog *accept = nullptr;
+	Dialog *accept = nullptr;
 
-	ConfirmationDialog *snap_dialog = nullptr;
-	ConfirmationDialog *xform_dialog = nullptr;
-	ConfirmationDialog *settings_dialog = nullptr;
+	Dialog *snap_dialog = nullptr;
+	Dialog *xform_dialog = nullptr;
+	Dialog *settings_dialog = nullptr;
 
 	bool snap_enabled = false;
 	bool vertex_snap_origin_mode = false;

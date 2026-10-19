@@ -42,7 +42,7 @@
 #include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/tree.h"
 #include "scene/main/resource_preloader.h"
 
@@ -439,7 +439,7 @@ ResourcePreloaderEditor::ResourcePreloaderEditor() {
 	mc->add_child(tree);
 	search->set_forward_control(tree);
 
-	dialog = memnew(AcceptDialog);
+	dialog = memnew(Dialog);
 	dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	dialog->set_title(TTRC("Error!"));
 	dialog->set_ok_button_text(TTRC("Close"));

@@ -33,14 +33,14 @@
 #include "core/doc_data.h"
 #include "core/templates/rb_set.h"
 #include "editor/plugins/editor_plugin.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/tree.h"
 
 class FilterLineEdit;
 
-class EditorHelpSearch : public ConfirmationDialog {
-	GDCLASS(EditorHelpSearch, ConfirmationDialog);
+class EditorHelpSearch : public Dialog {
+	GDCLASS(EditorHelpSearch, Dialog);
 
 	enum SearchFlags {
 		SEARCH_CLASSES = 1 << 0,

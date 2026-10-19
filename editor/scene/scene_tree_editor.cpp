@@ -2322,10 +2322,10 @@ SceneTreeEditor::SceneTreeEditor(bool p_label, bool p_can_rename, bool p_can_ope
 	tree->connect("nothing_selected", callable_mp(this, &SceneTreeEditor::_deselect_items));
 	tree->connect(SceneStringName(gui_input), callable_mp(this, &SceneTreeEditor::_gui_input));
 
-	error = memnew(AcceptDialog);
+	error = memnew(Dialog);
 	add_child(error);
 
-	warning = memnew(AcceptDialog);
+	warning = memnew(Dialog);
 	add_child(warning);
 	warning->set_title(TTRC("Node Configuration Warning!"));
 	warning->set_flag(Window::FLAG_POPUP, true);
@@ -2344,7 +2344,7 @@ SceneTreeEditor::SceneTreeEditor(bool p_label, bool p_can_rename, bool p_can_ope
 	update_node_tooltip_delay->set_one_shot(true);
 	add_child(update_node_tooltip_delay);
 
-	revoke_dialog = memnew(ConfirmationDialog);
+	revoke_dialog = memnew(Dialog(true));
 	revoke_dialog->set_ok_button_text(TTRC("Revoke"));
 	add_child(revoke_dialog);
 	revoke_dialog->connect(SceneStringName(confirmed), callable_mp(this, &SceneTreeEditor::_update_ask_before_revoking_unique_name));
@@ -2501,7 +2501,8 @@ LineEdit *SceneTreeDialog::get_filter_line_edit() {
 	return filter;
 }
 
-SceneTreeDialog::SceneTreeDialog() {
+SceneTreeDialog::SceneTreeDialog() :
+		Dialog(true) {
 	set_title(TTRC("Select a Node"));
 	content = memnew(VBoxContainer);
 	add_child(content);

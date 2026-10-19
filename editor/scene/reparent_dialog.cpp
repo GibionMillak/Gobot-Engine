@@ -70,7 +70,8 @@ void ReparentDialog::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("reparent_requested", PropertyInfo(Variant::NODE_PATH, "path"), PropertyInfo(Variant::BOOL, "keep_global_xform")));
 }
 
-ReparentDialog::ReparentDialog() {
+ReparentDialog::ReparentDialog() :
+		Dialog(true) {
 	set_title(TTR("Reparent Node"));
 
 	VBoxContainer *vbc = memnew(VBoxContainer);

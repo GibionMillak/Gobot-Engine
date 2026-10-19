@@ -35,8 +35,7 @@
 #include "scene/gui/slider.h"
 #include "scene/gui/spin_box.h"
 
-class AcceptDialog;
-class ConfirmationDialog;
+class Dialog;
 class LineEdit;
 class MenuButton;
 class OptionButton;
@@ -47,7 +46,7 @@ class MultiMeshEditor : public Control {
 
 	friend class MultiMeshEditorPlugin;
 
-	AcceptDialog *err_dialog = nullptr;
+	Dialog *err_dialog = nullptr;
 	MenuButton *options = nullptr;
 	MultiMeshInstance3D *_last_pp_node = nullptr;
 	bool browsing_source = false;
@@ -60,7 +59,7 @@ class MultiMeshEditor : public Control {
 
 	SceneTreeDialog *std = nullptr;
 
-	ConfirmationDialog *populate_dialog = nullptr;
+	Dialog *populate_dialog = nullptr;
 	OptionButton *populate_axis = nullptr;
 	HSlider *populate_rotate_random = nullptr;
 	HSlider *populate_tilt_random = nullptr;

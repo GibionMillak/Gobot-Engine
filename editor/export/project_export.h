@@ -32,7 +32,7 @@
 
 #include "core/templates/rb_set.h"
 #include "editor/export/editor_export_preset.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class CheckBox;
 class CheckButton;
@@ -71,8 +71,8 @@ public:
 	ProjectExportTextureFormatError(ProjectExportDialog *p_export_dialog);
 };
 
-class ProjectExportDialog : public ConfirmationDialog {
-	GDCLASS(ProjectExportDialog, ConfirmationDialog);
+class ProjectExportDialog : public Dialog {
+	GDCLASS(ProjectExportDialog, Dialog);
 
 	HSplitContainer *main_split = nullptr;
 	TabContainer *sections = nullptr;
@@ -95,8 +95,8 @@ class ProjectExportDialog : public ConfirmationDialog {
 	bool updating = false;
 
 	RichTextLabel *result_dialog_log = nullptr;
-	AcceptDialog *result_dialog = nullptr;
-	ConfirmationDialog *delete_confirm = nullptr;
+	Dialog *result_dialog = nullptr;
+	Dialog *delete_confirm = nullptr;
 
 	OptionButton *export_filter = nullptr;
 	LineEdit *include_filters = nullptr;
@@ -110,7 +110,7 @@ class ProjectExportDialog : public ConfirmationDialog {
 
 	Button *export_button = nullptr;
 	Button *export_all_button = nullptr;
-	AcceptDialog *export_all_dialog = nullptr;
+	Dialog *export_all_dialog = nullptr;
 
 	RBSet<String> feature_set;
 
@@ -122,7 +122,7 @@ class ProjectExportDialog : public ConfirmationDialog {
 	Tree *patches = nullptr;
 	int patch_index = -1;
 	EditorFileDialog *patch_dialog = nullptr;
-	ConfirmationDialog *patch_erase = nullptr;
+	Dialog *patch_erase = nullptr;
 	Button *patch_add_btn = nullptr;
 
 	LineEdit *custom_features = nullptr;

@@ -34,7 +34,7 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/plugins/editor_plugin.h"
 #include "editor/scene/gui/theme_editor_preview.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/margin_container.h"
 #include "scene/gui/tree.h"
 #include "scene/resources/theme.h"
@@ -199,8 +199,8 @@ public:
 
 class ThemeTypeEditor;
 
-class ThemeItemEditorDialog : public AcceptDialog {
-	GDCLASS(ThemeItemEditorDialog, AcceptDialog);
+class ThemeItemEditorDialog : public Dialog {
+	GDCLASS(ThemeItemEditorDialog, Dialog);
 
 	ThemeTypeEditor *theme_type_editor = nullptr;
 
@@ -236,7 +236,7 @@ class ThemeItemEditorDialog : public AcceptDialog {
 		ITEMS_TREE_REMOVE_DATA_TYPE,
 	};
 
-	ConfirmationDialog *edit_theme_item_dialog = nullptr;
+	Dialog *edit_theme_item_dialog = nullptr;
 	VBoxContainer *edit_theme_item_old_vb = nullptr;
 	Label *theme_item_old_name = nullptr;
 	LineEdit *theme_item_name = nullptr;
@@ -259,9 +259,9 @@ class ThemeItemEditorDialog : public AcceptDialog {
 	Button *import_another_theme_button = nullptr;
 	EditorFileDialog *import_another_theme_dialog = nullptr;
 
-	ConfirmationDialog *confirm_closing_dialog = nullptr;
+	Dialog *confirm_closing_dialog = nullptr;
 
-	void ok_pressed() override;
+	void _on_confirmed() override;
 	void _close_dialog();
 
 	void _dialog_about_to_show();
@@ -299,8 +299,8 @@ public:
 	ThemeItemEditorDialog(ThemeTypeEditor *p_theme_editor);
 };
 
-class ThemeTypeDialog : public ConfirmationDialog {
-	GDCLASS(ThemeTypeDialog, ConfirmationDialog);
+class ThemeTypeDialog : public Dialog {
+	GDCLASS(ThemeTypeDialog, Dialog);
 
 	Ref<Theme> edited_theme;
 	bool include_own_types = false;
@@ -309,10 +309,10 @@ class ThemeTypeDialog : public ConfirmationDialog {
 
 	FilterLineEdit *add_type_filter = nullptr;
 	ItemList *add_type_options = nullptr;
-	ConfirmationDialog *add_type_confirmation = nullptr;
+	Dialog *add_type_confirmation = nullptr;
 
 	void _dialog_about_to_show();
-	void ok_pressed() override;
+	void _on_confirmed() override;
 
 	void _update_add_type_options(const String &p_filter = "");
 
@@ -359,7 +359,7 @@ class ThemeTypeEditor : public MarginContainer {
 	OptionButton *theme_type_list = nullptr;
 	Button *add_type_button = nullptr;
 	Button *rename_type_button = nullptr;
-	ConfirmationDialog *theme_type_rename_dialog = nullptr;
+	Dialog *theme_type_rename_dialog = nullptr;
 	LineEdit *theme_type_rename_line_edit = nullptr;
 	Button *remove_type_button = nullptr;
 

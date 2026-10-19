@@ -538,7 +538,7 @@ EditorRunBar::EditorRunBar() {
 	main_panel->add_child(main_hbox);
 
 	if (Engine::get_singleton()->is_recovery_mode_hint()) {
-		recovery_mode_popup = memnew(AcceptDialog);
+		recovery_mode_popup = memnew(Dialog);
 		recovery_mode_popup->set_min_size(Size2(550, 70) * EDSCALE);
 		recovery_mode_popup->set_title(TTR("Recovery Mode"));
 		recovery_mode_popup->set_text(

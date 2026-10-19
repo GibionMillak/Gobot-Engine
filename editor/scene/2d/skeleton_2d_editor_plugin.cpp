@@ -35,7 +35,7 @@
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/scene/canvas_item_editor_plugin.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/menu_button.h"
 
 void Skeleton2DEditor::_node_removed(Node *p_node) {
@@ -108,7 +108,7 @@ Skeleton2DEditor::Skeleton2DEditor() {
 
 	options->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &Skeleton2DEditor::_menu_option));
 
-	err_dialog = memnew(AcceptDialog);
+	err_dialog = memnew(Dialog);
 	err_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(err_dialog);
 }

@@ -32,7 +32,7 @@
 
 #include "scene/gui/tree.h"
 
-class AcceptDialog;
+class Dialog;
 class SceneDebuggerTree;
 class EditorFileDialog;
 
@@ -69,7 +69,7 @@ private:
 	HashSet<ObjectID> selection_cache;
 	PopupMenu *item_menu = nullptr;
 	EditorFileDialog *file_dialog = nullptr;
-	AcceptDialog *accept = nullptr;
+	Dialog *accept = nullptr;
 	String last_filter;
 
 	void _scene_tree_folded(Object *p_obj);

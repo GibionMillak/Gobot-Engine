@@ -44,10 +44,9 @@ typedef void (*EditorPluginInitializeCallback)();
 #ifndef ANDROID_ENABLED
 class AndroidSDKManager;
 #endif
-class AcceptDialog;
+class Dialog;
 class BoxContainer;
 class ColorPicker;
-class ConfirmationDialog;
 class Control;
 class FileDialog;
 class HBoxContainer;
@@ -836,7 +835,7 @@ private:
 
 	bool portrait_mode = false;
 
-	ConfirmationDialog *video_restart_dialog = nullptr;
+	Dialog *video_restart_dialog = nullptr;
 
 	// Split containers.
 	DockSplitContainer *left_l_vsplit = nullptr;
@@ -890,11 +889,11 @@ private:
 	Timer *screenshot_timer = nullptr;
 
 	RichTextLabel *load_errors = nullptr;
-	AcceptDialog *load_error_dialog = nullptr;
+	Dialog *load_error_dialog = nullptr;
 	bool load_errors_queued_to_display = false;
 
 	RichTextLabel *execute_outputs = nullptr;
-	AcceptDialog *execute_output_dialog = nullptr;
+	Dialog *execute_output_dialog = nullptr;
 
 	Ref<Theme> theme;
 	EditorIconManager *icon_manager = nullptr;
@@ -911,18 +910,18 @@ private:
 	String defer_load_scene;
 	Node *_last_instantiated_scene = nullptr;
 
-	ConfirmationDialog *confirmation = nullptr;
+	Dialog *confirmation = nullptr;
 	bool stop_project_confirmation = false;
 	Button *confirmation_button = nullptr;
-	ConfirmationDialog *save_confirmation = nullptr;
-	ConfirmationDialog *import_confirmation = nullptr;
-	ConfirmationDialog *pick_main_scene = nullptr;
-	ConfirmationDialog *open_project_settings = nullptr;
+	Dialog *save_confirmation = nullptr;
+	Dialog *import_confirmation = nullptr;
+	Dialog *pick_main_scene = nullptr;
+	Dialog *open_project_settings = nullptr;
 	Button *select_current_scene_button = nullptr;
-	AcceptDialog *save_accept = nullptr;
+	Dialog *save_accept = nullptr;
 	EditorAbout *about = nullptr;
 	SystemInformationDialog *_system_information_dialog = nullptr;
-	AcceptDialog *warning = nullptr;
+	Dialog *warning = nullptr;
 	EditorPlugin *plugin_to_save = nullptr;
 
 	bool overridden_default_layout = false;
@@ -930,9 +929,9 @@ private:
 	PopupMenu *editor_layouts = nullptr;
 	EditorLayoutsDialog *layout_dialog = nullptr;
 
-	ConfirmationDialog *gradle_build_manage_templates = nullptr;
-	ConfirmationDialog *install_android_build_template = nullptr;
-	ConfirmationDialog *remove_android_build_template = nullptr;
+	Dialog *gradle_build_manage_templates = nullptr;
+	Dialog *install_android_build_template = nullptr;
+	Dialog *remove_android_build_template = nullptr;
 	Label *install_android_build_template_message = nullptr;
 	OptionButton *choose_android_export_profile = nullptr;
 	Ref<EditorExportPreset> android_export_preset;
@@ -957,7 +956,7 @@ private:
 	DependencyErrorDialog *dependency_error = nullptr;
 	HashMap<String, HashSet<String>> dependency_errors;
 	OrphanResourcesDialog *orphan_resources = nullptr;
-	ConfirmationDialog *open_imported = nullptr;
+	Dialog *open_imported = nullptr;
 	Button *new_inherited_button = nullptr;
 	String open_import_request;
 
@@ -972,8 +971,8 @@ private:
 	Tree *disk_changed_list = nullptr;
 	HashSet<String> disk_changed_scenes;
 	bool disk_changed_project = false;
-	ConfirmationDialog *disk_changed = nullptr;
-	ConfirmationDialog *project_data_missing = nullptr;
+	Dialog *disk_changed = nullptr;
+	Dialog *project_data_missing = nullptr;
 
 	bool scene_distraction_free = false;
 	bool script_distraction_free = false;
@@ -1025,7 +1024,7 @@ private:
 	HashMap<String, Ref<Texture2D>> icon_type_cache;
 	HashMap<Pair<String, String>, Ref<Texture2D>> class_icon_cache;
 
-	ConfirmationDialog *clear_cache_dialog = nullptr;
+	Dialog *clear_cache_dialog = nullptr;
 
 	LocalVector<String> files_to_delete_on_exit;
 

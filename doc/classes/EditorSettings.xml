@@ -919,13 +919,6 @@
 		</member>
 
 
-		<member name="interface/editor/appearance/accept_dialog_cancel_ok_buttons" type="int" setter="" getter="">
-			How to position the Cancel and OK buttons in the editor's [AcceptDialog] windows. Different platforms have different conventions for this, which can be overridden through this setting to avoid accidental clicks when using Godot on multiple platforms.
-			- [b]Auto[/b] follows the platform convention: OK first on Windows, KDE, and LXQt; Cancel first on macOS and other Linux desktop environments.
-			- [b]Cancel First[/b] forces the Cancel/OK ordering.
-			- [b]OK First[/b] forces the OK/Cancel ordering.
-			To check if these buttons are swapped at runtime, use [method DisplayServer.get_swap_cancel_ok].
-		</member>
 		<member name="interface/editor/appearance/collapse_main_menu" type="bool" setter="" getter="">
 			If [code]true[/code], the main menu collapses into a [MenuButton].
 			[b]Note:[/b] This setting is only applicable on macOS when [member interface/editor/appearance/use_embedded_menu] is [code]true[/code].

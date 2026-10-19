@@ -279,7 +279,7 @@ private:
 	void _auto_create_tiles();
 	void _auto_remove_tiles();
 	void _cancel_auto_create_tiles();
-	AcceptDialog *confirm_auto_create_tiles = nullptr;
+	Dialog *confirm_auto_create_tiles = nullptr;
 	Vector<Ref<TileSetAtlasSource>> atlases_to_auto_create_tiles;
 	Vector2i _get_drag_offset_tile_coords(const Vector2i &p_offset) const;
 

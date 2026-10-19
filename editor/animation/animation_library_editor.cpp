@@ -968,7 +968,7 @@ AnimationLibraryEditor::AnimationLibraryEditor() {
 	file_dialog->connect("file_selected", callable_mp(this, &AnimationLibraryEditor::_load_file));
 	file_dialog->connect("files_selected", callable_mp(this, &AnimationLibraryEditor::_load_files));
 
-	add_library_dialog = memnew(ConfirmationDialog);
+	add_library_dialog = memnew(Dialog(true));
 	add_library_dialog->set_title(TTRC("Library Name:"));
 
 	VBoxContainer *dialog_vb = memnew(VBoxContainer);
@@ -1023,7 +1023,7 @@ AnimationLibraryEditor::AnimationLibraryEditor() {
 
 	add_child(vb);
 
-	error_dialog = memnew(AcceptDialog);
+	error_dialog = memnew(Dialog);
 	error_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	error_dialog->set_title(TTRC("Error:"));
 	add_child(error_dialog);

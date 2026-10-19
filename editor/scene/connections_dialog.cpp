@@ -155,7 +155,7 @@ public:
 /*
  * Signal automatically called by parent dialog.
  */
-void ConnectDialog::ok_pressed() {
+void ConnectDialog::_on_confirmed() {
 	String method_name = dst_method->get_text();
 
 	if (method_name.is_empty()) {
@@ -190,7 +190,7 @@ void ConnectDialog::_cancel_pressed() {
 }
 
 void ConnectDialog::_item_activated() {
-	_ok_pressed(); // From AcceptDialog.
+	_ok_pressed(); // From Dialog.
 }
 
 /*
@@ -746,7 +746,8 @@ void ConnectDialog::_advanced_pressed() {
 	popup_centered();
 }
 
-ConnectDialog::ConnectDialog() {
+ConnectDialog::ConnectDialog() :
+		Dialog(true) {
 	set_min_size(Size2(0, 500) * EDSCALE);
 
 	HBoxContainer *main_hb = memnew(HBoxContainer);
@@ -794,7 +795,7 @@ ConnectDialog::ConnectDialog() {
 	vbc_left->add_child(error_label);
 	error_label->hide();
 
-	method_popup = memnew(AcceptDialog);
+	method_popup = memnew(Dialog);
 	method_popup->set_title(TTR("Select Method"));
 	method_popup->set_min_size(Vector2(400, 600) * EDSCALE);
 	add_child(method_popup);
@@ -908,7 +909,7 @@ ConnectDialog::ConnectDialog() {
 
 	cdbinds = memnew(ConnectDialogBinds);
 
-	error = memnew(AcceptDialog);
+	error = memnew(Dialog);
 	error->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(error);
 	error->set_title(TTR("Cannot connect signal"));
@@ -1766,7 +1767,7 @@ ConnectionsDock::ConnectionsDock() {
 	connect_dialog->set_process_shortcut_input(true);
 	holder->add_child(connect_dialog);
 
-	disconnect_all_dialog = memnew(ConfirmationDialog);
+	disconnect_all_dialog = memnew(Dialog(true));
 	disconnect_all_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	holder->add_child(disconnect_all_dialog);
 	disconnect_all_dialog->connect(SceneStringName(confirmed), callable_mp(this, &ConnectionsDock::_disconnect_all));

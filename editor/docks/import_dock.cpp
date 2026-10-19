@@ -822,7 +822,7 @@ ImportDock::ImportDock() {
 	advanced_spacer->hide();
 	advanced->connect(SceneStringName(pressed), callable_mp(this, &ImportDock::_advanced_options));
 
-	reimport_confirm = memnew(ConfirmationDialog);
+	reimport_confirm = memnew(Dialog(true));
 	content->add_child(reimport_confirm);
 	reimport_confirm->connect(SceneStringName(confirmed), callable_mp(this, &ImportDock::_reimport_and_cleanup));
 

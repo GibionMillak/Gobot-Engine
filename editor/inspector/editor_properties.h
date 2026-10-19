@@ -34,7 +34,7 @@
 
 class CheckBox;
 class ColorPickerButton;
-class ConfirmationDialog;
+class Dialog;
 class CreateDialog;
 class EditorFileDialog;
 class EditorLocaleDialog;
@@ -121,7 +121,7 @@ class EditorPropertyMultilineText : public EditorProperty {
 
 	TextEdit *text = nullptr;
 
-	AcceptDialog *big_text_dialog = nullptr;
+	Dialog *big_text_dialog = nullptr;
 	TextEdit *big_text = nullptr;
 	Button *open_big_text = nullptr;
 
@@ -328,7 +328,7 @@ private:
 	bool read_only = false;
 	int renamed_layer_index = -1;
 	PopupMenu *layer_rename = nullptr;
-	ConfirmationDialog *rename_dialog = nullptr;
+	Dialog *rename_dialog = nullptr;
 	LineEdit *rename_dialog_text = nullptr;
 
 	void _rename_pressed(int p_menu);
@@ -557,7 +557,7 @@ class EditorPropertyQuaternion : public EditorProperty {
 	EditorSpinSlider *spin[4];
 
 	Button *warning = nullptr;
-	AcceptDialog *warning_dialog = nullptr;
+	Dialog *warning_dialog = nullptr;
 
 	Label *euler_label = nullptr;
 	VBoxContainer *edit_custom_bc = nullptr;

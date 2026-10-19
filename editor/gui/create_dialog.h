@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class Button;
 class EditorHelpBit;
@@ -42,8 +42,8 @@ class TreeItem;
 class HBoxContainer;
 class MenuButton;
 
-class CreateDialog : public ConfirmationDialog {
-	GDCLASS(CreateDialog, ConfirmationDialog);
+class CreateDialog : public Dialog {
+	GDCLASS(CreateDialog, Dialog);
 
 	enum TypeCategory {
 		CPP_TYPE,
@@ -110,7 +110,7 @@ class CreateDialog : public ConfirmationDialog {
 	void _hide_requested();
 
 	void _confirmed();
-	virtual void cancel_pressed() override;
+	virtual void _on_canceled() override;
 
 	void _type_filter_toggled(int p_type, bool p_search);
 	void _favorite_toggled();

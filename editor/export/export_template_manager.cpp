@@ -135,7 +135,7 @@ ExportTemplateManager::ExportTemplateManager() {
 		}
 	}
 
-	_confirm_delete = memnew(ConfirmationDialog);
+	_confirm_delete = memnew(Dialog(true));
 	_confirm_delete->connect(SceneStringName(confirmed), callable_mp(this, &ExportTemplateManager::_delete_confirmed));
 	_confirm_delete->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(_confirm_delete);

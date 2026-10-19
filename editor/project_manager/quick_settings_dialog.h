@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/label.h"
 
 class Button;
@@ -51,8 +51,8 @@ public:
 	SettingLabel(const String &p_text, const String &p_setting);
 };
 
-class QuickSettingsDialog : public AcceptDialog {
-	GDCLASS(QuickSettingsDialog, AcceptDialog);
+class QuickSettingsDialog : public Dialog {
+	GDCLASS(QuickSettingsDialog, Dialog);
 
 #ifndef ANDROID_ENABLED
 	Vector<String> editor_languages;

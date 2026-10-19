@@ -35,19 +35,19 @@
 #include "editor/script/script_editor_base.h"
 #include "editor/script/script_editor_plugin.h"
 #include "scene/gui/color_picker.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/tree.h"
 
 class RichTextLabel;
 
-class ConnectionInfoDialog : public AcceptDialog {
-	GDCLASS(ConnectionInfoDialog, AcceptDialog);
+class ConnectionInfoDialog : public Dialog {
+	GDCLASS(ConnectionInfoDialog, Dialog);
 
 	Label *method = nullptr;
 	Tree *tree = nullptr;
 
-	virtual void ok_pressed() override;
+	virtual void _on_confirmed() override;
 
 public:
 	void popup_connections(const String &p_method, const Vector<Node *> &p_nodes);

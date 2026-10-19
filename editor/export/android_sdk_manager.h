@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/main/http_request.h"
 
 class Label;
@@ -40,8 +40,8 @@ class RichTextLabel;
 const String DEFAULT_ANDROID_KEYSTORE_DEBUG_USER = "androiddebugkey";
 const String DEFAULT_ANDROID_KEYSTORE_DEBUG_PASSWORD = "android";
 
-class AndroidSDKManager : public AcceptDialog {
-	GDCLASS(AndroidSDKManager, AcceptDialog)
+class AndroidSDKManager : public Dialog {
+	GDCLASS(AndroidSDKManager, Dialog)
 
 	enum SetupStatus {
 		IDLE,

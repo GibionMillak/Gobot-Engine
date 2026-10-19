@@ -797,7 +797,7 @@ void DependencyRemoveDialog::show(const Vector<String> &p_folders, const Vector<
 	EditorFileSystem::get_singleton()->scan_changes();
 }
 
-void DependencyRemoveDialog::ok_pressed() {
+void DependencyRemoveDialog::_on_confirmed() {
 	HashMap<String, StringName> setting_path_map;
 	for (const StringName &setting : FileSystemDock::get_singleton()->get_path_project_settings()) {
 		const String path = ResourceUID::ensure_path(GLOBAL_GET(setting));
@@ -885,7 +885,8 @@ void DependencyRemoveDialog::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("folder_removed", PropertyInfo(Variant::STRING, "folder")));
 }
 
-DependencyRemoveDialog::DependencyRemoveDialog() {
+DependencyRemoveDialog::DependencyRemoveDialog() :
+		Dialog(true) {
 	set_ok_button_text(TTR("Remove"));
 
 	VBoxContainer *vb = memnew(VBoxContainer);
@@ -984,7 +985,7 @@ void DependencyErrorDialog::show(const String &p_for_file, const HashMap<String,
 	popup_centered();
 }
 
-void DependencyErrorDialog::ok_pressed() {
+void DependencyErrorDialog::_on_confirmed() {
 	EditorNode::get_singleton()->load_scene_or_resource(for_file, !errors_fixed);
 }
 
@@ -1070,7 +1071,8 @@ void DependencyErrorDialog::_check_for_resolved() {
 	set_ok_button_text(errors_fixed ? TTRC("Open") : TTRC("Open Anyway"));
 }
 
-DependencyErrorDialog::DependencyErrorDialog() {
+DependencyErrorDialog::DependencyErrorDialog() :
+		Dialog(true) {
 	icon_name_fail = StringName("ImportFail");
 	icon_name_check = StringName("ImportCheck");
 
@@ -1095,7 +1097,7 @@ DependencyErrorDialog::DependencyErrorDialog() {
 
 //////////////////////////////////////////////////////////////////////
 
-void OrphanResourcesDialog::ok_pressed() {
+void OrphanResourcesDialog::_on_confirmed() {
 	paths.clear();
 
 	_find_to_delete(files->get_root(), paths);
@@ -1212,9 +1214,10 @@ void OrphanResourcesDialog::_button_pressed(Object *p_item, int p_column, int p_
 	dep_edit->edit(path);
 }
 
-OrphanResourcesDialog::OrphanResourcesDialog() {
+OrphanResourcesDialog::OrphanResourcesDialog() :
+		Dialog(true) {
 	set_title(TTR("Orphan Resource Explorer"));
-	delete_confirm = memnew(ConfirmationDialog);
+	delete_confirm = memnew(Dialog(true));
 	set_ok_button_text(TTR("Delete"));
 	add_child(delete_confirm);
 	dep_edit = memnew(DependencyEditor);

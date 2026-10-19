@@ -38,7 +38,7 @@
 #include "core/object/callable_mp.h"
 #include "editor/editor_interface.h"
 #include "editor/settings/editor_settings.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/rich_text_label.h"
 
 void AndroidEditorGradleRunner::run_gradle(const String &p_project_path, const String &p_build_path, const String &p_output_path, const String &p_export_format, const List<String> &p_gradle_build_args, const List<String> &p_gradle_copy_args) {
@@ -55,7 +55,7 @@ void AndroidEditorGradleRunner::run_gradle(const String &p_project_path, const S
 		output_label->set_context_menu_enabled(true);
 		output_label->set_scroll_follow(true);
 
-		output_dialog = memnew(ConfirmationDialog);
+		output_dialog = memnew(Dialog(true));
 		output_dialog->set_unparent_when_invisible(true);
 		output_dialog->set_title(TTR("Building Android Project (gradle)"));
 		output_dialog->add_child(output_label);

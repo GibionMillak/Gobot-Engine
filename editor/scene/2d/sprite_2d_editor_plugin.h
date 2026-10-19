@@ -34,9 +34,8 @@
 #include "scene/2d/sprite_2d.h"
 #include "scene/gui/spin_box.h"
 
-class AcceptDialog;
+class Dialog;
 class Button;
-class ConfirmationDialog;
 class EditorZoomWidget;
 class HBoxContainer;
 class HScrollBar;
@@ -64,11 +63,11 @@ class Sprite2DEditor : public Control {
 	MenuButton *options = nullptr;
 	Button *resize_region_rect = nullptr;
 
-	ConfirmationDialog *outline_dialog = nullptr;
+	Dialog *outline_dialog = nullptr;
 
-	AcceptDialog *err_dialog = nullptr;
+	Dialog *err_dialog = nullptr;
 
-	ConfirmationDialog *debug_uv_dialog = nullptr;
+	Dialog *debug_uv_dialog = nullptr;
 	Panel *debug_uv = nullptr;
 	Vector<Vector2> uv_lines;
 	Vector<Vector<Vector2>> outline_lines;

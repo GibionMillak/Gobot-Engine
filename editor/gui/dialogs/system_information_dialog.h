@@ -30,15 +30,15 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class Button;
 class ScrollContainer;
 class Table;
 class VBoxContainer;
 
-class SystemInformationDialog : public AcceptDialog {
-	GDCLASS(SystemInformationDialog, AcceptDialog);
+class SystemInformationDialog : public Dialog {
+	GDCLASS(SystemInformationDialog, Dialog);
 
 public:
 	SystemInformationDialog();

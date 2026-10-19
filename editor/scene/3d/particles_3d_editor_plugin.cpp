@@ -267,7 +267,7 @@ bool Particles3DEditorPlugin::_generate(Vector<Vector3> &r_points, Vector<Vector
 }
 
 Particles3DEditorPlugin::Particles3DEditorPlugin() {
-	generate_aabb = memnew(ConfirmationDialog);
+	generate_aabb = memnew(Dialog(true));
 	generate_aabb->set_title(TTR("Generate Visibility AABB"));
 
 	VBoxContainer *genvb = memnew(VBoxContainer);
@@ -290,7 +290,7 @@ Particles3DEditorPlugin::Particles3DEditorPlugin() {
 	EditorNode::get_singleton()->get_gui_base()->add_child(emission_tree_dialog);
 	emission_tree_dialog->connect("selected", callable_mp(this, &Particles3DEditorPlugin::_node_selected));
 
-	emission_dialog = memnew(ConfirmationDialog);
+	emission_dialog = memnew(Dialog(true));
 	emission_dialog->set_title(TTR("Create Emitter"));
 	EditorNode::get_singleton()->get_gui_base()->add_child(emission_dialog);
 

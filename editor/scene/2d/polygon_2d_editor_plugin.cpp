@@ -45,7 +45,7 @@
 #include "editor/themes/editor_scale.h"
 #include "scene/2d/skeleton_2d.h"
 #include "scene/gui/check_box.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/label.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/panel.h"
@@ -1507,7 +1507,7 @@ Polygon2DEditor::Polygon2DEditor() {
 	b_snap_grid->set_tooltip_text(TTR("Show Grid"));
 	b_snap_grid->connect(SceneStringName(toggled), callable_mp(this, &Polygon2DEditor::_set_show_grid));
 
-	grid_settings = memnew(AcceptDialog);
+	grid_settings = memnew(Dialog);
 	grid_settings->set_title(TTR("Configure Grid:"));
 	polygon_edit->add_child(grid_settings);
 	VBoxContainer *grid_settings_vb = memnew(VBoxContainer);
@@ -1587,7 +1587,7 @@ Polygon2DEditor::Polygon2DEditor() {
 	canvas->connect(SceneStringName(focus_exited), callable_mp(panner.ptr(), &ViewPanner::release_pan_key));
 	canvas->set_focus_mode(FOCUS_CLICK);
 
-	error = memnew(AcceptDialog);
+	error = memnew(Dialog);
 	error->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(error);
 }

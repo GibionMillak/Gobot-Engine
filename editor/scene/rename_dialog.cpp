@@ -49,7 +49,8 @@
 #include "scene/gui/tab_container.h"
 #include "scene/main/scene_tree.h"
 
-RenameDialog::RenameDialog(SceneTreeEditor *p_scene_tree_editor) {
+RenameDialog::RenameDialog(SceneTreeEditor *p_scene_tree_editor) :
+		Dialog(true) {
 	scene_tree_editor = p_scene_tree_editor;
 	preview_node = nullptr;
 
@@ -362,7 +363,7 @@ void RenameDialog::_update_substitute() {
 }
 
 void RenameDialog::_post_popup() {
-	ConfirmationDialog::_post_popup();
+	Dialog::_post_popup();
 
 	EditorSelection *editor_selection = EditorNode::get_singleton()->get_editor_selection();
 	preview_node = nullptr;

@@ -790,7 +790,7 @@ void ScenePaint2DEditor::_notification(int p_what) {
 			edit_properties_button->set_button_icon(get_editor_theme_icon(SNAME("Tools")));
 			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("SnapDisable")));
 			advanced_settings_popup->add_theme_style_override(SceneStringName(panel),
-					get_theme_stylebox(SceneStringName(panel), SNAME("AcceptDialog")));
+					get_theme_stylebox(SceneStringName(panel), SNAME("Dialog")));
 			advanced_settings_popup->set_item_icon(MENU_ITEM_FREE_PAINT_MODE,
 					get_editor_theme_icon(SNAME("SnapDisable")));
 			advanced_settings_popup->set_item_icon(MENU_ITEM_SNAP_TO_GRID_PAINT_MODE,

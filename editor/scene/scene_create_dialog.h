@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class ButtonGroup;
 class CheckBox;
@@ -41,8 +41,8 @@ class Label;
 class LineEdit;
 class OptionButton;
 
-class SceneCreateDialog : public ConfirmationDialog {
-	GDCLASS(SceneCreateDialog, ConfirmationDialog);
+class SceneCreateDialog : public Dialog {
+	GDCLASS(SceneCreateDialog, Dialog);
 
 	enum {
 		MSG_ID_PATH,

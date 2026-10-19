@@ -2128,7 +2128,7 @@ AnimationPlayerEditor::AnimationPlayerEditor(AnimationPlayerEditorPlugin *p_plug
 	scale->set_tooltip_text(TTRC("Scale animation playback globally for the node."));
 	scale->hide();
 
-	delete_dialog = memnew(ConfirmationDialog);
+	delete_dialog = memnew(Dialog(true));
 	delete_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(delete_dialog);
 	delete_dialog->connect(SceneStringName(confirmed), callable_mp(this, &AnimationPlayerEditor::_animation_remove_confirmed));
@@ -2216,7 +2216,7 @@ AnimationPlayerEditor::AnimationPlayerEditor(AnimationPlayerEditorPlugin *p_plug
 	file = memnew(EditorFileDialog);
 	add_child(file);
 
-	name_dialog = memnew(ConfirmationDialog);
+	name_dialog = memnew(Dialog(true));
 	name_dialog->set_title(TTRC("Create New Animation"));
 	name_dialog->set_hide_on_ok(false);
 	add_child(name_dialog);
@@ -2236,14 +2236,14 @@ AnimationPlayerEditor::AnimationPlayerEditor(AnimationPlayerEditorPlugin *p_plug
 	vb->add_child(name_hb);
 	name_dialog->register_text_enter(name);
 
-	error_dialog = memnew(AcceptDialog);
+	error_dialog = memnew(Dialog);
 	error_dialog->set_ok_button_text(TTRC("Close"));
 	error_dialog->set_title(TTRC("Error!"));
 	name_dialog->add_child(error_dialog);
 
 	name_dialog->connect(SceneStringName(confirmed), callable_mp(this, &AnimationPlayerEditor::_animation_name_edited));
 
-	blend_editor.dialog = memnew(AcceptDialog);
+	blend_editor.dialog = memnew(Dialog);
 	blend_editor.dialog->set_title(TTRC("Cross-Animation Blend Times"));
 	blend_editor.dialog->set_ok_button_text(TTRC("Close"));
 	blend_editor.dialog->set_hide_on_ok(true);

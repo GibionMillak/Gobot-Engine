@@ -60,7 +60,7 @@
 #include "scene/gui/tree.h"
 #include "scene/main/timer.h"
 
-void EditorSettingsDialog::ok_pressed() {
+void EditorSettingsDialog::_on_confirmed() {
 	if (!EditorSettings::get_singleton()) {
 		return;
 	}
@@ -206,7 +206,7 @@ void EditorSettingsDialog::_settings_save() {
 	EditorSettings::get_singleton()->save();
 }
 
-void EditorSettingsDialog::cancel_pressed() {
+void EditorSettingsDialog::_on_canceled() {
 	if (!EditorSettings::get_singleton()) {
 		return;
 	}

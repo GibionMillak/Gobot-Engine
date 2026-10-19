@@ -2441,7 +2441,7 @@ SpriteFramesEditor::SpriteFramesEditor() {
 
 	sub_vb->add_child(frame_list);
 
-	dialog = memnew(AcceptDialog);
+	dialog = memnew(Dialog);
 	dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(dialog);
 
@@ -2492,12 +2492,12 @@ SpriteFramesEditor::SpriteFramesEditor() {
 
 	edited_anim = SceneStringName(default_);
 
-	delete_dialog = memnew(ConfirmationDialog);
+	delete_dialog = memnew(Dialog(true));
 	delete_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(delete_dialog);
 	delete_dialog->connect(SceneStringName(confirmed), callable_mp(this, &SpriteFramesEditor::_animation_remove_confirmed));
 
-	split_sheet_dialog = memnew(ConfirmationDialog);
+	split_sheet_dialog = memnew(Dialog(true));
 	split_sheet_dialog->set_flag(Window::FLAG_MAXIMIZE_DISABLED, false);
 	add_child(split_sheet_dialog);
 	split_sheet_dialog->set_title(TTRC("Select Frames"));

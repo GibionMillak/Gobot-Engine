@@ -392,7 +392,7 @@ void PropertySelector::_item_selected() {
 }
 
 void PropertySelector::_hide_requested() {
-	_cancel_pressed(); // From AcceptDialog.
+	_cancel_pressed(); // From Dialog.
 }
 
 void PropertySelector::_create_subproperties(TreeItem *p_parent_item, Variant::Type p_type) {
@@ -682,7 +682,8 @@ void PropertySelector::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("selected", PropertyInfo(Variant::STRING, "name")));
 }
 
-PropertySelector::PropertySelector() {
+PropertySelector::PropertySelector() :
+		Dialog(true) {
 	VBoxContainer *vbc = memnew(VBoxContainer);
 	add_child(vbc);
 

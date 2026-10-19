@@ -44,7 +44,7 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/flow_container.h"
 #include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
@@ -832,7 +832,7 @@ void ProjectList::find_projects(const String &p_path) {
 
 void ProjectList::find_projects_multiple(const PackedStringArray &p_paths) {
 	if (!scan_progress && is_inside_tree()) {
-		scan_progress = memnew(AcceptDialog);
+		scan_progress = memnew(Dialog);
 		scan_progress->set_title(TTRC("Scanning"));
 		scan_progress->set_ok_button_text(TTRC("Cancel"));
 

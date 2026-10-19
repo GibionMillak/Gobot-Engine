@@ -113,7 +113,7 @@ class Timer;
 class Button;
 class VBoxContainer;
 class HFlowContainer;
-class ConfirmationDialog;
+class Dialog;
 
 // Prompts search parameters.
 class FindInFilesSearchPanel : public ScrollContainer {
@@ -153,7 +153,7 @@ class FindInFilesSearchPanel : public ScrollContainer {
 	HBoxContainer *replace_hbox = nullptr;
 	LineEdit *replace_line_edit = nullptr;
 	Button *replace_all_button = nullptr;
-	ConfirmationDialog *replace_all_confirm = nullptr;
+	Dialog *replace_all_confirm = nullptr;
 	CheckBox *dont_show_checkbox = nullptr;
 
 	Label *filters_label = nullptr;
@@ -169,7 +169,7 @@ class FindInFilesSearchPanel : public ScrollContainer {
 	LineEdit *rename_line_edit = nullptr;
 	Button *apply_rename = nullptr;
 
-	ConfirmationDialog *rename_confirm = nullptr;
+	Dialog *rename_confirm = nullptr;
 
 protected:
 	void _notification(int p_what);

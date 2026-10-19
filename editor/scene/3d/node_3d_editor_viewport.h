@@ -36,7 +36,7 @@
 #include "scene/debugger/view_3d_controller.h"
 #include "scene/gui/margin_container.h"
 
-class AcceptDialog;
+class Dialog;
 class CheckBox;
 class EditorSelection;
 class Gradient;
@@ -256,7 +256,7 @@ private:
 	Vector3 preview_node_pos;
 	AABB *preview_bounds = nullptr;
 	Vector<String> selected_files;
-	AcceptDialog *accept = nullptr;
+	Dialog *accept = nullptr;
 
 	Node *target_node = nullptr;
 	Point2 drop_pos;
@@ -573,7 +573,7 @@ public:
 	void assign_pending_data_pointers(
 			Node3D *p_preview_node,
 			AABB *p_preview_bounds,
-			AcceptDialog *p_accept);
+			Dialog *p_accept);
 
 	SubViewport *get_viewport_node() { return viewport; }
 	Camera3D *get_camera_3d() { return camera; } // return the default camera object.

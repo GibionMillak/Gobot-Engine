@@ -32,7 +32,7 @@
 
 #include "core/object/ref_counted.h"
 #include "editor/doc/editor_help.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/tree.h"
 
 class EditorBuildProfile : public RefCounted {
@@ -141,8 +141,8 @@ VARIANT_ENUM_CAST(EditorBuildProfile::BuildOptionCategory)
 class EditorFileDialog;
 class EditorFileSystemDirectory;
 
-class EditorBuildProfileManager : public AcceptDialog {
-	GDCLASS(EditorBuildProfileManager, AcceptDialog);
+class EditorBuildProfileManager : public Dialog {
+	GDCLASS(EditorBuildProfileManager, Dialog);
 
 	enum Action {
 		ACTION_NEW,
@@ -157,7 +157,7 @@ class EditorBuildProfileManager : public AcceptDialog {
 
 	Action last_action = ACTION_NEW;
 
-	ConfirmationDialog *confirm_dialog = nullptr;
+	Dialog *confirm_dialog = nullptr;
 	Button *profile_actions[ACTION_MAX];
 
 	Tree *class_list = nullptr;

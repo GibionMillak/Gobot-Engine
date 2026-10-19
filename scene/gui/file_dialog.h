@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/property_list_helper.h"
 
 class DirAccess;
@@ -45,8 +45,8 @@ class PopupMenu;
 class VBoxContainer;
 class VSeparator;
 
-class FileDialog : public ConfirmationDialog {
-	GDCLASS(FileDialog, ConfirmationDialog);
+class FileDialog : public Dialog {
+	GDCLASS(FileDialog, Dialog);
 
 	inline static constexpr int MAX_RECENTS = 20;
 
@@ -256,12 +256,12 @@ private:
 	FlowContainer *flow_checkbox_options = nullptr;
 	GridContainer *grid_select_options = nullptr;
 
-	ConfirmationDialog *delete_dialog = nullptr;
-	ConfirmationDialog *make_dir_dialog = nullptr;
+	Dialog *delete_dialog = nullptr;
+	Dialog *make_dir_dialog = nullptr;
 	LineEdit *new_dir_name = nullptr;
-	AcceptDialog *mkdirerr = nullptr;
-	AcceptDialog *exterr = nullptr;
-	ConfirmationDialog *confirm_save = nullptr;
+	Dialog *mkdirerr = nullptr;
+	Dialog *exterr = nullptr;
+	Dialog *confirm_save = nullptr;
 
 	struct ThemeCache {
 		int thumbnail_size = 64;

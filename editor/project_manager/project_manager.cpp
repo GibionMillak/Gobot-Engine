@@ -1152,12 +1152,6 @@ ProjectManager::ProjectManager() {
 		FileDialog::set_default_show_hidden_files(EDITOR_GET("filesystem/file_dialog/show_hidden_files"));
 		FileDialog::set_default_display_mode((FileDialog::DisplayMode)EDITOR_GET("filesystem/file_dialog/display_mode").operator int());
 
-		int swap_cancel_ok = EDITOR_GET("interface/editor/appearance/accept_dialog_cancel_ok_buttons");
-		if (swap_cancel_ok != 0) { // 0 is auto, set in register_scene based on DisplayServer.
-			// Swap on means OK first.
-			AcceptDialog::set_swap_cancel_ok(swap_cancel_ok == 2);
-		}
-
 		OS::get_singleton()->set_low_processor_usage_mode(true);
 	}
 
@@ -1500,13 +1494,13 @@ ProjectManager::ProjectManager() {
 		add_child(scan_dir);
 		scan_dir->connect("dir_selected", callable_mp(project_list, &ProjectList::find_projects));
 
-		erase_missing_ask = memnew(ConfirmationDialog);
+		erase_missing_ask = memnew(Dialog(true));
 		erase_missing_ask->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 		erase_missing_ask->set_ok_button_text(TTRC("Remove All"));
 		erase_missing_ask->get_ok_button()->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_erase_missing_projects_confirm));
 		add_child(erase_missing_ask);
 
-		erase_ask = memnew(ConfirmationDialog);
+		erase_ask = memnew(Dialog(true));
 		erase_ask->set_ok_button_text(TTRC("Remove"));
 		erase_ask->get_ok_button()->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_erase_project_confirm));
 		add_child(erase_ask);
@@ -1523,19 +1517,19 @@ ProjectManager::ProjectManager() {
 		//delete_project_contents->set_text(TTRC("Also delete project contents (no undo!)"));
 		//erase_ask_vb->add_child(delete_project_contents);
 
-		multi_open_ask = memnew(ConfirmationDialog);
+		multi_open_ask = memnew(Dialog(true));
 		multi_open_ask->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 		multi_open_ask->set_ok_button_text(TTRC("Edit"));
 		multi_open_ask->get_ok_button()->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_open_selected_projects));
 		add_child(multi_open_ask);
 
-		multi_run_ask = memnew(ConfirmationDialog);
+		multi_run_ask = memnew(Dialog(true));
 		multi_run_ask->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 		multi_run_ask->set_ok_button_text(TTRC("Run"));
 		multi_run_ask->get_ok_button()->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_run_project_confirm));
 		add_child(multi_run_ask);
 
-		open_recovery_mode_ask = memnew(ConfirmationDialog);
+		open_recovery_mode_ask = memnew(Dialog(true));
 		open_recovery_mode_ask->set_min_size(Size2(550, 70) * EDSCALE);
 		open_recovery_mode_ask->set_autowrap(true);
 		open_recovery_mode_ask->add_button(TTRC("Edit normally"))->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_on_recovery_mode_popup_open_normal));
@@ -1553,14 +1547,14 @@ ProjectManager::ProjectManager() {
 		project_dialog->connect("project_duplicated", callable_mp(this, &ProjectManager::_on_project_duplicated));
 		add_child(project_dialog);
 
-		error_dialog = memnew(AcceptDialog);
+		error_dialog = memnew(Dialog);
 		error_dialog->set_title(TTRC("Error"));
 		add_child(error_dialog);
 	}
 
 	// Tag management.
 	{
-		tag_manage_dialog = memnew(ConfirmationDialog);
+		tag_manage_dialog = memnew(Dialog(true));
 		add_child(tag_manage_dialog);
 		tag_manage_dialog->set_title(TTRC("Manage Project Tags"));
 		tag_manage_dialog->get_ok_button()->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_apply_project_tags));
@@ -1601,7 +1595,7 @@ ProjectManager::ProjectManager() {
 		tag_vb->add_child(tag_edit_error);
 		tag_edit_error->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 
-		create_tag_dialog = memnew(ConfirmationDialog);
+		create_tag_dialog = memnew(Dialog(true));
 		tag_manage_dialog->add_child(create_tag_dialog);
 		create_tag_dialog->set_title(TTRC("Create New Tag"));
 		create_tag_dialog->get_ok_button()->connect(SceneStringName(pressed), callable_mp(this, &ProjectManager::_create_new_tag));

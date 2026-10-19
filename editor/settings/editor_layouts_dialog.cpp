@@ -96,7 +96,7 @@ void EditorLayoutsDialog::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("name_confirmed", PropertyInfo(Variant::STRING, "name")));
 }
 
-void EditorLayoutsDialog::ok_pressed() {
+void EditorLayoutsDialog::_on_confirmed() {
 	if (layout_names->is_anything_selected()) {
 		for (const int item : layout_names->get_selected_items()) {
 			emit_signal(SNAME("name_confirmed"), layout_names->get_item_metadata(item));
@@ -107,7 +107,7 @@ void EditorLayoutsDialog::ok_pressed() {
 }
 
 void EditorLayoutsDialog::_post_popup() {
-	ConfirmationDialog::_post_popup();
+	Dialog::_post_popup();
 	layout_names->clear();
 	name->clear();
 
@@ -140,7 +140,8 @@ void EditorLayoutsDialog::_post_popup() {
 	}
 }
 
-EditorLayoutsDialog::EditorLayoutsDialog() {
+EditorLayoutsDialog::EditorLayoutsDialog() :
+		Dialog(true) {
 	makevb = memnew(VBoxContainer);
 	add_child(makevb);
 

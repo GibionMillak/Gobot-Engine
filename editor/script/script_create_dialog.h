@@ -32,15 +32,15 @@
 
 #include "core/object/script_language.h"
 #include "scene/gui/check_box.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class CreateDialog;
 class EditorFileDialog;
 class EditorValidationPanel;
 class LineEdit;
 
-class ScriptCreateDialog : public ConfirmationDialog {
-	GDCLASS(ScriptCreateDialog, ConfirmationDialog);
+class ScriptCreateDialog : public Dialog {
+	GDCLASS(ScriptCreateDialog, Dialog);
 
 	enum {
 		MSG_ID_SCRIPT,
@@ -57,7 +57,7 @@ class ScriptCreateDialog : public ConfirmationDialog {
 	Button *path_button = nullptr;
 	EditorFileDialog *file_browse = nullptr;
 	CheckBox *built_in = nullptr;
-	AcceptDialog *alert = nullptr;
+	Dialog *alert = nullptr;
 	CreateDialog *select_class = nullptr;
 
 	bool is_browsing_parent = false;
@@ -92,7 +92,7 @@ class ScriptCreateDialog : public ConfirmationDialog {
 	void _file_selected(const String &p_file);
 	void _create();
 	void _browse_class_in_tree();
-	virtual void ok_pressed() override;
+	virtual void _on_confirmed() override;
 	void _create_new();
 	void _load_exist();
 	void _update_dialog();

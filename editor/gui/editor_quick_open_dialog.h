@@ -32,7 +32,7 @@
 
 #include "core/string/fuzzy_search.h"
 #include "core/templates/a_hash_map.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/margin_container.h"
 
 class Button;
@@ -253,8 +253,8 @@ private:
 	void _set_enabled(bool p_enabled);
 };
 
-class EditorQuickOpenDialog : public AcceptDialog {
-	GDCLASS(EditorQuickOpenDialog, AcceptDialog);
+class EditorQuickOpenDialog : public Dialog {
+	GDCLASS(EditorQuickOpenDialog, Dialog);
 
 public:
 	void popup_dialog(const Vector<StringName> &p_base_types, const Callable &p_item_selected_callback, bool p_allow_type_switching = false);
@@ -262,8 +262,8 @@ public:
 	EditorQuickOpenDialog();
 
 protected:
-	virtual void cancel_pressed() override;
-	virtual void ok_pressed() override;
+	virtual void _on_canceled() override;
+	virtual void _on_confirmed() override;
 	virtual void shortcut_input(const Ref<InputEvent> &p_event) override;
 	void item_pressed(bool p_double_click);
 	void selection_changed();

@@ -40,7 +40,7 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/main/scene_tree.h"
 
 bool AbstractPolygon2DEditor::Vertex::operator==(const AbstractPolygon2DEditor::Vertex &p_vertex) const {
@@ -956,7 +956,7 @@ AbstractPolygon2DEditor::AbstractPolygon2DEditor(bool p_wip_destructive) {
 	button_center->connect(SceneStringName(pressed), callable_mp(this, &AbstractPolygon2DEditor::_menu_option).bind(CENTER_POLY));
 	button_center->set_visible(edit_origin_and_center);
 
-	create_resource = memnew(ConfirmationDialog);
+	create_resource = memnew(Dialog(true));
 	create_resource->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(create_resource);
 	create_resource->set_ok_button_text(TTR("Create"));

@@ -276,12 +276,12 @@ void AtlasMergingDialog::_merge_confirmed(const String &p_path) {
 	hide();
 }
 
-void AtlasMergingDialog::ok_pressed() {
+void AtlasMergingDialog::_on_confirmed() {
 	delete_original_atlases = false;
 	editor_file_dialog->popup_file_dialog();
 }
 
-void AtlasMergingDialog::cancel_pressed() {
+void AtlasMergingDialog::_on_canceled() {
 	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
 	for (int i = 0; i < committed_actions_count; i++) {
 		undo_redo->undo();
@@ -289,7 +289,7 @@ void AtlasMergingDialog::cancel_pressed() {
 	committed_actions_count = 0;
 }
 
-void AtlasMergingDialog::custom_action(const String &p_action) {
+void AtlasMergingDialog::_on_custom_action(const String &p_action) {
 	if (p_action == "merge") {
 		delete_original_atlases = true;
 		editor_file_dialog->popup_file_dialog();
@@ -347,7 +347,8 @@ void AtlasMergingDialog::update_tile_set(Ref<TileSet> p_tile_set) {
 	committed_actions_count = 0;
 }
 
-AtlasMergingDialog::AtlasMergingDialog() {
+AtlasMergingDialog::AtlasMergingDialog() :
+		Dialog(true) {
 	// Atlas merging window.
 	set_title(TTR("Atlas Merging"));
 	set_hide_on_ok(false);

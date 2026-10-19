@@ -42,7 +42,7 @@ class LineEdit;
 class TabContainer;
 class RichTextLabel;
 class TextureButton;
-class AcceptDialog;
+class Dialog;
 class TreeItem;
 class HSplitContainer;
 class ItemList;

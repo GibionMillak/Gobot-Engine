@@ -34,9 +34,8 @@
 #include "scene/3d/mesh_instance_3d.h"
 #include "scene/gui/option_button.h"
 
-class AcceptDialog;
+class Dialog;
 class AspectRatioContainer;
-class ConfirmationDialog;
 class MenuButton;
 class SpinBox;
 
@@ -81,24 +80,24 @@ class MeshInstance3DEditor : public Control {
 
 	MenuButton *options = nullptr;
 
-	ConfirmationDialog *outline_dialog = nullptr;
+	Dialog *outline_dialog = nullptr;
 	SpinBox *outline_size = nullptr;
 
-	ConfirmationDialog *shape_dialog = nullptr;
+	Dialog *shape_dialog = nullptr;
 	OptionButton *shape_type = nullptr;
 	OptionButton *shape_placement = nullptr;
 	Label *shape_axis_label = nullptr;
 	OptionButton *shape_axis = nullptr;
 	Transform3D shape_offset_transform;
 
-	AcceptDialog *err_dialog = nullptr;
+	Dialog *err_dialog = nullptr;
 
-	AcceptDialog *debug_uv_dialog = nullptr;
+	Dialog *debug_uv_dialog = nullptr;
 	AspectRatioContainer *debug_uv_arc = nullptr;
 	Control *debug_uv = nullptr;
 	Vector<Vector2> uv_lines;
 
-	ConfirmationDialog *navigation_mesh_dialog = nullptr;
+	Dialog *navigation_mesh_dialog = nullptr;
 
 	void _shape_dialog_about_to_popup();
 	void _shape_type_selected(int p_option);

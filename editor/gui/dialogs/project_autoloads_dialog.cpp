@@ -126,7 +126,7 @@ ProjectAutoloadsDialog::ProjectAutoloadsDialog() {
 		}
 	}
 
-	_name_dialog = memnew(ConfirmationDialog);
+	_name_dialog = memnew(Dialog(true));
 	_name_dialog->connect(SceneStringName(confirmed), callable_mp(this, &ProjectAutoloadsDialog::_confirm_autoload_name));
 	_name_dialog->set_title(TTRC("Enter Autoload Name"));
 	add_child(_name_dialog);

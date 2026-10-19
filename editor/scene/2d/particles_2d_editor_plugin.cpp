@@ -243,7 +243,7 @@ Particles2DEditorPlugin::Particles2DEditorPlugin() {
 	file_dialog->set_file_mode(EditorFileDialog::FILE_MODE_OPEN_FILE);
 	file_dialog->connect("file_selected", callable_mp(this, &Particles2DEditorPlugin::_file_selected));
 
-	emission_mask_dialog = memnew(ConfirmationDialog);
+	emission_mask_dialog = memnew(Dialog(true));
 	emission_mask_dialog->set_title(TTRC("Load Emission Mask"));
 	emission_mask_dialog->add_child(file_dialog);
 	emission_mask_dialog->get_ok_button()->set_disabled(true);
@@ -658,7 +658,7 @@ GPUParticles2DEditorPlugin::GPUParticles2DEditorPlugin() {
 	handled_type = TTRC("GPUParticles2D");
 	conversion_option_name = TTR("Convert to CPUParticles2D");
 
-	generate_visibility_rect = memnew(ConfirmationDialog);
+	generate_visibility_rect = memnew(Dialog(true));
 	generate_visibility_rect->set_title(TTR("Generate Visibility Rect"));
 
 	VBoxContainer *genvb = memnew(VBoxContainer);

@@ -334,7 +334,7 @@ void EditorPropertyMultilineText::_open_big_text() {
 		big_text->set_line_wrapping_mode(wrap_lines
 						? TextEdit::LineWrappingMode::LINE_WRAPPING_BOUNDARY
 						: TextEdit::LineWrappingMode::LINE_WRAPPING_NONE);
-		big_text_dialog = memnew(AcceptDialog);
+		big_text_dialog = memnew(Dialog);
 		big_text_dialog->add_child(big_text);
 		big_text_dialog->set_title(TTR("Edit Text:"));
 		add_child(big_text_dialog);
@@ -1108,7 +1108,7 @@ void EditorPropertyLayersGrid::_rename_operation_confirm() {
 }
 
 EditorPropertyLayersGrid::EditorPropertyLayersGrid() {
-	rename_dialog = memnew(ConfirmationDialog);
+	rename_dialog = memnew(Dialog(true));
 	VBoxContainer *rename_dialog_vb = memnew(VBoxContainer);
 	rename_dialog->add_child(rename_dialog_vb);
 	rename_dialog_text = memnew(LineEdit);
@@ -2454,7 +2454,7 @@ EditorPropertyQuaternion::EditorPropertyQuaternion() {
 	warning->set_clip_text(true);
 	warning->set_theme_type_variation(SNAME("EditorInspectorButton"));
 	warning->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyQuaternion::_warning_pressed));
-	warning_dialog = memnew(AcceptDialog);
+	warning_dialog = memnew(Dialog);
 	warning_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(warning_dialog);
 	warning_dialog->set_text(TTR("Temporary Euler will not be stored in the object with the original value. Instead, it will be stored as Quaternion with irreversible conversion.\nThis is due to the fact that the result of Euler->Quaternion can be determined uniquely, but the result of Quaternion->Euler can be multi-existent."));

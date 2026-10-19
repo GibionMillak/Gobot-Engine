@@ -768,10 +768,10 @@ void CreateDialog::_item_selected() {
 }
 
 void CreateDialog::_hide_requested() {
-	_cancel_pressed(); // From AcceptDialog.
+	_cancel_pressed(); // From Dialog.
 }
 
-void CreateDialog::cancel_pressed() {
+void CreateDialog::_on_canceled() {
 	_cleanup();
 }
 
@@ -975,7 +975,8 @@ void CreateDialog::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("favorites_updated"));
 }
 
-CreateDialog::CreateDialog() {
+CreateDialog::CreateDialog() :
+		Dialog(true) {
 	base_type = "Object";
 	preferred_search_result_type = "";
 

@@ -38,7 +38,7 @@
 #include "editor/plugins/editor_resource_conversion_plugin.h"
 #include "editor/script/script_editor_base.h"
 #include "scene/gui/control.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/graph_edit.h"
 
 class Button;
@@ -208,8 +208,8 @@ public:
 	Variant get_edited_property() const;
 };
 
-class VisualShaderGroupPortsDialog : public AcceptDialog {
-	GDCLASS(VisualShaderGroupPortsDialog, AcceptDialog);
+class VisualShaderGroupPortsDialog : public Dialog {
+	GDCLASS(VisualShaderGroupPortsDialog, Dialog);
 
 	VisualShaderEditor *vs_editor = nullptr;
 	VisualShaderGroup *group = nullptr;
@@ -305,7 +305,7 @@ class VisualShaderEditor : public ScriptEditorBase {
 	bool theme_dirty = false;
 	bool pending_update_preview = false;
 	bool shader_error = false;
-	AcceptDialog *code_preview_window = nullptr;
+	Dialog *code_preview_window = nullptr;
 	VBoxContainer *code_preview_vbox = nullptr;
 	CodeEdit *preview_text = nullptr;
 	Ref<CodeHighlighter> syntax_highlighter = nullptr;
@@ -321,7 +321,7 @@ class VisualShaderEditor : public ScriptEditorBase {
 	Point2 saved_node_pos;
 	bool saved_node_pos_dirty = false;
 
-	ConfirmationDialog *members_dialog = nullptr;
+	Dialog *members_dialog = nullptr;
 	VisualShaderNode::PortType members_input_port_type = VisualShaderNode::PORT_TYPE_MAX;
 	VisualShaderNode::PortType members_output_port_type = VisualShaderNode::PORT_TYPE_MAX;
 	PopupMenu *popup_menu = nullptr;
@@ -329,13 +329,13 @@ class VisualShaderEditor : public ScriptEditorBase {
 	PopupMenu *constants_submenu = nullptr;
 	MenuButton *tools = nullptr;
 
-	ConfirmationDialog *add_varying_dialog = nullptr;
+	Dialog *add_varying_dialog = nullptr;
 	OptionButton *varying_type = nullptr;
 	LineEdit *varying_name = nullptr;
 	OptionButton *varying_mode = nullptr;
 	Label *varying_error_label = nullptr;
 
-	ConfirmationDialog *remove_varying_dialog = nullptr;
+	Dialog *remove_varying_dialog = nullptr;
 	Tree *varyings = nullptr;
 
 	PopupPanel *frame_title_change_popup = nullptr;
@@ -443,7 +443,7 @@ class VisualShaderEditor : public ScriptEditorBase {
 	};
 
 	Tree *members = nullptr;
-	AcceptDialog *alert = nullptr;
+	Dialog *alert = nullptr;
 	FilterLineEdit *node_filter = nullptr;
 	RichTextLabel *node_desc = nullptr;
 	Label *highend_label = nullptr;

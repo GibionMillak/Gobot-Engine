@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/tree.h"
 
 class CheckBox;
@@ -118,10 +118,10 @@ class SceneTreeEditor : public Control {
 	String filter_term_warning;
 	bool show_all_nodes = false;
 
-	AcceptDialog *error = nullptr;
-	AcceptDialog *warning = nullptr;
+	Dialog *error = nullptr;
+	Dialog *warning = nullptr;
 
-	ConfirmationDialog *revoke_dialog = nullptr;
+	Dialog *revoke_dialog = nullptr;
 	Label *revoke_dialog_label = nullptr;
 	CheckBox *ask_before_revoke_checkbox = nullptr;
 	Node *revoke_node = nullptr;
@@ -277,8 +277,8 @@ public:
 	~SceneTreeEditor();
 };
 
-class SceneTreeDialog : public ConfirmationDialog {
-	GDCLASS(SceneTreeDialog, ConfirmationDialog);
+class SceneTreeDialog : public Dialog {
+	GDCLASS(SceneTreeDialog, Dialog);
 
 	VBoxContainer *content = nullptr;
 	SceneTreeEditor *tree = nullptr;

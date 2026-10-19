@@ -35,7 +35,7 @@
 #include "scene/3d/light_3d.h"
 #include "scene/3d/mesh_instance_3d.h"
 #include "scene/3d/skeleton_3d.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/panel_container.h"
@@ -51,8 +51,8 @@ class EditorInspector;
 class SceneImportSettingsData;
 class Timer;
 
-class SceneImportSettingsDialog : public ConfirmationDialog {
-	GDCLASS(SceneImportSettingsDialog, ConfirmationDialog)
+class SceneImportSettingsDialog : public Dialog {
+	GDCLASS(SceneImportSettingsDialog, Dialog)
 
 	static SceneImportSettingsDialog *singleton;
 
@@ -212,7 +212,7 @@ class SceneImportSettingsDialog : public ConfirmationDialog {
 
 	MenuButton *action_menu = nullptr;
 
-	ConfirmationDialog *external_paths = nullptr;
+	Dialog *external_paths = nullptr;
 	Tree *external_path_tree = nullptr;
 	EditorFileDialog *save_path = nullptr;
 	OptionButton *external_extension_type = nullptr;

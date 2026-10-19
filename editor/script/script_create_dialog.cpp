@@ -189,7 +189,7 @@ void ScriptCreateDialog::_parent_name_changed(const String &p_parent) {
 	validation_panel->update();
 }
 
-void ScriptCreateDialog::ok_pressed() {
+void ScriptCreateDialog::_on_confirmed() {
 	if (missing_base_dir) {
 		String path = file_path->get_text();
 		Error err = EditorFileSystem::get_singleton()->make_dir_recursive(path.strip_edges().get_base_dir());
@@ -449,7 +449,8 @@ void ScriptCreateDialog::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("script_created", PropertyInfo(Variant::OBJECT, "script", PROPERTY_HINT_RESOURCE_TYPE, Script::get_class_static())));
 }
 
-ScriptCreateDialog::ScriptCreateDialog() {
+ScriptCreateDialog::ScriptCreateDialog() :
+		Dialog(true) {
 	/* Main Controls */
 
 	GridContainer *gc = memnew(GridContainer);
@@ -556,7 +557,7 @@ ScriptCreateDialog::ScriptCreateDialog() {
 	file_browse->set_file_mode(EditorFileDialog::FILE_MODE_OPEN_FILE);
 	add_child(file_browse);
 	set_ok_button_text(TTR("Create"));
-	alert = memnew(AcceptDialog);
+	alert = memnew(Dialog);
 	alert->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	alert->get_label()->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	alert->get_label()->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);

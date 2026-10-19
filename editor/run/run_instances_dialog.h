@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class CheckBox;
 class LineEdit;
@@ -40,8 +40,8 @@ class Tree;
 class TreeItem;
 class PopupMenu;
 
-class RunInstancesDialog : public AcceptDialog {
-	GDCLASS(RunInstancesDialog, AcceptDialog);
+class RunInstancesDialog : public Dialog {
+	GDCLASS(RunInstancesDialog, Dialog);
 
 #ifndef ANDROID_ENABLED
 	enum Columns {

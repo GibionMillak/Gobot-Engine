@@ -155,12 +155,12 @@ class SceneTreeDock : public EditorDock {
 
 	ScriptCreateDialog *script_create_dialog = nullptr;
 	ShaderCreateDialog *shader_create_dialog = nullptr;
-	AcceptDialog *accept = nullptr;
-	ConfirmationDialog *delete_dialog = nullptr;
+	Dialog *accept = nullptr;
+	Dialog *delete_dialog = nullptr;
 	Label *delete_dialog_label = nullptr;
 	CheckBox *delete_tracks_checkbox = nullptr;
-	ConfirmationDialog *editable_instance_remove_dialog = nullptr;
-	ConfirmationDialog *placeholder_editable_instance_remove_dialog = nullptr;
+	Dialog *editable_instance_remove_dialog = nullptr;
+	Dialog *placeholder_editable_instance_remove_dialog = nullptr;
 
 	ReparentDialog *reparent_dialog = nullptr;
 	EditorFileDialog *new_scene_from_dialog = nullptr;
@@ -176,7 +176,7 @@ class SceneTreeDock : public EditorDock {
 	PopupMenu *menu = nullptr;
 	PopupMenu *menu_subresources = nullptr;
 	PopupMenu *menu_properties = nullptr;
-	ConfirmationDialog *clear_inherit_confirm = nullptr;
+	Dialog *clear_inherit_confirm = nullptr;
 
 	bool first_enter = true;
 

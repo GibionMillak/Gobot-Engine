@@ -34,9 +34,8 @@
 
 #include "editor/plugins/editor_plugin.h"
 
-class AcceptDialog;
+class Dialog;
 class Button;
-class ConfirmationDialog;
 class HBoxContainer;
 class Label;
 class NavigationRegion3D;
@@ -46,8 +45,8 @@ class NavigationRegion3DEditor : public Control {
 
 	GDCLASS(NavigationRegion3DEditor, Control);
 
-	AcceptDialog *err_dialog = nullptr;
-	ConfirmationDialog *multibake_dialog = nullptr;
+	Dialog *err_dialog = nullptr;
+	Dialog *multibake_dialog = nullptr;
 
 	HBoxContainer *bake_hbox = nullptr;
 	Button *button_bake = nullptr;

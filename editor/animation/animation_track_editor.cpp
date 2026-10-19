@@ -8557,7 +8557,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	add_child(method_selector);
 	method_selector->connect("selected", callable_mp(this, &AnimationTrackEditor::_add_method_key));
 
-	insert_confirm = memnew(ConfirmationDialog);
+	insert_confirm = memnew(Dialog(true));
 	add_child(insert_confirm);
 	insert_confirm->connect(SceneStringName(confirmed), callable_mp(this, &AnimationTrackEditor::_confirm_insert_list));
 	VBoxContainer *icvb = memnew(VBoxContainer);
@@ -8589,7 +8589,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 
 	// Dialogs.
 
-	optimize_dialog = memnew(ConfirmationDialog);
+	optimize_dialog = memnew(Dialog(true));
 	add_child(optimize_dialog);
 	optimize_dialog->set_title(TTRC("Animation Optimizer"));
 	VBoxContainer *optimize_vb = memnew(VBoxContainer);
@@ -8618,7 +8618,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	optimize_dialog->connect(SceneStringName(confirmed), callable_mp(this, &AnimationTrackEditor::_edit_menu_pressed).bind(EDIT_OPTIMIZE_ANIMATION_CONFIRM));
 
 	//
-	cleanup_dialog = memnew(ConfirmationDialog);
+	cleanup_dialog = memnew(Dialog(true));
 	add_child(cleanup_dialog);
 	VBoxContainer *cleanup_vb = memnew(VBoxContainer);
 	cleanup_dialog->add_child(cleanup_vb);
@@ -8653,7 +8653,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	cleanup_dialog->connect(SceneStringName(confirmed), callable_mp(this, &AnimationTrackEditor::_edit_menu_pressed).bind(EDIT_CLEAN_UP_ANIMATION_CONFIRM));
 
 	//
-	scale_dialog = memnew(ConfirmationDialog);
+	scale_dialog = memnew(Dialog(true));
 	VBoxContainer *vbc = memnew(VBoxContainer);
 	scale_dialog->add_child(vbc);
 
@@ -8669,7 +8669,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	scale_dialog->register_text_enter(scale->get_line_edit());
 
 	//
-	ease_dialog = memnew(ConfirmationDialog);
+	ease_dialog = memnew(Dialog(true));
 	ease_dialog->set_title(TTRC("Select Transition and Easing"));
 	ease_dialog->connect(SceneStringName(confirmed), callable_mp(this, &AnimationTrackEditor::_edit_menu_pressed).bind(EDIT_EASE_CONFIRM));
 	add_child(ease_dialog);
@@ -8711,7 +8711,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	ease_grid->add_child(ease_fps);
 
 	//
-	bake_dialog = memnew(ConfirmationDialog);
+	bake_dialog = memnew(Dialog(true));
 	bake_dialog->set_title(TTRC("Animation Baker"));
 	bake_dialog->connect(SceneStringName(confirmed), callable_mp(this, &AnimationTrackEditor::_edit_menu_pressed).bind(EDIT_BAKE_ANIMATION_CONFIRM));
 	add_child(bake_dialog);
@@ -8738,7 +8738,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	bake_grid->add_child(memnew(Label(TTRC("FPS:"))));
 	bake_grid->add_child(bake_fps);
 
-	track_copy_dialog = memnew(ConfirmationDialog);
+	track_copy_dialog = memnew(Dialog(true));
 	add_child(track_copy_dialog);
 	track_copy_dialog->set_title(TTRC("Select Tracks to Copy"));
 	track_copy_dialog->set_ok_button_text(TTRC("Copy"));
@@ -8763,7 +8763,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	mc->add_child(track_copy_select);
 	track_copy_dialog->connect(SceneStringName(confirmed), callable_mp(this, &AnimationTrackEditor::_edit_menu_pressed).bind(EDIT_COPY_TRACKS_CONFIRM));
 
-	read_only_dialog = memnew(AcceptDialog);
+	read_only_dialog = memnew(Dialog);
 	read_only_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	read_only_dialog->set_title(TTRC("Key Insertion Error"));
 	read_only_dialog->set_text(TTRC("Imported Animation cannot be edited!"));
@@ -9821,7 +9821,7 @@ AnimationMarkerEdit::AnimationMarkerEdit() {
 	menu->add_shortcut(ED_SHORTCUT("animation_marker_edit/delete_selection", TTRC("Delete Marker(s)"), Key::KEY_DELETE), MENU_KEY_DELETE);
 	menu->add_shortcut(ED_SHORTCUT("animation_marker_edit/toggle_marker_names", TTRC("Show All Marker Names"), Key::M), MENU_KEY_TOGGLE_MARKER_NAMES);
 
-	marker_insert_confirm = memnew(ConfirmationDialog);
+	marker_insert_confirm = memnew(Dialog(true));
 	marker_insert_confirm->set_title(TTRC("Insert Marker"));
 	marker_insert_confirm->set_hide_on_ok(false);
 	marker_insert_confirm->connect(SceneStringName(confirmed), callable_mp(this, &AnimationMarkerEdit::_marker_insert_confirmed));
@@ -9837,13 +9837,13 @@ AnimationMarkerEdit::AnimationMarkerEdit() {
 	marker_insert_color->set_edit_alpha(false);
 	marker_insert_color->get_popup()->connect("about_to_popup", callable_mp(EditorNode::get_singleton(), &EditorNode::setup_color_picker).bind(marker_insert_color->get_picker()));
 	marker_insert_vbox->add_child(_create_hbox_labeled_control(TTRC("Marker Color"), marker_insert_color));
-	marker_insert_error_dialog = memnew(AcceptDialog);
+	marker_insert_error_dialog = memnew(Dialog);
 	marker_insert_error_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	marker_insert_error_dialog->set_ok_button_text(TTRC("Close"));
 	marker_insert_error_dialog->set_title(TTRC("Error!"));
 	marker_insert_confirm->add_child(marker_insert_error_dialog);
 
-	marker_rename_confirm = memnew(ConfirmationDialog);
+	marker_rename_confirm = memnew(Dialog(true));
 	marker_rename_confirm->set_title(TTRC("Rename Marker"));
 	marker_rename_confirm->set_hide_on_ok(false);
 	marker_rename_confirm->connect(SceneStringName(confirmed), callable_mp(this, &AnimationMarkerEdit::_marker_rename_confirmed));
@@ -9859,7 +9859,7 @@ AnimationMarkerEdit::AnimationMarkerEdit() {
 	marker_rename_confirm->register_text_enter(marker_rename_new_name);
 	marker_rename_vbox->add_child(marker_rename_new_name);
 
-	marker_rename_error_dialog = memnew(AcceptDialog);
+	marker_rename_error_dialog = memnew(Dialog);
 	marker_rename_error_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	marker_rename_error_dialog->set_ok_button_text(TTRC("Close"));
 	marker_rename_error_dialog->set_title(TTRC("Error!"));

@@ -32,7 +32,7 @@
 
 #include "editor/inspector/editor_inspector.h"
 #include "editor/plugins/editor_plugin.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class CheckBox;
 class HSplitContainer;
@@ -41,8 +41,8 @@ class Tree;
 class TreeItem;
 class AudioStreamInteractive;
 
-class AudioStreamInteractiveTransitionEditor : public AcceptDialog {
-	GDCLASS(AudioStreamInteractiveTransitionEditor, AcceptDialog);
+class AudioStreamInteractiveTransitionEditor : public Dialog {
+	GDCLASS(AudioStreamInteractiveTransitionEditor, Dialog);
 
 	AudioStreamInteractive *audio_stream_interactive = nullptr;
 

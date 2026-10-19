@@ -38,7 +38,7 @@
 #include "editor/settings/action_map_editor.h"
 #include "editor/shader/shader_globals_editor.h"
 #include "editor/translations/localization_editor.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/panel_container.h"
 #include "scene/gui/tab_container.h"
 #include "scene/gui/texture_rect.h"
@@ -46,8 +46,8 @@
 class EditorVariantTypeOptionButton;
 class FileSystemDock;
 
-class ProjectSettingsEditor : public AcceptDialog {
-	GDCLASS(ProjectSettingsEditor, AcceptDialog);
+class ProjectSettingsEditor : public Dialog {
+	GDCLASS(ProjectSettingsEditor, Dialog);
 
 	inline static ProjectSettingsEditor *singleton = nullptr;
 

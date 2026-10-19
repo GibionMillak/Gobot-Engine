@@ -35,7 +35,7 @@
 #include "scene/gui/box_container.h"
 
 class CanvasItemEditor;
-class ConfirmationDialog;
+class Dialog;
 class MenuButton;
 
 class Path2DEditor : public HBoxContainer {
@@ -67,7 +67,7 @@ class Path2DEditor : public HBoxContainer {
 	MenuButton *handle_menu = nullptr;
 
 	Button *create_curve_button = nullptr;
-	ConfirmationDialog *clear_points_dialog = nullptr;
+	Dialog *clear_points_dialog = nullptr;
 
 	bool mirror_handle_angle = true;
 	bool mirror_handle_length = true;

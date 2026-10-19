@@ -32,7 +32,7 @@
 
 #include "scene/gui/control.h"
 
-class AcceptDialog;
+class Dialog;
 class Button;
 class CheckButton;
 class EditorEventSearchBar;
@@ -77,7 +77,7 @@ private:
 	// Popups
 
 	InputEventConfigurationDialog *event_config_dialog = nullptr;
-	AcceptDialog *message = nullptr;
+	Dialog *message = nullptr;
 
 	// Filtering and Adding actions
 

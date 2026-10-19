@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class EditorFileDialog;
 class EditorFileSystemDirectory;
@@ -59,8 +59,8 @@ enum class Column {
 	MAX,
 };
 
-class DependencyEditor : public AcceptDialog {
-	GDCLASS(DependencyEditor, AcceptDialog);
+class DependencyEditor : public Dialog {
+	GDCLASS(DependencyEditor, Dialog);
 
 	Tree *tree = nullptr;
 	Button *fixdeps = nullptr;
@@ -95,8 +95,8 @@ public:
 	DependencyEditor();
 };
 
-class DependencyEditorOwners : public AcceptDialog {
-	GDCLASS(DependencyEditorOwners, AcceptDialog);
+class DependencyEditorOwners : public Dialog {
+	GDCLASS(DependencyEditorOwners, Dialog);
 
 	Label *owners_count = nullptr;
 	Label *empty = nullptr;
@@ -122,8 +122,8 @@ public:
 	DependencyEditorOwners();
 };
 
-class DependencyRemoveDialog : public ConfirmationDialog {
-	GDCLASS(DependencyRemoveDialog, ConfirmationDialog);
+class DependencyRemoveDialog : public Dialog {
+	GDCLASS(DependencyRemoveDialog, Dialog);
 
 	Label *text = nullptr;
 	Tree *owners = nullptr;
@@ -156,7 +156,7 @@ class DependencyRemoveDialog : public ConfirmationDialog {
 	void _build_removed_dependency_tree(const Vector<RemovedDependency> &p_removed);
 	void _show_files_to_delete_list();
 
-	void ok_pressed() override;
+	void _on_confirmed() override;
 
 	static void _bind_methods();
 
@@ -165,8 +165,8 @@ public:
 	DependencyRemoveDialog();
 };
 
-class DependencyErrorDialog : public ConfirmationDialog {
-	GDCLASS(DependencyErrorDialog, ConfirmationDialog);
+class DependencyErrorDialog : public Dialog {
+	GDCLASS(DependencyErrorDialog, Dialog);
 
 	StringName icon_name_fail;
 	StringName icon_name_check;
@@ -181,7 +181,7 @@ class DependencyErrorDialog : public ConfirmationDialog {
 	EditorFileDialog *replacement_file_dialog = nullptr;
 	DependencyEditor *deps_editor = nullptr;
 
-	void ok_pressed() override;
+	void _on_confirmed() override;
 
 	void _on_files_button_clicked(TreeItem *p_item, int p_column, int p_id, MouseButton p_button);
 	void _on_replacement_file_selected(const String &p_path);
@@ -193,13 +193,13 @@ public:
 	DependencyErrorDialog();
 };
 
-class OrphanResourcesDialog : public ConfirmationDialog {
-	GDCLASS(OrphanResourcesDialog, ConfirmationDialog);
+class OrphanResourcesDialog : public Dialog {
+	GDCLASS(OrphanResourcesDialog, Dialog);
 
 	DependencyEditor *dep_edit = nullptr;
 	Tree *files = nullptr;
-	ConfirmationDialog *delete_confirm = nullptr;
-	void ok_pressed() override;
+	Dialog *delete_confirm = nullptr;
+	void _on_confirmed() override;
 
 	bool _fill_owners(EditorFileSystemDirectory *efsd, HashMap<String, int> &refs, TreeItem *p_parent);
 

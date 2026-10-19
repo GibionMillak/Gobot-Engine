@@ -506,7 +506,7 @@ void EditorFeatureProfileManager::_profile_selected(int p_what) {
 }
 
 void EditorFeatureProfileManager::_hide_requested() {
-	_cancel_pressed(); // From AcceptDialog.
+	_cancel_pressed(); // From Dialog.
 }
 
 void EditorFeatureProfileManager::_fill_classes_from(TreeItem *p_parent, const String &p_class, const String &p_selected, int p_class_insert_index) {
@@ -1034,7 +1034,7 @@ EditorFeatureProfileManager::EditorFeatureProfileManager() {
 	no_profile_selected_help->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	h_split->add_child(no_profile_selected_help);
 
-	new_profile_dialog = memnew(ConfirmationDialog);
+	new_profile_dialog = memnew(Dialog(true));
 	new_profile_dialog->set_title(TTRC("Create Profile"));
 	VBoxContainer *new_profile_vb = memnew(VBoxContainer);
 	new_profile_dialog->add_child(new_profile_vb);
@@ -1049,7 +1049,7 @@ EditorFeatureProfileManager::EditorFeatureProfileManager() {
 	new_profile_dialog->register_text_enter(new_profile_name);
 	new_profile_dialog->set_ok_button_text(TTRC("Create"));
 
-	erase_profile_dialog = memnew(ConfirmationDialog);
+	erase_profile_dialog = memnew(Dialog(true));
 	erase_profile_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(erase_profile_dialog);
 	erase_profile_dialog->set_title(TTRC("Remove Profile"));

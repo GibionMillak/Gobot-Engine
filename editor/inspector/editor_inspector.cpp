@@ -3686,7 +3686,7 @@ EditorInspectorArray::EditorInspectorArray(bool p_read_only) {
 	control_dropping->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
 	add_child(control_dropping);
 
-	resize_dialog = memnew(AcceptDialog);
+	resize_dialog = memnew(Dialog);
 	resize_dialog->set_title(TTRC("Resize Array"));
 	resize_dialog->add_cancel_button();
 	resize_dialog->connect(SceneStringName(confirmed), callable_mp(this, &EditorInspectorArray::_resize_dialog_confirmed));

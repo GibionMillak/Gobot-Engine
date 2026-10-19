@@ -33,7 +33,7 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/plugins/editor_plugin.h"
 #include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/item_list.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/scroll_container.h"
@@ -155,15 +155,15 @@ class SpriteFramesEditor : public EditorDock {
 
 	EditorFileDialog *file = nullptr;
 
-	AcceptDialog *dialog = nullptr;
+	Dialog *dialog = nullptr;
 
 	PopupMenu *menu = nullptr;
 
 	StringName edited_anim;
 
-	ConfirmationDialog *delete_dialog = nullptr;
+	Dialog *delete_dialog = nullptr;
 
-	ConfirmationDialog *split_sheet_dialog = nullptr;
+	Dialog *split_sheet_dialog = nullptr;
 	ScrollContainer *split_sheet_scroll = nullptr;
 	TextureRect *split_sheet_preview = nullptr;
 	VBoxContainer *split_sheet_settings_vb = nullptr;

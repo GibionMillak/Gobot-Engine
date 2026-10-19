@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class OptionButton;
 class Tree;
@@ -39,8 +39,8 @@ class CheckBox;
 
 // Confirmation Dialog used when configuring an input event.
 // Separate from ActionMapEditor for code cleanliness and separation of responsibilities.
-class InputEventConfigurationDialog : public ConfirmationDialog {
-	GDCLASS(InputEventConfigurationDialog, ConfirmationDialog)
+class InputEventConfigurationDialog : public Dialog {
+	GDCLASS(InputEventConfigurationDialog, Dialog)
 private:
 	struct IconCache {
 		Ref<Texture2D> keyboard;

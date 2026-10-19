@@ -36,7 +36,7 @@
 
 class Button;
 class CanvasItemEditor;
-class ConfirmationDialog;
+class Dialog;
 
 class AbstractPolygon2DEditor : public HBoxContainer {
 	GDCLASS(AbstractPolygon2DEditor, HBoxContainer);
@@ -95,7 +95,7 @@ class AbstractPolygon2DEditor : public HBoxContainer {
 
 	CanvasItemEditor *canvas_item_editor = nullptr;
 	Panel *panel = nullptr;
-	ConfirmationDialog *create_resource = nullptr;
+	Dialog *create_resource = nullptr;
 
 protected:
 	enum {

@@ -37,7 +37,7 @@
 #include "scene/gui/scroll_container.h"
 
 class AddMetadataDialog;
-class AcceptDialog;
+class Dialog;
 class EditorInspector;
 class HSeparator;
 class LineEdit;
@@ -612,7 +612,7 @@ class EditorInspectorArray : public EditorInspectorSection {
 
 	Button *add_button = nullptr;
 
-	AcceptDialog *resize_dialog = nullptr;
+	Dialog *resize_dialog = nullptr;
 	SpinBox *new_size_spin_box = nullptr;
 
 	// Pagination.

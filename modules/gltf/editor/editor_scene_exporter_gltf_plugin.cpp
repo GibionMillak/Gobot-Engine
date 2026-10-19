@@ -39,7 +39,7 @@
 #include "editor/import/3d/scene_import_settings.h"
 #include "editor/inspector/editor_inspector.h"
 #include "editor/themes/editor_scale.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/main/scene_tree.h"
 
 String SceneExporterGLTFPlugin::get_plugin_name() const {
@@ -60,7 +60,7 @@ SceneExporterGLTFPlugin::SceneExporterGLTFPlugin() {
 	_file_dialog->set_title(TTR("Export Scene to glTF 2.0 File"));
 	EditorNode::get_singleton()->get_gui_base()->add_child(_file_dialog);
 	// Set up the export settings menu.
-	_config_dialog = memnew(ConfirmationDialog);
+	_config_dialog = memnew(Dialog(true));
 	_config_dialog->set_title(TTRC("Export Settings"));
 	EditorNode::get_singleton()->get_gui_base()->add_child(_config_dialog);
 	_config_dialog->connect(SceneStringName(confirmed), callable_mp(this, &SceneExporterGLTFPlugin::_export_scene_as_gltf));

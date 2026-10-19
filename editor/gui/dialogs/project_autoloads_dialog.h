@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class Button;
 class Control;
@@ -43,8 +43,8 @@ class Script;
 class ScriptCreateDialog;
 class Tree;
 
-class ProjectAutoloadsDialog : public AcceptDialog {
-	GDCLASS(ProjectAutoloadsDialog, AcceptDialog);
+class ProjectAutoloadsDialog : public Dialog {
+	GDCLASS(ProjectAutoloadsDialog, Dialog);
 
 public:
 	ProjectAutoloadsDialog();
@@ -101,7 +101,7 @@ private:
 	FileDialog *_scene_file_dialog = nullptr;
 	ScriptCreateDialog *_script_create_dialog = nullptr;
 	SceneCreateDialog *_scene_create_dialog = nullptr;
-	ConfirmationDialog *_name_dialog = nullptr;
+	Dialog *_name_dialog = nullptr;
 	LineEdit *_name_edit = nullptr;
 	EditorValidationPanel *_name_validator = nullptr;
 };

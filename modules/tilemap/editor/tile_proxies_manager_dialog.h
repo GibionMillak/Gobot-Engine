@@ -33,14 +33,14 @@
 #include "../tile_set.h"
 
 #include "editor/inspector/editor_properties.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/item_list.h"
 
 class EditorPropertyVector2i;
 class EditorUndoRedoManager;
 
-class TileProxiesManagerDialog : public ConfirmationDialog {
-	GDCLASS(TileProxiesManagerDialog, ConfirmationDialog);
+class TileProxiesManagerDialog : public Dialog {
+	GDCLASS(TileProxiesManagerDialog, Dialog);
 
 private:
 	int committed_actions_count = 0;
@@ -77,7 +77,7 @@ protected:
 	bool _set(const StringName &p_name, const Variant &p_value);
 	bool _get(const StringName &p_name, Variant &r_ret) const;
 	void _unhandled_key_input(Ref<InputEvent> p_event);
-	virtual void cancel_pressed() override;
+	virtual void _on_canceled() override;
 	static void _bind_methods();
 
 public:

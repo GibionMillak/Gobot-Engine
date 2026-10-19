@@ -62,7 +62,7 @@ EditorDebuggerTree::EditorDebuggerTree() {
 	file_dialog->connect("file_selected", callable_mp(this, &EditorDebuggerTree::_file_selected));
 	add_child(file_dialog);
 
-	accept = memnew(AcceptDialog);
+	accept = memnew(Dialog);
 	accept->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(accept);
 }

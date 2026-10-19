@@ -33,7 +33,7 @@
 #include "core/os/thread.h"
 #include "editor/doc/doc_tools.h"
 #include "editor/plugins/editor_plugin.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/popup.h"
 #include "scene/gui/rich_text_label.h"
 #include "scene/gui/text_edit.h"

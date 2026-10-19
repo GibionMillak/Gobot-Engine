@@ -192,7 +192,7 @@ void EditorQuickOpenDialog::_finish_dialog_setup(const Vector<StringName> &p_bas
 	search_box->grab_focus();
 }
 
-void EditorQuickOpenDialog::ok_pressed() {
+void EditorQuickOpenDialog::_on_confirmed() {
 	container->save_selected_item();
 
 	update_property();
@@ -221,14 +221,14 @@ void EditorQuickOpenDialog::selection_changed() {
 void EditorQuickOpenDialog::item_pressed(bool p_double_click) {
 	// A double-click should always be taken as a "confirm" action.
 	if (p_double_click) {
-		ok_pressed();
+		_on_confirmed();
 		return;
 	}
 
 	// Single-clicks should be taken as a "confirm" action only if Instant Preview
 	// isn't currently enabled, or the property object is null for some reason.
 	if (!_is_instant_preview_active()) {
-		ok_pressed();
+		_on_confirmed();
 	}
 }
 
@@ -283,7 +283,7 @@ void EditorQuickOpenDialog::update_property() {
 	item_selected_callback.call(container->get_selected_path());
 }
 
-void EditorQuickOpenDialog::cancel_pressed() {
+void EditorQuickOpenDialog::_on_canceled() {
 	if (property_object) {
 		if (Object::cast_to<MultiNodeEdit>(property_object)) {
 			Object::cast_to<MultiNodeEdit>(property_object)->_set_impl(property_path, initial_property_value, "", false);
@@ -299,7 +299,7 @@ void EditorQuickOpenDialog::shortcut_input(const Ref<InputEvent> &p_event) {
 	// If the user is cycling through items (with up/down arrows), confirm selection when releasing the keys.
 	Ref<InputEventWithModifiers> iewm = p_event;
 	if (is_cycling_items && iewm.is_valid() && p_event->is_released() && iewm->get_modifiers_mask().is_empty()) {
-		ok_pressed();
+		_on_confirmed();
 		return;
 	}
 

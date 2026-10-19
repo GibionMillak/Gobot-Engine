@@ -306,7 +306,7 @@ void TileProxiesManagerDialog::_unhandled_key_input(Ref<InputEvent> p_event) {
 	}
 }
 
-void TileProxiesManagerDialog::cancel_pressed() {
+void TileProxiesManagerDialog::_on_canceled() {
 	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
 	for (int i = 0; i < committed_actions_count; i++) {
 		undo_redo->undo();
@@ -326,7 +326,8 @@ void TileProxiesManagerDialog::update_tile_set(Ref<TileSet> p_tile_set) {
 	_update_lists();
 }
 
-TileProxiesManagerDialog::TileProxiesManagerDialog() {
+TileProxiesManagerDialog::TileProxiesManagerDialog() :
+		Dialog(true) {
 	// Tile proxy management window.
 	set_title(TTR("Tile Proxies Management"));
 	set_process_unhandled_key_input(true);

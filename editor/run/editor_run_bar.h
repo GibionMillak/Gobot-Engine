@@ -34,7 +34,7 @@
 #include "editor/run/editor_run.h"
 #include "scene/gui/margin_container.h"
 
-class AcceptDialog;
+class Dialog;
 class Button;
 class EditorExportPreset;
 class EditorRunNative;
@@ -63,7 +63,7 @@ class EditorRunBar : public MarginContainer {
 	PanelContainer *recovery_mode_panel = nullptr;
 	Button *recovery_mode_button = nullptr;
 	Button *recovery_mode_reload_button = nullptr;
-	AcceptDialog *recovery_mode_popup = nullptr;
+	Dialog *recovery_mode_popup = nullptr;
 
 	Button *play_button = nullptr;
 	Button *pause_button = nullptr;

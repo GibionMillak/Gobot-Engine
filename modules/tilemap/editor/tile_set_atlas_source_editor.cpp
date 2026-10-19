@@ -2773,7 +2773,7 @@ TileSetAtlasSourceEditor::TileSetAtlasSourceEditor() {
 	EditorNode::get_editor_data().add_undo_redo_inspector_hook_callback(callable_mp(this, &TileSetAtlasSourceEditor::_undo_redo_inspector_callback));
 
 	// -- Dialogs --
-	confirm_auto_create_tiles = memnew(AcceptDialog);
+	confirm_auto_create_tiles = memnew(Dialog);
 	confirm_auto_create_tiles->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	confirm_auto_create_tiles->set_title(TTRC("Auto Create Tiles in Non-Transparent Texture Regions?"));
 	confirm_auto_create_tiles->set_text(TTRC("The atlas's texture was modified.\nWould you like to automatically create tiles in the atlas?"));

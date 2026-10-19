@@ -33,14 +33,14 @@
 #include "core/templates/vector.h"
 #include "editor/plugins/editor_plugin.h"
 #include "scene/animation/animation_mixer.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/tree.h"
 
 class AnimationMixer;
 class EditorFileDialog;
 
-class AnimationLibraryEditor : public AcceptDialog {
-	GDCLASS(AnimationLibraryEditor, AcceptDialog)
+class AnimationLibraryEditor : public Dialog {
+	GDCLASS(AnimationLibraryEditor, Dialog)
 
 	enum {
 		LIB_BUTTON_ADD,
@@ -82,11 +82,11 @@ class AnimationLibraryEditor : public AcceptDialog {
 	Button *new_library_button = nullptr;
 	Button *load_library_button = nullptr;
 
-	AcceptDialog *error_dialog = nullptr;
+	Dialog *error_dialog = nullptr;
 	bool adding_animation = false;
 	StringName adding_animation_to_library;
 	EditorFileDialog *file_dialog = nullptr;
-	ConfirmationDialog *add_library_dialog = nullptr;
+	Dialog *add_library_dialog = nullptr;
 	LineEdit *add_library_name = nullptr;
 	Label *add_library_validate = nullptr;
 	PopupMenu *file_popup = nullptr;

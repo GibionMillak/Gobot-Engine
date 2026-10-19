@@ -3711,7 +3711,7 @@ Node3DEditor::Node3DEditor() {
 	p = view_layout_menu->get_popup();
 	p->set_hide_on_checkable_item_selection(false);
 
-	accept = memnew(AcceptDialog);
+	accept = memnew(Dialog);
 	EditorNode::get_singleton()->get_gui_base()->add_child(accept);
 
 	p->add_radio_check_shortcut(ED_SHORTCUT("spatial_editor/1_viewport", TTRC("1 Viewport"), KeyModifierMask::CMD_OR_CTRL + Key::KEY_1, true), MENU_VIEW_USE_1_VIEWPORT);
@@ -3778,7 +3778,7 @@ Node3DEditor::Node3DEditor() {
 
 	/* SNAP DIALOG */
 
-	snap_dialog = memnew(ConfirmationDialog);
+	snap_dialog = memnew(Dialog(true));
 	snap_dialog->set_title(TTRC("Snap Settings"));
 	add_child(snap_dialog);
 	snap_dialog->connect(SceneStringName(confirmed), callable_mp(this, &Node3DEditor::_snap_changed));
@@ -3811,7 +3811,7 @@ Node3DEditor::Node3DEditor() {
 
 	/* SETTINGS DIALOG */
 
-	settings_dialog = memnew(ConfirmationDialog);
+	settings_dialog = memnew(Dialog(true));
 	settings_dialog->set_title(TTRC("Viewport Settings"));
 	add_child(settings_dialog);
 	settings_vbc = memnew(VBoxContainer);
@@ -3849,7 +3849,7 @@ Node3DEditor::Node3DEditor() {
 
 	/* XFORM DIALOG */
 
-	xform_dialog = memnew(ConfirmationDialog);
+	xform_dialog = memnew(Dialog(true));
 	xform_dialog->set_title(TTRC("Transform Change"));
 	add_child(xform_dialog);
 

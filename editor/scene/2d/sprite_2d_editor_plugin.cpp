@@ -652,11 +652,11 @@ Sprite2DEditor::Sprite2DEditor() {
 	top_hb->add_child(resize_region_rect);
 
 	// Other elements definition
-	err_dialog = memnew(AcceptDialog);
+	err_dialog = memnew(Dialog);
 	err_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(err_dialog);
 
-	debug_uv_dialog = memnew(ConfirmationDialog);
+	debug_uv_dialog = memnew(Dialog(true));
 	debug_uv_dialog->set_size(Size2(960, 540) * EDSCALE);
 	VBoxContainer *vb = memnew(VBoxContainer);
 	debug_uv_dialog->add_child(vb);

@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class Button;
 class HBoxContainer;
@@ -39,8 +39,8 @@ class LineEdit;
 class Tree;
 class OptionButton;
 
-class EditorLocaleDialog : public ConfirmationDialog {
-	GDCLASS(EditorLocaleDialog, ConfirmationDialog);
+class EditorLocaleDialog : public Dialog {
+	GDCLASS(EditorLocaleDialog, Dialog);
 
 	enum LocaleFilter {
 		SHOW_ALL_LOCALES,
@@ -70,7 +70,7 @@ protected:
 	void _notification(int p_what);
 	static void _bind_methods();
 	virtual void _post_popup() override;
-	virtual void ok_pressed() override;
+	virtual void _on_confirmed() override;
 
 	void _item_selected();
 	void _filter_lang_option_changed();

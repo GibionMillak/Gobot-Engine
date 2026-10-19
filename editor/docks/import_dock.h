@@ -34,7 +34,7 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/inspector/editor_inspector.h"
 #include "scene/gui/box_container.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/popup_menu.h"
@@ -50,7 +50,7 @@ class ImportDock : public EditorDock {
 	MenuButton *preset = nullptr;
 	EditorInspector *import_opts = nullptr;
 
-	ConfirmationDialog *reimport_confirm = nullptr;
+	Dialog *reimport_confirm = nullptr;
 	Label *cleanup_warning = nullptr;
 	Label *label_warning = nullptr;
 	Button *import = nullptr;

@@ -31,7 +31,7 @@
 #pragma once
 
 #include "scene/gui/check_box.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/grid_container.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/option_button.h"
@@ -39,8 +39,8 @@
 class EditorFileDialog;
 class EditorValidationPanel;
 
-class ShaderCreateDialog : public ConfirmationDialog {
-	GDCLASS(ShaderCreateDialog, ConfirmationDialog);
+class ShaderCreateDialog : public Dialog {
+	GDCLASS(ShaderCreateDialog, Dialog);
 
 	enum {
 		MSG_ID_SHADER,
@@ -65,7 +65,7 @@ class ShaderCreateDialog : public ConfirmationDialog {
 	LineEdit *file_path = nullptr;
 	Button *path_button = nullptr;
 	EditorFileDialog *file_browse = nullptr;
-	AcceptDialog *alert = nullptr;
+	Dialog *alert = nullptr;
 
 	String initial_base_path;
 	String path_error;
@@ -93,7 +93,7 @@ class ShaderCreateDialog : public ConfirmationDialog {
 	void _file_selected(const String &p_file);
 	void _refresh_type_icons();
 	String _validate_path(const String &p_path);
-	virtual void ok_pressed() override;
+	virtual void _on_confirmed() override;
 	void _create_new();
 	void _load_exist();
 	void _update_dialog();

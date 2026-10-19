@@ -34,7 +34,7 @@
 #include "scene/resources/material.h"
 
 class Button;
-class ConfirmationDialog;
+class Dialog;
 class EditorFileDialog;
 class PopupMenu;
 class TextureRect;
@@ -62,7 +62,7 @@ class EditorResourcePicker : public HBoxContainer {
 	Button *quick_load_button = nullptr;
 	EditorFileDialog *file_dialog = nullptr;
 
-	ConfirmationDialog *duplicate_resources_dialog = nullptr;
+	Dialog *duplicate_resources_dialog = nullptr;
 	Tree *duplicate_resources_tree = nullptr;
 
 	Size2i assign_button_min_size = Size2i(1, 1);

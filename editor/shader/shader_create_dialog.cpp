@@ -121,7 +121,7 @@ void ShaderCreateDialog::_template_changed(int p_template) {
 	EditorSettings::get_singleton()->set_project_metadata("shader_setup", "last_selected_template", p_template);
 }
 
-void ShaderCreateDialog::ok_pressed() {
+void ShaderCreateDialog::_on_confirmed() {
 	if (missing_base_dir) {
 		String path = file_path->get_text();
 		Error err = EditorFileSystem::get_singleton()->make_dir_recursive(path.strip_edges().get_base_dir());
@@ -330,7 +330,7 @@ void ShaderCreateDialog::_path_changed(const String &p_path) {
 
 void ShaderCreateDialog::_path_submitted(const String &p_path) {
 	if (!get_ok_button()->is_disabled()) {
-		ok_pressed();
+		_on_confirmed();
 	}
 }
 
@@ -494,7 +494,8 @@ void ShaderCreateDialog::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("shader_include_created", PropertyInfo(Variant::OBJECT, "shader_include", PROPERTY_HINT_RESOURCE_TYPE, ShaderInclude::get_class_static())));
 }
 
-ShaderCreateDialog::ShaderCreateDialog() {
+ShaderCreateDialog::ShaderCreateDialog() :
+		Dialog(true) {
 	_update_language_info();
 
 	// Main Controls.
@@ -582,7 +583,7 @@ ShaderCreateDialog::ShaderCreateDialog() {
 	file_browse->set_file_mode(EditorFileDialog::FILE_MODE_OPEN_FILE);
 	add_child(file_browse);
 
-	alert = memnew(AcceptDialog);
+	alert = memnew(Dialog);
 	alert->get_label()->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	alert->get_label()->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	alert->get_label()->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);

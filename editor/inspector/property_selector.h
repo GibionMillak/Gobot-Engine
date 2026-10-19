@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class EditorHelpBit;
 class FilterLineEdit;
@@ -38,8 +38,8 @@ class LineEdit;
 class Tree;
 class TreeItem;
 
-class PropertySelector : public ConfirmationDialog {
-	GDCLASS(PropertySelector, ConfirmationDialog);
+class PropertySelector : public Dialog {
+	GDCLASS(PropertySelector, Dialog);
 
 	FilterLineEdit *search_box = nullptr;
 	Tree *search_options = nullptr;

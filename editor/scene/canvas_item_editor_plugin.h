@@ -35,11 +35,10 @@
 #include "scene/debugger/canvas_item_manipulator.h"
 #include "scene/gui/box_container.h"
 
-class AcceptDialog;
+class Dialog;
 class Button;
 class ButtonGroup;
 class CanvasItemEditorViewport;
-class ConfirmationDialog;
 class CreateDialog;
 class EditorData;
 class EditorSelection;
@@ -314,7 +313,7 @@ private:
 
 	bool _select_click_on_item(const Variant &p_node, bool p_append);
 
-	ConfirmationDialog *snap_dialog = nullptr;
+	Dialog *snap_dialog = nullptr;
 
 	CanvasItem *ref_item = nullptr;
 
@@ -550,8 +549,8 @@ class CanvasItemEditorViewport : public Control {
 
 	CanvasItemEditor *canvas_item_editor = nullptr;
 	Control *preview_node = nullptr;
-	AcceptDialog *accept = nullptr;
-	AcceptDialog *texture_node_type_selector = nullptr;
+	Dialog *accept = nullptr;
+	Dialog *texture_node_type_selector = nullptr;
 	RichTextLabel *tooltip_panel = nullptr;
 	Ref<ButtonGroup> button_group;
 

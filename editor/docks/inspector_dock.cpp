@@ -858,7 +858,7 @@ InspectorDock::InspectorDock(EditorData &p_editor_data) {
 	info->hide();
 	info->connect(SceneStringName(pressed), callable_mp(this, &InspectorDock::_info_pressed));
 
-	unique_resources_confirmation = memnew(ConfirmationDialog);
+	unique_resources_confirmation = memnew(Dialog(true));
 	main_vb->add_child(unique_resources_confirmation);
 
 	VBoxContainer *container = memnew(VBoxContainer);
@@ -877,7 +877,7 @@ InspectorDock::InspectorDock(EditorData &p_editor_data) {
 
 	unique_resources_confirmation->connect(SceneStringName(confirmed), callable_mp(this, &InspectorDock::_menu_confirm_current));
 
-	info_dialog = memnew(AcceptDialog);
+	info_dialog = memnew(Dialog);
 	info_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	EditorNode::get_singleton()->get_gui_base()->add_child(info_dialog);
 

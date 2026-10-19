@@ -32,7 +32,7 @@
 
 #include "core/object/ref_counted.h"
 #include "editor/doc/editor_help.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/split_container.h"
 #include "scene/gui/tree.h"
@@ -101,8 +101,8 @@ public:
 
 VARIANT_ENUM_CAST(EditorFeatureProfile::Feature)
 
-class EditorFeatureProfileManager : public AcceptDialog {
-	GDCLASS(EditorFeatureProfileManager, AcceptDialog);
+class EditorFeatureProfileManager : public Dialog {
+	GDCLASS(EditorFeatureProfileManager, Dialog);
 
 	enum Action {
 		PROFILE_CLEAR,
@@ -118,8 +118,8 @@ class EditorFeatureProfileManager : public AcceptDialog {
 		CLASS_OPTION_DISABLE_EDITOR
 	};
 
-	ConfirmationDialog *erase_profile_dialog = nullptr;
-	ConfirmationDialog *new_profile_dialog = nullptr;
+	Dialog *erase_profile_dialog = nullptr;
+	Dialog *new_profile_dialog = nullptr;
 	LineEdit *new_profile_name = nullptr;
 
 	LineEdit *current_profile_name = nullptr;

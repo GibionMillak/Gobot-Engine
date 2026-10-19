@@ -115,7 +115,7 @@ void DirectoryCreateDialog::_on_dir_path_changed() {
 	}
 }
 
-void DirectoryCreateDialog::ok_pressed() {
+void DirectoryCreateDialog::_on_confirmed() {
 	const String path = _sanitize_input(dir_path->get_text());
 
 	// The OK button should be disabled if the path is invalid, but just in case.
@@ -127,7 +127,7 @@ void DirectoryCreateDialog::ok_pressed() {
 }
 
 void DirectoryCreateDialog::_post_popup() {
-	ConfirmationDialog::_post_popup();
+	Dialog::_post_popup();
 	dir_path->grab_focus();
 }
 
@@ -151,7 +151,8 @@ void DirectoryCreateDialog::config(const String &p_base_dir, const Callable &p_a
 	dir_path->select_all();
 }
 
-DirectoryCreateDialog::DirectoryCreateDialog() {
+DirectoryCreateDialog::DirectoryCreateDialog() :
+		Dialog(true) {
 	set_min_size(Size2i(480, 0) * EDSCALE);
 
 	VBoxContainer *vb = memnew(VBoxContainer);

@@ -35,7 +35,7 @@
 #include "scene/gui/box_container.h"
 
 class Button;
-class ConfirmationDialog;
+class Dialog;
 class NavigationObstacle3D;
 
 class NavigationObstacle3DGizmoPlugin : public EditorNode3DGizmoPlugin {
@@ -103,7 +103,7 @@ private:
 	Button *button_flip = nullptr;
 	Button *button_clear = nullptr;
 
-	ConfirmationDialog *button_clear_dialog = nullptr;
+	Dialog *button_clear_dialog = nullptr;
 
 protected:
 	void _notification(int p_what);

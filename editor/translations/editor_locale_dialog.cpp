@@ -54,7 +54,7 @@ void EditorLocaleDialog::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("locale_selected", PropertyInfo(Variant::STRING, "locale")));
 }
 
-void EditorLocaleDialog::ok_pressed() {
+void EditorLocaleDialog::_on_confirmed() {
 	if (edit_filters->is_pressed()) {
 		return; // Do not update, if in filter edit mode.
 	}
@@ -113,7 +113,7 @@ void EditorLocaleDialog::_toggle_advanced(bool p_checked) {
 }
 
 void EditorLocaleDialog::_post_popup() {
-	ConfirmationDialog::_post_popup();
+	Dialog::_post_popup();
 
 	if (!locale_set) {
 		lang_code->set_text("");
@@ -399,7 +399,8 @@ void EditorLocaleDialog::popup_locale_dialog() {
 	popup_centered_clamped(Size2(1050, 700) * EDSCALE, 0.8);
 }
 
-EditorLocaleDialog::EditorLocaleDialog() {
+EditorLocaleDialog::EditorLocaleDialog() :
+		Dialog(true) {
 	set_title(TTRC("Select a Locale"));
 
 	VBoxContainer *vb = memnew(VBoxContainer);

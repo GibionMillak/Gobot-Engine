@@ -36,7 +36,7 @@
 #include "scene/3d/skeleton_3d.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/color_rect.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/texture_button.h"
 #include "scene/resources/bone_map.h"
 
@@ -99,8 +99,8 @@ public:
 	BoneMapperItem(Ref<BoneMap> &p_bone_map, const StringName &p_profile_bone_name = StringName());
 };
 
-class BonePicker : public AcceptDialog {
-	GDCLASS(BonePicker, AcceptDialog);
+class BonePicker : public Dialog {
+	GDCLASS(BonePicker, Dialog);
 
 	Skeleton3D *skeleton = nullptr;
 	Tree *bones = nullptr;

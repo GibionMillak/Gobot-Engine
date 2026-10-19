@@ -64,7 +64,7 @@
 #include "scene/resources/style_box_flat.h"
 #include "servers/rendering/rendering_server.h"
 
-void ConnectionInfoDialog::ok_pressed() {
+void ConnectionInfoDialog::_on_confirmed() {
 }
 
 void ConnectionInfoDialog::popup_connections(const String &p_method, const Vector<Node *> &p_nodes) {

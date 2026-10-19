@@ -33,7 +33,7 @@
 #include "editor/plugins/editor_plugin.h"
 #include "scene/2d/skeleton_2d.h"
 
-class AcceptDialog;
+class Dialog;
 class MenuButton;
 
 class Skeleton2DEditor : public Control {
@@ -47,7 +47,7 @@ class Skeleton2DEditor : public Control {
 	Skeleton2D *node = nullptr;
 
 	MenuButton *options = nullptr;
-	AcceptDialog *err_dialog = nullptr;
+	Dialog *err_dialog = nullptr;
 
 	void _menu_option(int p_option);
 

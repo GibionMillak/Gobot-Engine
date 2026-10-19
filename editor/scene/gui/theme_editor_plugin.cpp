@@ -1299,7 +1299,7 @@ ThemeItemImportTree::ThemeItemImportTree() {
 
 ///////////////////////
 
-void ThemeItemEditorDialog::ok_pressed() {
+void ThemeItemEditorDialog::_on_confirmed() {
 	if (import_default_theme_items->has_selected_items() || import_editor_theme_items->has_selected_items() || import_other_theme_items->has_selected_items()) {
 		confirm_closing_dialog->set_text(TTRC("Import Items tab has some items selected. Selection will be lost upon closing this window.\nClose anyway?"));
 		confirm_closing_dialog->popup_centered(Size2(380, 120) * EDSCALE);
@@ -2233,7 +2233,7 @@ ThemeItemEditorDialog::ThemeItemEditorDialog(ThemeTypeEditor *p_theme_type_edito
 	edit_items_message->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 	edit_items_tree->add_child(edit_items_message);
 
-	edit_theme_item_dialog = memnew(ConfirmationDialog);
+	edit_theme_item_dialog = memnew(Dialog(true));
 	edit_theme_item_dialog->set_title(TTRC("Add Theme Item"));
 	add_child(edit_theme_item_dialog);
 	VBoxContainer *edit_theme_item_vb = memnew(VBoxContainer);
@@ -2303,7 +2303,7 @@ ThemeItemEditorDialog::ThemeItemEditorDialog(ThemeTypeEditor *p_theme_type_edito
 	import_tc->set_tab_title(2, TTRC("Another Theme"));
 	import_other_theme_items->connect("items_imported", callable_mp(this, &ThemeItemEditorDialog::_update_edit_types));
 
-	confirm_closing_dialog = memnew(ConfirmationDialog);
+	confirm_closing_dialog = memnew(Dialog(true));
 	confirm_closing_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	confirm_closing_dialog->set_autowrap(true);
 	add_child(confirm_closing_dialog);
@@ -2319,7 +2319,7 @@ void ThemeTypeDialog::_dialog_about_to_show() {
 	_update_add_type_options();
 }
 
-void ThemeTypeDialog::ok_pressed() {
+void ThemeTypeDialog::_on_confirmed() {
 	_add_type_selected(add_type_filter->get_text().strip_edges());
 }
 
@@ -2419,7 +2419,8 @@ void ThemeTypeDialog::set_include_own_types(bool p_enable) {
 	include_own_types = p_enable;
 }
 
-ThemeTypeDialog::ThemeTypeDialog() {
+ThemeTypeDialog::ThemeTypeDialog() :
+		Dialog(true) {
 	set_hide_on_ok(false);
 
 	VBoxContainer *add_type_vb = memnew(VBoxContainer);
@@ -2451,7 +2452,7 @@ ThemeTypeDialog::ThemeTypeDialog() {
 	add_type_options->connect(SceneStringName(item_selected), callable_mp(this, &ThemeTypeDialog::_add_type_options_cbk));
 	add_type_options->connect("item_activated", callable_mp(this, &ThemeTypeDialog::_add_type_dialog_activated));
 
-	add_type_confirmation = memnew(ConfirmationDialog);
+	add_type_confirmation = memnew(Dialog(true));
 	add_type_confirmation->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_type_confirmation->set_title(TTRC("Type name is empty!"));
 	add_type_confirmation->set_text(TTRC("Are you sure you want to create an empty type?"));
@@ -3808,7 +3809,7 @@ ThemeTypeEditor::ThemeTypeEditor() {
 	type_list_hb->add_child(rename_type_button);
 	rename_type_button->connect(SceneStringName(pressed), callable_mp(this, &ThemeTypeEditor::_rename_type_button_cbk));
 
-	theme_type_rename_dialog = memnew(ConfirmationDialog);
+	theme_type_rename_dialog = memnew(Dialog(true));
 	theme_type_rename_dialog->set_title(TTRC("Rename Theme Type"));
 	theme_type_rename_dialog->set_min_size(Size2(256, 64) * EDSCALE);
 	add_child(theme_type_rename_dialog);

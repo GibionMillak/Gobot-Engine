@@ -33,7 +33,7 @@
 #include "core/object/callable_mp.h"
 #include "editor/settings/event_listener_line_edit.h"
 #include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/line_edit.h"
 
 void EditorEventSearchBar::_on_event_changed(const Ref<InputEvent> &p_event) {

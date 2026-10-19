@@ -669,7 +669,7 @@ void GroupsEditor::_confirm_delete() {
 
 void GroupsEditor::_show_add_group_dialog() {
 	if (!add_group_dialog) {
-		add_group_dialog = memnew(ConfirmationDialog);
+		add_group_dialog = memnew(Dialog(true));
 		add_group_dialog->set_title(TTRC("Create New Group"));
 		add_group_dialog->set_ok_button_text(TTRC("Create"));
 		add_group_dialog->connect(SceneStringName(confirmed), callable_mp(this, &GroupsEditor::_confirm_add));
@@ -736,7 +736,7 @@ void GroupsEditor::_show_add_group_dialog() {
 
 void GroupsEditor::_show_rename_group_dialog() {
 	if (!rename_group_dialog) {
-		rename_group_dialog = memnew(ConfirmationDialog);
+		rename_group_dialog = memnew(Dialog(true));
 		rename_group_dialog->set_title(TTRC("Rename Group"));
 		rename_group_dialog->connect(SceneStringName(confirmed), callable_mp(this, &GroupsEditor::_confirm_rename));
 
@@ -793,7 +793,7 @@ void GroupsEditor::_show_rename_group_dialog() {
 
 void GroupsEditor::_show_remove_group_dialog() {
 	if (!remove_group_dialog) {
-		remove_group_dialog = memnew(ConfirmationDialog);
+		remove_group_dialog = memnew(Dialog(true));
 		remove_group_dialog->set_ok_button_text(TTRC("Delete"));
 		remove_group_dialog->connect(SceneStringName(confirmed), callable_mp(this, &GroupsEditor::_confirm_delete));
 

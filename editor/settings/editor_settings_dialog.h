@@ -31,7 +31,7 @@
 #pragma once
 
 #include "editor/inspector/editor_inspector.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class CheckButton;
 class EditorEventSearchBar;
@@ -44,8 +44,8 @@ class TextureRect;
 class Tree;
 class TreeItem;
 
-class EditorSettingsDialog : public AcceptDialog {
-	GDCLASS(EditorSettingsDialog, AcceptDialog);
+class EditorSettingsDialog : public Dialog {
+	GDCLASS(EditorSettingsDialog, Dialog);
 
 	static inline EditorSettingsDialog *singleton = nullptr;
 
@@ -77,8 +77,8 @@ class EditorSettingsDialog : public AcceptDialog {
 
 	Timer *timer = nullptr;
 
-	virtual void cancel_pressed() override;
-	virtual void ok_pressed() override;
+	virtual void _on_canceled() override;
+	virtual void _on_confirmed() override;
 
 	void _settings_changed();
 	void _settings_property_edited();

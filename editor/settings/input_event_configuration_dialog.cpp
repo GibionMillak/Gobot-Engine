@@ -704,7 +704,8 @@ void InputEventConfigurationDialog::set_allowed_input_types(int p_type_masks) {
 	event_listener->set_allowed_input_types(p_type_masks);
 }
 
-InputEventConfigurationDialog::InputEventConfigurationDialog() {
+InputEventConfigurationDialog::InputEventConfigurationDialog() :
+		Dialog(true) {
 	allowed_input_types = INPUT_KEY | INPUT_MOUSE_BUTTON | INPUT_JOY_BUTTON | INPUT_JOY_MOTION;
 
 	set_min_size(Size2i(800, 0) * EDSCALE);

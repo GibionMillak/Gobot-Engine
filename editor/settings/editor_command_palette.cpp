@@ -319,7 +319,8 @@ EditorCommandPalette *EditorCommandPalette::get_singleton() {
 	return singleton;
 }
 
-EditorCommandPalette::EditorCommandPalette() {
+EditorCommandPalette::EditorCommandPalette() :
+		Dialog(true) {
 	set_hide_on_ok(false);
 	connect(SceneStringName(confirmed), callable_mp(this, &EditorCommandPalette::_confirmed));
 

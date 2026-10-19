@@ -35,11 +35,11 @@
 #include "editor/inspector/editor_inspector.h"
 #include "scene/animation/animation_blend_tree.h"
 #include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/graph_edit.h"
 #include "scene/gui/tree.h"
 
-class AcceptDialog;
+class Dialog;
 class CheckBox;
 class ProgressBar;
 class EditorFileDialog;
@@ -61,7 +61,7 @@ class AnimationNodeBlendTreeEditor : public AnimationTreeNodeEditorPlugin {
 	Vector2 position_from_popup_menu;
 	bool use_position_from_popup_menu;
 
-	AcceptDialog *filter_dialog = nullptr;
+	Dialog *filter_dialog = nullptr;
 	Tree *filters = nullptr;
 	CheckBox *filter_enabled = nullptr;
 	Button *filter_fill_selection = nullptr;
@@ -183,8 +183,8 @@ public:
 	virtual bool parse_property(Object *p_object, const Variant::Type p_type, const String &p_path, const PropertyHint p_hint, const String &p_hint_text, const BitField<PropertyUsageFlags> p_usage, const bool p_wide) override;
 };
 
-class AnimationNodeAnimationEditorDialog : public ConfirmationDialog {
-	GDCLASS(AnimationNodeAnimationEditorDialog, ConfirmationDialog);
+class AnimationNodeAnimationEditorDialog : public Dialog {
+	GDCLASS(AnimationNodeAnimationEditorDialog, Dialog);
 
 	friend class AnimationNodeAnimationEditor;
 

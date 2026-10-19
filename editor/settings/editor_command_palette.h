@@ -30,14 +30,14 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class FilterLineEdit;
 class Shortcut;
 class Tree;
 
-class EditorCommandPalette : public ConfirmationDialog {
-	GDCLASS(EditorCommandPalette, ConfirmationDialog);
+class EditorCommandPalette : public Dialog {
+	GDCLASS(EditorCommandPalette, Dialog);
 
 	static EditorCommandPalette *singleton;
 	FilterLineEdit *command_search_box = nullptr;

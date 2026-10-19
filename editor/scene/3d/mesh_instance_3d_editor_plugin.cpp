@@ -43,7 +43,7 @@
 #include "scene/3d/physics/static_body_3d.h"
 #include "scene/gui/aspect_ratio_container.h"
 #include "scene/gui/box_container.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/spin_box.h"
 #include "scene/main/scene_tree.h"
@@ -815,7 +815,7 @@ MeshInstance3DEditor::MeshInstance3DEditor() {
 
 	options->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &MeshInstance3DEditor::_menu_option));
 
-	outline_dialog = memnew(ConfirmationDialog);
+	outline_dialog = memnew(Dialog(true));
 	outline_dialog->set_title(TTR("Create Outline Mesh"));
 	outline_dialog->set_ok_button_text(TTR("Create"));
 
@@ -833,7 +833,7 @@ MeshInstance3DEditor::MeshInstance3DEditor() {
 	add_child(outline_dialog);
 	outline_dialog->connect(SceneStringName(confirmed), callable_mp(this, &MeshInstance3DEditor::_create_outline_mesh));
 
-	shape_dialog = memnew(ConfirmationDialog);
+	shape_dialog = memnew(Dialog(true));
 	shape_dialog->set_title(TTR("Create Collision Shape"));
 	shape_dialog->set_ok_button_text(TTR("Create"));
 	shape_dialog->connect("about_to_popup", callable_mp(this, &MeshInstance3DEditor::_shape_dialog_about_to_popup));
@@ -899,11 +899,11 @@ MeshInstance3DEditor::MeshInstance3DEditor() {
 	add_child(shape_dialog);
 	shape_dialog->connect(SceneStringName(confirmed), callable_mp(this, &MeshInstance3DEditor::_create_collision_shape));
 
-	err_dialog = memnew(AcceptDialog);
+	err_dialog = memnew(Dialog);
 	err_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(err_dialog);
 
-	debug_uv_dialog = memnew(AcceptDialog);
+	debug_uv_dialog = memnew(Dialog);
 	debug_uv_dialog->set_title(TTR("UV Channel Debug"));
 	add_child(debug_uv_dialog);
 
@@ -915,7 +915,7 @@ MeshInstance3DEditor::MeshInstance3DEditor() {
 	debug_uv->connect(SceneStringName(draw), callable_mp(this, &MeshInstance3DEditor::_debug_uv_draw));
 	debug_uv_arc->add_child(debug_uv);
 
-	navigation_mesh_dialog = memnew(ConfirmationDialog);
+	navigation_mesh_dialog = memnew(Dialog(true));
 	navigation_mesh_dialog->set_title(TTR("Create NavigationMesh"));
 	navigation_mesh_dialog->set_ok_button_text(TTR("Create"));
 

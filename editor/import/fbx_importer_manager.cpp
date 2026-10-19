@@ -136,7 +136,8 @@ void FBXImporterManager::_browse_install() {
 
 FBXImporterManager *FBXImporterManager::singleton = nullptr;
 
-FBXImporterManager::FBXImporterManager() {
+FBXImporterManager::FBXImporterManager() :
+		Dialog(true) {
 	singleton = this;
 
 	set_title(TTR("Configure FBX Importer"));

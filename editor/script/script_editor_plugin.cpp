@@ -147,7 +147,8 @@ void ScriptEditorQuickOpen::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("goto_line", PropertyInfo(Variant::INT, "line")));
 }
 
-ScriptEditorQuickOpen::ScriptEditorQuickOpen() {
+ScriptEditorQuickOpen::ScriptEditorQuickOpen() :
+		Dialog(true) {
 	set_ok_button_text(TTRC("Open"));
 	get_ok_button()->set_disabled(true);
 	set_hide_on_ok(false);
@@ -4174,10 +4175,10 @@ DocumentEditorContainer::DocumentEditorContainer(bool p_is_main_editor, const St
 
 	tab_container->connect("tab_changed", callable_mp(this, &DocumentEditorContainer::ensure_select_current).unbind(1));
 
-	erase_tab_confirm = memnew(ConfirmationDialog);
+	erase_tab_confirm = memnew(Dialog(true));
 	erase_tab_confirm->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	erase_tab_confirm->set_ok_button_text(TTRC("Save"));
-	erase_tab_confirm->add_button(TTRC("Discard"), DisplayServer::get_singleton()->get_swap_cancel_ok(), "discard");
+	erase_tab_confirm->add_button(TTRC("Discard"), false, "discard");
 	erase_tab_confirm->connect(SceneStringName(confirmed), callable_mp(this, &DocumentEditorContainer::_close_current_tab).bind(true));
 	erase_tab_confirm->connect("custom_action", callable_mp(this, &DocumentEditorContainer::_close_discard_current_tab));
 	add_child(erase_tab_confirm);
@@ -4197,10 +4198,10 @@ DocumentEditorContainer::DocumentEditorContainer(bool p_is_main_editor, const St
 	shader_create_dialog->connect("shader_include_created", callable_mp(this, &DocumentEditorContainer::_resource_created));
 	add_child(shader_create_dialog);
 
-	error_dialog = memnew(AcceptDialog);
+	error_dialog = memnew(Dialog);
 	add_child(error_dialog);
 
-	disk_changed = memnew(ConfirmationDialog);
+	disk_changed = memnew(Dialog(true));
 	{
 		disk_changed->set_title(TTRC("Files have been modified outside Godot"));
 
@@ -4224,7 +4225,7 @@ DocumentEditorContainer::DocumentEditorContainer(bool p_is_main_editor, const St
 		disk_changed->connect(SceneStringName(confirmed), callable_mp(this, &DocumentEditorContainer::reload_scripts).bind(false));
 		disk_changed->set_ok_button_text(TTRC("Reload from disk"));
 
-		disk_changed->add_button(TTRC("Ignore external changes"), !DisplayServer::get_singleton()->get_swap_cancel_ok(), "resave");
+		disk_changed->add_button(TTRC("Ignore external changes"), true, "resave");
 		disk_changed->connect("custom_action", callable_mp(this, &DocumentEditorContainer::_resave_scripts));
 	}
 

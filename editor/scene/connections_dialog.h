@@ -31,7 +31,7 @@
 #pragma once
 
 #include "core/variant/callable_bind.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/tree.h"
 
 class Button;
@@ -47,8 +47,8 @@ class PopupMenu;
 class SceneTreeEditor;
 class SpinBox;
 
-class ConnectDialog : public ConfirmationDialog {
-	GDCLASS(ConnectDialog, ConfirmationDialog);
+class ConnectDialog : public Dialog {
+	GDCLASS(ConnectDialog, Dialog);
 
 public:
 	struct ConnectionData {
@@ -124,10 +124,10 @@ private:
 	NodePath dst_path;
 	VBoxContainer *vbc_right = nullptr;
 	SceneTreeEditor *tree = nullptr;
-	AcceptDialog *error = nullptr;
+	Dialog *error = nullptr;
 
 	Button *open_method_tree = nullptr;
-	AcceptDialog *method_popup = nullptr;
+	Dialog *method_popup = nullptr;
 	Tree *method_tree = nullptr;
 	Label *empty_tree_label = nullptr;
 	LineEdit *method_search = nullptr;
@@ -145,7 +145,7 @@ private:
 
 	Label *error_label = nullptr;
 
-	void ok_pressed() override;
+	void _on_confirmed() override;
 	void _cancel_pressed();
 	void _item_activated();
 	void _tree_node_selected();
@@ -236,7 +236,7 @@ class ConnectionsDock : public VBoxContainer {
 	ObjectID selected_object_id;
 	ConnectionsDockTree *tree = nullptr;
 
-	ConfirmationDialog *disconnect_all_dialog = nullptr;
+	Dialog *disconnect_all_dialog = nullptr;
 	ConnectDialog *connect_dialog = nullptr;
 	Button *connect_button = nullptr;
 	PopupMenu *class_menu = nullptr;

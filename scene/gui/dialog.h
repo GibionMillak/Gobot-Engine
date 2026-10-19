@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  dialogs.h                                                             */
+/*  dialog.h                                                              */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -39,101 +39,76 @@
 
 class LineEdit;
 
-class AcceptDialog : public Window {
-	GDCLASS(AcceptDialog, Window);
+class Dialog : public Window {
+	GDCLASS(Dialog, Window);
 
-	Window *parent_visible = nullptr;
+public:
+	explicit Dialog(bool p_show_cancel = false);
+	~Dialog() override = default;
 
-	Panel *bg_panel = nullptr;
-	Label *message_label = nullptr;
-	HBoxContainer *buttons_hbox = nullptr;
-	Button *ok_button = nullptr;
+	Label *get_label() { return _message_lbl; }
+	void register_text_enter(LineEdit *p_line_edit);
+	Button *get_ok_button() { return _ok_btn; }
+	Button *get_cancel_button() { return _cancel_btn; }
+	Button *add_button(const String &p_text, bool p_right = false, const String &p_action = "");
+	Button *add_cancel_button(const String &p_cancel = "");
+	void remove_button(Button *p_button);
+	void set_cancel_button_visible(bool p_visible);
+	bool is_cancel_button_visible() const;
+	void set_cancel_button_text(String p_cancel_button_text);
+	String get_cancel_button_text() const;
+	void set_hide_on_ok(bool p_hide);
+	bool get_hide_on_ok() const;
+	void set_close_on_escape(bool p_enable);
+	bool get_close_on_escape() const;
+	void set_text(String p_text);
+	String get_text() const;
+	void set_autowrap(bool p_autowrap);
+	bool has_autowrap();
+	void set_ok_button_text(String p_ok_button_text);
+	String get_ok_button_text() const;
 
-	bool popped_up = false;
-	String ok_text;
-	String default_ok_text;
+protected:
+	static void _bind_methods();
+	void _notification(int p_what);
+	Size2 _get_contents_minimum_size() const override;
+	void _input_from_window(const Ref<InputEvent> &p_event) override;
+	void _post_popup() override;
+	void _validate_property(PropertyInfo &r_property) const;
+	virtual void _on_confirmed() {}
+	virtual void _on_canceled() {}
+	virtual void _on_custom_action(const String &p_action) {}
+	void _set_default_ok_text(const String &p_text);
+	void _text_submitted(const String &p_text);
+	void _ok_pressed();
+	void _cancel_pressed();
 
-	bool hide_on_ok = true;
-	bool close_on_escape = true;
-
+private:
 	struct ThemeCache {
 		Ref<StyleBox> panel_style;
 		int buttons_separation = 0;
 		int buttons_min_width = 0;
 		int buttons_min_height = 0;
-	} theme_cache;
+	};
 
 	void _custom_action(const String &p_action);
-	void _button_visibility_changed(Button *button);
+	void _button_visibility_changed(Button *p_button);
 	void _update_child_rects();
 	void _update_ok_text();
-
-	inline static bool swap_cancel_ok = false;
-
 	void _parent_focused();
+	void _update_confirmation_style();
 
-protected:
-	virtual Size2 _get_contents_minimum_size() const override;
-	virtual void _input_from_window(const Ref<InputEvent> &p_event) override;
-	virtual void _post_popup() override;
-
-	void _notification(int p_what);
-	static void _bind_methods();
-	void _validate_property(PropertyInfo &p_property) const;
-
-	virtual void ok_pressed() {}
-	virtual void cancel_pressed() {}
-	virtual void custom_action(const String &) {}
-
-	void set_default_ok_text(const String &p_text);
-
-	// Not private since used by derived classes signal.
-	void _text_submitted(const String &p_text);
-	void _ok_pressed();
-	void _cancel_pressed();
-
-public:
-	Label *get_label() { return message_label; }
-	static void set_swap_cancel_ok(bool p_swap);
-
-	void register_text_enter(LineEdit *p_line_edit);
-
-	Button *get_ok_button() { return ok_button; }
-	Button *add_button(const String &p_text, bool p_right = false, const String &p_action = "");
-	Button *add_cancel_button(const String &p_cancel = "");
-	void remove_button(Button *p_button);
-
-	void set_hide_on_ok(bool p_hide);
-	bool get_hide_on_ok() const;
-
-	void set_close_on_escape(bool p_enable);
-	bool get_close_on_escape() const;
-
-	void set_text(String p_text);
-	String get_text() const;
-
-	void set_autowrap(bool p_autowrap);
-	bool has_autowrap();
-
-	void set_ok_button_text(String p_ok_button_text);
-	String get_ok_button_text() const;
-
-	AcceptDialog();
-	~AcceptDialog();
-};
-
-class ConfirmationDialog : public AcceptDialog {
-	GDCLASS(ConfirmationDialog, AcceptDialog);
-	Button *cancel = nullptr;
-
-protected:
-	static void _bind_methods();
-
-public:
-	Button *get_cancel_button();
-
-	void set_cancel_button_text(String p_cancel_button_text);
-	String get_cancel_button_text() const;
-
-	ConfirmationDialog();
+	Window *_parent_visible = nullptr;
+	Panel *_bg_panel = nullptr;
+	Label *_message_lbl = nullptr;
+	HBoxContainer *_buttons_hbox = nullptr;
+	Button *_ok_btn = nullptr;
+	Button *_cancel_btn = nullptr;
+	bool _popped_up = false;
+	String _ok_text;
+	String _default_ok_text;
+	bool _hide_on_ok = true;
+	bool _close_on_escape = true;
+	// Required by the BIND_THEME_ITEM macros.
+	ThemeCache theme_cache;
 };

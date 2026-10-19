@@ -162,7 +162,7 @@
 #include "scene/animation/animation_tree.h"
 #include "scene/gui/color_picker.h"
 #include "scene/gui/control.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/file_dialog.h"
 #include "scene/gui/menu_bar.h"
 #include "scene/gui/menu_button.h"
@@ -480,12 +480,6 @@ EditorNode::EditorNode() {
 
 	FileDialog::set_default_show_hidden_files(EDITOR_GET("filesystem/file_dialog/show_hidden_files"));
 	FileDialog::set_default_display_mode(EDITOR_GET("filesystem/file_dialog/display_mode"));
-
-	int swap_cancel_ok = EDITOR_GET("interface/editor/appearance/accept_dialog_cancel_ok_buttons");
-	if (swap_cancel_ok != 0) { // 0 is auto, set in register_scene based on DisplayServer.
-		// Swap on means OK first.
-		AcceptDialog::set_swap_cancel_ok(swap_cancel_ok == 2);
-	}
 
 	int ed_root_dir = EDITOR_GET("interface/editor/localization/ui_layout_direction");
 	Control::set_root_layout_direction(ed_root_dir);
@@ -907,7 +901,7 @@ EditorNode::EditorNode() {
 	scene_root->set_disable_input(true);
 	scene_root->set_as_audio_listener_2d(true);
 
-	save_accept = memnew(AcceptDialog);
+	save_accept = memnew(Dialog);
 	save_accept->set_unparent_when_invisible(true);
 	save_accept->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_menu_option).bind((int)MenuOptions::SCENE_SAVE_AS_SCENE));
 
@@ -959,12 +953,12 @@ EditorNode::EditorNode() {
 	gui_base->add_child(android_sdk_manager);
 #endif
 
-	warning = memnew(AcceptDialog);
+	warning = memnew(Dialog);
 	warning->set_unparent_when_invisible(true);
 	warning->add_button(TTRC("Copy Text"), true, "copy");
 	warning->connect("custom_action", callable_mp(this, &EditorNode::_copy_warning));
 
-	clear_cache_dialog = memnew(ConfirmationDialog);
+	clear_cache_dialog = memnew(Dialog(true));
 	clear_cache_dialog->set_autowrap(true);
 	clear_cache_dialog->set_text(TTRC("Clear all caches for the current project, including the cache for imported assets, exported assets, shaders, UIDs, scripts, and scene groups. New caches will be built upon restarting or exporting the project.\n\nNote that clearing the cache is almost always a workaround for a bug. If you can consistently reproduce the invalid cache or unexpected behavior that is solved by clearing the cache, please report this bug (\"Help > Report a Bug\") with reproduction steps."));
 	clear_cache_dialog->set_ok_button_text(TTRC("Clear & Restart"));
@@ -1245,16 +1239,16 @@ EditorNode::EditorNode() {
 	orphan_resources = memnew(OrphanResourcesDialog);
 	gui_base->add_child(orphan_resources);
 
-	confirmation = memnew(ConfirmationDialog);
-	confirmation_button = confirmation->add_button(TTRC("Don't Save"), DisplayServer::get_singleton()->get_swap_cancel_ok(), "discard");
+	confirmation = memnew(Dialog(true));
+	confirmation_button = confirmation->add_button(TTRC("Don't Save"), false, "discard");
 	gui_base->add_child(confirmation);
 	confirmation->set_min_size(Vector2(450.0 * EDSCALE, 0));
 	confirmation->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_menu_confirm_current));
 	confirmation->connect("custom_action", callable_mp(this, &EditorNode::_discard_changes));
 	confirmation->connect("canceled", callable_mp(this, &EditorNode::_cancel_confirmation));
 
-	save_confirmation = memnew(ConfirmationDialog);
-	save_confirmation->add_button(TTRC("Don't Save"), DisplayServer::get_singleton()->get_swap_cancel_ok(), "discard");
+	save_confirmation = memnew(Dialog(true));
+	save_confirmation->add_button(TTRC("Don't Save"), false, "discard");
 	gui_base->add_child(save_confirmation);
 	save_confirmation->set_min_size(Vector2(450.0 * EDSCALE, 0));
 	save_confirmation->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_menu_confirm_current));
@@ -1262,7 +1256,7 @@ EditorNode::EditorNode() {
 	save_confirmation->connect("canceled", callable_mp(this, &EditorNode::_cancel_close_scene_tab));
 	save_confirmation->connect("about_to_popup", callable_mp(this, &EditorNode::_prepare_save_confirmation_popup));
 
-	gradle_build_manage_templates = memnew(ConfirmationDialog);
+	gradle_build_manage_templates = memnew(Dialog(true));
 	gradle_build_manage_templates->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	gradle_build_manage_templates->set_text(TTR("Android build template is missing, please install relevant templates."));
 	gradle_build_manage_templates->set_ok_button_text(TTR("Manage Templates"));
@@ -1289,7 +1283,7 @@ EditorNode::EditorNode() {
 		choose_android_export_profile->connect(SceneStringName(item_selected), callable_mp(this, &EditorNode::_android_export_preset_selected));
 		vbox->add_child(choose_android_export_profile);
 
-		install_android_build_template = memnew(ConfirmationDialog);
+		install_android_build_template = memnew(Dialog(true));
 		install_android_build_template->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 		install_android_build_template->set_ok_button_text(TTR("Install"));
 		install_android_build_template->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_menu_confirm_current));
@@ -1298,7 +1292,7 @@ EditorNode::EditorNode() {
 		gui_base->add_child(install_android_build_template);
 	}
 
-	remove_android_build_template = memnew(ConfirmationDialog);
+	remove_android_build_template = memnew(Dialog(true));
 	remove_android_build_template->set_ok_button_text(OS::get_singleton()->get_platform_string(OS::PLATFORM_STRING_FILE_MANAGER_OPEN));
 	remove_android_build_template->set_autowrap(true);
 	remove_android_build_template->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_android_explore_build_templates));
@@ -1342,7 +1336,7 @@ EditorNode::EditorNode() {
 
 	add_editor_plugin(memnew(DebuggerEditorPlugin(debug_menu)));
 
-	disk_changed = memnew(ConfirmationDialog);
+	disk_changed = memnew(Dialog(true));
 	{
 		disk_changed->set_title(TTR("Files have been modified outside Godot"));
 
@@ -1365,13 +1359,13 @@ EditorNode::EditorNode() {
 		disk_changed->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_reload_project_settings));
 		disk_changed->set_ok_button_text(TTR("Reload from disk"));
 
-		disk_changed->add_button(TTR("Ignore external changes"), !DisplayServer::get_singleton()->get_swap_cancel_ok(), "resave");
+		disk_changed->add_button(TTR("Ignore external changes"), true, "resave");
 		disk_changed->connect("custom_action", callable_mp(this, &EditorNode::_resave_externally_modified_scenes));
 	}
 
 	gui_base->add_child(disk_changed);
 
-	project_data_missing = memnew(ConfirmationDialog);
+	project_data_missing = memnew(Dialog(true));
 	project_data_missing->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	project_data_missing->set_text(TTRC("Project data folder (.godot) is missing. Please restart editor."));
 	project_data_missing->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::restart_editor).bind(false));
@@ -1505,10 +1499,10 @@ EditorNode::EditorNode() {
 
 	set_process(true);
 
-	open_imported = memnew(ConfirmationDialog);
+	open_imported = memnew(Dialog(true));
 	open_imported->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	open_imported->set_ok_button_text(TTR("Open Anyway"));
-	new_inherited_button = open_imported->add_button(TTR("New Inherited"), !DisplayServer::get_singleton()->get_swap_cancel_ok(), "inherit");
+	new_inherited_button = open_imported->add_button(TTR("New Inherited"), true, "inherit");
 	open_imported->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_open_imported));
 	open_imported->connect("custom_action", callable_mp(this, &EditorNode::_inherit_imported));
 	gui_base->add_child(open_imported);
@@ -1524,7 +1518,7 @@ EditorNode::EditorNode() {
 	set_process_shortcut_input(true);
 
 	load_errors = memnew(RichTextLabel);
-	load_error_dialog = memnew(AcceptDialog);
+	load_error_dialog = memnew(Dialog);
 	load_error_dialog->set_unparent_when_invisible(true);
 	load_error_dialog->add_child(load_errors);
 	load_error_dialog->set_title(TTR("Load Errors"));
@@ -1533,7 +1527,7 @@ EditorNode::EditorNode() {
 	execute_outputs = memnew(RichTextLabel);
 	execute_outputs->set_selection_enabled(true);
 	execute_outputs->set_context_menu_enabled(true);
-	execute_output_dialog = memnew(AcceptDialog);
+	execute_output_dialog = memnew(Dialog);
 	execute_output_dialog->set_unparent_when_invisible(true);
 	execute_output_dialog->add_child(execute_outputs);
 	execute_output_dialog->set_title("");
@@ -1546,14 +1540,14 @@ EditorNode::EditorNode() {
 
 	_build_icon_type_cache();
 
-	pick_main_scene = memnew(ConfirmationDialog);
+	pick_main_scene = memnew(Dialog(true));
 	gui_base->add_child(pick_main_scene);
 	pick_main_scene->set_ok_button_text(TTR("Select"));
 	pick_main_scene->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_menu_option).bind(SETTINGS_PICK_MAIN_SCENE));
 	select_current_scene_button = pick_main_scene->add_button(TTR("Select Current"), true, "select_current");
 	pick_main_scene->connect("custom_action", callable_mp(this, &EditorNode::_pick_main_scene_custom_action));
 
-	open_project_settings = memnew(ConfirmationDialog);
+	open_project_settings = memnew(Dialog(true));
 	gui_base->add_child(open_project_settings);
 	open_project_settings->set_ok_button_text(TTRC("Open Project Settings"));
 	open_project_settings->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_menu_option).bind(PROJECT_OPEN_SETTINGS));
@@ -2035,7 +2029,7 @@ void EditorNode::add_plugin_init_callback(EditorPluginInitializeCallback p_callb
 }
 
 bool EditorNode::immediate_confirmation_dialog(const String &p_text, const String &p_ok_text, const String &p_cancel_text, uint32_t p_wrap_width) {
-	ConfirmationDialog *cd = memnew(ConfirmationDialog);
+	Dialog *cd = memnew(Dialog(true));
 	cd->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	cd->set_text(p_text);
 	cd->set_ok_button_text(p_ok_text);
@@ -7738,7 +7732,7 @@ void EditorNode::_renderer_selected(int p_index) {
 	}
 
 	if (video_restart_dialog == nullptr) {
-		video_restart_dialog = memnew(ConfirmationDialog);
+		video_restart_dialog = memnew(Dialog(true));
 		video_restart_dialog->set_ok_button_text(TTRC("Save & Restart"));
 		video_restart_dialog->get_label()->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 		gui_base->add_child(video_restart_dialog);

@@ -784,7 +784,7 @@ MeshLibraryEditor::MeshLibraryEditor() {
 	add_child(file);
 	file->connect("file_selected", callable_mp(this, &MeshLibraryEditor::_import_scene_cbk));
 
-	cd_update = memnew(ConfirmationDialog);
+	cd_update = memnew(Dialog(true));
 	add_child(cd_update);
 	cd_update->set_ok_button_text(TTRC("Apply without Transforms"));
 	cd_update->get_ok_button()->connect(SceneStringName(pressed), callable_mp(this, &MeshLibraryEditor::_menu_update_confirm).bind(false));

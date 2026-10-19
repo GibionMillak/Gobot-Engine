@@ -69,7 +69,7 @@ protected:
 	};
 
 	EditorFileDialog *file_dialog = nullptr;
-	ConfirmationDialog *emission_mask_dialog = nullptr;
+	Dialog *emission_mask_dialog = nullptr;
 	OptionButton *emission_mask_mode = nullptr;
 	OptionButton *emission_direction_mode = nullptr;
 	CheckBox *emission_mask_centered = nullptr;
@@ -113,7 +113,7 @@ class GPUParticles2DEditorPlugin : public Particles2DEditorPlugin {
 		MENU_GENERATE_VISIBILITY_RECT = 200,
 	};
 
-	ConfirmationDialog *generate_visibility_rect = nullptr;
+	Dialog *generate_visibility_rect = nullptr;
 	SpinBox *generate_seconds = nullptr;
 
 	void _generate_visibility_rect();

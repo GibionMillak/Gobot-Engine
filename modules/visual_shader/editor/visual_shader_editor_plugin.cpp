@@ -7990,7 +7990,7 @@ VisualShaderEditor::VisualShaderEditor() {
 	// CODE PREVIEW
 	///////////////////////////////////////
 
-	code_preview_window = memnew(AcceptDialog);
+	code_preview_window = memnew(Dialog);
 	code_preview_window->set_title(TTR("Generated Shader Code"));
 	code_preview_window->set_visible(code_preview_showed);
 	code_preview_window->set_ok_button_text(TTR("Close"));
@@ -8181,7 +8181,7 @@ VisualShaderEditor::VisualShaderEditor() {
 	node_desc->set_v_size_flags(SIZE_FILL);
 	node_desc->set_custom_minimum_size(Size2(0, 70 * EDSCALE));
 
-	members_dialog = memnew(ConfirmationDialog);
+	members_dialog = memnew(Dialog(true));
 	members_dialog->set_title(TTR("Create Shader Node"));
 	members_dialog->add_child(members_vb);
 	members_dialog->set_ok_button_text(TTR("Create"));
@@ -8193,7 +8193,7 @@ VisualShaderEditor::VisualShaderEditor() {
 
 	// add varyings dialog
 	{
-		add_varying_dialog = memnew(ConfirmationDialog);
+		add_varying_dialog = memnew(Dialog(true));
 		add_varying_dialog->set_title(TTR("Create Shader Varying"));
 		add_varying_dialog->set_ok_button_text(TTR("Create"));
 		add_varying_dialog->connect(SceneStringName(confirmed), callable_mp(this, &VisualShaderEditor::_varying_create));
@@ -8241,7 +8241,7 @@ VisualShaderEditor::VisualShaderEditor() {
 
 	// remove varying dialog
 	{
-		remove_varying_dialog = memnew(ConfirmationDialog);
+		remove_varying_dialog = memnew(Dialog(true));
 		remove_varying_dialog->set_title(TTR("Delete Shader Varying"));
 		remove_varying_dialog->set_ok_button_text(TTR("Delete"));
 		remove_varying_dialog->connect(SceneStringName(confirmed), callable_mp(this, &VisualShaderEditor::_varying_deleted));
@@ -8264,7 +8264,7 @@ VisualShaderEditor::VisualShaderEditor() {
 		varyings->connect("nothing_selected", callable_mp(this, &VisualShaderEditor::_varying_unselected));
 	}
 
-	alert = memnew(AcceptDialog);
+	alert = memnew(Dialog);
 	alert->get_label()->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 	alert->get_label()->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	alert->get_label()->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);

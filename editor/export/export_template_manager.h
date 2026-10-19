@@ -32,7 +32,7 @@
 
 #include "core/templates/hash_map.h"
 #include "core/templates/hash_set.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class Button;
 class EditorExportPreset;
@@ -42,8 +42,8 @@ class Texture2D;
 class Tree;
 class TreeItem;
 
-class ExportTemplateManager : public AcceptDialog {
-	GDCLASS(ExportTemplateManager, AcceptDialog);
+class ExportTemplateManager : public Dialog {
+	GDCLASS(ExportTemplateManager, Dialog);
 
 public:
 	ExportTemplateManager();
@@ -143,7 +143,7 @@ private:
 	Button *_open_folder_btn = nullptr;
 	Button *_delete_all_btn = nullptr;
 	Button *_tpz_btn = nullptr;
-	ConfirmationDialog *_confirm_delete = nullptr;
+	Dialog *_confirm_delete = nullptr;
 	EditorFileDialog *_tpz_selection_dialog = nullptr;
 	ThemeCache _theme_cache;
 };

@@ -33,7 +33,7 @@
 #include "core/input/input_map.h"
 #include "core/object/callable_mp.h"
 #include "core/os/os.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 // Maps to 2*axis if value is neg, or 2*axis+1 if value is pos.
 static const char *_joy_axis_descriptions[(size_t)JoyAxis::MAX * 2] = {
@@ -243,7 +243,7 @@ void EventListenerLineEdit::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_FOCUS_ENTER: {
-			AcceptDialog *dialog = Object::cast_to<AcceptDialog>(get_window());
+			Dialog *dialog = Object::cast_to<Dialog>(get_window());
 			if (dialog) {
 				dialog->set_close_on_escape(false);
 			}
@@ -252,7 +252,7 @@ void EventListenerLineEdit::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_FOCUS_EXIT: {
-			AcceptDialog *dialog = Object::cast_to<AcceptDialog>(get_window());
+			Dialog *dialog = Object::cast_to<Dialog>(get_window());
 			if (dialog) {
 				dialog->set_close_on_escape(true);
 			}

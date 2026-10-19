@@ -35,7 +35,7 @@
 #include "scene/gui/graph_edit.h"
 #include "scene/gui/popup.h"
 
-class ConfirmationDialog;
+class Dialog;
 class EditorFileDialog;
 class LineEdit;
 class OptionButton;

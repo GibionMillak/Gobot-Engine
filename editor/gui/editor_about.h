@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class CreditsRoll;
 class ItemList;
@@ -43,8 +43,8 @@ class Tree;
  * NOTE: Do not assume the EditorNode singleton to be available in this class' methods.
  * EditorAbout is also used from the project manager where EditorNode isn't initialized.
  */
-class EditorAbout : public AcceptDialog {
-	GDCLASS(EditorAbout, AcceptDialog);
+class EditorAbout : public Dialog {
+	GDCLASS(EditorAbout, Dialog);
 
 private:
 	enum SectionFlags {

@@ -33,7 +33,7 @@
 #include "editor/scene/2d/abstract_polygon_2d_editor.h"
 #include "scene/2d/polygon_2d.h"
 
-class AcceptDialog;
+class Dialog;
 class ButtonGroup;
 class EditorDock;
 class EditorZoomWidget;
@@ -118,7 +118,7 @@ class Polygon2DEditor : public AbstractPolygon2DEditor {
 	int bone_painting_bone = 0;
 	Vector<float> prev_weights;
 	Vector2 bone_paint_pos;
-	AcceptDialog *grid_settings = nullptr;
+	Dialog *grid_settings = nullptr;
 
 	void _sync_bones();
 	void _update_bone_list(const Polygon2D *p_for_node);
@@ -140,7 +140,7 @@ class Polygon2DEditor : public AbstractPolygon2DEditor {
 	Action current_action = ACTION_CREATE;
 	Vector2 drag_from;
 
-	AcceptDialog *error = nullptr;
+	Dialog *error = nullptr;
 
 	bool use_snap = false;
 	bool snap_show_grid = false;

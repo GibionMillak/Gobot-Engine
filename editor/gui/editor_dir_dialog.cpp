@@ -200,7 +200,7 @@ void EditorDirDialog::_copy_pressed() {
 	emit_signal(SNAME("copy_pressed"), ti->get_metadata(0));
 }
 
-void EditorDirDialog::ok_pressed() {
+void EditorDirDialog::_on_confirmed() {
 	TreeItem *ti = tree->get_selected();
 	ERR_FAIL_NULL(ti);
 
@@ -237,7 +237,8 @@ void EditorDirDialog::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("move_pressed", PropertyInfo(Variant::STRING, "dir")));
 }
 
-EditorDirDialog::EditorDirDialog() {
+EditorDirDialog::EditorDirDialog() :
+		Dialog(true) {
 	set_hide_on_ok(false);
 
 	VBoxContainer *vb = memnew(VBoxContainer);
@@ -262,7 +263,7 @@ EditorDirDialog::EditorDirDialog() {
 
 	set_ok_button_text(TTR("Move"));
 
-	copy = add_button(TTR("Copy"), !DisplayServer::get_singleton()->get_swap_cancel_ok());
+	copy = add_button(TTR("Copy"), true);
 	copy->connect(SceneStringName(pressed), callable_mp(this, &EditorDirDialog::_copy_pressed));
 
 	makedialog = memnew(DirectoryCreateDialog);

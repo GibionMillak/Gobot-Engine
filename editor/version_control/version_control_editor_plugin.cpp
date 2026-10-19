@@ -1006,7 +1006,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	version_control_actions = memnew(PopupMenu);
 
-	metadata_dialog = memnew(ConfirmationDialog);
+	metadata_dialog = memnew(Dialog(true));
 	metadata_dialog->set_title(TTR("Create Version Control Metadata"));
 	metadata_dialog->set_min_size(Size2(200, 40));
 	metadata_dialog->get_ok_button()->connect(SceneStringName(pressed), callable_mp(this, &VersionControlEditorPlugin::_create_vcs_metadata_files));
@@ -1033,7 +1033,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	l->set_text(TTR("Existing VCS metadata files will be overwritten."));
 	metadata_vb->add_child(l);
 
-	set_up_dialog = memnew(AcceptDialog);
+	set_up_dialog = memnew(Dialog);
 	set_up_dialog->set_title(TTR("Local Settings"));
 	set_up_dialog->set_min_size(Size2(600, 100));
 	set_up_dialog->add_cancel_button("Cancel");
@@ -1237,7 +1237,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	refresh_button->connect(SceneStringName(pressed), callable_mp(this, &VersionControlEditorPlugin::_refresh_remote_list));
 	unstage_title->add_child(refresh_button);
 
-	discard_all_confirm = memnew(AcceptDialog);
+	discard_all_confirm = memnew(Dialog);
 	discard_all_confirm->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	discard_all_confirm->set_title(TTR("Discard all changes"));
 	discard_all_confirm->set_min_size(Size2i(400, 50));
@@ -1387,7 +1387,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	branch_select->connect(SceneStringName(pressed), callable_mp(this, &VersionControlEditorPlugin::_refresh_branch_list));
 	menu_bar->add_child(branch_select);
 
-	branch_create_confirm = memnew(AcceptDialog);
+	branch_create_confirm = memnew(Dialog);
 	branch_create_confirm->set_title(TTR("Create New Branch"));
 	branch_create_confirm->set_min_size(Size2(400, 100));
 	branch_create_confirm->set_hide_on_ok(true);
@@ -1398,7 +1398,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	branch_create_ok->set_disabled(true);
 	branch_create_ok->connect(SceneStringName(pressed), callable_mp(this, &VersionControlEditorPlugin::_create_branch));
 
-	branch_remove_confirm = memnew(AcceptDialog);
+	branch_remove_confirm = memnew(Dialog);
 	branch_remove_confirm->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	branch_remove_confirm->set_title(TTR("Remove Branch"));
 	branch_remove_confirm->add_cancel_button();
@@ -1435,7 +1435,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	remote_select->connect(SceneStringName(pressed), callable_mp(this, &VersionControlEditorPlugin::_refresh_remote_list));
 	menu_bar->add_child(remote_select);
 
-	remote_create_confirm = memnew(AcceptDialog);
+	remote_create_confirm = memnew(Dialog);
 	remote_create_confirm->set_title(TTR("Create New Remote"));
 	remote_create_confirm->set_min_size(Size2(400, 100));
 	remote_create_confirm->set_hide_on_ok(true);
@@ -1446,7 +1446,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	remote_create_ok->set_disabled(true);
 	remote_create_ok->connect(SceneStringName(pressed), callable_mp(this, &VersionControlEditorPlugin::_create_remote));
 
-	remote_remove_confirm = memnew(AcceptDialog);
+	remote_remove_confirm = memnew(Dialog);
 	remote_remove_confirm->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	remote_remove_confirm->set_title(TTR("Remove Remote"));
 	remote_remove_confirm->add_cancel_button();

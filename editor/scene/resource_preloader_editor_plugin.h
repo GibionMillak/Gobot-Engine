@@ -33,7 +33,7 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/plugins/editor_plugin.h"
 
-class AcceptDialog;
+class Dialog;
 class Button;
 class FilterLineEdit;
 class EditorFileDialog;
@@ -59,7 +59,7 @@ class ResourcePreloaderEditor : public EditorDock {
 
 	EditorFileDialog *file = nullptr;
 
-	AcceptDialog *dialog = nullptr;
+	Dialog *dialog = nullptr;
 
 	ResourcePreloader *preloader = nullptr;
 

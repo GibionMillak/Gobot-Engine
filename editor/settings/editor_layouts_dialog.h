@@ -30,14 +30,14 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class EditorValidationPanel;
 class LineEdit;
 class ItemList;
 
-class EditorLayoutsDialog : public ConfirmationDialog {
-	GDCLASS(EditorLayoutsDialog, ConfirmationDialog);
+class EditorLayoutsDialog : public Dialog {
+	GDCLASS(EditorLayoutsDialog, Dialog);
 
 	bool save_mode = true;
 
@@ -53,7 +53,7 @@ class EditorLayoutsDialog : public ConfirmationDialog {
 
 protected:
 	static void _bind_methods();
-	virtual void ok_pressed() override;
+	virtual void _on_confirmed() override;
 	virtual void _post_popup() override;
 
 public:

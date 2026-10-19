@@ -1306,7 +1306,7 @@ AnimationNodeBlendTreeEditor::AnimationNodeBlendTreeEditor() {
 	add_options.push_back(AddOption("BlendSpace2D", "AnimationNodeBlendSpace2D"));
 	add_options.push_back(AddOption("StateMachine", "AnimationNodeStateMachine"));
 	_update_options_menu();
-	filter_dialog = memnew(AcceptDialog);
+	filter_dialog = memnew(Dialog);
 	add_child(filter_dialog);
 	filter_dialog->set_title(TTR("Edit Filtered Tracks:"));
 
@@ -1478,7 +1478,8 @@ bool EditorInspectorPluginAnimationNodeAnimation::parse_property(Object *p_objec
 	return false;
 }
 
-AnimationNodeAnimationEditorDialog::AnimationNodeAnimationEditorDialog() {
+AnimationNodeAnimationEditorDialog::AnimationNodeAnimationEditorDialog() :
+		Dialog(true) {
 	set_title(TTR("Select Markers"));
 
 	GridContainer *grid = memnew(GridContainer);

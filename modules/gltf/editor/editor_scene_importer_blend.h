@@ -35,7 +35,7 @@
 
 class Animation;
 class Node;
-class ConfirmationDialog;
+class Dialog;
 
 class EditorSceneFormatImporterBlend : public EditorSceneFormatImporter {
 	GDCLASS(EditorSceneFormatImporterBlend, EditorSceneFormatImporter);
@@ -88,7 +88,7 @@ class Label;
 class EditorFileSystemImportFormatSupportQueryBlend : public EditorFileSystemImportFormatSupportQuery {
 	GDCLASS(EditorFileSystemImportFormatSupportQueryBlend, EditorFileSystemImportFormatSupportQuery);
 
-	ConfirmationDialog *configure_blender_dialog = nullptr;
+	Dialog *configure_blender_dialog = nullptr;
 	LineEdit *blender_path = nullptr;
 	Button *blender_path_browse = nullptr;
 	EditorFileDialog *browse_dialog = nullptr;

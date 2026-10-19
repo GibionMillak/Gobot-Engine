@@ -302,7 +302,8 @@ void EditorHelpSearch::popup_dialog(const String &p_term) {
 	_update_results();
 }
 
-EditorHelpSearch::EditorHelpSearch() {
+EditorHelpSearch::EditorHelpSearch() :
+		Dialog(true) {
 	set_hide_on_ok(false);
 	set_clamp_to_embedder(true);
 

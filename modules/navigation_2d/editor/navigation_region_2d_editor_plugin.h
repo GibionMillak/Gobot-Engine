@@ -33,7 +33,7 @@
 #include "editor/plugins/editor_plugin.h"
 #include "editor/scene/2d/abstract_polygon_2d_editor.h"
 
-class AcceptDialog;
+class Dialog;
 class HBoxContainer;
 class NavigationPolygon;
 class NavigationRegion2D;
@@ -48,7 +48,7 @@ class NavigationRegion2DEditor : public AbstractPolygon2DEditor {
 
 	Ref<NavigationPolygon> _ensure_navpoly() const;
 
-	AcceptDialog *err_dialog = nullptr;
+	Dialog *err_dialog = nullptr;
 
 	HBoxContainer *bake_hbox = nullptr;
 	Button *button_bake = nullptr;

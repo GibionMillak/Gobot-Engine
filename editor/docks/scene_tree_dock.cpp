@@ -5407,12 +5407,12 @@ SceneTreeDock::SceneTreeDock(Node *p_scene_root, EditorSelection *p_editor_selec
 	add_child(reparent_dialog);
 	reparent_dialog->connect("reparent_requested", callable_mp(this, &SceneTreeDock::_node_reparent));
 
-	accept = memnew(AcceptDialog);
+	accept = memnew(Dialog);
 	add_child(accept);
 
 	set_process_shortcut_input(true);
 
-	delete_dialog = memnew(ConfirmationDialog);
+	delete_dialog = memnew(Dialog(true));
 	delete_dialog->set_ok_button_text(TTRC("Delete"));
 	add_child(delete_dialog);
 	delete_dialog->connect(SceneStringName(confirmed), callable_mp(this, &SceneTreeDock::_delete_confirm).bind(false));
@@ -5427,12 +5427,12 @@ SceneTreeDock::SceneTreeDock(Node *p_scene_root, EditorSelection *p_editor_selec
 	delete_tracks_checkbox->set_pressed(true);
 	vb->add_child(delete_tracks_checkbox);
 
-	editable_instance_remove_dialog = memnew(ConfirmationDialog);
+	editable_instance_remove_dialog = memnew(Dialog(true));
 	editable_instance_remove_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(editable_instance_remove_dialog);
 	editable_instance_remove_dialog->connect(SceneStringName(confirmed), callable_mp(this, &SceneTreeDock::_toggle_editable_children_from_selection));
 
-	placeholder_editable_instance_remove_dialog = memnew(ConfirmationDialog);
+	placeholder_editable_instance_remove_dialog = memnew(Dialog(true));
 	placeholder_editable_instance_remove_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(placeholder_editable_instance_remove_dialog);
 	placeholder_editable_instance_remove_dialog->connect(SceneStringName(confirmed), callable_mp(this, &SceneTreeDock::_toggle_placeholder_from_selection));
@@ -5458,7 +5458,7 @@ SceneTreeDock::SceneTreeDock(Node *p_scene_root, EditorSelection *p_editor_selec
 	add_child(menu_properties);
 	menu_properties->connect(SceneStringName(id_pressed), callable_mp(this, &SceneTreeDock::_property_selected));
 
-	clear_inherit_confirm = memnew(ConfirmationDialog);
+	clear_inherit_confirm = memnew(Dialog(true));
 	clear_inherit_confirm->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	clear_inherit_confirm->set_text(TTRC("Clear Inheritance? (No Undo!)"));
 	clear_inherit_confirm->set_ok_button_text(TTRC("Clear"));

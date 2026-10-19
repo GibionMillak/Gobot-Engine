@@ -387,6 +387,44 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 #endif
 		p_theme->set_constant("click_margin", "BaseButton", click_margin);
 
+		// PrimaryButton.
+		{
+			p_theme->set_type_variation("PrimaryButton", "Button");
+			const Color primary_text_color = p_config.accent_color.get_luminance() > 0.5 ? Color(0, 0, 0) : Color(1, 1, 1);
+			Ref<StyleBoxFlat> primary_normal = p_config.button_style->duplicate();
+			primary_normal->set_bg_color(p_config.accent_color);
+			primary_normal->set_border_color(p_config.accent_color);
+			p_theme->set_stylebox(CoreStringName(normal), "PrimaryButton", primary_normal);
+
+			Ref<StyleBoxFlat> primary_hover = primary_normal->duplicate();
+			primary_hover->set_bg_color(p_config.accent_color.lightened(0.1));
+			p_theme->set_stylebox(SceneStringName(hover), "PrimaryButton", primary_hover);
+
+			Ref<StyleBoxFlat> primary_pressed = primary_normal->duplicate();
+			primary_pressed->set_bg_color(p_config.accent_color.darkened(0.1));
+			p_theme->set_stylebox(SceneStringName(pressed), "PrimaryButton", primary_pressed);
+			p_theme->set_stylebox("hover_pressed", "PrimaryButton", primary_pressed);
+
+			Ref<StyleBoxFlat> primary_focus = p_config.button_style_focus->duplicate();
+			primary_focus->set_border_color(primary_text_color);
+			p_theme->set_stylebox("focus", "PrimaryButton", primary_focus);
+
+			Ref<StyleBoxFlat> primary_disabled = primary_normal->duplicate();
+			primary_disabled->set_bg_color(p_config.accent_color.lerp(p_config.base_color, 0.7));
+			primary_disabled->set_border_color(primary_disabled->get_bg_color());
+			p_theme->set_stylebox("disabled", "PrimaryButton", primary_disabled);
+
+			const StringName primary_colors[] = {
+				"font_color", "font_hover_color", "font_focus_color", "font_pressed_color", "font_hover_pressed_color",
+				"icon_normal_color", "icon_hover_color", "icon_focus_color", "icon_pressed_color", "icon_hover_pressed_color",
+			};
+			for (const StringName &color_name : primary_colors) {
+				p_theme->set_color(color_name, "PrimaryButton", primary_text_color);
+			}
+			p_theme->set_color("font_disabled_color", "PrimaryButton", Color(primary_text_color, 0.5));
+			p_theme->set_color("icon_disabled_color", "PrimaryButton", Color(primary_text_color, 0.5));
+		}
+
 		// MenuBar.
 
 		p_theme->set_stylebox(CoreStringName(normal), "MenuBar", p_config.button_style);
@@ -1032,12 +1070,12 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_font("title_font", "Window", p_theme->get_font(SNAME("title"), EditorStringName(EditorFonts)));
 		p_theme->set_font_size("title_font_size", "Window", p_theme->get_font_size(SNAME("title_size"), EditorStringName(EditorFonts)));
 
-		// AcceptDialog.
-		p_theme->set_stylebox(SceneStringName(panel), "AcceptDialog", p_config.dialog_style);
-		p_theme->set_constant("buttons_separation", "AcceptDialog", EDSCALE_RND(8));
+		// Dialog.
+		p_theme->set_stylebox(SceneStringName(panel), "Dialog", p_config.dialog_style);
+		p_theme->set_constant("buttons_separation", "Dialog", EDSCALE_RND(8));
 		// Make buttons with short texts such as "OK" easier to click/tap.
-		p_theme->set_constant("buttons_min_width", "AcceptDialog", EDSCALE_RND(p_config.dialogs_buttons_min_size.x));
-		p_theme->set_constant("buttons_min_height", "AcceptDialog", EDSCALE_RND(p_config.dialogs_buttons_min_size.y));
+		p_theme->set_constant("buttons_min_width", "Dialog", EDSCALE_RND(p_config.dialogs_buttons_min_size.x));
+		p_theme->set_constant("buttons_min_height", "Dialog", EDSCALE_RND(p_config.dialogs_buttons_min_size.y));
 
 		// FileDialog.
 		p_theme->set_icon("folder", "FileDialog", p_theme->get_icon("Folder", EditorStringName(EditorIcons)));

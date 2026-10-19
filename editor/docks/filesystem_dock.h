@@ -38,13 +38,13 @@
 #include "editor/script/script_editor_plugin.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/control.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/item_list.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/split_container.h"
 #include "scene/gui/tree.h"
 
-class AcceptDialog;
+class Dialog;
 class CreateDialog;
 class DependencyEditor;
 class DependencyEditorOwners;
@@ -203,14 +203,14 @@ private:
 	EditorDirDialog *move_dialog = nullptr;
 	DirectoryCreateDialog *make_dir_dialog = nullptr;
 
-	ConfirmationDialog *overwrite_dialog = nullptr;
+	Dialog *overwrite_dialog = nullptr;
 	ScrollContainer *overwrite_dialog_scroll = nullptr;
 	Label *overwrite_dialog_header = nullptr;
 	Label *overwrite_dialog_footer = nullptr;
 	Label *overwrite_dialog_file_list = nullptr;
 
-	ConfirmationDialog *conversion_dialog = nullptr;
-	ConfirmationDialog *move_confirm_dialog = nullptr;
+	Dialog *conversion_dialog = nullptr;
+	Dialog *move_confirm_dialog = nullptr;
 	CheckBox *confirm_before_move_checkbox = nullptr;
 	Label *move_confirm_dialog_label = nullptr;
 
@@ -219,7 +219,7 @@ private:
 	ShaderCreateDialog *make_shader_dialog = nullptr;
 	CreateDialog *new_resource_dialog = nullptr;
 
-	AcceptDialog *unrecognized_ext_dialog = nullptr;
+	Dialog *unrecognized_ext_dialog = nullptr;
 
 	String confirm_move_to_dir;
 	bool confirm_to_copy = false;

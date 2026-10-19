@@ -36,7 +36,7 @@
 #include "scene/3d/skeleton_3d.h"
 #include "scene/animation/animation_mixer.h"
 #include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/tree.h"
 
 void EditorPropertyRootMotion::_confirmed() {
@@ -202,7 +202,7 @@ EditorPropertyRootMotion::EditorPropertyRootMotion() {
 	clear->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyRootMotion::_node_clear));
 	hbc->add_child(clear);
 
-	filter_dialog = memnew(ConfirmationDialog);
+	filter_dialog = memnew(Dialog(true));
 	add_child(filter_dialog);
 	filter_dialog->set_title(TTR("Edit Filtered Tracks:"));
 	filter_dialog->connect(SceneStringName(confirmed), callable_mp(this, &EditorPropertyRootMotion::_confirmed));

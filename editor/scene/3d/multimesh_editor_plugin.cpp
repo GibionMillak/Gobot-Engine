@@ -282,7 +282,7 @@ MultiMeshEditor::MultiMeshEditor() {
 	options->get_popup()->add_item(TTRC("Populate Surface"));
 	options->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &MultiMeshEditor::_menu_option));
 
-	populate_dialog = memnew(ConfirmationDialog);
+	populate_dialog = memnew(Dialog(true));
 	populate_dialog->set_title(TTRC("Populate MultiMesh"));
 	add_child(populate_dialog);
 
@@ -364,7 +364,7 @@ MultiMeshEditor::MultiMeshEditor() {
 
 	_last_pp_node = nullptr;
 
-	err_dialog = memnew(AcceptDialog);
+	err_dialog = memnew(Dialog);
 	err_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(err_dialog);
 }

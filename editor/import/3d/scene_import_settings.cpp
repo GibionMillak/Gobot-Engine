@@ -1365,7 +1365,7 @@ void SceneImportSettingsDialog::_re_import() {
 }
 
 void SceneImportSettingsDialog::_update_theme_item_cache() {
-	ConfirmationDialog::_update_theme_item_cache();
+	Dialog::_update_theme_item_cache();
 	theme_cache.light_1_icon = get_editor_theme_icon(SNAME("MaterialPreviewLight1"));
 	theme_cache.light_2_icon = get_editor_theme_icon(SNAME("MaterialPreviewLight2"));
 	theme_cache.rotate_icon = get_editor_theme_icon(SNAME("PreviewRotate"));
@@ -1686,7 +1686,8 @@ void SceneImportSettingsDialog::_save_dir_confirm() {
 	}
 }
 
-SceneImportSettingsDialog::SceneImportSettingsDialog() {
+SceneImportSettingsDialog::SceneImportSettingsDialog() :
+		Dialog(true) {
 	singleton = this;
 	_resource_importer_scene = memnew(ResourceImporterScene("PackedScene"));
 
@@ -1949,7 +1950,7 @@ SceneImportSettingsDialog::SceneImportSettingsDialog() {
 	set_ok_button_text(TTR("Reimport"));
 	set_cancel_button_text(TTR("Close"));
 
-	external_paths = memnew(ConfirmationDialog);
+	external_paths = memnew(Dialog(true));
 	add_child(external_paths);
 	external_path_tree = memnew(Tree);
 	external_paths->add_child(external_path_tree);

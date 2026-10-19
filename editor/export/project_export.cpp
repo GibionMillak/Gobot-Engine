@@ -1607,7 +1607,8 @@ void ProjectExportDialog::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "export_path"), "set_export_path", "get_export_path");
 }
 
-ProjectExportDialog::ProjectExportDialog() {
+ProjectExportDialog::ProjectExportDialog() :
+		Dialog(true) {
 	set_title(TTRC("Export"));
 	set_flag(FLAG_MAXIMIZE_DISABLED, false);
 	set_clamp_to_embedder(true);
@@ -1897,7 +1898,7 @@ ProjectExportDialog::ProjectExportDialog() {
 	patch_dialog->connect("file_selected", callable_mp(this, &ProjectExportDialog::_patch_file_selected));
 	add_child(patch_dialog);
 
-	patch_erase = memnew(ConfirmationDialog);
+	patch_erase = memnew(Dialog(true));
 	patch_erase->set_ok_button_text(TTRC("Delete"));
 	patch_erase->connect(SceneStringName(confirmed), callable_mp(this, &ProjectExportDialog::_patch_delete_confirmed));
 	add_child(patch_erase);
@@ -2021,7 +2022,7 @@ ProjectExportDialog::ProjectExportDialog() {
 
 	// Deletion dialog.
 
-	delete_confirm = memnew(ConfirmationDialog);
+	delete_confirm = memnew(Dialog(true));
 	add_child(delete_confirm);
 	delete_confirm->set_ok_button_text(TTRC("Delete"));
 	delete_confirm->connect(SceneStringName(confirmed), callable_mp(this, &ProjectExportDialog::_delete_preset_confirm));
@@ -2033,13 +2034,13 @@ ProjectExportDialog::ProjectExportDialog() {
 	get_ok_button()->set_tooltip_text(TTRC("Export the project resources as a PCK or ZIP package. This is not a playable build, only the project data without a Godot executable."));
 	get_ok_button()->set_disabled(true);
 
-	export_button = add_button(TTRC("Export Project..."), !DisplayServer::get_singleton()->get_swap_cancel_ok(), "export");
+	export_button = add_button(TTRC("Export Project..."), true, "export");
 	export_button->set_tooltip_text(TTRC("Export the project as a playable build (Godot executable and project data) for the selected preset."));
 	export_button->connect(SceneStringName(pressed), callable_mp(this, &ProjectExportDialog::_export_project));
 	// Disable initially before we select a valid preset.
 	export_button->set_disabled(true);
 
-	export_all_dialog = memnew(ConfirmationDialog);
+	export_all_dialog = memnew(Dialog(true));
 	export_all_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(export_all_dialog);
 	export_all_dialog->set_title(TTRC("Export All"));
@@ -2049,7 +2050,7 @@ ProjectExportDialog::ProjectExportDialog() {
 	export_all_dialog->add_button(TTRC("Release"), true, "release");
 	export_all_dialog->connect("custom_action", callable_mp(this, &ProjectExportDialog::_export_all_dialog_action));
 
-	export_all_button = add_button(TTRC("Export All..."), !DisplayServer::get_singleton()->get_swap_cancel_ok(), "export");
+	export_all_button = add_button(TTRC("Export All..."), true, "export");
 	export_all_button->connect(SceneStringName(pressed), callable_mp(this, &ProjectExportDialog::_export_all_dialog));
 	export_all_button->set_disabled(true);
 
@@ -2085,7 +2086,7 @@ ProjectExportDialog::ProjectExportDialog() {
 	export_templates_error->add_child(export_error2);
 	export_error2->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_WORD_ELLIPSIS);
 
-	result_dialog = memnew(AcceptDialog);
+	result_dialog = memnew(Dialog);
 	result_dialog->set_title(TTRC("Project Export"));
 	result_dialog_log = memnew(RichTextLabel);
 	result_dialog_log->set_custom_minimum_size(Size2(300, 80) * EDSCALE);

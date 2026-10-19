@@ -39,7 +39,7 @@
 class BaseButton;
 class Button;
 class ButtonGroup;
-class ConfirmationDialog;
+class Dialog;
 class EditorZoomWidget;
 class FilterLineEdit;
 class HSlider;
@@ -103,7 +103,7 @@ class GridMapEditor : public EditorDock {
 	Button *mode_list = nullptr;
 	FilterLineEdit *search_box = nullptr;
 	HSlider *size_slider = nullptr;
-	ConfirmationDialog *settings_dialog = nullptr;
+	Dialog *settings_dialog = nullptr;
 	VBoxContainer *settings_vbc = nullptr;
 	SpinBox *settings_pick_distance = nullptr;
 	Label *spin_box_label = nullptr;

@@ -58,7 +58,7 @@
 #include "scene/gui/color_picker_shape.h"
 #include "scene/gui/color_rect.h"
 #include "scene/gui/control.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/file_dialog.h"
 #include "scene/gui/flow_container.h"
 #include "scene/gui/foldable_container.h"
@@ -524,8 +524,7 @@ void register_scene_types() {
 	GDREGISTER_VIRTUAL_CLASS(VideoStream);
 
 #ifndef ADVANCED_GUI_DISABLED
-	GDREGISTER_CLASS(AcceptDialog);
-	GDREGISTER_CLASS(ConfirmationDialog);
+	GDREGISTER_CLASS(Dialog);
 
 	GDREGISTER_CLASS(FileDialog);
 
@@ -565,11 +564,6 @@ void register_scene_types() {
 
 	OS::get_singleton()->yield(); // may take time to init
 
-	int swap_cancel_ok = GLOBAL_DEF(PropertyInfo(Variant::INT, "gui/common/swap_cancel_ok", PROPERTY_HINT_ENUM, "Auto,Cancel First,OK First"), 0);
-	if (DisplayServer::get_singleton() && swap_cancel_ok == 0) {
-		swap_cancel_ok = DisplayServer::get_singleton()->get_swap_cancel_ok() ? 2 : 1;
-	}
-	AcceptDialog::set_swap_cancel_ok(swap_cancel_ok == 2);
 #endif
 
 	int root_dir = GLOBAL_GET("internationalization/rendering/root_node_layout_direction");

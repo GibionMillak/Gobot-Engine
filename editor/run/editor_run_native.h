@@ -31,7 +31,7 @@
 #pragma once
 
 #include "scene/gui/box_container.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/rich_text_label.h"
 
@@ -39,8 +39,8 @@ class EditorRunNative : public HBoxContainer {
 	GDCLASS(EditorRunNative, HBoxContainer);
 
 	RichTextLabel *result_dialog_log = nullptr;
-	AcceptDialog *result_dialog = nullptr;
-	ConfirmationDialog *run_native_confirm = nullptr;
+	Dialog *result_dialog = nullptr;
+	Dialog *run_native_confirm = nullptr;
 	bool run_confirmed = false;
 
 	MenuButton *remote_debug = nullptr;

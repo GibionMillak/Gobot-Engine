@@ -4685,7 +4685,7 @@ FileSystemDock::FileSystemDock() {
 	move_dialog->connect("move_pressed", callable_mp(this, &FileSystemDock::_move_operation_confirm).bind(false, OVERWRITE_UNDECIDED));
 	move_dialog->connect("copy_pressed", callable_mp(this, &FileSystemDock::_move_operation_confirm).bind(true, OVERWRITE_UNDECIDED));
 
-	overwrite_dialog = memnew(ConfirmationDialog);
+	overwrite_dialog = memnew(Dialog(true));
 	add_child(overwrite_dialog);
 	overwrite_dialog->set_ok_button_text(TTRC("Overwrite"));
 	overwrite_dialog->add_button(TTRC("Keep Both"), true)->connect(SceneStringName(pressed), callable_mp(this, &FileSystemDock::_overwrite_dialog_action).bind(false));
@@ -4730,13 +4730,13 @@ FileSystemDock::FileSystemDock() {
 	new_resource_dialog->set_base_type("Resource");
 	new_resource_dialog->connect("create", callable_mp(this, &FileSystemDock::_resource_created));
 
-	conversion_dialog = memnew(ConfirmationDialog);
+	conversion_dialog = memnew(Dialog(true));
 	conversion_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(conversion_dialog);
 	conversion_dialog->set_ok_button_text(TTRC("Convert"));
 	conversion_dialog->connect(SceneStringName(confirmed), callable_mp(this, &FileSystemDock::_convert_dialog_action));
 
-	move_confirm_dialog = memnew(ConfirmationDialog);
+	move_confirm_dialog = memnew(Dialog(true));
 	add_child(move_confirm_dialog);
 	move_confirm_dialog->connect(SceneStringName(confirmed), callable_mp(this, &FileSystemDock::_move_confirm));
 
@@ -4748,7 +4748,7 @@ FileSystemDock::FileSystemDock() {
 	confirm_before_move_checkbox->set_tooltip_text(TTRC("This dialog can be skipped by holding shift or enabled/disabled in the Editor Settings: Docks > FileSystem > Ask Before Moving Files."));
 	vb->add_child(confirm_before_move_checkbox);
 
-	unrecognized_ext_dialog = memnew(AcceptDialog);
+	unrecognized_ext_dialog = memnew(Dialog);
 	unrecognized_ext_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(unrecognized_ext_dialog);
 	unrecognized_ext_dialog->set_text(TTRC("This file extension is not recognized by the editor.\nIf you want to rename it anyway, use your operating system's file manager.\nAfter renaming to an unknown extension, the file won't be shown in the editor anymore.\nTo make the editor recognize this file extension, add it to one of the lists of extensions in Editor Settings > Docks > FileSystem."));

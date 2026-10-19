@@ -36,7 +36,8 @@
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/line_edit.h"
 
-AddMetadataDialog::AddMetadataDialog() {
+AddMetadataDialog::AddMetadataDialog() :
+		Dialog(true) {
 	VBoxContainer *vbc = memnew(VBoxContainer);
 	add_child(vbc);
 

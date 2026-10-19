@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class Button;
 class CheckBox;
@@ -40,8 +40,8 @@ class LineEdit;
 class OptionButton;
 class TextureRect;
 
-class ProjectDialog : public ConfirmationDialog {
-	GDCLASS(ProjectDialog, ConfirmationDialog);
+class ProjectDialog : public Dialog {
+	GDCLASS(ProjectDialog, Dialog);
 
 public:
 	enum Mode {
@@ -72,7 +72,7 @@ private:
 
 	Mode mode = MODE_NEW;
 	bool is_folder_empty = true;
-	ConfirmationDialog *nonempty_confirmation = nullptr;
+	Dialog *nonempty_confirmation = nullptr;
 
 	CheckButton *create_dir = nullptr;
 	Button *project_browse = nullptr;
@@ -102,7 +102,7 @@ private:
 
 	EditorFileDialog *fdialog_project = nullptr;
 	EditorFileDialog *fdialog_install = nullptr;
-	AcceptDialog *dialog_error = nullptr;
+	Dialog *dialog_error = nullptr;
 
 	String zip_path;
 	String zip_title;
@@ -145,7 +145,7 @@ private:
 	void _renderer_selected();
 	void _nonempty_confirmation_ok_pressed();
 
-	void ok_pressed() override;
+	void _on_confirmed() override;
 
 protected:
 	static void _bind_methods();

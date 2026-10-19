@@ -347,17 +347,17 @@ class AnimationMarkerEdit : public Control {
 	void _rename_marker(const StringName &p_name);
 	void _delete_selected_markers();
 
-	ConfirmationDialog *marker_insert_confirm = nullptr;
+	Dialog *marker_insert_confirm = nullptr;
 	LineEdit *marker_insert_new_name = nullptr;
 	ColorPickerButton *marker_insert_color = nullptr;
-	AcceptDialog *marker_insert_error_dialog = nullptr;
+	Dialog *marker_insert_error_dialog = nullptr;
 	float marker_insert_ofs = 0;
 
-	ConfirmationDialog *marker_rename_confirm = nullptr;
+	Dialog *marker_rename_confirm = nullptr;
 	LineEdit *marker_rename_new_name = nullptr;
 	StringName marker_rename_prev_name;
 
-	AcceptDialog *marker_rename_error_dialog = nullptr;
+	Dialog *marker_rename_error_dialog = nullptr;
 
 	bool should_show_all_marker_names = false;
 
@@ -615,7 +615,7 @@ class AnimationTrackEditor : public VBoxContainer {
 	bool read_only = false;
 	Node *root = nullptr;
 
-	AcceptDialog *read_only_dialog = nullptr;
+	Dialog *read_only_dialog = nullptr;
 
 	MenuButton *edit = nullptr;
 
@@ -713,7 +713,7 @@ class AnimationTrackEditor : public VBoxContainer {
 	Label *insert_confirm_text = nullptr;
 	CheckBox *insert_confirm_bezier = nullptr;
 	CheckBox *insert_confirm_reset = nullptr;
-	ConfirmationDialog *insert_confirm = nullptr;
+	Dialog *insert_confirm = nullptr;
 	bool insert_queue = false;
 	List<InsertData> insert_data;
 
@@ -805,28 +805,28 @@ class AnimationTrackEditor : public VBoxContainer {
 
 	////////////// edit menu stuff
 
-	ConfirmationDialog *bake_dialog = nullptr;
+	Dialog *bake_dialog = nullptr;
 	CheckBox *bake_trs = nullptr;
 	CheckBox *bake_blendshape = nullptr;
 	CheckBox *bake_value = nullptr;
 	SpinBox *bake_fps = nullptr;
 
-	ConfirmationDialog *optimize_dialog = nullptr;
+	Dialog *optimize_dialog = nullptr;
 	SpinBox *optimize_velocity_error = nullptr;
 	SpinBox *optimize_angular_error = nullptr;
 	SpinBox *optimize_precision_error = nullptr;
 
-	ConfirmationDialog *cleanup_dialog = nullptr;
+	Dialog *cleanup_dialog = nullptr;
 	CheckBox *cleanup_keys_with_trimming_head = nullptr;
 	CheckBox *cleanup_keys_with_trimming_end = nullptr;
 	CheckBox *cleanup_keys = nullptr;
 	CheckBox *cleanup_tracks = nullptr;
 	CheckBox *cleanup_all = nullptr;
 
-	ConfirmationDialog *scale_dialog = nullptr;
+	Dialog *scale_dialog = nullptr;
 	SpinBox *scale = nullptr;
 
-	ConfirmationDialog *ease_dialog = nullptr;
+	Dialog *ease_dialog = nullptr;
 	OptionButton *transition_selection = nullptr;
 	OptionButton *ease_selection = nullptr;
 	SpinBox *ease_fps = nullptr;
@@ -863,7 +863,7 @@ class AnimationTrackEditor : public VBoxContainer {
 	void _scene_changed();
 	void _selection_changed();
 
-	ConfirmationDialog *track_copy_dialog = nullptr;
+	Dialog *track_copy_dialog = nullptr;
 	Tree *track_copy_select = nullptr;
 
 	struct TrackClipboard {

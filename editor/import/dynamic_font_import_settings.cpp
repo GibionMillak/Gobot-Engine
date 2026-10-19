@@ -995,7 +995,8 @@ DynamicFontImportSettingsDialog *DynamicFontImportSettingsDialog::get_singleton(
 	return singleton;
 }
 
-DynamicFontImportSettingsDialog::DynamicFontImportSettingsDialog() {
+DynamicFontImportSettingsDialog::DynamicFontImportSettingsDialog() :
+		Dialog(true) {
 	singleton = this;
 
 	options_general.push_back(ResourceImporter::ImportOption(PropertyInfo(Variant::NIL, "Rendering", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_GROUP), Variant()));

@@ -88,8 +88,8 @@
 #include "scene/resources/style_box_texture.h"
 #include "servers/rendering/rendering_server.h"
 
-class SnapDialog : public ConfirmationDialog {
-	GDCLASS(SnapDialog, ConfirmationDialog);
+class SnapDialog : public Dialog {
+	GDCLASS(SnapDialog, Dialog);
 
 	friend class CanvasItemEditor;
 
@@ -104,7 +104,8 @@ class SnapDialog : public ConfirmationDialog {
 	SpinBox *scale_step;
 
 public:
-	SnapDialog() {
+	SnapDialog() :
+		Dialog(true) {
 		const int SPIN_BOX_GRID_RANGE = 16384;
 		const int SPIN_BOX_ROTATION_RANGE = 360;
 		const real_t SPIN_BOX_SCALE_MIN = 0.01;
@@ -5244,10 +5245,10 @@ CanvasItemEditorViewport::CanvasItemEditorViewport(CanvasItemEditor *p_canvas_it
 	canvas_item_editor = p_canvas_item_editor;
 	preview_node = memnew(Control);
 
-	accept = memnew(AcceptDialog);
+	accept = memnew(Dialog);
 	EditorNode::get_singleton()->get_gui_base()->add_child(accept);
 
-	texture_node_type_selector = memnew(AcceptDialog);
+	texture_node_type_selector = memnew(Dialog);
 	EditorNode::get_singleton()->get_gui_base()->add_child(texture_node_type_selector);
 	texture_node_type_selector->connect(SceneStringName(confirmed), callable_mp(this, &CanvasItemEditorViewport::_on_change_type_confirmed));
 	texture_node_type_selector->connect("canceled", callable_mp(this, &CanvasItemEditorViewport::_remove_preview));

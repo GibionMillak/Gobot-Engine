@@ -37,7 +37,7 @@
 
 class HBoxContainer;
 class MenuButton;
-class ConfirmationDialog;
+class Dialog;
 
 class Path3DGizmo : public EditorNode3DGizmo {
 	GDCLASS(Path3DGizmo, EditorNode3DGizmo);
@@ -126,7 +126,7 @@ class Path3DEditorPlugin : public EditorPlugin {
 	MenuButton *handle_menu = nullptr;
 
 	Button *create_curve_button = nullptr;
-	ConfirmationDialog *clear_points_dialog = nullptr;
+	Dialog *clear_points_dialog = nullptr;
 
 	enum Mode {
 		MODE_CREATE,

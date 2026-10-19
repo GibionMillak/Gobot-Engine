@@ -33,7 +33,7 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/plugins/editor_plugin.h"
 
-class ConfirmationDialog;
+class Dialog;
 class EditorFileDialog;
 class EditorInspector;
 class EditorZoomWidget;
@@ -88,7 +88,7 @@ class MeshLibraryEditor : public EditorDock {
 	Timer *update_items_delay = nullptr;
 
 	EditorFileDialog *file = nullptr;
-	ConfirmationDialog *cd_update = nullptr;
+	Dialog *cd_update = nullptr;
 
 	bool apply_xforms = false;
 	bool import_update = false;

@@ -47,7 +47,7 @@
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/control.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 TileSetEditor *TileSetEditor::singleton = nullptr;
 
@@ -1013,7 +1013,7 @@ TileSetEditor::TileSetEditor() {
 
 void TileSourceInspectorPlugin::_show_id_edit_dialog(Object *p_for_source) {
 	if (!id_edit_dialog) {
-		id_edit_dialog = memnew(ConfirmationDialog);
+		id_edit_dialog = memnew(Dialog(true));
 		TileSetEditor::get_singleton()->add_child(id_edit_dialog);
 
 		VBoxContainer *vbox = memnew(VBoxContainer);

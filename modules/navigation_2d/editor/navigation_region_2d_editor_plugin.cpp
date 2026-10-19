@@ -35,7 +35,7 @@
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/2d/navigation/navigation_region_2d.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/main/timer.h"
 
 Ref<NavigationPolygon> NavigationRegion2DEditor::_ensure_navpoly() const {
@@ -171,7 +171,7 @@ NavigationRegion2DEditor::NavigationRegion2DEditor() {
 	}
 	rebake_timer->connect("timeout", callable_mp(this, &NavigationRegion2DEditor::_rebake_timer_timeout));
 
-	err_dialog = memnew(AcceptDialog);
+	err_dialog = memnew(Dialog);
 	err_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(err_dialog);
 	node = nullptr;

@@ -39,7 +39,8 @@
 #include "scene/gui/check_box.h"
 #include "scene/gui/label.h"
 
-ProjectCompatibilityDialog::ProjectCompatibilityDialog() {
+ProjectCompatibilityDialog::ProjectCompatibilityDialog() :
+		Dialog(true) {
 	set_ok_button_text(TTRC("Open Anyway"));
 	set_title(TTRC("Project Compatibility"));
 

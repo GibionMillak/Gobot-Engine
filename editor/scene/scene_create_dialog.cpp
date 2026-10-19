@@ -192,7 +192,8 @@ Node *SceneCreateDialog::create_scene_root() {
 	return root;
 }
 
-SceneCreateDialog::SceneCreateDialog() {
+SceneCreateDialog::SceneCreateDialog() :
+		Dialog(true) {
 	select_node_dialog = memnew(CreateDialog);
 	add_child(select_node_dialog);
 	select_node_dialog->set_base_type("Node");

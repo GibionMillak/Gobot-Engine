@@ -1112,7 +1112,7 @@ void EditorBuildProfileManager::_action_confirm() {
 }
 
 void EditorBuildProfileManager::_hide_requested() {
-	_cancel_pressed(); // From AcceptDialog.
+	_cancel_pressed(); // From Dialog.
 }
 
 void EditorBuildProfileManager::_fill_classes_from(TreeItem *p_parent, const String &p_class, const String &p_selected) {
@@ -1403,7 +1403,7 @@ EditorBuildProfileManager::EditorBuildProfileManager() {
 	description_bit->connect("request_hide", callable_mp(this, &EditorBuildProfileManager::_hide_requested));
 	main_vbc->add_margin_child(TTRC("Description:"), description_bit, false);
 
-	confirm_dialog = memnew(ConfirmationDialog);
+	confirm_dialog = memnew(Dialog(true));
 	confirm_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(confirm_dialog);
 	confirm_dialog->set_title(TTRC("Please Confirm:"));

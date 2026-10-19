@@ -30,14 +30,14 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class CheckBox;
 class Label;
 class VBoxContainer;
 
-class ProjectCompatibilityDialog : public ConfirmationDialog {
-	GDCLASS(ProjectCompatibilityDialog, ConfirmationDialog);
+class ProjectCompatibilityDialog : public Dialog {
+	GDCLASS(ProjectCompatibilityDialog, Dialog);
 
 public:
 	enum Reason {

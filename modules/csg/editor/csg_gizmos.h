@@ -36,7 +36,7 @@
 #include "editor/scene/3d/node_3d_editor_gizmos.h"
 #include "scene/gui/control.h"
 
-class AcceptDialog;
+class Dialog;
 class Gizmo3DHelper;
 class MenuButton;
 
@@ -71,7 +71,7 @@ class CSGShapeEditor : public Control {
 
 	CSGShape3D *node = nullptr;
 	MenuButton *options = nullptr;
-	AcceptDialog *err_dialog = nullptr;
+	Dialog *err_dialog = nullptr;
 
 	void _menu_option(int p_option);
 

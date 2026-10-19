@@ -49,7 +49,7 @@
 #include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
 #include "scene/gui/check_box.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/flow_container.h"
 #include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
@@ -586,7 +586,7 @@ void FindInFilesSearchPanel::_on_rename_apply(bool p_confirm) {
 	}
 	if (!p_confirm) {
 		if (!rename_confirm) {
-			rename_confirm = memnew(ConfirmationDialog);
+			rename_confirm = memnew(Dialog(true));
 			rename_confirm->set_autowrap(true);
 			rename_confirm->set_text(TTRC("Symbol renaming is an experimental feature. It can be unreliable, and in worst case, cause data loss. Don't use without version control and/or backup."));
 			rename_confirm->set_ok_button_text(TTRC("I understand the risk"));
@@ -691,7 +691,7 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 		dont_show_checkbox->set_h_size_flags(Control::SIZE_SHRINK_CENTER);
 		confirm_vbox->add_child(dont_show_checkbox);
 
-		replace_all_confirm = memnew(ConfirmationDialog);
+		replace_all_confirm = memnew(Dialog(true));
 		replace_all_confirm->add_child(confirm_vbox);
 		replace_all_confirm->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 		replace_all_confirm->set_ok_button_text(TTRC("Replace all"));

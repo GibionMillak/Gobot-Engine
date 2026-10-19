@@ -31,7 +31,7 @@
 #pragma once
 
 #include "core/io/resource_importer.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/tab_container.h"
 #include "scene/gui/text_edit.h"
 #include "scene/gui/tree.h"
@@ -65,8 +65,8 @@ class EditorFileDialog;
 class EditorInspector;
 class EditorLocaleDialog;
 
-class DynamicFontImportSettingsDialog : public ConfirmationDialog {
-	GDCLASS(DynamicFontImportSettingsDialog, ConfirmationDialog)
+class DynamicFontImportSettingsDialog : public Dialog {
+	GDCLASS(DynamicFontImportSettingsDialog, Dialog)
 	friend class DynamicFontImportSettingsData;
 
 	enum ItemButton {

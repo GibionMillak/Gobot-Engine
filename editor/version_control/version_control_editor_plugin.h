@@ -67,9 +67,9 @@ private:
 	List<StringName> available_plugins;
 
 	PopupMenu *version_control_actions = nullptr;
-	ConfirmationDialog *metadata_dialog = nullptr;
+	Dialog *metadata_dialog = nullptr;
 	OptionButton *metadata_selection = nullptr;
-	AcceptDialog *set_up_dialog = nullptr;
+	Dialog *set_up_dialog = nullptr;
 	CheckButton *toggle_vcs_choice = nullptr;
 	OptionButton *set_up_choice = nullptr;
 	VBoxContainer *set_up_vbc = nullptr;
@@ -85,15 +85,15 @@ private:
 	Button *select_public_path_button = nullptr;
 	Button *select_private_path_button = nullptr;
 
-	AcceptDialog *discard_all_confirm = nullptr;
+	Dialog *discard_all_confirm = nullptr;
 
 	OptionButton *commit_list_size_button = nullptr;
 
-	AcceptDialog *branch_create_confirm = nullptr;
+	Dialog *branch_create_confirm = nullptr;
 	LineEdit *branch_create_name_input = nullptr;
 	Button *branch_create_ok = nullptr;
 
-	AcceptDialog *remote_create_confirm = nullptr;
+	Dialog *remote_create_confirm = nullptr;
 	LineEdit *remote_create_name_input = nullptr;
 	LineEdit *remote_create_url_input = nullptr;
 	Button *remote_create_ok = nullptr;
@@ -109,14 +109,14 @@ private:
 
 	OptionButton *branch_select = nullptr;
 	Button *branch_remove_button = nullptr;
-	AcceptDialog *branch_remove_confirm = nullptr;
+	Dialog *branch_remove_confirm = nullptr;
 
 	Button *fetch_button = nullptr;
 	Button *pull_button = nullptr;
 	Button *push_button = nullptr;
 	OptionButton *remote_select = nullptr;
 	Button *remote_remove_button = nullptr;
-	AcceptDialog *remote_remove_confirm = nullptr;
+	Dialog *remote_remove_confirm = nullptr;
 	MenuButton *extra_options = nullptr;
 	PopupMenu *extra_options_remove_branch_list = nullptr;
 	PopupMenu *extra_options_remove_remote_list = nullptr;

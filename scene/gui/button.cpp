@@ -32,7 +32,6 @@
 
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
-#include "scene/gui/dialogs.h"
 #include "scene/theme/theme_db.h"
 
 Size2 Button::get_minimum_size() const {
@@ -154,8 +153,6 @@ Ref<StyleBox> Button::_get_current_stylebox() const {
 
 void Button::_notification(int p_what) {
 	switch (p_what) {
-
-
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
 			queue_redraw();
 		} break;

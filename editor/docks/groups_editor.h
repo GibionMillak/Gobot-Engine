@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class Button;
 class CheckBox;
@@ -56,18 +56,18 @@ class GroupsEditor : public VBoxContainer {
 	Node *scene_root_node = nullptr;
 	SceneTree *scene_tree = nullptr;
 
-	ConfirmationDialog *add_group_dialog = nullptr;
+	Dialog *add_group_dialog = nullptr;
 	LineEdit *add_group_name = nullptr;
 	LineEdit *add_group_description = nullptr;
 	CheckButton *global_group_button = nullptr;
 	EditorValidationPanel *add_validation_panel = nullptr;
 
-	ConfirmationDialog *rename_group_dialog = nullptr;
+	Dialog *rename_group_dialog = nullptr;
 	LineEdit *rename_group = nullptr;
 	CheckBox *rename_check_box = nullptr;
 	EditorValidationPanel *rename_validation_panel = nullptr;
 
-	ConfirmationDialog *remove_group_dialog = nullptr;
+	Dialog *remove_group_dialog = nullptr;
 	CheckBox *remove_check_box = nullptr;
 	Label *remove_label = nullptr;
 

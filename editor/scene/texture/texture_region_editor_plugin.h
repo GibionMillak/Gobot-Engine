@@ -32,7 +32,7 @@
 
 #include "editor/inspector/editor_inspector.h"
 #include "editor/plugins/editor_plugin.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class AtlasTexture;
 class NinePatchRect;
@@ -43,8 +43,8 @@ class Sprite3D;
 class StyleBoxTexture;
 class ViewPanner;
 
-class TextureRegionEditor : public AcceptDialog {
-	GDCLASS(TextureRegionEditor, AcceptDialog);
+class TextureRegionEditor : public Dialog {
+	GDCLASS(TextureRegionEditor, Dialog);
 
 	enum SnapMode {
 		SNAP_NONE,

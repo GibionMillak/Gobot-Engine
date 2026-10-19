@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/scroll_container.h"
 
 class EditorAbout;
@@ -102,7 +102,7 @@ class ProjectManager : public Control {
 	void _show_about();
 	void _project_list_menu_option(int p_option);
 
-	AcceptDialog *error_dialog = nullptr;
+	Dialog *error_dialog = nullptr;
 
 	void _show_error(const String &p_message, const Size2 &p_min_size = Size2());
 	void _dim_window();
@@ -150,15 +150,15 @@ class ProjectManager : public Control {
 
 	EditorFileDialog *scan_dir = nullptr;
 
-	ConfirmationDialog *erase_ask = nullptr;
+	Dialog *erase_ask = nullptr;
 	Label *erase_ask_label = nullptr;
 	// Comment out for now until we have a better warning system to
 	// ensure users delete their project only.
 	//CheckBox *delete_project_contents = nullptr;
-	ConfirmationDialog *erase_missing_ask = nullptr;
-	ConfirmationDialog *multi_open_ask = nullptr;
-	ConfirmationDialog *multi_run_ask = nullptr;
-	ConfirmationDialog *open_recovery_mode_ask = nullptr;
+	Dialog *erase_missing_ask = nullptr;
+	Dialog *multi_open_ask = nullptr;
+	Dialog *multi_run_ask = nullptr;
+	Dialog *open_recovery_mode_ask = nullptr;
 
 	ProjectDialog *project_dialog = nullptr;
 
@@ -203,13 +203,13 @@ class ProjectManager : public Control {
 	PackedStringArray current_project_tags;
 	PackedStringArray forbidden_tag_characters{ "/", "\\", "-" };
 
-	ConfirmationDialog *tag_manage_dialog = nullptr;
+	Dialog *tag_manage_dialog = nullptr;
 	HFlowContainer *project_tags = nullptr;
 	HFlowContainer *all_tags = nullptr;
 	Label *tag_edit_error = nullptr;
 
 	Button *create_tag_btn = nullptr;
-	ConfirmationDialog *create_tag_dialog = nullptr;
+	Dialog *create_tag_dialog = nullptr;
 	LineEdit *new_tag_name = nullptr;
 	Label *tag_error = nullptr;
 

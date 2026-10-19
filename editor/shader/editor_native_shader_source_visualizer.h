@@ -30,13 +30,13 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class CodeHighlighter;
 class TabContainer;
 
-class EditorNativeShaderSourceVisualizer : public AcceptDialog {
-	GDCLASS(EditorNativeShaderSourceVisualizer, AcceptDialog)
+class EditorNativeShaderSourceVisualizer : public Dialog {
+	GDCLASS(EditorNativeShaderSourceVisualizer, Dialog)
 	TabContainer *versions = nullptr;
 	Ref<CodeHighlighter> syntax_highlighter;
 

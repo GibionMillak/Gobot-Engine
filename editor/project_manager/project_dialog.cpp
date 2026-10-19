@@ -540,15 +540,15 @@ void ProjectDialog::_renderer_selected() {
 
 void ProjectDialog::_nonempty_confirmation_ok_pressed() {
 	is_folder_empty = true;
-	ok_pressed();
+	_on_confirmed();
 }
 
-void ProjectDialog::ok_pressed() {
+void ProjectDialog::_on_confirmed() {
 	// Before we create a project, check that the target folder is empty.
 	// If not, we need to ask the user if they're sure they want to do this.
 	if (!is_folder_empty) {
 		if (!nonempty_confirmation) {
-			nonempty_confirmation = memnew(ConfirmationDialog);
+			nonempty_confirmation = memnew(Dialog(true));
 			nonempty_confirmation->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 			nonempty_confirmation->set_title(TTRC("Warning: This folder is not empty"));
 			nonempty_confirmation->set_text(TTRC("You are about to create a Godot project in a non-empty folder.\nThe entire contents of this folder will be imported as project resources!\n\nAre you sure you wish to continue?"));
@@ -1012,7 +1012,8 @@ void ProjectDialog::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("projects_updated"));
 }
 
-ProjectDialog::ProjectDialog() {
+ProjectDialog::ProjectDialog() :
+		Dialog(true) {
 	VBoxContainer *vb = memnew(VBoxContainer);
 	add_child(vb);
 
@@ -1215,19 +1216,19 @@ ProjectDialog::ProjectDialog() {
 	vb->add_child(edit_check_box);
 
 	project_name->connect(SceneStringName(text_changed), callable_mp(this, &ProjectDialog::_project_name_changed).unbind(1));
-	project_name->connect(SceneStringName(text_submitted), callable_mp(this, &ProjectDialog::ok_pressed).unbind(1));
+	project_name->connect(SceneStringName(text_submitted), callable_mp(this, &ProjectDialog::_on_confirmed).unbind(1));
 
 	project_path->connect(SceneStringName(text_changed), callable_mp(this, &ProjectDialog::_project_path_changed).unbind(1));
-	project_path->connect(SceneStringName(text_submitted), callable_mp(this, &ProjectDialog::ok_pressed).unbind(1));
+	project_path->connect(SceneStringName(text_submitted), callable_mp(this, &ProjectDialog::_on_confirmed).unbind(1));
 
 	install_path->connect(SceneStringName(text_changed), callable_mp(this, &ProjectDialog::_install_path_changed).unbind(1));
-	install_path->connect(SceneStringName(text_submitted), callable_mp(this, &ProjectDialog::ok_pressed).unbind(1));
+	install_path->connect(SceneStringName(text_submitted), callable_mp(this, &ProjectDialog::_on_confirmed).unbind(1));
 
 	fdialog_install->connect("dir_selected", callable_mp(this, &ProjectDialog::_install_path_selected));
 	fdialog_install->connect("file_selected", callable_mp(this, &ProjectDialog::_install_path_selected));
 
 	set_hide_on_ok(false);
 
-	dialog_error = memnew(AcceptDialog);
+	dialog_error = memnew(Dialog);
 	add_child(dialog_error);
 }

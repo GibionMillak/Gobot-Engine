@@ -30,14 +30,14 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class EditorValidationPanel;
 class Label;
 class LineEdit;
 
-class DirectoryCreateDialog : public ConfirmationDialog {
-	GDCLASS(DirectoryCreateDialog, ConfirmationDialog);
+class DirectoryCreateDialog : public Dialog {
+	GDCLASS(DirectoryCreateDialog, Dialog);
 
 public:
 	enum Mode {
@@ -59,7 +59,7 @@ private:
 	void _on_dir_path_changed();
 
 protected:
-	virtual void ok_pressed() override;
+	virtual void _on_confirmed() override;
 	virtual void _post_popup() override;
 
 public:

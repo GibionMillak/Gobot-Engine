@@ -30,15 +30,15 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class ConfigPluginDialog;
 class ProjectPluginManager;
 class TextureRect;
 class Tree;
 
-class ProjectPluginsDialog : public AcceptDialog {
-	GDCLASS(ProjectPluginsDialog, AcceptDialog);
+class ProjectPluginsDialog : public Dialog {
+	GDCLASS(ProjectPluginsDialog, Dialog);
 
 public:
 	ProjectPluginsDialog();

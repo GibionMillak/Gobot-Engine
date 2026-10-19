@@ -404,7 +404,7 @@ void GroupSettingsEditor::show_message(const String &p_message) {
 
 void GroupSettingsEditor::_show_remove_dialog() {
 	if (!remove_dialog) {
-		remove_dialog = memnew(ConfirmationDialog);
+		remove_dialog = memnew(Dialog(true));
 		remove_dialog->connect(SceneStringName(confirmed), callable_mp(this, &GroupSettingsEditor::_confirm_delete));
 
 		VBoxContainer *vbox = memnew(VBoxContainer);
@@ -434,7 +434,7 @@ void GroupSettingsEditor::_show_remove_dialog() {
 
 void GroupSettingsEditor::_show_rename_dialog() {
 	if (!rename_group_dialog) {
-		rename_group_dialog = memnew(ConfirmationDialog);
+		rename_group_dialog = memnew(Dialog(true));
 		rename_group_dialog->set_title(TTRC("Rename Group"));
 		rename_group_dialog->connect(SceneStringName(confirmed), callable_mp(this, &GroupSettingsEditor::_confirm_rename));
 
@@ -550,6 +550,6 @@ GroupSettingsEditor::GroupSettingsEditor() {
 
 	mc->add_child(tree, true);
 
-	message = memnew(AcceptDialog);
+	message = memnew(Dialog);
 	add_child(message);
 }

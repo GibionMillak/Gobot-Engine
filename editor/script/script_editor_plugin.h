@@ -49,8 +49,8 @@ class TabContainer;
 class Tree;
 class WindowWrapper;
 
-class ScriptEditorQuickOpen : public ConfirmationDialog {
-	GDCLASS(ScriptEditorQuickOpen, ConfirmationDialog);
+class ScriptEditorQuickOpen : public Dialog {
+	GDCLASS(ScriptEditorQuickOpen, Dialog);
 
 	FilterLineEdit *search_box = nullptr;
 	Tree *search_options = nullptr;
@@ -248,8 +248,8 @@ class DocumentEditorContainer : public MarginContainer {
 	DocumentOutline *document_outline = nullptr;
 	VSplitContainer *list_split = nullptr;
 	TabContainer *tab_container = nullptr;
-	AcceptDialog *error_dialog = nullptr;
-	ConfirmationDialog *erase_tab_confirm = nullptr;
+	Dialog *error_dialog = nullptr;
+	Dialog *erase_tab_confirm = nullptr;
 	FindReplaceBar *find_replace_bar = nullptr;
 
 	EditorFileDialog *file_dialog = nullptr;
@@ -311,7 +311,7 @@ class DocumentEditorContainer : public MarginContainer {
 	bool _has_script_tab() const;
 
 	Tree *disk_changed_list = nullptr;
-	ConfirmationDialog *disk_changed = nullptr;
+	Dialog *disk_changed = nullptr;
 
 	void _resave_scripts(const String &p_str);
 

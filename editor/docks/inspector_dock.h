@@ -35,7 +35,7 @@
 #include "editor/gui/create_dialog.h"
 #include "editor/inspector/editor_inspector.h"
 #include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/tree.h"
@@ -93,10 +93,10 @@ class InspectorDock : public EditorDock {
 
 	bool info_is_warning = false; // Display in yellow and use warning icon if true.
 	Button *info = nullptr;
-	AcceptDialog *info_dialog = nullptr;
+	Dialog *info_dialog = nullptr;
 
 	int current_option = -1;
-	ConfirmationDialog *unique_resources_confirmation = nullptr;
+	Dialog *unique_resources_confirmation = nullptr;
 	Tree *unique_resources_list_tree = nullptr;
 	LocalVector<StringName> properties_to_unique;
 

@@ -105,7 +105,7 @@ Vector2i FileDialog::_get_list_mode_icon_size() const {
 void FileDialog::_popup_base(const Rect2i &p_screen_rect) {
 #ifdef TOOLS_ENABLED
 	if (is_part_of_edited_scene()) {
-		ConfirmationDialog::_popup_base(p_screen_rect);
+		Dialog::_popup_base(p_screen_rect);
 		return;
 	}
 #endif
@@ -113,7 +113,7 @@ void FileDialog::_popup_base(const Rect2i &p_screen_rect) {
 	if (_should_use_native_popup()) {
 		_native_popup();
 	} else {
-		ConfirmationDialog::_popup_base(p_screen_rect);
+		Dialog::_popup_base(p_screen_rect);
 	}
 }
 
@@ -129,7 +129,7 @@ void FileDialog::set_visible(bool p_visible) {
 
 #ifdef TOOLS_ENABLED
 	if (is_part_of_edited_scene()) {
-		ConfirmationDialog::set_visible(p_visible);
+		Dialog::set_visible(p_visible);
 		return;
 	}
 #endif
@@ -139,7 +139,7 @@ void FileDialog::set_visible(bool p_visible) {
 			_native_popup();
 		}
 	} else {
-		ConfirmationDialog::set_visible(p_visible);
+		Dialog::set_visible(p_visible);
 	}
 }
 
@@ -260,7 +260,7 @@ void FileDialog::_notification(int p_what) {
 
 			// Replace the built-in dialog with the native one if it started visible.
 			if (is_visible() && _should_use_native_popup()) {
-				ConfirmationDialog::set_visible(false);
+				Dialog::set_visible(false);
 				_native_popup();
 			}
 		} break;
@@ -424,7 +424,7 @@ void FileDialog::_save_confirm_pressed() {
 }
 
 void FileDialog::_post_popup() {
-	ConfirmationDialog::_post_popup();
+	Dialog::_post_popup();
 	if (mode == FILE_MODE_SAVE_FILE) {
 		filename_edit->grab_focus(true);
 	} else {
@@ -625,16 +625,16 @@ void FileDialog::deselect_all() {
 	switch (mode) {
 		case FILE_MODE_OPEN_FILE:
 		case FILE_MODE_OPEN_FILES:
-			set_default_ok_text(ETR("Open"));
+			_set_default_ok_text(ETR("Open"));
 			break;
 		case FILE_MODE_OPEN_DIR:
-			set_default_ok_text(ETR("Select Current Folder"));
+			_set_default_ok_text(ETR("Select Current Folder"));
 			break;
 		case FILE_MODE_OPEN_ANY:
-			set_default_ok_text(ETR("Open"));
+			_set_default_ok_text(ETR("Open"));
 			break;
 		case FILE_MODE_SAVE_FILE:
-			set_default_ok_text(ETR("Save"));
+			_set_default_ok_text(ETR("Save"));
 			break;
 	}
 }
@@ -663,14 +663,14 @@ void FileDialog::_file_list_selected(int p_item) {
 	if (!d["dir"]) {
 		filename_edit->set_text(d["name"]);
 		if (mode == FILE_MODE_SAVE_FILE) {
-			set_default_ok_text(ETR("Save"));
+			_set_default_ok_text(ETR("Save"));
 		} else {
-			set_default_ok_text(ETR("Open"));
+			_set_default_ok_text(ETR("Open"));
 		}
 	} else if (mode != FILE_MODE_SAVE_FILE) {
 		filename_edit->set_text("");
 		if (mode == FILE_MODE_OPEN_DIR || mode == FILE_MODE_OPEN_ANY) {
-			set_default_ok_text(ETR("Select This Folder"));
+			_set_default_ok_text(ETR("Select This Folder"));
 		}
 	}
 
@@ -1392,24 +1392,24 @@ void FileDialog::set_file_mode(FileMode p_mode) {
 	mode = p_mode;
 	switch (mode) {
 		case FILE_MODE_OPEN_FILE:
-			set_default_ok_text(ETR("Open"));
+			_set_default_ok_text(ETR("Open"));
 			set_default_title(ETR("Open a File"));
 			break;
 		case FILE_MODE_OPEN_FILES:
-			set_default_ok_text(ETR("Open"));
+			_set_default_ok_text(ETR("Open"));
 			set_default_title(ETR("Open File(s)"));
 			break;
 		case FILE_MODE_OPEN_DIR:
-			set_default_ok_text(ETR("Select Current Folder"));
+			_set_default_ok_text(ETR("Select Current Folder"));
 			set_default_title(ETR("Open a Directory"));
 			break;
 		case FILE_MODE_OPEN_ANY:
-			set_default_ok_text(ETR("Open"));
+			_set_default_ok_text(ETR("Open"));
 			set_default_title(ETR("Open a File or Directory"));
 			make_dir_button->show();
 			break;
 		case FILE_MODE_SAVE_FILE:
-			set_default_ok_text(ETR("Save"));
+			_set_default_ok_text(ETR("Save"));
 			set_default_title(ETR("Save a File"));
 			break;
 	}
@@ -2255,7 +2255,7 @@ void FileDialog::_bind_methods() {
 	PropertyListHelper::register_base_helper(get_class_static(), &base_property_helper);
 
 	ADD_CLASS_DEPENDENCY("Button");
-	ADD_CLASS_DEPENDENCY("ConfirmationDialog");
+	ADD_CLASS_DEPENDENCY("Dialog");
 	ADD_CLASS_DEPENDENCY("LineEdit");
 	ADD_CLASS_DEPENDENCY("OptionButton");
 	ADD_CLASS_DEPENDENCY("Tree");
@@ -2321,7 +2321,7 @@ void FileDialog::set_use_native_dialog(bool p_native) {
 
 	// Replace the built-in dialog with the native one if it's currently visible.
 	if (is_inside_tree() && is_visible() && _should_use_native_popup()) {
-		ConfirmationDialog::set_visible(false);
+		Dialog::set_visible(false);
 		_native_popup();
 	}
 }
@@ -2330,11 +2330,12 @@ bool FileDialog::get_use_native_dialog() const {
 	return use_native_dialog;
 }
 
-FileDialog::FileDialog() {
+FileDialog::FileDialog() :
+		Dialog(true) {
 	set_default_title(ETR("Save a File"));
 	set_hide_on_ok(false);
 	set_size(Size2(640, 360));
-	set_default_ok_text(ETR("Save")); // Default mode text.
+	_set_default_ok_text(ETR("Save")); // Default mode text.
 	set_process_shortcut_input(true);
 
 	for (int i = 0; i < CUSTOMIZATION_MAX; i++) {
@@ -2625,17 +2626,17 @@ FileDialog::FileDialog() {
 	grid_select_options->set_columns(2);
 	main_vbox->add_child(grid_select_options);
 
-	confirm_save = memnew(ConfirmationDialog);
+	confirm_save = memnew(Dialog(true));
 	add_child(confirm_save, false, INTERNAL_MODE_FRONT);
 	confirm_save->connect(SceneStringName(confirmed), callable_mp(this, &FileDialog::_save_confirm_pressed));
 
-	delete_dialog = memnew(ConfirmationDialog);
+	delete_dialog = memnew(Dialog(true));
 	delete_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	delete_dialog->set_text(ETR("Delete the selected file?\nDepending on your filesystem configuration, the files will either be moved to the system trash or deleted permanently."));
 	add_child(delete_dialog, false, INTERNAL_MODE_FRONT);
 	delete_dialog->connect(SceneStringName(confirmed), callable_mp(this, &FileDialog::_delete_confirm));
 
-	make_dir_dialog = memnew(ConfirmationDialog);
+	make_dir_dialog = memnew(Dialog(true));
 	make_dir_dialog->set_title(ETR("Create Folder"));
 	add_child(make_dir_dialog, false, INTERNAL_MODE_FRONT);
 	make_dir_dialog->connect(SceneStringName(confirmed), callable_mp(this, &FileDialog::_make_dir_confirm));
@@ -2648,12 +2649,12 @@ FileDialog::FileDialog() {
 	makevb->add_margin_child(ETR("Name:"), new_dir_name);
 	make_dir_dialog->register_text_enter(new_dir_name);
 
-	mkdirerr = memnew(AcceptDialog);
+	mkdirerr = memnew(Dialog);
 	mkdirerr->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	mkdirerr->set_text(ETR("Could not create folder."));
 	add_child(mkdirerr, false, INTERNAL_MODE_FRONT);
 
-	exterr = memnew(AcceptDialog);
+	exterr = memnew(Dialog);
 	exterr->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	exterr->set_text(ETR("Invalid extension, or empty filename."));
 	add_child(exterr, false, INTERNAL_MODE_FRONT);

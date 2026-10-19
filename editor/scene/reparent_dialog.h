@@ -30,13 +30,13 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class CheckBox;
 class SceneTreeEditor;
 
-class ReparentDialog : public ConfirmationDialog {
-	GDCLASS(ReparentDialog, ConfirmationDialog);
+class ReparentDialog : public Dialog {
+	GDCLASS(ReparentDialog, Dialog);
 
 	SceneTreeEditor *tree = nullptr;
 	CheckBox *keep_transform = nullptr;

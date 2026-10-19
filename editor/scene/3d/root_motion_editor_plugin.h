@@ -33,7 +33,7 @@
 #include "editor/inspector/editor_inspector.h"
 
 class Button;
-class ConfirmationDialog;
+class Dialog;
 class Tree;
 
 class EditorPropertyRootMotion : public EditorProperty {
@@ -43,7 +43,7 @@ class EditorPropertyRootMotion : public EditorProperty {
 	Button *clear = nullptr;
 	NodePath base_hint;
 
-	ConfirmationDialog *filter_dialog = nullptr;
+	Dialog *filter_dialog = nullptr;
 	Tree *filters = nullptr;
 
 	void _confirmed();

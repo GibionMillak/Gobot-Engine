@@ -35,7 +35,7 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/plugins/editor_plugin.h"
 #include "scene/animation/animation_player.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/spin_box.h"
 #include "scene/gui/tree.h"
 #include "scene/resources/material.h"
@@ -117,19 +117,19 @@ class AnimationPlayerEditor : public EditorDock {
 	float timeline_position = 0;
 
 	EditorFileDialog *file = nullptr;
-	ConfirmationDialog *delete_dialog = nullptr;
+	Dialog *delete_dialog = nullptr;
 
 	AnimationLibraryEditor *library_editor = nullptr;
 
 	struct BlendEditor {
-		AcceptDialog *dialog = nullptr;
+		Dialog *dialog = nullptr;
 		Tree *tree = nullptr;
 		OptionButton *next = nullptr;
 
 	} blend_editor;
 
-	ConfirmationDialog *name_dialog = nullptr;
-	AcceptDialog *error_dialog = nullptr;
+	Dialog *name_dialog = nullptr;
+	Dialog *error_dialog = nullptr;
 	int name_dialog_op = TOOL_NEW_ANIM;
 
 	bool updating = false;

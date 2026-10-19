@@ -33,7 +33,7 @@
 #include "editor/plugins/editor_plugin.h"
 
 class CheckBox;
-class ConfirmationDialog;
+class Dialog;
 class HBoxContainer;
 class MenuButton;
 class OptionButton;

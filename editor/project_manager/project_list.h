@@ -34,7 +34,7 @@
 #include "scene/gui/box_container.h"
 #include "scene/gui/scroll_container.h"
 
-class AcceptDialog;
+class Dialog;
 class Button;
 class HFlowContainer;
 class Label;
@@ -245,7 +245,7 @@ private:
 		SafeFlag scan_in_progress;
 	};
 	ScanData *scan_data = nullptr;
-	AcceptDialog *scan_progress = nullptr;
+	Dialog *scan_progress = nullptr;
 
 	static void _scan_thread(void *p_scan_data);
 	void _scan_finished();

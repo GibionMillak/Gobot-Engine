@@ -30,15 +30,15 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class EditorValidationPanel;
 class Label;
 class LineEdit;
 class TextEdit;
 
-class ConfigPluginDialog : public ConfirmationDialog {
-	GDCLASS(ConfigPluginDialog, ConfirmationDialog);
+class ConfigPluginDialog : public Dialog {
+	GDCLASS(ConfigPluginDialog, Dialog);
 
 public:
 	ConfigPluginDialog();

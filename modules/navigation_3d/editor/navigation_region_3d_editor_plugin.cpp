@@ -39,7 +39,7 @@
 #include "scene/3d/navigation/navigation_region_3d.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/label.h"
 #include "scene/main/scene_tree.h"
 #include "servers/navigation_3d/navigation_server_3d.h"
@@ -249,11 +249,11 @@ NavigationRegion3DEditor::NavigationRegion3DEditor() {
 	bake_info = memnew(Label);
 	bake_hbox->add_child(bake_info);
 
-	err_dialog = memnew(AcceptDialog);
+	err_dialog = memnew(Dialog);
 	err_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
 	add_child(err_dialog);
 
-	multibake_dialog = memnew(ConfirmationDialog);
+	multibake_dialog = memnew(Dialog(true));
 	add_child(multibake_dialog);
 	multibake_dialog->connect(SceneStringName(confirmed), callable_mp(this, &NavigationRegion3DEditor::_on_navmesh_multibake_confirmed));
 	multibake_dialog->connect(SNAME("canceled"), callable_mp(this, &NavigationRegion3DEditor::_on_navmesh_multibake_canceled));

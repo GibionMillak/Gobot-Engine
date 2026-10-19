@@ -31,7 +31,7 @@
 #pragma once
 
 #include "editor/scene/scene_tree_editor.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/line_edit.h"
 
 class Button;
@@ -42,10 +42,10 @@ class OptionButton;
 class SpinBox;
 class TabContainer;
 
-class RenameDialog : public ConfirmationDialog {
-	GDCLASS(RenameDialog, ConfirmationDialog);
+class RenameDialog : public Dialog {
+	GDCLASS(RenameDialog, Dialog);
 
-	virtual void ok_pressed() override { rename(); }
+	virtual void _on_confirmed() override { rename(); }
 	void _cancel_pressed() {}
 	void _features_toggled(bool pressed);
 	void _insert_text(const String &text);

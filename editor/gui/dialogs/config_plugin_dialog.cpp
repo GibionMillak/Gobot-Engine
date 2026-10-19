@@ -54,7 +54,8 @@
 #include "modules/gdscript/gdscript.h"
 #endif
 
-ConfigPluginDialog::ConfigPluginDialog() {
+ConfigPluginDialog::ConfigPluginDialog() :
+		Dialog(true) {
 	get_ok_button()->set_disabled(true);
 	set_hide_on_ok(false);
 

@@ -35,9 +35,8 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/plugins/editor_plugin.h"
 
-class ConfirmationDialog;
+class Dialog;
 class MultiplayerSynchronizer;
-class AcceptDialog;
 class LineEdit;
 class Tree;
 class TreeItem;
@@ -50,7 +49,7 @@ class ReplicationEditor : public EditorDock {
 private:
 	MultiplayerSynchronizer *current = nullptr;
 
-	ConfirmationDialog *delete_dialog = nullptr;
+	Dialog *delete_dialog = nullptr;
 	Button *add_pick_button = nullptr;
 	Button *add_from_path_button = nullptr;
 	LineEdit *np_line_edit = nullptr;

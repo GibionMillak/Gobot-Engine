@@ -39,7 +39,7 @@
 #include "editor/docks/editor_dock.h"
 #include "scene/gui/tab_bar.h"
 
-class AcceptDialog;
+class Dialog;
 class SpinBox;
 class HBoxContainer;
 class SplitContainer;
@@ -133,7 +133,7 @@ public:
 class TileSourceInspectorPlugin : public EditorInspectorPlugin {
 	GDCLASS(TileSourceInspectorPlugin, EditorInspectorPlugin);
 
-	AcceptDialog *id_edit_dialog = nullptr;
+	Dialog *id_edit_dialog = nullptr;
 	Label *id_label = nullptr;
 	SpinBox *id_input = nullptr;
 	Object *edited_source = nullptr;

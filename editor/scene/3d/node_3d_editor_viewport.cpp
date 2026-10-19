@@ -5505,7 +5505,7 @@ void Node3DEditorViewport::focus_aabb() {
 	}
 }
 
-void Node3DEditorViewport::assign_pending_data_pointers(Node3D *p_preview_node, AABB *p_preview_bounds, AcceptDialog *p_accept) {
+void Node3DEditorViewport::assign_pending_data_pointers(Node3D *p_preview_node, AABB *p_preview_bounds, Dialog *p_accept) {
 	preview_node = p_preview_node;
 	preview_bounds = p_preview_bounds;
 	accept = p_accept;

@@ -30,15 +30,15 @@
 
 #pragma once
 
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 
 class DirectoryCreateDialog;
 class EditorFileSystemDirectory;
 class Tree;
 class TreeItem;
 
-class EditorDirDialog : public ConfirmationDialog {
-	GDCLASS(EditorDirDialog, ConfirmationDialog);
+class EditorDirDialog : public Dialog {
+	GDCLASS(EditorDirDialog, Dialog);
 
 	DirectoryCreateDialog *makedialog = nullptr;
 
@@ -59,7 +59,7 @@ class EditorDirDialog : public ConfirmationDialog {
 	void _make_dir_confirm(const String &p_path, const String &p_base_dir);
 
 	void _copy_pressed();
-	void ok_pressed() override;
+	void _on_confirmed() override;
 
 	bool must_reload = false;
 

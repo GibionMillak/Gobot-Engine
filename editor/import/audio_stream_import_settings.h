@@ -33,14 +33,14 @@
 #include "editor/plugins/editor_plugin.h"
 #include "scene/audio/audio_stream_player.h"
 #include "scene/gui/color_rect.h"
-#include "scene/gui/dialogs.h"
+#include "scene/gui/dialog.h"
 #include "scene/gui/spin_box.h"
 
 class CheckBox;
 class HScrollBar;
 
-class AudioStreamImportSettingsDialog : public ConfirmationDialog {
-	GDCLASS(AudioStreamImportSettingsDialog, ConfirmationDialog);
+class AudioStreamImportSettingsDialog : public Dialog {
+	GDCLASS(AudioStreamImportSettingsDialog, Dialog);
 
 	CheckBox *bpm_enabled = nullptr;
 	SpinBox *bpm_edit = nullptr;
