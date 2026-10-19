@@ -111,26 +111,26 @@ void EditorLog::_update_theme() {
 	const String wide_text = "0000";
 
 	Button *button = type_filter_map[MSG_TYPE_STD]->toggle_button;
-	button->set_button_icon(get_editor_theme_icon(SNAME("Popup")));
+	button->set_button_icon(get_editor_theme_icon(SNAME("node_viewport_popup")));
 	button->set_custom_minimum_size(Vector2(button->get_minimum_size_for_text_and_icon(wide_text, button->get_button_icon()).x, 0));
 	button = type_filter_map[MSG_TYPE_ERROR]->toggle_button;
-	button->set_button_icon(get_editor_theme_icon(SNAME("StatusError")));
+	button->set_button_icon(get_editor_theme_icon(SNAME("status_status_error")));
 	button->set_custom_minimum_size(Vector2(button->get_minimum_size_for_text_and_icon(wide_text, button->get_button_icon()).x, 0));
 	button = type_filter_map[MSG_TYPE_WARNING]->toggle_button;
-	button->set_button_icon(get_editor_theme_icon(SNAME("StatusWarning")));
+	button->set_button_icon(get_editor_theme_icon(SNAME("status_status_warning")));
 	button->set_custom_minimum_size(Vector2(button->get_minimum_size_for_text_and_icon(wide_text, button->get_button_icon()).x, 0));
 	button = type_filter_map[MSG_TYPE_EDITOR]->toggle_button;
-	button->set_button_icon(get_editor_theme_icon(SNAME("Edit")));
+	button->set_button_icon(get_editor_theme_icon(SNAME("action_edit")));
 	button->set_custom_minimum_size(Vector2(button->get_minimum_size_for_text_and_icon(wide_text, button->get_button_icon()).x, 0));
 
-	clear_button->set_button_icon(get_editor_theme_icon(SNAME("Clear")));
-	collapse_button->set_button_icon(get_editor_theme_icon(SNAME("CombineLines")));
-	search_box->set_right_icon(get_editor_theme_icon(SNAME("Search")));
+	clear_button->set_button_icon(get_editor_theme_icon(SNAME("action_clear")));
+	collapse_button->set_button_icon(get_editor_theme_icon(SNAME("action_combine_lines")));
+	search_box->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 
 	theme_cache.error_color = get_theme_color(SNAME("error_color"), EditorStringName(Editor));
-	theme_cache.error_icon = get_editor_theme_icon(SNAME("Error"));
+	theme_cache.error_icon = get_editor_theme_icon(SNAME("status_error"));
 	theme_cache.warning_color = get_theme_color(SNAME("warning_color"), EditorStringName(Editor));
-	theme_cache.warning_icon = get_editor_theme_icon(SNAME("Warning"));
+	theme_cache.warning_icon = get_editor_theme_icon(SNAME("status_warning"));
 	theme_cache.message_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor)) * Color(1, 1, 1, 0.6);
 }
 
@@ -489,7 +489,7 @@ void EditorLog::_reset_message_counts() {
 
 EditorLog::EditorLog() {
 	set_name(TTRC("Output"));
-	set_icon_name("Output");
+	set_icon_name("dock_output");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_output_bottom_panel", TTRC("Toggle Output Dock"), KeyModifierMask::ALT | Key::O));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

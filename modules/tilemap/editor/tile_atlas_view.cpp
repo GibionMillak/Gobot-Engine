@@ -637,8 +637,8 @@ void TileAtlasView::queue_redraw() {
 void TileAtlasView::_update_theme_item_cache() {
 	Control::_update_theme_item_cache();
 
-	theme_cache.center_view_icon = get_editor_theme_icon(SNAME("CenterView"));
-	theme_cache.checkerboard = get_editor_theme_icon(SNAME("Checkerboard"));
+	theme_cache.center_view_icon = get_editor_theme_icon(SNAME("navigation_center_view"));
+	theme_cache.checkerboard = get_editor_theme_icon(SNAME("gui_checkerboard"));
 }
 
 void TileAtlasView::_notification(int p_what) {

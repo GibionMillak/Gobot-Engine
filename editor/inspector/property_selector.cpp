@@ -32,6 +32,7 @@
 
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/doc/editor_help.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -106,7 +107,7 @@ void PropertySelector::_update_search() {
 
 				Ref<Texture2D> icon;
 				if (E.name == "Script Variables") {
-					icon = search_options->get_editor_theme_icon(SNAME("Script"));
+					icon = search_options->get_editor_theme_icon(SNAME("resource_script"));
 				} else {
 					icon = EditorNode::get_singleton()->get_class_icon(E.name);
 				}
@@ -132,7 +133,7 @@ void PropertySelector::_update_search() {
 				item->set_custom_font(0, monospace_font);
 			}
 			item->set_metadata(0, E.name);
-			item->set_icon(0, search_options->get_editor_theme_icon(Variant::get_type_name(E.type)));
+			item->set_icon(0, search_options->get_editor_theme_icon(editor_get_type_icon_name(Variant::get_type_name(E.type))));
 
 			if (!found && !search_box->get_text().is_empty() && E.name.containsn(search_text)) {
 				item->select(0);
@@ -238,7 +239,7 @@ void PropertySelector::_update_search() {
 				script_methods = false;
 				String rep = mi.name.remove_char('*');
 				if (mi.name == "*Script Methods") {
-					icon = search_options->get_editor_theme_icon(SNAME("Script"));
+					icon = search_options->get_editor_theme_icon(SNAME("resource_script"));
 					script_methods = true;
 				} else {
 					icon = EditorNode::get_singleton()->get_class_icon(rep);
@@ -522,7 +523,7 @@ void PropertySelector::_create_subproperty(TreeItem *p_parent_item, const String
 		item->set_custom_font(0, get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
 	}
 	item->set_metadata(0, String(p_parent_item->get_metadata(0)) + ":" + p_name);
-	item->set_icon(0, search_options->get_editor_theme_icon(Variant::get_type_name(p_type)));
+	item->set_icon(0, search_options->get_editor_theme_icon(editor_get_type_icon_name(Variant::get_type_name(p_type))));
 
 	_create_subproperties(item, p_type);
 }
@@ -538,7 +539,7 @@ void PropertySelector::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			search_box->set_right_icon(get_editor_theme_icon(SNAME("Search")));
+			search_box->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 		} break;
 	}
 }

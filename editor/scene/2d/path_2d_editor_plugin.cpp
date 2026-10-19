@@ -45,14 +45,14 @@
 void Path2DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			curve_edit->set_button_icon(get_editor_theme_icon(SNAME("CurveEdit")));
-			curve_edit_curve->set_button_icon(get_editor_theme_icon(SNAME("CurveCurve")));
-			curve_create->set_button_icon(get_editor_theme_icon(SNAME("CurveCreate")));
-			curve_del->set_button_icon(get_editor_theme_icon(SNAME("CurveDelete")));
-			curve_close->set_button_icon(get_editor_theme_icon(SNAME("CurveClose")));
-			curve_clear_points->set_button_icon(get_editor_theme_icon(SNAME("Clear")));
+			curve_edit->set_button_icon(get_editor_theme_icon(SNAME("node_control_curve_edit")));
+			curve_edit_curve->set_button_icon(get_editor_theme_icon(SNAME("action_curve_curve")));
+			curve_create->set_button_icon(get_editor_theme_icon(SNAME("action_curve_create")));
+			curve_del->set_button_icon(get_editor_theme_icon(SNAME("action_curve_delete")));
+			curve_close->set_button_icon(get_editor_theme_icon(SNAME("action_curve_close")));
+			curve_clear_points->set_button_icon(get_editor_theme_icon(SNAME("action_clear")));
 
-			create_curve_button->set_button_icon(get_editor_theme_icon(SNAME("Curve2D")));
+			create_curve_button->set_button_icon(get_editor_theme_icon(SNAME("resource_curve_2d")));
 		} break;
 	}
 }
@@ -433,12 +433,12 @@ void Path2DEditor::forward_canvas_draw_over_viewport(Control *p_overlay) {
 
 	Transform2D xform = canvas_item_editor->get_canvas_transform() * node->get_screen_transform();
 
-	const Ref<Texture2D> path_sharp_handle = get_editor_theme_icon(SNAME("EditorPathSharpHandle"));
-	const Ref<Texture2D> path_smooth_handle = get_editor_theme_icon(SNAME("EditorPathSmoothHandle"));
+	const Ref<Texture2D> path_sharp_handle = get_editor_theme_icon(SNAME("viewport_editor_path_sharp_handle"));
+	const Ref<Texture2D> path_smooth_handle = get_editor_theme_icon(SNAME("viewport_editor_path_smooth_handle"));
 	// Both handle icons must be of the same size
 	const Size2 handle_size = path_sharp_handle->get_size();
 
-	const Ref<Texture2D> curve_handle = get_editor_theme_icon(SNAME("EditorCurveHandle"));
+	const Ref<Texture2D> curve_handle = get_editor_theme_icon(SNAME("viewport_editor_curve_handle"));
 	const Size2 curve_handle_size = curve_handle->get_size();
 
 	Ref<Curve2D> curve = node->get_curve();
@@ -490,7 +490,7 @@ void Path2DEditor::forward_canvas_draw_over_viewport(Control *p_overlay) {
 	}
 
 	if (on_edge) {
-		Ref<Texture2D> add_handle = get_editor_theme_icon(SNAME("EditorHandleAdd"));
+		Ref<Texture2D> add_handle = get_editor_theme_icon(SNAME("viewport_editor_handle_add"));
 		p_overlay->draw_texture(add_handle, edge_point - add_handle->get_size() * 0.5);
 	}
 

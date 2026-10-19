@@ -745,12 +745,12 @@ void AnimationTrackEditSubAnim::set_node(Object *p_object) {
 //// VOLUME DB ////
 
 int AnimationTrackEditVolumeDB::get_key_height() const {
-	Ref<Texture2D> volume_texture = get_editor_theme_icon(SNAME("ColorTrackVu"));
+	Ref<Texture2D> volume_texture = get_editor_theme_icon(SNAME("audio_color_track_vu"));
 	return volume_texture->get_height() * 1.2;
 }
 
 void AnimationTrackEditVolumeDB::draw_bg(int p_clip_left, int p_clip_right) {
-	Ref<Texture2D> volume_texture = get_editor_theme_icon(SNAME("ColorTrackVu"));
+	Ref<Texture2D> volume_texture = get_editor_theme_icon(SNAME("audio_color_track_vu"));
 	int tex_h = volume_texture->get_height();
 
 	int y_from = (get_size().height - tex_h) / 2;
@@ -761,7 +761,7 @@ void AnimationTrackEditVolumeDB::draw_bg(int p_clip_left, int p_clip_right) {
 }
 
 void AnimationTrackEditVolumeDB::draw_fg(int p_clip_left, int p_clip_right) {
-	Ref<Texture2D> volume_texture = get_editor_theme_icon(SNAME("ColorTrackVu"));
+	Ref<Texture2D> volume_texture = get_editor_theme_icon(SNAME("audio_color_track_vu"));
 	int tex_h = volume_texture->get_height();
 	int y_from = (get_size().height - tex_h) / 2;
 	int db0 = y_from + (24 / 80.0) * tex_h;
@@ -796,7 +796,7 @@ void AnimationTrackEditVolumeDB::draw_key_link(int p_index_from, int p_index_to,
 		to_x = p_clip_right;
 	}
 
-	Ref<Texture2D> volume_texture = get_editor_theme_icon(SNAME("ColorTrackVu"));
+	Ref<Texture2D> volume_texture = get_editor_theme_icon(SNAME("audio_color_track_vu"));
 	int tex_h = volume_texture->get_height();
 
 	int y_from = (get_size().height - tex_h) / 2;

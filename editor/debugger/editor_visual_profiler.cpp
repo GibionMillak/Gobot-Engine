@@ -345,7 +345,7 @@ void EditorVisualProfiler::_update_plot() {
 void EditorVisualProfiler::_update_frame(bool p_focus_selected) {
 	int cursor_metric = _get_cursor_index();
 
-	Ref<Texture> track_icon = get_editor_theme_icon(SNAME("TrackColor"));
+	Ref<Texture> track_icon = get_editor_theme_icon(SNAME("animation_track_color"));
 
 	ERR_FAIL_INDEX(cursor_metric, frame_metrics.size());
 
@@ -446,12 +446,12 @@ void EditorVisualProfiler::_update_frame(bool p_focus_selected) {
 
 void EditorVisualProfiler::_activate_pressed() {
 	if (activate->is_pressed()) {
-		activate->set_button_icon(get_editor_theme_icon(SNAME("Stop")));
+		activate->set_button_icon(get_editor_theme_icon(SNAME("playback_stop")));
 		activate->set_text(TTRC("Stop"));
 		_clear_pressed(); //always clear on start
 		clear_button->set_disabled(false);
 	} else {
-		activate->set_button_icon(get_editor_theme_icon(SNAME("Play")));
+		activate->set_button_icon(get_editor_theme_icon(SNAME("playback_play")));
 		activate->set_text(TTRC("Start"));
 	}
 	emit_signal(SNAME("enable_profiling"), activate->is_pressed());
@@ -478,8 +478,8 @@ void EditorVisualProfiler::_notification(int p_what) {
 		}
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
-			activate->set_button_icon(get_editor_theme_icon(SNAME("Play")));
-			clear_button->set_button_icon(get_editor_theme_icon(SNAME("Clear")));
+			activate->set_button_icon(get_editor_theme_icon(SNAME("playback_play")));
+			clear_button->set_button_icon(get_editor_theme_icon(SNAME("action_clear")));
 			graph_background->set_color(get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor)));
 
 			if (last_metric > -1) {
@@ -709,10 +709,10 @@ void EditorVisualProfiler::_bind_methods() {
 
 void EditorVisualProfiler::_update_button_text() {
 	if (activate->is_pressed()) {
-		activate->set_button_icon(get_editor_theme_icon(SNAME("Stop")));
+		activate->set_button_icon(get_editor_theme_icon(SNAME("playback_stop")));
 		activate->set_text(TTRC("Stop"));
 	} else {
-		activate->set_button_icon(get_editor_theme_icon(SNAME("Play")));
+		activate->set_button_icon(get_editor_theme_icon(SNAME("playback_play")));
 		activate->set_text(TTRC("Start"));
 	}
 }

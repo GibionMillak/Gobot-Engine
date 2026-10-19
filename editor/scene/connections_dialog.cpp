@@ -35,6 +35,7 @@
 #include "core/object/class_db.h"
 #include "core/object/editor_language.h"
 #include "core/templates/hash_set.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/doc/editor_help.h"
 #include "editor/docks/scene_tree_dock.h"
 #include "editor/docks/signals_dock.h"
@@ -409,7 +410,7 @@ void ConnectDialog::_update_method_tree() {
 		if (!methods.is_empty()) {
 			TreeItem *si_item = method_tree->create_item(root_item);
 			si_item->set_text(0, TTR("Attached Script"));
-			si_item->set_icon(0, get_editor_theme_icon(SNAME("Script")));
+			si_item->set_icon(0, get_editor_theme_icon(SNAME("resource_script")));
 			si_item->set_selectable(0, false);
 
 			_create_method_tree_items(methods, si_item);
@@ -426,9 +427,9 @@ void ConnectDialog::_update_method_tree() {
 	do {
 		TreeItem *class_item = method_tree->create_item(root_item);
 		class_item->set_text(0, current_class);
-		Ref<Texture2D> icon = get_editor_theme_icon(SNAME("Node"));
-		if (has_theme_icon(current_class, EditorStringName(EditorIcons))) {
-			icon = get_editor_theme_icon(current_class);
+		Ref<Texture2D> icon = get_editor_theme_icon(SNAME("node_node"));
+		if (has_theme_icon(editor_get_type_icon_name(current_class), EditorStringName(EditorIcons))) {
+			icon = get_editor_theme_icon(editor_get_type_icon_name(current_class));
 		}
 		class_item->set_icon(0, icon);
 		class_item->set_selectable(0, false);
@@ -496,8 +497,8 @@ void ConnectDialog::_notification(int p_what) {
 			[[fallthrough]];
 		}
 		case NOTIFICATION_THEME_CHANGED: {
-			method_search->set_right_icon(get_editor_theme_icon("Search"));
-			open_method_tree->set_button_icon(get_editor_theme_icon("Edit"));
+			method_search->set_right_icon(get_editor_theme_icon("action_search"));
+			open_method_tree->set_button_icon(get_editor_theme_icon("action_edit"));
 
 			bool use_monospace_font = EDITOR_GET("interface/theme/use_monospace_font_for_editor_symbols");
 			Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
@@ -1138,17 +1139,17 @@ void ConnectionsDock::_tree_item_selected() {
 	TreeItem *item = tree->get_selected();
 	if (item && _get_item_type(*item) == TREE_ITEM_TYPE_SIGNAL) {
 		connect_button->set_text(TTR("Connect..."));
-		connect_button->set_button_icon(get_editor_theme_icon(SNAME("Instance")));
+		connect_button->set_button_icon(get_editor_theme_icon(SNAME("action_instance")));
 		connect_button->set_disabled(is_editing_resource);
 	} else if (item && _get_item_type(*item) == TREE_ITEM_TYPE_CONNECTION) {
 		connect_button->set_text(TTR("Disconnect"));
-		connect_button->set_button_icon(get_editor_theme_icon(SNAME("Unlinked")));
+		connect_button->set_button_icon(get_editor_theme_icon(SNAME("action_unlinked")));
 
 		Object::Connection connection = item->get_metadata(0);
 		connect_button->set_disabled(_is_connection_inherited(connection));
 	} else {
 		connect_button->set_text(TTR("Connect..."));
-		connect_button->set_button_icon(get_editor_theme_icon(SNAME("Instance")));
+		connect_button->set_button_icon(get_editor_theme_icon(SNAME("action_instance")));
 		connect_button->set_disabled(true);
 	}
 }
@@ -1461,18 +1462,18 @@ void ConnectionsDock::_connect_pressed() {
 void ConnectionsDock::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			search_box->set_right_icon(get_editor_theme_icon(SNAME("Search")));
+			search_box->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 
-			class_menu->set_item_icon(class_menu->get_item_index(CLASS_MENU_OPEN_DOCS), get_editor_theme_icon(SNAME("Help")));
+			class_menu->set_item_icon(class_menu->get_item_index(CLASS_MENU_OPEN_DOCS), get_editor_theme_icon(SNAME("gui_help")));
 
-			signal_menu->set_item_icon(signal_menu->get_item_index(SIGNAL_MENU_CONNECT), get_editor_theme_icon(SNAME("Instance")));
-			signal_menu->set_item_icon(signal_menu->get_item_index(SIGNAL_MENU_DISCONNECT_ALL), get_editor_theme_icon(SNAME("Unlinked")));
-			signal_menu->set_item_icon(signal_menu->get_item_index(SIGNAL_MENU_COPY_NAME), get_editor_theme_icon(SNAME("Copy")));
-			signal_menu->set_item_icon(signal_menu->get_item_index(SIGNAL_MENU_OPEN_DOCS), get_editor_theme_icon(SNAME("Help")));
+			signal_menu->set_item_icon(signal_menu->get_item_index(SIGNAL_MENU_CONNECT), get_editor_theme_icon(SNAME("action_instance")));
+			signal_menu->set_item_icon(signal_menu->get_item_index(SIGNAL_MENU_DISCONNECT_ALL), get_editor_theme_icon(SNAME("action_unlinked")));
+			signal_menu->set_item_icon(signal_menu->get_item_index(SIGNAL_MENU_COPY_NAME), get_editor_theme_icon(SNAME("action_copy")));
+			signal_menu->set_item_icon(signal_menu->get_item_index(SIGNAL_MENU_OPEN_DOCS), get_editor_theme_icon(SNAME("gui_help")));
 
-			slot_menu->set_item_icon(slot_menu->get_item_index(SLOT_MENU_EDIT), get_editor_theme_icon(SNAME("Edit")));
-			slot_menu->set_item_icon(slot_menu->get_item_index(SLOT_MENU_GO_TO_METHOD), get_editor_theme_icon(SNAME("ArrowRight")));
-			slot_menu->set_item_icon(slot_menu->get_item_index(SLOT_MENU_DISCONNECT), get_editor_theme_icon(SNAME("Unlinked")));
+			slot_menu->set_item_icon(slot_menu->get_item_index(SLOT_MENU_EDIT), get_editor_theme_icon(SNAME("action_edit")));
+			slot_menu->set_item_icon(slot_menu->get_item_index(SLOT_MENU_GO_TO_METHOD), get_editor_theme_icon(SNAME("navigation_arrow_right")));
+			slot_menu->set_item_icon(slot_menu->get_item_index(SLOT_MENU_DISCONNECT), get_editor_theme_icon(SNAME("action_unlinked")));
 
 			tree->add_theme_constant_override("icon_max_width", get_theme_constant(SNAME("class_icon_size"), EditorStringName(Editor)));
 
@@ -1557,8 +1558,8 @@ void ConnectionsDock::update_tree() {
 			}
 
 			class_icon = editor_data.get_script_icon(script_base->get_path());
-			if (class_icon.is_null() && has_theme_icon(native_base, EditorStringName(EditorIcons))) {
-				class_icon = get_editor_theme_icon(native_base);
+			if (class_icon.is_null() && has_theme_icon(editor_get_type_icon_name(native_base), EditorStringName(EditorIcons))) {
+				class_icon = get_editor_theme_icon(editor_get_type_icon_name(native_base));
 			}
 
 			script_base->get_script_signal_list(&class_signals);
@@ -1590,8 +1591,8 @@ void ConnectionsDock::update_tree() {
 				doc_class_name = String();
 			}
 
-			if (has_theme_icon(native_base, EditorStringName(EditorIcons))) {
-				class_icon = get_editor_theme_icon(native_base);
+			if (has_theme_icon(editor_get_type_icon_name(native_base), EditorStringName(EditorIcons))) {
+				class_icon = get_editor_theme_icon(editor_get_type_icon_name(native_base));
 			}
 
 			ClassDB::get_signal_list(native_base, &class_signals, true);
@@ -1612,7 +1613,7 @@ void ConnectionsDock::update_tree() {
 		}
 
 		if (class_icon.is_null()) {
-			class_icon = get_editor_theme_icon(SNAME("Object"));
+			class_icon = get_editor_theme_icon(SNAME("variant_object"));
 		}
 
 		TreeItem *section_item = nullptr;
@@ -1659,7 +1660,7 @@ void ConnectionsDock::update_tree() {
 			sinfo["name"] = signal_name;
 			sinfo["args"] = argnames;
 			signal_item->set_metadata(0, sinfo);
-			signal_item->set_icon(0, get_editor_theme_icon(SNAME("Signal")));
+			signal_item->set_icon(0, get_editor_theme_icon(SNAME("variant_signal")));
 			// `|` separators used in `EditorHelpBit`.
 			signal_item->set_tooltip_text(0, "signal|" + doc_class_name + "|" + String(signal_name));
 
@@ -1707,7 +1708,7 @@ void ConnectionsDock::update_tree() {
 				TreeItem *connection_item = tree->create_item(signal_item);
 				connection_item->set_text(0, path);
 				connection_item->set_metadata(0, connection);
-				connection_item->set_icon(0, get_editor_theme_icon(SNAME("Slot")));
+				connection_item->set_icon(0, get_editor_theme_icon(SNAME("scripting_slot")));
 				if (use_monospace_font) {
 					connection_item->set_custom_font(0, monospace_font);
 				}
@@ -1722,7 +1723,7 @@ void ConnectionsDock::update_tree() {
 	}
 
 	connect_button->set_text(TTRC("Connect..."));
-	connect_button->set_button_icon(get_editor_theme_icon(SNAME("Instance")));
+	connect_button->set_button_icon(get_editor_theme_icon(SNAME("action_instance")));
 	connect_button->set_disabled(true);
 }
 

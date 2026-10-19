@@ -614,25 +614,25 @@ void InputEventConfigurationDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			input_list_search->set_right_icon(get_editor_theme_icon(SNAME("Search")));
+			input_list_search->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 
-			key_mode->set_item_icon(KEYMODE_KEYCODE, get_editor_theme_icon(SNAME("Keyboard")));
-			key_mode->set_item_icon(KEYMODE_PHY_KEYCODE, get_editor_theme_icon(SNAME("KeyboardPhysical")));
-			key_mode->set_item_icon(KEYMODE_UNICODE, get_editor_theme_icon(SNAME("KeyboardLabel")));
+			key_mode->set_item_icon(KEYMODE_KEYCODE, get_editor_theme_icon(SNAME("animation_keyboard")));
+			key_mode->set_item_icon(KEYMODE_PHY_KEYCODE, get_editor_theme_icon(SNAME("animation_keyboard_physical")));
+			key_mode->set_item_icon(KEYMODE_UNICODE, get_editor_theme_icon(SNAME("animation_keyboard_label")));
 
-			icon_cache.keyboard = get_editor_theme_icon(SNAME("Keyboard"));
-			icon_cache.mouse = get_editor_theme_icon(SNAME("Mouse"));
-			icon_cache.mouse_left_button = get_editor_theme_icon(SNAME("MouseButtonLeft"));
-			icon_cache.mouse_right_button = get_editor_theme_icon(SNAME("MouseButtonRight"));
-			icon_cache.mouse_middle_button = get_editor_theme_icon(SNAME("MouseButtonMiddle"));
-			icon_cache.mouse_wheel_up = get_editor_theme_icon(SNAME("MouseButtonWheelUp"));
-			icon_cache.mouse_wheel_down = get_editor_theme_icon(SNAME("MouseButtonWheelDown"));
-			icon_cache.mouse_wheel_left = get_editor_theme_icon(SNAME("MouseButtonWheelLeft"));
-			icon_cache.mouse_wheel_right = get_editor_theme_icon(SNAME("MouseButtonWheelRight"));
-			icon_cache.mouse_xbutton1 = get_editor_theme_icon(SNAME("MouseButtonXButton1"));
-			icon_cache.mouse_xbutton2 = get_editor_theme_icon(SNAME("MouseButtonXButton2"));
-			icon_cache.joypad_button = get_editor_theme_icon(SNAME("JoyButton"));
-			icon_cache.joypad_axis = get_editor_theme_icon(SNAME("JoyAxis"));
+			icon_cache.keyboard = get_editor_theme_icon(SNAME("animation_keyboard"));
+			icon_cache.mouse = get_editor_theme_icon(SNAME("input_mouse"));
+			icon_cache.mouse_left_button = get_editor_theme_icon(SNAME("input_mouse_button_left"));
+			icon_cache.mouse_right_button = get_editor_theme_icon(SNAME("input_mouse_button_right"));
+			icon_cache.mouse_middle_button = get_editor_theme_icon(SNAME("input_mouse_button_middle"));
+			icon_cache.mouse_wheel_up = get_editor_theme_icon(SNAME("input_mouse_button_wheel_up"));
+			icon_cache.mouse_wheel_down = get_editor_theme_icon(SNAME("input_mouse_button_wheel_down"));
+			icon_cache.mouse_wheel_left = get_editor_theme_icon(SNAME("input_mouse_button_wheel_left"));
+			icon_cache.mouse_wheel_right = get_editor_theme_icon(SNAME("input_mouse_button_wheel_right"));
+			icon_cache.mouse_xbutton1 = get_editor_theme_icon(SNAME("input_mouse_button_x_button1"));
+			icon_cache.mouse_xbutton2 = get_editor_theme_icon(SNAME("input_mouse_button_x_button2"));
+			icon_cache.joypad_button = get_editor_theme_icon(SNAME("input_joy_button"));
+			icon_cache.joypad_axis = get_editor_theme_icon(SNAME("input_joy_axis"));
 
 			event_as_text->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
 			event_exists->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));

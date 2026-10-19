@@ -123,20 +123,20 @@ void Polygon2DEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_READY: {
-			action_buttons[ACTION_CREATE]->set_button_icon(get_editor_theme_icon(SNAME("Edit")));
-			action_buttons[ACTION_CREATE_INTERNAL]->set_button_icon(get_editor_theme_icon(SNAME("EditInternal")));
-			action_buttons[ACTION_REMOVE_INTERNAL]->set_button_icon(get_editor_theme_icon(SNAME("RemoveInternal")));
-			action_buttons[ACTION_EDIT_POINT]->set_button_icon(get_editor_theme_icon(SNAME("ToolSelect")));
-			action_buttons[ACTION_MOVE]->set_button_icon(get_editor_theme_icon(SNAME("ToolMove")));
-			action_buttons[ACTION_ROTATE]->set_button_icon(get_editor_theme_icon(SNAME("ToolRotate")));
-			action_buttons[ACTION_SCALE]->set_button_icon(get_editor_theme_icon(SNAME("ToolScale")));
-			action_buttons[ACTION_ADD_POLYGON]->set_button_icon(get_editor_theme_icon(SNAME("Edit")));
-			action_buttons[ACTION_REMOVE_POLYGON]->set_button_icon(get_editor_theme_icon(SNAME("Close")));
-			action_buttons[ACTION_PAINT_WEIGHT]->set_button_icon(get_editor_theme_icon(SNAME("Bucket")));
-			action_buttons[ACTION_CLEAR_WEIGHT]->set_button_icon(get_editor_theme_icon(SNAME("Clear")));
+			action_buttons[ACTION_CREATE]->set_button_icon(get_editor_theme_icon(SNAME("action_edit")));
+			action_buttons[ACTION_CREATE_INTERNAL]->set_button_icon(get_editor_theme_icon(SNAME("action_edit_internal")));
+			action_buttons[ACTION_REMOVE_INTERNAL]->set_button_icon(get_editor_theme_icon(SNAME("action_remove_internal")));
+			action_buttons[ACTION_EDIT_POINT]->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_select")));
+			action_buttons[ACTION_MOVE]->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_move")));
+			action_buttons[ACTION_ROTATE]->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_rotate")));
+			action_buttons[ACTION_SCALE]->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_scale")));
+			action_buttons[ACTION_ADD_POLYGON]->set_button_icon(get_editor_theme_icon(SNAME("action_edit")));
+			action_buttons[ACTION_REMOVE_POLYGON]->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
+			action_buttons[ACTION_PAINT_WEIGHT]->set_button_icon(get_editor_theme_icon(SNAME("action_bucket")));
+			action_buttons[ACTION_CLEAR_WEIGHT]->set_button_icon(get_editor_theme_icon(SNAME("action_clear")));
 
-			b_snap_grid->set_button_icon(get_editor_theme_icon(SNAME("Grid")));
-			b_snap_enable->set_button_icon(get_editor_theme_icon(SNAME("SnapGrid")));
+			b_snap_grid->set_button_icon(get_editor_theme_icon(SNAME("gui_grid")));
+			b_snap_enable->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
 
 			vscroll->set_anchors_and_offsets_preset(PRESET_RIGHT_WIDE);
 			hscroll->set_anchors_and_offsets_preset(PRESET_BOTTOM_WIDE);
@@ -1201,7 +1201,7 @@ void Polygon2DEditor::_canvas_draw() {
 	}
 
 	// All UV points are sharp, so use the sharp handle icon
-	Ref<Texture2D> handle = get_editor_theme_icon(SNAME("EditorPathSharpHandle"));
+	Ref<Texture2D> handle = get_editor_theme_icon(SNAME("viewport_editor_path_sharp_handle"));
 
 	Color poly_line_color = Color(0.9, 0.5, 0.5);
 	if (polygons.size() || polygon_create.size()) {
@@ -1378,7 +1378,7 @@ Polygon2DEditor::Polygon2DEditor() {
 
 	polygon_edit = memnew(EditorDock);
 	polygon_edit->set_name(TTRC("Polygon"));
-	polygon_edit->set_icon_name("PolygonDock");
+	polygon_edit->set_icon_name("dock_polygon_dock");
 	polygon_edit->set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_polygon_2d_bottom_panel", TTRC("Toggle Polygon Dock")));
 	polygon_edit->set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	polygon_edit->set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

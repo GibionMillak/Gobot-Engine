@@ -174,9 +174,9 @@ void ProjectAutoloadsDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			_browse_btn->set_button_icon(get_editor_theme_icon(SNAME("FileBrowse")));
-			_create_script_autoload_btn->set_button_icon(get_editor_theme_icon(SNAME("Add")));
-			_create_scene_autoload_btn->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+			_browse_btn->set_button_icon(get_editor_theme_icon(SNAME("file_file_browse")));
+			_create_script_autoload_btn->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
+			_create_scene_autoload_btn->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 		} break;
 	}
 }
@@ -204,9 +204,9 @@ void ProjectAutoloadsDialog::_refresh_tree() {
 		item->set_editable(2, true);
 		item->set_text(2, TTRC("Enable"));
 		item->set_checked(2, entry.is_singleton);
-		item->add_button(3, get_editor_theme_icon(SNAME("MoveUp")), MOVE_UP);
-		item->add_button(3, get_editor_theme_icon(SNAME("MoveDown")), MOVE_DOWN);
-		item->add_button(3, get_editor_theme_icon(SNAME("Remove")), DELETE);
+		item->add_button(3, get_editor_theme_icon(SNAME("action_move_up")), MOVE_UP);
+		item->add_button(3, get_editor_theme_icon(SNAME("action_move_down")), MOVE_DOWN);
+		item->add_button(3, get_editor_theme_icon(SNAME("action_remove")), DELETE);
 		item->set_selectable(3, false);
 		if (entry.name == _selected_autoload) {
 			item->select(0);

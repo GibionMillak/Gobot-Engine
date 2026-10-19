@@ -132,8 +132,8 @@ void EditorPropertyVectorN::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			int icon_size = get_theme_constant(SNAME("class_icon_size"), EditorStringName(Editor));
 
-			linked->set_texture_normal(get_editor_theme_icon(SNAME("Unlinked")));
-			linked->set_texture_pressed(get_editor_theme_icon(SNAME("Instance")));
+			linked->set_texture_normal(get_editor_theme_icon(SNAME("action_unlinked")));
+			linked->set_texture_pressed(get_editor_theme_icon(SNAME("action_instance")));
 			linked->set_custom_minimum_size(Size2(icon_size + 8 * EDSCALE, 0));
 
 			const Color *colors = _get_property_colors();

@@ -340,7 +340,7 @@ void AnimationTreeEditor::_update_path() {
 		texture_rect->set_expand_mode(TextureRect::EXPAND_IGNORE_SIZE);
 		texture_rect->set_stretch_mode(TextureRect::STRETCH_KEEP_ASPECT_CENTERED);
 		texture_rect->set_custom_minimum_size(Size2(16, 16) * EDSCALE);
-		texture_rect->set_texture(get_editor_theme_icon(SNAME("GuiTreeArrowRight")));
+		texture_rect->set_texture(get_editor_theme_icon(SNAME("gui_gui_tree_arrow_right")));
 		path_hb->add_child(texture_rect);
 
 		b = memnew(Button);
@@ -422,7 +422,7 @@ void AnimationTreeEditor::_notification(int p_what) {
 			empty_style.instantiate();
 			error_scroll->add_theme_style_override(SceneStringName(panel), empty_style);
 			error_label->add_theme_color_override(SNAME("default_color"), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
-			error_button->set_button_icon(get_editor_theme_icon(SNAME("StatusError")));
+			error_button->set_button_icon(get_editor_theme_icon(SNAME("status_status_error")));
 			error_button->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 			current_scope_error_label->add_theme_font_override(SNAME("normal_font"), get_theme_font(SNAME("main"), EditorStringName(EditorFonts)));
 			current_scope_error_label->add_theme_font_size_override(SNAME("normal_font_size"), get_theme_font_size(SNAME("main_size"), EditorStringName(EditorFonts)));
@@ -517,7 +517,7 @@ AnimationTreeEditor::AnimationTreeEditor() {
 	AnimationNodeAnimation::get_editable_animation_list = get_animation_list;
 
 	set_name(TTRC("AnimationTree"));
-	set_icon_name("AnimationTreeDock");
+	set_icon_name("animation_animation_tree_dock");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_animation_tree_bottom_panel", TTRC("Toggle AnimationTree Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

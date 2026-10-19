@@ -114,14 +114,14 @@ void MaterialEditor::set_autohide_buttons(bool p_autohide) {
 void MaterialEditor::_update_theme_item_cache() {
 	Control::_update_theme_item_cache();
 
-	theme_cache.light_1_icon = get_editor_theme_icon(SNAME("MaterialPreviewLight1"));
-	theme_cache.light_2_icon = get_editor_theme_icon(SNAME("MaterialPreviewLight2"));
+	theme_cache.light_1_icon = get_editor_theme_icon(SNAME("viewport_material_preview_light1"));
+	theme_cache.light_2_icon = get_editor_theme_icon(SNAME("viewport_material_preview_light2"));
 
-	theme_cache.sphere_icon = get_editor_theme_icon(SNAME("MaterialPreviewSphere"));
-	theme_cache.box_icon = get_editor_theme_icon(SNAME("MaterialPreviewCube"));
-	theme_cache.quad_icon = get_editor_theme_icon(SNAME("MaterialPreviewQuad"));
+	theme_cache.sphere_icon = get_editor_theme_icon(SNAME("viewport_material_preview_sphere"));
+	theme_cache.box_icon = get_editor_theme_icon(SNAME("viewport_material_preview_cube"));
+	theme_cache.quad_icon = get_editor_theme_icon(SNAME("viewport_material_preview_quad"));
 
-	theme_cache.checkerboard = get_editor_theme_icon(SNAME("Checkerboard"));
+	theme_cache.checkerboard = get_editor_theme_icon(SNAME("gui_checkerboard"));
 }
 
 void MaterialEditor::_notification(int p_what) {

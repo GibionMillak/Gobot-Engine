@@ -345,9 +345,9 @@ float ParticleProcessMaterialMinMaxPropertyEditor::_get_max_spread() const {
 void ParticleProcessMaterialMinMaxPropertyEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			toggle_mode_button->set_button_icon(get_editor_theme_icon(SNAME("Anchor")));
-			range_slider_left_icon = get_editor_theme_icon(SNAME("RangeSliderLeft"));
-			range_slider_right_icon = get_editor_theme_icon(SNAME("RangeSliderRight"));
+			toggle_mode_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_anchor")));
+			range_slider_left_icon = get_editor_theme_icon(SNAME("gui_range_slider_left"));
+			range_slider_right_icon = get_editor_theme_icon(SNAME("gui_range_slider_right"));
 
 			min_edit->add_theme_color_override(SNAME("label_color"), get_theme_color(SNAME("property_color_x"), EditorStringName(Editor)));
 			max_edit->add_theme_color_override(SNAME("label_color"), get_theme_color(SNAME("property_color_y"), EditorStringName(Editor)));

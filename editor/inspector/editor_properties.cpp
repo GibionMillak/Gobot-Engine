@@ -124,7 +124,7 @@ void EditorPropertyVariant::_set_read_only(bool p_read_only) {
 
 void EditorPropertyVariant::_notification(int p_what) {
 	if (p_what == NOTIFICATION_THEME_CHANGED) {
-		edit_button->set_button_icon(get_editor_theme_icon(SNAME("Edit")));
+		edit_button->set_button_icon(get_editor_theme_icon(SNAME("action_edit")));
 	}
 }
 
@@ -359,7 +359,7 @@ void EditorPropertyMultilineText::update_property() {
 }
 
 void EditorPropertyMultilineText::_update_theme() {
-	Ref<Texture2D> df = get_editor_theme_icon(SNAME("DistractionFree"));
+	Ref<Texture2D> df = get_editor_theme_icon(SNAME("view_distraction_free"));
 	open_big_text->set_button_icon(df);
 
 	Ref<Font> font;
@@ -565,9 +565,9 @@ void EditorPropertyTextEnum::setup(const Vector<String> &p_options, const Vector
 void EditorPropertyTextEnum::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			edit_button->set_button_icon(get_editor_theme_icon(SNAME("Edit")));
-			accept_button->set_button_icon(get_editor_theme_icon(SNAME("ImportCheck")));
-			cancel_button->set_button_icon(get_editor_theme_icon(SNAME("ImportFail")));
+			edit_button->set_button_icon(get_editor_theme_icon(SNAME("action_edit")));
+			accept_button->set_button_icon(get_editor_theme_icon(SNAME("gui_import_check")));
+			cancel_button->set_button_icon(get_editor_theme_icon(SNAME("gui_import_fail")));
 		} break;
 	}
 }
@@ -659,7 +659,7 @@ void EditorPropertyLocale::setup(const String &p_hint_text) {
 void EditorPropertyLocale::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			locale_edit->set_button_icon(get_editor_theme_icon(SNAME("Translation")));
+			locale_edit->set_button_icon(get_editor_theme_icon(SNAME("resource_translation")));
 		} break;
 	}
 }
@@ -774,9 +774,9 @@ void EditorPropertyPath::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			if (folder) {
-				path_edit->set_button_icon(get_editor_theme_icon(SNAME("FolderBrowse")));
+				path_edit->set_button_icon(get_editor_theme_icon(SNAME("folder_folder_browse")));
 			} else {
-				path_edit->set_button_icon(get_editor_theme_icon(SNAME("FileBrowse")));
+				path_edit->set_button_icon(get_editor_theme_icon(SNAME("file_file_browse")));
 			}
 			_update_uid_icon();
 		} break;
@@ -794,7 +794,7 @@ void EditorPropertyPath::_toggle_uid_display() {
 }
 
 void EditorPropertyPath::_update_uid_icon() {
-	toggle_uid->set_button_icon(get_editor_theme_icon(display_uid ? SNAME("UID") : SNAME("NodePath")));
+	toggle_uid->set_button_icon(get_editor_theme_icon(display_uid ? SNAME("gui_uid") : SNAME("variant_node_path")));
 }
 
 void EditorPropertyPath::_drop_data_fw(const Point2 &p_point, const Variant &p_data, Control *p_from) {
@@ -1401,9 +1401,9 @@ void EditorPropertyLayersGrid::_bind_methods() {
 void EditorPropertyLayers::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			button->set_texture_normal(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
-			button->set_texture_pressed(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
-			button->set_texture_disabled(get_editor_theme_icon(SNAME("GuiTabMenu")));
+			button->set_texture_normal(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			button->set_texture_pressed(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			button->set_texture_disabled(get_editor_theme_icon(SNAME("gui_gui_tab_menu")));
 		} break;
 	}
 }
@@ -1528,7 +1528,7 @@ void EditorPropertyLayers::_button_pressed() {
 		layers->set_item_disabled(0, true);
 	}
 	layers->add_separator();
-	layers->add_icon_item(get_editor_theme_icon("Edit"), TTR("Edit Layer Names"), grid->layer_count);
+	layers->add_icon_item(get_editor_theme_icon("action_edit"), TTR("Edit Layer Names"), grid->layer_count);
 
 	Rect2 gp = button->get_screen_rect();
 	layers->reset_size();
@@ -1705,7 +1705,7 @@ void EditorPropertySignal::update_property() {
 
 	edit->set_text("Signal: " + signal.get_name());
 	edit->set_disabled(false);
-	edit->set_button_icon(get_editor_theme_icon(SNAME("Signals")));
+	edit->set_button_icon(get_editor_theme_icon(SNAME("scripting_signals")));
 }
 
 EditorPropertySignal::EditorPropertySignal() {
@@ -1723,7 +1723,7 @@ void EditorPropertyCallable::update_property() {
 
 	edit->set_text("Callable");
 	edit->set_disabled(true);
-	edit->set_button_icon(get_editor_theme_icon(SNAME("Callable")));
+	edit->set_button_icon(get_editor_theme_icon(SNAME("variant_callable")));
 }
 
 EditorPropertyCallable::EditorPropertyCallable() {
@@ -1961,13 +1961,13 @@ void EditorPropertyEasing::setup(bool p_positive_only, bool p_flip) {
 void EditorPropertyEasing::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			preset->set_item_icon(preset->get_item_index(EASING_LINEAR), get_editor_theme_icon(SNAME("CurveLinear")));
-			preset->set_item_icon(preset->get_item_index(EASING_IN), get_editor_theme_icon(SNAME("CurveIn")));
-			preset->set_item_icon(preset->get_item_index(EASING_OUT), get_editor_theme_icon(SNAME("CurveOut")));
-			preset->set_item_icon(preset->get_item_index(EASING_ZERO), get_editor_theme_icon(SNAME("CurveConstant")));
+			preset->set_item_icon(preset->get_item_index(EASING_LINEAR), get_editor_theme_icon(SNAME("animation_curve_linear")));
+			preset->set_item_icon(preset->get_item_index(EASING_IN), get_editor_theme_icon(SNAME("animation_curve_in")));
+			preset->set_item_icon(preset->get_item_index(EASING_OUT), get_editor_theme_icon(SNAME("animation_curve_out")));
+			preset->set_item_icon(preset->get_item_index(EASING_ZERO), get_editor_theme_icon(SNAME("animation_curve_constant")));
 			if (!positive_only) {
-				preset->set_item_icon(preset->get_item_index(EASING_IN_OUT), get_editor_theme_icon(SNAME("CurveInOut")));
-				preset->set_item_icon(preset->get_item_index(EASING_OUT_IN), get_editor_theme_icon(SNAME("CurveOutIn")));
+				preset->set_item_icon(preset->get_item_index(EASING_IN_OUT), get_editor_theme_icon(SNAME("animation_curve_in_out")));
+				preset->set_item_icon(preset->get_item_index(EASING_OUT_IN), get_editor_theme_icon(SNAME("animation_curve_out_in")));
 			}
 			easing_draw->set_custom_minimum_size(Size2(0, get_theme_font(SceneStringName(font), SNAME("Label"))->get_height(get_theme_font_size(SceneStringName(font_size), SNAME("Label"))) * 2));
 		} break;
@@ -2377,9 +2377,9 @@ void EditorPropertyQuaternion::_notification(int p_what) {
 			for (int i = 0; i < 3; i++) {
 				euler[i]->add_theme_color_override("label_color", colors[i]);
 			}
-			edit_button->set_button_icon(get_editor_theme_icon(SNAME("Edit")));
+			edit_button->set_button_icon(get_editor_theme_icon(SNAME("action_edit")));
 			euler_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("property_color"), SNAME("EditorProperty")));
-			warning->set_button_icon(get_editor_theme_icon(SNAME("NodeWarning")));
+			warning->set_button_icon(get_editor_theme_icon(SNAME("status_node_warning")));
 			warning->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 		} break;
 	}
@@ -3276,12 +3276,12 @@ void EditorPropertyNodePath::setup(const Vector<StringName> &p_valid_types, bool
 void EditorPropertyNodePath::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			menu_button->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
+			menu_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
 			if (menu) {
-				menu->set_item_icon(ACTION_CLEAR, get_editor_theme_icon(SNAME("Clear")));
-				menu->set_item_icon(ACTION_COPY, get_editor_theme_icon(SNAME("Copy")));
-				menu->set_item_icon(ACTION_EDIT, get_editor_theme_icon(SNAME("Edit")));
-				menu->set_item_icon(ACTION_SELECT, get_editor_theme_icon(SNAME("ExternalLink")));
+				menu->set_item_icon(ACTION_CLEAR, get_editor_theme_icon(SNAME("action_clear")));
+				menu->set_item_icon(ACTION_COPY, get_editor_theme_icon(SNAME("action_copy")));
+				menu->set_item_icon(ACTION_EDIT, get_editor_theme_icon(SNAME("action_edit")));
+				menu->set_item_icon(ACTION_SELECT, get_editor_theme_icon(SNAME("navigation_external_link")));
 			}
 
 			// Use a constant width for the icon to avoid sizing issues or blurry icons.

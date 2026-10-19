@@ -244,7 +244,7 @@ void GroupsEditor::_update_tree() {
 
 	TreeItem *local_root = tree->create_item(root);
 	local_root->set_text(0, TTR("Scene Groups"));
-	local_root->set_icon(0, get_editor_theme_icon(SNAME("PackedScene")));
+	local_root->set_icon(0, get_editor_theme_icon(SNAME("resource_packed_scene")));
 	local_root->set_custom_bg_color(0, get_theme_color(SNAME("prop_subsection"), EditorStringName(Editor)));
 	local_root->set_custom_stylebox(0, get_theme_stylebox(SNAME("prop_subsection_stylebox"), EditorStringName(Editor)));
 	local_root->set_selectable(0, false);
@@ -269,9 +269,9 @@ void GroupsEditor::_update_tree() {
 		item->set_meta("__name", E);
 		item->set_meta("__description", "");
 		if (!scene_groups[E]) {
-			item->add_button(0, get_editor_theme_icon(SNAME("Lock")), -1, true, TTR("This group belongs to another scene and can't be edited."));
+			item->add_button(0, get_editor_theme_icon(SNAME("action_lock")), -1, true, TTR("This group belongs to another scene and can't be edited."));
 		}
-		item->add_button(0, get_editor_theme_icon(SNAME("Copy")), COPY_GROUP, false, TTR("Copy group name to clipboard."));
+		item->add_button(0, get_editor_theme_icon(SNAME("action_copy")), COPY_GROUP, false, TTR("Copy group name to clipboard."));
 	}
 
 	List<StringName> keys;
@@ -282,7 +282,7 @@ void GroupsEditor::_update_tree() {
 
 	TreeItem *global_root = tree->create_item(root);
 	global_root->set_text(0, TTR("Global Groups"));
-	global_root->set_icon(0, get_editor_theme_icon(SNAME("Environment")));
+	global_root->set_icon(0, get_editor_theme_icon(SNAME("resource_environment")));
 	global_root->set_custom_bg_color(0, get_theme_color(SNAME("prop_subsection"), EditorStringName(Editor)));
 	global_root->set_custom_stylebox(0, get_theme_stylebox(SNAME("prop_subsection_stylebox"), EditorStringName(Editor)));
 	global_root->set_selectable(0, false);
@@ -303,7 +303,7 @@ void GroupsEditor::_update_tree() {
 		if (!global_groups[E].is_empty()) {
 			item->set_tooltip_text(0, vformat("%s\n\n%s", E, global_groups[E]));
 		}
-		item->add_button(0, get_editor_theme_icon(SNAME("Copy")), COPY_GROUP, false, TTR("Copy group name to clipboard."));
+		item->add_button(0, get_editor_theme_icon(SNAME("action_copy")), COPY_GROUP, false, TTR("Copy group name to clipboard."));
 	}
 
 	updating_tree = false;
@@ -428,8 +428,8 @@ void GroupsEditor::_notification(int p_what) {
 			}
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
-			filter->set_right_icon(get_editor_theme_icon("Search"));
-			add->set_button_icon(get_editor_theme_icon("Add"));
+			filter->set_right_icon(get_editor_theme_icon("action_search"));
+			add->set_button_icon(get_editor_theme_icon("action_add"));
 			_update_tree();
 		} break;
 		case NOTIFICATION_VISIBILITY_CHANGED: {
@@ -517,16 +517,16 @@ void GroupsEditor::_item_mouse_selected(const Vector2 &p_pos, MouseButton p_mous
 
 		menu->clear();
 		if (ti->get_meta("__local")) {
-			menu->add_icon_item(get_editor_theme_icon(SNAME("Environment")), TTRC("Convert to Global Group"), CONVERT_GROUP);
+			menu->add_icon_item(get_editor_theme_icon(SNAME("resource_environment")), TTRC("Convert to Global Group"), CONVERT_GROUP);
 		} else {
-			menu->add_icon_item(get_editor_theme_icon(SNAME("PackedScene")), TTRC("Convert to Scene Group"), CONVERT_GROUP);
+			menu->add_icon_item(get_editor_theme_icon(SNAME("resource_packed_scene")), TTRC("Convert to Scene Group"), CONVERT_GROUP);
 		}
 
 		String group_name = ti->get_meta("__name");
 		if (global_groups.has(group_name) || scene_groups[group_name]) {
 			menu->add_separator();
-			menu->add_icon_shortcut(get_editor_theme_icon(SNAME("Rename")), ED_GET_SHORTCUT("groups_editor/rename"), RENAME_GROUP);
-			menu->add_icon_shortcut(get_editor_theme_icon(SNAME("Remove")), ED_GET_SHORTCUT("groups_editor/delete"), DELETE_GROUP);
+			menu->add_icon_shortcut(get_editor_theme_icon(SNAME("action_rename")), ED_GET_SHORTCUT("groups_editor/rename"), RENAME_GROUP);
+			menu->add_icon_shortcut(get_editor_theme_icon(SNAME("action_remove")), ED_GET_SHORTCUT("groups_editor/delete"), DELETE_GROUP);
 		}
 
 		menu->set_position(tree->get_screen_position() + p_pos);

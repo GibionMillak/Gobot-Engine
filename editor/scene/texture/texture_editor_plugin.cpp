@@ -116,11 +116,11 @@ void TexturePreview::_notification(int p_what) {
 			}
 
 			if (metadata_toggle) {
-				metadata_toggle->set_button_icon(get_editor_theme_icon(SNAME("Info")));
+				metadata_toggle->set_button_icon(get_editor_theme_icon(SNAME("status_info")));
 			}
 
 			bg_rect->set_color(get_theme_color(SNAME("dark_color_2"), EditorStringName(Editor)));
-			checkerboard->set_texture(get_editor_theme_icon(SNAME("Checkerboard")));
+			checkerboard->set_texture(get_editor_theme_icon(SNAME("gui_checkerboard")));
 			theme_cache.outline_color = get_theme_color(SNAME("texture_preview_outline_color"), EditorStringName(Editor));
 		} break;
 	}

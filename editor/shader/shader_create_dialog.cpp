@@ -36,6 +36,7 @@
 #include "core/io/resource_saver.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/editor_node.h"
 #include "editor/file_system/editor_file_system.h"
 #include "editor/gui/editor_file_dialog.h"
@@ -55,7 +56,7 @@ void ShaderCreateDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			path_button->set_button_icon(get_editor_theme_icon(SNAME("Folder")));
+			path_button->set_button_icon(get_editor_theme_icon(SNAME("folder_folder")));
 			// Note that some of the theme logic happens in `config()` when opening the dialog.
 		} break;
 	}
@@ -64,11 +65,11 @@ void ShaderCreateDialog::_notification(int p_what) {
 void ShaderCreateDialog::_refresh_type_icons() {
 	for (int i = 0; i < type_menu->get_item_count(); i++) {
 		const String item_name = type_menu->get_item_text(i);
-		Ref<Texture2D> icon = get_editor_theme_icon(item_name);
+		Ref<Texture2D> icon = get_editor_theme_icon(editor_get_type_icon_name(item_name));
 		if (icon.is_valid()) {
 			type_menu->set_item_icon(i, icon);
 		} else {
-			icon = get_editor_theme_icon("TextFile");
+			icon = get_editor_theme_icon("resource_text_file");
 			if (icon.is_valid()) {
 				type_menu->set_item_icon(i, icon);
 			}

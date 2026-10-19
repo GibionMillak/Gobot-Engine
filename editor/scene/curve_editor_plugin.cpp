@@ -962,14 +962,14 @@ void CurveEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			spacing = Math::round(BASE_SPACING * get_theme_default_base_scale());
-			snap_button->set_button_icon(get_editor_theme_icon(SNAME("SnapGrid")));
+			snap_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
 			PopupMenu *p = presets_button->get_popup();
 			p->clear();
-			p->add_icon_item(get_editor_theme_icon(SNAME("CurveConstant")), TTR("Constant"), CurveEdit::PRESET_CONSTANT);
-			p->add_icon_item(get_editor_theme_icon(SNAME("CurveLinear")), TTR("Linear"), CurveEdit::PRESET_LINEAR);
-			p->add_icon_item(get_editor_theme_icon(SNAME("CurveIn")), TTR("Ease In"), CurveEdit::PRESET_EASE_IN);
-			p->add_icon_item(get_editor_theme_icon(SNAME("CurveOut")), TTR("Ease Out"), CurveEdit::PRESET_EASE_OUT);
-			p->add_icon_item(get_editor_theme_icon(SNAME("CurveInOut")), TTR("Smoothstep"), CurveEdit::PRESET_SMOOTHSTEP);
+			p->add_icon_item(get_editor_theme_icon(SNAME("animation_curve_constant")), TTR("Constant"), CurveEdit::PRESET_CONSTANT);
+			p->add_icon_item(get_editor_theme_icon(SNAME("animation_curve_linear")), TTR("Linear"), CurveEdit::PRESET_LINEAR);
+			p->add_icon_item(get_editor_theme_icon(SNAME("animation_curve_in")), TTR("Ease In"), CurveEdit::PRESET_EASE_IN);
+			p->add_icon_item(get_editor_theme_icon(SNAME("animation_curve_out")), TTR("Ease Out"), CurveEdit::PRESET_EASE_OUT);
+			p->add_icon_item(get_editor_theme_icon(SNAME("animation_curve_in_out")), TTR("Smoothstep"), CurveEdit::PRESET_SMOOTHSTEP);
 		} break;
 		case NOTIFICATION_READY: {
 			Ref<Curve> curve = curve_editor_rect->get_curve();

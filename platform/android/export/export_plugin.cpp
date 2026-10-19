@@ -2174,7 +2174,7 @@ Ref<Texture2D> EditorExportPlatformAndroid::get_option_icon(int p_index) const {
 	if (p_index == 0) {
 		Ref<Theme> theme = EditorNode::get_singleton()->get_editor_theme();
 		ERR_FAIL_COND_V(theme.is_null(), Ref<ImageTexture>());
-		return theme->get_icon(use_scrcpy ? SNAME("GuiChecked") : SNAME("GuiUnchecked"), EditorStringName(EditorIcons));
+		return theme->get_icon(use_scrcpy ? SNAME("gui_gui_checked") : SNAME("gui_gui_unchecked"), EditorStringName(EditorIcons));
 	}
 	return EditorExportPlatform::get_option_icon(p_index - 1);
 }

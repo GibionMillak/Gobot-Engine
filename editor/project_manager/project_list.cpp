@@ -61,7 +61,7 @@ void ProjectListItemControl::_notification(int p_what) {
 			if (_thumbnail_needs_reload) {
 				// The project thumbnail may not be loaded by the time the control is displayed,
 				// so use a loading placeholder.
-				_project_thumbnail->set_texture(get_editor_theme_icon(SNAME("ProjectThumbnailLoading")));
+				_project_thumbnail->set_texture(get_editor_theme_icon(SNAME("gui_project_thumbnail_loading")));
 			}
 
 			project_title->begin_bulk_theme_override();
@@ -74,25 +74,25 @@ void ProjectListItemControl::_notification(int p_what) {
 
 			_update_version_icon();
 
-			project_unsupported_features->set_texture(get_editor_theme_icon(SNAME("NodeWarning")));
+			project_unsupported_features->set_texture(get_editor_theme_icon(SNAME("status_node_warning")));
 
 			favorite_focus_color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 			_update_favorite_button_focus_color();
 			if (is_favorite) {
-				favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("Favorites")));
+				favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("folder_favorites")));
 			} else {
-				favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("Unfavorite")));
+				favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("folder_unfavorite")));
 			}
 
 			if (project_is_missing) {
-				explore_button->set_button_icon(get_editor_theme_icon(SNAME("FileBroken")));
+				explore_button->set_button_icon(get_editor_theme_icon(SNAME("file_file_broken")));
 #if !defined(ANDROID_ENABLED)
 			} else {
-				explore_button->set_button_icon(get_editor_theme_icon(SNAME("Load")));
+				explore_button->set_button_icon(get_editor_theme_icon(SNAME("action_load")));
 #endif
 			}
 			if (touch_menu_button) {
-				touch_menu_button->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
+				touch_menu_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
 			}
 		} break;
 
@@ -204,19 +204,19 @@ void ProjectListItemControl::set_last_edited_info(const String &p_info) {
 void ProjectListItemControl::_update_version_icon() {
 	switch (version_match_type) {
 		case VersionMatchType::PROJECT_USES_OLDER_MAJOR:
-			project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectUpgradeMajor")));
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("gui_project_upgrade_major")));
 			break;
 		case VersionMatchType::PROJECT_USES_OLDER_MINOR:
-			project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectUpgrade")));
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("gui_project_upgrade")));
 			break;
 		case VersionMatchType::PROJECT_USES_NEWER_MAJOR:
-			project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectDowngradeMajor")));
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("gui_project_downgrade_major")));
 			break;
 		case VersionMatchType::PROJECT_USES_NEWER_MINOR:
-			project_different_version->set_texture(get_editor_theme_icon(SNAME("ProjectDowngrade")));
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("gui_project_downgrade")));
 			break;
 		default:
-			project_different_version->set_texture(get_editor_theme_icon(SNAME("StatusWarning")));
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("status_status_warning")));
 			break;
 	}
 }
@@ -273,9 +273,9 @@ void ProjectListItemControl::set_selected(bool p_selected, bool p_hide_focus) {
 void ProjectListItemControl::set_is_favorite(bool p_favorite) {
 	is_favorite = p_favorite;
 	if (p_favorite) {
-		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("Favorites")));
+		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("folder_favorites")));
 	} else {
-		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("Unfavorite")));
+		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("folder_unfavorite")));
 	}
 }
 
@@ -283,14 +283,14 @@ void ProjectListItemControl::set_is_missing(bool p_missing) {
 	project_is_missing = p_missing;
 
 	if (project_is_missing) {
-		explore_button->set_button_icon(get_editor_theme_icon(SNAME("FileBroken")));
+		explore_button->set_button_icon(get_editor_theme_icon(SNAME("file_file_broken")));
 		explore_button->set_tooltip_text(TTRC("Error: Project is missing on the filesystem."));
 	} else {
 #if defined(ANDROID_ENABLED)
 		// Opening the system file manager is not supported on the Android editor.
 		explore_button->hide();
 #else
-		explore_button->set_button_icon(get_editor_theme_icon(SNAME("Load")));
+		explore_button->set_button_icon(get_editor_theme_icon(SNAME("action_load")));
 		explore_button->set_tooltip_text(OS::get_singleton()->get_platform_string(OS::PLATFORM_STRING_FILE_MANAGER_OPEN));
 #endif
 	}
@@ -703,7 +703,7 @@ void ProjectList::_update_thumbnails_async() {
 void ProjectList::_load_project_thumbnail(int p_index) {
 	Item &item = _projects.write[p_index];
 
-	Ref<Texture2D> default_thumbnail = get_editor_theme_icon(SNAME("ProjectThumbnailDefault"));
+	Ref<Texture2D> default_thumbnail = get_editor_theme_icon(SNAME("gui_project_thumbnail_default"));
 	Ref<Texture2D> thumbnail;
 	if (!item.missing && !item.thumbnail.is_empty()) {
 		Ref<Image> img;
@@ -715,7 +715,7 @@ void ProjectList::_load_project_thumbnail(int p_index) {
 		}
 	}
 	if (thumbnail.is_null()) {
-		thumbnail = item.missing ? get_editor_theme_icon(SNAME("ProjectThumbnailMissing")) : default_thumbnail;
+		thumbnail = item.missing ? get_editor_theme_icon(SNAME("gui_project_thumbnail_missing")) : default_thumbnail;
 	}
 
 	item.control->set_project_thumbnail(thumbnail);
@@ -1199,18 +1199,18 @@ void ProjectList::_menu_option(int p_option) {
 }
 
 void ProjectList::_update_menu_icons() {
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_EDIT), get_editor_theme_icon("Edit"));
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_EDIT_VERBOSE), get_editor_theme_icon("Notification"));
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_EDIT_RECOVERY), get_editor_theme_icon("NodeWarning"));
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_RUN), get_editor_theme_icon("Play"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_EDIT), get_editor_theme_icon("action_edit"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_EDIT_VERBOSE), get_editor_theme_icon("status_notification"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_EDIT_RECOVERY), get_editor_theme_icon("status_node_warning"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_RUN), get_editor_theme_icon("playback_play"));
 #if !defined(ANDROID_ENABLED)
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_SHOW_IN_FILE_MANAGER), get_editor_theme_icon("Load"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_SHOW_IN_FILE_MANAGER), get_editor_theme_icon("action_load"));
 #endif
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_COPY_PATH), get_editor_theme_icon("Copy"));
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_RENAME), get_editor_theme_icon("Rename"));
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_MANAGE_TAGS), get_editor_theme_icon("Script"));
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_DUPLICATE), get_editor_theme_icon("Duplicate"));
-	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_REMOVE), get_editor_theme_icon("Remove"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_COPY_PATH), get_editor_theme_icon("action_copy"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_RENAME), get_editor_theme_icon("action_rename"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_MANAGE_TAGS), get_editor_theme_icon("resource_script"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_DUPLICATE), get_editor_theme_icon("action_duplicate"));
+	project_context_menu->set_item_icon(project_context_menu->get_item_index(MENU_REMOVE), get_editor_theme_icon("action_remove"));
 }
 
 // Project list selection.

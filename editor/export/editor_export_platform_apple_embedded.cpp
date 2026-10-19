@@ -2548,9 +2548,9 @@ Ref<Texture2D> EditorExportPlatformAppleEmbedded::get_option_icon(int p_index) c
 		Ref<Theme> theme = EditorNode::get_singleton()->get_editor_theme();
 		if (theme.is_valid()) {
 			if (devices[p_index].wifi) {
-				icon = theme->get_icon("IOSDeviceWireless", EditorStringName(EditorIcons));
+				icon = theme->get_icon("input_ios_device_wireless", EditorStringName(EditorIcons));
 			} else {
-				icon = theme->get_icon("IOSDeviceWired", EditorStringName(EditorIcons));
+				icon = theme->get_icon("input_ios_device_wired", EditorStringName(EditorIcons));
 			}
 		}
 	}

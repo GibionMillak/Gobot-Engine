@@ -188,9 +188,9 @@ void EditorDebuggerTree::_scene_tree_rmb_selected(const Vector2 &p_position, Mou
 	item->select(0);
 
 	item_menu->clear();
-	item_menu->add_icon_item(get_editor_theme_icon(SNAME("CreateNewSceneFrom")), TTR("Save Branch as Scene..."), ITEM_MENU_SAVE_REMOTE_NODE);
-	item_menu->add_icon_item(get_editor_theme_icon(SNAME("CopyNodePath")), TTR("Copy Node Path"), ITEM_MENU_COPY_NODE_PATH);
-	item_menu->add_icon_item(get_editor_theme_icon(SNAME("Collapse")), TTR("Expand/Collapse Branch"), ITEM_MENU_EXPAND_COLLAPSE);
+	item_menu->add_icon_item(get_editor_theme_icon(SNAME("action_create_new_scene_from")), TTR("Save Branch as Scene..."), ITEM_MENU_SAVE_REMOTE_NODE);
+	item_menu->add_icon_item(get_editor_theme_icon(SNAME("action_copy_node_path")), TTR("Copy Node Path"), ITEM_MENU_COPY_NODE_PATH);
+	item_menu->add_icon_item(get_editor_theme_icon(SNAME("action_collapse")), TTR("Expand/Collapse Branch"), ITEM_MENU_EXPAND_COLLAPSE);
 	item_menu->set_position(get_screen_position() + get_local_mouse_position());
 	item_menu->reset_size();
 	item_menu->popup();
@@ -302,7 +302,7 @@ void EditorDebuggerTree::update_scene_tree(const SceneDebuggerTree *p_tree, int 
 		const Color remote_button_color = Color(1, 1, 1, 0.8);
 		if (!node.scene_file_path.is_empty() && ResourceLoader::exists(node.scene_file_path, "PackedScene")) {
 			String node_scene_file_path = node.scene_file_path;
-			Ref<Texture2D> button_icon = get_editor_theme_icon(SNAME("InstanceOptions"));
+			Ref<Texture2D> button_icon = get_editor_theme_icon(SNAME("gui_instance_options"));
 			String tooltip = vformat(TTR("This node has been instantiated from a PackedScene file:\n%s\nClick to open the original file in the Editor."), node_scene_file_path);
 
 			item->set_meta("scene_file_path", node_scene_file_path);
@@ -313,7 +313,7 @@ void EditorDebuggerTree::update_scene_tree(const SceneDebuggerTree *p_tree, int 
 		if (node.view_flags & SceneDebuggerTree::RemoteNode::VIEW_HAS_VISIBLE_METHOD) {
 			bool node_visible = node.view_flags & SceneDebuggerTree::RemoteNode::VIEW_VISIBLE;
 			bool node_visible_in_tree = node.view_flags & SceneDebuggerTree::RemoteNode::VIEW_VISIBLE_IN_TREE;
-			Ref<Texture2D> button_icon = get_editor_theme_icon(node_visible ? SNAME("GuiVisibilityVisible") : SNAME("GuiVisibilityHidden"));
+			Ref<Texture2D> button_icon = get_editor_theme_icon(node_visible ? SNAME("gui_gui_visibility_visible") : SNAME("gui_gui_visibility_hidden"));
 			String tooltip = TTR("Toggle Visibility");
 
 			item->set_meta("visible", node_visible);

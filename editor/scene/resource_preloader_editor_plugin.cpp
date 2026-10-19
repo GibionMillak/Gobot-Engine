@@ -55,7 +55,7 @@ void ResourcePreloaderEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			load->set_button_icon(get_editor_theme_icon(SNAME("Folder")));
+			load->set_button_icon(get_editor_theme_icon(SNAME("folder_folder")));
 		} break;
 	}
 }
@@ -238,11 +238,11 @@ void ResourcePreloaderEditor::_update_library() {
 		ti->set_selectable(1, false);
 
 		if (type == "PackedScene") {
-			ti->add_button(1, get_editor_theme_icon(SNAME("InstanceOptions")), BUTTON_OPEN_SCENE, false, TTR("Open in Editor"));
+			ti->add_button(1, get_editor_theme_icon(SNAME("gui_instance_options")), BUTTON_OPEN_SCENE, false, TTR("Open in Editor"));
 		} else {
-			ti->add_button(1, get_editor_theme_icon(SNAME("Load")), BUTTON_EDIT_RESOURCE, false, TTR("Open in Editor"));
+			ti->add_button(1, get_editor_theme_icon(SNAME("action_load")), BUTTON_EDIT_RESOURCE, false, TTR("Open in Editor"));
 		}
-		ti->add_button(1, get_editor_theme_icon(SNAME("Remove")), BUTTON_REMOVE, false, TTR("Remove"));
+		ti->add_button(1, get_editor_theme_icon(SNAME("action_remove")), BUTTON_REMOVE, false, TTR("Remove"));
 	}
 }
 
@@ -385,7 +385,7 @@ void ResourcePreloaderEditor::_bind_methods() {
 
 ResourcePreloaderEditor::ResourcePreloaderEditor() {
 	set_name(TTRC("ResourcePreloader"));
-	set_icon_name("ResourcePreloader");
+	set_icon_name("node_resource_preloader");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_resource_preloader_bottom_panel", TTRC("Toggle ResourcePreloader Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);

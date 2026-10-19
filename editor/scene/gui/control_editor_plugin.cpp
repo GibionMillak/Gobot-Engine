@@ -57,15 +57,15 @@ void ControlPositioningWarning::_update_warning() {
 
 	Node *parent_node = control_node->get_parent_control();
 	if (!parent_node) {
-		title_icon->set_texture(get_editor_theme_icon(SNAME("SubViewport")));
+		title_icon->set_texture(get_editor_theme_icon(SNAME("node_viewport_sub_viewport")));
 		title_label->set_text(TTRC("This node doesn't have a control parent."));
 		hint_label->set_text(TTRC("Use the appropriate layout properties depending on where you are going to put it."));
 	} else if (Object::cast_to<Container>(parent_node)) {
-		title_icon->set_texture(get_editor_theme_icon(SNAME("ContainerLayout")));
+		title_icon->set_texture(get_editor_theme_icon(SNAME("gui_container_layout")));
 		title_label->set_text(TTRC("This node is a child of a container."));
 		hint_label->set_text(TTRC("Use container properties for positioning."));
 	} else {
-		title_icon->set_texture(get_editor_theme_icon(SNAME("ControlLayout")));
+		title_icon->set_texture(get_editor_theme_icon(SNAME("gui_alignment_control_layout")));
 		title_label->set_text(TTRC("This node is a child of a regular control."));
 		hint_label->set_text(TTRC("Use anchors and the rectangle for positioning."));
 	}
@@ -178,22 +178,22 @@ void EditorPropertyAnchorsPreset::_notification(int p_what) {
 					continue;
 				}
 				static const StringName icon_names[] = {
-					StringName("ControlAlignTopLeft", true),
-					StringName("ControlAlignTopRight", true),
-					StringName("ControlAlignBottomLeft", true),
-					StringName("ControlAlignBottomRight", true),
-					StringName("ControlAlignCenterLeft", true),
-					StringName("ControlAlignCenterTop", true),
-					StringName("ControlAlignCenterRight", true),
-					StringName("ControlAlignCenterBottom", true),
-					StringName("ControlAlignCenter", true),
-					StringName("ControlAlignLeftWide", true),
-					StringName("ControlAlignTopWide", true),
-					StringName("ControlAlignRightWide", true),
-					StringName("ControlAlignBottomWide", true),
-					StringName("ControlAlignVCenterWide", true),
-					StringName("ControlAlignHCenterWide", true),
-					StringName("ControlAlignFullRect", true),
+					StringName("gui_alignment_control_align_top_left", true),
+					StringName("gui_alignment_control_align_top_right", true),
+					StringName("gui_alignment_control_align_bottom_left", true),
+					StringName("gui_alignment_control_align_bottom_right", true),
+					StringName("gui_alignment_control_align_center_left", true),
+					StringName("gui_alignment_control_align_center_top", true),
+					StringName("gui_alignment_control_align_center_right", true),
+					StringName("gui_alignment_control_align_center_bottom", true),
+					StringName("gui_alignment_control_align_center", true),
+					StringName("gui_alignment_control_align_left_wide", true),
+					StringName("gui_alignment_control_align_top_wide", true),
+					StringName("gui_alignment_control_align_right_wide", true),
+					StringName("gui_alignment_control_align_bottom_wide", true),
+					StringName("gui_alignment_control_align_v_center_wide", true),
+					StringName("gui_alignment_control_align_h_center_wide", true),
+					StringName("gui_alignment_control_align_full_rect", true),
 				};
 				options->set_item_icon(i, get_editor_theme_icon(icon_names[preset]));
 			}
@@ -415,13 +415,13 @@ void EditorPropertySizeFlags::setup(const Vector<String> &p_options, bool p_vert
 	}
 
 	Control *gui_base = EditorNode::get_singleton()->get_gui_base();
-	StringName wide_preset_icon = SNAME("ControlAlignHCenterWide");
-	StringName begin_preset_icon = SNAME("ControlAlignCenterLeft");
-	StringName end_preset_icon = SNAME("ControlAlignCenterRight");
+	StringName wide_preset_icon = SNAME("gui_alignment_control_align_h_center_wide");
+	StringName begin_preset_icon = SNAME("gui_alignment_control_align_center_left");
+	StringName end_preset_icon = SNAME("gui_alignment_control_align_center_right");
 	if (vertical) {
-		wide_preset_icon = SNAME("ControlAlignVCenterWide");
-		begin_preset_icon = SNAME("ControlAlignCenterTop");
-		end_preset_icon = SNAME("ControlAlignCenterBottom");
+		wide_preset_icon = SNAME("gui_alignment_control_align_v_center_wide");
+		begin_preset_icon = SNAME("gui_alignment_control_align_center_top");
+		end_preset_icon = SNAME("gui_alignment_control_align_center_bottom");
 	}
 
 	flag_presets->clear();
@@ -431,7 +431,7 @@ void EditorPropertySizeFlags::setup(const Vector<String> &p_options, bool p_vert
 	// Shrink Begin is the same as no flags at all, as such it cannot be disabled.
 	flag_presets->add_icon_item(gui_base->get_editor_theme_icon(begin_preset_icon), TTRC("Shrink Begin"), SIZE_FLAGS_PRESET_SHRINK_BEGIN);
 	if (flags.has(SIZE_SHRINK_CENTER)) {
-		flag_presets->add_icon_item(gui_base->get_editor_theme_icon(SNAME("ControlAlignCenter")), TTRC("Shrink Center"), SIZE_FLAGS_PRESET_SHRINK_CENTER);
+		flag_presets->add_icon_item(gui_base->get_editor_theme_icon(SNAME("gui_alignment_control_align_center")), TTRC("Shrink Center"), SIZE_FLAGS_PRESET_SHRINK_CENTER);
 	}
 	if (flags.has(SIZE_SHRINK_END)) {
 		flag_presets->add_icon_item(gui_base->get_editor_theme_icon(end_preset_icon), TTRC("Shrink End"), SIZE_FLAGS_PRESET_SHRINK_END);
@@ -661,27 +661,27 @@ void AnchorPresetPicker::_preset_button_pressed(const int p_preset) {
 void AnchorPresetPicker::_notification(int p_notification) {
 	switch (p_notification) {
 		case NOTIFICATION_THEME_CHANGED: {
-			preset_buttons[PRESET_TOP_LEFT]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignTopLeft")));
-			preset_buttons[PRESET_CENTER_TOP]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenterTop")));
-			preset_buttons[PRESET_TOP_RIGHT]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignTopRight")));
+			preset_buttons[PRESET_TOP_LEFT]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_top_left")));
+			preset_buttons[PRESET_CENTER_TOP]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center_top")));
+			preset_buttons[PRESET_TOP_RIGHT]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_top_right")));
 
-			preset_buttons[PRESET_CENTER_LEFT]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenterLeft")));
-			preset_buttons[PRESET_CENTER]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenter")));
-			preset_buttons[PRESET_CENTER_RIGHT]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenterRight")));
+			preset_buttons[PRESET_CENTER_LEFT]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center_left")));
+			preset_buttons[PRESET_CENTER]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center")));
+			preset_buttons[PRESET_CENTER_RIGHT]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center_right")));
 
-			preset_buttons[PRESET_BOTTOM_LEFT]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignBottomLeft")));
-			preset_buttons[PRESET_CENTER_BOTTOM]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenterBottom")));
-			preset_buttons[PRESET_BOTTOM_RIGHT]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignBottomRight")));
+			preset_buttons[PRESET_BOTTOM_LEFT]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_bottom_left")));
+			preset_buttons[PRESET_CENTER_BOTTOM]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center_bottom")));
+			preset_buttons[PRESET_BOTTOM_RIGHT]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_bottom_right")));
 
-			preset_buttons[PRESET_TOP_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignTopWide")));
-			preset_buttons[PRESET_HCENTER_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignHCenterWide")));
-			preset_buttons[PRESET_BOTTOM_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignBottomWide")));
+			preset_buttons[PRESET_TOP_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_top_wide")));
+			preset_buttons[PRESET_HCENTER_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_h_center_wide")));
+			preset_buttons[PRESET_BOTTOM_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_bottom_wide")));
 
-			preset_buttons[PRESET_LEFT_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignLeftWide")));
-			preset_buttons[PRESET_VCENTER_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignVCenterWide")));
-			preset_buttons[PRESET_RIGHT_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignRightWide")));
+			preset_buttons[PRESET_LEFT_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_left_wide")));
+			preset_buttons[PRESET_VCENTER_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_v_center_wide")));
+			preset_buttons[PRESET_RIGHT_WIDE]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_right_wide")));
 
-			preset_buttons[PRESET_FULL_RECT]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignFullRect")));
+			preset_buttons[PRESET_FULL_RECT]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_full_rect")));
 		} break;
 	}
 }
@@ -809,17 +809,17 @@ void SizeFlagPresetPicker::_notification(int p_notification) {
 	switch (p_notification) {
 		case NOTIFICATION_THEME_CHANGED: {
 			if (vertical) {
-				preset_buttons[SIZE_SHRINK_BEGIN]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenterTop")));
-				preset_buttons[SIZE_SHRINK_CENTER]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenter")));
-				preset_buttons[SIZE_SHRINK_END]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenterBottom")));
+				preset_buttons[SIZE_SHRINK_BEGIN]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center_top")));
+				preset_buttons[SIZE_SHRINK_CENTER]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center")));
+				preset_buttons[SIZE_SHRINK_END]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center_bottom")));
 
-				preset_buttons[SIZE_FILL]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignVCenterWide")));
+				preset_buttons[SIZE_FILL]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_v_center_wide")));
 			} else {
-				preset_buttons[SIZE_SHRINK_BEGIN]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenterLeft")));
-				preset_buttons[SIZE_SHRINK_CENTER]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenter")));
-				preset_buttons[SIZE_SHRINK_END]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignCenterRight")));
+				preset_buttons[SIZE_SHRINK_BEGIN]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center_left")));
+				preset_buttons[SIZE_SHRINK_CENTER]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center")));
+				preset_buttons[SIZE_SHRINK_END]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_center_right")));
 
-				preset_buttons[SIZE_FILL]->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignHCenterWide")));
+				preset_buttons[SIZE_FILL]->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_h_center_wide")));
 			}
 		} break;
 	}
@@ -1285,9 +1285,9 @@ void ControlEditorToolbar::_selection_changed() {
 void ControlEditorToolbar::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			anchors_button->set_button_icon(get_editor_theme_icon(SNAME("ControlLayout")));
-			anchor_mode_button->set_button_icon(get_editor_theme_icon(SNAME("Anchor")));
-			containers_button->set_button_icon(get_editor_theme_icon(SNAME("ContainerLayout")));
+			anchors_button->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_layout")));
+			anchor_mode_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_anchor")));
+			containers_button->set_button_icon(get_editor_theme_icon(SNAME("gui_container_layout")));
 		} break;
 	}
 }

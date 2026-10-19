@@ -459,7 +459,7 @@ void EditorResourcePreview::_idle_callback() {
 void EditorResourcePreview::_update_thumbnail_sizes() {
 	if (small_thumbnail_size == -1) {
 		// Kind of a workaround to retrieve the default icon size.
-		small_thumbnail_size = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Object"), EditorStringName(EditorIcons))->get_width();
+		small_thumbnail_size = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_object"), EditorStringName(EditorIcons))->get_width();
 	}
 }
 

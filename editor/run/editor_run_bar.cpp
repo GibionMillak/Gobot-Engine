@@ -73,8 +73,8 @@ void EditorRunBar::_notification(int p_what) {
 				recovery_mode_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("RecoveryModeButton"), EditorStringName(EditorStyles)));
 				recovery_mode_button->add_theme_style_override("hover", get_theme_stylebox(SNAME("RecoveryModeButton"), EditorStringName(EditorStyles)));
 
-				recovery_mode_button->set_button_icon(get_editor_theme_icon(SNAME("NodeWarning")));
-				recovery_mode_reload_button->set_button_icon(get_editor_theme_icon(SNAME("Reload")));
+				recovery_mode_button->set_button_icon(get_editor_theme_icon(SNAME("status_node_warning")));
+				recovery_mode_reload_button->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
 
 				recovery_mode_button->begin_bulk_theme_override();
 				recovery_mode_button->add_theme_color_override("icon_normal_color", Color(0.3, 0.3, 0.3, 1));
@@ -91,9 +91,9 @@ void EditorRunBar::_notification(int p_what) {
 			}
 
 			_update_play_buttons();
-			profiler_autostart_indicator->set_button_icon(get_editor_theme_icon(SNAME("ProfilerAutostartWarning")));
-			pause_button->set_button_icon(get_editor_theme_icon(SNAME("Pause")));
-			stop_button->set_button_icon(get_editor_theme_icon(SNAME("Stop")));
+			profiler_autostart_indicator->set_button_icon(get_editor_theme_icon(SNAME("debugger_profiler_autostart_warning")));
+			pause_button->set_button_icon(get_editor_theme_icon(SNAME("playback_pause")));
+			stop_button->set_button_icon(get_editor_theme_icon(SNAME("playback_stop")));
 
 			if (is_movie_maker_enabled()) {
 				main_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("LaunchPadMovieMode"), EditorStringName(EditorStyles)));
@@ -107,7 +107,7 @@ void EditorRunBar::_notification(int p_what) {
 				write_movie_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("MovieWriterButtonNormal"), EditorStringName(EditorStyles)));
 			}
 
-			write_movie_button->set_button_icon(get_editor_theme_icon(SNAME("MainMovieWrite")));
+			write_movie_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_movie_write")));
 
 		} break;
 	}
@@ -119,15 +119,15 @@ void EditorRunBar::_reset_play_buttons() {
 	}
 
 	play_button->set_pressed(false);
-	play_button->set_button_icon(get_editor_theme_icon(SNAME("MainPlay")));
+	play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
 	play_button->set_tooltip_text(TTRC("Run the project's main scene."));
 
 	_play_scene_btn->set_pressed(false);
-	_play_scene_btn->set_button_icon(get_editor_theme_icon(SNAME("PlayScene")));
+	_play_scene_btn->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene")));
 	_play_scene_btn->set_tooltip_text(TTRC("Play the currently edited scene."));
 
 	_play_custom_scene_btn->set_pressed(false);
-	_play_custom_scene_btn->set_button_icon(get_editor_theme_icon(SNAME("PlayCustom")));
+	_play_custom_scene_btn->set_button_icon(get_editor_theme_icon(SNAME("playback_play_custom")));
 	_play_custom_scene_btn->set_tooltip_text(TTRC("Play a custom scene."));
 }
 
@@ -155,7 +155,7 @@ void EditorRunBar::_update_play_buttons() {
 
 	if (active_button) {
 		active_button->set_pressed(true);
-		active_button->set_button_icon(get_editor_theme_icon(SNAME("Reload")));
+		active_button->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
 	}
 }
 

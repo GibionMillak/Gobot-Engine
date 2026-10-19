@@ -314,7 +314,7 @@ void TextShaderPreview::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			panel->add_theme_style_override(SceneStringName(panel), panel_style);
 
-			error_icon->set_texture(get_editor_theme_icon(SNAME("Error")));
+			error_icon->set_texture(get_editor_theme_icon(SNAME("status_error")));
 
 			Ref<StyleBoxEmpty> no_margins;
 			no_margins.instantiate();
@@ -322,7 +322,7 @@ void TextShaderPreview::_notification(int p_what) {
 			error_label->add_theme_style_override(CoreStringName(normal), no_margins);
 			error_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 
-			delete_button->set_button_icon(get_editor_theme_icon(SNAME("GuiClose")));
+			delete_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_close")));
 
 			goto_button->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
 			goto_button->add_theme_font_size_override(SceneStringName(font_size), Math::round(12 * EDSCALE));
@@ -752,7 +752,7 @@ void ShaderTextEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			code_editor->get_text_editor()->add_theme_color_override("breakpoint_color", EditorNode::get_singleton()->get_editor_theme()->get_color(SceneStringName(font_color), EditorStringName(Editor)));
-			code_editor->get_text_editor()->add_theme_icon_override("breakpoint", get_editor_theme_icon(SNAME("GuiVisibilityVisible")));
+			code_editor->get_text_editor()->add_theme_icon_override("breakpoint", get_editor_theme_icon(SNAME("gui_gui_visibility_visible")));
 
 			if (is_visible_in_tree()) {
 				_load_theme_settings();
@@ -770,8 +770,8 @@ void ShaderTextEditor::_notification(int p_what) {
 			}
 			preview_panel->add_theme_style_override(SceneStringName(panel), preview_style);
 
-			update_params_btn->set_button_icon(get_editor_theme_icon(SNAME("Reload")));
-			remove_all_btn->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
+			update_params_btn->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
+			remove_all_btn->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {

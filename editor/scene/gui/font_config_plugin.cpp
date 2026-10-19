@@ -285,7 +285,7 @@ void EditorPropertyFontMetaOverride::update_property() {
 			hbox->add_child(prop);
 			prop->set_h_size_flags(SIZE_EXPAND_FILL);
 			Button *remove = memnew(Button);
-			remove->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
+			remove->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
 			hbox->add_child(remove);
 			remove->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyFontMetaOverride::_remove).bind(remove, name));
 
@@ -299,10 +299,10 @@ void EditorPropertyFontMetaOverride::update_property() {
 			// So we can ignore the auto-translation here.
 
 			// TRANSLATORS: Script refers to a writing system.
-			button_add = memnew(EditorInspectorActionButton(TTR("Add Script", "Locale"), SNAME("Add")));
+			button_add = memnew(EditorInspectorActionButton(TTR("Add Script", "Locale"), SNAME("action_add")));
 			button_add->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 		} else {
-			button_add = memnew(EditorInspectorActionButton(TTRC("Add Locale"), SNAME("Add")));
+			button_add = memnew(EditorInspectorActionButton(TTRC("Add Locale"), SNAME("action_add")));
 		}
 		button_add->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyFontMetaOverride::_add_menu));
 		property_vbox->add_child(button_add);
@@ -782,7 +782,7 @@ void EditorPropertyOTFeatures::update_property() {
 				hbox->add_child(prop);
 				prop->set_h_size_flags(SIZE_EXPAND_FILL);
 				Button *remove = memnew(Button);
-				remove->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
+				remove->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
 				hbox->add_child(remove);
 				remove->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyOTFeatures::_remove).bind(remove, name_tag));
 
@@ -790,7 +790,7 @@ void EditorPropertyOTFeatures::update_property() {
 			}
 		}
 
-		EditorInspectorActionButton *button_add = memnew(EditorInspectorActionButton(TTRC("Add Feature"), SNAME("Add")));
+		EditorInspectorActionButton *button_add = memnew(EditorInspectorActionButton(TTRC("Add Feature"), SNAME("action_add")));
 		button_add->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyOTFeatures::_add_menu));
 		property_vbox->add_child(button_add);
 

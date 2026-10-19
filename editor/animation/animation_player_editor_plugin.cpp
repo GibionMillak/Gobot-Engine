@@ -177,22 +177,22 @@ void AnimationPlayerEditor::_notification(int p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED:
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
-			stop_icon = get_editor_theme_icon(SNAME("Stop"));
-			pause_icon = get_editor_theme_icon(SNAME("Pause"));
+			stop_icon = get_editor_theme_icon(SNAME("playback_stop"));
+			pause_icon = get_editor_theme_icon(SNAME("playback_pause"));
 			if (player && player->is_playing()) {
 				stop->set_button_icon(pause_icon);
 			} else {
 				stop->set_button_icon(stop_icon);
 			}
 
-			autoplay->set_button_icon(get_editor_theme_icon(SNAME("AutoPlay")));
-			play->set_button_icon(get_editor_theme_icon(SNAME("PlayStart")));
-			play_from->set_button_icon(get_editor_theme_icon(SNAME("Play")));
-			play_bw->set_button_icon(get_editor_theme_icon(SNAME("PlayStartBackwards")));
-			play_bw_from->set_button_icon(get_editor_theme_icon(SNAME("PlayBackwards")));
+			autoplay->set_button_icon(get_editor_theme_icon(SNAME("animation_auto_play")));
+			play->set_button_icon(get_editor_theme_icon(SNAME("playback_play_start")));
+			play_from->set_button_icon(get_editor_theme_icon(SNAME("playback_play")));
+			play_bw->set_button_icon(get_editor_theme_icon(SNAME("playback_play_start_backwards")));
+			play_bw_from->set_button_icon(get_editor_theme_icon(SNAME("playback_play_backwards")));
 
-			autoplay_icon = get_editor_theme_icon(SNAME("AutoPlay"));
-			reset_icon = get_editor_theme_icon(SNAME("Reload"));
+			autoplay_icon = get_editor_theme_icon(SNAME("animation_auto_play"));
+			reset_icon = get_editor_theme_icon(SNAME("action_reload"));
 			{
 				Ref<Image> autoplay_img = autoplay_icon->get_image();
 				Ref<Image> reset_img = reset_icon->get_image();
@@ -203,20 +203,20 @@ void AnimationPlayerEditor::_notification(int p_what) {
 				autoplay_reset_icon = ImageTexture::create_from_image(autoplay_reset_img);
 			}
 
-			onion_toggle->set_button_icon(get_editor_theme_icon(SNAME("Onion")));
-			onion_skinning->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
+			onion_toggle->set_button_icon(get_editor_theme_icon(SNAME("animation_onion")));
+			onion_skinning->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
 
-			pin->set_button_icon(get_editor_theme_icon(SNAME("Pin")));
+			pin->set_button_icon(get_editor_theme_icon(SNAME("action_pin")));
 
 #define ITEM_ICON(m_item, m_icon) tool_anim->get_popup()->set_item_icon(tool_anim->get_popup()->get_item_index(m_item), get_editor_theme_icon(SNAME(m_icon)))
 
-			ITEM_ICON(TOOL_NEW_ANIM, "New");
-			ITEM_ICON(TOOL_ANIM_LIBRARY, "AnimationLibrary");
-			ITEM_ICON(TOOL_DUPLICATE_ANIM, "Duplicate");
-			ITEM_ICON(TOOL_RENAME_ANIM, "Rename");
-			ITEM_ICON(TOOL_EDIT_TRANSITIONS, "Blend");
-			ITEM_ICON(TOOL_EDIT_RESOURCE, "Edit");
-			ITEM_ICON(TOOL_REMOVE_ANIM, "Remove");
+			ITEM_ICON(TOOL_NEW_ANIM, "action_new");
+			ITEM_ICON(TOOL_ANIM_LIBRARY, "resource_animation_library");
+			ITEM_ICON(TOOL_DUPLICATE_ANIM, "action_duplicate");
+			ITEM_ICON(TOOL_RENAME_ANIM, "action_rename");
+			ITEM_ICON(TOOL_EDIT_TRANSITIONS, "action_blend");
+			ITEM_ICON(TOOL_EDIT_RESOURCE, "action_edit");
+			ITEM_ICON(TOOL_REMOVE_ANIM, "action_remove");
 
 			_update_animation_list_icons();
 		} break;
@@ -2075,7 +2075,7 @@ AnimationPlayerEditor::AnimationPlayerEditor(AnimationPlayerEditorPlugin *p_plug
 	singleton = this;
 
 	set_name(TTRC("Animation"));
-	set_icon_name("Animation");
+	set_icon_name("resource_animation");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_animation_bottom_panel", TTRC("Toggle Animation Dock"), KeyModifierMask::ALT | Key::N));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

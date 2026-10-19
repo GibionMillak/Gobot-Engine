@@ -193,7 +193,7 @@ void DynamicFontImportSettingsDialog::_variation_add() {
 
 	vars_item->set_text(0, TTR("New Configuration"));
 	vars_item->set_editable(0, true);
-	vars_item->add_button(1, get_editor_theme_icon(SNAME("Remove")), BUTTON_REMOVE_VAR, false, TTR("Remove Variation"));
+	vars_item->add_button(1, get_editor_theme_icon(SNAME("action_remove")), BUTTON_REMOVE_VAR, false, TTR("Remove Variation"));
 	vars_item->set_button_color(1, 0, Color(1, 1, 1, 0.75));
 
 	Ref<DynamicFontImportSettingsData> import_variation_data;
@@ -632,7 +632,7 @@ void DynamicFontImportSettingsDialog::_notification(int p_what) {
 			main_pages->set_theme_type_variation(type_variation);
 			preload_pages->set_theme_type_variation(type_variation);
 
-			add_var->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+			add_var->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 			label_warn->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 			glyph_tree->add_theme_color_override(SNAME("font_disabled_color"), glyph_tree->get_theme_color(SceneStringName(font_color)));
 		} break;
@@ -893,7 +893,7 @@ void DynamicFontImportSettingsDialog::open_settings(const String &p_path) {
 
 					vars_item->set_text(0, cfg_name);
 					vars_item->set_editable(0, true);
-					vars_item->add_button(1, get_editor_theme_icon(SNAME("Remove")), BUTTON_REMOVE_VAR, false, TTR("Remove Variation"));
+					vars_item->add_button(1, get_editor_theme_icon(SNAME("action_remove")), BUTTON_REMOVE_VAR, false, TTR("Remove Variation"));
 					vars_item->set_button_color(1, 0, Color(1, 1, 1, 0.75));
 
 					Ref<DynamicFontImportSettingsData> import_variation_data_custom;

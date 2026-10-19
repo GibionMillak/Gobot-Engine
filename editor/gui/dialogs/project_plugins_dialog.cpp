@@ -162,7 +162,7 @@ void ProjectPluginsDialog::update_plugins() {
 		item->set_text(STATUS, TTRC("On"));
 		item->set_checked(STATUS, entry.enabled);
 		item->set_editable(STATUS, true);
-		item->add_button(EDIT, get_editor_theme_icon(SNAME("Edit")), EDIT_PLUGIN, false, TTRC("Edit Plugin"));
+		item->add_button(EDIT, get_editor_theme_icon(SNAME("action_edit")), EDIT_PLUGIN, false, TTRC("Edit Plugin"));
 	}
 	_updating = false;
 }
@@ -185,7 +185,7 @@ void ProjectPluginsDialog::_notification(int p_what) {
 
 		case NOTIFICATION_THEME_CHANGED: {
 			if (Engine::get_singleton()->is_recovery_mode_hint()) {
-				_recovery_mode_icon->set_texture(get_editor_theme_icon(SNAME("NodeWarning")));
+				_recovery_mode_icon->set_texture(get_editor_theme_icon(SNAME("status_node_warning")));
 			}
 		} break;
 	}

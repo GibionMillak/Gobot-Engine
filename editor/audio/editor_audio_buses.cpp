@@ -108,17 +108,17 @@ void EditorAudioBus::_notification(int p_what) {
 			Ref<StyleBoxFlat>(mute->get_theme_stylebox("hover_pressed"))->set_border_color(mute_color_darkened);
 			Ref<StyleBoxFlat>(bypass->get_theme_stylebox("hover_pressed"))->set_border_color(bypass_color_darkened);
 
-			solo->set_button_icon(get_editor_theme_icon(SNAME("AudioBusSolo")));
+			solo->set_button_icon(get_editor_theme_icon(SNAME("audio_audio_bus_solo")));
 			solo->add_theme_color_override("icon_pressed_color", solo_color);
 			solo->add_theme_color_override("icon_hover_pressed_color", solo_color_darkened);
-			mute->set_button_icon(get_editor_theme_icon(SNAME("AudioBusMute")));
+			mute->set_button_icon(get_editor_theme_icon(SNAME("audio_audio_bus_mute")));
 			mute->add_theme_color_override("icon_pressed_color", mute_color);
 			mute->add_theme_color_override("icon_hover_pressed_color", mute_color_darkened);
-			bypass->set_button_icon(get_editor_theme_icon(SNAME("AudioBusBypass")));
+			bypass->set_button_icon(get_editor_theme_icon(SNAME("audio_audio_bus_bypass")));
 			bypass->add_theme_color_override("icon_pressed_color", bypass_color);
 			bypass->add_theme_color_override("icon_hover_pressed_color", bypass_color_darkened);
 
-			bus_options->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
+			bus_options->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
 
 			audio_value_preview_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SceneStringName(font_color), SNAME("TooltipLabel")));
 			audio_value_preview_label->add_theme_color_override("font_shadow_color", get_theme_color(SNAME("font_shadow_color"), SNAME("TooltipLabel")));
@@ -1274,16 +1274,16 @@ EditorAudioBuses *EditorAudioBuses::register_editor() {
 void EditorAudioBuses::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			menu->set_button_icon(get_editor_theme_icon("GuiTabMenuHl"));
-			menu->get_popup()->set_item_icon((int)MenuOption::CREATE, get_editor_theme_icon("New"));
-			menu->get_popup()->set_item_icon((int)MenuOption::LOAD, get_editor_theme_icon("Load"));
-			menu->get_popup()->set_item_icon((int)MenuOption::SAVE_AS, get_editor_theme_icon("Save"));
+			menu->set_button_icon(get_editor_theme_icon("gui_gui_tab_menu_hl"));
+			menu->get_popup()->set_item_icon((int)MenuOption::CREATE, get_editor_theme_icon("action_new"));
+			menu->get_popup()->set_item_icon((int)MenuOption::LOAD, get_editor_theme_icon("action_load"));
+			menu->get_popup()->set_item_icon((int)MenuOption::SAVE_AS, get_editor_theme_icon("action_save"));
 
 			bus_scroll->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("Tree")));
 			if (is_visible_in_tree()) {
 				_update_file_label_size();
 			}
-			add->set_button_icon(get_editor_theme_icon("Add"));
+			add->set_button_icon(get_editor_theme_icon("action_add"));
 		} break;
 
 		case NOTIFICATION_READY: {
@@ -1537,7 +1537,7 @@ void EditorAudioBuses::_bind_methods() {
 
 EditorAudioBuses::EditorAudioBuses() {
 	set_name(TTRC("Audio"));
-	set_icon_name("AudioStreamPlayer");
+	set_icon_name("node_audio_stream_player");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_audio_bottom_panel", TTRC("Toggle Audio Dock"), KeyModifierMask::ALT | Key::A));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);

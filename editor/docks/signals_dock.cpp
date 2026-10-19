@@ -44,7 +44,7 @@ void SignalsDock::set_object(Object *p_object) {
 SignalsDock::SignalsDock() {
 	singleton = this;
 	set_name(TTRC("Signals"));
-	set_icon_name("Signals");
+	set_icon_name("scripting_signals");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/open_signals", TTRC("Open Signals Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_RIGHT_UL);
 

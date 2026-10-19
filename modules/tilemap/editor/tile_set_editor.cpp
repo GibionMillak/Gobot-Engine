@@ -192,7 +192,7 @@ void TileSetEditor::_update_sources_list(int force_selected_id) {
 		// Scene collection source.
 		TileSetScenesCollectionSource *scene_collection_source = Object::cast_to<TileSetScenesCollectionSource>(source);
 		if (scene_collection_source) {
-			texture = get_editor_theme_icon(SNAME("PackedScene"));
+			texture = get_editor_theme_icon(SNAME("resource_packed_scene"));
 			if (item_text.is_empty()) {
 				if (scene_collection_source->get_scene_tiles_count() > 0) {
 					item_text = vformat(TTR("Scene Collection Source (ID: %d)"), source_id);
@@ -376,11 +376,11 @@ void TileSetEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			sources_delete_button->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
-			sources_add_button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
-			source_sort_button->set_button_icon(get_editor_theme_icon(SNAME("Sort")));
-			sources_advanced_menu_button->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
-			missing_texture_texture = get_editor_theme_icon(SNAME("TileSet"));
+			sources_delete_button->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
+			sources_add_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
+			source_sort_button->set_button_icon(get_editor_theme_icon(SNAME("action_sort")));
+			sources_advanced_menu_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			missing_texture_texture = get_editor_theme_icon(SNAME("module_tilemap_tile_set"));
 			expanded_area->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("expand_panel"), SNAME("TileSetEditor")));
 			_update_sources_list();
 		} break;
@@ -837,7 +837,7 @@ void TileSetEditor::register_split(SplitContainer *p_split) {
 TileSetEditor::TileSetEditor() {
 	singleton = this;
 	set_name(TTRC("TileSet"));
-	set_icon_name("TileSet");
+	set_icon_name("module_tilemap_tile_set");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_tile_set_bottom_panel", TTRC("Open TileSet Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

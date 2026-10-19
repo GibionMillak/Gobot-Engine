@@ -380,7 +380,7 @@ void ActionMapEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			add_button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+			add_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 			if (!actions_cache.is_empty()) {
 				update_action_list();
 			}
@@ -488,10 +488,10 @@ void ActionMapEditor::update_action_list(const Vector<ActionInfo> &p_action_info
 			bool events_eq = Shortcut::is_event_array_equal(action_info.action_initial["events"], action_info.action["events"]);
 			bool action_eq = deadzone_eq && events_eq;
 			action_item->set_meta("__action_initial", action_info.action_initial);
-			action_item->add_button(2, get_editor_theme_icon(SNAME("ReloadSmall")), BUTTON_REVERT_ACTION, action_eq, action_eq ? TTRC("Cannot Revert - Action is same as initial") : TTRC("Revert Action"));
+			action_item->add_button(2, get_editor_theme_icon(SNAME("action_reload_small")), BUTTON_REVERT_ACTION, action_eq, action_eq ? TTRC("Cannot Revert - Action is same as initial") : TTRC("Revert Action"));
 		}
-		action_item->add_button(2, get_editor_theme_icon(SNAME("Add")), BUTTON_ADD_EVENT, false, TTRC("Add Event"));
-		action_item->add_button(2, get_editor_theme_icon(SNAME("Remove")), BUTTON_REMOVE_ACTION, !action_info.editable, action_info.editable ? TTRC("Remove Action") : TTRC("Cannot Remove Action"));
+		action_item->add_button(2, get_editor_theme_icon(SNAME("action_add")), BUTTON_ADD_EVENT, false, TTRC("Add Event"));
+		action_item->add_button(2, get_editor_theme_icon(SNAME("action_remove")), BUTTON_REMOVE_ACTION, !action_info.editable, action_info.editable ? TTRC("Remove Action") : TTRC("Cannot Remove Action"));
 
 		action_item->set_custom_bg_color(0, get_theme_color(SNAME("prop_subsection"), EditorStringName(Editor)));
 		action_item->set_custom_bg_color(1, get_theme_color(SNAME("prop_subsection"), EditorStringName(Editor)));
@@ -520,54 +520,54 @@ void ActionMapEditor::update_action_list(const Vector<ActionInfo> &p_action_info
 			Ref<InputEventKey> k = event;
 			if (k.is_valid()) {
 				if (k->get_physical_keycode() == Key::NONE && k->get_keycode() == Key::NONE && k->get_key_label() != Key::NONE) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("KeyboardLabel")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("animation_keyboard_label")));
 				} else if (k->get_keycode() != Key::NONE) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("Keyboard")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("animation_keyboard")));
 				} else if (k->get_physical_keycode() != Key::NONE) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("KeyboardPhysical")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("animation_keyboard_physical")));
 				} else {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("KeyboardError")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("animation_keyboard_error")));
 				}
 			}
 
 			Ref<InputEventMouseButton> mb = event;
 			if (mb.is_valid()) {
 				if (mb->get_button_index() == MouseButton::LEFT) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("MouseButtonLeft")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse_button_left")));
 				} else if (mb->get_button_index() == MouseButton::RIGHT) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("MouseButtonRight")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse_button_right")));
 				} else if (mb->get_button_index() == MouseButton::MIDDLE) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("MouseButtonMiddle")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse_button_middle")));
 				} else if (mb->get_button_index() == MouseButton::WHEEL_UP) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("MouseButtonWheelUp")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse_button_wheel_up")));
 				} else if (mb->get_button_index() == MouseButton::WHEEL_DOWN) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("MouseButtonWheelDown")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse_button_wheel_down")));
 				} else if (mb->get_button_index() == MouseButton::WHEEL_LEFT) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("MouseButtonWheelLeft")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse_button_wheel_left")));
 				} else if (mb->get_button_index() == MouseButton::WHEEL_RIGHT) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("MouseButtonWheelRight")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse_button_wheel_right")));
 				} else if (mb->get_button_index() == MouseButton::MB_XBUTTON1) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("MouseButtonXButton1")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse_button_x_button1")));
 				} else if (mb->get_button_index() == MouseButton::MB_XBUTTON2) {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("MouseButtonXButton2")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse_button_x_button2")));
 				} else {
-					event_item->set_icon(0, get_editor_theme_icon(SNAME("Mouse")));
+					event_item->set_icon(0, get_editor_theme_icon(SNAME("input_mouse")));
 				}
 			}
 
 			Ref<InputEventJoypadButton> jb = event;
 			if (jb.is_valid()) {
-				event_item->set_icon(0, get_editor_theme_icon(SNAME("JoyButton")));
+				event_item->set_icon(0, get_editor_theme_icon(SNAME("input_joy_button")));
 			}
 
 			Ref<InputEventJoypadMotion> jm = event;
 			if (jm.is_valid()) {
-				event_item->set_icon(0, get_editor_theme_icon(SNAME("JoyAxis")));
+				event_item->set_icon(0, get_editor_theme_icon(SNAME("input_joy_axis")));
 			}
 
 			// Third Column - Buttons
-			event_item->add_button(2, get_editor_theme_icon(SNAME("Edit")), BUTTON_EDIT_EVENT, false, TTRC("Edit Event"), TTRC("Edit Event"));
-			event_item->add_button(2, get_editor_theme_icon(SNAME("Remove")), BUTTON_REMOVE_EVENT, false, TTRC("Remove Event"), TTRC("Remove Event"));
+			event_item->add_button(2, get_editor_theme_icon(SNAME("action_edit")), BUTTON_EDIT_EVENT, false, TTRC("Edit Event"), TTRC("Edit Event"));
+			event_item->add_button(2, get_editor_theme_icon(SNAME("action_remove")), BUTTON_REMOVE_EVENT, false, TTRC("Remove Event"), TTRC("Remove Event"));
 			event_item->set_button_color(2, 0, Color(1, 1, 1, 0.75));
 			event_item->set_button_color(2, 1, Color(1, 1, 1, 0.75));
 

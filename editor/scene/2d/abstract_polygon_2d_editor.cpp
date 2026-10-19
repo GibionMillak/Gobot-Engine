@@ -222,10 +222,10 @@ void AbstractPolygon2DEditor::_menu_option(int p_option) {
 void AbstractPolygon2DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			button_create->set_button_icon(get_editor_theme_icon(SNAME("CurveCreate")));
-			button_edit->set_button_icon(get_editor_theme_icon(SNAME("CurveEdit")));
-			button_delete->set_button_icon(get_editor_theme_icon(SNAME("CurveDelete")));
-			button_center->set_button_icon(get_editor_theme_icon(SNAME("CurveCenter")));
+			button_create->set_button_icon(get_editor_theme_icon(SNAME("action_curve_create")));
+			button_edit->set_button_icon(get_editor_theme_icon(SNAME("node_control_curve_edit")));
+			button_delete->set_button_icon(get_editor_theme_icon(SNAME("action_curve_delete")));
+			button_center->set_button_icon(get_editor_theme_icon(SNAME("action_curve_center")));
 		} break;
 
 		case NOTIFICATION_READY: {
@@ -680,8 +680,8 @@ void AbstractPolygon2DEditor::forward_canvas_draw_over_viewport(Control *p_overl
 
 	Transform2D xform = canvas_item_editor->get_canvas_transform() * _get_node()->get_screen_transform();
 	// All polygon points are sharp, so use the sharp handle icon
-	const Ref<Texture2D> handle = get_editor_theme_icon(SNAME("EditorPathSharpHandle"));
-	const Ref<Texture2D> nhandle = get_editor_theme_icon(SNAME("EditorPathNullHandle"));
+	const Ref<Texture2D> handle = get_editor_theme_icon(SNAME("viewport_editor_path_sharp_handle"));
+	const Ref<Texture2D> nhandle = get_editor_theme_icon(SNAME("viewport_editor_path_null_handle"));
 
 	Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
 	int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
@@ -787,7 +787,7 @@ void AbstractPolygon2DEditor::forward_canvas_draw_over_viewport(Control *p_overl
 	}
 
 	if (edge_point.valid()) {
-		Ref<Texture2D> add_handle = get_editor_theme_icon(SNAME("EditorHandleAdd"));
+		Ref<Texture2D> add_handle = get_editor_theme_icon(SNAME("viewport_editor_handle_add"));
 		p_overlay->draw_texture(add_handle, edge_point.pos - add_handle->get_size() * 0.5);
 	}
 }

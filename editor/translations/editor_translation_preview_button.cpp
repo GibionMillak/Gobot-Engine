@@ -59,7 +59,7 @@ void EditorTranslationPreviewButton::pressed() {
 void EditorTranslationPreviewButton::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			set_button_icon(get_editor_theme_icon(SNAME("Translation")));
+			set_button_icon(get_editor_theme_icon(SNAME("resource_translation")));
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED: {

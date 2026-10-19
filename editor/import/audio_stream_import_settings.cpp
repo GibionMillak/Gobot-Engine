@@ -50,8 +50,8 @@ void AudioStreamImportSettingsDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			_play_button->set_button_icon(get_editor_theme_icon(SNAME("MainPlay")));
-			_stop_button->set_button_icon(get_editor_theme_icon(SNAME("Stop")));
+			_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+			_stop_button->set_button_icon(get_editor_theme_icon(SNAME("playback_stop")));
 
 			_preview->set_color(get_theme_color(SNAME("dark_color_2"), EditorStringName(Editor)));
 			color_rect->set_color(get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor)));
@@ -66,9 +66,9 @@ void AudioStreamImportSettingsDialog::_notification(int p_what) {
 			_duration_label->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("status_source_size"), EditorStringName(EditorFonts)));
 			_duration_label->end_bulk_theme_override();
 
-			zoom_in->set_button_icon(get_editor_theme_icon(SNAME("ZoomMore")));
-			zoom_out->set_button_icon(get_editor_theme_icon(SNAME("ZoomLess")));
-			zoom_reset->set_button_icon(get_editor_theme_icon(SNAME("ZoomReset")));
+			zoom_in->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_more")));
+			zoom_out->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_less")));
+			zoom_reset->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_reset")));
 
 			_indicator->queue_redraw();
 			_preview->queue_redraw();
@@ -268,13 +268,13 @@ void AudioStreamImportSettingsDialog::_play() {
 		// '_pausing' variable indicates that we want to pause the audio player, not stop it. See '_on_finished()'.
 		_pausing = true;
 		_player->stop();
-		_play_button->set_button_icon(get_editor_theme_icon(SNAME("MainPlay")));
+		_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
 		set_process(false);
 	} else {
 		_reset_master();
 
 		_player->play(_current);
-		_play_button->set_button_icon(get_editor_theme_icon(SNAME("Pause")));
+		_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_pause")));
 		set_process(true);
 	}
 }
@@ -285,7 +285,7 @@ void AudioStreamImportSettingsDialog::_stop() {
 	}
 
 	_player->stop();
-	_play_button->set_button_icon(get_editor_theme_icon(SNAME("MainPlay")));
+	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
 	_current = 0;
 	_indicator->queue_redraw();
 	set_process(false);
@@ -294,7 +294,7 @@ void AudioStreamImportSettingsDialog::_stop() {
 void AudioStreamImportSettingsDialog::_on_finished() {
 	_load_master_state();
 
-	_play_button->set_button_icon(get_editor_theme_icon(SNAME("MainPlay")));
+	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
 	if (!_pausing) {
 		_current = 0;
 		_indicator->queue_redraw();
@@ -330,8 +330,8 @@ void AudioStreamImportSettingsDialog::_draw_indicator() {
 	const Color color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 	_indicator->draw_line(Point2(ofs_x, rect.position.y), Point2(ofs_x, rect.position.y + rect.size.height), color, Math::round(2 * EDSCALE));
 	_indicator->draw_texture(
-			get_editor_theme_icon(SNAME("TimelineIndicator")),
-			Point2(ofs_x - get_editor_theme_icon(SNAME("TimelineIndicator"))->get_width() * 0.5, rect.position.y),
+			get_editor_theme_icon(SNAME("animation_timeline_indicator")),
+			Point2(ofs_x - get_editor_theme_icon(SNAME("animation_timeline_indicator"))->get_width() * 0.5, rect.position.y),
 			color);
 
 	if (stream->get_bpm() > 0 && _hovering_beat != -1) {

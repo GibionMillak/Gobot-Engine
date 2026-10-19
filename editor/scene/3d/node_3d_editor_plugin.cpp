@@ -790,13 +790,13 @@ void Node3DEditor::_menu_gizmo_toggled(int p_option) {
 	const int state = gizmos_menu->get_item_state(idx);
 	switch (state) {
 		case EditorNode3DGizmoPlugin::VISIBLE:
-			gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("GuiVisibilityVisible")));
+			gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("gui_gui_visibility_visible")));
 			break;
 		case EditorNode3DGizmoPlugin::ON_TOP:
-			gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("GuiVisibilityXray")));
+			gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("gui_gui_visibility_xray")));
 			break;
 		case EditorNode3DGizmoPlugin::HIDDEN:
-			gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("GuiVisibilityHidden")));
+			gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("gui_gui_visibility_hidden")));
 			break;
 	}
 
@@ -1734,13 +1734,13 @@ void Node3DEditor::_update_gizmos_menu() {
 				TTR("Click to toggle between visibility states.\n\nOpen eye: Gizmo is visible.\nClosed eye: Gizmo is hidden.\nHalf-open eye: Gizmo is also visible through opaque surfaces (\"x-ray\")."));
 		switch (plugin_state) {
 			case EditorNode3DGizmoPlugin::VISIBLE:
-				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("GuiVisibilityVisible")));
+				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("gui_gui_visibility_visible")));
 				break;
 			case EditorNode3DGizmoPlugin::ON_TOP:
-				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("GuiVisibilityXray")));
+				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("gui_gui_visibility_xray")));
 				break;
 			case EditorNode3DGizmoPlugin::HIDDEN:
-				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("GuiVisibilityHidden")));
+				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("gui_gui_visibility_hidden")));
 				break;
 		}
 	}
@@ -1755,13 +1755,13 @@ void Node3DEditor::_update_gizmos_menu_theme() {
 		const int idx = gizmos_menu->get_item_index(i);
 		switch (plugin_state) {
 			case EditorNode3DGizmoPlugin::VISIBLE:
-				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("GuiVisibilityVisible")));
+				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("gui_gui_visibility_visible")));
 				break;
 			case EditorNode3DGizmoPlugin::ON_TOP:
-				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("GuiVisibilityXray")));
+				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("gui_gui_visibility_xray")));
 				break;
 			case EditorNode3DGizmoPlugin::HIDDEN:
-				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("GuiVisibilityHidden")));
+				gizmos_menu->set_item_icon(idx, EditorIconManager::get_icon(SNAME("gui_gui_visibility_hidden")));
 				break;
 		}
 	}
@@ -3376,7 +3376,7 @@ void Node3DEditor::PreviewSunEnvPopup::shortcut_input(const Ref<InputEvent> &p_e
 
 Node3DEditor::Node3DEditor() {
 	set_name(TTRC("3D"));
-	set_icon_name("3D");
+	set_icon_name("node_3d");
 	set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_3d"));
@@ -3416,7 +3416,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_MODE_TRANSFORM]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_TRANSFORM));
 	tool_button[TOOL_MODE_TRANSFORM]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_transform", TTRC("Transform Mode"), Key::Q, true));
 	tool_button[TOOL_MODE_TRANSFORM]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_TRANSFORM]->set_button_icon(EditorIconManager::get_icon(SNAME("ToolTransform")));
+	tool_button[TOOL_MODE_TRANSFORM]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_transform")));
 
 	tool_button[TOOL_MODE_MOVE] = memnew(Button);
 	tool_button_hbox->add_child(tool_button[TOOL_MODE_MOVE]);
@@ -3427,7 +3427,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_MODE_MOVE]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_MOVE));
 	tool_button[TOOL_MODE_MOVE]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_move", TTRC("Move Mode"), Key::W, true));
 	tool_button[TOOL_MODE_MOVE]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_MOVE]->set_button_icon(EditorIconManager::get_icon(SNAME("ToolMove")));
+	tool_button[TOOL_MODE_MOVE]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_move")));
 
 	tool_button[TOOL_MODE_ROTATE] = memnew(Button);
 	tool_button_hbox->add_child(tool_button[TOOL_MODE_ROTATE]);
@@ -3437,7 +3437,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_MODE_ROTATE]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_ROTATE));
 	tool_button[TOOL_MODE_ROTATE]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_rotate", TTRC("Rotate Mode"), Key::E, true));
 	tool_button[TOOL_MODE_ROTATE]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_ROTATE]->set_button_icon(EditorIconManager::get_icon(SNAME("ToolRotate")));
+	tool_button[TOOL_MODE_ROTATE]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_rotate")));
 
 	tool_button[TOOL_MODE_SCALE] = memnew(Button);
 	tool_button_hbox->add_child(tool_button[TOOL_MODE_SCALE]);
@@ -3447,7 +3447,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_MODE_SCALE]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_SCALE));
 	tool_button[TOOL_MODE_SCALE]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_scale", TTRC("Scale Mode"), Key::R, true));
 	tool_button[TOOL_MODE_SCALE]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_SCALE]->set_button_icon(EditorIconManager::get_icon(SNAME("ToolScale")));
+	tool_button[TOOL_MODE_SCALE]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_scale")));
 
 	tool_button[TOOL_MODE_SELECT] = memnew(Button);
 	tool_button_hbox->add_child(tool_button[TOOL_MODE_SELECT]);
@@ -3457,7 +3457,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_MODE_SELECT]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_SELECT));
 	tool_button[TOOL_MODE_SELECT]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_select", TTRC("Select Mode"), Key::V, true));
 	tool_button[TOOL_MODE_SELECT]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_SELECT]->set_button_icon(EditorIconManager::get_icon(SNAME("ToolSelect")));
+	tool_button[TOOL_MODE_SELECT]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_select")));
 
 	VSeparator *vsep = memnew(VSeparator);
 	vsep->set_theme_type_variation("VSeparatorButtonGroup");
@@ -3469,7 +3469,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_MODE_LIST_SELECT]->set_theme_type_variation(SceneStringName(FlatButton));
 	tool_button[TOOL_MODE_LIST_SELECT]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_LIST_SELECT));
 	tool_button[TOOL_MODE_LIST_SELECT]->set_tooltip_text(TTR("Show list of selectable nodes at position clicked.") + "\n" + vformat(TTR("%s+RMB: Show list of all nodes at position clicked, including locked."), keycode_get_string((Key)KeyModifierMask::ALT)));
-	tool_button[TOOL_MODE_LIST_SELECT]->set_button_icon(EditorIconManager::get_icon(SNAME("ListSelect")));
+	tool_button[TOOL_MODE_LIST_SELECT]->set_button_icon(EditorIconManager::get_icon(SNAME("action_list_select")));
 
 	tool_button[TOOL_RULER] = memnew(Button);
 	tool_button_hbox->add_child(tool_button[TOOL_RULER]);
@@ -3478,7 +3478,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_RULER]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_RULER));
 	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
 	tool_button[TOOL_RULER]->set_shortcut(ED_SHORTCUT("spatial_editor/measure", TTRC("Ruler Mode"), Key::M));
-	tool_button[TOOL_RULER]->set_button_icon(EditorIconManager::get_icon(SNAME("Ruler")));
+	tool_button[TOOL_RULER]->set_button_icon(EditorIconManager::get_icon(SNAME("action_ruler")));
 
 	main_flow->add_child(memnew(VSeparator));
 
@@ -3492,7 +3492,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_LOCK_SELECTED]->set_tooltip_text(TTRC("Lock selected node, preventing selection and movement."));
 	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
 	tool_button[TOOL_LOCK_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/lock_selected_nodes"));
-	tool_button[TOOL_LOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("Lock")));
+	tool_button[TOOL_LOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_lock")));
 
 	tool_button[TOOL_UNLOCK_SELECTED] = memnew(Button);
 	lock_group_hbox->add_child(tool_button[TOOL_UNLOCK_SELECTED]);
@@ -3501,7 +3501,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_UNLOCK_SELECTED]->set_tooltip_text(TTRC("Unlock selected node, allowing selection and movement."));
 	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
 	tool_button[TOOL_UNLOCK_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/unlock_selected_nodes"));
-	tool_button[TOOL_UNLOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("Unlock")));
+	tool_button[TOOL_UNLOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_unlock")));
 
 	tool_button[TOOL_GROUP_SELECTED] = memnew(Button);
 	lock_group_hbox->add_child(tool_button[TOOL_GROUP_SELECTED]);
@@ -3510,7 +3510,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_GROUP_SELECTED]->set_tooltip_text(TTRC("Groups the selected node with its children. This selects the parent when any child node is clicked in 2D and 3D view."));
 	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
 	tool_button[TOOL_GROUP_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/group_selected_nodes"));
-	tool_button[TOOL_GROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("Group")));
+	tool_button[TOOL_GROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_group")));
 
 	tool_button[TOOL_UNGROUP_SELECTED] = memnew(Button);
 	lock_group_hbox->add_child(tool_button[TOOL_UNGROUP_SELECTED]);
@@ -3519,7 +3519,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_UNGROUP_SELECTED]->set_tooltip_text(TTRC("Ungroups the selected node from its children. Child nodes will be individual items in 2D and 3D view."));
 	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
 	tool_button[TOOL_UNGROUP_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/ungroup_selected_nodes"));
-	tool_button[TOOL_UNGROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("Ungroup")));
+	tool_button[TOOL_UNGROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_ungroup")));
 
 	main_flow->add_child(memnew(VSeparator));
 
@@ -3533,7 +3533,7 @@ Node3DEditor::Node3DEditor() {
 	tool_option_button[TOOL_OPT_LOCAL_COORDS]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_LOCAL_COORDS));
 	tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_shortcut(ED_SHORTCUT("spatial_editor/local_coords", TTRC("Use Local Space"), Key::T));
 	tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_shortcut_context(this);
-	tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_button_icon(EditorIconManager::get_icon(SNAME("Object")));
+	tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_button_icon(EditorIconManager::get_icon(SNAME("variant_object")));
 
 	tool_option_button[TOOL_OPT_USE_TRACKBALL] = memnew(Button);
 	misc_hbox->add_child(tool_option_button[TOOL_OPT_USE_TRACKBALL]);
@@ -3542,7 +3542,7 @@ Node3DEditor::Node3DEditor() {
 	tool_option_button[TOOL_OPT_USE_TRACKBALL]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_USE_TRACKBALL));
 	tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_shortcut(ED_SHORTCUT("spatial_editor/trackball", TTRC("Use Trackball"), Key::U));
 	tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_shortcut_context(this);
-	tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_button_icon(EditorIconManager::get_icon(SNAME("Trackball")));
+	tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_trackball")));
 
 	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM] = memnew(Button);
 	misc_hbox->add_child(tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]);
@@ -3552,7 +3552,7 @@ Node3DEditor::Node3DEditor() {
 	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_shortcut(ED_SHORTCUT("spatial_editor/preserve_children_transform", TTRC("Preserve Children Transform"), Key::P));
 	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_shortcut_context(this);
 	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_tooltip_text(TTRC("When enabled, transforming a node will preserve the global transform of its children.\nThis also applies when editing transform properties in the Inspector."));
-	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_button_icon(EditorIconManager::get_icon(SNAME("Pin")));
+	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_button_icon(EditorIconManager::get_icon(SNAME("action_pin")));
 
 	main_flow->add_child(memnew(VSeparator));
 
@@ -3565,7 +3565,7 @@ Node3DEditor::Node3DEditor() {
 	tool_option_button[TOOL_OPT_USE_SNAP]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_USE_SNAP));
 	tool_option_button[TOOL_OPT_USE_SNAP]->set_shortcut(ED_SHORTCUT("spatial_editor/snap", TTRC("Use Snap"), Key::Y));
 	tool_option_button[TOOL_OPT_USE_SNAP]->set_shortcut_context(this);
-	tool_option_button[TOOL_OPT_USE_SNAP]->set_button_icon(EditorIconManager::get_icon(SNAME("Snap")));
+	tool_option_button[TOOL_OPT_USE_SNAP]->set_button_icon(EditorIconManager::get_icon(SNAME("action_snap")));
 
 	snap_menu = memnew(MenuButton);
 	snap_hbox->add_child(snap_menu);
@@ -3573,7 +3573,7 @@ Node3DEditor::Node3DEditor() {
 	snap_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
 	snap_menu->set_h_size_flags(SIZE_SHRINK_END);
 	snap_menu->set_tooltip_text(TTRC("Selection options."));
-	snap_menu->set_button_icon(EditorIconManager::get_icon(SNAME("GuiDropdown")));
+	snap_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
 
 	PopupMenu *snap_p = snap_menu->get_popup();
 	snap_p->set_hide_on_checkable_item_selection(false);
@@ -3601,7 +3601,7 @@ Node3DEditor::Node3DEditor() {
 	sun_button->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_update_preview_environment), CONNECT_DEFERRED);
 	// Preview is enabled by default - ensure this applies on editor startup when there is no state yet.
 	sun_button->set_pressed(true);
-	sun_button->set_button_icon(EditorIconManager::get_icon(SNAME("PreviewSun")));
+	sun_button->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_preview_sun")));
 
 	environment_hbox->add_child(sun_button);
 
@@ -3612,7 +3612,7 @@ Node3DEditor::Node3DEditor() {
 	environ_button->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_update_preview_environment), CONNECT_DEFERRED);
 	// Preview is enabled by default - ensure this applies on editor startup when there is no state yet.
 	environ_button->set_pressed(true);
-	environ_button->set_button_icon(EditorIconManager::get_icon(SNAME("PreviewEnvironment")));
+	environ_button->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_preview_environment")));
 
 	environment_hbox->add_child(environ_button);
 
@@ -3620,7 +3620,7 @@ Node3DEditor::Node3DEditor() {
 	sun_environ_settings->set_tooltip_text(TTRC("Edit Sun and Environment settings."));
 	sun_environ_settings->set_theme_type_variation(SceneStringName(FlatButton));
 	sun_environ_settings->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_sun_environ_settings_pressed));
-	sun_environ_settings->set_button_icon(EditorIconManager::get_icon(SNAME("GuiDropdown")));
+	sun_environ_settings->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
 
 	environment_hbox->add_child(sun_environ_settings);
 
@@ -3720,12 +3720,12 @@ Node3DEditor::Node3DEditor() {
 	p->add_radio_check_shortcut(ED_SHORTCUT("spatial_editor/3_viewports", TTRC("3 Viewports"), KeyModifierMask::CMD_OR_CTRL + Key::KEY_3, true), MENU_VIEW_USE_3_VIEWPORTS);
 	p->add_radio_check_shortcut(ED_SHORTCUT("spatial_editor/3_viewports_alt", TTRC("3 Viewports (Alt)"), KeyModifierMask::ALT + KeyModifierMask::CMD_OR_CTRL + Key::KEY_3, true), MENU_VIEW_USE_3_VIEWPORTS_ALT);
 	p->add_radio_check_shortcut(ED_SHORTCUT("spatial_editor/4_viewports", TTRC("4 Viewports"), KeyModifierMask::CMD_OR_CTRL + Key::KEY_4, true), MENU_VIEW_USE_4_VIEWPORTS);
-	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_1_VIEWPORT), EditorIconManager::get_icon(SNAME("Panels1")));
-	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_2_VIEWPORTS), EditorIconManager::get_icon(SNAME("Panels2")));
-	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_2_VIEWPORTS_ALT), EditorIconManager::get_icon(SNAME("Panels2Alt")));
-	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_3_VIEWPORTS), EditorIconManager::get_icon(SNAME("Panels3")));
-	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_3_VIEWPORTS_ALT), EditorIconManager::get_icon(SNAME("Panels3Alt")));
-	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_4_VIEWPORTS), EditorIconManager::get_icon(SNAME("Panels4")));
+	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_1_VIEWPORT), EditorIconManager::get_icon(SNAME("gui_panels1")));
+	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_2_VIEWPORTS), EditorIconManager::get_icon(SNAME("gui_panels2")));
+	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_2_VIEWPORTS_ALT), EditorIconManager::get_icon(SNAME("gui_panels2_alt")));
+	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_3_VIEWPORTS), EditorIconManager::get_icon(SNAME("gui_panels3")));
+	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_3_VIEWPORTS_ALT), EditorIconManager::get_icon(SNAME("gui_panels3_alt")));
+	p->set_item_icon(p->get_item_index(MENU_VIEW_USE_4_VIEWPORTS), EditorIconManager::get_icon(SNAME("gui_panels4")));
 	p->add_separator();
 
 	gizmos_menu = memnew(PopupMenu);

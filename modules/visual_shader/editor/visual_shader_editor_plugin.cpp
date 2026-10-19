@@ -43,6 +43,7 @@
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "core/os/keyboard.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/editor_node.h"
@@ -163,7 +164,7 @@ void VSRerouteNode::_notification(int p_what) {
 			Color drag_bg_color = get_theme_color(SNAME("drag_background"), SNAME("VSRerouteNode"));
 			draw_circle(get_size() * 0.5 + offset, 16 * EDSCALE, Color(drag_bg_color, selected ? 1 : icon_opacity), true, -1, true);
 
-			Ref<Texture2D> icon = get_editor_theme_icon(SNAME("ToolMove"));
+			Ref<Texture2D> icon = get_editor_theme_icon(SNAME("viewport_tool_move"));
 			Point2 icon_offset = -icon->get_size() * 0.5 + get_size() * 0.5 + offset;
 			draw_texture(icon, icon_offset, Color(1, 1, 1, selected ? 1 : icon_opacity));
 		} break;
@@ -472,10 +473,10 @@ void VisualShaderGroupPortsDialog::_notification(int p_what) {
 			connect("about_to_popup", callable_mp(this, &VisualShaderGroupPortsDialog::_update_port_list).bind(0));
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
-			add_port_btn->set_button_icon(get_editor_theme_icon(SNAME("Add")));
-			remove_port_btn->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
-			move_up_btn->set_button_icon(get_editor_theme_icon(SNAME("MoveUp")));
-			move_down_btn->set_button_icon(get_editor_theme_icon(SNAME("MoveDown")));
+			add_port_btn->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
+			remove_port_btn->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
+			move_up_btn->set_button_icon(get_editor_theme_icon(SNAME("action_move_up")));
+			move_down_btn->set_button_icon(get_editor_theme_icon(SNAME("action_move_down")));
 		} break;
 	}
 }
@@ -1065,7 +1066,7 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 			HBoxContainer *titlebar = gnode->get_titlebar_hbox();
 			TextureRect *group_icon = memnew(TextureRect);
 			group_icon->set_stretch_mode(TextureRect::STRETCH_KEEP_CENTERED);
-			group_icon->set_texture(editor->get_editor_theme_icon("VisualShaderGroup"));
+			group_icon->set_texture(editor->get_editor_theme_icon("resource_visual_shader_group"));
 			titlebar->add_child(group_icon, false, Node::INTERNAL_MODE_FRONT);
 
 			Ref<VisualShaderGroup> group = group_node->get_group();
@@ -1073,7 +1074,7 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 			// Add "Edit" button to group node titlebar.
 			Button *edit_group_btn = memnew(Button);
 			edit_group_btn->set_tooltip_text(TTRC("Edit"));
-			edit_group_btn->set_button_icon(editor->get_editor_theme_icon("Edit"));
+			edit_group_btn->set_button_icon(editor->get_editor_theme_icon("action_edit"));
 			edit_group_btn->set_disabled(group.is_null());
 			edit_group_btn->connect(SceneStringName(pressed), callable_mp(editor, &VisualShaderEditor::_edit_group_in_graph).bind(p_id), CONNECT_DEFERRED);
 			titlebar->add_child(edit_group_btn);
@@ -1542,7 +1543,7 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 					name_box->connect(SceneStringName(focus_exited), callable_mp(editor, &VisualShaderEditor::_port_name_focus_out).bind(name_box, p_id, j, false), CONNECT_DEFERRED);
 
 					Button *remove_btn = memnew(Button);
-					remove_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Remove"), EditorStringName(EditorIcons)));
+					remove_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_remove"), EditorStringName(EditorIcons)));
 					remove_btn->set_tooltip_text(TTR("Remove") + " " + name_left);
 					remove_btn->connect(SceneStringName(pressed), callable_mp(editor, &VisualShaderEditor::_remove_input_port).bind(p_id, j), CONNECT_DEFERRED);
 					hb->add_child(remove_btn);
@@ -1570,7 +1571,7 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 			if (valid_right) {
 				if (is_expression) {
 					Button *remove_btn = memnew(Button);
-					remove_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Remove"), EditorStringName(EditorIcons)));
+					remove_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_remove"), EditorStringName(EditorIcons)));
 					remove_btn->set_tooltip_text(TTR("Remove") + " " + name_right);
 					remove_btn->connect(SceneStringName(pressed), callable_mp(editor, &VisualShaderEditor::_remove_output_port).bind(p_id, i), CONNECT_DEFERRED);
 					hb->add_child(remove_btn);
@@ -1610,8 +1611,8 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 			if (expanded_port_counter == 0 && vsnode->is_output_port_expandable(i)) {
 				TextureButton *expand = memnew(TextureButton);
 				expand->set_toggle_mode(true);
-				expand->set_texture_normal(editor->get_editor_theme_icon(SNAME("GuiTreeArrowRight")));
-				expand->set_texture_pressed(editor->get_editor_theme_icon(SNAME("GuiTreeArrowDown")));
+				expand->set_texture_normal(editor->get_editor_theme_icon(SNAME("gui_gui_tree_arrow_right")));
+				expand->set_texture_pressed(editor->get_editor_theme_icon(SNAME("gui_gui_tree_arrow_down")));
 				expand->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
 				expand->set_pressed(vsnode->_is_output_port_expanded(i));
 				expand->connect(SceneStringName(pressed), callable_mp(editor, &VisualShaderEditor::_expand_output_port).bind(p_id, i, !vsnode->_is_output_port_expanded(i)), CONNECT_DEFERRED);
@@ -1620,8 +1621,8 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 			if (vsnode->has_output_port_preview(i) && port_right != VisualShaderNode::PORT_TYPE_TRANSFORM && port_right != VisualShaderNode::PORT_TYPE_SAMPLER) {
 				TextureButton *preview = memnew(TextureButton);
 				preview->set_toggle_mode(true);
-				preview->set_texture_normal(editor->get_editor_theme_icon(SNAME("GuiVisibilityHidden")));
-				preview->set_texture_pressed(editor->get_editor_theme_icon(SNAME("GuiVisibilityVisible")));
+				preview->set_texture_normal(editor->get_editor_theme_icon(SNAME("gui_gui_visibility_hidden")));
+				preview->set_texture_pressed(editor->get_editor_theme_icon(SNAME("gui_gui_visibility_visible")));
 				preview->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
 
 				register_output_port(p_id, j, port_right, preview);
@@ -2656,9 +2657,9 @@ bool VisualShaderEditor::_update_preview_parameter_tree() {
 		}
 
 		if (prop.value.type == Variant::OBJECT) {
-			item->set_icon(0, get_editor_theme_icon(SNAME("ImageTexture")));
+			item->set_icon(0, get_editor_theme_icon(SNAME("resource_image_texture")));
 		} else {
-			item->set_icon(0, get_editor_theme_icon(Variant::get_type_name(prop.value.type)));
+			item->set_icon(0, get_editor_theme_icon(editor_get_type_icon_name(Variant::get_type_name(prop.value.type))));
 		}
 	}
 
@@ -3035,31 +3036,31 @@ void VisualShaderEditor::_update_options_menu() {
 		}
 		switch (options[i].return_type) {
 			case VisualShaderNode::PORT_TYPE_SCALAR:
-				item->set_icon(0, get_editor_theme_icon(SNAME("float")));
+				item->set_icon(0, get_editor_theme_icon(SNAME("variant_float")));
 				break;
 			case VisualShaderNode::PORT_TYPE_SCALAR_INT:
-				item->set_icon(0, get_editor_theme_icon(SNAME("int")));
+				item->set_icon(0, get_editor_theme_icon(SNAME("variant_int")));
 				break;
 			case VisualShaderNode::PORT_TYPE_SCALAR_UINT:
-				item->set_icon(0, get_editor_theme_icon(SNAME("uint")));
+				item->set_icon(0, get_editor_theme_icon(SNAME("variant_uint")));
 				break;
 			case VisualShaderNode::PORT_TYPE_VECTOR_2D:
-				item->set_icon(0, get_editor_theme_icon(SNAME("Vector2")));
+				item->set_icon(0, get_editor_theme_icon(SNAME("variant_vector2")));
 				break;
 			case VisualShaderNode::PORT_TYPE_VECTOR_3D:
-				item->set_icon(0, get_editor_theme_icon(SNAME("Vector3")));
+				item->set_icon(0, get_editor_theme_icon(SNAME("variant_vector3")));
 				break;
 			case VisualShaderNode::PORT_TYPE_VECTOR_4D:
-				item->set_icon(0, get_editor_theme_icon(SNAME("Vector4")));
+				item->set_icon(0, get_editor_theme_icon(SNAME("variant_vector4")));
 				break;
 			case VisualShaderNode::PORT_TYPE_BOOLEAN:
-				item->set_icon(0, get_editor_theme_icon(SNAME("bool")));
+				item->set_icon(0, get_editor_theme_icon(SNAME("variant_bool")));
 				break;
 			case VisualShaderNode::PORT_TYPE_TRANSFORM:
-				item->set_icon(0, get_editor_theme_icon(SNAME("Transform3D")));
+				item->set_icon(0, get_editor_theme_icon(SNAME("variant_transform_3d")));
 				break;
 			case VisualShaderNode::PORT_TYPE_SAMPLER:
-				item->set_icon(0, get_editor_theme_icon(SNAME("ImageTexture")));
+				item->set_icon(0, get_editor_theme_icon(SNAME("resource_image_texture")));
 				break;
 			default:
 				break;
@@ -6069,11 +6070,11 @@ void VisualShaderEditor::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			highend_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 
-			param_filter->set_right_icon(Control::get_editor_theme_icon(SNAME("Search")));
+			param_filter->set_right_icon(Control::get_editor_theme_icon(SNAME("action_search")));
 
-			code_preview_button->set_button_icon(Control::get_editor_theme_icon(SNAME("Shader")));
-			shader_preview_button->set_button_icon(Control::get_editor_theme_icon(SNAME("SubViewport")));
-			exit_group_button->set_button_icon(Control::get_editor_theme_icon(SNAME("MoveUp")));
+			code_preview_button->set_button_icon(Control::get_editor_theme_icon(SNAME("resource_shader")));
+			shader_preview_button->set_button_icon(Control::get_editor_theme_icon(SNAME("node_viewport_sub_viewport")));
+			exit_group_button->set_button_icon(Control::get_editor_theme_icon(SNAME("action_move_up")));
 
 			{
 				Color text_color = EDITOR_GET("text_editor/theme/highlighting/text_color");
@@ -6122,8 +6123,8 @@ void VisualShaderEditor::_notification(int p_what) {
 				error_label->end_bulk_theme_override();
 			}
 
-			tools->set_button_icon(get_editor_theme_icon(SNAME("Tools")));
-			preview_tools->set_button_icon(get_editor_theme_icon(SNAME("Tools")));
+			tools->set_button_icon(get_editor_theme_icon(SNAME("viewport_tools")));
+			preview_tools->set_button_icon(get_editor_theme_icon(SNAME("viewport_tools")));
 
 			cached_theme_base_scale = get_theme_default_base_scale();
 
@@ -7210,28 +7211,28 @@ void VisualShaderEditor::_update_varying_tree() {
 
 			switch (varying->type) {
 				case VisualShader::VARYING_TYPE_FLOAT:
-					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("float"), EditorStringName(EditorIcons)));
+					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_float"), EditorStringName(EditorIcons)));
 					break;
 				case VisualShader::VARYING_TYPE_INT:
-					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("int"), EditorStringName(EditorIcons)));
+					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_int"), EditorStringName(EditorIcons)));
 					break;
 				case VisualShader::VARYING_TYPE_UINT:
-					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("uint"), EditorStringName(EditorIcons)));
+					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_uint"), EditorStringName(EditorIcons)));
 					break;
 				case VisualShader::VARYING_TYPE_VECTOR_2D:
-					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Vector2"), EditorStringName(EditorIcons)));
+					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_vector2"), EditorStringName(EditorIcons)));
 					break;
 				case VisualShader::VARYING_TYPE_VECTOR_3D:
-					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Vector3"), EditorStringName(EditorIcons)));
+					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_vector3"), EditorStringName(EditorIcons)));
 					break;
 				case VisualShader::VARYING_TYPE_VECTOR_4D:
-					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Vector4"), EditorStringName(EditorIcons)));
+					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_vector4"), EditorStringName(EditorIcons)));
 					break;
 				case VisualShader::VARYING_TYPE_BOOLEAN:
-					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("bool"), EditorStringName(EditorIcons)));
+					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_bool"), EditorStringName(EditorIcons)));
 					break;
 				case VisualShader::VARYING_TYPE_TRANSFORM:
-					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Transform3D"), EditorStringName(EditorIcons)));
+					item->set_icon(0, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_transform_3d"), EditorStringName(EditorIcons)));
 					break;
 				default:
 					break;
@@ -9182,16 +9183,16 @@ public:
 		parameter_ref = p_parameter_ref;
 
 		Ref<Texture2D> type_icon[] = {
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("float"), EditorStringName(EditorIcons)),
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("int"), EditorStringName(EditorIcons)),
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("uint"), EditorStringName(EditorIcons)),
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("bool"), EditorStringName(EditorIcons)),
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Vector2"), EditorStringName(EditorIcons)),
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Vector3"), EditorStringName(EditorIcons)),
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Vector4"), EditorStringName(EditorIcons)),
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Transform3D"), EditorStringName(EditorIcons)),
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Color"), EditorStringName(EditorIcons)),
-			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("ImageTexture"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_float"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_int"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_uint"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_bool"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_vector2"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_vector3"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_vector4"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_transform_3d"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("variant_color"), EditorStringName(EditorIcons)),
+			EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("resource_image_texture"), EditorStringName(EditorIcons)),
 		};
 
 		add_item(TTR("[None]"));
@@ -9637,7 +9638,7 @@ void VisualShaderNodePortPreview::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			if (checkerboard != nullptr) {
-				checkerboard->set_texture(get_theme_icon(SNAME("GuiMiniCheckerboard"), EditorStringName(EditorIcons)));
+				checkerboard->set_texture(get_theme_icon(SNAME("gui_gui_mini_checkerboard"), EditorStringName(EditorIcons)));
 			}
 		} break;
 		case NOTIFICATION_DRAW: {

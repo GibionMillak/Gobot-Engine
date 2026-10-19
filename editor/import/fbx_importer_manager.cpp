@@ -42,7 +42,7 @@
 void FBXImporterManager::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			fbx_path_browse->set_button_icon(get_editor_theme_icon(SNAME("FileBrowse")));
+			fbx_path_browse->set_button_icon(get_editor_theme_icon(SNAME("file_file_browse")));
 		} break;
 
 		case NOTIFICATION_READY: {

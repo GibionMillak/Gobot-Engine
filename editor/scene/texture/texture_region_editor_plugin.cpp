@@ -155,7 +155,7 @@ void TextureRegionEditor::_texture_overlay_draw() {
 		}
 	}
 
-	Ref<Texture2D> select_handle = get_editor_theme_icon(SNAME("EditorHandle"));
+	Ref<Texture2D> select_handle = get_editor_theme_icon(SNAME("viewport_editor_handle"));
 
 	Rect2 scroll_rect(Point2(), object_texture->get_size());
 
@@ -908,9 +908,9 @@ void TextureRegionEditor::_notification(int p_what) {
 			texture_preview->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("TextureRegionPreviewBG"), EditorStringName(EditorStyles)));
 			texture_overlay->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("TextureRegionPreviewFG"), EditorStringName(EditorStyles)));
 
-			zoom_out->set_button_icon(get_editor_theme_icon(SNAME("ZoomLess")));
-			zoom_reset->set_button_icon(get_editor_theme_icon(SNAME("ZoomReset")));
-			zoom_in->set_button_icon(get_editor_theme_icon(SNAME("ZoomMore")));
+			zoom_out->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_less")));
+			zoom_reset->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_reset")));
+			zoom_in->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_more")));
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {
@@ -1372,7 +1372,7 @@ void EditorInspectorPluginTextureRegion::_region_edit(Object *p_object) {
 bool EditorInspectorPluginTextureRegion::parse_property(Object *p_object, const Variant::Type p_type, const String &p_path, const PropertyHint p_hint, const String &p_hint_text, const BitField<PropertyUsageFlags> p_usage, const bool p_wide) {
 	if ((p_type == Variant::RECT2 || p_type == Variant::RECT2I)) {
 		if (((Object::cast_to<Sprite2D>(p_object) || Object::cast_to<Sprite3D>(p_object) || Object::cast_to<NinePatchRect>(p_object) || Object::cast_to<StyleBoxTexture>(p_object)) && p_path == "region_rect") || (Object::cast_to<AtlasTexture>(p_object) && p_path == "region")) {
-			EditorInspectorActionButton *button = memnew(EditorInspectorActionButton(TTRC("Edit Region"), SNAME("RegionEdit")));
+			EditorInspectorActionButton *button = memnew(EditorInspectorActionButton(TTRC("Edit Region"), SNAME("action_region_edit")));
 			button->connect(SceneStringName(pressed), callable_mp(this, &EditorInspectorPluginTextureRegion::_region_edit).bind(p_object));
 			add_property_editor(p_path, button, true);
 		}

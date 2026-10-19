@@ -68,7 +68,7 @@ EditorDebuggerNode *EditorDebuggerNode::singleton = nullptr;
 
 EditorDebuggerNode::EditorDebuggerNode() {
 	set_name(TTRC("Debugger"));
-	set_icon_name("Debug");
+	set_icon_name("gui_debug");
 	set_layout_key("Debugger");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_debugger_bottom_panel", TTRC("Toggle Debugger Dock"), KeyModifierMask::ALT | Key::D));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
@@ -508,14 +508,14 @@ void EditorDebuggerNode::_update_errors(bool p_force) {
 		} else {
 			set_title(TTR("Debugger") + " (" + itos(error_count + warning_count) + ")");
 			if (error_count >= 1 && warning_count >= 1) {
-				set_dock_icon(get_editor_theme_icon(SNAME("ErrorWarning")));
+				set_dock_icon(get_editor_theme_icon(SNAME("status_error_warning")));
 				// Use error color to represent the highest level of severity reported.
 				set_title_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 			} else if (error_count >= 1) {
-				set_dock_icon(get_editor_theme_icon(SNAME("Error")));
+				set_dock_icon(get_editor_theme_icon(SNAME("status_error")));
 				set_title_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 			} else {
-				set_dock_icon(get_editor_theme_icon(SNAME("Warning")));
+				set_dock_icon(get_editor_theme_icon(SNAME("status_warning")));
 				set_title_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 			}
 			set_force_show_icon(true);

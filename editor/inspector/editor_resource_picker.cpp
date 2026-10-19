@@ -36,6 +36,7 @@
 #include "core/object/class_db.h"
 #include "core/os/os.h"
 #include "editor/audio/audio_stream_preview.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/doc/editor_help.h"
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/scene_tree_dock.h"
@@ -133,7 +134,7 @@ void EditorResourcePicker::_update_resource() {
 		bool unique_recursive_enabled = _is_uniqueness_enabled(true);
 		bool is_internal = EditorNode::get_singleton()->is_resource_internal_to_scene(edited_resource);
 		int num_of_copies = EditorNode::get_singleton()->get_resource_count(edited_resource);
-		make_unique_button->set_button_icon(get_editor_theme_icon(SNAME("Instance")));
+		make_unique_button->set_button_icon(get_editor_theme_icon(SNAME("action_instance")));
 		make_unique_button->set_visible(num_of_copies > 1 || (!is_internal && !Object::cast_to<Script>(edited_resource.ptr())));
 		make_unique_button->set_disabled((!unique_enable && !unique_recursive_enabled) || !editable);
 
@@ -306,11 +307,11 @@ void EditorResourcePicker::_update_menu_items() {
 		set_create_options(edit_menu);
 
 		// Add an option to load a resource from a file using the QuickOpen dialog.
-		edit_menu->add_icon_item(get_editor_theme_icon(SNAME("LoadQuick")), TTR("Quick Load..."), OBJ_MENU_QUICKLOAD);
+		edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_load_quick")), TTR("Quick Load..."), OBJ_MENU_QUICKLOAD);
 		edit_menu->set_item_tooltip(-1, TTR("Opens a quick menu to select from a list of allowed Resource files."));
 
 		// Add an option to load a resource from a file using the regular file dialog.
-		edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Load")), TTR("Load..."), OBJ_MENU_LOAD);
+		edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_load")), TTR("Load..."), OBJ_MENU_LOAD);
 	}
 
 	// Add options for changing existing value of the resource.
@@ -322,19 +323,19 @@ void EditorResourcePicker::_update_menu_items() {
 		// since will only be able to view its properties in read-only mode.
 		if (is_edited_resource_foreign_import) {
 			// The 'Search' icon is a magnifying glass, which seems appropriate, but maybe a bespoke icon is preferred here.
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Search")), TTR("Inspect"), OBJ_MENU_INSPECT);
+			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_search")), TTR("Inspect"), OBJ_MENU_INSPECT);
 		} else {
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Edit")), TTR("Edit"), OBJ_MENU_INSPECT);
+			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_edit")), TTR("Edit"), OBJ_MENU_INSPECT);
 			edit_menu->set_item_disabled(-1, force_allow_unique);
 		}
 
 		if (is_editable()) {
 			if (!_is_custom_type_script()) {
-				edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Clear")), TTR("Clear"), OBJ_MENU_CLEAR);
+				edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_clear")), TTR("Clear"), OBJ_MENU_CLEAR);
 				edit_menu->set_item_disabled(-1, force_allow_unique);
 			}
 			bool unique_enabled = _is_uniqueness_enabled();
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Duplicate")), TTR("Make Unique"), OBJ_MENU_MAKE_UNIQUE);
+			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_duplicate")), TTR("Make Unique"), OBJ_MENU_MAKE_UNIQUE);
 			edit_menu->set_item_disabled(-1, !unique_enabled);
 
 			String modifier = "Ctrl";
@@ -355,7 +356,7 @@ void EditorResourcePicker::_update_menu_items() {
 
 			if (_has_sub_resources(edited_resource)) {
 				unique_enabled = _is_uniqueness_enabled(true);
-				edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Duplicate")), TTR("Make Unique (Recursive)"), OBJ_MENU_MAKE_UNIQUE_RECURSIVE);
+				edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_duplicate")), TTR("Make Unique (Recursive)"), OBJ_MENU_MAKE_UNIQUE_RECURSIVE);
 				edit_menu->set_item_disabled(-1, !unique_enabled);
 				if (!unique_enabled) {
 					Ref<Resource> parent_res = _has_parent_resource();
@@ -365,15 +366,15 @@ void EditorResourcePicker::_update_menu_items() {
 				}
 			}
 
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Save")), TTR("Save"), OBJ_MENU_SAVE);
+			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_save")), TTR("Save"), OBJ_MENU_SAVE);
 			edit_menu->set_item_disabled(-1, force_allow_unique);
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Save")), TTR("Save As..."), OBJ_MENU_SAVE_AS);
+			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_save")), TTR("Save As..."), OBJ_MENU_SAVE_AS);
 			edit_menu->set_item_disabled(-1, force_allow_unique);
 		}
 
 		if (edited_resource->get_path().is_resource_file()) {
 			edit_menu->add_separator();
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("ShowInFileSystem")), TTR("Show in FileSystem"), OBJ_MENU_SHOW_IN_FILE_SYSTEM);
+			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("gui_show_in_file_system")), TTR("Show in FileSystem"), OBJ_MENU_SHOW_IN_FILE_SYSTEM);
 		}
 	}
 
@@ -402,12 +403,12 @@ void EditorResourcePicker::_update_menu_items() {
 		edit_menu->add_separator();
 
 		if (edited_resource.is_valid()) {
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Copy")), TTRC("Copy"), OBJ_MENU_COPY);
+			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_copy")), TTRC("Copy"), OBJ_MENU_COPY);
 		}
 
 		if (paste_valid) {
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Paste")), TTRC("Paste"), OBJ_MENU_PASTE);
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("Paste")), TTRC("Paste as Unique"), OBJ_MENU_PASTE_AS_UNIQUE);
+			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_paste")), TTRC("Paste"), OBJ_MENU_PASTE);
+			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_paste")), TTRC("Paste as Unique"), OBJ_MENU_PASTE_AS_UNIQUE);
 		}
 	}
 
@@ -421,10 +422,10 @@ void EditorResourcePicker::_update_menu_items() {
 		for (const Ref<EditorResourceConversionPlugin> &conversion : conversions) {
 			String what = conversion->converts_to();
 			Ref<Texture2D> icon;
-			if (has_theme_icon(what, EditorStringName(EditorIcons))) {
-				icon = get_editor_theme_icon(what);
+			if (has_theme_icon(editor_get_type_icon_name(what), EditorStringName(EditorIcons))) {
+				icon = get_editor_theme_icon(editor_get_type_icon_name(what));
 			} else {
-				icon = get_editor_theme_icon(SNAME("Object"));
+				icon = get_editor_theme_icon(SNAME("variant_object"));
 			}
 
 			edit_menu->add_icon_item(icon, vformat(TTR("Convert to %s"), what), CONVERT_BASE_ID + relative_id);
@@ -1107,7 +1108,7 @@ void EditorResourcePicker::_notification(int p_what) {
 				edit_menu->add_theme_constant_override("icon_max_width", icon_width);
 			}
 
-			quick_load_button->set_button_icon(get_editor_theme_icon(SNAME("LoadQuick")));
+			quick_load_button->set_button_icon(get_editor_theme_icon(SNAME("action_load_quick")));
 			edit_button->set_button_icon(get_theme_icon(SNAME("select_arrow"), SNAME("Tree")));
 		} break;
 
@@ -1568,13 +1569,13 @@ void EditorScriptPicker::set_create_options(Object *p_menu_node) {
 	}
 
 	if (!(script_owner && script_owner->has_meta(SceneStringName(_custom_type_script)))) {
-		menu_node->add_icon_item(get_editor_theme_icon(SNAME("ScriptCreate")), TTR("New Script..."), OBJ_MENU_NEW_SCRIPT);
+		menu_node->add_icon_item(get_editor_theme_icon(SNAME("scripting_script_create")), TTR("New Script..."), OBJ_MENU_NEW_SCRIPT);
 	}
 
 	if (script_owner) {
 		Ref<Script> scr = script_owner->get_script();
 		if (scr.is_valid()) {
-			menu_node->add_icon_item(get_editor_theme_icon(SNAME("ScriptExtend")), TTR("Extend Script..."), OBJ_MENU_EXTEND_SCRIPT);
+			menu_node->add_icon_item(get_editor_theme_icon(SNAME("scripting_script_extend")), TTR("Extend Script..."), OBJ_MENU_EXTEND_SCRIPT);
 		}
 	}
 	menu_node->add_separator();
@@ -1623,7 +1624,7 @@ void EditorShaderPicker::set_create_options(Object *p_menu_node) {
 		return;
 	}
 
-	menu_node->add_icon_item(get_editor_theme_icon(SNAME("Shader")), TTR("New Shader..."), OBJ_MENU_NEW_SHADER);
+	menu_node->add_icon_item(get_editor_theme_icon(SNAME("resource_shader")), TTR("New Shader..."), OBJ_MENU_NEW_SHADER);
 	menu_node->add_separator();
 }
 
@@ -1789,7 +1790,7 @@ void EditorAudioStreamPicker::_preview_draw() {
 	Color icon_modulate(1, 1, 1, 1);
 
 	if (tagged_frame_offset_count > 0) {
-		icon = get_editor_theme_icon(SNAME("Play"));
+		icon = get_editor_theme_icon(SNAME("playback_play"));
 		if ((OS::get_singleton()->get_ticks_msec() % 500) > 250) {
 			icon_modulate = Color(1, 0.5, 0.5, 1); // get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 		}

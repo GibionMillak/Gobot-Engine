@@ -1538,22 +1538,22 @@ void GridMapEditor::_draw_grids(const Vector3 &cell_size) {
 }
 
 void GridMapEditor::_update_theme() {
-	transform_mode_button->set_button_icon(get_theme_icon(SNAME("ToolMove"), EditorStringName(EditorIcons)));
-	select_mode_button->set_button_icon(get_theme_icon(SNAME("ToolSelect"), EditorStringName(EditorIcons)));
-	erase_mode_button->set_button_icon(get_theme_icon(SNAME("Eraser"), EditorStringName(EditorIcons)));
-	paint_mode_button->set_button_icon(get_theme_icon(SNAME("Paint"), EditorStringName(EditorIcons)));
-	pick_mode_button->set_button_icon(get_theme_icon(SNAME("ColorPick"), EditorStringName(EditorIcons)));
-	fill_action_button->set_button_icon(get_theme_icon(SNAME("Bucket"), EditorStringName(EditorIcons)));
-	move_action_button->set_button_icon(get_theme_icon(SNAME("Cut"), EditorStringName(EditorIcons)));
-	duplicate_action_button->set_button_icon(get_theme_icon(SNAME("Copy"), EditorStringName(EditorIcons)));
-	delete_action_button->set_button_icon(get_theme_icon(SNAME("Clear"), EditorStringName(EditorIcons)));
-	rotate_x_button->set_button_icon(get_theme_icon(SNAME("RotateLeft"), EditorStringName(EditorIcons)));
-	rotate_y_button->set_button_icon(get_theme_icon(SNAME("ToolRotate"), EditorStringName(EditorIcons)));
-	rotate_z_button->set_button_icon(get_theme_icon(SNAME("RotateRight"), EditorStringName(EditorIcons)));
-	clear_rotation_button->set_button_icon(get_theme_icon(SNAME("UndoRedo"), EditorStringName(EditorIcons)));
-	mode_thumbnail->set_button_icon(get_theme_icon(SNAME("FileThumbnail"), EditorStringName(EditorIcons)));
-	mode_list->set_button_icon(get_theme_icon(SNAME("FileList"), EditorStringName(EditorIcons)));
-	options->set_button_icon(get_theme_icon(SNAME("Tools"), EditorStringName(EditorIcons)));
+	transform_mode_button->set_button_icon(get_theme_icon(SNAME("viewport_tool_move"), EditorStringName(EditorIcons)));
+	select_mode_button->set_button_icon(get_theme_icon(SNAME("viewport_tool_select"), EditorStringName(EditorIcons)));
+	erase_mode_button->set_button_icon(get_theme_icon(SNAME("action_eraser"), EditorStringName(EditorIcons)));
+	paint_mode_button->set_button_icon(get_theme_icon(SNAME("action_paint"), EditorStringName(EditorIcons)));
+	pick_mode_button->set_button_icon(get_theme_icon(SNAME("action_color_pick"), EditorStringName(EditorIcons)));
+	fill_action_button->set_button_icon(get_theme_icon(SNAME("action_bucket"), EditorStringName(EditorIcons)));
+	move_action_button->set_button_icon(get_theme_icon(SNAME("action_cut"), EditorStringName(EditorIcons)));
+	duplicate_action_button->set_button_icon(get_theme_icon(SNAME("action_copy"), EditorStringName(EditorIcons)));
+	delete_action_button->set_button_icon(get_theme_icon(SNAME("action_clear"), EditorStringName(EditorIcons)));
+	rotate_x_button->set_button_icon(get_theme_icon(SNAME("action_rotate_left"), EditorStringName(EditorIcons)));
+	rotate_y_button->set_button_icon(get_theme_icon(SNAME("viewport_tool_rotate"), EditorStringName(EditorIcons)));
+	rotate_z_button->set_button_icon(get_theme_icon(SNAME("action_rotate_right"), EditorStringName(EditorIcons)));
+	clear_rotation_button->set_button_icon(get_theme_icon(SNAME("resource_undo_redo"), EditorStringName(EditorIcons)));
+	mode_thumbnail->set_button_icon(get_theme_icon(SNAME("file_file_thumbnail"), EditorStringName(EditorIcons)));
+	mode_list->set_button_icon(get_theme_icon(SNAME("gui_file_list"), EditorStringName(EditorIcons)));
+	options->set_button_icon(get_theme_icon(SNAME("viewport_tools"), EditorStringName(EditorIcons)));
 }
 
 void GridMapEditor::_notification(int p_what) {
@@ -1729,7 +1729,7 @@ void GridMapEditor::_bind_methods() {
 
 GridMapEditor::GridMapEditor() {
 	set_name(TTRC("GridMap"));
-	set_icon_name("GridMapDock");
+	set_icon_name("module_gridmap_grid_map_dock");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_grid_map_bottom_panel", TTRC("Toggle GridMap Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

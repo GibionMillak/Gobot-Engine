@@ -88,12 +88,12 @@ void EditorAbout::_notification(int p_what) {
 			license_text_label->add_theme_constant_override(SceneStringName(line_separation), 4 * EDSCALE);
 			license_text_label->end_bulk_theme_override();
 
-			_logo->set_texture(get_editor_theme_icon(SNAME("Logo")));
+			_logo->set_texture(get_editor_theme_icon(SNAME("branding_logo")));
 
 			for (ItemList *il : name_lists) {
 				for (int i = 0; i < il->get_item_count(); i++) {
 					if (il->get_item_metadata(i)) {
-						il->set_item_icon(i, get_theme_icon(SNAME("ExternalLink"), EditorStringName(EditorIcons)));
+						il->set_item_icon(i, get_theme_icon(SNAME("navigation_external_link"), EditorStringName(EditorIcons)));
 						il->set_item_icon_modulate(i, get_theme_color(SNAME("font_disabled_color"), EditorStringName(Editor)));
 					}
 				}

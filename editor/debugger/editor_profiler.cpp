@@ -426,10 +426,10 @@ void EditorProfiler::_update_frame() {
 
 void EditorProfiler::_update_button_text() {
 	if (activate->is_pressed()) {
-		activate->set_button_icon(get_editor_theme_icon(SNAME("Stop")));
+		activate->set_button_icon(get_editor_theme_icon(SNAME("playback_stop")));
 		activate->set_text(TTRC("Stop"));
 	} else {
-		activate->set_button_icon(get_editor_theme_icon(SNAME("Play")));
+		activate->set_button_icon(get_editor_theme_icon(SNAME("playback_play")));
 		activate->set_text(TTRC("Start"));
 	}
 }
@@ -469,8 +469,8 @@ void EditorProfiler::_notification(int p_what) {
 		}
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
-			activate->set_button_icon(get_editor_theme_icon(SNAME("Play")));
-			clear_button->set_button_icon(get_editor_theme_icon(SNAME("Clear")));
+			activate->set_button_icon(get_editor_theme_icon(SNAME("playback_play")));
+			clear_button->set_button_icon(get_editor_theme_icon(SNAME("action_clear")));
 			graph_background->set_color(get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor)));
 
 			theme_cache.seek_line_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));

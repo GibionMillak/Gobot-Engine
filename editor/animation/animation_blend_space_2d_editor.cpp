@@ -148,7 +148,7 @@ void AnimationNodeBlendSpace2DEditor::_blend_space_gui_input(const Ref<InputEven
 				animations_menu->set_item_disabled(-1, true);
 			} else {
 				for (const StringName &E : animation_list) {
-					animations_menu->add_icon_item(get_editor_theme_icon(SNAME("Animation")), E);
+					animations_menu->add_icon_item(get_editor_theme_icon(SNAME("resource_animation")), E);
 					animations_to_add.push_back(E);
 				}
 			}
@@ -540,9 +540,9 @@ void AnimationNodeBlendSpace2DEditor::_blend_space_draw() {
 	linecolor_soft.a *= 0.5;
 	Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
-	Ref<Texture2D> icon = get_editor_theme_icon(SNAME("KeyValue"));
-	Ref<Texture2D> icon_selected = get_editor_theme_icon(SNAME("KeySelected"));
-	Ref<Texture2D> icon_invalid = get_editor_theme_icon(SNAME("KeyInvalid"));
+	Ref<Texture2D> icon = get_editor_theme_icon(SNAME("animation_key_value"));
+	Ref<Texture2D> icon_selected = get_editor_theme_icon(SNAME("animation_key_selected"));
+	Ref<Texture2D> icon_invalid = get_editor_theme_icon(SNAME("animation_key_invalid"));
 
 	const float pm = POINT_MARGIN * EDSCALE;
 
@@ -1015,18 +1015,18 @@ void AnimationNodeBlendSpace2DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("GraphBlendSpace")));
-			tool_blend->set_button_icon(get_editor_theme_icon(SNAME("EditPivot")));
-			tool_select->set_button_icon(get_editor_theme_icon(SNAME("ToolSelect")));
-			tool_create->set_button_icon(get_editor_theme_icon(SNAME("EditKey")));
-			tool_triangle->set_button_icon(get_editor_theme_icon(SNAME("ToolTriangle")));
-			tool_erase->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
-			snap->set_button_icon(get_editor_theme_icon(SNAME("SnapGrid")));
-			open_editor->set_button_icon(get_editor_theme_icon(SNAME("Edit")));
-			auto_triangles->set_button_icon(get_editor_theme_icon(SNAME("AutoTriangle")));
+			tool_blend->set_button_icon(get_editor_theme_icon(SNAME("action_edit_pivot")));
+			tool_select->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_select")));
+			tool_create->set_button_icon(get_editor_theme_icon(SNAME("action_edit_key")));
+			tool_triangle->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_triangle")));
+			tool_erase->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
+			snap->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
+			open_editor->set_button_icon(get_editor_theme_icon(SNAME("action_edit")));
+			auto_triangles->set_button_icon(get_editor_theme_icon(SNAME("animation_auto_triangle")));
 			interpolation->clear();
-			interpolation->add_icon_item(get_editor_theme_icon(SNAME("TrackContinuous")), TTR("Continuous"), 0);
-			interpolation->add_icon_item(get_editor_theme_icon(SNAME("TrackDiscrete")), TTR("Discrete"), 1);
-			interpolation->add_icon_item(get_editor_theme_icon(SNAME("TrackCapture")), TTR("Capture"), 2);
+			interpolation->add_icon_item(get_editor_theme_icon(SNAME("animation_track_continuous")), TTR("Continuous"), 0);
+			interpolation->add_icon_item(get_editor_theme_icon(SNAME("animation_track_discrete")), TTR("Discrete"), 1);
+			interpolation->add_icon_item(get_editor_theme_icon(SNAME("animation_track_capture")), TTR("Capture"), 2);
 		} break;
 	}
 }

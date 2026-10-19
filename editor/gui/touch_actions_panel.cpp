@@ -55,24 +55,24 @@ void TouchActionsPanel::_notification(int p_what) {
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
 			if (is_floating) {
-				drag_handle->set_texture(get_editor_theme_icon(SNAME("DragHandle")));
-				layout_toggle_button->set_button_icon(get_editor_theme_icon(SNAME("Orientation")));
-				lock_panel_button->set_button_icon(get_editor_theme_icon(SNAME("Lock")));
+				drag_handle->set_texture(get_editor_theme_icon(SNAME("gui_drag_handle")));
+				layout_toggle_button->set_button_icon(get_editor_theme_icon(SNAME("gui_orientation")));
+				lock_panel_button->set_button_icon(get_editor_theme_icon(SNAME("action_lock")));
 			} else {
 				if (embedded_panel_index == 1) {
-					panel_pos_button->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignLeftWide")));
+					panel_pos_button->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_left_wide")));
 				} else {
-					panel_pos_button->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignRightWide")));
+					panel_pos_button->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_right_wide")));
 				}
 			}
-			save_button->set_button_icon(get_editor_theme_icon(SNAME("Save")));
-			delete_button->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
-			undo_button->set_button_icon(get_editor_theme_icon(SNAME("UndoRedo")));
-			redo_button->set_button_icon(get_editor_theme_icon(SNAME("Redo")));
-			cut_button->set_button_icon(get_editor_theme_icon(SNAME("Cut")));
-			copy_button->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
-			paste_button->set_button_icon(get_editor_theme_icon(SNAME("Paste")));
-			tab_button->set_button_icon(get_editor_theme_icon(SNAME("KeyboardTab")));
+			save_button->set_button_icon(get_editor_theme_icon(SNAME("action_save")));
+			delete_button->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
+			undo_button->set_button_icon(get_editor_theme_icon(SNAME("resource_undo_redo")));
+			redo_button->set_button_icon(get_editor_theme_icon(SNAME("action_redo")));
+			cut_button->set_button_icon(get_editor_theme_icon(SNAME("action_cut")));
+			copy_button->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
+			paste_button->set_button_icon(get_editor_theme_icon(SNAME("action_paste")));
+			tab_button->set_button_icon(get_editor_theme_icon(SNAME("animation_keyboard_tab")));
 		} break;
 	}
 }
@@ -229,10 +229,10 @@ void TouchActionsPanel::_lock_panel_toggled(bool p_pressed) {
 void TouchActionsPanel::_switch_embedded_panel_side() {
 	if (embedded_panel_index == 0) {
 		embedded_panel_index = 1;
-		panel_pos_button->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignLeftWide")));
+		panel_pos_button->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_left_wide")));
 	} else {
 		embedded_panel_index = 0;
-		panel_pos_button->set_button_icon(get_editor_theme_icon(SNAME("ControlAlignRightWide")));
+		panel_pos_button->set_button_icon(get_editor_theme_icon(SNAME("gui_alignment_control_align_right_wide")));
 	}
 	get_parent()->move_child(this, embedded_panel_index); // Parent is a hbox with only two children -- TouchActionsPanel and main Editor UI.
 	EditorSettings::get_singleton()->set("_touch_actions_panel_embed_index", embedded_panel_index);

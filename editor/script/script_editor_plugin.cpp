@@ -176,10 +176,10 @@ ScriptEditorQuickOpen::ScriptEditorQuickOpen() :
 void DocumentList::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			filter->set_right_icon(get_editor_theme_icon(SNAME("Search")));
+			filter->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 			item_list->set_fixed_icon_size(Vector2i(1, 1) * get_theme_constant("class_icon_size", EditorStringName(Editor)));
 
-			const Ref<Texture2D> &help_icon = get_editor_theme_icon(SNAME("Help"));
+			const Ref<Texture2D> &help_icon = get_editor_theme_icon(SNAME("gui_help"));
 			for (ItemData &item : items) {
 				Control *editor = document_editor_container->tab_container->get_tab_control(item.index);
 				ScriptEditorBase *seb = Object::cast_to<ScriptEditorBase>(editor);
@@ -213,7 +213,7 @@ Variant DocumentList::get_drag_data_fw(const Point2 &p_point, Control *p_from) {
 	EditorHelp *eh = Object::cast_to<EditorHelp>(cur_node);
 	if (eh) {
 		preview_name = eh->get_class();
-		preview_icon = get_editor_theme_icon(SNAME("Help"));
+		preview_icon = get_editor_theme_icon(SNAME("gui_help"));
 	}
 
 	if (preview_icon.is_valid()) {
@@ -458,7 +458,7 @@ static void _find_scripts(Node *p_base, Node *p_current, HashSet<Ref<Script>> &r
 void DocumentList::update_list() {
 	TabContainer *tab_container = document_editor_container->tab_container;
 	const int num_open_editors = tab_container->get_tab_count();
-	const Ref<Texture2D> &help_icon = get_editor_theme_icon(SNAME("Help"));
+	const Ref<Texture2D> &help_icon = get_editor_theme_icon(SNAME("gui_help"));
 
 	HashSet<Ref<Script>> scripts_in_scene;
 	if (document_editor_container->highlight_scene_scripts && num_open_editors > 0) {
@@ -539,7 +539,7 @@ void DocumentList::_update_item_list() {
 	Color tool_color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 	tool_color.set_s(tool_color.get_s() * 1.5);
 	Color used_item_bg_color = Color(0.5, 0.5, 0.5, 0.125);
-	const Ref<Texture2D> &error_icon = get_editor_theme_icon(SNAME("Error"));
+	const Ref<Texture2D> &error_icon = get_editor_theme_icon(SNAME("status_error"));
 
 	for (const ItemData &item : items) {
 		if (item.hidden) {
@@ -649,7 +649,7 @@ DocumentList::DocumentList(DocumentEditorContainer *p_document_editor_container)
 void DocumentOutline::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			sort_button->set_button_icon(get_editor_theme_icon(SNAME("Sort")));
+			sort_button->set_button_icon(get_editor_theme_icon(SNAME("action_sort")));
 
 			update_visibility();
 		} break;
@@ -2135,21 +2135,21 @@ void DocumentEditorContainer::_notification(int p_what) {
 			_calculate_script_name_button_size();
 
 			if (is_main_editor) {
-				help_search->set_button_icon(get_editor_theme_icon(SNAME("HelpSearch")));
+				help_search->set_button_icon(get_editor_theme_icon(SNAME("action_help_search")));
 			}
-			site_search->set_button_icon(get_editor_theme_icon(SNAME("ExternalLink")));
+			site_search->set_button_icon(get_editor_theme_icon(SNAME("navigation_external_link")));
 
 			if (is_layout_rtl()) {
-				script_forward->set_button_icon(get_editor_theme_icon(SNAME("Back")));
-				script_back->set_button_icon(get_editor_theme_icon(SNAME("Forward")));
+				script_forward->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
+				script_back->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
 			} else {
-				script_forward->set_button_icon(get_editor_theme_icon(SNAME("Forward")));
-				script_back->set_button_icon(get_editor_theme_icon(SNAME("Back")));
+				script_forward->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
+				script_back->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
 			}
 
 			recent_scripts->reset_size();
 
-			toggle_files_button->set_button_icon(get_editor_theme_icon(SNAME("SidebarLeft")));
+			toggle_files_button->set_button_icon(get_editor_theme_icon(SNAME("view_sidebar_left")));
 		} break;
 
 		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {
@@ -4694,7 +4694,7 @@ ScriptEditorPlugin::ScriptEditorPlugin() {
 
 	script_editor = memnew(ScriptEditor);
 	script_editor->set_name(TTRC("Script"));
-	script_editor->set_icon_name("Script");
+	script_editor->set_icon_name("resource_script");
 	script_editor->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN | EditorDock::DOCK_LAYOUT_FLOATING);
 	script_editor->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	script_editor->set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_script"));

@@ -39,6 +39,7 @@
 #include "core/os/keyboard.h"
 #include "core/string/translation_server.h"
 #include "editor/animation/animation_player_editor_plugin.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/scene_tree_dock.h"
@@ -85,7 +86,6 @@
 #include "scene/property_utils.h"
 #include "scene/resources/gradient.h"
 #include "scene/resources/packed_scene.h"
-#include "scene/resources/style_box_texture.h"
 #include "servers/rendering/rendering_server.h"
 
 class SnapDialog : public Dialog {
@@ -601,17 +601,17 @@ void CanvasItemEditor::_selection_menu_requested(const Array &p_selection, const
 
 void CanvasItemEditor::_tool_menu_requested(const Point2 &p_pos) {
 	add_node_menu->clear();
-	add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("Add")), TTRC("Add 2D Node Here..."), ADD_NODE);
-	add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("Instance")), TTRC("Instantiate Scene Here..."), ADD_INSTANCE);
+	add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("action_add")), TTRC("Add 2D Node Here..."), ADD_NODE);
+	add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("action_instance")), TTRC("Instantiate Scene Here..."), ADD_INSTANCE);
 	for (Node *node : SceneTreeDock::get_singleton()->get_node_clipboard()) {
 		if (Object::cast_to<CanvasItem>(node)) {
-			add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("Paste")), TTRC("Paste Node(s) Here"), ADD_PASTE);
+			add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("action_paste")), TTRC("Paste Node(s) Here"), ADD_PASTE);
 			break;
 		}
 	}
 	for (Node *node : EditorNode::get_singleton()->get_editor_selection()->get_top_selected_node_list()) {
 		if (Object::cast_to<CanvasItem>(node) && ci_manipulator->is_node_movable(node, false)) {
-			add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("ToolMove")), TTRC("Move Node(s) Here"), ADD_MOVE);
+			add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("viewport_tool_move")), TTRC("Move Node(s) Here"), ADD_MOVE);
 			break;
 		}
 	}
@@ -1574,7 +1574,7 @@ void CanvasItemEditor::_draw_ruler_tool() {
 
 	Point2 ruler_tool_origin = ci_manipulator->get_ruler_tool_origin();
 	bool grid_snap_active = ci_manipulator->is_grid_snap_enabled();
-	const Ref<Texture2D> position_icon = get_editor_theme_icon(SNAME("EditorPosition"));
+	const Ref<Texture2D> position_icon = get_editor_theme_icon(SNAME("viewport_editor_position"));
 	if (ci_manipulator->is_ruler_tool_active()) {
 		const String &lang = _get_locale();
 		const TranslationServer *ts = TranslationServer::get_singleton();
@@ -1935,9 +1935,9 @@ void CanvasItemEditor::_draw_control_helpers(Control *control) {
 }
 
 void CanvasItemEditor::_draw_selection() {
-	Ref<Texture2D> pivot_icon = get_editor_theme_icon(SNAME("EditorPivot"));
-	Ref<Texture2D> position_icon = get_editor_theme_icon(SNAME("EditorPosition"));
-	Ref<Texture2D> previous_position_icon = get_editor_theme_icon(SNAME("EditorPositionPrevious"));
+	Ref<Texture2D> pivot_icon = get_editor_theme_icon(SNAME("viewport_editor_pivot"));
+	Ref<Texture2D> position_icon = get_editor_theme_icon(SNAME("viewport_editor_position"));
+	Ref<Texture2D> previous_position_icon = get_editor_theme_icon(SNAME("viewport_editor_position_previous"));
 
 	RID vp_ci = viewport->get_canvas_item();
 	List<CanvasItem *> selection = _get_edited_canvas_items(true, false);
@@ -2286,7 +2286,7 @@ void CanvasItemEditor::_draw_invisible_nodes_positions(Node *p_node, const Trans
 		Transform2D xform = transform * canvas_xform * parent_xform;
 
 		// Draw the node's position
-		Ref<Texture2D> position_icon = get_editor_theme_icon(SNAME("EditorPositionUnselected"));
+		Ref<Texture2D> position_icon = get_editor_theme_icon(SNAME("viewport_editor_position_unselected"));
 		Transform2D unscaled_transform = (xform * ci->get_transform().affine_inverse() * ci->_edit_get_transform()).orthonormalized();
 		Transform2D simple_xform;
 		if (ci_manipulator->is_local_space_enabled()) {
@@ -2436,13 +2436,13 @@ void CanvasItemEditor::_draw_locks_and_groups(Node *p_node, const Transform2D &p
 	if (ci) {
 		real_t offset = 0;
 
-		Ref<Texture2D> lock = get_editor_theme_icon(SNAME("LockViewport"));
+		Ref<Texture2D> lock = get_editor_theme_icon(SNAME("viewport_lock_viewport"));
 		if (show_lock_gizmos && p_node->has_meta("_edit_lock_")) {
 			lock->draw(viewport_ci, (transform * canvas_xform * parent_xform).xform(Point2(0, 0)) + Point2(offset, 0));
 			offset += lock->get_size().x;
 		}
 
-		Ref<Texture2D> group = get_editor_theme_icon(SNAME("GroupViewport"));
+		Ref<Texture2D> group = get_editor_theme_icon(SNAME("viewport_group_viewport"));
 		if (show_group_gizmos && ci->has_meta("_edit_group_")) {
 			group->draw(viewport_ci, (transform * canvas_xform * parent_xform).xform(Point2(0, 0)) + Point2(offset, 0));
 			//offset += group->get_size().x;
@@ -2494,40 +2494,39 @@ void CanvasItemEditor::set_current_tool(CanvasItemManipulator::Tool p_tool) {
 }
 
 void CanvasItemEditor::_update_editor_settings() {
-	button_center_view->set_button_icon(get_editor_theme_icon(SNAME("CenterView")));
-	select_button->set_button_icon(get_editor_theme_icon(SNAME("ToolSelect")));
-	scene_paint_button->set_button_icon(get_editor_theme_icon(SNAME("Paint")));
-	select_sb->set_texture(get_editor_theme_icon(SNAME("EditorRect2D")));
-	list_select_button->set_button_icon(get_editor_theme_icon(SNAME("ListSelect")));
-	move_button->set_button_icon(get_editor_theme_icon(SNAME("ToolMove")));
-	scale_button->set_button_icon(get_editor_theme_icon(SNAME("ToolScale")));
-	rotate_button->set_button_icon(get_editor_theme_icon(SNAME("ToolRotate")));
-	local_space_button->set_button_icon(get_editor_theme_icon(SNAME("Object")));
-	smart_snap_button->set_button_icon(get_editor_theme_icon(SNAME("Snap")));
-	grid_snap_button->set_button_icon(get_editor_theme_icon(SNAME("SnapGrid")));
-	snap_config_menu->set_button_icon(get_editor_theme_icon(SNAME("GuiDropdown")));
-	skeleton_menu->set_button_icon(get_editor_theme_icon(SNAME("Bone")));
-	pan_button->set_button_icon(get_editor_theme_icon(SNAME("ToolPan")));
-	ruler_button->set_button_icon(get_editor_theme_icon(SNAME("Ruler")));
-	pivot_button->set_button_icon(get_editor_theme_icon(SNAME("EditPivot")));
-	select_handle = get_editor_theme_icon(SNAME("EditorHandle"));
-	anchor_handle = get_editor_theme_icon(SNAME("EditorControlAnchor"));
-	lock_button->set_button_icon(get_editor_theme_icon(SNAME("Lock")));
-	unlock_button->set_button_icon(get_editor_theme_icon(SNAME("Unlock")));
-	group_button->set_button_icon(get_editor_theme_icon(SNAME("Group")));
-	ungroup_button->set_button_icon(get_editor_theme_icon(SNAME("Ungroup")));
-	key_loc_button->set_button_icon(get_editor_theme_icon(SNAME("KeyPosition")));
-	key_rot_button->set_button_icon(get_editor_theme_icon(SNAME("KeyRotation")));
-	key_scale_button->set_button_icon(get_editor_theme_icon(SNAME("KeyScale")));
-	key_insert_button->set_button_icon(get_editor_theme_icon(SNAME("Key")));
-	key_auto_insert_button->set_button_icon(get_editor_theme_icon(SNAME("AutoKey")));
+	button_center_view->set_button_icon(get_editor_theme_icon(SNAME("navigation_center_view")));
+	select_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_select")));
+	scene_paint_button->set_button_icon(get_editor_theme_icon(SNAME("action_paint")));
+	list_select_button->set_button_icon(get_editor_theme_icon(SNAME("action_list_select")));
+	move_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_move")));
+	scale_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_scale")));
+	rotate_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_rotate")));
+	local_space_button->set_button_icon(get_editor_theme_icon(SNAME("variant_object")));
+	smart_snap_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap")));
+	grid_snap_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
+	snap_config_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_dropdown")));
+	skeleton_menu->set_button_icon(get_editor_theme_icon(SNAME("viewport_bone")));
+	pan_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_pan")));
+	ruler_button->set_button_icon(get_editor_theme_icon(SNAME("action_ruler")));
+	pivot_button->set_button_icon(get_editor_theme_icon(SNAME("action_edit_pivot")));
+	select_handle = get_editor_theme_icon(SNAME("viewport_editor_handle"));
+	anchor_handle = get_editor_theme_icon(SNAME("viewport_editor_control_anchor"));
+	lock_button->set_button_icon(get_editor_theme_icon(SNAME("action_lock")));
+	unlock_button->set_button_icon(get_editor_theme_icon(SNAME("action_unlock")));
+	group_button->set_button_icon(get_editor_theme_icon(SNAME("action_group")));
+	ungroup_button->set_button_icon(get_editor_theme_icon(SNAME("action_ungroup")));
+	key_loc_button->set_button_icon(get_editor_theme_icon(SNAME("animation_key_position")));
+	key_rot_button->set_button_icon(get_editor_theme_icon(SNAME("animation_key_rotation")));
+	key_scale_button->set_button_icon(get_editor_theme_icon(SNAME("animation_key_scale")));
+	key_insert_button->set_button_icon(get_editor_theme_icon(SNAME("animation_key")));
+	key_auto_insert_button->set_button_icon(get_editor_theme_icon(SNAME("animation_auto_key")));
 	// Use a different color for the active autokey icon to make them easier
 	// to distinguish from the other key icons at the top. On a light theme,
 	// the icon will be dark, so we need to lighten it before blending it
 	// with the red color.
 	const Color key_auto_color = EditorThemeManager::is_dark_icon_and_font() ? Color(1, 1, 1) : Color(4.25, 4.25, 4.25);
 	key_auto_insert_button->add_theme_color_override("icon_pressed_color", key_auto_color.lerp(Color(1, 0, 0), 0.55));
-	animation_menu->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
+	animation_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
 
 	selection_rectangle_color = EDITOR_GET("editors/2d/selection_rectangle_color");
 	locked_selection_rectangle_color = EDITOR_GET("editors/2d/locked_selection_rectangle_color");
@@ -2571,9 +2570,6 @@ void CanvasItemEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_READY: {
-			select_sb->set_texture(get_editor_theme_icon(SNAME("EditorRect2D")));
-			select_sb->set_texture_margin_all(4);
-			select_sb->set_content_margin_all(4);
 
 			AnimationPlayerEditor::get_singleton()->get_track_editor()->connect("keying_changed", callable_mp(this, &CanvasItemEditor::_keying_changed));
 			AnimationPlayerEditor::get_singleton()->connect("animation_selected", callable_mp(this, &CanvasItemEditor::_keying_changed).unbind(1));
@@ -3862,7 +3858,7 @@ void CanvasItemEditor::center_at(const Point2 &p_pos) {
 
 CanvasItemEditor::CanvasItemEditor() {
 	set_name(TTRC("2D"));
-	set_icon_name("2D");
+	set_icon_name("node_2d");
 	set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_2d"));
@@ -4391,7 +4387,6 @@ CanvasItemEditor::CanvasItemEditor() {
 	snap_dialog->connect(SceneStringName(confirmed), callable_mp(this, &CanvasItemEditor::_snap_changed));
 	add_child(snap_dialog);
 
-	select_sb.instantiate();
 
 	selection_menu = memnew(PopupMenu);
 	add_child(selection_menu);
@@ -4535,7 +4530,7 @@ void CanvasItemEditorViewport::_create_preview(const Vector<String> &files) cons
 		Ref<AudioStream> audio = res;
 		if (audio.is_valid()) {
 			Sprite2D *sprite = memnew(Sprite2D);
-			sprite->set_texture(get_editor_theme_icon(SNAME("AudioStreamPlayer2D")));
+			sprite->set_texture(get_editor_theme_icon(SNAME("node_2d_audio_stream_player_2d")));
 			sprite->set_modulate(Color(1, 1, 1, 0.7f));
 			sprite->set_position(Vector2(0, -sprite->get_texture()->get_size().height) * EDSCALE);
 			preview_node->add_child(sprite);
@@ -5115,7 +5110,7 @@ void CanvasItemEditorViewport::_update_theme() {
 
 	for (BaseButton *btn : btn_list) {
 		CheckBox *check = Object::cast_to<CheckBox>(btn);
-		check->set_button_icon(get_editor_theme_icon(check->get_text()));
+		check->set_button_icon(get_editor_theme_icon(editor_get_type_icon_name(check->get_text())));
 	}
 	Control *gui_base = EditorNode::get_singleton()->get_gui_base();
 	const Ref<StyleBox> &information_3d_stylebox = gui_base->get_theme_stylebox(SNAME("Information3dViewport"), EditorStringName(EditorStyles));

@@ -570,7 +570,7 @@ void CollisionShape2DEditor::forward_canvas_draw_over_viewport(Control *p_overla
 
 	Transform2D gt = canvas_item_editor->get_canvas_transform() * node->get_screen_transform();
 
-	Ref<Texture2D> h = get_editor_theme_icon(SNAME("EditorHandle"));
+	Ref<Texture2D> h = get_editor_theme_icon(SNAME("viewport_editor_handle"));
 	Vector2 size = h->get_size() * 0.5;
 
 	handles.clear();

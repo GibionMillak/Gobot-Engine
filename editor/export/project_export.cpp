@@ -122,10 +122,10 @@ void ProjectExportDialog::_notification(int p_what) {
 
 		case NOTIFICATION_THEME_CHANGED: {
 			_script_encryption_key_visibility_changed(show_script_key->is_pressed());
-			options_filter->set_right_icon(get_editor_theme_icon(SNAME("Search")));
-			duplicate_preset->set_button_icon(presets->get_editor_theme_icon(SNAME("Duplicate")));
-			delete_preset->set_button_icon(presets->get_editor_theme_icon(SNAME("Remove")));
-			patch_add_btn->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+			options_filter->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
+			duplicate_preset->set_button_icon(presets->get_editor_theme_icon(SNAME("action_duplicate")));
+			delete_preset->set_button_icon(presets->get_editor_theme_icon(SNAME("action_remove")));
+			patch_add_btn->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 
 			script_key_error->add_theme_color_override(SceneStringName(font_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("error_color"), EditorStringName(Editor)));
 			export_error->add_theme_color_override(SceneStringName(font_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("error_color"), EditorStringName(Editor)));
@@ -139,9 +139,9 @@ void ProjectExportDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_READY: {
-			duplicate_preset->set_button_icon(presets->get_editor_theme_icon(SNAME("Duplicate")));
-			delete_preset->set_button_icon(presets->get_editor_theme_icon(SNAME("Remove")));
-			patch_add_btn->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+			duplicate_preset->set_button_icon(presets->get_editor_theme_icon(SNAME("action_duplicate")));
+			delete_preset->set_button_icon(presets->get_editor_theme_icon(SNAME("action_remove")));
+			patch_add_btn->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 			connect(SceneStringName(confirmed), callable_mp(this, &ProjectExportDialog::_export_pck_zip));
 			_update_export_all();
 		} break;
@@ -358,8 +358,8 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 		patch->set_text(0, patch_path.get_file());
 		patch->set_tooltip_text(0, patch_path);
 		patch->set_metadata(0, i);
-		patch->add_button(0, get_editor_theme_icon(SNAME("Remove")), 0);
-		patch->add_button(0, get_editor_theme_icon(SNAME("FileBrowse")), 1);
+		patch->add_button(0, get_editor_theme_icon(SNAME("action_remove")), 0);
+		patch->add_button(0, get_editor_theme_icon(SNAME("file_file_browse")), 1);
 	}
 
 	_fill_resource_tree();
@@ -764,7 +764,7 @@ void ProjectExportDialog::_script_encryption_key_changed(const String &p_key) {
 }
 
 void ProjectExportDialog::_script_encryption_key_visibility_changed(bool p_visible) {
-	show_script_key->set_button_icon(get_editor_theme_icon(p_visible ? SNAME("GuiVisibilityVisible") : SNAME("GuiVisibilityHidden")));
+	show_script_key->set_button_icon(get_editor_theme_icon(p_visible ? SNAME("gui_gui_visibility_visible") : SNAME("gui_gui_visibility_hidden")));
 	show_script_key->set_tooltip_text(p_visible ? TTRC("Hide encryption key") : TTRC("Show encryption key"));
 	script_key->set_secret(!p_visible);
 }
@@ -1185,7 +1185,7 @@ bool ProjectExportDialog::_fill_tree(EditorFileSystemDirectory *p_dir, TreeItem 
 			icon = EditorNode::get_singleton()->get_class_icon(type);
 		}
 		if (icon.is_null()) {
-			icon = get_editor_theme_icon(SNAME("File"));
+			icon = get_editor_theme_icon(SNAME("file_file"));
 		}
 		file->set_icon(0, icon);
 		file->set_editable(0, true);

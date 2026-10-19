@@ -114,11 +114,11 @@ void EditorToaster::_notification(int p_what) {
 
 		case NOTIFICATION_THEME_CHANGED: {
 			if (vbox_container->is_visible()) {
-				main_button->set_button_icon(get_editor_theme_icon(SNAME("Notification")));
+				main_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification")));
 			} else {
-				main_button->set_button_icon(get_editor_theme_icon(SNAME("NotificationDisabled")));
+				main_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification_disabled")));
 			}
-			disable_notifications_button->set_button_icon(get_editor_theme_icon(SNAME("NotificationDisabled")));
+			disable_notifications_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification_disabled")));
 
 			// Styleboxes background.
 			const Color base_color = get_theme_color(SNAME("base_color"), EditorStringName(Editor));
@@ -341,9 +341,9 @@ void EditorToaster::_draw_progress(Control *panel) {
 void EditorToaster::_set_notifications_enabled(bool p_enabled) {
 	vbox_container->set_visible(p_enabled);
 	if (p_enabled) {
-		main_button->set_button_icon(get_editor_theme_icon(SNAME("Notification")));
+		main_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification")));
 	} else {
-		main_button->set_button_icon(get_editor_theme_icon(SNAME("NotificationDisabled")));
+		main_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification_disabled")));
 	}
 	_update_disable_notifications_button();
 }
@@ -533,10 +533,10 @@ void EditorToaster::_toast_theme_changed(Control *p_control) {
 
 	Toast &toast = toasts[p_control];
 	if (toast.close_button) {
-		toast.close_button->set_button_icon(get_editor_theme_icon(SNAME("Close")));
+		toast.close_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 	}
 	if (toast.copy_button) {
-		toast.copy_button->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
+		toast.copy_button->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
 	}
 }
 

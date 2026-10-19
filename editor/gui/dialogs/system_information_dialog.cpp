@@ -155,14 +155,14 @@ void SystemInformationDialog::show_information() {
 void SystemInformationDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			_copy_btn->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
+			_copy_btn->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
 			for (int i = 0; i < _content_vbox->get_child_count(); i++) {
 				Table *table = Object::cast_to<Table>(_content_vbox->get_child(i));
 				if (table) {
 					for (int j = 0; j < table->get_footer()->get_child_count(); j++) {
 						Button *copy_btn = Object::cast_to<Button>(table->get_footer()->get_child(j));
 						if (copy_btn) {
-							copy_btn->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
+							copy_btn->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
 						}
 					}
 				}
@@ -191,7 +191,7 @@ void SystemInformationDialog::_add_section(const String &p_title) {
 
 		Button *copy_btn = memnew(Button);
 		copy_btn->connect("pressed", callable_mp(this, &SystemInformationDialog::_copy_section).bind(_table));
-		copy_btn->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
+		copy_btn->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
 		copy_btn->set_text(TTRC("Copy"));
 		_table->get_footer()->add_child(copy_btn);
 	}

@@ -657,7 +657,7 @@ void LocalizationEditor::update_translations() {
 			t->set_text(0, translations[i].replace_first("res://", ""));
 			t->set_tooltip_text(0, translations[i]);
 			t->set_metadata(0, i);
-			t->add_button(0, get_editor_theme_icon(SNAME("Remove")), 0, false, TTRC("Remove"));
+			t->add_button(0, get_editor_theme_icon(SNAME("action_remove")), 0, false, TTRC("Remove"));
 		}
 	}
 
@@ -689,7 +689,7 @@ void LocalizationEditor::update_translations() {
 			t->set_text(0, keys[i].replace_first("res://", ""));
 			t->set_tooltip_text(0, keys[i]);
 			t->set_metadata(0, keys[i]);
-			t->add_button(0, get_editor_theme_icon(SNAME("Remove")), 0, false, TTRC("Remove"));
+			t->add_button(0, get_editor_theme_icon(SNAME("action_remove")), 0, false, TTRC("Remove"));
 
 			// Display that it has been removed if this is the case.
 			if (!FileAccess::exists(keys[i])) {
@@ -713,7 +713,7 @@ void LocalizationEditor::update_translations() {
 					t2->set_text(0, path.replace_first("res://", ""));
 					t2->set_tooltip_text(0, path);
 					t2->set_metadata(0, j);
-					t2->add_button(0, get_editor_theme_icon(SNAME("Remove")), 0, false, TTRC("Remove"));
+					t2->add_button(0, get_editor_theme_icon(SNAME("action_remove")), 0, false, TTRC("Remove"));
 					t2->set_cell_mode(1, TreeItem::CELL_MODE_CUSTOM);
 					t2->set_text(1, TranslationServer::get_singleton()->get_locale_name(locale));
 					t2->set_editable(1, true);
@@ -741,7 +741,7 @@ void LocalizationEditor::update_translations() {
 		t->set_text(0, sources[i].replace_first("res://", ""));
 		t->set_tooltip_text(0, sources[i]);
 		t->set_metadata(0, i);
-		t->add_button(0, get_editor_theme_icon(SNAME("Remove")), 0, false, TTRC("Remove"));
+		t->add_button(0, get_editor_theme_icon(SNAME("action_remove")), 0, false, TTRC("Remove"));
 	}
 
 	// New translation parser plugin might extend possible file extensions in template generation.

@@ -3199,7 +3199,7 @@ void EditorExportPlatformMacOS::initialize() {
 
 		Ref<Theme> theme = EditorNode::get_singleton()->get_editor_theme();
 		if (theme.is_valid()) {
-			stop_icon = theme->get_icon(SNAME("Stop"), EditorStringName(EditorIcons));
+			stop_icon = theme->get_icon(SNAME("playback_stop"), EditorStringName(EditorIcons));
 		} else {
 			stop_icon.instantiate();
 		}

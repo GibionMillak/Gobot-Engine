@@ -5,7 +5,7 @@ import os
 import methods
 
 
-# See also `editor/icons/editor_icons_builders.py`.
+# See also `editor/builtin/assets/icons/editor_icons_builders.py`.
 def make_default_theme_icons_action(target, source, env):
     icons_names = []
     icons_raw = []

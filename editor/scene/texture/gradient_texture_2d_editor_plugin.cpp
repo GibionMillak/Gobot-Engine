@@ -169,7 +169,7 @@ void GradientTexture2DEdit::_notification(int p_what) {
 			}
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
-			checkerboard->set_texture(get_editor_theme_icon(SNAME("GuiMiniCheckerboard")));
+			checkerboard->set_texture(get_editor_theme_icon(SNAME("gui_gui_mini_checkerboard")));
 		} break;
 		case NOTIFICATION_DRAW: {
 			_draw();
@@ -182,8 +182,8 @@ void GradientTexture2DEdit::_draw() {
 		return;
 	}
 
-	const Ref<Texture2D> fill_from_icon = get_editor_theme_icon(SNAME("EditorPathSmoothHandle"));
-	const Ref<Texture2D> fill_to_icon = get_editor_theme_icon(SNAME("EditorPathSharpHandle"));
+	const Ref<Texture2D> fill_from_icon = get_editor_theme_icon(SNAME("viewport_editor_path_smooth_handle"));
+	const Ref<Texture2D> fill_to_icon = get_editor_theme_icon(SNAME("viewport_editor_path_sharp_handle"));
 	handle_size = fill_from_icon->get_size();
 
 	Size2 rect_size = get_size();
@@ -261,8 +261,8 @@ void GradientTexture2DEditor::set_texture(Ref<GradientTexture2D> &p_texture) {
 void GradientTexture2DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			reverse_button->set_button_icon(get_editor_theme_icon(SNAME("ReverseGradient")));
-			snap_button->set_button_icon(get_editor_theme_icon(SNAME("SnapGrid")));
+			reverse_button->set_button_icon(get_editor_theme_icon(SNAME("action_reverse_gradient")));
+			snap_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
 		} break;
 		case NOTIFICATION_READY: {
 			if (texture.is_valid()) {

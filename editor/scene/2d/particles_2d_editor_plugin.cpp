@@ -434,8 +434,8 @@ void Particles2DEditorPlugin::_notification(int p_what) {
 }
 
 void Particles2DEditorPlugin::_theme_changed() {
-	mask_browse_button->set_button_icon(mask_browse_button->get_editor_theme_icon(SNAME("FileBrowse")));
-	direction_browse_button->set_button_icon(direction_browse_button->get_editor_theme_icon(SNAME("FileBrowse")));
+	mask_browse_button->set_button_icon(mask_browse_button->get_editor_theme_icon(SNAME("file_file_browse")));
+	direction_browse_button->set_button_icon(direction_browse_button->get_editor_theme_icon(SNAME("file_file_browse")));
 }
 
 void Particles2DEditorPlugin::_menu_callback(int p_idx) {

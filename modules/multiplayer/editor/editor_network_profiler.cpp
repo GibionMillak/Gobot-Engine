@@ -32,6 +32,7 @@
 
 #include "core/io/resource_loader.h"
 #include "core/object/callable_mp.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/editor_string_names.h"
 #include "editor/run/editor_run_bar.h"
 #include "editor/settings/editor_settings.h"
@@ -83,16 +84,16 @@ void EditorNetworkProfiler::_notification(int p_what) {
 void EditorNetworkProfiler::_update_theme_item_cache() {
 	VBoxContainer::_update_theme_item_cache();
 
-	theme_cache.node_icon = get_theme_icon(SNAME("Node"), EditorStringName(EditorIcons));
-	theme_cache.stop_icon = get_theme_icon(SNAME("Stop"), EditorStringName(EditorIcons));
-	theme_cache.play_icon = get_theme_icon(SNAME("Play"), EditorStringName(EditorIcons));
-	theme_cache.clear_icon = get_theme_icon(SNAME("Clear"), EditorStringName(EditorIcons));
+	theme_cache.node_icon = get_theme_icon(SNAME("node_node"), EditorStringName(EditorIcons));
+	theme_cache.stop_icon = get_theme_icon(SNAME("playback_stop"), EditorStringName(EditorIcons));
+	theme_cache.play_icon = get_theme_icon(SNAME("playback_play"), EditorStringName(EditorIcons));
+	theme_cache.clear_icon = get_theme_icon(SNAME("action_clear"), EditorStringName(EditorIcons));
 
-	theme_cache.multiplayer_synchronizer_icon = get_theme_icon("MultiplayerSynchronizer", EditorStringName(EditorIcons));
-	theme_cache.instance_options_icon = get_theme_icon(SNAME("InstanceOptions"), EditorStringName(EditorIcons));
+	theme_cache.multiplayer_synchronizer_icon = get_theme_icon("module_multiplayer_multiplayer_synchronizer", EditorStringName(EditorIcons));
+	theme_cache.instance_options_icon = get_theme_icon(SNAME("gui_instance_options"), EditorStringName(EditorIcons));
 
-	theme_cache.incoming_bandwidth_icon = get_theme_icon(SNAME("ArrowDown"), EditorStringName(EditorIcons));
-	theme_cache.outgoing_bandwidth_icon = get_theme_icon(SNAME("ArrowUp"), EditorStringName(EditorIcons));
+	theme_cache.incoming_bandwidth_icon = get_theme_icon(SNAME("navigation_arrow_down"), EditorStringName(EditorIcons));
+	theme_cache.outgoing_bandwidth_icon = get_theme_icon(SNAME("gui_arrow_up"), EditorStringName(EditorIcons));
 
 	theme_cache.incoming_bandwidth_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
 	theme_cache.outgoing_bandwidth_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
@@ -149,7 +150,7 @@ void EditorNetworkProfiler::refresh_replication_data() {
 		const NodeInfo &cfg_info = node_data[E.value.config];
 
 		node->set_text(0, root_info.path.get_file());
-		node->set_icon(0, has_theme_icon(root_info.type, EditorStringName(EditorIcons)) ? get_theme_icon(root_info.type, EditorStringName(EditorIcons)) : theme_cache.node_icon);
+		node->set_icon(0, has_theme_icon(editor_get_type_icon_name(root_info.type), EditorStringName(EditorIcons)) ? get_theme_icon(editor_get_type_icon_name(root_info.type), EditorStringName(EditorIcons)) : theme_cache.node_icon);
 		node->set_tooltip_text(0, root_info.path);
 
 		node->set_text(1, sync_info.path.get_file());

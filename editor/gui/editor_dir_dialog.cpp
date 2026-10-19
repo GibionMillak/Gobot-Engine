@@ -45,7 +45,7 @@ void EditorDirDialog::_update_dir(const Color &p_default_folder_color, const Dic
 	const String path = p_dir->get_path();
 
 	p_item->set_metadata(0, path);
-	p_item->set_icon(0, tree->get_editor_theme_icon(SNAME("Folder")));
+	p_item->set_icon(0, tree->get_editor_theme_icon(SNAME("folder_folder")));
 
 	if (!p_item->get_parent()) {
 		p_item->set_text(0, "res://");

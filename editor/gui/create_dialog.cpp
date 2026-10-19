@@ -33,6 +33,7 @@
 #include "core/io/resource_loader.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/doc/editor_help.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -57,7 +58,8 @@ void CreateDialog::popup_create(bool p_dont_clear, bool p_replace_mode, const St
 	types_enabled[TYPE_EDITOR] = EditorSettings::get_singleton()->get_project_metadata("create_dialog", "editor_enabled", false);
 	_update_filter_button_state();
 
-	icon_fallback = search_options->has_theme_icon(base_type, EditorStringName(EditorIcons)) ? base_type : "Object";
+	const StringName base_icon = editor_get_type_icon_name(base_type);
+	icon_fallback = search_options->has_theme_icon(base_icon, EditorStringName(EditorIcons)) ? base_icon : SNAME("variant_object");
 
 	if (p_dont_clear) {
 		search_box->select_all();
@@ -421,7 +423,7 @@ void CreateDialog::_configure_search_option_item(TreeItem *r_item, const StringN
 			tooltip = TTR("The script will run in the editor.") + "\n" + tooltip;
 		}
 		const String script_path = ScriptServer::get_global_class_path(p_type);
-		r_item->add_button(0, get_editor_theme_icon(SNAME("Script")), 1, false, vformat(tooltip, script_path));
+		r_item->add_button(0, get_editor_theme_icon(SNAME("resource_script")), 1, false, vformat(tooltip, script_path));
 		r_item->set_meta(SNAME("_script_path"), script_path);
 		if (is_tool) {
 			int button_index = r_item->get_button_count(0) - 1;
@@ -460,9 +462,9 @@ void CreateDialog::_configure_search_option_item(TreeItem *r_item, const StringN
 	bool is_experimental = (class_doc && class_doc->value.is_experimental);
 
 	if (is_deprecated) {
-		r_item->add_button(0, get_editor_theme_icon("StatusError"), 0, false, TTR("This class is marked as deprecated."));
+		r_item->add_button(0, get_editor_theme_icon("status_status_error"), 0, false, TTR("This class is marked as deprecated."));
 	} else if (is_experimental) {
-		r_item->add_button(0, get_editor_theme_icon("NodeWarning"), 0, false, TTR("This class is marked as experimental."));
+		r_item->add_button(0, get_editor_theme_icon("status_node_warning"), 0, false, TTR("This class is marked as experimental."));
 	}
 
 	if (!search_box->get_text().is_empty()) {
@@ -662,9 +664,9 @@ void CreateDialog::_notification(int p_what) {
 			favorites->add_theme_constant_override("icon_max_width", icon_width);
 			recent->set_fixed_icon_size(Size2(icon_width, icon_width));
 
-			favorite->set_button_icon(get_editor_theme_icon(SNAME("Favorites")));
-			reset_filters_button->set_button_icon(get_editor_theme_icon(SNAME("Reload")));
-			filters_button->set_button_icon(get_editor_theme_icon(SNAME("GuiDropdown")));
+			favorite->set_button_icon(get_editor_theme_icon(SNAME("folder_favorites")));
+			reset_filters_button->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
+			filters_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_dropdown")));
 		} break;
 	}
 }

@@ -209,8 +209,8 @@ void DependencyEditor::_update_file() {
 void DependencyEditor::_notification(int p_what) {
 	if (p_what == NOTIFICATION_THEME_CHANGED) {
 		warning_label->add_theme_color_override(SceneStringName(font_color), get_theme_color("warning_color", EditorStringName(Editor)));
-		filter->set_right_icon(get_editor_theme_icon(SNAME("Search")));
-		menu_sort->set_button_icon(get_editor_theme_icon(SNAME("Sort")));
+		filter->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
+		menu_sort->set_button_icon(get_editor_theme_icon(SNAME("action_sort")));
 	}
 }
 
@@ -459,9 +459,9 @@ void DependencyEditorOwners::_list_rmb_clicked(int p_item, const Vector2 &p_pos,
 		}
 
 		if (only_scenes_selected) {
-			file_options->add_icon_item(get_editor_theme_icon(SNAME("Load")), TPL(selected_items.size(), TTRC("Open Scene"), TTRC("Open Scenes")), FILE_MENU_OPEN);
+			file_options->add_icon_item(get_editor_theme_icon(SNAME("action_load")), TPL(selected_items.size(), TTRC("Open Scene"), TTRC("Open Scenes")), FILE_MENU_OPEN);
 		} else if (selected_items.size() == 1) {
-			file_options->add_icon_item(get_editor_theme_icon(SNAME("Load")), TTR("Open"), FILE_MENU_OPEN);
+			file_options->add_icon_item(get_editor_theme_icon(SNAME("action_load")), TTR("Open"), FILE_MENU_OPEN);
 		} else {
 			return;
 		}
@@ -540,7 +540,7 @@ void DependencyEditorOwners::show(const String &p_path) {
 		const String path = ResourceUID::ensure_path(GLOBAL_GET(setting));
 		if (path == p_path) {
 			owners->add_item(vformat(TTR("Project setting: %s"), setting));
-			owners->set_item_icon(-1, get_editor_theme_icon(SNAME("ClassList")));
+			owners->set_item_icon(-1, get_editor_theme_icon(SNAME("gui_class_list")));
 		}
 	}
 
@@ -721,17 +721,17 @@ void DependencyRemoveDialog::_build_removed_dependency_tree(const Vector<Removed
 				if (!tree_items.has(rd.dependency_folder)) {
 					TreeItem *folder_item = owners->create_item(owners->get_root());
 					folder_item->set_text(0, rd.dependency_folder);
-					folder_item->set_icon(0, owners->get_editor_theme_icon(SNAME("Folder")));
+					folder_item->set_icon(0, owners->get_editor_theme_icon(SNAME("folder_folder")));
 					tree_items[rd.dependency_folder] = folder_item;
 				}
 				TreeItem *dependency_item = owners->create_item(tree_items[rd.dependency_folder]);
 				dependency_item->set_text(0, rd.dependency);
-				dependency_item->set_icon(0, owners->get_editor_theme_icon(SNAME("Warning")));
+				dependency_item->set_icon(0, owners->get_editor_theme_icon(SNAME("status_warning")));
 				tree_items[rd.dependency] = dependency_item;
 			} else {
 				TreeItem *dependency_item = owners->create_item(owners->get_root());
 				dependency_item->set_text(0, rd.dependency);
-				dependency_item->set_icon(0, owners->get_editor_theme_icon(SNAME("Warning")));
+				dependency_item->set_icon(0, owners->get_editor_theme_icon(SNAME("status_warning")));
 				tree_items[rd.dependency] = dependency_item;
 			}
 		}
@@ -977,7 +977,7 @@ void DependencyErrorDialog::show(const String &p_for_file, const HashMap<String,
 			owner_ti->set_text(0, vformat(TTR("Referenced by %s"), owner_path));
 			owner_ti->set_metadata(0, owner_path);
 			owner_ti->set_auto_translate_mode(0, AUTO_TRANSLATE_MODE_DISABLED);
-			owner_ti->add_button(1, files->get_editor_theme_icon(SNAME("Edit")), BUTTON_ID_OPEN_DEPS_EDITOR, false, TTRC("Fix Dependencies"));
+			owner_ti->add_button(1, files->get_editor_theme_icon(SNAME("action_edit")), BUTTON_ID_OPEN_DEPS_EDITOR, false, TTRC("Fix Dependencies"));
 		}
 	}
 
@@ -1073,8 +1073,8 @@ void DependencyErrorDialog::_check_for_resolved() {
 
 DependencyErrorDialog::DependencyErrorDialog() :
 		Dialog(true) {
-	icon_name_fail = StringName("ImportFail");
-	icon_name_check = StringName("ImportCheck");
+	icon_name_fail = StringName("gui_import_fail");
+	icon_name_check = StringName("gui_import_check");
 
 	VBoxContainer *vb = memnew(VBoxContainer);
 	add_child(vb);
@@ -1157,7 +1157,7 @@ bool OrphanResourcesDialog::_fill_owners(EditorFileSystemDirectory *efsd, HashMa
 				int ds = efsd->get_file_deps(i).size();
 				ti->set_text(1, itos(ds));
 				if (ds) {
-					ti->add_button(1, files->get_editor_theme_icon(SNAME("GuiVisibilityVisible")), -1, false, TTR("Show Dependencies"));
+					ti->add_button(1, files->get_editor_theme_icon(SNAME("gui_gui_visibility_visible")), -1, false, TTR("Show Dependencies"));
 				}
 				ti->set_metadata(0, path);
 				has_children = true;

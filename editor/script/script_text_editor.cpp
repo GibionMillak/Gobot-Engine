@@ -40,6 +40,7 @@
 #include "core/object/class_db.h"
 #include "core/object/editor_language.h"
 #include "core/os/keyboard.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/doc/editor_help.h"
 #include "editor/docks/filesystem_dock.h"
@@ -91,7 +92,7 @@ void ConnectionInfoDialog::popup_connections(const String &p_method, const Vecto
 
 			node_item->set_text(1, connection.signal.get_name());
 			Control *p = Object::cast_to<Control>(get_parent());
-			node_item->set_icon(1, p->get_editor_theme_icon(SNAME("Slot")));
+			node_item->set_icon(1, p->get_editor_theme_icon(SNAME("scripting_slot")));
 			node_item->set_selectable(1, false);
 			node_item->set_editable(1, false);
 
@@ -862,18 +863,11 @@ void ScriptTextEditor::store_previous_state() {
 Ref<Texture2D> ScriptTextEditor::get_theme_icon() {
 	Ref<Script> script = edited_res;
 	if (get_parent_control()) {
-		String icon_name = script->get_class();
-		if (script->is_built_in()) {
-			icon_name += "Internal";
-		}
-
-		if (get_parent_control()->has_theme_icon(icon_name, EditorStringName(EditorIcons))) {
+		const StringName icon_name = script->is_built_in() && script->get_class() == "GDScript" ? SNAME("module_gdscript_gd_script_internal") : editor_get_type_icon_name(script->get_class());
+		if (!icon_name.is_empty() && get_parent_control()->has_theme_icon(icon_name, EditorStringName(EditorIcons))) {
 			return get_parent_control()->get_editor_theme_icon(icon_name);
-		} else if (get_parent_control()->has_theme_icon(script->get_class(), EditorStringName(EditorIcons))) {
-			return get_parent_control()->get_editor_theme_icon(script->get_class());
 		}
 	}
-
 	return Ref<Texture2D>();
 }
 
@@ -1547,7 +1541,7 @@ void ScriptTextEditor::_update_connected_methods() {
 						line_meta["method"] = method;
 						line = functions[j].get_slicec(':', 1).to_int() - 1;
 						text_edit->set_line_gutter_metadata(line, connection_gutter, line_meta);
-						text_edit->set_line_gutter_icon(line, connection_gutter, get_parent_control()->get_editor_theme_icon(SNAME("Slot")));
+						text_edit->set_line_gutter_icon(line, connection_gutter, get_parent_control()->get_editor_theme_icon(SNAME("scripting_slot")));
 						text_edit->set_line_gutter_clickable(line, connection_gutter, true);
 						methods_found.insert(method);
 						break;
@@ -1634,11 +1628,11 @@ void ScriptTextEditor::_update_connected_methods() {
 				line_meta["type"] = "inherits";
 				line_meta["method"] = name;
 				line_meta["base_class"] = found_base_class;
-				text_edit->set_line_gutter_icon(line, connection_gutter, get_parent_control()->get_editor_theme_icon(SNAME("MethodOverride")));
+				text_edit->set_line_gutter_icon(line, connection_gutter, get_parent_control()->get_editor_theme_icon(SNAME("scripting_method_override")));
 				text_edit->set_line_gutter_clickable(line, connection_gutter, true);
 			} else {
 				// If method is also connected to signal, then merge icons and keep the click behavior of the slot.
-				text_edit->set_line_gutter_icon(line, connection_gutter, get_parent_control()->get_editor_theme_icon(SNAME("MethodOverrideAndSlot")));
+				text_edit->set_line_gutter_icon(line, connection_gutter, get_parent_control()->get_editor_theme_icon(SNAME("scripting_method_override_and_slot")));
 			}
 
 			methods_found.insert(StringName(raw_name));

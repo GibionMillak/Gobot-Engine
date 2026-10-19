@@ -259,7 +259,7 @@ void TextureLayeredEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_DRAW: {
-			Ref<Texture2D> checkerboard = get_editor_theme_icon(SNAME("Checkerboard"));
+			Ref<Texture2D> checkerboard = get_editor_theme_icon(SNAME("gui_checkerboard"));
 			draw_texture_rect(checkerboard, texture_rect->get_rect(), true);
 			_draw_outline();
 		} break;
@@ -270,7 +270,7 @@ void TextureLayeredEditor::_notification(int p_what) {
 				info->add_theme_font_override(SceneStringName(font), metadata_label_font);
 			}
 			if (info_toggle) {
-				info_toggle->set_button_icon(get_editor_theme_icon(SNAME("Info")));
+				info_toggle->set_button_icon(get_editor_theme_icon(SNAME("status_info")));
 			}
 			theme_cache.outline_color = get_theme_color(SNAME("texture_preview_outline_color"), EditorStringName(Editor));
 		} break;

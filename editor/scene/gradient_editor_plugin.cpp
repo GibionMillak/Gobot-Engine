@@ -449,7 +449,7 @@ void GradientEdit::_redraw() {
 	int half_handle_width = handle_width * 0.5;
 
 	// Draw gradient.
-	draw_texture_rect(get_editor_theme_icon(SNAME("GuiMiniCheckerboard")), Rect2(half_handle_width, 0, total_w, h), true);
+	draw_texture_rect(get_editor_theme_icon(SNAME("gui_gui_mini_checkerboard")), Rect2(half_handle_width, 0, total_w, h), true);
 	preview_texture->set_gradient(gradient);
 	draw_texture_rect(preview_texture, Rect2(half_handle_width, 0, total_w, h));
 
@@ -483,7 +483,7 @@ void GradientEdit::_redraw() {
 
 		if (inside_col.a < 1) {
 			// If the color is translucent, draw a little opaque rectangle at the bottom to more easily see it.
-			draw_texture_rect(get_editor_theme_icon(SNAME("GuiMiniCheckerboard")), rect, true);
+			draw_texture_rect(get_editor_theme_icon(SNAME("gui_gui_mini_checkerboard")), rect, true);
 			draw_rect(rect, inside_col, true);
 			Color inside_col_opaque = inside_col;
 			inside_col_opaque.a = 1.0;
@@ -526,7 +526,7 @@ void GradientEdit::_redraw() {
 	if (selected_index != -1) {
 		Color grabbed_col = gradient->get_color(selected_index);
 		if (grabbed_col.a < 1) {
-			draw_texture_rect(get_editor_theme_icon(SNAME("GuiMiniCheckerboard")), Rect2(button_offset, 0, h, h), true);
+			draw_texture_rect(get_editor_theme_icon(SNAME("gui_gui_mini_checkerboard")), Rect2(button_offset, 0, h, h), true);
 		}
 		draw_rect(Rect2(button_offset, 0, h, h), grabbed_col);
 		if (grabbed_col.r > 1 || grabbed_col.g > 1 || grabbed_col.b > 1) {
@@ -607,8 +607,8 @@ void GradientEditor::set_gradient(const Ref<Gradient> &p_gradient) {
 void GradientEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			reverse_button->set_button_icon(get_editor_theme_icon(SNAME("ReverseGradient")));
-			snap_button->set_button_icon(get_editor_theme_icon(SNAME("SnapGrid")));
+			reverse_button->set_button_icon(get_editor_theme_icon(SNAME("action_reverse_gradient")));
+			snap_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
 		} break;
 		case NOTIFICATION_READY: {
 			Ref<Gradient> gradient = gradient_editor_rect->get_gradient();

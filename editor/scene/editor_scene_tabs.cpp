@@ -60,10 +60,10 @@ void EditorSceneTabs::_notification(int p_what) {
 			tabbar_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("tabbar_background"), SNAME("TabContainer")));
 			scene_tabs->add_theme_constant_override("icon_max_width", get_theme_constant(SNAME("class_icon_size"), EditorStringName(Editor)));
 
-			scene_list->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
+			scene_list->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
 			_update_tab_titles();
 
-			scene_tab_add->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+			scene_tab_add->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 			scene_tab_add->add_theme_color_override("icon_normal_color", Color(0.6f, 0.6f, 0.6f, 0.8f));
 
 			scene_tab_add_ph->set_custom_minimum_size(scene_tab_add->get_minimum_size());
@@ -307,7 +307,7 @@ void EditorSceneTabs::_update_tab_titles() {
 	}
 	EditorNode::disambiguate_filenames(full_path_names, disambiguated_scene_names);
 
-	Ref<Texture2D> script_icon = get_editor_theme_icon(SNAME("Script"));
+	Ref<Texture2D> script_icon = get_editor_theme_icon(SNAME("resource_script"));
 	for (int i = 0; i < EditorNode::get_editor_data().get_edited_scene_count(); i++) {
 		Node *type_node = EditorNode::get_editor_data().get_edited_scene_root(i);
 		Ref<Texture2D> icon;

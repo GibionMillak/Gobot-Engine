@@ -41,6 +41,7 @@
 #include "core/string/ustring.h"
 #include "core/variant/typed_dictionary.h"
 #include "core/version.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/editor_debugger_plugin.h"
 #include "editor/debugger/editor_expression_evaluator.h"
 #include "editor/debugger/editor_performance_profiler.h"
@@ -97,9 +98,9 @@ void ScriptEditorDebugger::debug_copy() {
 void ScriptEditorDebugger::debug_skip_breakpoints() {
 	skip_breakpoints_value = !skip_breakpoints_value;
 	if (skip_breakpoints_value) {
-		skip_breakpoints->set_button_icon(get_editor_theme_icon(SNAME("DebugSkipBreakpointsOn")));
+		skip_breakpoints->set_button_icon(get_editor_theme_icon(SNAME("debugger_debug_skip_breakpoints_on")));
 	} else {
-		skip_breakpoints->set_button_icon(get_editor_theme_icon(SNAME("DebugSkipBreakpointsOff")));
+		skip_breakpoints->set_button_icon(get_editor_theme_icon(SNAME("debugger_debug_skip_breakpoints_off")));
 	}
 
 	Array msg = { skip_breakpoints_value };
@@ -109,9 +110,9 @@ void ScriptEditorDebugger::debug_skip_breakpoints() {
 void ScriptEditorDebugger::debug_ignore_error_breaks() {
 	ignore_error_breaks_value = !ignore_error_breaks_value;
 	if (ignore_error_breaks_value) {
-		ignore_error_breaks->set_button_icon(get_theme_icon(SNAME("NotificationDisabled"), SNAME("EditorIcons")));
+		ignore_error_breaks->set_button_icon(get_theme_icon(SNAME("status_notification_disabled"), SNAME("EditorIcons")));
 	} else {
-		ignore_error_breaks->set_button_icon(get_theme_icon(SNAME("Notification"), SNAME("EditorIcons")));
+		ignore_error_breaks->set_button_icon(get_theme_icon(SNAME("status_notification"), SNAME("EditorIcons")));
 	}
 
 	Array msg = { ignore_error_breaks_value };
@@ -167,11 +168,11 @@ void ScriptEditorDebugger::update_tabs() {
 	} else {
 		errors_tab->set_name(TTR("Errors") + " (" + itos(error_count + warning_count) + ")");
 		if (error_count >= 1 && warning_count >= 1) {
-			tabs->set_tab_icon(tabs->get_tab_idx_from_control(errors_tab), get_editor_theme_icon(SNAME("ErrorWarning")));
+			tabs->set_tab_icon(tabs->get_tab_idx_from_control(errors_tab), get_editor_theme_icon(SNAME("status_error_warning")));
 		} else if (error_count >= 1) {
-			tabs->set_tab_icon(tabs->get_tab_idx_from_control(errors_tab), get_editor_theme_icon(SNAME("Error")));
+			tabs->set_tab_icon(tabs->get_tab_idx_from_control(errors_tab), get_editor_theme_icon(SNAME("status_error")));
 		} else {
-			tabs->set_tab_icon(tabs->get_tab_idx_from_control(errors_tab), get_editor_theme_icon(SNAME("Warning")));
+			tabs->set_tab_icon(tabs->get_tab_idx_from_control(errors_tab), get_editor_theme_icon(SNAME("status_warning")));
 		}
 	}
 }
@@ -493,18 +494,18 @@ void ScriptEditorDebugger::_msg_servers_memory_usage(uint64_t p_thread_id, const
 		total += bytes;
 
 		// If it does not have a theme icon, just go up the inheritance tree until we find one.
-		if (!has_theme_icon(type, EditorStringName(EditorIcons))) {
+		if (!has_theme_icon(editor_get_type_icon_name(type), EditorStringName(EditorIcons))) {
 			StringName base_type = type;
 			while (base_type != "Resource" && base_type != "") {
 				base_type = ClassDB::get_parent_class(base_type);
-				if (has_theme_icon(base_type, EditorStringName(EditorIcons))) {
+				if (has_theme_icon(editor_get_type_icon_name(base_type), EditorStringName(EditorIcons))) {
 					type = base_type;
 					break;
 				}
 			}
 		}
 
-		it->set_icon(0, get_editor_theme_icon(type));
+		it->set_icon(0, get_editor_theme_icon(editor_get_type_icon_name(type)));
 	}
 
 	vmem_total->set_tooltip_text(TTR("Bytes:") + " " + itos(total));
@@ -663,7 +664,7 @@ void ScriptEditorDebugger::_msg_error(uint64_t p_thread_id, const Array &p_data)
 	error->set_collapsed(true);
 
 	error->set_text_overrun_behavior(0, TextServer::OVERRUN_NO_TRIMMING);
-	error->set_icon(0, get_editor_theme_icon(oe.warning ? SNAME("Warning") : SNAME("Error")));
+	error->set_icon(0, get_editor_theme_icon(oe.warning ? SNAME("status_warning") : SNAME("status_error")));
 	error->set_text(0, time);
 	error->set_text_alignment(0, HORIZONTAL_ALIGNMENT_LEFT);
 
@@ -1109,24 +1110,24 @@ void ScriptEditorDebugger::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			skip_breakpoints->set_button_icon(get_editor_theme_icon(skip_breakpoints_value ? SNAME("DebugSkipBreakpointsOn") : SNAME("DebugSkipBreakpointsOff")));
-			ignore_error_breaks->set_button_icon(get_editor_theme_icon(ignore_error_breaks_value ? SNAME("NotificationDisabled") : SNAME("Notification")));
+			skip_breakpoints->set_button_icon(get_editor_theme_icon(skip_breakpoints_value ? SNAME("debugger_debug_skip_breakpoints_on") : SNAME("debugger_debug_skip_breakpoints_off")));
+			ignore_error_breaks->set_button_icon(get_editor_theme_icon(ignore_error_breaks_value ? SNAME("status_notification_disabled") : SNAME("status_notification")));
 			ignore_error_breaks->add_theme_color_override("icon_normal_color", get_theme_color(SNAME("error_color"), SNAME("Editor")));
 			ignore_error_breaks->add_theme_color_override("icon_hover_color", get_theme_color(SNAME("error_color"), SNAME("Editor")));
 			ignore_error_breaks->add_theme_color_override("icon_pressed_color", get_theme_color(SNAME("error_color"), SNAME("Editor")));
 			ignore_error_breaks->add_theme_color_override("icon_focus_color", get_theme_color(SNAME("error_color"), SNAME("Editor")));
-			copy->set_button_icon(get_editor_theme_icon(SNAME("Copy")));
-			step->set_button_icon(get_editor_theme_icon(SNAME("DebugStep")));
-			next->set_button_icon(get_editor_theme_icon(SNAME("DebugNext")));
-			out->set_button_icon(get_editor_theme_icon(SNAME("DebugOut")));
-			dobreak->set_button_icon(get_editor_theme_icon(SNAME("Pause")));
-			docontinue->set_button_icon(get_editor_theme_icon(SNAME("DebugContinue")));
-			vmem_notice_icon->set_texture(get_editor_theme_icon(SNAME("NodeInfo")));
-			vmem_refresh->set_button_icon(get_editor_theme_icon(SNAME("Reload")));
-			vmem_export->set_button_icon(get_editor_theme_icon(SNAME("Save")));
-			vmem_item_menu->set_item_icon(VMEM_MENU_SHOW_IN_FILESYSTEM, get_editor_theme_icon(SNAME("ShowInFileSystem")));
-			vmem_item_menu->set_item_icon(VMEM_MENU_SHOW_IN_EXPLORER, get_editor_theme_icon(SNAME("Filesystem")));
-			search->set_right_icon(get_editor_theme_icon(SNAME("Search")));
+			copy->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
+			step->set_button_icon(get_editor_theme_icon(SNAME("debugger_debug_step")));
+			next->set_button_icon(get_editor_theme_icon(SNAME("debugger_debug_next")));
+			out->set_button_icon(get_editor_theme_icon(SNAME("debugger_debug_out")));
+			dobreak->set_button_icon(get_editor_theme_icon(SNAME("playback_pause")));
+			docontinue->set_button_icon(get_editor_theme_icon(SNAME("debugger_debug_continue")));
+			vmem_notice_icon->set_texture(get_editor_theme_icon(SNAME("status_node_info")));
+			vmem_refresh->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
+			vmem_export->set_button_icon(get_editor_theme_icon(SNAME("action_save")));
+			vmem_item_menu->set_item_icon(VMEM_MENU_SHOW_IN_FILESYSTEM, get_editor_theme_icon(SNAME("gui_show_in_file_system")));
+			vmem_item_menu->set_item_icon(VMEM_MENU_SHOW_IN_EXPLORER, get_editor_theme_icon(SNAME("gui_filesystem")));
+			search->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 
 			reason->add_theme_color_override(SNAME("default_color"), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 			reason->add_theme_style_override(SNAME("normal"), get_theme_stylebox(SNAME("normal"), SNAME("Label"))); // Empty stylebox.
@@ -1143,11 +1144,11 @@ void ScriptEditorDebugger::_notification(int p_what) {
 				TreeItem *error = error_root->get_first_child();
 				while (error) {
 					if (error->has_meta("_is_warning")) {
-						error->set_icon(0, get_editor_theme_icon(SNAME("Warning")));
+						error->set_icon(0, get_editor_theme_icon(SNAME("status_warning")));
 						error->set_custom_color(0, get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 						error->set_custom_color(1, get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 					} else if (error->has_meta("_is_error")) {
-						error->set_icon(0, get_editor_theme_icon(SNAME("Error")));
+						error->set_icon(0, get_editor_theme_icon(SNAME("status_error")));
 						error->set_custom_color(0, get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 						error->set_custom_color(1, get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 					}
@@ -1924,12 +1925,12 @@ void ScriptEditorDebugger::_breakpoints_item_rmb_selected(const Vector2 &p_pos, 
 	const TreeItem *selected = breakpoints_tree->get_selected();
 	String file = selected->get_text(0);
 	if (selected->has_meta("line")) {
-		breakpoints_menu->add_icon_item(get_editor_theme_icon(SNAME("Remove")), TTRC("Delete Breakpoint"), ACTION_DELETE_BREAKPOINT);
+		breakpoints_menu->add_icon_item(get_editor_theme_icon(SNAME("action_remove")), TTRC("Delete Breakpoint"), ACTION_DELETE_BREAKPOINT);
 		file = selected->get_parent()->get_text(0);
 	}
-	breakpoints_menu->add_icon_item(get_editor_theme_icon(SNAME("Remove")), TTR("Delete All Breakpoints in:") + " " + file, ACTION_DELETE_BREAKPOINTS_IN_FILE);
+	breakpoints_menu->add_icon_item(get_editor_theme_icon(SNAME("action_remove")), TTR("Delete All Breakpoints in:") + " " + file, ACTION_DELETE_BREAKPOINTS_IN_FILE);
 	breakpoints_menu->set_item_auto_translate_mode(-1, AUTO_TRANSLATE_MODE_DISABLED);
-	breakpoints_menu->add_icon_item(get_editor_theme_icon(SNAME("Remove")), TTRC("Delete All Breakpoints"), ACTION_DELETE_ALL_BREAKPOINTS);
+	breakpoints_menu->add_icon_item(get_editor_theme_icon(SNAME("action_remove")), TTRC("Delete All Breakpoints"), ACTION_DELETE_ALL_BREAKPOINTS);
 
 	breakpoints_menu->set_position(get_screen_position() + get_local_mouse_position());
 	breakpoints_menu->popup();
@@ -1945,8 +1946,8 @@ void ScriptEditorDebugger::_error_tree_item_rmb_selected(const Vector2 &p_pos, M
 	item_menu->reset_size();
 
 	if (error_tree->is_anything_selected()) {
-		item_menu->add_icon_item(get_editor_theme_icon(SNAME("Copy")), TTRC("Copy Error"), ACTION_COPY_ERROR);
-		item_menu->add_icon_item(get_editor_theme_icon(SNAME("ExternalLink")), TTRC("Open C++ Source on GitHub"), ACTION_OPEN_SOURCE);
+		item_menu->add_icon_item(get_editor_theme_icon(SNAME("action_copy")), TTRC("Copy Error"), ACTION_COPY_ERROR);
+		item_menu->add_icon_item(get_editor_theme_icon(SNAME("navigation_external_link")), TTRC("Open C++ Source on GitHub"), ACTION_OPEN_SOURCE);
 	}
 
 	if (item_menu->get_item_count() > 0) {

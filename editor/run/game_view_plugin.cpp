@@ -873,11 +873,11 @@ void GameView::_update_speed_state_icon(int p_id) {
 		menu->set_item_icon(i, nullptr);
 	}
 
-	menu->set_item_icon(p_id, get_editor_theme_icon(SNAME("KeyValue")));
+	menu->set_item_icon(p_id, get_editor_theme_icon(SNAME("animation_key_value")));
 	if (p_id == DEFAULT_TIME_SCALE_INDEX) {
 		menu->set_item_icon_modulate(p_id, get_theme_color(SNAME("mono_color"), EditorStringName(Editor)));
 	} else {
-		menu->set_item_icon(DEFAULT_TIME_SCALE_INDEX, get_editor_theme_icon(SNAME("KeyBezierHandle")));
+		menu->set_item_icon(DEFAULT_TIME_SCALE_INDEX, get_editor_theme_icon(SNAME("animation_key_bezier_handle")));
 
 		if (p_id > DEFAULT_TIME_SCALE_INDEX) {
 			menu->set_item_icon_modulate(p_id, get_theme_color(SNAME("success_color"), EditorStringName(Editor)));
@@ -1066,7 +1066,7 @@ void GameView::_update_embed_window_size() {
 
 void GameView::_debug_hide_selection_button_pressed() {
 	debug_hide_selection = !debug_hide_selection;
-	debug_hide_selection_button->set_button_icon(EditorIconManager::get_icon(debug_hide_selection ? SNAME("GuiVisibilityHidden") : SNAME("GuiVisibilityVisible")));
+	debug_hide_selection_button->set_button_icon(EditorIconManager::get_icon(debug_hide_selection ? SNAME("gui_gui_visibility_hidden") : SNAME("gui_gui_visibility_visible")));
 	debug_hide_selection_button->set_tooltip_text(debug_hide_selection ? TTRC("Show selection indicators.") : TTRC("Hide selection indicators."));
 	debugger->set_selection_visible(!debug_hide_selection);
 	EditorSettings::get_singleton()->set_project_metadata("game_view", "show_selection", !debug_hide_selection);
@@ -1074,7 +1074,7 @@ void GameView::_debug_hide_selection_button_pressed() {
 
 void GameView::_debug_mute_audio_button_pressed() {
 	debug_mute_audio = !debug_mute_audio;
-	debug_mute_audio_button->set_button_icon(EditorIconManager::get_icon(debug_mute_audio ? SNAME("AudioMute") : SNAME("AudioStreamPlayer")));
+	debug_mute_audio_button->set_button_icon(EditorIconManager::get_icon(debug_mute_audio ? SNAME("audio_audio_mute") : SNAME("node_audio_stream_player")));
 	debug_mute_audio_button->set_tooltip_text(debug_mute_audio ? TTRC("Unmute game audio.") : TTRC("Mute game audio."));
 	debugger->set_debug_mute_audio(debug_mute_audio);
 }
@@ -1505,7 +1505,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	game_dock = memnew(EditorDock);
 	game_dock->set_name(TTRC("Game"));
-	game_dock->set_icon_name("Game");
+	game_dock->set_icon_name("dock_development_game");
 	game_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN);
 	game_dock->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	game_dock->set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_game"));
@@ -1527,7 +1527,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	main_menu_fc->add_child(process_hb);
 	suspend_button = memnew(Button);
 	process_hb->add_child(suspend_button);
-	suspend_button->set_button_icon(EditorIconManager::get_icon(SNAME("Suspend")));
+	suspend_button->set_button_icon(EditorIconManager::get_icon(SNAME("playback_suspend")));
 	suspend_button->set_toggle_mode(true);
 	suspend_button->set_theme_type_variation(SceneStringName(FlatButton));
 	suspend_button->connect(SceneStringName(toggled), callable_mp(this, &GameView::_suspend_button_toggled));
@@ -1536,7 +1536,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	next_frame_button = memnew(Button);
 	process_hb->add_child(next_frame_button);
-	next_frame_button->set_button_icon(EditorIconManager::get_icon(SNAME("NextFrame")));
+	next_frame_button->set_button_icon(EditorIconManager::get_icon(SNAME("playback_next_frame")));
 	next_frame_button->set_theme_type_variation(SceneStringName(FlatButton));
 	next_frame_button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::next_frame));
 	next_frame_button->set_shortcut(ED_GET_SHORTCUT("editor/next_frame_embedded_project"));
@@ -1565,7 +1565,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE] = memnew(Button);
 	input_hb->add_child(node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE]);
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE]->set_text(TTRC("Input"));
-	node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE]->set_button_icon(EditorIconManager::get_icon(SNAME("InputEventJoypadMotion")));
+	node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE]->set_button_icon(EditorIconManager::get_icon(SNAME("resource_input_event_joypad_motion")));
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE]->set_toggle_mode(true);
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE]->set_pressed(true);
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE]->set_button_group(node_group);
@@ -1576,7 +1576,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_2D] = memnew(Button);
 	input_hb->add_child(node_type_button[RuntimeNodeSelect::NODE_TYPE_2D]);
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_2D]->set_text(TTRC("2D"));
-	node_type_button[RuntimeNodeSelect::NODE_TYPE_2D]->set_button_icon(EditorIconManager::get_icon(SNAME("2DNodes")));
+	node_type_button[RuntimeNodeSelect::NODE_TYPE_2D]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_2d_nodes")));
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_2D]->set_toggle_mode(true);
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_2D]->set_button_group(node_group);
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_2D]->set_theme_type_variation("FlatButtonNoIconTint");
@@ -1586,7 +1586,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_3D] = memnew(Button);
 	input_hb->add_child(node_type_button[RuntimeNodeSelect::NODE_TYPE_3D]);
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_3D]->set_text(TTRC("3D"));
-	node_type_button[RuntimeNodeSelect::NODE_TYPE_3D]->set_button_icon(EditorIconManager::get_icon(SNAME("Node3D")));
+	node_type_button[RuntimeNodeSelect::NODE_TYPE_3D]->set_button_icon(EditorIconManager::get_icon(SNAME("node_node_3d")));
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_3D]->set_toggle_mode(true);
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_3D]->set_button_group(node_group);
 	node_type_button[RuntimeNodeSelect::NODE_TYPE_3D]->set_theme_type_variation("FlatButtonNoIconTint");
@@ -1599,7 +1599,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	camera_override_button = memnew(Button);
 	camera_hb->add_child(camera_override_button);
-	camera_override_button->set_button_icon(EditorIconManager::get_icon(SNAME("Camera")));
+	camera_override_button->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_camera")));
 	camera_override_button->set_toggle_mode(true);
 	camera_override_button->set_theme_type_variation(SceneStringName(FlatButton));
 	camera_override_button->set_tooltip_text(TTRC("Override the in-game camera."));
@@ -1607,7 +1607,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	camera_override_menu = memnew(MenuButton);
 	camera_hb->add_child(camera_override_menu);
-	camera_override_menu->set_button_icon(EditorIconManager::get_icon(SNAME("GuiDropdown")));
+	camera_override_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
 	camera_override_menu->set_flat(false);
 	camera_override_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
 	camera_override_menu->set_h_size_flags(SIZE_SHRINK_END);
@@ -1631,7 +1631,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	debug_hide_selection_button = memnew(Button);
 	audio_hb->add_child(debug_hide_selection_button);
-	debug_hide_selection_button->set_button_icon(EditorIconManager::get_icon(debug_hide_selection ? "GuiVisibilityHidden" : "GuiVisibilityVisible"));
+	debug_hide_selection_button->set_button_icon(EditorIconManager::get_icon(debug_hide_selection ? "gui_gui_visibility_hidden" : "gui_gui_visibility_visible"));
 	debug_hide_selection_button->set_theme_type_variation(SceneStringName(FlatButton));
 	debug_hide_selection_button->connect(SceneStringName(pressed), callable_mp(this, &GameView::_debug_hide_selection_button_pressed));
 	debug_hide_selection_button->set_tooltip_text(debug_hide_selection ? TTRC("Show selection indicators.") : TTRC("Hide selection indicators."));
@@ -1640,7 +1640,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	debug_mute_audio_button = memnew(Button);
 	audio_hb->add_child(debug_mute_audio_button);
 	debug_mute_audio_button->set_theme_type_variation(SceneStringName(FlatButton));
-	debug_mute_audio_button->set_button_icon(EditorIconManager::get_icon(debug_mute_audio ? SNAME("AudioMute") : SNAME("AudioStreamPlayer")));
+	debug_mute_audio_button->set_button_icon(EditorIconManager::get_icon(debug_mute_audio ? SNAME("audio_audio_mute") : SNAME("node_audio_stream_player")));
 	debug_mute_audio_button->connect(SceneStringName(pressed), callable_mp(this, &GameView::_debug_mute_audio_button_pressed));
 	debug_mute_audio_button->set_tooltip_text(debug_mute_audio ? TTRC("Unmute game audio.") : TTRC("Mute game audio."));
 
@@ -1655,7 +1655,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	ci_group.instantiate();
 
 	{
-		Button *button = _setup_button(SNAME("ToolSelect"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/select_mode"));
+		Button *button = _setup_button(SNAME("viewport_tool_select"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/select_mode"));
 		ci_bar->get_hbox()->add_child(button);
 		button->set_pressed(true);
 		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_SELECT));
@@ -1667,19 +1667,19 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	ci_bar->get_hbox()->add_child(vsep);
 
 	{
-		Button *button = _setup_button(SNAME("ToolMove"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/move_mode"));
+		Button *button = _setup_button(SNAME("viewport_tool_move"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/move_mode"));
 		ci_bar->get_hbox()->add_child(button);
 		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_MOVE));
 		ci_button[CanvasItemManipulator::TOOL_MOVE] = button;
 	}
 	{
-		Button *button = _setup_button(SNAME("ToolRotate"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/rotate_mode"));
+		Button *button = _setup_button(SNAME("viewport_tool_rotate"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/rotate_mode"));
 		ci_bar->get_hbox()->add_child(button);
 		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_ROTATE));
 		ci_button[CanvasItemManipulator::TOOL_ROTATE] = button;
 	}
 	{
-		Button *button = _setup_button(SNAME("ToolScale"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/scale_mode"));
+		Button *button = _setup_button(SNAME("viewport_tool_scale"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/scale_mode"));
 		ci_bar->get_hbox()->add_child(button);
 		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_SCALE));
 		ci_button[CanvasItemManipulator::TOOL_SCALE] = button;
@@ -1690,20 +1690,20 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	ci_bar->get_hbox()->add_child(vsep);
 
 	{
-		Button *button = _setup_button(SNAME("ListSelect"), ci_group);
+		Button *button = _setup_button(SNAME("action_list_select"), ci_group);
 		ci_bar->get_hbox()->add_child(button);
 		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_LIST_SELECT));
 		ci_button[CanvasItemManipulator::TOOL_LIST_SELECT] = button;
 	}
 	{
-		Button *button = _setup_button(SNAME("EditPivot"), ci_group);
+		Button *button = _setup_button(SNAME("action_edit_pivot"), ci_group);
 		button->set_disabled(true);
 		ci_bar->get_hbox()->add_child(button);
 		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_EDIT_PIVOT));
 		ci_button[CanvasItemManipulator::TOOL_EDIT_PIVOT] = button;
 	}
 	{
-		Button *button = _setup_button(SNAME("ToolPan"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/pan_mode"));
+		Button *button = _setup_button(SNAME("viewport_tool_pan"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/pan_mode"));
 		ci_bar->get_hbox()->add_child(button);
 		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_PAN));
 		ci_button[CanvasItemManipulator::TOOL_PAN] = button;
@@ -1715,7 +1715,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	Button *ci_local_space = memnew(Button);
 	ci_bar->get_hbox()->add_child(ci_local_space);
-	ci_local_space->set_button_icon(EditorIconManager::get_icon(SNAME("Object")));
+	ci_local_space->set_button_icon(EditorIconManager::get_icon(SNAME("variant_object")));
 	ci_local_space->set_toggle_mode(true);
 	ci_local_space->set_pressed(true);
 	ci_local_space->set_theme_type_variation(SceneStringName(FlatButton));
@@ -1732,14 +1732,14 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	n3d_group.instantiate();
 
 	{
-		Button *button = _setup_button(SNAME("ToolSelect"), n3d_group, ED_GET_SHORTCUT("spatial_editor/tool_select"));
+		Button *button = _setup_button(SNAME("viewport_tool_select"), n3d_group, ED_GET_SHORTCUT("spatial_editor/tool_select"));
 		n3d_bar->get_hbox()->add_child(button);
 		button->set_pressed(true);
 		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_n3d_tool).bind(RuntimeNodeSelect::SELECT_MODE_SINGLE));
 		n3d_button[RuntimeNodeSelect::SELECT_MODE_SINGLE] = button;
 	}
 	{
-		Button *button = _setup_button(SNAME("ListSelect"), n3d_group);
+		Button *button = _setup_button(SNAME("action_list_select"), n3d_group);
 		n3d_bar->get_hbox()->add_child(button);
 		button->set_tooltip_text(TTRC("Show list of selectable nodes at position clicked."));
 		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_n3d_tool).bind(RuntimeNodeSelect::SELECT_MODE_LIST));
@@ -1748,7 +1748,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	n3d_options_menu = memnew(MenuButton);
 	n3d_bar->get_hbox()->add_child(n3d_options_menu);
-	n3d_options_menu->set_button_icon(EditorIconManager::get_icon(SNAME("GuiDropdown")));
+	n3d_options_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
 	n3d_options_menu->set_flat(false);
 	n3d_options_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
 	n3d_options_menu->set_h_size_flags(SIZE_SHRINK_END);
@@ -1788,7 +1788,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_EDITOR] = memnew(Button);
 	game_hb->add_child(game_embed_mode_button[EmbedMode::EMBED_TYPE_EDITOR]);
-	game_embed_mode_button[EmbedMode::EMBED_TYPE_EDITOR]->set_button_icon(EditorIconManager::get_icon(SNAME("EmbedFused")));
+	game_embed_mode_button[EmbedMode::EMBED_TYPE_EDITOR]->set_button_icon(EditorIconManager::get_icon(SNAME("gui_embed_fused")));
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_EDITOR]->set_toggle_mode(true);
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_EDITOR]->set_button_group(game_embed_group);
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_EDITOR]->set_theme_type_variation("FlatMenuButtonNoIconTint");
@@ -1797,7 +1797,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_FLOATING] = memnew(Button);
 	game_hb->add_child(game_embed_mode_button[EmbedMode::EMBED_TYPE_FLOATING]);
-	game_embed_mode_button[EmbedMode::EMBED_TYPE_FLOATING]->set_button_icon(EditorIconManager::get_icon(SNAME("EmbedFloating")));
+	game_embed_mode_button[EmbedMode::EMBED_TYPE_FLOATING]->set_button_icon(EditorIconManager::get_icon(SNAME("gui_embed_floating")));
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_FLOATING]->set_toggle_mode(true);
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_FLOATING]->set_button_group(game_embed_group);
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_FLOATING]->set_theme_type_variation("FlatMenuButtonNoIconTint");
@@ -1806,7 +1806,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_DISABLED] = memnew(Button);
 	game_hb->add_child(game_embed_mode_button[EmbedMode::EMBED_TYPE_DISABLED]);
-	game_embed_mode_button[EmbedMode::EMBED_TYPE_DISABLED]->set_button_icon(EditorIconManager::get_icon(SNAME("EmbedDisabled")));
+	game_embed_mode_button[EmbedMode::EMBED_TYPE_DISABLED]->set_button_icon(EditorIconManager::get_icon(SNAME("gui_embed_disabled")));
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_DISABLED]->set_toggle_mode(true);
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_DISABLED]->set_button_group(game_embed_group);
 	game_embed_mode_button[EmbedMode::EMBED_TYPE_DISABLED]->set_theme_type_variation("FlatMenuButtonNoIconTint");
@@ -1815,7 +1815,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	game_window_options_menu = memnew(MenuButton);
 	game_hb->add_child(game_window_options_menu);
-	game_window_options_menu->set_button_icon(EditorIconManager::get_icon(SNAME("GuiDropdown")));
+	game_window_options_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
 	game_window_options_menu->set_flat(false);
 	game_window_options_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
 	game_window_options_menu->set_h_size_flags(SIZE_SHRINK_END);
@@ -2006,7 +2006,7 @@ GameViewPlugin::GameViewPlugin() {
 void GameViewPluginBase::setup_android() {
 	EditorDock *game_dock = memnew(EditorDock);
 	game_dock->set_name(TTRC("Game"));
-	game_dock->set_icon_name("Game");
+	game_dock->set_icon_name("dock_development_game");
 	game_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN);
 	game_dock->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	game_dock->set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_game"));

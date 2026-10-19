@@ -49,11 +49,11 @@
 void AudioStreamInteractiveTransitionEditor::_notification(int p_what) {
 	if (p_what == NOTIFICATION_READY || p_what == NOTIFICATION_THEME_CHANGED) {
 		fade_mode->clear();
-		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("FadeDisabled")), TTR("Disabled"), AudioStreamInteractive::FADE_DISABLED);
-		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("FadeIn")), TTR("Fade-In"), AudioStreamInteractive::FADE_IN);
-		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("FadeOut")), TTR("Fade-Out"), AudioStreamInteractive::FADE_OUT);
-		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("FadeCross")), TTR("Cross-Fade"), AudioStreamInteractive::FADE_CROSS);
-		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("AutoPlay")), TTR("Automatic"), AudioStreamInteractive::FADE_AUTOMATIC);
+		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("animation_fade_disabled")), TTR("Disabled"), AudioStreamInteractive::FADE_DISABLED);
+		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("animation_fade_in")), TTR("Fade-In"), AudioStreamInteractive::FADE_IN);
+		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("animation_fade_out")), TTR("Fade-Out"), AudioStreamInteractive::FADE_OUT);
+		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("animation_fade_cross")), TTR("Cross-Fade"), AudioStreamInteractive::FADE_CROSS);
+		fade_mode->add_icon_item(get_editor_theme_icon(SNAME("animation_auto_play")), TTR("Automatic"), AudioStreamInteractive::FADE_AUTOMATIC);
 	}
 }
 
@@ -171,11 +171,11 @@ void AudioStreamInteractiveTransitionEditor::_update_transitions() {
 	Color font_color_default = font_color;
 	font_color_default.a *= 0.5;
 	Ref<Texture> fade_icons[5] = {
-		get_editor_theme_icon(SNAME("FadeDisabled")),
-		get_editor_theme_icon(SNAME("FadeIn")),
-		get_editor_theme_icon(SNAME("FadeOut")),
-		get_editor_theme_icon(SNAME("FadeCross")),
-		get_editor_theme_icon(SNAME("AutoPlay"))
+		get_editor_theme_icon(SNAME("animation_fade_disabled")),
+		get_editor_theme_icon(SNAME("animation_fade_in")),
+		get_editor_theme_icon(SNAME("animation_fade_out")),
+		get_editor_theme_icon(SNAME("animation_fade_cross")),
+		get_editor_theme_icon(SNAME("animation_auto_play"))
 	};
 	for (int i = 0; i <= clip_count; i++) {
 		for (int j = 0; j <= clip_count; j++) {
@@ -403,7 +403,7 @@ void EditorInspectorPluginAudioStreamInteractive::_edit(Object *p_object) {
 
 void EditorInspectorPluginAudioStreamInteractive::parse_end(Object *p_object) {
 	if (Object::cast_to<AudioStreamInteractive>(p_object)) {
-		Button *button = memnew(EditorInspectorActionButton(TTRC("Edit Transitions"), SNAME("Blend")));
+		Button *button = memnew(EditorInspectorActionButton(TTRC("Edit Transitions"), SNAME("action_blend")));
 		button->connect(SceneStringName(pressed), callable_mp(this, &EditorInspectorPluginAudioStreamInteractive::_edit).bind(p_object));
 		add_custom_control(button);
 	}

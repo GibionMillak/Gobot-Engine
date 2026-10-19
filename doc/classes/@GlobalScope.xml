@@ -2832,8 +2832,8 @@
 		<constant name="PROPERTY_HINT_TOOL_BUTTON" value="39" enum="PropertyHint">
 			Hints that a [Callable] property should be displayed as a clickable button. When the button is pressed, the callable is called. The hint string specifies the button text and optionally an icon from the [code]"EditorIcons"[/code] theme type.
 			[codeblock lang=text]
-			"Click me!" - A button with the text "Click me!" and the default "Callable" icon.
-			"Click me!,ColorRect" - A button with the text "Click me!" and the "ColorRect" icon.
+			"Click me!" - A button with the text "Click me!" and the default "variant_callable" icon.
+			"Click me!,node_control_color_rect" - A button with the text "Click me!" and the "node_control_color_rect" icon.
 			[/codeblock]
 			[b]Note:[/b] A [Callable] cannot be properly serialized and stored in a file, so it is recommended to use [constant PROPERTY_USAGE_EDITOR] instead of [constant PROPERTY_USAGE_DEFAULT].
 		</constant>

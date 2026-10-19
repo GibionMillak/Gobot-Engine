@@ -341,7 +341,7 @@ void TileSetScenesCollectionSourceEditor::_update_scenes_list() {
 			item_index = scene_tiles_list->add_item(vformat("%s (path:%s id:%d)", scene->get_path().get_file().get_basename(), scene->get_path(), scene_id));
 			EditorResourcePreview::get_singleton()->queue_edited_resource_preview(scene, callable_mp(this, &TileSetScenesCollectionSourceEditor::_scene_thumbnail_done).bind(i));
 		} else {
-			item_index = scene_tiles_list->add_item(TTR("Tile with Invalid Scene"), get_editor_theme_icon(SNAME("PackedScene")));
+			item_index = scene_tiles_list->add_item(TTR("Tile with Invalid Scene"), get_editor_theme_icon(SNAME("resource_packed_scene")));
 		}
 		scene_tiles_list->set_item_metadata(item_index, scene_id);
 
@@ -380,8 +380,8 @@ void TileSetScenesCollectionSourceEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			scene_tile_add_button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
-			scene_tile_delete_button->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
+			scene_tile_add_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
+			scene_tile_delete_button->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
 			_update_scenes_list();
 		} break;
 

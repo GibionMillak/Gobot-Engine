@@ -33,6 +33,7 @@
 #include "core/io/dir_access.h"
 #include "core/io/resource_saver.h"
 #include "core/object/callable_mp.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/create_dialog.h"
@@ -51,11 +52,11 @@
 void SceneCreateDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			select_node_button->set_button_icon(get_editor_theme_icon(SNAME("ClassList")));
-			node_type_2d->set_button_icon(get_editor_theme_icon(SNAME("Node2D")));
-			node_type_3d->set_button_icon(get_editor_theme_icon(SNAME("Node3D")));
-			node_type_gui->set_button_icon(get_editor_theme_icon(SNAME("Control")));
-			node_type_other->add_theme_icon_override(SNAME("icon"), get_editor_theme_icon(SNAME("Node")));
+			select_node_button->set_button_icon(get_editor_theme_icon(SNAME("gui_class_list")));
+			node_type_2d->set_button_icon(get_editor_theme_icon(SNAME("node_node_2d")));
+			node_type_3d->set_button_icon(get_editor_theme_icon(SNAME("node_node_3d")));
+			node_type_gui->set_button_icon(get_editor_theme_icon(SNAME("node_control")));
+			node_type_other->add_theme_icon_override(SNAME("icon"), get_editor_theme_icon(SNAME("node_node")));
 		} break;
 
 		case NOTIFICATION_READY: {
@@ -129,8 +130,8 @@ void SceneCreateDialog::update_dialog() {
 	}
 
 	const StringName root_type_name = StringName(other_type_display->get_text());
-	if (has_theme_icon(root_type_name, EditorStringName(EditorIcons))) {
-		node_type_other->set_button_icon(get_editor_theme_icon(root_type_name));
+	if (has_theme_icon(editor_get_type_icon_name(root_type_name), EditorStringName(EditorIcons))) {
+		node_type_other->set_button_icon(get_editor_theme_icon(editor_get_type_icon_name(root_type_name)));
 	} else {
 		node_type_other->set_button_icon(nullptr);
 	}

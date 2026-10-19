@@ -240,7 +240,7 @@ void TileMapLayerEditorTilesPlugin::_update_tile_set_sources_list() {
 		// Scene collection source.
 		TileSetScenesCollectionSource *scene_collection_source = Object::cast_to<TileSetScenesCollectionSource>(source);
 		if (scene_collection_source) {
-			texture = tiles_bottom_panel->get_editor_theme_icon(SNAME("PackedScene"));
+			texture = tiles_bottom_panel->get_editor_theme_icon(SNAME("resource_packed_scene"));
 			if (item_text.is_empty()) {
 				if (scene_collection_source->get_scene_tiles_count() > 0) {
 					item_text = vformat(TTR("Scene Collection Source (ID: %d)"), source_id);
@@ -457,7 +457,7 @@ void TileMapLayerEditorTilesPlugin::_update_scenes_collection_view() {
 			item_index = scene_tiles_list->add_item(vformat("%s (Path: %s, ID: %d)", scene->get_path().get_file().get_basename(), scene->get_path(), scene_id));
 			EditorResourcePreview::get_singleton()->queue_edited_resource_preview(scene, callable_mp(this, &TileMapLayerEditorTilesPlugin::_scene_thumbnail_done).bind(i));
 		} else {
-			item_index = scene_tiles_list->add_item(TTR("Tile with Invalid Scene"), tiles_bottom_panel->get_editor_theme_icon(SNAME("PackedScene")));
+			item_index = scene_tiles_list->add_item(TTR("Tile with Invalid Scene"), tiles_bottom_panel->get_editor_theme_icon(SNAME("resource_packed_scene")));
 		}
 		scene_tiles_list->set_item_metadata(item_index, scene_id);
 
@@ -531,23 +531,23 @@ void TileMapLayerEditorTilesPlugin::_scenes_list_lmb_empty_clicked(const Vector2
 }
 
 void TileMapLayerEditorTilesPlugin::_update_theme() {
-	source_sort_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("Sort")));
-	select_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("ToolSelect")));
-	paint_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("Edit")));
-	line_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("Line")));
-	rect_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("Rectangle")));
-	bucket_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("Bucket")));
+	source_sort_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_sort")));
+	select_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("viewport_tool_select")));
+	paint_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_edit")));
+	line_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_line")));
+	rect_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_rectangle")));
+	bucket_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_bucket")));
 
-	picker_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("ColorPick")));
-	erase_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("Eraser")));
-	random_tile_toggle->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("RandomNumberGenerator")));
+	picker_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_color_pick")));
+	erase_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_eraser")));
+	random_tile_toggle->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("type_random_number_generator")));
 
-	transform_button_rotate_left->set_button_icon(tiles_bottom_panel->get_editor_theme_icon("RotateLeft"));
-	transform_button_rotate_right->set_button_icon(tiles_bottom_panel->get_editor_theme_icon("RotateRight"));
-	transform_button_flip_h->set_button_icon(tiles_bottom_panel->get_editor_theme_icon("MirrorX"));
-	transform_button_flip_v->set_button_icon(tiles_bottom_panel->get_editor_theme_icon("MirrorY"));
+	transform_button_rotate_left->set_button_icon(tiles_bottom_panel->get_editor_theme_icon("action_rotate_left"));
+	transform_button_rotate_right->set_button_icon(tiles_bottom_panel->get_editor_theme_icon("action_rotate_right"));
+	transform_button_flip_h->set_button_icon(tiles_bottom_panel->get_editor_theme_icon("action_mirror_x"));
+	transform_button_flip_v->set_button_icon(tiles_bottom_panel->get_editor_theme_icon("action_mirror_y"));
 
-	missing_atlas_texture_icon = tiles_bottom_panel->get_editor_theme_icon(SNAME("TileSet"));
+	missing_atlas_texture_icon = tiles_bottom_panel->get_editor_theme_icon(SNAME("module_tilemap_tile_set"));
 	_update_tile_set_sources_list();
 }
 
@@ -3368,13 +3368,13 @@ void TileMapLayerEditorTerrainsPlugin::_update_terrains_tree() {
 		TreeItem *terrain_set_tree_item = terrains_tree->create_item();
 		String matches;
 		if (tile_set->get_terrain_set_mode(terrain_set_index) == TileSet::TERRAIN_MODE_MATCH_CORNERS_AND_SIDES) {
-			terrain_set_tree_item->set_icon(0, main_box_container->get_editor_theme_icon(SNAME("TerrainMatchCornersAndSides")));
+			terrain_set_tree_item->set_icon(0, main_box_container->get_editor_theme_icon(SNAME("tile_terrain_match_corners_and_sides")));
 			matches = String(TTR("Matches Corners and Sides"));
 		} else if (tile_set->get_terrain_set_mode(terrain_set_index) == TileSet::TERRAIN_MODE_MATCH_CORNERS) {
-			terrain_set_tree_item->set_icon(0, main_box_container->get_editor_theme_icon(SNAME("TerrainMatchCorners")));
+			terrain_set_tree_item->set_icon(0, main_box_container->get_editor_theme_icon(SNAME("tile_terrain_match_corners")));
 			matches = String(TTR("Matches Corners Only"));
 		} else {
-			terrain_set_tree_item->set_icon(0, main_box_container->get_editor_theme_icon(SNAME("TerrainMatchSides")));
+			terrain_set_tree_item->set_icon(0, main_box_container->get_editor_theme_icon(SNAME("tile_terrain_match_sides")));
 			matches = String(TTR("Matches Sides Only"));
 		}
 		terrain_set_tree_item->set_text(0, vformat(TTR("Terrain Set %d (%s)"), terrain_set_index, matches));
@@ -3418,13 +3418,13 @@ void TileMapLayerEditorTerrainsPlugin::_update_tiles_list() {
 		ERR_FAIL_INDEX(sel_terrain_id, tile_set->get_terrains_count(sel_terrain_set));
 
 		// Add the two first generic modes
-		int item_index = terrains_tile_list->add_icon_item(main_box_container->get_editor_theme_icon(SNAME("TerrainConnect")));
+		int item_index = terrains_tile_list->add_icon_item(main_box_container->get_editor_theme_icon(SNAME("tile_terrain_connect")));
 		terrains_tile_list->set_item_tooltip(item_index, TTRC("Connect mode: paints a terrain, then connects it with the surrounding tiles with the same terrain."));
 		Dictionary list_metadata_dict;
 		list_metadata_dict["type"] = SELECTED_TYPE_CONNECT;
 		terrains_tile_list->set_item_metadata(item_index, list_metadata_dict);
 
-		item_index = terrains_tile_list->add_icon_item(main_box_container->get_editor_theme_icon(SNAME("TerrainPath")));
+		item_index = terrains_tile_list->add_icon_item(main_box_container->get_editor_theme_icon(SNAME("tile_terrain_path")));
 		terrains_tile_list->set_item_tooltip(item_index, TTRC("Path mode: paints a terrain, then connects it to the previous tile painted within the same stroke."));
 		list_metadata_dict = Dictionary();
 		list_metadata_dict["type"] = SELECTED_TYPE_PATH;
@@ -3495,13 +3495,13 @@ void TileMapLayerEditorTerrainsPlugin::_update_tiles_list() {
 }
 
 void TileMapLayerEditorTerrainsPlugin::_update_theme() {
-	paint_tool_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("Edit")));
-	line_tool_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("Line")));
-	rect_tool_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("Rectangle")));
-	bucket_tool_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("Bucket")));
+	paint_tool_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_edit")));
+	line_tool_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_line")));
+	rect_tool_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_rectangle")));
+	bucket_tool_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_bucket")));
 
-	picker_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("ColorPick")));
-	erase_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("Eraser")));
+	picker_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_color_pick")));
+	erase_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_eraser")));
 
 	_update_tiles_list();
 }
@@ -3732,14 +3732,14 @@ void TileMapLayerEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			missing_tile_texture = get_editor_theme_icon(SNAME("StatusWarning"));
-			warning_pattern_texture = get_editor_theme_icon(SNAME("WarningPattern"));
-			advanced_menu_button->set_button_icon(get_editor_theme_icon(SNAME("Tools")));
-			select_previous_layer->set_button_icon(get_editor_theme_icon(SNAME("MoveUp")));
-			select_next_layer->set_button_icon(get_editor_theme_icon(SNAME("MoveDown")));
-			select_all_layers->set_button_icon(get_editor_theme_icon(SNAME("FileList")));
-			toggle_grid_button->set_button_icon(get_editor_theme_icon(SNAME("Grid")));
-			toggle_highlight_selected_layer_button->set_button_icon(get_editor_theme_icon(SNAME("TileMapHighlightSelected")));
+			missing_tile_texture = get_editor_theme_icon(SNAME("status_status_warning"));
+			warning_pattern_texture = get_editor_theme_icon(SNAME("status_warning_pattern"));
+			advanced_menu_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tools")));
+			select_previous_layer->set_button_icon(get_editor_theme_icon(SNAME("action_move_up")));
+			select_next_layer->set_button_icon(get_editor_theme_icon(SNAME("action_move_down")));
+			select_all_layers->set_button_icon(get_editor_theme_icon(SNAME("gui_file_list")));
+			toggle_grid_button->set_button_icon(get_editor_theme_icon(SNAME("gui_grid")));
+			toggle_highlight_selected_layer_button->set_button_icon(get_editor_theme_icon(SNAME("module_tilemap_tile_map_highlight_selected")));
 		} break;
 
 		case NOTIFICATION_INTERNAL_PROCESS: {
@@ -4530,7 +4530,7 @@ void TileMapLayerEditor::update_layout(DockLayout p_layout, int p_slot) {
 TileMapLayerEditor::TileMapLayerEditor() {
 	set_process_internal(true);
 	set_name(TTRC("TileMap"));
-	set_icon_name("TileMapDock");
+	set_icon_name("module_tilemap_tile_map_dock");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_tile_map_bottom_panel", TTRC("Open TileMap Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);

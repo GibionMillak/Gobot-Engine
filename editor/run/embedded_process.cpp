@@ -55,7 +55,7 @@ void EmbeddedProcessBase::_notification(int p_what) {
 			_draw();
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
-			checkerboard = get_editor_theme_icon(SNAME("Checkerboard"));
+			checkerboard = get_editor_theme_icon(SNAME("gui_checkerboard"));
 			focus_style_box = get_theme_stylebox(SNAME("FocusViewport"), EditorStringName(EditorStyles));
 			Ref<StyleBoxFlat> focus_style_box_flat = focus_style_box;
 			if (focus_style_box_flat.is_valid()) {

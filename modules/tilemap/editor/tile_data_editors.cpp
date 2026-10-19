@@ -138,8 +138,8 @@ void GenericTilePolygonEditor::_base_control_draw() {
 	real_t grab_threshold = EDITOR_GET("editors/polygon_editor/point_grab_radius");
 
 	Color grid_color = EDITOR_GET("editors/tiles_editor/grid_color");
-	const Ref<Texture2D> handle = get_editor_theme_icon(SNAME("EditorPathSharpHandle"));
-	const Ref<Texture2D> add_handle = get_editor_theme_icon(SNAME("EditorHandleAdd"));
+	const Ref<Texture2D> handle = get_editor_theme_icon(SNAME("viewport_editor_path_sharp_handle"));
+	const Ref<Texture2D> add_handle = get_editor_theme_icon(SNAME("viewport_editor_handle_add"));
 	const Ref<StyleBox> focus_stylebox = get_theme_stylebox(SNAME("Focus"), EditorStringName(EditorStyles));
 
 	// Get the background data.
@@ -888,22 +888,22 @@ void GenericTilePolygonEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			button_expand->set_button_icon(get_editor_theme_icon(SNAME("DistractionFree")));
-			button_create->set_button_icon(get_editor_theme_icon(SNAME("CurveCreate")));
-			button_edit->set_button_icon(get_editor_theme_icon(SNAME("CurveEdit")));
-			button_delete->set_button_icon(get_editor_theme_icon(SNAME("CurveDelete")));
-			button_center_view->set_button_icon(get_editor_theme_icon(SNAME("CenterView")));
-			button_advanced_menu->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
-			button_pixel_snap->get_popup()->set_item_icon(0, get_editor_theme_icon(SNAME("SnapDisable")));
-			button_pixel_snap->get_popup()->set_item_icon(1, get_editor_theme_icon(SNAME("Snap")));
-			button_pixel_snap->get_popup()->set_item_icon(2, get_editor_theme_icon(SNAME("SnapGrid")));
+			button_expand->set_button_icon(get_editor_theme_icon(SNAME("view_distraction_free")));
+			button_create->set_button_icon(get_editor_theme_icon(SNAME("action_curve_create")));
+			button_edit->set_button_icon(get_editor_theme_icon(SNAME("node_control_curve_edit")));
+			button_delete->set_button_icon(get_editor_theme_icon(SNAME("action_curve_delete")));
+			button_center_view->set_button_icon(get_editor_theme_icon(SNAME("navigation_center_view")));
+			button_advanced_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			button_pixel_snap->get_popup()->set_item_icon(0, get_editor_theme_icon(SNAME("action_snap_disable")));
+			button_pixel_snap->get_popup()->set_item_icon(1, get_editor_theme_icon(SNAME("action_snap")));
+			button_pixel_snap->get_popup()->set_item_icon(2, get_editor_theme_icon(SNAME("action_snap_grid")));
 			button_pixel_snap->set_button_icon(button_pixel_snap->get_popup()->get_item_icon(current_snap_option));
 
 			PopupMenu *p = button_advanced_menu->get_popup();
-			p->set_item_icon(p->get_item_index(ROTATE_RIGHT), get_editor_theme_icon(SNAME("RotateRight")));
-			p->set_item_icon(p->get_item_index(ROTATE_LEFT), get_editor_theme_icon(SNAME("RotateLeft")));
-			p->set_item_icon(p->get_item_index(FLIP_HORIZONTALLY), get_editor_theme_icon(SNAME("MirrorX")));
-			p->set_item_icon(p->get_item_index(FLIP_VERTICALLY), get_editor_theme_icon(SNAME("MirrorY")));
+			p->set_item_icon(p->get_item_index(ROTATE_RIGHT), get_editor_theme_icon(SNAME("action_rotate_right")));
+			p->set_item_icon(p->get_item_index(ROTATE_LEFT), get_editor_theme_icon(SNAME("action_rotate_left")));
+			p->set_item_icon(p->get_item_index(FLIP_HORIZONTALLY), get_editor_theme_icon(SNAME("action_mirror_x")));
+			p->set_item_icon(p->get_item_index(FLIP_VERTICALLY), get_editor_theme_icon(SNAME("action_mirror_y")));
 		} break;
 	}
 }
@@ -1369,9 +1369,9 @@ void TileDataDefaultEditor::setup_property_editor(Variant::Type p_type, const St
 void TileDataDefaultEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			picker_button->set_button_icon(get_editor_theme_icon(SNAME("ColorPick")));
-			tile_bool_checked = get_editor_theme_icon(SNAME("TileChecked"));
-			tile_bool_unchecked = get_editor_theme_icon(SNAME("TileUnchecked"));
+			picker_button->set_button_icon(get_editor_theme_icon(SNAME("action_color_pick")));
+			tile_bool_checked = get_editor_theme_icon(SNAME("module_tilemap_tile_checked"));
+			tile_bool_unchecked = get_editor_theme_icon(SNAME("module_tilemap_tile_unchecked"));
 		} break;
 	}
 }
@@ -1417,7 +1417,7 @@ void TileDataTextureOriginEditor::draw_over_tile(CanvasItem *p_canvas_item, Tran
 	}
 
 	if (atlas_source->is_position_in_tile_texture_region(p_cell.get_atlas_coords(), p_cell.alternative_tile, Vector2())) {
-		Ref<Texture2D> position_icon = TileSetEditor::get_singleton()->get_editor_theme_icon(SNAME("EditorPosition"));
+		Ref<Texture2D> position_icon = TileSetEditor::get_singleton()->get_editor_theme_icon(SNAME("viewport_editor_position"));
 		p_canvas_item->draw_texture(position_icon, p_transform.xform(Vector2()) - (position_icon->get_size() / 2), color);
 	} else {
 		Ref<Font> font = TileSetEditor::get_singleton()->get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
@@ -1447,7 +1447,7 @@ void TileDataPositionEditor::draw_over_tile(CanvasItem *p_canvas_item, Transform
 		Color selection_color = Color::from_hsv(Math::fposmod(grid_color.get_h() + 0.5, 1.0), grid_color.get_s(), grid_color.get_v(), 1.0);
 		color = selection_color;
 	}
-	Ref<Texture2D> position_icon = TileSetEditor::get_singleton()->get_editor_theme_icon(SNAME("EditorPosition"));
+	Ref<Texture2D> position_icon = TileSetEditor::get_singleton()->get_editor_theme_icon(SNAME("viewport_editor_position"));
 	p_canvas_item->draw_texture(position_icon, p_transform.xform(Vector2(value)) - position_icon->get_size() / 2, color);
 }
 
@@ -1465,7 +1465,7 @@ void TileDataYSortEditor::draw_over_tile(CanvasItem *p_canvas_item, Transform2D 
 	TileSetSource *source = *(tile_set->get_source(p_cell.source_id));
 	TileSetAtlasSource *atlas_source = Object::cast_to<TileSetAtlasSource>(source);
 	if (atlas_source->is_position_in_tile_texture_region(p_cell.get_atlas_coords(), p_cell.alternative_tile, Vector2(0, tile_data->get_y_sort_origin()))) {
-		Ref<Texture2D> position_icon = TileSetEditor::get_singleton()->get_editor_theme_icon(SNAME("EditorPosition"));
+		Ref<Texture2D> position_icon = TileSetEditor::get_singleton()->get_editor_theme_icon(SNAME("viewport_editor_position"));
 		p_canvas_item->draw_texture(position_icon, p_transform.xform(Vector2(0, tile_data->get_y_sort_origin())) - position_icon->get_size() / 2, color);
 	} else {
 		Ref<Font> font = TileSetEditor::get_singleton()->get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
@@ -1850,7 +1850,7 @@ void TileDataCollisionEditor::draw_over_tile(CanvasItem *p_canvas_item, Transfor
 
 	RenderingServer::get_singleton()->canvas_item_add_set_transform(p_canvas_item->get_canvas_item(), p_transform);
 
-	Ref<Texture2D> one_way_icon = get_editor_theme_icon(SNAME("OneWayTile"));
+	Ref<Texture2D> one_way_icon = get_editor_theme_icon(SNAME("tile_one_way_tile"));
 	for (int i = 0; i < tile_data->get_collision_polygons_count(physics_layer); i++) {
 		Vector<Vector2> polygon = tile_data->get_collision_polygon_points(physics_layer, i);
 		if (polygon.size() < 3) {
@@ -2892,7 +2892,7 @@ void TileDataTerrainsEditor::draw_over_tile(CanvasItem *p_canvas_item, Transform
 void TileDataTerrainsEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			picker_button->set_button_icon(get_editor_theme_icon(SNAME("ColorPick")));
+			picker_button->set_button_icon(get_editor_theme_icon(SNAME("action_color_pick")));
 		} break;
 	}
 }

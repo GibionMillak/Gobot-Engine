@@ -775,7 +775,7 @@ void TileSetAtlasSourceEditor::_update_tile_data_editors() {
 
 	if (tile_set->get_physics_layers_count() == 0) {
 		TreeItem *item = tile_data_editors_tree->create_item(group);
-		item->set_icon(0, get_editor_theme_icon("Info"));
+		item->set_icon(0, get_editor_theme_icon("status_info"));
 		item->set_icon_modulate(0, disabled_color);
 		item->set_text(0, TTRC("No physics layers"));
 		item->set_tooltip_text(0, TTRC("Create and customize physics layers in the inspector of the TileSet resource."));
@@ -803,7 +803,7 @@ void TileSetAtlasSourceEditor::_update_tile_data_editors() {
 
 	if (tile_set->get_navigation_layers_count() == 0) {
 		TreeItem *item = tile_data_editors_tree->create_item(group);
-		item->set_icon(0, get_editor_theme_icon("Info"));
+		item->set_icon(0, get_editor_theme_icon("status_info"));
 		item->set_icon_modulate(0, disabled_color);
 		item->set_text(0, TTRC("No navigation layers"));
 		item->set_tooltip_text(0, TTRC("Create and customize navigation layers in the inspector of the TileSet resource."));
@@ -846,7 +846,7 @@ void TileSetAtlasSourceEditor::_update_tile_data_editors() {
 
 	if (tile_set->get_custom_data_layers_count() == 0) {
 		TreeItem *item = tile_data_editors_tree->create_item(group);
-		item->set_icon(0, get_editor_theme_icon("Info"));
+		item->set_icon(0, get_editor_theme_icon("status_info"));
 		item->set_icon_modulate(0, disabled_color);
 		item->set_text(0, TTRC("No custom data layers"));
 		item->set_tooltip_text(0, TTRC("Create and customize custom data layers in the inspector of the TileSet resource."));
@@ -1040,7 +1040,7 @@ void TileSetAtlasSourceEditor::_update_atlas_view() {
 				// Create and position the button.
 				Button *button = memnew(Button);
 				button->set_flat(true);
-				button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+				button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 				button->add_theme_style_override(CoreStringName(normal), memnew(StyleBoxEmpty));
 				button->add_theme_style_override(SceneStringName(hover), memnew(StyleBoxEmpty));
 				button->add_theme_style_override("focus", memnew(StyleBoxEmpty));
@@ -2493,16 +2493,16 @@ void TileSetAtlasSourceEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			tool_setup_atlas_source_button->set_button_icon(get_editor_theme_icon(SNAME("Tools")));
-			tool_select_button->set_button_icon(get_editor_theme_icon(SNAME("ToolSelect")));
-			tool_paint_button->set_button_icon(get_editor_theme_icon(SNAME("Paint")));
+			tool_setup_atlas_source_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tools")));
+			tool_select_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_select")));
+			tool_paint_button->set_button_icon(get_editor_theme_icon(SNAME("action_paint")));
 
-			tools_settings_erase_button->set_button_icon(get_editor_theme_icon(SNAME("Eraser")));
-			tool_advanced_menu_button->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
-			outside_tiles_warning->set_texture(get_editor_theme_icon(SNAME("StatusWarning")));
+			tools_settings_erase_button->set_button_icon(get_editor_theme_icon(SNAME("action_eraser")));
+			tool_advanced_menu_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			outside_tiles_warning->set_texture(get_editor_theme_icon(SNAME("status_status_warning")));
 
-			resize_handle = get_editor_theme_icon(SNAME("EditorHandle"));
-			resize_handle_disabled = get_editor_theme_icon(SNAME("EditorHandleDisabled"));
+			resize_handle = get_editor_theme_icon(SNAME("viewport_editor_handle"));
+			resize_handle_disabled = get_editor_theme_icon(SNAME("viewport_editor_handle_disabled"));
 
 			tile_data_editors_tree->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), "PopupPanel"));
 		} break;

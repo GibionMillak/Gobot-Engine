@@ -343,11 +343,11 @@ void NavigationObstacle3DEditorPlugin::_update_theme() {
 	button_delete->set_tooltip_text(TTR("Delete Vertex"));
 	button_flip->set_tooltip_text(TTR("Flip Winding"));
 	button_clear->set_tooltip_text(TTR("Clear Vertices"));
-	button_create->set_button_icon(button_create->get_editor_theme_icon(SNAME("CurveCreate")));
-	button_edit->set_button_icon(button_edit->get_editor_theme_icon(SNAME("CurveEdit")));
-	button_delete->set_button_icon(button_delete->get_editor_theme_icon(SNAME("CurveDelete")));
-	button_flip->set_button_icon(button_flip->get_editor_theme_icon(SNAME("FlipWinding")));
-	button_clear->set_button_icon(button_clear->get_editor_theme_icon(SNAME("Clear")));
+	button_create->set_button_icon(button_create->get_editor_theme_icon(SNAME("action_curve_create")));
+	button_edit->set_button_icon(button_edit->get_editor_theme_icon(SNAME("node_control_curve_edit")));
+	button_delete->set_button_icon(button_delete->get_editor_theme_icon(SNAME("action_curve_delete")));
+	button_flip->set_button_icon(button_flip->get_editor_theme_icon(SNAME("action_flip_winding")));
+	button_clear->set_button_icon(button_clear->get_editor_theme_icon(SNAME("action_clear")));
 }
 
 void NavigationObstacle3DEditorPlugin::_node_removed(Node *p_node) {
@@ -808,7 +808,7 @@ NavigationObstacle3DEditorPlugin::NavigationObstacle3DEditorPlugin() {
 	handle_material->set_flag(StandardMaterial3D::FLAG_ALBEDO_FROM_VERTEX_COLOR, true);
 	handle_material->set_flag(StandardMaterial3D::FLAG_SRGB_VERTEX_COLOR, true);
 	handle_material->set_flag(StandardMaterial3D::FLAG_DISABLE_FOG, true);
-	Ref<Texture2D> handle = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Editor3DHandle"), EditorStringName(EditorIcons));
+	Ref<Texture2D> handle = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_3d_handle"), EditorStringName(EditorIcons));
 	handle_material->set_point_size(handle->get_width());
 	handle_material->set_texture(StandardMaterial3D::TEXTURE_ALBEDO, handle);
 	handle_material->set_flag(StandardMaterial3D::FLAG_DISABLE_DEPTH_TEST, true);

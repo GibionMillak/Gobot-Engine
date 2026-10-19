@@ -3446,7 +3446,7 @@ void EditorInspectorArray::_setup() {
 
 			if (element_position > 0) {
 				ae.move_up = memnew(Button);
-				ae.move_up->set_button_icon(get_editor_theme_icon(SNAME("MoveUp")));
+				ae.move_up->set_button_icon(get_editor_theme_icon(SNAME("action_move_up")));
 				ae.move_up->connect(SceneStringName(pressed), callable_mp(this, &EditorInspectorArray::_move_element).bind(element_position, element_position - 1));
 				move_vbox->add_child(ae.move_up);
 			}
@@ -3456,13 +3456,13 @@ void EditorInspectorArray::_setup() {
 			ae.move_texture_rect->set_default_cursor_shape(Control::CURSOR_MOVE);
 
 			if (is_inside_tree()) {
-				ae.move_texture_rect->set_texture(get_editor_theme_icon(SNAME("DragHandle")));
+				ae.move_texture_rect->set_texture(get_editor_theme_icon(SNAME("gui_drag_handle")));
 			}
 			move_vbox->add_child(ae.move_texture_rect);
 
 			if (element_position < count - 1) {
 				ae.move_down = memnew(Button);
-				ae.move_down->set_button_icon(get_editor_theme_icon(SNAME("MoveDown")));
+				ae.move_down->set_button_icon(get_editor_theme_icon(SNAME("action_move_down")));
 				ae.move_down->connect(SceneStringName(pressed), callable_mp(this, &EditorInspectorArray::_move_element).bind(element_position, element_position + 2));
 				move_vbox->add_child(ae.move_down);
 			}
@@ -3486,7 +3486,7 @@ void EditorInspectorArray::_setup() {
 
 		if (!unresizable) {
 			ae.erase = memnew(Button);
-			ae.erase->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
+			ae.erase->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
 			ae.erase->set_v_size_flags(SIZE_SHRINK_CENTER);
 			ae.erase->connect(SceneStringName(pressed), callable_mp(this, &EditorInspectorArray::_remove_item).bind(element_position));
 			ae.hbox->add_child(ae.erase);
@@ -3567,13 +3567,13 @@ void EditorInspectorArray::_notification(int p_what) {
 
 			for (ArrayElement &ae : array_elements) {
 				if (ae.move_texture_rect) {
-					ae.move_texture_rect->set_texture(get_editor_theme_icon(SNAME("DragHandle")));
+					ae.move_texture_rect->set_texture(get_editor_theme_icon(SNAME("gui_drag_handle")));
 				}
 				if (ae.move_up) {
-					ae.move_up->set_button_icon(get_editor_theme_icon(SNAME("MoveUp")));
+					ae.move_up->set_button_icon(get_editor_theme_icon(SNAME("action_move_up")));
 				}
 				if (ae.move_down) {
-					ae.move_down->set_button_icon(get_editor_theme_icon(SNAME("MoveDown")));
+					ae.move_down->set_button_icon(get_editor_theme_icon(SNAME("action_move_down")));
 				}
 				Size2 min_size = get_theme_stylebox(SNAME("Focus"), EditorStringName(EditorStyles))->get_minimum_size();
 				ae.margin->begin_bulk_theme_override();
@@ -3584,7 +3584,7 @@ void EditorInspectorArray::_notification(int p_what) {
 				ae.margin->end_bulk_theme_override();
 
 				if (ae.erase) {
-					ae.erase->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
+					ae.erase->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
 				}
 			}
 		} break;
@@ -3676,7 +3676,7 @@ EditorInspectorArray::EditorInspectorArray(bool p_read_only) {
 	elements_vbox->add_theme_constant_override("separation", 0);
 	vbox->add_child(elements_vbox);
 
-	add_button = memnew(EditorInspectorActionButton(TTRC("Add Element"), SNAME("Add")));
+	add_button = memnew(EditorInspectorActionButton(TTRC("Add Element"), SNAME("action_add")));
 	add_button->connect(SceneStringName(pressed), callable_mp(this, &EditorInspectorArray::_add_button_pressed));
 	add_button->set_disabled(read_only);
 	vbox->add_child(add_button);
@@ -3753,10 +3753,10 @@ void EditorPaginator::update(int p_page, int p_max_page) {
 void EditorPaginator::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			first_page_button->set_button_icon(get_editor_theme_icon(SNAME("PageFirst")));
-			prev_page_button->set_button_icon(get_editor_theme_icon(SNAME("PagePrevious")));
-			next_page_button->set_button_icon(get_editor_theme_icon(SNAME("PageNext")));
-			last_page_button->set_button_icon(get_editor_theme_icon(SNAME("PageLast")));
+			first_page_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_page_first")));
+			prev_page_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_page_previous")));
+			next_page_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_page_next")));
+			last_page_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_page_last")));
 		} break;
 	}
 }
@@ -3861,14 +3861,14 @@ void EditorInspector::initialize_section_theme(EditorInspectorSection::ThemeCach
 	p_cache.arrow = p_control->get_theme_icon(SNAME("arrow"), SNAME("Tree"));
 	p_cache.arrow_collapsed = p_control->get_theme_icon(SNAME("arrow_collapsed"), SNAME("Tree"));
 	p_cache.arrow_collapsed_mirrored = p_control->get_theme_icon(SNAME("arrow_collapsed_mirrored"), SNAME("Tree"));
-	p_cache.icon_gui_revert = p_control->get_editor_theme_icon(SNAME("ReloadSmall"));
-	p_cache.icon_gui_checked = p_control->get_editor_theme_icon(SNAME("GuiChecked"));
-	p_cache.icon_gui_unchecked = p_control->get_editor_theme_icon(SNAME("GuiUnchecked"));
-	p_cache.icon_gui_animation_key = p_control->get_editor_theme_icon(SNAME("Key"));
-	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("Copy"));
-	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("Paste"));
-	p_cache.icon_copy_path = p_control->get_editor_theme_icon(SNAME("CopyNodePath"));
-	p_cache.help_icon = p_control->get_editor_theme_icon(SNAME("Help"));
+	p_cache.icon_gui_revert = p_control->get_editor_theme_icon(SNAME("action_reload_small"));
+	p_cache.icon_gui_checked = p_control->get_editor_theme_icon(SNAME("gui_gui_checked"));
+	p_cache.icon_gui_unchecked = p_control->get_editor_theme_icon(SNAME("gui_gui_unchecked"));
+	p_cache.icon_gui_animation_key = p_control->get_editor_theme_icon(SNAME("animation_key"));
+	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("action_copy"));
+	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("action_paste"));
+	p_cache.icon_copy_path = p_control->get_editor_theme_icon(SNAME("action_copy_node_path"));
+	p_cache.help_icon = p_control->get_editor_theme_icon(SNAME("gui_help"));
 
 	p_cache.indent_box = p_control->get_theme_stylebox(SNAME("indent_box"), SNAME("EditorInspectorSection"));
 	p_cache.icon_hover = p_control->get_theme_stylebox(SceneStringName(hover), SceneStringName(FlatButton));
@@ -3890,12 +3890,12 @@ void EditorInspector::initialize_category_theme(EditorInspectorCategory::ThemeCa
 	p_cache.bold_font = p_control->get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
 	p_cache.bold_font_size = p_control->get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
 
-	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("Copy"));
-	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("Paste"));
+	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("action_copy"));
+	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("action_paste"));
 
-	p_cache.icon_favorites = p_control->get_editor_theme_icon(SNAME("Favorites"));
-	p_cache.icon_unfavorite = p_control->get_editor_theme_icon(SNAME("Unfavorite"));
-	p_cache.icon_help = p_control->get_editor_theme_icon(SNAME("Help"));
+	p_cache.icon_favorites = p_control->get_editor_theme_icon(SNAME("folder_favorites"));
+	p_cache.icon_unfavorite = p_control->get_editor_theme_icon(SNAME("folder_unfavorite"));
+	p_cache.icon_help = p_control->get_editor_theme_icon(SNAME("gui_help"));
 
 	p_cache.background = p_control->get_theme_stylebox(SNAME("bg"), SNAME("EditorInspectorCategory"));
 
@@ -3922,21 +3922,21 @@ void EditorInspector::initialize_property_theme(EditorProperty::ThemeCache &p_ca
 	p_cache.child_background = p_control->get_theme_stylebox(SNAME("child_bg"), SNAME("EditorProperty"));
 	p_cache.hover = p_control->get_theme_stylebox(SceneStringName(hover), SceneStringName(FlatButton));
 
-	p_cache.key_icon = p_control->get_editor_theme_icon(SNAME("Key"));
-	p_cache.key_next_icon = p_control->get_editor_theme_icon(SNAME("KeyNext"));
-	p_cache.delete_icon = p_control->get_editor_theme_icon(SNAME("Close"));
-	p_cache.checked_icon = p_control->get_editor_theme_icon(SNAME("GuiChecked"));
-	p_cache.unchecked_icon = p_control->get_editor_theme_icon(SNAME("GuiUnchecked"));
-	p_cache.revert_icon = p_control->get_editor_theme_icon(SNAME("ReloadSmall"));
-	p_cache.pin_icon = p_control->get_editor_theme_icon(SNAME("Pin"));
-	p_cache.copy_icon = p_control->get_editor_theme_icon(SNAME("Copy"));
-	p_cache.copy_node_path_icon = p_control->get_editor_theme_icon(SNAME("CopyNodePath"));
-	p_cache.paste_icon = p_control->get_editor_theme_icon(SNAME("Paste"));
-	p_cache.unfavorite_icon = p_control->get_editor_theme_icon(SNAME("Unfavorite"));
-	p_cache.favorite_icon = p_control->get_editor_theme_icon(SNAME("Favorites"));
-	p_cache.override_icon = p_control->get_editor_theme_icon(SNAME("Override"));
-	p_cache.remove_icon = p_control->get_editor_theme_icon(SNAME("Remove"));
-	p_cache.help_icon = p_control->get_editor_theme_icon(SNAME("Help"));
+	p_cache.key_icon = p_control->get_editor_theme_icon(SNAME("animation_key"));
+	p_cache.key_next_icon = p_control->get_editor_theme_icon(SNAME("animation_key_next"));
+	p_cache.delete_icon = p_control->get_editor_theme_icon(SNAME("action_close"));
+	p_cache.checked_icon = p_control->get_editor_theme_icon(SNAME("gui_gui_checked"));
+	p_cache.unchecked_icon = p_control->get_editor_theme_icon(SNAME("gui_gui_unchecked"));
+	p_cache.revert_icon = p_control->get_editor_theme_icon(SNAME("action_reload_small"));
+	p_cache.pin_icon = p_control->get_editor_theme_icon(SNAME("action_pin"));
+	p_cache.copy_icon = p_control->get_editor_theme_icon(SNAME("action_copy"));
+	p_cache.copy_node_path_icon = p_control->get_editor_theme_icon(SNAME("action_copy_node_path"));
+	p_cache.paste_icon = p_control->get_editor_theme_icon(SNAME("action_paste"));
+	p_cache.unfavorite_icon = p_control->get_editor_theme_icon(SNAME("folder_unfavorite"));
+	p_cache.favorite_icon = p_control->get_editor_theme_icon(SNAME("folder_favorites"));
+	p_cache.override_icon = p_control->get_editor_theme_icon(SNAME("gui_override"));
+	p_cache.remove_icon = p_control->get_editor_theme_icon(SNAME("action_remove"));
+	p_cache.help_icon = p_control->get_editor_theme_icon(SNAME("gui_help"));
 
 	p_cache.font_size = p_control->get_theme_font_size(SceneStringName(font_size), SNAME("Tree"));
 	p_cache.font_offset = p_control->get_theme_constant(SNAME("font_offset"), SNAME("EditorProperty"));
@@ -5176,7 +5176,7 @@ void EditorInspector::update_tree() {
 		spacer->set_custom_minimum_size(Size2(0, 4) * EDSCALE);
 		main_vbox->add_child(spacer);
 
-		Button *add_md = memnew(EditorInspectorActionButton(TTRC("Add Metadata"), SNAME("Add")));
+		Button *add_md = memnew(EditorInspectorActionButton(TTRC("Add Metadata"), SNAME("action_add")));
 		add_md->connect(SceneStringName(pressed), callable_mp(this, &EditorInspector::_show_add_meta_dialog));
 		main_vbox->add_child(add_md);
 		if (all_read_only) {

@@ -39,7 +39,7 @@ void GroupsDock::set_selection(const Vector<Node *> &p_nodes) {
 GroupsDock::GroupsDock() {
 	singleton = this;
 	set_name(TTRC("Groups"));
-	set_icon_name("Groups");
+	set_icon_name("gui_groups");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/open_groups", TTRC("Open Groups Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_RIGHT_UL);
 

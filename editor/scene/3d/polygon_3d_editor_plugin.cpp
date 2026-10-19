@@ -52,8 +52,8 @@
 void Polygon3DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY: {
-			button_create->set_button_icon(get_editor_theme_icon(SNAME("Edit")));
-			button_edit->set_button_icon(get_editor_theme_icon(SNAME("MovePoint")));
+			button_create->set_button_icon(get_editor_theme_icon(SNAME("action_edit")));
+			button_edit->set_button_icon(get_editor_theme_icon(SNAME("action_move_point")));
 			button_edit->set_pressed(true);
 			get_tree()->connect("node_removed", callable_mp(this, &Polygon3DEditor::_node_removed));
 
@@ -576,7 +576,7 @@ Polygon3DEditor::Polygon3DEditor() {
 	handle_material->set_flag(StandardMaterial3D::FLAG_SRGB_VERTEX_COLOR, true);
 	handle_material->set_flag(StandardMaterial3D::FLAG_DISABLE_FOG, true);
 	handle_material->set_flag(StandardMaterial3D::FLAG_DISABLE_DEPTH_TEST, true);
-	Ref<Texture2D> handle = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("Editor3DHandle"), EditorStringName(EditorIcons));
+	Ref<Texture2D> handle = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_3d_handle"), EditorStringName(EditorIcons));
 	handle_material->set_point_size(handle->get_width());
 	handle_material->set_texture(StandardMaterial3D::TEXTURE_ALBEDO, handle);
 

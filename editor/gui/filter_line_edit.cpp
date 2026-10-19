@@ -32,7 +32,7 @@
 
 void FilterLineEdit::_notification(int p_what) {
 	if (p_what == NOTIFICATION_THEME_CHANGED) {
-		set_right_icon(get_editor_theme_icon(SNAME("Search")));
+		set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 	}
 }
 

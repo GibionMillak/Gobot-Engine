@@ -584,14 +584,14 @@ void Sprite2DEditor::_notification(int p_what) {
 			panner->setup_warped_panning(debug_uv_dialog->get_child(0), EDITOR_GET("editors/panning/warped_mouse_panning"));
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
-			options->set_button_icon(get_editor_theme_icon(SNAME("Sprite2D")));
+			options->set_button_icon(get_editor_theme_icon(SNAME("node_2d_sprite_2d")));
 
-			options->get_popup()->set_item_icon(MENU_OPTION_CONVERT_TO_MESH_2D, get_editor_theme_icon(SNAME("MeshInstance2D")));
-			options->get_popup()->set_item_icon(MENU_OPTION_CONVERT_TO_POLYGON_2D, get_editor_theme_icon(SNAME("Polygon2D")));
-			options->get_popup()->set_item_icon(MENU_OPTION_CREATE_COLLISION_POLY_2D, get_editor_theme_icon(SNAME("CollisionPolygon2D")));
-			options->get_popup()->set_item_icon(MENU_OPTION_CREATE_LIGHT_OCCLUDER_2D, get_editor_theme_icon(SNAME("LightOccluder2D")));
+			options->get_popup()->set_item_icon(MENU_OPTION_CONVERT_TO_MESH_2D, get_editor_theme_icon(SNAME("node_2d_mesh_instance_2d")));
+			options->get_popup()->set_item_icon(MENU_OPTION_CONVERT_TO_POLYGON_2D, get_editor_theme_icon(SNAME("node_2d_polygon_2d")));
+			options->get_popup()->set_item_icon(MENU_OPTION_CREATE_COLLISION_POLY_2D, get_editor_theme_icon(SNAME("node_2d_collision_polygon_2d")));
+			options->get_popup()->set_item_icon(MENU_OPTION_CREATE_LIGHT_OCCLUDER_2D, get_editor_theme_icon(SNAME("node_2d_light_occluder_2d")));
 
-			resize_region_rect->set_button_icon(get_editor_theme_icon(SNAME("KeepAspect")));
+			resize_region_rect->set_button_icon(get_editor_theme_icon(SNAME("gui_keep_aspect")));
 		} break;
 	}
 }

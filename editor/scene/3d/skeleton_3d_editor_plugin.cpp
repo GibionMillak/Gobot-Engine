@@ -139,7 +139,7 @@ void BonePropertiesEditor::create_editors() {
 	meta_section->setup("bone_meta", TTR("Bone Metadata"), this, Color(.0f, .0f, .0f), true);
 	section->get_vbox()->add_child(meta_section);
 
-	EditorInspectorActionButton *add_metadata_button = memnew(EditorInspectorActionButton(TTRC("Add Bone Metadata"), SNAME("Add")));
+	EditorInspectorActionButton *add_metadata_button = memnew(EditorInspectorActionButton(TTRC("Add Bone Metadata"), SNAME("action_add")));
 	add_metadata_button->connect(SceneStringName(pressed), callable_mp(this, &BonePropertiesEditor::_show_add_meta_dialog));
 	section->get_vbox()->add_child(add_metadata_button);
 
@@ -1034,7 +1034,7 @@ void Skeleton3DEditor::update_joint_tree() {
 
 	items.insert(-1, root);
 
-	Ref<Texture> bone_icon = get_editor_theme_icon(SNAME("Bone"));
+	Ref<Texture> bone_icon = get_editor_theme_icon(SNAME("viewport_bone"));
 
 	Vector<int> bones_to_process = skeleton->get_parentless_bones();
 	while (bones_to_process.size() > 0) {
@@ -1080,7 +1080,7 @@ void Skeleton3DEditor::update_joint_tree() {
 		bool can_revert_skin_scale = EditorPropertyRevert::can_property_revert(skeleton, bone_skin_scale_property, &current_skin_scale);
 
 		if (can_revert_enabled || can_revert_parent || can_revert_name || can_revert_position || can_revert_rotation || can_revert_scale || can_revert_rest || can_revert_skin_scale) {
-			joint_item->add_button(0, get_editor_theme_icon(SNAME("ReloadSmall")), JOINT_BUTTON_REVERT, false, TTR("Revert"));
+			joint_item->add_button(0, get_editor_theme_icon(SNAME("action_reload_small")), JOINT_BUTTON_REVERT, false, TTR("Revert"));
 		}
 
 		// Add the bone's children to the list of bones to be processed.
@@ -1300,15 +1300,15 @@ void Skeleton3DEditor::_notification(int p_what) {
 			add_theme_constant_override("separation", 0);
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
-			skeleton_options->set_button_icon(get_editor_theme_icon(SNAME("Skeleton3D")));
-			edit_mode_button->set_button_icon(get_editor_theme_icon(SNAME("ToolBoneSelect")));
-			key_loc_button->set_button_icon(get_editor_theme_icon(SNAME("KeyPosition")));
-			key_rot_button->set_button_icon(get_editor_theme_icon(SNAME("KeyRotation")));
-			key_scale_button->set_button_icon(get_editor_theme_icon(SNAME("KeyScale")));
-			key_insert_button->set_button_icon(get_editor_theme_icon(SNAME("InsertKey")));
-			key_insert_new_button->set_button_icon(get_editor_theme_icon(SNAME("NewKey")));
-			key_mod_insert_button->set_button_icon(get_editor_theme_icon(SNAME("InsertModKey")));
-			key_mod_insert_new_button->set_button_icon(get_editor_theme_icon(SNAME("NewModKey")));
+			skeleton_options->set_button_icon(get_editor_theme_icon(SNAME("node_3d_skeleton_3d")));
+			edit_mode_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_bone_select")));
+			key_loc_button->set_button_icon(get_editor_theme_icon(SNAME("animation_key_position")));
+			key_rot_button->set_button_icon(get_editor_theme_icon(SNAME("animation_key_rotation")));
+			key_scale_button->set_button_icon(get_editor_theme_icon(SNAME("animation_key_scale")));
+			key_insert_button->set_button_icon(get_editor_theme_icon(SNAME("animation_insert_key")));
+			key_insert_new_button->set_button_icon(get_editor_theme_icon(SNAME("animation_new_key")));
+			key_mod_insert_button->set_button_icon(get_editor_theme_icon(SNAME("animation_insert_mod_key")));
+			key_mod_insert_new_button->set_button_icon(get_editor_theme_icon(SNAME("animation_new_mod_key")));
 			bones_section->set_bg_color(get_theme_color(SNAME("prop_subsection"), EditorStringName(Editor)));
 
 			update_joint_tree();
@@ -1428,7 +1428,7 @@ void fragment() {
 }
 )");
 	handle_material->set_shader(handle_shader);
-	Ref<Texture2D> handle = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("EditorBoneHandle"), EditorStringName(EditorIcons));
+	Ref<Texture2D> handle = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_bone_handle"), EditorStringName(EditorIcons));
 	handle_material->set_shader_parameter("point_size", handle->get_width());
 	handle_material->set_shader_parameter("texture_albedo", handle);
 

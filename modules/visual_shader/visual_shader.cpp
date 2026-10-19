@@ -128,7 +128,7 @@ Variant VisualShaderNode::get_port_type_default_value_variant(PortType p_type) {
 
 const char *VisualShaderNode::get_port_type_icon_name(PortType p_type) {
 	static const char *icon_names[PORT_TYPE_MAX] = {
-		"float", "int", "uint", "Vector2", "Vector3", "Vector4", "bool", "Transform3D", "ImageTexture"
+		"variant_float", "variant_int", "variant_uint", "variant_vector2", "variant_vector3", "variant_vector4", "variant_bool", "variant_transform_3d", "resource_image_texture"
 	};
 	ERR_FAIL_INDEX_V(p_type, PORT_TYPE_MAX, nullptr);
 	return icon_names[p_type];

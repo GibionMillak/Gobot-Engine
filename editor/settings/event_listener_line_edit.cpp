@@ -234,7 +234,7 @@ void EventListenerLineEdit::_notification(int p_what) {
 
 
 		case NOTIFICATION_THEME_CHANGED: {
-			set_right_icon(get_editor_theme_icon(SNAME("Keyboard")));
+			set_right_icon(get_editor_theme_icon(SNAME("animation_keyboard")));
 		} break;
 
 		case NOTIFICATION_ENTER_TREE: {

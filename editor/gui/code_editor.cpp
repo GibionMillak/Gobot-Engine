@@ -36,6 +36,7 @@
 #include "core/object/editor_language.h"
 #include "core/os/keyboard.h"
 #include "core/string/string_builder.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/script/script_editor_navigation_marker.h"
@@ -147,9 +148,9 @@ void FindReplaceBar::_notification(int p_what) {
 			[[fallthrough]];
 		}
 		case NOTIFICATION_READY: {
-			find_prev->set_button_icon(get_editor_theme_icon(SNAME("MoveUp")));
-			find_next->set_button_icon(get_editor_theme_icon(SNAME("MoveDown")));
-			hide_button->set_button_icon(get_editor_theme_icon(SNAME("Close")));
+			find_prev->set_button_icon(get_editor_theme_icon(SNAME("action_move_up")));
+			find_next->set_button_icon(get_editor_theme_icon(SNAME("action_move_down")));
+			hide_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 			_update_toggle_replace_button(replace_text->is_visible_in_tree());
 		} break;
 
@@ -587,8 +588,8 @@ void FindReplaceBar::_update_toggle_replace_button(bool p_replace_visible) {
 	String tooltip = p_replace_visible ? TTRC("Hide Replace") : TTRC("Show Replace");
 	String shortcut = ED_GET_SHORTCUT(p_replace_visible ? "script_text_editor/find" : "script_text_editor/replace")->get_as_text();
 	toggle_replace_button->set_tooltip_text(vformat("%s (%s)", tooltip, shortcut));
-	StringName rtl_compliant_arrow = is_layout_rtl() ? SNAME("GuiTreeArrowLeft") : SNAME("GuiTreeArrowRight");
-	toggle_replace_button->set_button_icon(get_editor_theme_icon(p_replace_visible ? SNAME("GuiTreeArrowDown") : rtl_compliant_arrow));
+	StringName rtl_compliant_arrow = is_layout_rtl() ? SNAME("gui_gui_tree_arrow_left") : SNAME("gui_gui_tree_arrow_right");
+	toggle_replace_button->set_button_icon(get_editor_theme_icon(p_replace_visible ? SNAME("gui_gui_tree_arrow_down") : rtl_compliant_arrow));
 }
 
 void FindReplaceBar::_show_search(bool p_with_replace, bool p_show_only) {
@@ -1056,47 +1057,47 @@ Ref<Texture2D> CodeTextEditor::_get_completion_icon(const EditorLanguage::Comple
 	switch (p_option.kind) {
 		case EditorLanguage::CompletionKind::CLASS: {
 			const String formatted_class_name = p_option.display.unquote();
-			if (has_theme_icon(formatted_class_name, EditorStringName(EditorIcons))) {
-				tex = get_editor_theme_icon(formatted_class_name);
+			if (has_theme_icon(editor_get_type_icon_name(formatted_class_name), EditorStringName(EditorIcons))) {
+				tex = get_editor_theme_icon(editor_get_type_icon_name(formatted_class_name));
 			} else {
 				tex = EditorNode::get_singleton()->get_class_icon(formatted_class_name);
 				if (tex.is_null()) {
-					tex = get_editor_theme_icon(SNAME("Object"));
+					tex = get_editor_theme_icon(SNAME("variant_object"));
 				}
 			}
 		} break;
 		case EditorLanguage::CompletionKind::ENUM:
-			tex = get_editor_theme_icon(SNAME("Enum"));
+			tex = get_editor_theme_icon(SNAME("scripting_enum"));
 			break;
 		case EditorLanguage::CompletionKind::FILE_PATH:
-			tex = get_editor_theme_icon(SNAME("File"));
+			tex = get_editor_theme_icon(SNAME("file_file"));
 			break;
 		case EditorLanguage::CompletionKind::NODE_PATH:
-			tex = get_editor_theme_icon(SNAME("NodePath"));
+			tex = get_editor_theme_icon(SNAME("variant_node_path"));
 			break;
 		case EditorLanguage::CompletionKind::VARIABLE:
-			tex = get_editor_theme_icon(SNAME("LocalVariable"));
+			tex = get_editor_theme_icon(SNAME("scripting_local_variable"));
 			break;
 		case EditorLanguage::CompletionKind::CONSTANT:
-			tex = get_editor_theme_icon(SNAME("MemberConstant"));
+			tex = get_editor_theme_icon(SNAME("scripting_member_constant"));
 			break;
 		case EditorLanguage::CompletionKind::MEMBER_VARIABLE:
-			tex = get_editor_theme_icon(SNAME("MemberProperty"));
+			tex = get_editor_theme_icon(SNAME("scripting_member_property"));
 			break;
 		case EditorLanguage::CompletionKind::SIGNAL:
-			tex = get_editor_theme_icon(SNAME("MemberSignal"));
+			tex = get_editor_theme_icon(SNAME("scripting_member_signal"));
 			break;
 		case EditorLanguage::CompletionKind::FUNCTION:
-			tex = get_editor_theme_icon(SNAME("MemberMethod"));
+			tex = get_editor_theme_icon(SNAME("scripting_member_method"));
 			break;
 		case EditorLanguage::CompletionKind::KEYWORD:
-			tex = get_editor_theme_icon(SNAME("Keyword"));
+			tex = get_editor_theme_icon(SNAME("animation_keyword"));
 			break;
 		case EditorLanguage::CompletionKind::PLAIN_TEXT:
-			tex = get_editor_theme_icon(SNAME("BoxMesh"));
+			tex = get_editor_theme_icon(SNAME("resource_box_mesh"));
 			break;
 		default:
-			tex = get_editor_theme_icon(SNAME("String"));
+			tex = get_editor_theme_icon(SNAME("variant_string"));
 			break;
 	}
 	return tex;
@@ -1658,10 +1659,10 @@ void CodeTextEditor::_update_text_editor_theme() {
 	error->add_theme_style_override(SNAME("normal"), label_stylebox);
 	error->end_bulk_theme_override();
 
-	error_button->set_button_icon(get_editor_theme_icon(SNAME("StatusError")));
+	error_button->set_button_icon(get_editor_theme_icon(SNAME("status_status_error")));
 	error_button->add_theme_color_override(SceneStringName(font_color), error_color);
 
-	warning_button->set_button_icon(get_editor_theme_icon(SNAME("NodeWarning")));
+	warning_button->set_button_icon(get_editor_theme_icon(SNAME("status_node_warning")));
 	warning_button->add_theme_color_override(SceneStringName(font_color), warning_color);
 
 	const int child_count = status_bar->get_child_count();

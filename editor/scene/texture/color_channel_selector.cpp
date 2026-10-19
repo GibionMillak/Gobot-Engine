@@ -80,7 +80,7 @@ void ColorChannelSelector::_notification(int p_what) {
 		bg_style->set_content_margin(SIDE_BOTTOM, 1.0f * EDSCALE);
 		panel->add_theme_style_override(SceneStringName(panel), bg_style);
 
-		Ref<Texture2D> icon = get_editor_theme_icon(SNAME("TexturePreviewChannels"));
+		Ref<Texture2D> icon = get_editor_theme_icon(SNAME("gui_texture_preview_channels"));
 		toggle_button->set_button_icon(icon);
 	}
 }

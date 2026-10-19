@@ -51,8 +51,8 @@ void AudioStreamEditor::_notification(int p_what) {
 			_current_label->add_theme_font_override(SceneStringName(font), font);
 			_duration_label->add_theme_font_override(SceneStringName(font), font);
 
-			_play_button->set_button_icon(get_editor_theme_icon(SNAME("MainPlay")));
-			_stop_button->set_button_icon(get_editor_theme_icon(SNAME("Stop")));
+			_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+			_stop_button->set_button_icon(get_editor_theme_icon(SNAME("playback_stop")));
 			_preview->set_color(get_theme_color(SNAME("dark_color_2"), EditorStringName(Editor)));
 
 			set_color(get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor)));
@@ -127,26 +127,26 @@ void AudioStreamEditor::_play() {
 	if (_player->is_playing()) {
 		_pausing = true;
 		_player->stop();
-		_play_button->set_button_icon(get_editor_theme_icon(SNAME("MainPlay")));
+		_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
 		set_process(false);
 	} else {
 		_pausing = false;
 		_player->play(_current);
-		_play_button->set_button_icon(get_editor_theme_icon(SNAME("Pause")));
+		_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_pause")));
 		set_process(true);
 	}
 }
 
 void AudioStreamEditor::_stop() {
 	_player->stop();
-	_play_button->set_button_icon(get_editor_theme_icon(SNAME("MainPlay")));
+	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
 	_current = 0;
 	_indicator->queue_redraw();
 	set_process(false);
 }
 
 void AudioStreamEditor::_on_finished() {
-	_play_button->set_button_icon(get_editor_theme_icon(SNAME("MainPlay")));
+	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
 	if (!_pausing) {
 		_current = 0;
 		_indicator->queue_redraw();
@@ -170,7 +170,7 @@ void AudioStreamEditor::_draw_indicator() {
 
 	float ofs_x = _current / len * rect.size.width;
 	const Color col = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
-	Ref<Texture2D> icon = get_editor_theme_icon(SNAME("TimelineIndicator"));
+	Ref<Texture2D> icon = get_editor_theme_icon(SNAME("animation_timeline_indicator"));
 	_indicator->draw_line(Point2(ofs_x, 0), Point2(ofs_x, rect.size.height), col, Math::round(2 * EDSCALE));
 	_indicator->draw_texture(
 			icon,

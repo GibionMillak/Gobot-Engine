@@ -31,6 +31,7 @@
 #include "particles_editor_plugin.h"
 
 #include "core/object/callable_mp.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/docks/scene_tree_dock.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/settings/editor_settings.h"
@@ -49,7 +50,7 @@ void ParticlesEditorPlugin::_notification(int p_what) {
 				DEV_ASSERT(false);
 			}
 
-			menu->set_button_icon(menu->get_editor_theme_icon(handled_type));
+			menu->set_button_icon(menu->get_editor_theme_icon(editor_get_type_icon_name(handled_type)));
 			menu->set_text(handled_type);
 
 			PopupMenu *popup = menu->get_popup();

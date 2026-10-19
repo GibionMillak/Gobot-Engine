@@ -375,12 +375,12 @@ void EditorSettingsDialog::shortcut_input(const Ref<InputEvent> &p_event) {
 }
 
 void EditorSettingsDialog::_update_icons() {
-	search_box->set_right_icon(get_editor_theme_icon(SNAME("Search")));
+	search_box->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 	search_box->set_clear_button_enabled(true);
 
-	restart_close_button->set_button_icon(get_editor_theme_icon(SNAME("Close")));
+	restart_close_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 	restart_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("Tree")));
-	restart_icon->set_texture(get_editor_theme_icon(SNAME("StatusWarning")));
+	restart_icon->set_texture(get_editor_theme_icon(SNAME("status_status_warning")));
 	restart_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 }
 
@@ -515,11 +515,11 @@ TreeItem *EditorSettingsDialog::_create_shortcut_treeitem(TreeItem *p_parent, co
 	}
 
 	if (p_allow_revert) {
-		shortcut_item->add_button(1, get_editor_theme_icon(SNAME("Reload")), SHORTCUT_REVERT);
+		shortcut_item->add_button(1, get_editor_theme_icon(SNAME("action_reload")), SHORTCUT_REVERT);
 	}
 
-	shortcut_item->add_button(1, get_editor_theme_icon(SNAME("Add")), SHORTCUT_ADD);
-	shortcut_item->add_button(1, get_editor_theme_icon(SNAME("Close")), SHORTCUT_ERASE, p_events.is_empty());
+	shortcut_item->add_button(1, get_editor_theme_icon(SNAME("action_add")), SHORTCUT_ADD);
+	shortcut_item->add_button(1, get_editor_theme_icon(SNAME("action_close")), SHORTCUT_ERASE, p_events.is_empty());
 
 	shortcut_item->set_meta("is_action", p_is_action);
 	shortcut_item->set_meta("type", "shortcut");
@@ -540,8 +540,8 @@ TreeItem *EditorSettingsDialog::_create_shortcut_treeitem(TreeItem *p_parent, co
 		event_item->set_text(1, ie->as_text());
 		event_item->set_auto_translate_mode(1, AUTO_TRANSLATE_MODE_DISABLED);
 
-		event_item->add_button(1, get_editor_theme_icon(SNAME("Edit")), SHORTCUT_EDIT);
-		event_item->add_button(1, get_editor_theme_icon(SNAME("Close")), SHORTCUT_ERASE);
+		event_item->add_button(1, get_editor_theme_icon(SNAME("action_edit")), SHORTCUT_EDIT);
+		event_item->add_button(1, get_editor_theme_icon(SNAME("action_close")), SHORTCUT_ERASE);
 
 		event_item->set_custom_bg_color(0, get_theme_color(SNAME("dark_color_3"), EditorStringName(Editor)));
 		event_item->set_custom_bg_color(1, get_theme_color(SNAME("dark_color_3"), EditorStringName(Editor)));
@@ -1215,9 +1215,9 @@ void EditorSettingsPropertyWrapper::_remove_override() {
 
 void EditorSettingsPropertyWrapper::_notification(int p_what) {
 	if (override_container && p_what == NOTIFICATION_THEME_CHANGED) {
-		override_icon->set_texture(get_editor_theme_icon(SNAME("Hierarchy")));
-		goto_button->set_button_icon(get_editor_theme_icon(SNAME("MethodOverride")));
-		remove_button->set_button_icon(get_editor_theme_icon(SNAME("Close")));
+		override_icon->set_texture(get_editor_theme_icon(SNAME("gui_hierarchy")));
+		goto_button->set_button_icon(get_editor_theme_icon(SNAME("scripting_method_override")));
+		remove_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 	}
 }
 

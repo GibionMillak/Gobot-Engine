@@ -43,6 +43,7 @@
 #include "core/os/os.h"
 #include "core/string/translation_server.h"
 #include "editor/animation/animation_player_editor_plugin.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/docks/scene_tree_dock.h"
 #include "editor/editor_main_screen.h"
@@ -3592,7 +3593,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 				Node *focused_node = ObjectDB::get_instance<Node>(focused_node_id);
 				if (focused_node) {
 					follow_mode->set_text(vformat(TTR("Following %s"), focused_node->get_name()));
-					follow_mode->set_button_icon(get_editor_theme_icon(focused_node->get_class()));
+					follow_mode->set_button_icon(get_editor_theme_icon(editor_get_type_icon_name(focused_node->get_class())));
 					follow_mode->show();
 					if (follow_mode_uses_aabb) {
 						focus_aabb();
@@ -3884,9 +3885,9 @@ void Node3DEditorViewport::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			_update_centered_labels();
 
-			view_display_menu->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHlDarkBackground")));
-			preview_camera->set_button_icon(get_editor_theme_icon(SNAME("Camera3DDarkBackground")));
-			pilot_camera->set_button_icon(get_editor_theme_icon(SNAME("3D")));
+			view_display_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl_dark_background")));
+			preview_camera->set_button_icon(get_editor_theme_icon(SNAME("viewport_camera_3d_dark_background")));
+			pilot_camera->set_button_icon(get_editor_theme_icon(SNAME("node_3d")));
 			Control *gui_base = EditorNode::get_singleton()->get_gui_base();
 
 			const Ref<StyleBox> &information_3d_stylebox = gui_base->get_theme_stylebox(SNAME("Information3dViewport"), EditorStringName(EditorStyles));
@@ -4287,7 +4288,7 @@ void Node3DEditorViewport::_draw() {
 					draw_indicator_bar(
 							*surface,
 							1.0 - logscale_t,
-							get_editor_theme_icon(SNAME("ViewportSpeed")),
+							get_editor_theme_icon(SNAME("viewport_viewport_speed")),
 							get_theme_font("bold", EditorStringName(EditorFonts)),
 							get_theme_font_size(SceneStringName(font_size), SNAME("Label")),
 							vformat("%s m/s", String::num(freelook_speed).pad_decimals(precision)),
@@ -4309,7 +4310,7 @@ void Node3DEditorViewport::_draw() {
 					draw_indicator_bar(
 							*surface,
 							logscale_t,
-							get_editor_theme_icon(SNAME("ViewportZoom")),
+							get_editor_theme_icon(SNAME("viewport_viewport_zoom")),
 							get_theme_font("bold", EditorStringName(EditorFonts)),
 							get_theme_font_size(SceneStringName(font_size), SNAME("Label")),
 							vformat("%s m", String::num(cursor.distance).pad_decimals(precision)),
@@ -5707,7 +5708,7 @@ void Node3DEditorViewport::_create_preview_node(const Vector<String> &files) con
 		Ref<AudioStream> audio = res;
 		if (audio.is_valid()) {
 			Sprite3D *sprite = memnew(Sprite3D);
-			sprite->set_texture(get_editor_theme_icon(SNAME("Gizmo3DSamplePlayer")));
+			sprite->set_texture(get_editor_theme_icon(SNAME("viewport_gizmo_3d_sample_player")));
 			sprite->set_billboard_mode(StandardMaterial3D::BILLBOARD_ENABLED);
 			sprite->set_pixel_size(0.005);
 			preview_node->add_child(sprite);

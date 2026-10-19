@@ -30,6 +30,8 @@
 
 #include "editor_variant_type_selectors.h"
 
+#include "editor/builtin/assets/icons/editor_icons.h"
+
 struct CompareVariantTypeNames {
 	bool operator()(const String &p_lhs, const String &p_rhs) const {
 		// Variant type names should not be empty, but just in case.
@@ -53,7 +55,7 @@ void EditorVariantTypeOptionButton::_update_menu_icons() {
 	for (int i = 0; i < get_item_count(); i++) {
 		const Variant::Type type = Variant::Type(get_item_id(i));
 		const String &type_name = Variant::get_type_name(type);
-		set_item_icon(i, get_editor_theme_icon(type_name));
+		set_item_icon(i, get_editor_theme_icon(editor_get_type_icon_name(type_name)));
 	}
 }
 
@@ -136,7 +138,7 @@ void EditorVariantTypePopupMenu::_populate() {
 
 void EditorVariantTypePopupMenu::_update_menu_icons() {
 	if (remove_item) {
-		set_item_icon(get_item_index(Variant::VARIANT_MAX), get_editor_theme_icon(SNAME("Remove")));
+		set_item_icon(get_item_index(Variant::VARIANT_MAX), get_editor_theme_icon(SNAME("action_remove")));
 	}
 
 	for (int i = 0; i < get_item_count(); i++) {
@@ -149,7 +151,7 @@ void EditorVariantTypePopupMenu::_update_menu_icons() {
 
 		const Variant::Type type = Variant::Type(id);
 		const String &type_name = Variant::get_type_name(type);
-		set_item_icon(i, get_editor_theme_icon(type_name));
+		set_item_icon(i, get_editor_theme_icon(editor_get_type_icon_name(type_name)));
 	}
 }
 

@@ -928,14 +928,14 @@ void Path3DEditorPlugin::_restore_curve_points(const PackedVector3Array &p_point
 }
 
 void Path3DEditorPlugin::_update_theme() {
-	curve_edit->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("CurveEdit")));
-	curve_edit_curve->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("CurveCurve")));
-	curve_edit_tilt->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("CurveTilt")));
-	curve_create->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("CurveCreate")));
-	curve_del->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("CurveDelete")));
-	curve_closed->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("CurveClose")));
-	curve_clear_points->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("Clear")));
-	create_curve_button->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("Curve3D")));
+	curve_edit->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("node_control_curve_edit")));
+	curve_edit_curve->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_curve")));
+	curve_edit_tilt->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_tilt")));
+	curve_create->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_create")));
+	curve_del->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_delete")));
+	curve_closed->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_close")));
+	curve_clear_points->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_clear")));
+	create_curve_button->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("resource_curve_3d")));
 }
 
 void Path3DEditorPlugin::_update_toolbar() {
@@ -1311,10 +1311,10 @@ Path3DGizmoPlugin::Path3DGizmoPlugin() {
 	create_material("path_thin_material", Color(0.6, 0.6, 0.6));
 	create_material("path_tilt_material", path_tilt_color);
 	create_material("path_tilt_muted_material", path_tilt_color * 0.7);
-	create_handle_material("handles", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("EditorPathSmoothHandle"), EditorStringName(EditorIcons)));
-	create_handle_material("first_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("EditorPathSmoothHandle"), EditorStringName(EditorIcons)));
-	create_handle_material("last_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("EditorPathSmoothHandle"), EditorStringName(EditorIcons)));
-	create_handle_material("closed_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("EditorPathSmoothHandle"), EditorStringName(EditorIcons)));
-	create_handle_material("selected_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("EditorPathSmoothHandle"), EditorStringName(EditorIcons)));
-	create_handle_material("sec_handles", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("EditorCurveHandle"), EditorStringName(EditorIcons)));
+	create_handle_material("handles", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
+	create_handle_material("first_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
+	create_handle_material("last_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
+	create_handle_material("closed_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
+	create_handle_material("selected_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
+	create_handle_material("sec_handles", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_curve_handle"), EditorStringName(EditorIcons)));
 }

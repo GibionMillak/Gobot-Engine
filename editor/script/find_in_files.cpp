@@ -497,9 +497,9 @@ void FindInFilesSearchPanel::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			filters_label->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
-			match_case_checkbox->set_button_icon(get_editor_theme_icon(SNAME("MatchCase")));
-			whole_words_checkbox->set_button_icon(get_editor_theme_icon(SNAME("MatchWord")));
-			replace_all_button->set_button_icon(get_editor_theme_icon(SNAME("ReplaceText")));
+			match_case_checkbox->set_button_icon(get_editor_theme_icon(SNAME("gui_match_case")));
+			whole_words_checkbox->set_button_icon(get_editor_theme_icon(SNAME("gui_match_word")));
+			replace_all_button->set_button_icon(get_editor_theme_icon(SNAME("action_replace_text")));
 		} break;
 	}
 }
@@ -993,8 +993,8 @@ void FindInFilesResultsPanel::_notification(int p_what) {
 
 void FindInFilesResultsPanel::_on_result_found(const String &p_fpath, int p_line_number, int p_begin, int p_end, const String &p_text) {
 	TreeItem *file_item;
-	Ref<Texture2D> remove_texture = get_editor_theme_icon(SNAME("Close"));
-	Ref<Texture2D> replace_texture = get_editor_theme_icon(SNAME("ReplaceText"));
+	Ref<Texture2D> remove_texture = get_editor_theme_icon(SNAME("action_close"));
+	Ref<Texture2D> replace_texture = get_editor_theme_icon(SNAME("action_replace_text"));
 
 	HashMap<String, TreeItem *>::Iterator E = file_items.find(p_fpath);
 	if (!E) {
@@ -1089,13 +1089,13 @@ void FindInFilesResultsPanel::_on_result_found(const String &p_fpath, int p_line
 }
 
 void FindInFilesResultsPanel::_on_theme_changed() {
-	new_tab_button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+	new_tab_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 	results_display->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
 	results_display->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts)));
 
 	Color file_item_color = results_display->get_theme_color(SceneStringName(font_color)) * Color(1, 1, 1, 0.67);
-	Ref<Texture2D> remove_texture = get_editor_theme_icon(SNAME("Close"));
-	Ref<Texture2D> replace_texture = get_editor_theme_icon(SNAME("ReplaceText"));
+	Ref<Texture2D> remove_texture = get_editor_theme_icon(SNAME("action_close"));
+	Ref<Texture2D> replace_texture = get_editor_theme_icon(SNAME("action_replace_text"));
 
 	TreeItem *file_item = results_display->get_root()->get_first_child();
 	while (file_item) {
@@ -1524,7 +1524,7 @@ void FindInFilesContainer::_notification(int p_what) {
 			connect("closed", callable_mp(this, &FindInFilesContainer::_on_dock_closed));
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
-			new_tab_button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+			new_tab_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 		} break;
 	}
 }
@@ -1697,7 +1697,7 @@ void FindInFilesContainer::_bind_methods() {
 
 FindInFilesContainer::FindInFilesContainer() {
 	set_name(TTRC("Find in Files"));
-	set_icon_name("Search");
+	set_icon_name("action_search");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_search_results_bottom_panel", TTRC("Toggle Find in Files Bottom Panel")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(DOCK_LAYOUT_HORIZONTAL | DOCK_LAYOUT_FLOATING);

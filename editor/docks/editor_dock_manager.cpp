@@ -207,7 +207,7 @@ void EditorDockManager::update_docks_menu() {
 	docks_menu->clear();
 	docks_menu->reset_size();
 
-	const Ref<Texture2D> default_icon = docks_menu->get_editor_theme_icon(SNAME("Window"));
+	const Ref<Texture2D> default_icon = docks_menu->get_editor_theme_icon(SNAME("node_viewport_window"));
 	const Color closed_icon_color_mod = Color(1, 1, 1, 0.5);
 
 	bool global_menu = !bool(EDITOR_GET("interface/editor/appearance/use_embedded_menu")) && NativeMenu::get_singleton()->has_feature(NativeMenu::FEATURE_GLOBAL_MENU);
@@ -878,20 +878,20 @@ void DockContextPopup::_notification(int p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			if (make_float_button) {
-				make_float_button->set_button_icon(get_editor_theme_icon(SNAME("MakeFloating")));
+				make_float_button->set_button_icon(get_editor_theme_icon(SNAME("action_make_floating")));
 			}
 			if (is_layout_rtl()) {
-				tab_move_left_button->set_button_icon(get_editor_theme_icon(SNAME("Forward")));
-				tab_move_right_button->set_button_icon(get_editor_theme_icon(SNAME("Back")));
+				tab_move_left_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
+				tab_move_right_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
 				tab_move_left_button->set_tooltip_text(TTR("Move this dock right one tab."));
 				tab_move_right_button->set_tooltip_text(TTR("Move this dock left one tab."));
 			} else {
-				tab_move_left_button->set_button_icon(get_editor_theme_icon(SNAME("Back")));
-				tab_move_right_button->set_button_icon(get_editor_theme_icon(SNAME("Forward")));
+				tab_move_left_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
+				tab_move_right_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
 				tab_move_left_button->set_tooltip_text(TTR("Move this dock left one tab."));
 				tab_move_right_button->set_tooltip_text(TTR("Move this dock right one tab."));
 			}
-			close_button->set_button_icon(get_editor_theme_icon(SNAME("Close")));
+			close_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 		} break;
 	}
 }

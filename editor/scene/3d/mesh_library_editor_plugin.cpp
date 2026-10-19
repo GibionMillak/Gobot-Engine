@@ -659,8 +659,8 @@ void MeshLibraryEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			add_item->set_button_icon(get_editor_theme_icon(SNAME("Add")));
-			remove_item->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
+			add_item->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
+			remove_item->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
 		} break;
 	}
 }
@@ -673,7 +673,7 @@ void MeshLibraryEditor::_bind_methods() {
 
 MeshLibraryEditor::MeshLibraryEditor() {
 	set_name(TTRC("MeshLibrary"));
-	set_icon_name("MeshLibraryEditor");
+	set_icon_name("action_mesh_library_editor");
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_global(false);

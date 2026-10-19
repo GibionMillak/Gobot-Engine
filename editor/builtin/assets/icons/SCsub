@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+from misc.utility.scons_hints import *
+
+Import("env")
+
+import os
+from pathlib import Path
+
+import editor_icons_builders
+
+root = Path(Dir(".").abspath)
+repository_root = Path(Dir("#").abspath)
+icon_roots = [(str(root), "")]
+module_roots = [
+    (name, (Path(path) if os.path.isabs(path) else repository_root / path).resolve())
+    for name, path in env.module_list.items()
+]
+for path in sorted(env.module_icons_paths):
+    icon_root = (Path(path) if os.path.isabs(path) else repository_root / path).resolve()
+    candidates = [(name, module_root) for name, module_root in module_roots if icon_root.is_relative_to(module_root)]
+    if not candidates:
+        raise ValueError(f"Icon directory does not belong to an enabled module: {icon_root}")
+    module_name, module_root = max(candidates, key=lambda candidate: len(candidate[1].parts))
+    icon_roots.append((str(icon_root), "module_" + module_name + "_"))
+
+icon_sources = []
+icon_metadata_sources = []
+for icon_root, prefix in icon_roots:
+    root_path = Path(icon_root)
+    for path in sorted(root_path.rglob("*")):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(root_path)
+        if "not_in_use" in relative.parts:
+            continue
+        if prefix == "" and relative.parts[0] == "module" and relative.parts[1] not in env.module_list:
+            continue
+        if path.suffix == ".svg":
+            icon_sources.append(File(str(path)))
+        elif path.suffix == ".json":
+            icon_metadata_sources.append(File(str(path)))
+
+env_icons = env.Clone()
+env_icons["editor_icon_roots"] = icon_roots
+icon_header = env_icons.CommandNoCache(
+    "editor_icons.gen.h",
+    icon_sources + icon_metadata_sources + [env_icons.Value(icon_roots)],
+    env_icons.Run(editor_icons_builders.make_editor_icons_action),
+)
+
+icon_objects = []
+env_icons.add_source_files(icon_objects, "*.cpp")
+env_icons.Depends(icon_objects, icon_header)
+env.editor_sources.extend(icon_objects)

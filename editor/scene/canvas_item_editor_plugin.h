@@ -49,7 +49,6 @@ class HSplitContainer;
 class MenuButton;
 class PanelContainer;
 class RichTextLabel;
-class StyleBoxTexture;
 class Timer;
 class ViewPanner;
 class VScrollBar;
@@ -293,7 +292,6 @@ private:
 	Rect2 box_selection_rect;
 	CursorShape cursor_shape_override = CURSOR_ARROW;
 
-	Ref<StyleBoxTexture> select_sb;
 	Ref<Texture2D> select_handle;
 	Ref<Texture2D> anchor_handle;
 

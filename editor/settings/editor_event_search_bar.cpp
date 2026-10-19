@@ -75,7 +75,7 @@ Ref<InputEvent> EditorEventSearchBar::get_event() const {
 void EditorEventSearchBar::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			search_by_name->set_right_icon(get_editor_theme_icon(SNAME("Search")));
+			search_by_name->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 		} break;
 	}
 }

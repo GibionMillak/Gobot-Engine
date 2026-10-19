@@ -64,9 +64,9 @@ void ShaderFileEditor::_version_selected(int p_option) {
 
 		Ref<Texture2D> outcome_icon;
 		if (bytecode->get_stage_compile_error(RD::ShaderStage(i)) != String()) {
-			outcome_icon = get_editor_theme_icon(SNAME("ImportFail"));
+			outcome_icon = get_editor_theme_icon(SNAME("gui_import_fail"));
 		} else {
-			outcome_icon = get_editor_theme_icon(SNAME("ImportCheck"));
+			outcome_icon = get_editor_theme_icon(SNAME("gui_import_check"));
 		}
 		stages[i]->set_button_icon(outcome_icon);
 
@@ -152,9 +152,9 @@ void ShaderFileEditor::_update_options() {
 		}
 
 		if (failed) {
-			outcome_icon = get_editor_theme_icon(SNAME("ImportFail"));
+			outcome_icon = get_editor_theme_icon(SNAME("gui_import_fail"));
 		} else {
-			outcome_icon = get_editor_theme_icon(SNAME("ImportCheck"));
+			outcome_icon = get_editor_theme_icon(SNAME("gui_import_check"));
 		}
 
 		versions->add_item(version_title, outcome_icon);
@@ -246,7 +246,7 @@ ShaderFileEditor::ShaderFileEditor() {
 	singleton = this;
 
 	set_name(TTRC("ShaderFile"));
-	set_icon_name("RDShaderFile");
+	set_icon_name("resource_rd_shader_file");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_shader_file_bottom_panel", TTRC("Toggle ShaderFile Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);

@@ -789,7 +789,7 @@ void MeshInstance3DEditor::_create_outline_mesh() {
 void MeshInstance3DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			options->set_button_icon(get_editor_theme_icon(SNAME("MeshInstance3D")));
+			options->set_button_icon(get_editor_theme_icon(SNAME("node_3d_mesh_instance_3d")));
 		} break;
 	}
 }

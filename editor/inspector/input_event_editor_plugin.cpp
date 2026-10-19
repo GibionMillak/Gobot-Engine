@@ -126,7 +126,7 @@ InputEventConfigContainer::InputEventConfigContainer() {
 	input_event_text->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	add_child(input_event_text);
 
-	EditorInspectorActionButton *open_config_button = memnew(EditorInspectorActionButton(TTRC("Configure"), SNAME("Edit")));
+	EditorInspectorActionButton *open_config_button = memnew(EditorInspectorActionButton(TTRC("Configure"), SNAME("action_edit")));
 	open_config_button->connect(SceneStringName(pressed), callable_mp(this, &InputEventConfigContainer::_configure_pressed));
 	add_child(open_config_button);
 

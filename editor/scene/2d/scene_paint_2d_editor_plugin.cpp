@@ -739,13 +739,13 @@ void ScenePaint2DEditor::_paint_mode_changed(int p_mode) {
 void ScenePaint2DEditor::_update_paint_mode() {
 	switch (paint_mode) {
 		case PAINT_MODE_FREE:
-			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("SnapDisable")));
+			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_disable")));
 			break;
 		case PAINT_MODE_SNAP_GRID:
-			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("SnapGrid")));
+			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
 			break;
 		case PAINT_MODE_SNAP_GRID_CELL_CENTER:
-			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("Snap")));
+			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap")));
 			break;
 	}
 	advanced_settings_popup->set_item_disabled(MENU_ITEM_ALLOW_OVERLAPPING, paint_mode == PAINT_MODE_FREE);
@@ -785,18 +785,18 @@ void ScenePaint2DEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			pin_node_button->set_button_icon(get_editor_theme_icon(SNAME("Pin")));
-			scene_picker_button->set_button_icon(get_editor_theme_icon(SNAME("ColorPick")));
-			edit_properties_button->set_button_icon(get_editor_theme_icon(SNAME("Tools")));
-			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("SnapDisable")));
+			pin_node_button->set_button_icon(get_editor_theme_icon(SNAME("action_pin")));
+			scene_picker_button->set_button_icon(get_editor_theme_icon(SNAME("action_color_pick")));
+			edit_properties_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tools")));
+			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_disable")));
 			advanced_settings_popup->add_theme_style_override(SceneStringName(panel),
 					get_theme_stylebox(SceneStringName(panel), SNAME("Dialog")));
 			advanced_settings_popup->set_item_icon(MENU_ITEM_FREE_PAINT_MODE,
-					get_editor_theme_icon(SNAME("SnapDisable")));
+					get_editor_theme_icon(SNAME("action_snap_disable")));
 			advanced_settings_popup->set_item_icon(MENU_ITEM_SNAP_TO_GRID_PAINT_MODE,
-					get_editor_theme_icon(SNAME("SnapGrid")));
+					get_editor_theme_icon(SNAME("action_snap_grid")));
 			advanced_settings_popup->set_item_icon(MENU_ITEM_SNAP_TO_GRID_CELL_CENTER_PAINT_MODE,
-					get_editor_theme_icon(SNAME("Snap")));
+					get_editor_theme_icon(SNAME("action_snap")));
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {

@@ -37,10 +37,10 @@
 #include "core/os/os.h"
 #include "core/version.h"
 #include "editor/editor_node.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/settings/editor_settings.h"
-#include "editor/themes/editor_icons.h"
 #include "editor/themes/editor_scale.h"
 #include "editor/version_control/editor_vcs_interface.h"
 #include "scene/gui/check_box.h"
@@ -66,15 +66,15 @@ void ProjectDialog::_set_message(const String &p_msg, MessageType p_type, InputT
 	switch (p_type) {
 		case MESSAGE_ERROR: {
 			msg->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
-			new_icon = get_editor_theme_icon(SNAME("StatusError"));
+			new_icon = get_editor_theme_icon(SNAME("status_status_error"));
 		} break;
 		case MESSAGE_WARNING: {
 			msg->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
-			new_icon = get_editor_theme_icon(SNAME("StatusWarning"));
+			new_icon = get_editor_theme_icon(SNAME("status_status_warning"));
 		} break;
 		case MESSAGE_SUCCESS: {
 			msg->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("success_color"), EditorStringName(Editor)));
-			new_icon = get_editor_theme_icon(SNAME("StatusSuccess"));
+			new_icon = get_editor_theme_icon(SNAME("status_status_success"));
 		} break;
 	}
 
@@ -991,9 +991,9 @@ void ProjectDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			create_dir->set_button_icon(get_editor_theme_icon(SNAME("FolderCreate")));
-			project_browse->set_button_icon(get_editor_theme_icon(SNAME("FolderBrowse")));
-			install_browse->set_button_icon(get_editor_theme_icon(SNAME("FolderBrowse")));
+			create_dir->set_button_icon(get_editor_theme_icon(SNAME("folder_folder_create")));
+			project_browse->set_button_icon(get_editor_theme_icon(SNAME("folder_folder_browse")));
+			install_browse->set_button_icon(get_editor_theme_icon(SNAME("folder_folder_browse")));
 		} break;
 		case NOTIFICATION_READY: {
 			fdialog_project = memnew(EditorFileDialog);

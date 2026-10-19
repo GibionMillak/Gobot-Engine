@@ -475,7 +475,7 @@ void EditorHelp::_add_type_icon(const String &p_type, int p_size, const String &
 #define DEPRECATED_DOC_TAG \
 	class_desc->push_font(theme_cache.doc_bold_font); \
 	class_desc->push_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor))); \
-	Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("StatusError")); \
+	Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("status_status_error")); \
 	class_desc->add_image(error_icon, error_icon->get_width(), error_icon->get_height()); \
 	class_desc->add_text(String::chr(160) + TTR("Deprecated")); \
 	class_desc->pop(); \
@@ -484,7 +484,7 @@ void EditorHelp::_add_type_icon(const String &p_type, int p_size, const String &
 #define EXPERIMENTAL_DOC_TAG \
 	class_desc->push_font(theme_cache.doc_bold_font); \
 	class_desc->push_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor))); \
-	Ref<Texture2D> warning_icon = get_editor_theme_icon(SNAME("NodeWarning")); \
+	Ref<Texture2D> warning_icon = get_editor_theme_icon(SNAME("status_node_warning")); \
 	class_desc->add_image(warning_icon, warning_icon->get_width(), warning_icon->get_height()); \
 	class_desc->add_text(String::chr(160) + TTR("Experimental")); \
 	class_desc->pop(); \
@@ -493,7 +493,7 @@ void EditorHelp::_add_type_icon(const String &p_type, int p_size, const String &
 // Macros for displaying the deprecated/experimental info in class member descriptions.
 
 #define DEPRECATED_DOC_MSG(m_message, m_default_message) \
-	Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("StatusError")); \
+	Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("status_status_error")); \
 	class_desc->add_image(error_icon, error_icon->get_width(), error_icon->get_height()); \
 	class_desc->add_text(nbsp); \
 	class_desc->push_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor))); \
@@ -509,7 +509,7 @@ void EditorHelp::_add_type_icon(const String &p_type, int p_size, const String &
 	}
 
 #define EXPERIMENTAL_DOC_MSG(m_message, m_default_message) \
-	Ref<Texture2D> warning_icon = get_editor_theme_icon(SNAME("NodeWarning")); \
+	Ref<Texture2D> warning_icon = get_editor_theme_icon(SNAME("status_node_warning")); \
 	class_desc->add_image(warning_icon, warning_icon->get_width(), warning_icon->get_height()); \
 	class_desc->add_text(nbsp); \
 	class_desc->push_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor))); \
@@ -926,7 +926,7 @@ void EditorHelp::_update_method_descriptions(const DocData::ClassDoc &p_classdoc
 					message = TTR(messages_by_type[p_method_type]).replace("$url", CONTRIBUTE_URL).replace("$color", link_color_text);
 				}
 
-				class_desc->add_image(get_editor_theme_icon(SNAME("Error")));
+				class_desc->add_image(get_editor_theme_icon(SNAME("status_error")));
 				class_desc->add_text(" ");
 				class_desc->push_color(theme_cache.comment_color);
 				class_desc->append_text(message);
@@ -997,7 +997,7 @@ void EditorHelp::_update_doc() {
 
 		String inherits = cd.inherits;
 		while (!inherits.is_empty()) {
-			_add_type_icon(inherits, theme_cache.doc_font_size, "Object");
+			_add_type_icon(inherits, theme_cache.doc_font_size, "variant_object");
 			class_desc->add_text(nbsp); // Otherwise icon borrows hyperlink from `_add_type()`.
 			_add_type(inherits);
 
@@ -1026,7 +1026,7 @@ void EditorHelp::_update_doc() {
 				class_desc->add_text(" , ");
 			}
 
-			_add_type_icon(itr->get(), theme_cache.doc_font_size, "Object");
+			_add_type_icon(itr->get(), theme_cache.doc_font_size, "variant_object");
 			class_desc->add_text(nbsp); // Otherwise icon borrows hyperlink from `_add_type()`.
 			_add_type(itr->get());
 		}
@@ -1076,7 +1076,7 @@ void EditorHelp::_update_doc() {
 
 		_push_normal_font();
 
-		class_desc->add_image(get_editor_theme_icon(SNAME("Error")));
+		class_desc->add_image(get_editor_theme_icon(SNAME("status_error")));
 		class_desc->add_text(" ");
 
 		class_desc->push_color(theme_cache.comment_color);
@@ -1470,7 +1470,7 @@ void EditorHelp::_update_doc() {
 				has_prev_text = true;
 				_add_text(descr);
 			} else if (!has_prev_text) {
-				class_desc->add_image(get_editor_theme_icon(SNAME("Error")));
+				class_desc->add_image(get_editor_theme_icon(SNAME("status_error")));
 				class_desc->add_text(" ");
 				class_desc->push_color(theme_cache.comment_color);
 				if (cd.is_script_doc) {
@@ -1606,7 +1606,7 @@ void EditorHelp::_update_doc() {
 				has_prev_text = true;
 				_add_text(descr);
 			} else if (!has_prev_text) {
-				class_desc->add_image(get_editor_theme_icon(SNAME("Error")));
+				class_desc->add_image(get_editor_theme_icon(SNAME("status_error")));
 				class_desc->add_text(" ");
 				class_desc->push_color(theme_cache.comment_color);
 				if (cd.is_script_doc) {
@@ -2043,7 +2043,7 @@ void EditorHelp::_update_doc() {
 			if (!descr.is_empty()) {
 				_add_text(descr);
 			} else {
-				class_desc->add_image(get_editor_theme_icon(SNAME("Error")));
+				class_desc->add_image(get_editor_theme_icon(SNAME("status_error")));
 				class_desc->add_text(" ");
 				class_desc->push_color(theme_cache.comment_color);
 				if (cd.is_script_doc) {
@@ -2247,7 +2247,7 @@ void EditorHelp::_update_doc() {
 				has_prev_text = true;
 				_add_text(descr);
 			} else if (!has_prev_text) {
-				class_desc->add_image(get_editor_theme_icon(SNAME("Error")));
+				class_desc->add_image(get_editor_theme_icon(SNAME("status_error")));
 				class_desc->add_text(" ");
 				class_desc->push_color(theme_cache.comment_color);
 				if (cd.is_script_doc) {
@@ -2449,10 +2449,10 @@ static void _add_text_to_rt(const String &p_bbcode, RichTextLabel *p_rt, const C
 	const Color important_color = p_owner_node->get_theme_color(SNAME("important_color"), SNAME("EditorHelp"));
 	const Color tip_color = p_owner_node->get_theme_color(SNAME("tip_color"), SNAME("EditorHelp"));
 
-	const Ref<Texture2D> note_icon = p_owner_node->get_editor_theme_icon(SNAME("NodeInfo"));
-	const Ref<Texture2D> warning_icon = p_owner_node->get_editor_theme_icon(SNAME("NodeWarning"));
-	const Ref<Texture2D> important_icon = p_owner_node->get_editor_theme_icon(SNAME("StatusWarning"));
-	const Ref<Texture2D> tip_icon = p_owner_node->get_editor_theme_icon(SNAME("StatusSuccess"));
+	const Ref<Texture2D> note_icon = p_owner_node->get_editor_theme_icon(SNAME("status_node_info"));
+	const Ref<Texture2D> warning_icon = p_owner_node->get_editor_theme_icon(SNAME("status_node_warning"));
+	const Ref<Texture2D> important_icon = p_owner_node->get_editor_theme_icon(SNAME("status_status_warning"));
+	const Ref<Texture2D> tip_icon = p_owner_node->get_editor_theme_icon(SNAME("status_status_success"));
 
 	const Color link_color = p_owner_node->get_theme_color(SNAME("link_color"), SNAME("EditorHelp"));
 	const Color link_method_color = p_owner_node->get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
@@ -2513,7 +2513,7 @@ static void _add_text_to_rt(const String &p_bbcode, RichTextLabel *p_rt, const C
 				p_rt->pop(); // meta
 				p_rt->pop(); // color
 				p_rt->add_text(nbsp);
-				p_rt->add_image(p_owner_node->get_editor_theme_icon(SNAME("ExternalLink")), 0, doc_font_size, link_color);
+				p_rt->add_image(p_owner_node->get_editor_theme_icon(SNAME("navigation_external_link")), 0, doc_font_size, link_color);
 			} else {
 				p_rt->pop();
 			}
@@ -2712,7 +2712,7 @@ static void _add_text_to_rt(const String &p_bbcode, RichTextLabel *p_rt, const C
 			p_rt->set_cell_padding(Rect2(0, 10 * EDSCALE, 0, 10 * EDSCALE));
 			p_rt->set_cell_size_override(Vector2(1, 1), Vector2(10, 10) * EDSCALE);
 			p_rt->push_meta("^" + codeblock_copy_text, RichTextLabel::META_UNDERLINE_ON_HOVER);
-			p_rt->add_image(p_owner_node->get_editor_theme_icon(SNAME("Copy")), 24 * EDSCALE, 24 * EDSCALE, Color(link_property_color, 0.5), INLINE_ALIGNMENT_BOTTOM_TO, Rect2(), Variant(), false, TTR("Click to copy."));
+			p_rt->add_image(p_owner_node->get_editor_theme_icon(SNAME("action_copy")), 24 * EDSCALE, 24 * EDSCALE, Color(link_property_color, 0.5), INLINE_ALIGNMENT_BOTTOM_TO, Rect2(), Variant(), false, TTR("Click to copy."));
 			p_rt->pop(); // meta
 			p_rt->pop(); // cell
 
@@ -4043,7 +4043,7 @@ void EditorHelpBit::_update_labels() {
 	if (!help_data.deprecated_message.is_empty()) {
 		has_prev_text = true;
 
-		Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("StatusError"));
+		Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("status_status_error"));
 		content->add_image(error_icon, error_icon->get_width(), error_icon->get_height());
 		content->add_text(nbsp);
 		content->push_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
@@ -4061,7 +4061,7 @@ void EditorHelpBit::_update_labels() {
 		}
 		has_prev_text = true;
 
-		Ref<Texture2D> warning_icon = get_editor_theme_icon(SNAME("NodeWarning"));
+		Ref<Texture2D> warning_icon = get_editor_theme_icon(SNAME("status_node_warning"));
 		content->add_image(warning_icon, warning_icon->get_width(), warning_icon->get_height());
 		content->add_text(nbsp);
 		content->push_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
@@ -4094,7 +4094,7 @@ void EditorHelpBit::_update_labels() {
 		const bool is_valid = is_dir || EditorFileSystem::get_singleton()->get_valid_extensions().has(ext);
 		if (!is_dir && is_valid) {
 			content->push_meta("open-res:" + help_data.resource_path, RichTextLabel::META_UNDERLINE_ON_HOVER);
-			content->add_image(get_editor_theme_icon(SNAME("Load")));
+			content->add_image(get_editor_theme_icon(SNAME("action_load")));
 			content->add_text(nbsp + TTR("Open"));
 			content->pop(); // meta
 			content->add_newline();
@@ -4102,12 +4102,12 @@ void EditorHelpBit::_update_labels() {
 
 		if (is_valid) {
 			content->push_meta("show:" + help_data.resource_path, RichTextLabel::META_UNDERLINE_ON_HOVER);
-			content->add_image(get_editor_theme_icon(SNAME("Filesystem")));
+			content->add_image(get_editor_theme_icon(SNAME("gui_filesystem")));
 			content->add_text(nbsp + TTR("Show in FileSystem"));
 			content->pop(); // meta
 		} else {
 			content->push_meta("open-file:" + help_data.resource_path, RichTextLabel::META_UNDERLINE_ON_HOVER);
-			content->add_image(get_editor_theme_icon(SNAME("Filesystem")));
+			content->add_image(get_editor_theme_icon(SNAME("gui_filesystem")));
 			content->add_text(nbsp + TTR("Open in File Manager"));
 			content->pop(); // meta
 		}
@@ -4963,9 +4963,9 @@ void FindBar::popup_search() {
 void FindBar::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			find_prev->set_button_icon(get_editor_theme_icon(SNAME("MoveUp")));
-			find_next->set_button_icon(get_editor_theme_icon(SNAME("MoveDown")));
-			hide_button->set_button_icon(get_editor_theme_icon(SNAME("Close")));
+			find_prev->set_button_icon(get_editor_theme_icon(SNAME("action_move_up")));
+			find_next->set_button_icon(get_editor_theme_icon(SNAME("action_move_down")));
+			hide_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 			matches_label->add_theme_color_override(SceneStringName(font_color), results_count > 0 ? get_theme_color(SceneStringName(font_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 		} break;
 

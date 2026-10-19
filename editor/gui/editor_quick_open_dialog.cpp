@@ -37,6 +37,7 @@
 #include "core/os/os.h"
 #include "core/string/fuzzy_search.h"
 #include "core/templates/fixed_vector.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/docks/filesystem_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -528,7 +529,7 @@ void QuickOpenResultContainer::init(const Vector<StringName> &p_base_types) {
 
 	if (first_open && history_file->load(_get_cache_file_path()) == OK) {
 		// Load history when opening for the first time.
-		file_type_icons.insert(SNAME("__default_icon"), get_editor_theme_icon(SNAME("Object")));
+		file_type_icons.insert(SNAME("__default_icon"), get_editor_theme_icon(SNAME("variant_object")));
 
 		Vector<String> history_keys = history_file->get_section_keys("selected_history");
 		for (const String &type : history_keys) {
@@ -624,7 +625,7 @@ void QuickOpenResultContainer::_sort_uids(int p_max_results) {
 
 void QuickOpenResultContainer::_create_initial_results() {
 	file_type_icons.clear();
-	file_type_icons.insert(SNAME("__default_icon"), get_editor_theme_icon(SNAME("Object")));
+	file_type_icons.insert(SNAME("__default_icon"), get_editor_theme_icon(SNAME("variant_object")));
 	uids.clear();
 	filetypes.clear();
 	history_set.clear();
@@ -745,8 +746,8 @@ void QuickOpenResultContainer::_add_candidate(QuickOpenResultCandidate &p_candid
 		p_candidate.thumbnail = item.preview;
 	} else if (file_type_icons.has(actual_type)) {
 		p_candidate.thumbnail = *file_type_icons.getptr(actual_type);
-	} else if (has_theme_icon(actual_type, EditorStringName(EditorIcons))) {
-		p_candidate.thumbnail = get_editor_theme_icon(actual_type);
+	} else if (has_theme_icon(editor_get_type_icon_name(actual_type), EditorStringName(EditorIcons))) {
+		p_candidate.thumbnail = get_editor_theme_icon(editor_get_type_icon_name(actual_type));
 		file_type_icons.insert(actual_type, p_candidate.thumbnail);
 	} else {
 		p_candidate.thumbnail = *file_type_icons.getptr(SNAME("__default_icon"));
@@ -1052,10 +1053,10 @@ void QuickOpenResultContainer::_set_display_mode(QuickOpenDisplayMode p_display_
 	_update_result_items(num_visible_results, selection_index);
 
 	if (content_display_mode == QuickOpenDisplayMode::LIST) {
-		display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("FileThumbnail")));
+		display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("file_file_thumbnail")));
 		display_mode_toggle->set_tooltip_text(TTR("Grid view"));
 	} else {
-		display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("FileList")));
+		display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("gui_file_list")));
 		display_mode_toggle->set_tooltip_text(TTR("List view"));
 	}
 }
@@ -1169,17 +1170,17 @@ void QuickOpenResultContainer::_notification(int p_what) {
 			file_details_path->add_theme_color_override(SceneStringName(font_color), text_color);
 			no_results_label->add_theme_color_override(SceneStringName(font_color), text_color);
 
-			file_context_menu->set_item_icon(FILE_SHOW_IN_FILESYSTEM, get_editor_theme_icon(SNAME("ShowInFileSystem")));
-			file_context_menu->set_item_icon(FILE_SHOW_IN_FILE_MANAGER, get_editor_theme_icon(SNAME("Filesystem")));
+			file_context_menu->set_item_icon(FILE_SHOW_IN_FILESYSTEM, get_editor_theme_icon(SNAME("gui_show_in_file_system")));
+			file_context_menu->set_item_icon(FILE_SHOW_IN_FILE_MANAGER, get_editor_theme_icon(SNAME("gui_filesystem")));
 
 			Ref<StyleBox> tree_style = get_theme_stylebox(SceneStringName(panel), SNAME("Tree"));
 			no_results_container->add_theme_style_override(SceneStringName(panel), tree_style);
 			scroll_container->add_theme_style_override(SceneStringName(panel), tree_style);
 
 			if (content_display_mode == QuickOpenDisplayMode::LIST) {
-				display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("FileThumbnail")));
+				display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("file_file_thumbnail")));
 			} else {
-				display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("FileList")));
+				display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("gui_file_list")));
 			}
 		} break;
 	}

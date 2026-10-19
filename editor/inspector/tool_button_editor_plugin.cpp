@@ -77,7 +77,7 @@ bool EditorInspectorToolButtonPlugin::parse_property(Object *p_object, const Var
 
 	const PackedStringArray splits = p_hint_text.rsplit(",", true, 1);
 	const String &hint_text = splits[0]; // Safe since `splits` cannot be empty.
-	const String &hint_icon = splits.size() > 1 ? splits[1] : "Callable";
+	const String &hint_icon = splits.size() > 1 ? splits[1] : "variant_callable";
 
 	EditorInspectorActionButton *action_button = memnew(EditorInspectorActionButton(hint_text, hint_icon));
 	action_button->set_auto_translate_mode(Node::AUTO_TRANSLATE_MODE_DISABLED);

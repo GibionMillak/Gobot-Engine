@@ -161,78 +161,78 @@ void EditorColorMap::create() {
 	add_conversion_color_pair("#cf68ea", "#c050dd"); // Functions and expressions
 
 	// These icons should not be converted.
-	add_conversion_exception("EditorPivot");
-	add_conversion_exception("EditorHandle");
-	add_conversion_exception("EditorHandleDisabled");
-	add_conversion_exception("EditorHandleAdd");
-	add_conversion_exception("EditorCurveHandle");
-	add_conversion_exception("EditorPathSharpHandle");
-	add_conversion_exception("EditorPathSmoothHandle");
-	add_conversion_exception("EditorBoneHandle");
-	add_conversion_exception("Editor3DHandle");
-	add_conversion_exception("Godot");
-	add_conversion_exception("Sky");
-	add_conversion_exception("EditorControlAnchor");
-	add_conversion_exception("ProjectThumbnailDefault");
-	add_conversion_exception("ProjectThumbnailLoading");
-	add_conversion_exception("ProjectThumbnailMissing");
-	add_conversion_exception("ZoomMore");
-	add_conversion_exception("ZoomLess");
-	add_conversion_exception("ZoomReset");
-	add_conversion_exception("LockViewport");
-	add_conversion_exception("GroupViewport");
-	add_conversion_exception("StatusSuccess");
-	add_conversion_exception("OverbrightIndicator");
-	add_conversion_exception("MaterialPreviewCube");
-	add_conversion_exception("MaterialPreviewSphere");
-	add_conversion_exception("MaterialPreviewQuad");
+	add_conversion_exception("viewport_editor_pivot");
+	add_conversion_exception("viewport_editor_handle");
+	add_conversion_exception("viewport_editor_handle_disabled");
+	add_conversion_exception("viewport_editor_handle_add");
+	add_conversion_exception("viewport_editor_curve_handle");
+	add_conversion_exception("viewport_editor_path_sharp_handle");
+	add_conversion_exception("viewport_editor_path_smooth_handle");
+	add_conversion_exception("viewport_editor_bone_handle");
+	add_conversion_exception("viewport_editor_3d_handle");
+	add_conversion_exception("branding_godot");
+	add_conversion_exception("resource_sky");
+	add_conversion_exception("viewport_editor_control_anchor");
+	add_conversion_exception("gui_project_thumbnail_default");
+	add_conversion_exception("gui_project_thumbnail_loading");
+	add_conversion_exception("gui_project_thumbnail_missing");
+	add_conversion_exception("navigation_zoom_more");
+	add_conversion_exception("navigation_zoom_less");
+	add_conversion_exception("navigation_zoom_reset");
+	add_conversion_exception("viewport_lock_viewport");
+	add_conversion_exception("viewport_group_viewport");
+	add_conversion_exception("status_status_success");
+	add_conversion_exception("viewport_overbright_indicator");
+	add_conversion_exception("viewport_material_preview_cube");
+	add_conversion_exception("viewport_material_preview_sphere");
+	add_conversion_exception("viewport_material_preview_quad");
 
 	// 3D editor icons (always on a dark background, even in light theme).
-	add_conversion_exception("Camera3DDarkBackground");
-	add_conversion_exception("GuiTabMenuHlDarkBackground");
-	add_conversion_exception("ViewportSpeed");
-	add_conversion_exception("ViewportZoom");
+	add_conversion_exception("viewport_camera_3d_dark_background");
+	add_conversion_exception("gui_gui_tab_menu_hl_dark_background");
+	add_conversion_exception("viewport_viewport_speed");
+	add_conversion_exception("viewport_viewport_zoom");
 
-	add_conversion_exception("MaterialPreviewLight1");
-	add_conversion_exception("MaterialPreviewLight2");
+	add_conversion_exception("viewport_material_preview_light1");
+	add_conversion_exception("viewport_material_preview_light2");
 
 	// Gizmo icons displayed in the 3D editor.
-	add_conversion_exception("Gizmo3DSamplePlayer");
-	add_conversion_exception("GizmoAreaLight");
-	add_conversion_exception("GizmoAudioListener3D");
-	add_conversion_exception("GizmoCamera3D");
-	add_conversion_exception("GizmoCPUParticles3D");
-	add_conversion_exception("GizmoDecal");
-	add_conversion_exception("GizmoDirectionalLight");
-	add_conversion_exception("GizmoFogVolume");
-	add_conversion_exception("GizmoGPUParticles3D");
-	add_conversion_exception("GizmoLight");
-	add_conversion_exception("GizmoLightmapGI");
-	add_conversion_exception("GizmoLightmapProbe");
-	add_conversion_exception("GizmoReflectionProbe");
-	add_conversion_exception("GizmoSpotLight");
-	add_conversion_exception("GizmoVoxelGI");
+	add_conversion_exception("viewport_gizmo_3d_sample_player");
+	add_conversion_exception("viewport_gizmo_area_light");
+	add_conversion_exception("viewport_gizmo_audio_listener_3d");
+	add_conversion_exception("viewport_gizmo_camera_3d");
+	add_conversion_exception("viewport_gizmo_cpu_particles_3d");
+	add_conversion_exception("viewport_gizmo_decal");
+	add_conversion_exception("viewport_gizmo_directional_light");
+	add_conversion_exception("viewport_gizmo_fog_volume");
+	add_conversion_exception("viewport_gizmo_gpu_particles_3d");
+	add_conversion_exception("viewport_gizmo_light");
+	add_conversion_exception("viewport_gizmo_lightmap_gi");
+	add_conversion_exception("viewport_gizmo_lightmap_probe");
+	add_conversion_exception("viewport_gizmo_reflection_probe");
+	add_conversion_exception("viewport_gizmo_spot_light");
+	add_conversion_exception("viewport_gizmo_voxel_gi");
 
 	// GUI
-	add_conversion_exception("GuiChecked");
-	add_conversion_exception("GuiRadioChecked");
-	add_conversion_exception("GuiIndeterminate");
+	add_conversion_exception("gui_gui_checked");
+	add_conversion_exception("gui_gui_radio_checked");
+	add_conversion_exception("gui_gui_indeterminate");
 	add_conversion_exception("GuiCloseCustomizable");
-	add_conversion_exception("GuiGraphNodePort");
-	add_conversion_exception("GuiResizer");
-	add_conversion_exception("GuiMiniCheckerboard");
-	add_conversion_exception("PickerCursorBg");
-	add_conversion_exception("CenterView");
+	add_conversion_exception("gui_gui_graph_node_port");
+	add_conversion_exception("gui_gui_resizer");
+	add_conversion_exception("gui_gui_mini_checkerboard");
+	add_conversion_exception("gui_picker_cursor_bg");
+	add_conversion_exception("navigation_center_view");
 
 	/// Code Editor.
-	add_conversion_exception("GuiTab");
-	add_conversion_exception("GuiSpace");
-	add_conversion_exception("CodeFoldedRightArrow");
-	add_conversion_exception("CodeFoldDownArrow");
-	add_conversion_exception("CodeRegionFoldedRightArrow");
-	add_conversion_exception("CodeRegionFoldDownArrow");
-	add_conversion_exception("TextEditorPlay");
-	add_conversion_exception("Breakpoint");
+	add_conversion_exception("gui_gui_tab");
+	add_conversion_exception("gui_gui_space");
+	add_conversion_exception("scripting_code_folded_right_arrow");
+	add_conversion_exception("scripting_code_fold_down_arrow");
+	add_conversion_exception("scripting_code_region_folded_right_arrow");
+	add_conversion_exception("scripting_code_region_fold_down_arrow");
+	add_conversion_exception("scripting_text_editor_play");
+	add_conversion_exception("scripting_breakpoint");
 }
 
 void EditorColorMap::finish() {

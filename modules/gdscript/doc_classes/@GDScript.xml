@@ -662,7 +662,7 @@
 			<param index="1" name="icon" type="String" default="&quot;&quot;" />
 			<description>
 				Export a [Callable] property as a clickable button with the label [param text]. When the button is pressed, the callable is called.
-				If [param icon] is specified, it is used to fetch an icon for the button via [method Control.get_theme_icon], from the [code]"EditorIcons"[/code] theme type. If [param icon] is omitted, the default [code]"Callable"[/code] icon is used instead.
+				If [param icon] is specified, it is used to fetch an icon for the button via [method Control.get_theme_icon], from the [code]"EditorIcons"[/code] theme type. If [param icon] is omitted, the default [code]"variant_callable"[/code] icon is used instead.
 				Consider using the [EditorUndoRedoManager] to allow the action to be reverted safely.
 				See also [constant PROPERTY_HINT_TOOL_BUTTON].
 				[codeblock]
@@ -670,7 +670,7 @@
 				extends Sprite2D
 
 				@export_tool_button("Hello") var hello_action = hello
-				@export_tool_button("Randomize the color!", "ColorRect")
+				@export_tool_button("Randomize the color!", "node_control_color_rect")
 				var randomize_color_action = randomize_color
 
 				func hello():

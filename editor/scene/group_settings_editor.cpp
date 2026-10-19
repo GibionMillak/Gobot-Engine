@@ -50,7 +50,7 @@ void GroupSettingsEditor::_notification(int p_what) {
 			update_groups();
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
-			add_button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
+			add_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 		} break;
 	}
 }
@@ -315,7 +315,7 @@ void GroupSettingsEditor::update_groups() {
 
 		item->set_text(1, groups_cache[E]);
 		item->set_editable(1, true);
-		item->add_button(2, get_editor_theme_icon(SNAME("Remove")));
+		item->add_button(2, get_editor_theme_icon(SNAME("action_remove")));
 		item->set_selectable(2, false);
 	}
 

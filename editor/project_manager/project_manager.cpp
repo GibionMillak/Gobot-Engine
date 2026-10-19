@@ -157,15 +157,15 @@ void ProjectManager::_notification(int p_what) {
 
 Ref<Texture2D> ProjectManager::_file_dialog_get_icon(const String &p_path) {
 	if (p_path.has_extension("godot")) {
-		return singleton->icon_type_cache["GodotMonochrome"];
+		return singleton->icon_type_cache["branding_godot_monochrome"];
 	}
 
-	return singleton->icon_type_cache["Object"];
+	return singleton->icon_type_cache["variant_object"];
 }
 
 Ref<Texture2D> ProjectManager::_file_dialog_get_thumbnail(const String &p_path) {
 	if (p_path.has_extension("godot")) {
-		return singleton->icon_type_cache["GodotFile"];
+		return singleton->icon_type_cache["branding_godot_file"];
 	}
 
 	return Ref<Texture2D>();
@@ -264,34 +264,34 @@ void ProjectManager::_update_theme(bool p_skip_creation) {
 		background_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("Background", EditorStringName(EditorStyles)));
 		_project_list_pc->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("panel_container", "ProjectManager"));
 
-		title_bar_logo->set_button_icon(get_editor_theme_icon("TitleBarLogo"));
+		title_bar_logo->set_button_icon(get_editor_theme_icon("branding_title_bar_logo"));
 
 		// Project list.
 		{
 			loading_label->add_theme_font_override(SceneStringName(font), get_theme_font("bold", EditorStringName(EditorFonts)));
 			project_list_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("project_list", "ProjectManager"));
 
-			empty_list_create_project->set_button_icon(get_editor_theme_icon("Add"));
-			empty_list_import_project->set_button_icon(get_editor_theme_icon("Load"));
+			empty_list_create_project->set_button_icon(get_editor_theme_icon("action_add"));
+			empty_list_import_project->set_button_icon(get_editor_theme_icon("action_load"));
 
 			// Top bar.
-			search_box->set_right_icon(get_editor_theme_icon("Search"));
-			quick_settings_button->set_button_icon(get_editor_theme_icon("Tools"));
+			search_box->set_right_icon(get_editor_theme_icon("action_search"));
+			quick_settings_button->set_button_icon(get_editor_theme_icon("viewport_tools"));
 
 			// Sidebar.
-			create_btn->set_button_icon(get_editor_theme_icon("Add"));
-			import_btn->set_button_icon(get_editor_theme_icon("Load"));
-			scan_btn->set_button_icon(get_editor_theme_icon("Search"));
-			open_btn->set_button_icon(get_editor_theme_icon("Edit"));
-			open_options_btn->set_button_icon(get_editor_theme_icon("Collapse"));
-			run_btn->set_button_icon(get_editor_theme_icon("Play"));
-			rename_btn->set_button_icon(get_editor_theme_icon("Rename"));
-			duplicate_btn->set_button_icon(get_editor_theme_icon("Duplicate"));
-			manage_tags_btn->set_button_icon(get_editor_theme_icon("Script"));
-			erase_btn->set_button_icon(get_editor_theme_icon("Remove"));
-			erase_missing_btn->set_button_icon(get_editor_theme_icon("Clear"));
-			create_tag_btn->set_button_icon(get_editor_theme_icon("Add"));
-			donate_btn->set_button_icon(get_editor_theme_icon("Heart"));
+			create_btn->set_button_icon(get_editor_theme_icon("action_add"));
+			import_btn->set_button_icon(get_editor_theme_icon("action_load"));
+			scan_btn->set_button_icon(get_editor_theme_icon("action_search"));
+			open_btn->set_button_icon(get_editor_theme_icon("action_edit"));
+			open_options_btn->set_button_icon(get_editor_theme_icon("action_collapse"));
+			run_btn->set_button_icon(get_editor_theme_icon("playback_play"));
+			rename_btn->set_button_icon(get_editor_theme_icon("action_rename"));
+			duplicate_btn->set_button_icon(get_editor_theme_icon("action_duplicate"));
+			manage_tags_btn->set_button_icon(get_editor_theme_icon("resource_script"));
+			erase_btn->set_button_icon(get_editor_theme_icon("action_remove"));
+			erase_missing_btn->set_button_icon(get_editor_theme_icon("action_clear"));
+			create_tag_btn->set_button_icon(get_editor_theme_icon("action_add"));
+			donate_btn->set_button_icon(get_editor_theme_icon("status_heart"));
 
 			tag_error->add_theme_color_override(SceneStringName(font_color), get_theme_color("error_color", EditorStringName(Editor)));
 			tag_edit_error->add_theme_color_override(SceneStringName(font_color), get_theme_color("error_color", EditorStringName(Editor)));
@@ -309,8 +309,8 @@ void ProjectManager::_update_theme(bool p_skip_creation) {
 			erase_missing_btn->add_theme_constant_override("h_separation", h_separation);
 
 			open_btn_container->add_theme_constant_override("separation", 0);
-			open_options_popup->set_item_icon(0, get_editor_theme_icon("Notification"));
-			open_options_popup->set_item_icon(1, get_editor_theme_icon("NodeWarning"));
+			open_options_popup->set_item_icon(0, get_editor_theme_icon("status_notification"));
+			open_options_popup->set_item_icon(1, get_editor_theme_icon("status_node_warning"));
 		}
 	}
 

@@ -598,7 +598,7 @@ void ProjectSettingsEditor::_update_action_map_editor() {
 	List<PropertyInfo> props;
 	ProjectSettings::get_singleton()->get_property_list(&props);
 
-	const Ref<Texture2D> builtin_icon = get_editor_theme_icon(SNAME("PinPressed"));
+	const Ref<Texture2D> builtin_icon = get_editor_theme_icon(SNAME("gui_pin_pressed"));
 	for (const PropertyInfo &E : props) {
 		const String property_name = E.name;
 
@@ -635,12 +635,12 @@ void ProjectSettingsEditor::_update_action_map_editor() {
 }
 
 void ProjectSettingsEditor::_update_theme() {
-	add_button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
-	del_button->set_button_icon(get_editor_theme_icon(SNAME("Remove")));
-	search_box->set_right_icon(get_editor_theme_icon(SNAME("Search")));
-	restart_close_button->set_button_icon(get_editor_theme_icon(SNAME("Close")));
+	add_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
+	del_button->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
+	search_box->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
+	restart_close_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 	restart_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("Tree")));
-	restart_icon->set_texture(get_editor_theme_icon(SNAME("StatusWarning")));
+	restart_icon->set_texture(get_editor_theme_icon(SNAME("status_status_warning")));
 	restart_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 }
 

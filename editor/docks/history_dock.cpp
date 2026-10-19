@@ -237,7 +237,7 @@ void HistoryDock::_notification(int p_notification) {
 
 HistoryDock::HistoryDock() {
 	set_name(TTRC("History"));
-	set_icon_name("History");
+	set_icon_name("dock_development_history");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/open_history", TTRC("Open History Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_LEFT_BR);
 

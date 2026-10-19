@@ -344,10 +344,10 @@ void ExportTemplateManager::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			_open_folder_btn->set_button_icon(get_editor_theme_icon("Folder"));
-			_delete_all_btn->set_button_icon(get_editor_theme_icon("Remove"));
-			_tpz_btn->set_button_icon(get_editor_theme_icon("FileBrowse"));
-			_theme_cache.remove_icon = get_editor_theme_icon("Remove");
+			_open_folder_btn->set_button_icon(get_editor_theme_icon("folder_folder"));
+			_delete_all_btn->set_button_icon(get_editor_theme_icon("action_remove"));
+			_tpz_btn->set_button_icon(get_editor_theme_icon("file_file_browse"));
+			_theme_cache.remove_icon = get_editor_theme_icon("action_remove");
 			_theme_cache.current_version_color = get_theme_color("accent_color", EditorStringName(Editor));
 			_theme_cache.incomplete_template_color = get_theme_color("warning_color", EditorStringName(Editor));
 			_theme_cache.missing_file_color = get_theme_color("error_color", EditorStringName(Editor));
