@@ -35,6 +35,7 @@
 #include "core/object/callable_mp.h"
 #include "core/os/os.h"
 #include "editor/builtin/assets/fonts/editor_fonts.h"
+#include "editor/builtin/assets/sounds/editor_sounds.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/settings/editor_settings.h"
@@ -211,6 +212,8 @@ Ref<EditorTheme> EditorThemeManager::_create_base_theme(const Ref<EditorTheme> &
 	// TODO: Check if existing style definitions from the old theme are usable and copy them.
 
 	print_verbose("EditorTheme: Generating new styles.");
+
+	EditorSounds::populate_theme(theme);
 
 	ThemeClassic::populate_standard_styles(theme, config);
 	ThemeClassic::populate_editor_styles(theme, config);

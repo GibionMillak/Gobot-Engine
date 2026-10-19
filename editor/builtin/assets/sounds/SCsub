@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+from misc.utility.scons_hints import *
+
+Import("env")
+
+import editor_sounds_builders
+
+env_sounds = env.Clone()
+
+if "vorbis" in env.module_list:
+    if env["builtin_libogg"]:
+        env_sounds.Prepend(CPPPATH=["#thirdparty/libogg"])
+    if env["builtin_libvorbis"]:
+        env_sounds.Prepend(CPPPATH=["#thirdparty/libvorbis"])
+
+    sounds = Glob("*/*.ogg")
+    sounds.sort()
+    env.CommandNoCache(
+        "editor_sounds.gen.h",
+        sounds,
+        env.Run(editor_sounds_builders.make_sounds_header),
+    )
+
+env_sounds.add_source_files(env.editor_sources, "*.cpp")
