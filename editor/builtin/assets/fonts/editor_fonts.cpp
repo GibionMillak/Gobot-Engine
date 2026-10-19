@@ -33,9 +33,9 @@
 #include "core/io/dir_access.h"
 #include "core/os/os.h"
 #include "core/string/translation_server.h"
+#include "editor/builtin/assets/fonts/editor_fonts.gen.h"
 #include "editor/editor_string_names.h"
 #include "editor/settings/editor_settings.h"
-#include "editor/themes/builtin_fonts.gen.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/resources/font.h"
 #include "scene/scene_string_names.h"
@@ -155,8 +155,8 @@ void editor_register_fonts(const Ref<Theme> &p_theme) {
 	const int default_font_size = int(EDITOR_GET("interface/editor/fonts/main_font_size")) * EDSCALE;
 	const float embolden_strength = 0.6;
 
-	Ref<Font> default_font = load_internal_font(_font_Inter_Regular, _font_Inter_Regular_size, font_hinting, font_antialiasing, true, font_subpixel_positioning, font_disable_embedded_bitmaps, false);
-	Ref<Font> default_font_msdf = load_internal_font(_font_Inter_Regular, _font_Inter_Regular_size, font_hinting, font_antialiasing, true, font_subpixel_positioning, font_disable_embedded_bitmaps, font_allow_msdf);
+	Ref<Font> default_font = load_internal_font(_font_Baloo2_Regular, _font_Baloo2_Regular_size, font_hinting, font_antialiasing, true, font_subpixel_positioning, font_disable_embedded_bitmaps, false);
+	Ref<Font> default_font_msdf = load_internal_font(_font_Baloo2_Regular, _font_Baloo2_Regular_size, font_hinting, font_antialiasing, true, font_subpixel_positioning, font_disable_embedded_bitmaps, font_allow_msdf);
 
 	Dictionary default_features;
 	default_features["calt"] = false; // Disable contextual alternates by default.
@@ -224,8 +224,8 @@ void editor_register_fonts(const Ref<Theme> &p_theme) {
 	default_font->set_fallbacks(fallbacks);
 	default_font_msdf->set_fallbacks(fallbacks);
 
-	Ref<FontFile> default_font_bold = load_internal_font(_font_Inter_Bold, _font_Inter_Bold_size, font_hinting, font_antialiasing, true, font_subpixel_positioning, font_disable_embedded_bitmaps, false);
-	Ref<FontFile> default_font_bold_msdf = load_internal_font(_font_Inter_Bold, _font_Inter_Bold_size, font_hinting, font_antialiasing, true, font_subpixel_positioning, font_disable_embedded_bitmaps, font_allow_msdf);
+	Ref<FontFile> default_font_bold = load_internal_font(_font_Baloo2_Bold, _font_Baloo2_Bold_size, font_hinting, font_antialiasing, true, font_subpixel_positioning, font_disable_embedded_bitmaps, false);
+	Ref<FontFile> default_font_bold_msdf = load_internal_font(_font_Baloo2_Bold, _font_Baloo2_Bold_size, font_hinting, font_antialiasing, true, font_subpixel_positioning, font_disable_embedded_bitmaps, font_allow_msdf);
 
 	TypedArray<Font> fallbacks_bold;
 	Ref<FontFile> arabic_font_bold = load_internal_font(_font_Vazirmatn_Bold, _font_Vazirmatn_Bold_size, font_hinting, font_antialiasing, true, font_subpixel_positioning, font_disable_embedded_bitmaps, false, &fallbacks_bold);
@@ -286,8 +286,8 @@ void editor_register_fonts(const Ref<Theme> &p_theme) {
 		default_fc->set_opentype_features(default_features);
 		default_fc->set_base_font(default_font);
 	}
-	default_fc->set_spacing(TextServer::SPACING_TOP, -EDSCALE);
-	default_fc->set_spacing(TextServer::SPACING_BOTTOM, -EDSCALE);
+	default_fc->set_spacing(TextServer::SPACING_TOP, -1 * EDSCALE);
+	default_fc->set_spacing(TextServer::SPACING_BOTTOM, -4 * EDSCALE);
 	Dictionary default_fc_opentype;
 	default_fc_opentype["weight"] = 400;
 	default_fc->set_variation_opentype(default_fc_opentype);

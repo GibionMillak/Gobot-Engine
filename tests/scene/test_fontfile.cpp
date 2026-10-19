@@ -40,7 +40,7 @@ namespace TestFontFile {
 
 TEST_CASE("[FontFile] Load Dynamic Font - getters") {
 #ifdef MODULE_FREETYPE_ENABLED
-	String test_dynamic_font = "thirdparty/fonts/NotoSansHebrew_Regular.woff2";
+	String test_dynamic_font = "editor/builtin/assets/fonts/noto_sans/NotoSansHebrew_Regular.woff2";
 	Ref<FontFile> ff;
 	ff.instantiate();
 	CHECK(ff->load_dynamic_font(test_dynamic_font) == OK);
@@ -97,12 +97,12 @@ TEST_CASE("[FontFile] Create font file and check data") {
 	CHECK(font_file->load_dynamic_font("") == OK);
 	CHECK_MESSAGE(font_file->get_data().is_empty() == true, "Invalid fontfile should not be loaded.");
 
-	CHECK(font_file->load_dynamic_font("thirdparty/fonts/nofonthasthisname.woff2") == OK);
+	CHECK(font_file->load_dynamic_font("editor/builtin/assets/fonts/nofonthasthisname.woff2") == OK);
 	CHECK_MESSAGE(font_file->get_data().is_empty() == true, "Invalid fontfile should not be loaded.");
 	ERR_PRINT_ON
 
 	// Load a valid file.
-	CHECK(font_file->load_dynamic_font("thirdparty/fonts/Inter_Regular.woff2") == OK);
+	CHECK(font_file->load_dynamic_font("editor/builtin/assets/fonts/inter/Inter_Regular.woff2") == OK);
 
 	// Check fontfile data.
 	CHECK_MESSAGE(font_file->get_data().is_empty() == false, "Fontfile should have been loaded.");
