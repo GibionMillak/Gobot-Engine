@@ -14,7 +14,7 @@ flist.extend(Glob("*/*.otf"))
 flist.extend(Glob("*/*.woff"))
 flist.extend(Glob("*/*.woff2"))
 flist.sort()
-env.CommandNoCache(
+env_fonts.CommandNoCache(
     "editor_fonts.gen.h",
     flist,
     env_fonts.Run(editor_fonts_builders.make_fonts_header),

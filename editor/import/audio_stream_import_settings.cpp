@@ -50,7 +50,7 @@ void AudioStreamImportSettingsDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+			_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 			_stop_button->set_button_icon(get_editor_theme_icon(SNAME("playback_stop")));
 
 			_preview->set_color(get_theme_color(SNAME("dark_color_2"), EditorStringName(Editor)));
@@ -268,7 +268,7 @@ void AudioStreamImportSettingsDialog::_play() {
 		// '_pausing' variable indicates that we want to pause the audio player, not stop it. See '_on_finished()'.
 		_pausing = true;
 		_player->stop();
-		_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+		_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 		set_process(false);
 	} else {
 		_reset_master();
@@ -285,7 +285,7 @@ void AudioStreamImportSettingsDialog::_stop() {
 	}
 
 	_player->stop();
-	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 	_current = 0;
 	_indicator->queue_redraw();
 	set_process(false);
@@ -294,7 +294,7 @@ void AudioStreamImportSettingsDialog::_stop() {
 void AudioStreamImportSettingsDialog::_on_finished() {
 	_load_master_state();
 
-	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 	if (!_pausing) {
 		_current = 0;
 		_indicator->queue_redraw();

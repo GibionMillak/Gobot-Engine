@@ -1080,7 +1080,7 @@ void Skeleton3DEditor::update_joint_tree() {
 		bool can_revert_skin_scale = EditorPropertyRevert::can_property_revert(skeleton, bone_skin_scale_property, &current_skin_scale);
 
 		if (can_revert_enabled || can_revert_parent || can_revert_name || can_revert_position || can_revert_rotation || can_revert_scale || can_revert_rest || can_revert_skin_scale) {
-			joint_item->add_button(0, get_editor_theme_icon(SNAME("action_reload_small")), JOINT_BUTTON_REVERT, false, TTR("Revert"));
+			joint_item->add_button(0, get_editor_theme_icon(SNAME("action_revert")), JOINT_BUTTON_REVERT, false, TTR("Revert"));
 		}
 
 		// Add the bone's children to the list of bones to be processed.

@@ -404,8 +404,8 @@ void AnimationBezierTrackEdit::_notification(int p_what) {
 			const Color dc = get_theme_color(SNAME("font_disabled_color"), EditorStringName(Editor));
 
 			Ref<Texture2D> remove = get_editor_theme_icon(SNAME("action_remove"));
-			Ref<Texture2D> visibility_visible = get_editor_theme_icon(SNAME("gui_gui_visibility_visible"));
-			Ref<Texture2D> visibility_hidden = get_editor_theme_icon(SNAME("gui_gui_visibility_hidden"));
+			Ref<Texture2D> visibility_visible = get_editor_theme_icon(SNAME("gui_eye_open"));
+			Ref<Texture2D> visibility_hidden = get_editor_theme_icon(SNAME("gui_eye_closed"));
 			Ref<Texture2D> lock = get_editor_theme_icon(SNAME("action_lock"));
 			Ref<Texture2D> unlock = get_editor_theme_icon(SNAME("action_unlock"));
 			Ref<Texture2D> solo = get_editor_theme_icon(SNAME("audio_audio_bus_solo"));

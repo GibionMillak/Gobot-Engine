@@ -539,7 +539,7 @@ void TileMapLayerEditorTilesPlugin::_update_theme() {
 	bucket_tool_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_bucket")));
 
 	picker_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_color_pick")));
-	erase_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_eraser")));
+	erase_button->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("action_erase")));
 	random_tile_toggle->set_button_icon(tiles_bottom_panel->get_editor_theme_icon(SNAME("type_random_number_generator")));
 
 	transform_button_rotate_left->set_button_icon(tiles_bottom_panel->get_editor_theme_icon("action_rotate_left"));
@@ -3501,7 +3501,7 @@ void TileMapLayerEditorTerrainsPlugin::_update_theme() {
 	bucket_tool_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_bucket")));
 
 	picker_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_color_pick")));
-	erase_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_eraser")));
+	erase_button->set_button_icon(main_box_container->get_editor_theme_icon(SNAME("action_erase")));
 
 	_update_tiles_list();
 }

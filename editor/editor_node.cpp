@@ -5213,7 +5213,7 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_PLUGINS), get_editor_theme_native_menu_icon(SNAME("action_plugin"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_SETTINGS), get_editor_theme_native_menu_icon(SNAME("gui_class_list"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_AUTOLOADS), get_editor_theme_native_menu_icon(SNAME("action_autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
+	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_AUTOLOADS), get_editor_theme_native_menu_icon(SNAME("gui_autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_EXPORT), get_editor_theme_native_menu_icon(SNAME("node_resource_preloader"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_QUIT_TO_PROJECT_MANAGER), get_editor_theme_native_menu_icon(SNAME("action_close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 
@@ -5231,10 +5231,10 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 	help_menu->set_item_icon(help_menu->get_item_index(HELP_SYSTEM_INFORMATION), get_editor_theme_native_menu_icon(SNAME("status_info"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 #ifdef MACOS_ENABLED
 	if (menu_type != MENU_TYPE_GLOBAL) {
-		help_menu->set_item_icon(help_menu->get_item_index(HELP_ABOUT), get_editor_theme_native_menu_icon(SNAME("branding_godot"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
+		help_menu->set_item_icon(help_menu->get_item_index(HELP_ABOUT), get_editor_theme_native_menu_icon(SNAME("branding_logo_solid"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	}
 #else
-	help_menu->set_item_icon(help_menu->get_item_index(HELP_ABOUT), get_editor_theme_native_menu_icon(SNAME("branding_godot"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
+	help_menu->set_item_icon(help_menu->get_item_index(HELP_ABOUT), get_editor_theme_native_menu_icon(SNAME("branding_logo_solid"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 #endif
 }
 
@@ -9037,7 +9037,7 @@ void EditorNode::_build_project_menu(bool p_dark_mode) {
 	project_menu->clear(false);
 
 	project_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("gui_class_list"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/project_settings"), PROJECT_OPEN_SETTINGS);
-	project_menu->add_icon_item(get_editor_theme_native_menu_icon(SNAME("action_autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), TTRC("Autoloads"), PROJECT_OPEN_AUTOLOADS);
+	project_menu->add_icon_item(get_editor_theme_native_menu_icon(SNAME("gui_autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), TTRC("Autoloads"), PROJECT_OPEN_AUTOLOADS);
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/find_in_files"), PROJECT_FIND_IN_FILES);
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/replace_in_files"), PROJECT_REPLACE_IN_FILES);
 	project_menu->add_separator();
@@ -9146,10 +9146,10 @@ void EditorNode::_build_help_menu(bool p_dark_mode) {
 #ifdef MACOS_ENABLED
 	if (menu_type != MENU_TYPE_GLOBAL) {
 		// On macOS "About" option is in the "app" menu.
-		help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("branding_godot"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/about"), HELP_ABOUT);
+		help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("branding_logo_solid"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/about"), HELP_ABOUT);
 	}
 #else
-	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("branding_godot"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/about"), HELP_ABOUT);
+	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("branding_logo_solid"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/about"), HELP_ABOUT);
 #endif
 }
 

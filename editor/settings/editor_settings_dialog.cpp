@@ -515,7 +515,7 @@ TreeItem *EditorSettingsDialog::_create_shortcut_treeitem(TreeItem *p_parent, co
 	}
 
 	if (p_allow_revert) {
-		shortcut_item->add_button(1, get_editor_theme_icon(SNAME("action_reload")), SHORTCUT_REVERT);
+		shortcut_item->add_button(1, get_editor_theme_icon(SNAME("action_revert")), SHORTCUT_REVERT);
 	}
 
 	shortcut_item->add_button(1, get_editor_theme_icon(SNAME("action_add")), SHORTCUT_ADD);

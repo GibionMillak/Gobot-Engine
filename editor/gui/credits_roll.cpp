@@ -161,7 +161,7 @@ void CreditsRoll::roll_credits() {
 		bold_font = theme->get_font("bold", EditorStringName(EditorFonts));
 
 		{
-			const Ref<Texture2D> logo_texture = theme->get_icon("branding_logo", EditorStringName(EditorIcons));
+		const Ref<Texture2D> logo_texture = theme->get_icon("branding_logo_colorful", EditorStringName(EditorIcons));
 
 			TextureRect *logo = memnew(TextureRect);
 			logo->set_custom_minimum_size(Vector2(0, logo_texture->get_height() * 3));

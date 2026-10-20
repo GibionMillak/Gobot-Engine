@@ -1621,8 +1621,8 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 			if (vsnode->has_output_port_preview(i) && port_right != VisualShaderNode::PORT_TYPE_TRANSFORM && port_right != VisualShaderNode::PORT_TYPE_SAMPLER) {
 				TextureButton *preview = memnew(TextureButton);
 				preview->set_toggle_mode(true);
-				preview->set_texture_normal(editor->get_editor_theme_icon(SNAME("gui_gui_visibility_hidden")));
-				preview->set_texture_pressed(editor->get_editor_theme_icon(SNAME("gui_gui_visibility_visible")));
+				preview->set_texture_normal(editor->get_editor_theme_icon(SNAME("gui_eye_closed")));
+				preview->set_texture_pressed(editor->get_editor_theme_icon(SNAME("gui_eye_open")));
 				preview->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
 
 				register_output_port(p_id, j, port_right, preview);

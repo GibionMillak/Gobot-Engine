@@ -88,7 +88,7 @@ void EditorAbout::_notification(int p_what) {
 			license_text_label->add_theme_constant_override(SceneStringName(line_separation), 4 * EDSCALE);
 			license_text_label->end_bulk_theme_override();
 
-			_logo->set_texture(get_editor_theme_icon(SNAME("branding_logo")));
+		_logo->set_texture(get_editor_theme_icon(SNAME("branding_logo_colorful")));
 
 			for (ItemList *il : name_lists) {
 				for (int i = 0; i < il->get_item_count(); i++) {

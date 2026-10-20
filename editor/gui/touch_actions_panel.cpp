@@ -67,7 +67,7 @@ void TouchActionsPanel::_notification(int p_what) {
 			}
 			save_button->set_button_icon(get_editor_theme_icon(SNAME("action_save")));
 			delete_button->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
-			undo_button->set_button_icon(get_editor_theme_icon(SNAME("resource_undo_redo")));
+			undo_button->set_button_icon(get_editor_theme_icon(SNAME("action_undo")));
 			redo_button->set_button_icon(get_editor_theme_icon(SNAME("action_redo")));
 			cut_button->set_button_icon(get_editor_theme_icon(SNAME("action_cut")));
 			copy_button->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));

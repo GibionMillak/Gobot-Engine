@@ -664,8 +664,8 @@ void CreateDialog::_notification(int p_what) {
 			favorites->add_theme_constant_override("icon_max_width", icon_width);
 			recent->set_fixed_icon_size(Size2(icon_width, icon_width));
 
-			favorite->set_button_icon(get_editor_theme_icon(SNAME("folder_favorites")));
-			reset_filters_button->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
+			favorite->set_button_icon(get_editor_theme_icon(favorite_list.has(get_selected_type_name()) ? SNAME("action_unfavorite") : SNAME("action_favorite")));
+			reset_filters_button->set_button_icon(get_editor_theme_icon(SNAME("action_revert")));
 			filters_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_dropdown")));
 		} break;
 	}
@@ -684,6 +684,7 @@ void CreateDialog::select_type(const String &p_type, bool p_center_on_item) {
 
 	favorite->set_disabled(false);
 	favorite->set_pressed(favorite_list.has(p_type));
+	favorite->set_button_icon(get_editor_theme_icon(favorite_list.has(p_type) ? SNAME("action_unfavorite") : SNAME("action_favorite")));
 
 	if (to_select->get_meta("__instantiable", true)) {
 		get_ok_button()->set_disabled(false);
@@ -811,9 +812,11 @@ void CreateDialog::_favorite_toggled() {
 	if (favorite_list.has(name)) {
 		favorite_list.erase(name);
 		favorite->set_pressed(false);
+		favorite->set_button_icon(get_editor_theme_icon(SNAME("action_favorite")));
 	} else {
 		favorite_list.push_back(name);
 		favorite->set_pressed(true);
+		favorite->set_button_icon(get_editor_theme_icon(SNAME("action_unfavorite")));
 	}
 
 	_save_and_update_favorite_list();

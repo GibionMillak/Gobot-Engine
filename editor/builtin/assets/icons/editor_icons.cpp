@@ -126,10 +126,9 @@ void editor_register_icons(const Ref<Theme> &p_theme, bool p_dark_theme, float p
 	saturation_exceptions.insert("gui_project_thumbnail_default");
 	saturation_exceptions.insert("gui_project_thumbnail_loading");
 	saturation_exceptions.insert("gui_project_thumbnail_missing");
-	saturation_exceptions.insert("branding_godot");
-	saturation_exceptions.insert("branding_godot_file");
+	saturation_exceptions.insert("branding_logo_solid");
+	saturation_exceptions.insert("file_project");
 	saturation_exceptions.insert("branding_logo");
-	saturation_exceptions.insert("branding_title_bar_logo");
 
 	// Accent color conversion map.
 	// It is used on some icons (checkbox, radio, toggle, etc.), regardless of the dark
@@ -148,7 +147,6 @@ void editor_register_icons(const Ref<Theme> &p_theme, bool p_dark_theme, float p
 	accent_color_icons.insert("gui_gui_indeterminate");
 	accent_color_icons.insert("gui_gui_toggle_on");
 	accent_color_icons.insert("gui_gui_toggle_on_mirrored");
-	accent_color_icons.insert("playback_play_overlay");
 	accent_color_icons.insert("status_verified");
 
 	// Generate icons.

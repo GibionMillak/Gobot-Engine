@@ -1123,7 +1123,7 @@ void ScriptEditorDebugger::_notification(int p_what) {
 			dobreak->set_button_icon(get_editor_theme_icon(SNAME("playback_pause")));
 			docontinue->set_button_icon(get_editor_theme_icon(SNAME("debugger_debug_continue")));
 			vmem_notice_icon->set_texture(get_editor_theme_icon(SNAME("status_node_info")));
-			vmem_refresh->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
+			vmem_refresh->set_button_icon(get_editor_theme_icon(SNAME("action_refresh")));
 			vmem_export->set_button_icon(get_editor_theme_icon(SNAME("action_save")));
 			vmem_item_menu->set_item_icon(VMEM_MENU_SHOW_IN_FILESYSTEM, get_editor_theme_icon(SNAME("gui_show_in_file_system")));
 			vmem_item_menu->set_item_icon(VMEM_MENU_SHOW_IN_EXPLORER, get_editor_theme_icon(SNAME("gui_filesystem")));

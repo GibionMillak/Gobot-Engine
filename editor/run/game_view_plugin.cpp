@@ -1066,7 +1066,7 @@ void GameView::_update_embed_window_size() {
 
 void GameView::_debug_hide_selection_button_pressed() {
 	debug_hide_selection = !debug_hide_selection;
-	debug_hide_selection_button->set_button_icon(EditorIconManager::get_icon(debug_hide_selection ? SNAME("gui_gui_visibility_hidden") : SNAME("gui_gui_visibility_visible")));
+	debug_hide_selection_button->set_button_icon(EditorIconManager::get_icon(debug_hide_selection ? SNAME("gui_eye_closed") : SNAME("gui_eye_open")));
 	debug_hide_selection_button->set_tooltip_text(debug_hide_selection ? TTRC("Show selection indicators.") : TTRC("Hide selection indicators."));
 	debugger->set_selection_visible(!debug_hide_selection);
 	EditorSettings::get_singleton()->set_project_metadata("game_view", "show_selection", !debug_hide_selection);
@@ -1631,7 +1631,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	debug_hide_selection_button = memnew(Button);
 	audio_hb->add_child(debug_hide_selection_button);
-	debug_hide_selection_button->set_button_icon(EditorIconManager::get_icon(debug_hide_selection ? "gui_gui_visibility_hidden" : "gui_gui_visibility_visible"));
+	debug_hide_selection_button->set_button_icon(EditorIconManager::get_icon(debug_hide_selection ? "gui_eye_closed" : "gui_eye_open"));
 	debug_hide_selection_button->set_theme_type_variation(SceneStringName(FlatButton));
 	debug_hide_selection_button->connect(SceneStringName(pressed), callable_mp(this, &GameView::_debug_hide_selection_button_pressed));
 	debug_hide_selection_button->set_tooltip_text(debug_hide_selection ? TTRC("Show selection indicators.") : TTRC("Hide selection indicators."));

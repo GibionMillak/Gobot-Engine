@@ -99,11 +99,11 @@ void VersionControlEditorPlugin::_update_theme() {
 
 	select_public_path_button->set_button_icon(EditorNode::get_singleton()->get_gui_base()->get_editor_theme_icon("folder_folder"));
 	select_private_path_button->set_button_icon(EditorNode::get_singleton()->get_gui_base()->get_editor_theme_icon("folder_folder"));
-	refresh_button->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_reload"), EditorStringName(EditorIcons)));
+	refresh_button->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_refresh"), EditorStringName(EditorIcons)));
 	discard_all_button->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_close"), EditorStringName(EditorIcons)));
 	stage_all_button->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_move_down"), EditorStringName(EditorIcons)));
 	unstage_all_button->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_move_up"), EditorStringName(EditorIcons)));
-	fetch_button->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_reload"), EditorStringName(EditorIcons)));
+	fetch_button->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_refresh"), EditorStringName(EditorIcons)));
 	pull_button->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_move_down"), EditorStringName(EditorIcons)));
 	push_button->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_move_up"), EditorStringName(EditorIcons)));
 	extra_options->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("gui_gui_tab_menu_hl"), EditorStringName(EditorIcons)));

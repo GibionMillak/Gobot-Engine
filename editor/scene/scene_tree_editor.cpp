@@ -706,9 +706,9 @@ void SceneTreeEditor::_update_node(Node *p_node, TreeItem *p_item, bool p_part_o
 		if (p_node->has_method(SceneStringName(is_visible)) && p_node->has_method(SNAME("set_visible")) && p_node->has_signal(SceneStringName(visibility_changed))) {
 			bool is_visible = p_node->call(SceneStringName(is_visible));
 			if (is_visible) {
-				p_item->add_button(0, get_editor_theme_icon(SNAME("gui_gui_visibility_visible")), BUTTON_VISIBILITY, false, TTR("Toggle Visibility"));
+				p_item->add_button(0, get_editor_theme_icon(SNAME("gui_eye_open")), BUTTON_VISIBILITY, false, TTR("Toggle Visibility"));
 			} else {
-				p_item->add_button(0, get_editor_theme_icon(SNAME("gui_gui_visibility_hidden")), BUTTON_VISIBILITY, false, TTR("Toggle Visibility"));
+				p_item->add_button(0, get_editor_theme_icon(SNAME("gui_eye_closed")), BUTTON_VISIBILITY, false, TTR("Toggle Visibility"));
 			}
 			const Callable vis_changed = callable_mp(this, &SceneTreeEditor::_node_visibility_changed);
 			if (!p_node->is_connected(SceneStringName(visibility_changed), vis_changed)) {
@@ -830,9 +830,9 @@ void SceneTreeEditor::_node_visibility_changed(Node *p_node) {
 	}
 
 	if (node_visible) {
-		item->set_button(0, idx, get_editor_theme_icon(SNAME("gui_gui_visibility_visible")));
+		item->set_button(0, idx, get_editor_theme_icon(SNAME("gui_eye_open")));
 	} else {
-		item->set_button(0, idx, get_editor_theme_icon(SNAME("gui_gui_visibility_hidden")));
+		item->set_button(0, idx, get_editor_theme_icon(SNAME("gui_eye_closed")));
 	}
 
 	_update_visibility_color(p_node, item);

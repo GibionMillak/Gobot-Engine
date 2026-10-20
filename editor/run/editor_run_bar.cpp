@@ -119,15 +119,15 @@ void EditorRunBar::_reset_play_buttons() {
 	}
 
 	play_button->set_pressed(false);
-	play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+	play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 	play_button->set_tooltip_text(TTRC("Run the project's main scene."));
 
 	_play_scene_btn->set_pressed(false);
-	_play_scene_btn->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene")));
+	_play_scene_btn->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_current")));
 	_play_scene_btn->set_tooltip_text(TTRC("Play the currently edited scene."));
 
 	_play_custom_scene_btn->set_pressed(false);
-	_play_custom_scene_btn->set_button_icon(get_editor_theme_icon(SNAME("playback_play_custom")));
+	_play_custom_scene_btn->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_custom")));
 	_play_custom_scene_btn->set_tooltip_text(TTRC("Play a custom scene."));
 }
 

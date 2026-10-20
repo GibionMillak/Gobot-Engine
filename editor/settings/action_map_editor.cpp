@@ -488,7 +488,7 @@ void ActionMapEditor::update_action_list(const Vector<ActionInfo> &p_action_info
 			bool events_eq = Shortcut::is_event_array_equal(action_info.action_initial["events"], action_info.action["events"]);
 			bool action_eq = deadzone_eq && events_eq;
 			action_item->set_meta("__action_initial", action_info.action_initial);
-			action_item->add_button(2, get_editor_theme_icon(SNAME("action_reload_small")), BUTTON_REVERT_ACTION, action_eq, action_eq ? TTRC("Cannot Revert - Action is same as initial") : TTRC("Revert Action"));
+			action_item->add_button(2, get_editor_theme_icon(SNAME("action_revert")), BUTTON_REVERT_ACTION, action_eq, action_eq ? TTRC("Cannot Revert - Action is same as initial") : TTRC("Revert Action"));
 		}
 		action_item->add_button(2, get_editor_theme_icon(SNAME("action_add")), BUTTON_ADD_EVENT, false, TTRC("Add Event"));
 		action_item->add_button(2, get_editor_theme_icon(SNAME("action_remove")), BUTTON_REMOVE_ACTION, !action_info.editable, action_info.editable ? TTRC("Remove Action") : TTRC("Cannot Remove Action"));

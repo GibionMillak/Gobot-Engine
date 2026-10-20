@@ -63,7 +63,7 @@ void NavigationRegion3DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
 			button_bake->set_button_icon(get_theme_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
-			button_reset->set_button_icon(get_theme_icon(SNAME("action_reload"), EditorStringName(EditorIcons)));
+			button_reset->set_button_icon(get_theme_icon(SNAME("action_revert"), EditorStringName(EditorIcons)));
 		} break;
 		case NOTIFICATION_PROCESS: {
 			if (currently_baking_region) {

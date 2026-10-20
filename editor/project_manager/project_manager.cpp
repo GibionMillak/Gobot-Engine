@@ -157,7 +157,7 @@ void ProjectManager::_notification(int p_what) {
 
 Ref<Texture2D> ProjectManager::_file_dialog_get_icon(const String &p_path) {
 	if (p_path.has_extension("godot")) {
-		return singleton->icon_type_cache["branding_godot_monochrome"];
+		return singleton->icon_type_cache["branding_logo_monochrome"];
 	}
 
 	return singleton->icon_type_cache["variant_object"];
@@ -165,7 +165,7 @@ Ref<Texture2D> ProjectManager::_file_dialog_get_icon(const String &p_path) {
 
 Ref<Texture2D> ProjectManager::_file_dialog_get_thumbnail(const String &p_path) {
 	if (p_path.has_extension("godot")) {
-		return singleton->icon_type_cache["branding_godot_file"];
+		return singleton->icon_type_cache["file_project"];
 	}
 
 	return Ref<Texture2D>();
@@ -264,7 +264,7 @@ void ProjectManager::_update_theme(bool p_skip_creation) {
 		background_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("Background", EditorStringName(EditorStyles)));
 		_project_list_pc->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("panel_container", "ProjectManager"));
 
-		title_bar_logo->set_button_icon(get_editor_theme_icon("branding_title_bar_logo"));
+		title_bar_logo->set_button_icon(get_editor_theme_icon("branding_logo_solid"));
 
 		// Project list.
 		{

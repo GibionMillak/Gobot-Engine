@@ -79,9 +79,9 @@ void ProjectListItemControl::_notification(int p_what) {
 			favorite_focus_color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 			_update_favorite_button_focus_color();
 			if (is_favorite) {
-				favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("folder_favorites")));
+				favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("action_unfavorite")));
 			} else {
-				favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("folder_unfavorite")));
+				favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("action_favorite")));
 			}
 
 			if (project_is_missing) {
@@ -273,9 +273,9 @@ void ProjectListItemControl::set_selected(bool p_selected, bool p_hide_focus) {
 void ProjectListItemControl::set_is_favorite(bool p_favorite) {
 	is_favorite = p_favorite;
 	if (p_favorite) {
-		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("folder_favorites")));
+		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("action_unfavorite")));
 	} else {
-		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("folder_unfavorite")));
+		favorite_button->set_texture_normal(get_editor_theme_icon(SNAME("action_favorite")));
 	}
 }
 

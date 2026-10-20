@@ -3861,7 +3861,7 @@ void EditorInspector::initialize_section_theme(EditorInspectorSection::ThemeCach
 	p_cache.arrow = p_control->get_theme_icon(SNAME("arrow"), SNAME("Tree"));
 	p_cache.arrow_collapsed = p_control->get_theme_icon(SNAME("arrow_collapsed"), SNAME("Tree"));
 	p_cache.arrow_collapsed_mirrored = p_control->get_theme_icon(SNAME("arrow_collapsed_mirrored"), SNAME("Tree"));
-	p_cache.icon_gui_revert = p_control->get_editor_theme_icon(SNAME("action_reload_small"));
+	p_cache.icon_gui_revert = p_control->get_editor_theme_icon(SNAME("action_revert"));
 	p_cache.icon_gui_checked = p_control->get_editor_theme_icon(SNAME("gui_gui_checked"));
 	p_cache.icon_gui_unchecked = p_control->get_editor_theme_icon(SNAME("gui_gui_unchecked"));
 	p_cache.icon_gui_animation_key = p_control->get_editor_theme_icon(SNAME("animation_key"));
@@ -3893,8 +3893,8 @@ void EditorInspector::initialize_category_theme(EditorInspectorCategory::ThemeCa
 	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("action_copy"));
 	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("action_paste"));
 
-	p_cache.icon_favorites = p_control->get_editor_theme_icon(SNAME("folder_favorites"));
-	p_cache.icon_unfavorite = p_control->get_editor_theme_icon(SNAME("folder_unfavorite"));
+	p_cache.icon_favorites = p_control->get_editor_theme_icon(SNAME("action_favorite"));
+	p_cache.icon_unfavorite = p_control->get_editor_theme_icon(SNAME("action_unfavorite"));
 	p_cache.icon_help = p_control->get_editor_theme_icon(SNAME("gui_help"));
 
 	p_cache.background = p_control->get_theme_stylebox(SNAME("bg"), SNAME("EditorInspectorCategory"));
@@ -3927,13 +3927,13 @@ void EditorInspector::initialize_property_theme(EditorProperty::ThemeCache &p_ca
 	p_cache.delete_icon = p_control->get_editor_theme_icon(SNAME("action_close"));
 	p_cache.checked_icon = p_control->get_editor_theme_icon(SNAME("gui_gui_checked"));
 	p_cache.unchecked_icon = p_control->get_editor_theme_icon(SNAME("gui_gui_unchecked"));
-	p_cache.revert_icon = p_control->get_editor_theme_icon(SNAME("action_reload_small"));
+	p_cache.revert_icon = p_control->get_editor_theme_icon(SNAME("action_revert"));
 	p_cache.pin_icon = p_control->get_editor_theme_icon(SNAME("action_pin"));
 	p_cache.copy_icon = p_control->get_editor_theme_icon(SNAME("action_copy"));
 	p_cache.copy_node_path_icon = p_control->get_editor_theme_icon(SNAME("action_copy_node_path"));
 	p_cache.paste_icon = p_control->get_editor_theme_icon(SNAME("action_paste"));
-	p_cache.unfavorite_icon = p_control->get_editor_theme_icon(SNAME("folder_unfavorite"));
-	p_cache.favorite_icon = p_control->get_editor_theme_icon(SNAME("folder_favorites"));
+	p_cache.unfavorite_icon = p_control->get_editor_theme_icon(SNAME("action_unfavorite"));
+	p_cache.favorite_icon = p_control->get_editor_theme_icon(SNAME("action_favorite"));
 	p_cache.override_icon = p_control->get_editor_theme_icon(SNAME("gui_override"));
 	p_cache.remove_icon = p_control->get_editor_theme_icon(SNAME("action_remove"));
 	p_cache.help_icon = p_control->get_editor_theme_icon(SNAME("gui_help"));

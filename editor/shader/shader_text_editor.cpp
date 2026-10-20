@@ -752,7 +752,7 @@ void ShaderTextEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			code_editor->get_text_editor()->add_theme_color_override("breakpoint_color", EditorNode::get_singleton()->get_editor_theme()->get_color(SceneStringName(font_color), EditorStringName(Editor)));
-			code_editor->get_text_editor()->add_theme_icon_override("breakpoint", get_editor_theme_icon(SNAME("gui_gui_visibility_visible")));
+			code_editor->get_text_editor()->add_theme_icon_override("breakpoint", get_editor_theme_icon(SNAME("gui_eye_open")));
 
 			if (is_visible_in_tree()) {
 				_load_theme_settings();
@@ -770,7 +770,7 @@ void ShaderTextEditor::_notification(int p_what) {
 			}
 			preview_panel->add_theme_style_override(SceneStringName(panel), preview_style);
 
-			update_params_btn->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
+			update_params_btn->set_button_icon(get_editor_theme_icon(SNAME("action_refresh")));
 			remove_all_btn->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));
 		} break;
 

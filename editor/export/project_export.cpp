@@ -764,7 +764,7 @@ void ProjectExportDialog::_script_encryption_key_changed(const String &p_key) {
 }
 
 void ProjectExportDialog::_script_encryption_key_visibility_changed(bool p_visible) {
-	show_script_key->set_button_icon(get_editor_theme_icon(p_visible ? SNAME("gui_gui_visibility_visible") : SNAME("gui_gui_visibility_hidden")));
+	show_script_key->set_button_icon(get_editor_theme_icon(p_visible ? SNAME("gui_eye_open") : SNAME("gui_eye_closed")));
 	show_script_key->set_tooltip_text(p_visible ? TTRC("Hide encryption key") : TTRC("Show encryption key"));
 	script_key->set_secret(!p_visible);
 }

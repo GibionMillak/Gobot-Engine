@@ -3469,7 +3469,7 @@ void FileSystemDock::_file_and_folders_fill_popup(PopupMenu *p_popup, const Vect
 				p_popup->add_icon_item(get_editor_theme_icon(SNAME("playback_play")), TTRC("Play Scene"), FILE_MENU_RUN_SCENE);
 				p_popup->add_icon_item(get_editor_theme_icon(SNAME("action_create_new_scene_from")), TTRC("New Inherited Scene"), FILE_MENU_INHERIT);
 				if (main_scene_path != filenames[0]) {
-					p_popup->add_icon_item(get_editor_theme_icon(SNAME("playback_play_scene")), TTRC("Set as Main Scene"), FILE_MENU_MAIN_SCENE);
+					p_popup->add_icon_item(get_editor_theme_icon(SNAME("playback_play_scene_current")), TTRC("Set as Main Scene"), FILE_MENU_MAIN_SCENE);
 				}
 			} else {
 				p_popup->add_icon_item(get_editor_theme_icon(SNAME("action_load")), TTRC("Open Scenes"), FILE_MENU_OPEN);
@@ -3484,7 +3484,7 @@ void FileSystemDock::_file_and_folders_fill_popup(PopupMenu *p_popup, const Vect
 				Ref<Script> scr = ResourceLoader::load(filenames[0]);
 				if (scr.is_valid()) {
 					if (ClassDB::is_parent_class(scr->get_instance_base_type(), "EditorScript")) {
-						p_popup->add_icon_item(get_editor_theme_icon(SNAME("playback_main_play")), TTRC("Run"), FILE_MENU_RUN_SCRIPT);
+						p_popup->add_icon_item(get_editor_theme_icon(SNAME("playback_play_scene_main")), TTRC("Run"), FILE_MENU_RUN_SCRIPT);
 					}
 				}
 			}
@@ -3574,10 +3574,10 @@ void FileSystemDock::_file_and_folders_fill_popup(PopupMenu *p_popup, const Vect
 	// Add the options that are available when one or more items are selected.
 	if (p_paths.size() >= 1) {
 		if (!all_favorites) {
-			p_popup->add_icon_item(get_editor_theme_icon(SNAME("folder_favorites")), TTRC("Add to Favorites"), FILE_MENU_ADD_FAVORITE);
+			p_popup->add_icon_item(get_editor_theme_icon(SNAME("action_favorite")), TTRC("Add to Favorites"), FILE_MENU_ADD_FAVORITE);
 		}
 		if (!all_not_favorites) {
-			p_popup->add_icon_item(get_editor_theme_icon(SNAME("folder_unfavorite")), TTRC("Remove from Favorites"), FILE_MENU_REMOVE_FAVORITE);
+			p_popup->add_icon_item(get_editor_theme_icon(SNAME("action_unfavorite")), TTRC("Remove from Favorites"), FILE_MENU_REMOVE_FAVORITE);
 		}
 
 		if (root_path_not_selected) {

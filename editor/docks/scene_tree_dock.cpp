@@ -1714,7 +1714,7 @@ void SceneTreeDock::_notification(int p_what) {
 
 			node_shortcuts_toggle = memnew(Button);
 			node_shortcuts_toggle->set_flat(true);
-			node_shortcuts_toggle->set_button_icon(get_editor_theme_icon(SNAME("folder_favorites")));
+			node_shortcuts_toggle->set_button_icon(get_editor_theme_icon(SNAME("action_favorite")));
 			node_shortcuts_toggle->set_toggle_mode(true);
 			node_shortcuts_toggle->set_tooltip_text(TTRC("Toggle the display of favorite nodes."));
 			node_shortcuts_toggle->set_pressed(EDITOR_GET("_use_favorites_root_selection"));
@@ -4245,7 +4245,7 @@ void SceneTreeDock::_tree_rmb(const Vector2 &p_menu_pos) {
 			}
 
 			if (can_replace) {
-				menu->add_icon_shortcut(get_editor_theme_icon(SNAME("action_reload")), ED_GET_SHORTCUT("scene_tree/change_node_type"), TOOL_CHANGE_TYPE);
+				menu->add_icon_shortcut(get_editor_theme_icon(SNAME("action_refresh")), ED_GET_SHORTCUT("scene_tree/change_node_type"), TOOL_CHANGE_TYPE);
 			}
 			END_SECTION()
 		}

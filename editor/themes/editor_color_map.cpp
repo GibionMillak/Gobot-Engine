@@ -170,7 +170,7 @@ void EditorColorMap::create() {
 	add_conversion_exception("viewport_editor_path_smooth_handle");
 	add_conversion_exception("viewport_editor_bone_handle");
 	add_conversion_exception("viewport_editor_3d_handle");
-	add_conversion_exception("branding_godot");
+	add_conversion_exception("branding_logo_solid");
 	add_conversion_exception("resource_sky");
 	add_conversion_exception("viewport_editor_control_anchor");
 	add_conversion_exception("gui_project_thumbnail_default");

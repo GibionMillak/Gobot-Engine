@@ -186,13 +186,13 @@ void AnimationPlayerEditor::_notification(int p_what) {
 			}
 
 			autoplay->set_button_icon(get_editor_theme_icon(SNAME("animation_auto_play")));
-			play->set_button_icon(get_editor_theme_icon(SNAME("playback_play_start")));
+			play->set_button_icon(get_editor_theme_icon(SNAME("playback_play_from_start")));
 			play_from->set_button_icon(get_editor_theme_icon(SNAME("playback_play")));
-			play_bw->set_button_icon(get_editor_theme_icon(SNAME("playback_play_start_backwards")));
+			play_bw->set_button_icon(get_editor_theme_icon(SNAME("playback_play_from_end")));
 			play_bw_from->set_button_icon(get_editor_theme_icon(SNAME("playback_play_backwards")));
 
 			autoplay_icon = get_editor_theme_icon(SNAME("animation_auto_play"));
-			reset_icon = get_editor_theme_icon(SNAME("action_reload"));
+			reset_icon = get_editor_theme_icon(SNAME("action_revert"));
 			{
 				Ref<Image> autoplay_img = autoplay_icon->get_image();
 				Ref<Image> reset_img = reset_icon->get_image();

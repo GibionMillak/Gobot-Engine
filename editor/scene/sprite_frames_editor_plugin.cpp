@@ -704,9 +704,9 @@ void SpriteFramesEditor::_notification(int p_what) {
 
 			autoplay->set_button_icon(get_editor_theme_icon(SNAME("animation_auto_play")));
 			_update_anim_loop_button();
-			play->set_button_icon(get_editor_theme_icon(SNAME("playback_play_start")));
+			play->set_button_icon(get_editor_theme_icon(SNAME("playback_play_from_start")));
 			play_from->set_button_icon(get_editor_theme_icon(SNAME("playback_play")));
-			play_bw->set_button_icon(get_editor_theme_icon(SNAME("playback_play_start_backwards")));
+			play_bw->set_button_icon(get_editor_theme_icon(SNAME("playback_play_from_end")));
 			play_bw_from->set_button_icon(get_editor_theme_icon(SNAME("playback_play_backwards")));
 
 			load->set_button_icon(get_editor_theme_icon(SNAME("action_load")));

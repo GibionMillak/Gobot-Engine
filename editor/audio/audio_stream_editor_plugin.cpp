@@ -51,7 +51,7 @@ void AudioStreamEditor::_notification(int p_what) {
 			_current_label->add_theme_font_override(SceneStringName(font), font);
 			_duration_label->add_theme_font_override(SceneStringName(font), font);
 
-			_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+			_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 			_stop_button->set_button_icon(get_editor_theme_icon(SNAME("playback_stop")));
 			_preview->set_color(get_theme_color(SNAME("dark_color_2"), EditorStringName(Editor)));
 
@@ -127,7 +127,7 @@ void AudioStreamEditor::_play() {
 	if (_player->is_playing()) {
 		_pausing = true;
 		_player->stop();
-		_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+		_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 		set_process(false);
 	} else {
 		_pausing = false;
@@ -139,14 +139,14 @@ void AudioStreamEditor::_play() {
 
 void AudioStreamEditor::_stop() {
 	_player->stop();
-	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 	_current = 0;
 	_indicator->queue_redraw();
 	set_process(false);
 }
 
 void AudioStreamEditor::_on_finished() {
-	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_main_play")));
+	_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 	if (!_pausing) {
 		_current = 0;
 		_indicator->queue_redraw();

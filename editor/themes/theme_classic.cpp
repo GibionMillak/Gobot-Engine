@@ -1085,20 +1085,20 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_icon("parent_folder", "FileDialog", p_theme->get_icon("gui_arrow_up", EditorStringName(EditorIcons)));
 		p_theme->set_icon("back_folder", "FileDialog", p_theme->get_icon("navigation_back", EditorStringName(EditorIcons)));
 		p_theme->set_icon("forward_folder", "FileDialog", p_theme->get_icon("navigation_forward", EditorStringName(EditorIcons)));
-		p_theme->set_icon("reload", "FileDialog", p_theme->get_icon("action_reload", EditorStringName(EditorIcons)));
-		p_theme->set_icon("toggle_hidden", "FileDialog", p_theme->get_icon("gui_gui_visibility_visible", EditorStringName(EditorIcons)));
+		p_theme->set_icon("reload", "FileDialog", p_theme->get_icon("action_refresh", EditorStringName(EditorIcons)));
+		p_theme->set_icon("toggle_hidden", "FileDialog", p_theme->get_icon("gui_eye_open", EditorStringName(EditorIcons)));
 		p_theme->set_icon("toggle_filename_filter", "FileDialog", p_theme->get_icon("gui_filename_filter", EditorStringName(EditorIcons)));
 		p_theme->set_icon("thumbnail_mode", "FileDialog", p_theme->get_icon("file_file_thumbnail", EditorStringName(EditorIcons)));
 		p_theme->set_icon("list_mode", "FileDialog", p_theme->get_icon("gui_file_list", EditorStringName(EditorIcons)));
 		p_theme->set_icon("sort", "FileDialog", p_theme->get_icon("action_sort", EditorStringName(EditorIcons)));
-		p_theme->set_icon("favorite", "FileDialog", p_theme->get_icon("folder_favorites", EditorStringName(EditorIcons)));
+		p_theme->set_icon("favorite", "FileDialog", p_theme->get_icon("action_favorite", EditorStringName(EditorIcons)));
 		p_theme->set_icon("favorite_up", "FileDialog", p_theme->get_icon("action_move_up", EditorStringName(EditorIcons)));
 		p_theme->set_icon("favorite_down", "FileDialog", p_theme->get_icon("action_move_down", EditorStringName(EditorIcons)));
 		p_theme->set_icon("create_folder", "FileDialog", p_theme->get_icon("folder_folder_create", EditorStringName(EditorIcons)));
 
 		p_theme->set_icon("menu_copy_path", "FileDialog", p_theme->get_icon("action_copy", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_delete", "FileDialog", p_theme->get_icon("action_remove", EditorStringName(EditorIcons)));
-		p_theme->set_icon("menu_refresh", "FileDialog", p_theme->get_icon("action_reload", EditorStringName(EditorIcons)));
+		p_theme->set_icon("menu_refresh", "FileDialog", p_theme->get_icon("action_refresh", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_new_folder", "FileDialog", p_theme->get_icon("folder_folder", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_show_in_file_manager", "FileDialog", p_theme->get_icon("gui_filesystem", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_open_bundle", "FileDialog", p_theme->get_icon("folder_folder_browse", EditorStringName(EditorIcons)));
@@ -1164,7 +1164,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_icon("radio_checked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_radio_checked_disabled"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("radio_unchecked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_radio_unchecked_disabled"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("submenu", "PopupMenu", p_theme->get_icon(SNAME("navigation_arrow_right"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("submenu_mirrored", "PopupMenu", p_theme->get_icon(SNAME("action_arrow_left"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("submenu_mirrored", "PopupMenu", p_theme->get_icon(SNAME("gui_arrow_left"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("search", "PopupMenu", p_theme->get_icon(SNAME("action_search"), EditorStringName(EditorIcons)));
 
 			p_theme->set_constant("h_separation", "PopupMenu", EDSCALE_RND(4));
@@ -1573,7 +1573,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_icon("shape_rect_wheel", "ColorPicker", p_theme->get_icon(SNAME("gui_picker_shape_rectangle_wheel"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("add_preset", "ColorPicker", p_theme->get_icon(SNAME("action_add"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("sample_bg", "ColorPicker", p_theme->get_icon(SNAME("gui_gui_mini_checkerboard"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("sample_revert", "ColorPicker", p_theme->get_icon(SNAME("action_reload"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("sample_revert", "ColorPicker", p_theme->get_icon(SNAME("action_revert"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("overbright_indicator", "ColorPicker", p_theme->get_icon(SNAME("viewport_overbright_indicator"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("bar_arrow", "ColorPicker", p_theme->get_icon(SNAME("gui_color_picker_bar_arrow"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("picker_cursor", "ColorPicker", p_theme->get_icon(SNAME("gui_picker_cursor"), EditorStringName(EditorIcons)));

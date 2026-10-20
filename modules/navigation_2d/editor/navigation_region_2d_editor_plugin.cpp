@@ -181,7 +181,7 @@ void NavigationRegion2DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
 			button_bake->set_button_icon(get_editor_theme_icon(SNAME("action_bake")));
-			button_reset->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
+			button_reset->set_button_icon(get_editor_theme_icon(SNAME("action_revert")));
 		} break;
 		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {
 			if (rebake_timer) {

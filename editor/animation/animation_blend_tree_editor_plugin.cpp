@@ -1361,10 +1361,10 @@ void AnimationNodeAnimationEditor::_open_set_custom_timeline_from_marker_dialog(
 	PackedStringArray markers = tree->has_animation(anim_name) ? tree->get_animation(anim_name)->get_marker_names() : PackedStringArray();
 
 	dialog->select_start->clear();
-	dialog->select_start->add_icon_item(get_editor_theme_icon(SNAME("playback_play_start")), TTR("Start of Animation"));
+	dialog->select_start->add_icon_item(get_editor_theme_icon(SNAME("playback_play_from_start")), TTR("Start of Animation"));
 	dialog->select_start->add_separator();
 	dialog->select_end->clear();
-	dialog->select_end->add_icon_item(get_editor_theme_icon(SNAME("playback_play_start_backwards")), TTR("End of Animation"));
+	dialog->select_end->add_icon_item(get_editor_theme_icon(SNAME("playback_play_from_end")), TTR("End of Animation"));
 	dialog->select_end->add_separator();
 
 	for (const String &marker : markers) {

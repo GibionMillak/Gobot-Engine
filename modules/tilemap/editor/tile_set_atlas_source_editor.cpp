@@ -2497,7 +2497,7 @@ void TileSetAtlasSourceEditor::_notification(int p_what) {
 			tool_select_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_select")));
 			tool_paint_button->set_button_icon(get_editor_theme_icon(SNAME("action_paint")));
 
-			tools_settings_erase_button->set_button_icon(get_editor_theme_icon(SNAME("action_eraser")));
+			tools_settings_erase_button->set_button_icon(get_editor_theme_icon(SNAME("action_erase")));
 			tool_advanced_menu_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
 			outside_tiles_warning->set_texture(get_editor_theme_icon(SNAME("status_status_warning")));
 

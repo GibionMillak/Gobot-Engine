@@ -313,7 +313,7 @@ void EditorDebuggerTree::update_scene_tree(const SceneDebuggerTree *p_tree, int 
 		if (node.view_flags & SceneDebuggerTree::RemoteNode::VIEW_HAS_VISIBLE_METHOD) {
 			bool node_visible = node.view_flags & SceneDebuggerTree::RemoteNode::VIEW_VISIBLE;
 			bool node_visible_in_tree = node.view_flags & SceneDebuggerTree::RemoteNode::VIEW_VISIBLE_IN_TREE;
-			Ref<Texture2D> button_icon = get_editor_theme_icon(node_visible ? SNAME("gui_gui_visibility_visible") : SNAME("gui_gui_visibility_hidden"));
+			Ref<Texture2D> button_icon = get_editor_theme_icon(node_visible ? SNAME("gui_eye_open") : SNAME("gui_eye_closed"));
 			String tooltip = TTR("Toggle Visibility");
 
 			item->set_meta("visible", node_visible);

@@ -5628,7 +5628,7 @@ void AnimationTrackEditor::_notification(int p_what) {
 			inactive_player_warning->set_button_icon(get_editor_theme_icon(SNAME("status_node_warning")));
 
 			edit->get_popup()->set_item_icon(edit->get_popup()->get_item_index(EDIT_ADD_RESET_KEY), get_editor_theme_icon(SNAME("action_move_up")));
-			edit->get_popup()->set_item_icon(edit->get_popup()->get_item_index(EDIT_APPLY_RESET), get_editor_theme_icon(SNAME("action_reload")));
+			edit->get_popup()->set_item_icon(edit->get_popup()->get_item_index(EDIT_APPLY_RESET), get_editor_theme_icon(SNAME("action_revert")));
 			auto_fit->set_button_icon(get_editor_theme_icon(SNAME("animation_animation_auto_fit")));
 			auto_fit_bezier->set_button_icon(get_editor_theme_icon(SNAME("animation_animation_auto_fit_bezier")));
 
