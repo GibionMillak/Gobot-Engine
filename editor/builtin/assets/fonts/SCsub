@@ -5,6 +5,9 @@ Import("env")
 
 import editor_fonts_builders
 
+env_fonts = env.Clone()
+env_fonts["editor_asset_root"] = Dir(".").abspath
+
 # Fonts
 flist = Glob("*/*.ttf")
 flist.extend(Glob("*/*.otf"))
@@ -14,7 +17,7 @@ flist.sort()
 env.CommandNoCache(
     "editor_fonts.gen.h",
     flist,
-    env.Run(editor_fonts_builders.make_fonts_header),
+    env_fonts.Run(editor_fonts_builders.make_fonts_header),
 )
 
 env.add_source_files(env.editor_sources, "*.cpp")

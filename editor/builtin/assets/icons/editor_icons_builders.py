@@ -4,6 +4,7 @@ import json
 import re
 from pathlib import Path
 
+import asset_builders
 import methods
 
 
@@ -47,7 +48,7 @@ def make_editor_icons_action(target, source, env):
         for part in stem_path.split("/"):
             if not re.fullmatch(r"[a-z0-9]+(?:_[a-z0-9]+)*", part):
                 raise ValueError(f"Icon paths must use snake_case: {path}")
-        name = prefix + stem_path.replace("/", "_")
+        name = asset_builders.get_asset_name(asset_path, icon_root, prefix=prefix)
         if name in identifiers:
             raise ValueError(f"Duplicate icon identifier '{name}': {identifiers[name]} and {path}")
         identifiers[name] = path

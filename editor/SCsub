@@ -2,10 +2,13 @@
 from misc.utility.scons_hints import *
 
 import os
+import sys
 
 import editor_builders
 
 Import("env")
+
+sys.path.insert(0, Dir("builtin/assets").abspath)
 
 env.editor_sources = []
 

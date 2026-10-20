@@ -6,6 +6,7 @@ Import("env")
 import editor_sounds_builders
 
 env_sounds = env.Clone()
+env_sounds["editor_asset_root"] = Dir(".").abspath
 
 if "vorbis" in env.module_list:
     if env["builtin_libogg"]:
@@ -18,7 +19,7 @@ if "vorbis" in env.module_list:
     env.CommandNoCache(
         "editor_sounds.gen.h",
         sounds,
-        env.Run(editor_sounds_builders.make_sounds_header),
+        env_sounds.Run(editor_sounds_builders.make_sounds_header),
     )
 
 env_sounds.add_source_files(env.editor_sources, "*.cpp")
