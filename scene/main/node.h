@@ -737,7 +737,7 @@ public:
 		return binds;
 	}
 
-	void replace_by(RequiredParam<Node> p_node, bool p_keep_groups = false);
+	void replace_by(RequiredParam<Node> p_node, bool p_keep_groups = false, bool p_keep_owned_children = true);
 
 	void set_process_mode(ProcessMode p_mode);
 	ProcessMode get_process_mode() const;
