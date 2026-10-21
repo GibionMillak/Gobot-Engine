@@ -366,6 +366,7 @@ public:
 		struct wp_color_management_surface_v1 *wp_color_management_surface = nullptr;
 
 		struct zxdg_toplevel_decoration_v1 *xdg_toplevel_decoration = nullptr;
+		struct xdg_activation_token_v1 *pending_xdg_activation_token = nullptr;
 
 		struct zwp_idle_inhibitor_v1 *wp_idle_inhibitor = nullptr;
 
