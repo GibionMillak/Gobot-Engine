@@ -343,7 +343,12 @@ class GameViewPluginBase : public EditorPlugin {
 	bool _is_window_wrapper_enabled() const;
 	void _dock_visibility_changed(EditorDock *p_dock);
 
+#ifdef ANDROID_ENABLED
+	void _on_show_game_dock();
+#endif
+
 protected:
+	static void _bind_methods();
 	void _notification(int p_what);
 #ifndef ANDROID_ENABLED
 	void setup(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embedded_process);

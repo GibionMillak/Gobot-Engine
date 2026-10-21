@@ -59,6 +59,7 @@
 #include "editor/themes/editor_scale.h"
 #include "scene/debugger/canvas_item_manipulator.h"
 #include "scene/gui/box_container.h"
+#include "scene/gui/button.h"
 #include "scene/gui/flow_container.h"
 #include "scene/gui/label.h"
 #include "scene/gui/menu_button.h"
@@ -1912,6 +1913,12 @@ void GameViewPluginBase::setup(Ref<GameViewDebugger> p_debugger, EmbeddedProcess
 
 #endif // ANDROID_ENABLED
 
+void GameViewPluginBase::_bind_methods() {
+#ifdef ANDROID_ENABLED
+	ADD_SIGNAL(MethodInfo("show_android_game_dock"));
+#endif
+}
+
 void GameViewPluginBase::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED: {
@@ -2014,6 +2021,13 @@ void GameViewPluginBase::setup_android() {
 	EditorDockManager::get_singleton()->add_dock(game_dock);
 	game_dock->connect(SceneStringName(visibility_changed), callable_mp(this, &GameViewPluginBase::_dock_visibility_changed).bind(game_dock));
 
-	_create_empty_info_label(TTRC("Game dock is not available on Android."));
+	Button *show_game_dock = memnew(Button(TTRC("Tap to show Game dock")));
+	show_game_dock->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
+	show_game_dock->connect(SceneStringName(pressed), callable_mp(this, &GameViewPluginBase::_on_show_game_dock));
+	GameView::get_dock()->add_child(show_game_dock);
+}
+
+void GameViewPluginBase::_on_show_game_dock() {
+	emit_signal(SNAME("show_android_game_dock"));
 }
 #endif

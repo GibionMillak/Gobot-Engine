@@ -898,7 +898,17 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 	override fun onEditorWorkspaceSelected(workspace: String) {
 		activeWorkspace = workspace
 
-		if (workspace == GAME_WORKSPACE && shouldShowGameMenuBar()) {
+		if (workspace == GAME_WORKSPACE) {
+			showEditorGameDock()
+		}
+
+		if (!isLargeScreen) {
+			toggleEditorOrientation()
+		}
+	}
+
+	final override fun showEditorGameDock() {
+		if (shouldShowGameMenuBar()) {
 			if (editorMessageDispatcher.bringEditorWindowToFront(EMBEDDED_RUN_GAME_INFO) ||
 				editorMessageDispatcher.bringEditorWindowToFront(RUN_GAME_INFO_0)) {
 				return
@@ -911,9 +921,6 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 			}
 		}
 
-		if (!isLargeScreen) {
-			toggleEditorOrientation()
-		}
 	}
 
 	override fun onDistractionFreeModeChanged(enabled: Boolean) {
