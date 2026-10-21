@@ -360,7 +360,9 @@ String _get_activity_tag(const Ref<EditorExportPlatform> &p_export_platform, con
 
 	manifest_activity_text += "            </intent-filter>\n";
 
-	manifest_activity_text += export_plugins_activity_element_contents;
+	Ref<RegEx> hybrid_category_regex = RegEx::create_from_string(R"delim(<category\s+android:name\s*=\s*"org.godotengine.xr.hybrid.(SPATIAL|IMMERSIVE|PANEL)"\s*\/>)delim");
+	String alias_activity_contents = hybrid_category_regex->sub(export_plugins_activity_element_contents, "", true);
+	manifest_activity_text += alias_activity_contents;
 	manifest_activity_text += "        </activity-alias>\n";
 	return manifest_activity_text;
 }
