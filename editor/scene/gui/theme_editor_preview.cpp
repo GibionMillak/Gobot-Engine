@@ -76,8 +76,27 @@ void ScalableContainer::_notification(int p_what) {
 	}
 }
 
+static void _get_occupied_area(Node *p_node, Rect2 &r_rect) {
+	if (Control *control = Object::cast_to<Control>(p_node)) {
+		r_rect.expand_to(control->get_global_rect().position + control->get_bound_minimum_size());
+	}
+	for (Node *child : p_node->iterate_children<false>()) {
+		_get_occupied_area(child, r_rect);
+	}
+}
+
 Size2 ScalableContainer::get_minimum_size() const {
-	return MarginContainer::get_minimum_size() * EDSCALE;
+	// Preview content may use a root that does not calculate its children's size.
+	Rect2 occupied_area;
+	occupied_area.position = get_global_rect().position;
+	for (Node *child : iterate_children()) {
+		_get_occupied_area(child, occupied_area);
+	}
+
+	Size2 minimum_size = occupied_area.size;
+	minimum_size.width += get_margin_size(SIDE_RIGHT);
+	minimum_size.height += get_margin_size(SIDE_BOTTOM);
+	return minimum_size * EDSCALE;
 }
 
 ScalableContainer::ScalableContainer() {
