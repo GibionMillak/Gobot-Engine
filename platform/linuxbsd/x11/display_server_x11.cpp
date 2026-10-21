@@ -7377,7 +7377,11 @@ DisplayServerX11::DisplayServerX11(const String &p_rendering_driver, DisplayServ
 					fallback = "bd_double_arrow";
 					break;
 				case DisplayServerEnums::CURSOR_MOVE:
-					cursor_img[i] = cursor_img[DisplayServerEnums::CURSOR_DRAG];
+					// Reload DRAG's cursor image instead of aliasing it, so cleanup owns one image per cursor.
+					cursor_img[i] = XcursorLibraryLoadImage("fleur", cursor_theme, cursor_size);
+					if (!cursor_img[i]) {
+						fallback = "grabbing";
+					}
 					break;
 				case DisplayServerEnums::CURSOR_VSPLIT:
 					fallback = "sb_v_double_arrow";
