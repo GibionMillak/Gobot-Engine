@@ -1045,7 +1045,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_color("font_outline_color", "FoldableContainer", p_config.font_outline_color);
 
 		p_theme->set_icon("expanded_arrow", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_down"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("expanded_arrow_mirrored", "FoldableContainer", p_theme->get_icon(SNAME("tree_arrow_up"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("expanded_arrow_mirrored", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_up"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("folded_arrow", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_right"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("folded_arrow_mirrored", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_left"), EditorStringName(EditorIcons)));
 
@@ -1082,7 +1082,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_icon("file", "FileDialog", p_theme->get_icon("file_file", EditorStringName(EditorIcons)));
 		p_theme->set_icon("folder_thumbnail", "FileDialog", p_theme->get_icon("folder_big_thumb", EditorStringName(EditorIcons)));
 		p_theme->set_icon("file_thumbnail", "FileDialog", p_theme->get_icon("file_big_thumb", EditorStringName(EditorIcons)));
-		p_theme->set_icon("parent_folder", "FileDialog", p_theme->get_icon("tree_arrow_up", EditorStringName(EditorIcons)));
+		p_theme->set_icon("parent_folder", "FileDialog", p_theme->get_icon("gui_tree_arrow_up", EditorStringName(EditorIcons)));
 		p_theme->set_icon("back_folder", "FileDialog", p_theme->get_icon("navigation_back", EditorStringName(EditorIcons)));
 		p_theme->set_icon("forward_folder", "FileDialog", p_theme->get_icon("navigation_forward", EditorStringName(EditorIcons)));
 		p_theme->set_icon("reload", "FileDialog", p_theme->get_icon("action_refresh", EditorStringName(EditorIcons)));

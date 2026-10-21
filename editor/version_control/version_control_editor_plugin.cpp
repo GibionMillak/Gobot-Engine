@@ -308,7 +308,7 @@ void VersionControlEditorPlugin::_refresh_remote_list() {
 
 	int i = 0;
 	for (List<String>::ConstIterator itr = remotes.begin(); itr != remotes.end(); ++itr, ++i) {
-		remote_select->add_icon_item(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("tree_arrow_up"), EditorStringName(EditorIcons)), *itr, i);
+		remote_select->add_icon_item(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("gui_tree_arrow_up"), EditorStringName(EditorIcons)), *itr, i);
 		remote_select->set_item_metadata(i, *itr);
 
 		if (*itr == current_remote) {
@@ -928,7 +928,7 @@ void VersionControlEditorPlugin::_update_extra_options() {
 
 	extra_options_remove_remote_list->clear();
 	for (int i = 0; i < remote_select->get_item_count(); i++) {
-		extra_options_remove_remote_list->add_icon_item(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("tree_arrow_up"), EditorStringName(EditorIcons)), remote_select->get_item_text(remote_select->get_item_id(i)));
+		extra_options_remove_remote_list->add_icon_item(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("gui_tree_arrow_up"), EditorStringName(EditorIcons)), remote_select->get_item_text(remote_select->get_item_id(i)));
 	}
 	extra_options_remove_remote_list->update_canvas_items();
 }
