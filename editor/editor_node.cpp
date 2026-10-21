@@ -2449,7 +2449,7 @@ void EditorNode::update_resource_count(Node *p_node, bool p_remove) {
 		}
 	}
 
-	emit_signal(SNAME("resource_counter_changed"));
+	_queue_resource_counter_changed();
 }
 
 void EditorNode::update_node_reference(const Variant &p_value, Node *p_node, bool p_remove) {
@@ -2473,7 +2473,7 @@ void EditorNode::update_node_reference(const Variant &p_value, Node *p_node, boo
 			}
 		}
 	}
-	emit_signal(SNAME("resource_counter_changed"));
+	_queue_resource_counter_changed();
 }
 
 void EditorNode::clear_node_reference(Ref<Resource> p_res) {
@@ -7716,6 +7716,19 @@ void EditorNode::_queue_translation_notification() {
 void EditorNode::_propagate_translation_notification() {
 	pending_translation_notification = false;
 	scene_root->propagate_notification(NOTIFICATION_TRANSLATION_CHANGED);
+}
+
+void EditorNode::_queue_resource_counter_changed() {
+	if (resource_counter_queued) {
+		return;
+	}
+	callable_mp(this, &EditorNode::_emit_resource_counter_changed).call_deferred();
+	resource_counter_queued = true;
+}
+
+void EditorNode::_emit_resource_counter_changed() {
+	resource_counter_queued = false;
+	emit_signal(SNAME("resource_counter_changed"));
 }
 
 void EditorNode::_renderer_selected(int p_index) {
