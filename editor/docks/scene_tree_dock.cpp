@@ -2870,8 +2870,8 @@ void SceneTreeDock::_toggle_editable_children(List<Node *> &p_nodes, ItemCheckSt
 				if (node_3d) {
 					transforms_array.push_back(node_3d->get_global_transform());
 				} else {
-					CanvasItem *canvas_item = Object::cast_to<CanvasItem>(owned_node);
-					transforms_array.push_back(canvas_item ? canvas_item->get_global_transform() : Transform2D());
+					CanvasItem *canvas_item_node = Object::cast_to<CanvasItem>(owned_node);
+					transforms_array.push_back(canvas_item_node ? canvas_item_node->get_global_transform() : Transform2D());
 				}
 			}
 
