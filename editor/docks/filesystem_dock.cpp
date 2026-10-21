@@ -4618,7 +4618,6 @@ FileSystemDock::FileSystemDock() {
 	path_hb->add_child(file_list_button_sort);
 
 	files = memnew(FileSystemList);
-	files->set_accessibility_name(TTRC("Files"));
 	files->set_select_mode(ItemList::SELECT_MULTI);
 	files->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_TOP);
 	files->set_allow_rmb_select(true);
