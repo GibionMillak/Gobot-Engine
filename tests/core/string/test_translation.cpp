@@ -37,6 +37,7 @@ TEST_FORCE_LINK(test_translation)
 #include "core/string/plural_rules.h"
 #include "core/string/translation.h"
 #include "core/string/translation_server.h"
+#include "thirdparty/misc/smaz.h"
 
 #ifdef TOOLS_ENABLED
 #include "editor/import/resource_importer_csv_translation.h"
@@ -216,6 +217,36 @@ TEST_CASE("[OptimizedTranslation] Generate from Translation and read messages") 
 	CHECK(optimized_translation->get_message_count() == 0);
 	ERR_PRINT_ON;
 	CHECK(messages.size() == 0);
+}
+
+TEST_CASE("[OptimizedTranslation] Reject malformed bucket and string data") {
+	Ref<Translation> translation = memnew(Translation);
+	translation->add_message("Hello", "Bonjour");
+
+	Ref<OptimizedTranslation> invalid_bucket = memnew(OptimizedTranslation);
+	invalid_bucket->generate(translation);
+	invalid_bucket->set("bucket_table", PackedInt32Array());
+	ERR_PRINT_OFF;
+	CHECK(invalid_bucket->get_message("Hello").is_empty());
+	CHECK(invalid_bucket->get_translated_message_list().is_empty());
+	ERR_PRINT_ON;
+
+	Ref<OptimizedTranslation> invalid_string = memnew(OptimizedTranslation);
+	invalid_string->generate(translation);
+	invalid_string->set("strings", PackedByteArray());
+	ERR_PRINT_OFF;
+	CHECK(invalid_string->get_message("Hello").is_empty());
+	CHECK(invalid_string->get_translated_message_list().is_empty());
+	ERR_PRINT_ON;
+}
+
+TEST_CASE("[OptimizedTranslation] Reject truncated SMAZ verbatim data") {
+	char output[8];
+	const char truncated_byte[] = { static_cast<char>(254) };
+	const char truncated_string[] = { static_cast<char>(255), 3, 'a' };
+
+	CHECK_EQ(smaz_decompress(truncated_byte, static_cast<int>(sizeof(truncated_byte)), output, static_cast<int>(sizeof(output))), static_cast<int>(sizeof(output)) + 1);
+	CHECK_EQ(smaz_decompress(truncated_string, static_cast<int>(sizeof(truncated_string)), output, static_cast<int>(sizeof(output))), static_cast<int>(sizeof(output)) + 1);
 }
 
 TEST_CASE("[TranslationCSV] CSV import") {
