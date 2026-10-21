@@ -322,7 +322,7 @@ void TextShaderPreview::_notification(int p_what) {
 			error_label->add_theme_style_override(CoreStringName(normal), no_margins);
 			error_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 
-			delete_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_close")));
+			delete_button->set_button_icon(get_editor_theme_icon(SNAME("gui_close")));
 
 			goto_button->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
 			goto_button->add_theme_font_size_override(SceneStringName(font_size), Math::round(12 * EDSCALE));

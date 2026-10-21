@@ -523,8 +523,8 @@ void EditorThemeManager::_populate_text_editor_styles(const Ref<EditorTheme> &p_
 	p_theme->set_font_size(SceneStringName(font_size), "CodeEdit", p_theme->get_font_size(SNAME("source_size"), EditorStringName(EditorFonts)));
 
 	/* clang-format off */
-	p_theme->set_icon("tab",                  "CodeEdit", p_theme->get_icon(SNAME("gui_gui_tab"), EditorStringName(EditorIcons)));
-	p_theme->set_icon("space",                "CodeEdit", p_theme->get_icon(SNAME("gui_gui_space"), EditorStringName(EditorIcons)));
+	p_theme->set_icon("tab",                  "CodeEdit", p_theme->get_icon(SNAME("gui_tab"), EditorStringName(EditorIcons)));
+	p_theme->set_icon("space",                "CodeEdit", p_theme->get_icon(SNAME("gui_space"), EditorStringName(EditorIcons)));
 	p_theme->set_icon("folded",               "CodeEdit", p_theme->get_icon(SNAME("scripting_code_folded_right_arrow"), EditorStringName(EditorIcons)));
 	p_theme->set_icon("can_fold",             "CodeEdit", p_theme->get_icon(SNAME("scripting_code_fold_down_arrow"), EditorStringName(EditorIcons)));
 	p_theme->set_icon("folded_code_region",   "CodeEdit", p_theme->get_icon(SNAME("scripting_code_region_folded_right_arrow"), EditorStringName(EditorIcons)));

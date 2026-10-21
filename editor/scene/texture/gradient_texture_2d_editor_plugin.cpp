@@ -169,7 +169,7 @@ void GradientTexture2DEdit::_notification(int p_what) {
 			}
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
-			checkerboard->set_texture(get_editor_theme_icon(SNAME("gui_gui_mini_checkerboard")));
+			checkerboard->set_texture(get_editor_theme_icon(SNAME("gui_mini_checkerboard")));
 		} break;
 		case NOTIFICATION_DRAW: {
 			_draw();

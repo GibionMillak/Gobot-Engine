@@ -588,8 +588,8 @@ void FindReplaceBar::_update_toggle_replace_button(bool p_replace_visible) {
 	String tooltip = p_replace_visible ? TTRC("Hide Replace") : TTRC("Show Replace");
 	String shortcut = ED_GET_SHORTCUT(p_replace_visible ? "script_text_editor/find" : "script_text_editor/replace")->get_as_text();
 	toggle_replace_button->set_tooltip_text(vformat("%s (%s)", tooltip, shortcut));
-	StringName rtl_compliant_arrow = is_layout_rtl() ? SNAME("gui_gui_tree_arrow_left") : SNAME("gui_gui_tree_arrow_right");
-	toggle_replace_button->set_button_icon(get_editor_theme_icon(p_replace_visible ? SNAME("gui_gui_tree_arrow_down") : rtl_compliant_arrow));
+	StringName rtl_compliant_arrow = is_layout_rtl() ? SNAME("gui_tree_arrow_left") : SNAME("gui_tree_arrow_right");
+	toggle_replace_button->set_button_icon(get_editor_theme_icon(p_replace_visible ? SNAME("gui_tree_arrow_down") : rtl_compliant_arrow));
 }
 
 void FindReplaceBar::_show_search(bool p_with_replace, bool p_show_only) {
@@ -1659,7 +1659,7 @@ void CodeTextEditor::_update_text_editor_theme() {
 	error->add_theme_style_override(SNAME("normal"), label_stylebox);
 	error->end_bulk_theme_override();
 
-	error_button->set_button_icon(get_editor_theme_icon(SNAME("status_status_error")));
+	error_button->set_button_icon(get_editor_theme_icon(SNAME("status_error")));
 	error_button->add_theme_color_override(SceneStringName(font_color), error_color);
 
 	warning_button->set_button_icon(get_editor_theme_icon(SNAME("status_node_warning")));

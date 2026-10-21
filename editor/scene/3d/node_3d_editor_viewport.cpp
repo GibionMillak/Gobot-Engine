@@ -3885,7 +3885,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			_update_centered_labels();
 
-			view_display_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl_dark_background")));
+			view_display_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl_dark_background")));
 			preview_camera->set_button_icon(get_editor_theme_icon(SNAME("viewport_camera_3d_dark_background")));
 			pilot_camera->set_button_icon(get_editor_theme_icon(SNAME("node_3d")));
 			Control *gui_base = EditorNode::get_singleton()->get_gui_base();
@@ -4288,7 +4288,7 @@ void Node3DEditorViewport::_draw() {
 					draw_indicator_bar(
 							*surface,
 							1.0 - logscale_t,
-							get_editor_theme_icon(SNAME("viewport_viewport_speed")),
+							get_editor_theme_icon(SNAME("viewport_speed")),
 							get_theme_font("bold", EditorStringName(EditorFonts)),
 							get_theme_font_size(SceneStringName(font_size), SNAME("Label")),
 							vformat("%s m/s", String::num(freelook_speed).pad_decimals(precision)),
@@ -4310,7 +4310,7 @@ void Node3DEditorViewport::_draw() {
 					draw_indicator_bar(
 							*surface,
 							logscale_t,
-							get_editor_theme_icon(SNAME("viewport_viewport_zoom")),
+							get_editor_theme_icon(SNAME("viewport_zoom")),
 							get_theme_font("bold", EditorStringName(EditorFonts)),
 							get_theme_font_size(SceneStringName(font_size), SNAME("Label")),
 							vformat("%s m", String::num(cursor.distance).pad_decimals(precision)),

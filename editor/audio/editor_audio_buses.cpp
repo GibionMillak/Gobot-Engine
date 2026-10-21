@@ -108,17 +108,17 @@ void EditorAudioBus::_notification(int p_what) {
 			Ref<StyleBoxFlat>(mute->get_theme_stylebox("hover_pressed"))->set_border_color(mute_color_darkened);
 			Ref<StyleBoxFlat>(bypass->get_theme_stylebox("hover_pressed"))->set_border_color(bypass_color_darkened);
 
-			solo->set_button_icon(get_editor_theme_icon(SNAME("audio_audio_bus_solo")));
+			solo->set_button_icon(get_editor_theme_icon(SNAME("audio_bus_solo")));
 			solo->add_theme_color_override("icon_pressed_color", solo_color);
 			solo->add_theme_color_override("icon_hover_pressed_color", solo_color_darkened);
-			mute->set_button_icon(get_editor_theme_icon(SNAME("audio_audio_bus_mute")));
+			mute->set_button_icon(get_editor_theme_icon(SNAME("audio_bus_mute")));
 			mute->add_theme_color_override("icon_pressed_color", mute_color);
 			mute->add_theme_color_override("icon_hover_pressed_color", mute_color_darkened);
-			bypass->set_button_icon(get_editor_theme_icon(SNAME("audio_audio_bus_bypass")));
+			bypass->set_button_icon(get_editor_theme_icon(SNAME("audio_bus_bypass")));
 			bypass->add_theme_color_override("icon_pressed_color", bypass_color);
 			bypass->add_theme_color_override("icon_hover_pressed_color", bypass_color_darkened);
 
-			bus_options->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			bus_options->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
 
 			audio_value_preview_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SceneStringName(font_color), SNAME("TooltipLabel")));
 			audio_value_preview_label->add_theme_color_override("font_shadow_color", get_theme_color(SNAME("font_shadow_color"), SNAME("TooltipLabel")));
@@ -1274,7 +1274,7 @@ EditorAudioBuses *EditorAudioBuses::register_editor() {
 void EditorAudioBuses::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			menu->set_button_icon(get_editor_theme_icon("gui_gui_tab_menu_hl"));
+			menu->set_button_icon(get_editor_theme_icon("gui_tab_menu_hl"));
 			menu->get_popup()->set_item_icon((int)MenuOption::CREATE, get_editor_theme_icon("action_new"));
 			menu->get_popup()->set_item_icon((int)MenuOption::LOAD, get_editor_theme_icon("action_load"));
 			menu->get_popup()->set_item_icon((int)MenuOption::SAVE_AS, get_editor_theme_icon("action_save"));

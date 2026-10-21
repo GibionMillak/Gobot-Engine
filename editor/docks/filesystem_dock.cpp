@@ -655,7 +655,7 @@ void FileSystemDock::_notification(int p_what) {
 			button_toggle_display_mode->set_button_icon(get_editor_theme_icon(mode_icon));
 
 			if (file_list_display_mode == FILE_LIST_DISPLAY_LIST) {
-				button_file_list_display_mode->set_button_icon(get_editor_theme_icon(SNAME("file_file_thumbnail")));
+				button_file_list_display_mode->set_button_icon(get_editor_theme_icon(SNAME("file_thumbnail")));
 			} else {
 				button_file_list_display_mode->set_button_icon(get_editor_theme_icon(SNAME("gui_file_list")));
 			}
@@ -955,7 +955,7 @@ void FileSystemDock::_toggle_file_display() {
 void FileSystemDock::_set_file_display(bool p_active) {
 	if (p_active) {
 		file_list_display_mode = FILE_LIST_DISPLAY_LIST;
-		button_file_list_display_mode->set_button_icon(get_editor_theme_icon(SNAME("file_file_thumbnail")));
+		button_file_list_display_mode->set_button_icon(get_editor_theme_icon(SNAME("file_thumbnail")));
 		button_file_list_display_mode->set_tooltip_text(TTRC("View items as a grid of thumbnails."));
 	} else {
 		file_list_display_mode = FILE_LIST_DISPLAY_THUMBNAILS;
@@ -1052,13 +1052,13 @@ void FileSystemDock::_update_file_list(bool p_keep_selection, const Vector<Strin
 		files->set_fixed_tag_icon_size(Size2(icon_size, icon_size));
 
 		if (thumbnail_size < 64) {
-			folder_thumbnail = get_editor_theme_icon(SNAME("folder_folder_medium_thumb"));
-			file_thumbnail = get_editor_theme_icon(SNAME("file_file_medium_thumb"));
-			file_thumbnail_broken = get_editor_theme_icon(SNAME("file_file_dead_medium_thumb"));
+			folder_thumbnail = get_editor_theme_icon(SNAME("folder_medium_thumb"));
+			file_thumbnail = get_editor_theme_icon(SNAME("file_medium_thumb"));
+			file_thumbnail_broken = get_editor_theme_icon(SNAME("file_dead_medium_thumb"));
 		} else {
-			folder_thumbnail = get_editor_theme_icon(SNAME("folder_folder_big_thumb"));
-			file_thumbnail = get_editor_theme_icon(SNAME("file_file_big_thumb"));
-			file_thumbnail_broken = get_editor_theme_icon(SNAME("file_file_dead_big_thumb"));
+			folder_thumbnail = get_editor_theme_icon(SNAME("folder_big_thumb"));
+			file_thumbnail = get_editor_theme_icon(SNAME("file_big_thumb"));
+			file_thumbnail_broken = get_editor_theme_icon(SNAME("file_dead_big_thumb"));
 		}
 	} else {
 		// No thumbnails.
@@ -3519,8 +3519,8 @@ void FileSystemDock::_file_and_folders_fill_popup(PopupMenu *p_popup, const Vect
 			p_popup->add_icon_item(get_editor_theme_icon(SNAME("action_load")), TTRC("Expand Folder"), FILE_MENU_OPEN);
 
 			if (foldernames.size() == 1) {
-				p_popup->add_icon_item(get_editor_theme_icon(SNAME("gui_gui_tree_arrow_down")), TTRC("Expand Hierarchy"), FILE_MENU_EXPAND_ALL);
-				p_popup->add_icon_item(get_editor_theme_icon(SNAME("gui_gui_tree_arrow_right")), TTRC("Collapse Hierarchy"), FILE_MENU_COLLAPSE_ALL);
+				p_popup->add_icon_item(get_editor_theme_icon(SNAME("gui_tree_arrow_down")), TTRC("Expand Hierarchy"), FILE_MENU_EXPAND_ALL);
+				p_popup->add_icon_item(get_editor_theme_icon(SNAME("gui_tree_arrow_right")), TTRC("Collapse Hierarchy"), FILE_MENU_COLLAPSE_ALL);
 			}
 
 			p_popup->add_separator();

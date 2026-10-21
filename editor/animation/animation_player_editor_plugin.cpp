@@ -204,7 +204,7 @@ void AnimationPlayerEditor::_notification(int p_what) {
 			}
 
 			onion_toggle->set_button_icon(get_editor_theme_icon(SNAME("animation_onion")));
-			onion_skinning->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			onion_skinning->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
 
 			pin->set_button_icon(get_editor_theme_icon(SNAME("action_pin")));
 

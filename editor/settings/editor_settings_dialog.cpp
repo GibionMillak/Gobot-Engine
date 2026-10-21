@@ -380,7 +380,7 @@ void EditorSettingsDialog::_update_icons() {
 
 	restart_close_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 	restart_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("Tree")));
-	restart_icon->set_texture(get_editor_theme_icon(SNAME("status_status_warning")));
+	restart_icon->set_texture(get_editor_theme_icon(SNAME("status_warning")));
 	restart_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 }
 

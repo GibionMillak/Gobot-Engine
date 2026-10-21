@@ -932,7 +932,7 @@ bool ThemeItemImportTree::has_selected_items() const {
 void ThemeItemImportTree::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			select_icons_warning_icon->set_texture(get_editor_theme_icon(SNAME("status_status_warning")));
+			select_icons_warning_icon->set_texture(get_editor_theme_icon(SNAME("status_warning")));
 			select_icons_warning->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("font_disabled_color"), EditorStringName(Editor)));
 
 			import_items_filter->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
@@ -941,45 +941,45 @@ void ThemeItemImportTree::_notification(int p_what) {
 			import_collapse_types_button->set_button_icon(get_editor_theme_icon(SNAME("action_collapse_tree")));
 			import_expand_types_button->set_button_icon(get_editor_theme_icon(SNAME("action_expand_tree")));
 
-			import_select_all_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_all")));
-			import_select_full_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_full")));
-			import_deselect_all_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_deselect_all")));
+			import_select_all_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
+			import_select_full_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
+			import_deselect_all_button->set_button_icon(get_editor_theme_icon(SNAME("theme_deselect_all")));
 
 			// Side panel buttons.
 			select_colors_icon->set_texture(get_editor_theme_icon(SNAME("variant_color")));
-			deselect_all_colors_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_deselect_all")));
-			select_all_colors_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_all")));
-			select_full_colors_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_full")));
+			deselect_all_colors_button->set_button_icon(get_editor_theme_icon(SNAME("theme_deselect_all")));
+			select_all_colors_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
+			select_full_colors_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
 
 			select_constants_icon->set_texture(get_editor_theme_icon(SNAME("scripting_member_constant")));
-			deselect_all_constants_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_deselect_all")));
-			select_all_constants_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_all")));
-			select_full_constants_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_full")));
+			deselect_all_constants_button->set_button_icon(get_editor_theme_icon(SNAME("theme_deselect_all")));
+			select_all_constants_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
+			select_full_constants_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
 
 			select_fonts_icon->set_texture(get_editor_theme_icon(SNAME("theme_font_item")));
-			deselect_all_fonts_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_deselect_all")));
-			select_all_fonts_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_all")));
-			select_full_fonts_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_full")));
+			deselect_all_fonts_button->set_button_icon(get_editor_theme_icon(SNAME("theme_deselect_all")));
+			select_all_fonts_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
+			select_full_fonts_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
 
 			select_font_sizes_icon->set_texture(get_editor_theme_icon(SNAME("theme_font_size")));
-			deselect_all_font_sizes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_deselect_all")));
-			select_all_font_sizes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_all")));
-			select_full_font_sizes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_full")));
+			deselect_all_font_sizes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_deselect_all")));
+			select_all_font_sizes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
+			select_full_font_sizes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
 
 			select_icons_icon->set_texture(get_editor_theme_icon(SNAME("resource_image_texture")));
-			deselect_all_icons_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_deselect_all")));
-			select_all_icons_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_all")));
-			select_full_icons_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_full")));
+			deselect_all_icons_button->set_button_icon(get_editor_theme_icon(SNAME("theme_deselect_all")));
+			select_all_icons_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
+			select_full_icons_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
 
 			select_styleboxes_icon->set_texture(get_editor_theme_icon(SNAME("resource_style_box_flat")));
-			deselect_all_styleboxes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_deselect_all")));
-			select_all_styleboxes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_all")));
-			select_full_styleboxes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_full")));
+			deselect_all_styleboxes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_deselect_all")));
+			select_all_styleboxes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
+			select_full_styleboxes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
 
 			select_sounds_icon->set_texture(get_editor_theme_icon(SNAME("resource_audio_stream")));
-			deselect_all_sounds_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_deselect_all")));
-			select_all_sounds_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_all")));
-			select_full_sounds_button->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_select_full")));
+			deselect_all_sounds_button->set_button_icon(get_editor_theme_icon(SNAME("theme_deselect_all")));
+			select_all_sounds_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
+			select_full_sounds_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
 		} break;
 	}
 }
@@ -2060,8 +2060,8 @@ void ThemeItemEditorDialog::_notification(int p_what) {
 			edit_items_add_sound->set_button_icon(get_editor_theme_icon(SNAME("resource_audio_stream")));
 
 			edit_items_remove_class->set_button_icon(get_editor_theme_icon(SNAME("node_control")));
-			edit_items_remove_custom->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_remove_custom_items")));
-			edit_items_remove_all->set_button_icon(get_editor_theme_icon(SNAME("theme_theme_remove_all_items")));
+			edit_items_remove_custom->set_button_icon(get_editor_theme_icon(SNAME("theme_remove_custom_items")));
+			edit_items_remove_all->set_button_icon(get_editor_theme_icon(SNAME("theme_remove_all_items")));
 
 			edit_add_type_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 

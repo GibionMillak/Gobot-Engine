@@ -408,7 +408,7 @@ void AnimationBezierTrackEdit::_notification(int p_what) {
 			Ref<Texture2D> visibility_hidden = get_editor_theme_icon(SNAME("gui_eye_closed"));
 			Ref<Texture2D> lock = get_editor_theme_icon(SNAME("action_lock"));
 			Ref<Texture2D> unlock = get_editor_theme_icon(SNAME("action_unlock"));
-			Ref<Texture2D> solo = get_editor_theme_icon(SNAME("audio_audio_bus_solo"));
+			Ref<Texture2D> solo = get_editor_theme_icon(SNAME("audio_bus_solo"));
 
 			for (const KeyValue<String, Vector<int>> &E : track_indices) {
 				String base_path = E.key;

@@ -475,7 +475,7 @@ void EditorHelp::_add_type_icon(const String &p_type, int p_size, const String &
 #define DEPRECATED_DOC_TAG \
 	class_desc->push_font(theme_cache.doc_bold_font); \
 	class_desc->push_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor))); \
-	Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("status_status_error")); \
+	Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("status_error")); \
 	class_desc->add_image(error_icon, error_icon->get_width(), error_icon->get_height()); \
 	class_desc->add_text(String::chr(160) + TTR("Deprecated")); \
 	class_desc->pop(); \
@@ -493,7 +493,7 @@ void EditorHelp::_add_type_icon(const String &p_type, int p_size, const String &
 // Macros for displaying the deprecated/experimental info in class member descriptions.
 
 #define DEPRECATED_DOC_MSG(m_message, m_default_message) \
-	Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("status_status_error")); \
+	Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("status_error")); \
 	class_desc->add_image(error_icon, error_icon->get_width(), error_icon->get_height()); \
 	class_desc->add_text(nbsp); \
 	class_desc->push_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor))); \
@@ -2451,8 +2451,8 @@ static void _add_text_to_rt(const String &p_bbcode, RichTextLabel *p_rt, const C
 
 	const Ref<Texture2D> note_icon = p_owner_node->get_editor_theme_icon(SNAME("status_node_info"));
 	const Ref<Texture2D> warning_icon = p_owner_node->get_editor_theme_icon(SNAME("status_node_warning"));
-	const Ref<Texture2D> important_icon = p_owner_node->get_editor_theme_icon(SNAME("status_status_warning"));
-	const Ref<Texture2D> tip_icon = p_owner_node->get_editor_theme_icon(SNAME("status_status_success"));
+	const Ref<Texture2D> important_icon = p_owner_node->get_editor_theme_icon(SNAME("status_warning"));
+	const Ref<Texture2D> tip_icon = p_owner_node->get_editor_theme_icon(SNAME("status_success"));
 
 	const Color link_color = p_owner_node->get_theme_color(SNAME("link_color"), SNAME("EditorHelp"));
 	const Color link_method_color = p_owner_node->get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
@@ -4043,7 +4043,7 @@ void EditorHelpBit::_update_labels() {
 	if (!help_data.deprecated_message.is_empty()) {
 		has_prev_text = true;
 
-		Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("status_status_error"));
+		Ref<Texture2D> error_icon = get_editor_theme_icon(SNAME("status_error"));
 		content->add_image(error_icon, error_icon->get_width(), error_icon->get_height());
 		content->add_text(nbsp);
 		content->push_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));

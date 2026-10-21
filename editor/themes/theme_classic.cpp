@@ -482,7 +482,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_color("icon_pressed_color", "OptionButton", p_config.icon_pressed_color);
 			p_theme->set_color("icon_disabled_color", "OptionButton", p_config.icon_disabled_color);
 
-			p_theme->set_icon("arrow", "OptionButton", p_theme->get_icon(SNAME("gui_gui_option_arrow"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("arrow", "OptionButton", p_theme->get_icon(SNAME("gui_option_arrow"), EditorStringName(EditorIcons)));
 			p_theme->set_constant("arrow_margin", "OptionButton", p_config.widget_margin.x - EDSCALE_RND(2));
 			p_theme->set_constant("modulate_arrow", "OptionButton", true);
 			p_theme->set_constant("h_separation", "OptionButton", EDSCALE_RND(4));
@@ -497,15 +497,15 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_stylebox(SceneStringName(hover), "CheckButton", p_config.panel_container_style);
 		p_theme->set_stylebox("hover_pressed", "CheckButton", p_config.panel_container_style);
 
-		p_theme->set_icon("checked", "CheckButton", p_theme->get_icon(SNAME("gui_gui_toggle_on"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("checked_disabled", "CheckButton", p_theme->get_icon(SNAME("gui_gui_toggle_on_disabled"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("unchecked", "CheckButton", p_theme->get_icon(SNAME("gui_gui_toggle_off"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("unchecked_disabled", "CheckButton", p_theme->get_icon(SNAME("gui_gui_toggle_off_disabled"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("checked", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_on"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("checked_disabled", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_on_disabled"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("unchecked", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_off"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("unchecked_disabled", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_off_disabled"), EditorStringName(EditorIcons)));
 
-		p_theme->set_icon("checked_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_gui_toggle_on_mirrored"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("checked_disabled_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_gui_toggle_on_disabled_mirrored"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("unchecked_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_gui_toggle_off_mirrored"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("unchecked_disabled_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_gui_toggle_off_disabled_mirrored"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("checked_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_on_mirrored"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("checked_disabled_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_on_disabled_mirrored"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("unchecked_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_off_mirrored"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("unchecked_disabled_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_off_disabled_mirrored"), EditorStringName(EditorIcons)));
 
 		p_theme->set_color(SceneStringName(font_color), "CheckButton", p_config.font_color);
 		p_theme->set_color("font_hover_color", "CheckButton", p_config.font_hover_color);
@@ -535,14 +535,14 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_stylebox(SceneStringName(hover), "CheckBox", checkbox_style);
 			p_theme->set_stylebox("hover_pressed", "CheckBox", checkbox_style);
 
-			p_theme->set_icon("checked", "CheckBox", p_theme->get_icon(SNAME("gui_gui_checked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("unchecked", "CheckBox", p_theme->get_icon(SNAME("gui_gui_unchecked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("radio_checked", "CheckBox", p_theme->get_icon(SNAME("gui_gui_radio_checked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("radio_unchecked", "CheckBox", p_theme->get_icon(SNAME("gui_gui_radio_unchecked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("checked_disabled", "CheckBox", p_theme->get_icon(SNAME("gui_gui_checked_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("unchecked_disabled", "CheckBox", p_theme->get_icon(SNAME("gui_gui_unchecked_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("radio_checked_disabled", "CheckBox", p_theme->get_icon(SNAME("gui_gui_radio_checked_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("radio_unchecked_disabled", "CheckBox", p_theme->get_icon(SNAME("gui_gui_radio_unchecked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("checked", "CheckBox", p_theme->get_icon(SNAME("gui_checked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("unchecked", "CheckBox", p_theme->get_icon(SNAME("gui_unchecked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("radio_checked", "CheckBox", p_theme->get_icon(SNAME("gui_radio_checked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("radio_unchecked", "CheckBox", p_theme->get_icon(SNAME("gui_radio_unchecked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("checked_disabled", "CheckBox", p_theme->get_icon(SNAME("gui_checked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("unchecked_disabled", "CheckBox", p_theme->get_icon(SNAME("gui_unchecked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("radio_checked_disabled", "CheckBox", p_theme->get_icon(SNAME("gui_radio_checked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("radio_unchecked_disabled", "CheckBox", p_theme->get_icon(SNAME("gui_radio_unchecked_disabled"), EditorStringName(EditorIcons)));
 
 			p_theme->set_color(SceneStringName(font_color), "CheckBox", p_config.font_color);
 			p_theme->set_color("font_hover_color", "CheckBox", p_config.font_hover_color);
@@ -590,17 +590,17 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 
 		// Tree.
 		{
-			p_theme->set_icon("checked", "Tree", p_theme->get_icon(SNAME("gui_gui_checked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("checked_disabled", "Tree", p_theme->get_icon(SNAME("gui_gui_checked_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("indeterminate", "Tree", p_theme->get_icon(SNAME("gui_gui_indeterminate"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("indeterminate_disabled", "Tree", p_theme->get_icon(SNAME("gui_gui_indeterminate_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("unchecked", "Tree", p_theme->get_icon(SNAME("gui_gui_unchecked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("unchecked_disabled", "Tree", p_theme->get_icon(SNAME("gui_gui_unchecked_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("arrow", "Tree", p_theme->get_icon(SNAME("gui_gui_tree_arrow_down"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("arrow_collapsed", "Tree", p_theme->get_icon(SNAME("gui_gui_tree_arrow_right"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("arrow_collapsed_mirrored", "Tree", p_theme->get_icon(SNAME("gui_gui_tree_arrow_left"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("updown", "Tree", p_theme->get_icon(SNAME("gui_gui_tree_updown"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("select_arrow", "Tree", p_theme->get_icon(SNAME("gui_gui_dropdown"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("checked", "Tree", p_theme->get_icon(SNAME("gui_checked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("checked_disabled", "Tree", p_theme->get_icon(SNAME("gui_checked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("indeterminate", "Tree", p_theme->get_icon(SNAME("gui_indeterminate"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("indeterminate_disabled", "Tree", p_theme->get_icon(SNAME("gui_indeterminate_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("unchecked", "Tree", p_theme->get_icon(SNAME("gui_unchecked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("unchecked_disabled", "Tree", p_theme->get_icon(SNAME("gui_unchecked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("arrow", "Tree", p_theme->get_icon(SNAME("gui_tree_arrow_down"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("arrow_collapsed", "Tree", p_theme->get_icon(SNAME("gui_tree_arrow_right"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("arrow_collapsed_mirrored", "Tree", p_theme->get_icon(SNAME("gui_tree_arrow_left"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("updown", "Tree", p_theme->get_icon(SNAME("gui_tree_updown"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("select_arrow", "Tree", p_theme->get_icon(SNAME("gui_dropdown"), EditorStringName(EditorIcons)));
 
 			p_theme->set_stylebox(SceneStringName(panel), "Tree", p_config.tree_panel_style);
 			p_theme->set_stylebox("focus", "Tree", p_config.button_style_focus);
@@ -897,19 +897,19 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_color("icon_hovered_color", "TabBar", icon_color);
 		p_theme->set_color("icon_unselected_color", "TabBar", icon_color);
 
-		p_theme->set_icon("menu", "TabContainer", p_theme->get_icon(SNAME("gui_gui_tab_menu"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("menu_highlight", "TabContainer", p_theme->get_icon(SNAME("gui_gui_tab_menu_hl"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("close", "TabBar", p_theme->get_icon(SNAME("gui_gui_close"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("increment", "TabContainer", p_theme->get_icon(SNAME("gui_gui_scroll_arrow_right"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("decrement", "TabContainer", p_theme->get_icon(SNAME("gui_gui_scroll_arrow_left"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("increment", "TabBar", p_theme->get_icon(SNAME("gui_gui_scroll_arrow_right"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("decrement", "TabBar", p_theme->get_icon(SNAME("gui_gui_scroll_arrow_left"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("increment_highlight", "TabBar", p_theme->get_icon(SNAME("gui_gui_scroll_arrow_right_hl"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("decrement_highlight", "TabBar", p_theme->get_icon(SNAME("gui_gui_scroll_arrow_left_hl"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("increment_highlight", "TabContainer", p_theme->get_icon(SNAME("gui_gui_scroll_arrow_right_hl"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("decrement_highlight", "TabContainer", p_theme->get_icon(SNAME("gui_gui_scroll_arrow_left_hl"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("drop_mark", "TabContainer", p_theme->get_icon(SNAME("gui_gui_tab_drop_mark"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("drop_mark", "TabBar", p_theme->get_icon(SNAME("gui_gui_tab_drop_mark"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("menu", "TabContainer", p_theme->get_icon(SNAME("gui_tab_menu"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("menu_highlight", "TabContainer", p_theme->get_icon(SNAME("gui_tab_menu_hl"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("close", "TabBar", p_theme->get_icon(SNAME("gui_close"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("increment", "TabContainer", p_theme->get_icon(SNAME("gui_scroll_arrow_right"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("decrement", "TabContainer", p_theme->get_icon(SNAME("gui_scroll_arrow_left"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("increment", "TabBar", p_theme->get_icon(SNAME("gui_scroll_arrow_right"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("decrement", "TabBar", p_theme->get_icon(SNAME("gui_scroll_arrow_left"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("increment_highlight", "TabBar", p_theme->get_icon(SNAME("gui_scroll_arrow_right_hl"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("decrement_highlight", "TabBar", p_theme->get_icon(SNAME("gui_scroll_arrow_left_hl"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("increment_highlight", "TabContainer", p_theme->get_icon(SNAME("gui_scroll_arrow_right_hl"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("decrement_highlight", "TabContainer", p_theme->get_icon(SNAME("gui_scroll_arrow_left_hl"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("drop_mark", "TabContainer", p_theme->get_icon(SNAME("gui_tab_drop_mark"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("drop_mark", "TabBar", p_theme->get_icon(SNAME("gui_tab_drop_mark"), EditorStringName(EditorIcons)));
 
 		p_theme->set_constant("side_margin", "TabContainer", 0);
 		p_theme->set_constant("outline_size", "TabContainer", 0);
@@ -945,7 +945,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_stylebox("focus", "LineEdit", p_config.button_style_focus);
 		p_theme->set_stylebox("read_only", "LineEdit", text_editor_disabled_style);
 
-		p_theme->set_icon("clear", "LineEdit", p_theme->get_icon(SNAME("gui_gui_close"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("clear", "LineEdit", p_theme->get_icon(SNAME("gui_close"), EditorStringName(EditorIcons)));
 
 		p_theme->set_color(SceneStringName(font_color), "LineEdit", p_config.font_color);
 		p_theme->set_color("font_selected_color", "LineEdit", p_config.mono_color_font);
@@ -967,8 +967,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_stylebox("focus", "TextEdit", p_config.button_style_focus);
 		p_theme->set_stylebox("read_only", "TextEdit", text_editor_disabled_style);
 
-		p_theme->set_icon("tab", "TextEdit", p_theme->get_icon(SNAME("gui_gui_tab"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("space", "TextEdit", p_theme->get_icon(SNAME("gui_gui_space"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("tab", "TextEdit", p_theme->get_icon(SNAME("gui_tab"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("space", "TextEdit", p_theme->get_icon(SNAME("gui_space"), EditorStringName(EditorIcons)));
 
 		p_theme->set_color(SceneStringName(font_color), "TextEdit", p_config.font_color);
 		p_theme->set_color("font_readonly_color", "TextEdit", p_config.font_readonly_color);
@@ -1002,10 +1002,10 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 
 		// SplitContainer.
 
-		p_theme->set_icon("h_grabber", "SplitContainer", p_theme->get_icon(SNAME("gui_gui_hsplitter"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("v_grabber", "SplitContainer", p_theme->get_icon(SNAME("gui_gui_vsplitter"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("grabber", "VSplitContainer", p_theme->get_icon(SNAME("gui_gui_vsplitter"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("grabber", "HSplitContainer", p_theme->get_icon(SNAME("gui_gui_hsplitter"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("h_grabber", "SplitContainer", p_theme->get_icon(SNAME("gui_hsplitter"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("v_grabber", "SplitContainer", p_theme->get_icon(SNAME("gui_vsplitter"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("grabber", "VSplitContainer", p_theme->get_icon(SNAME("gui_vsplitter"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("grabber", "HSplitContainer", p_theme->get_icon(SNAME("gui_hsplitter"), EditorStringName(EditorIcons)));
 
 		p_theme->set_constant("separation", "SplitContainer", p_config.separation_margin);
 		p_theme->set_constant("separation", "HSplitContainer", p_config.separation_margin);
@@ -1044,10 +1044,10 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_color("collapsed_font_color", "FoldableContainer", p_config.font_pressed_color);
 		p_theme->set_color("font_outline_color", "FoldableContainer", p_config.font_outline_color);
 
-		p_theme->set_icon("expanded_arrow", "FoldableContainer", p_theme->get_icon(SNAME("gui_gui_tree_arrow_down"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("expanded_arrow_mirrored", "FoldableContainer", p_theme->get_icon(SNAME("gui_gui_arrow_up"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("folded_arrow", "FoldableContainer", p_theme->get_icon(SNAME("gui_gui_tree_arrow_right"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("folded_arrow_mirrored", "FoldableContainer", p_theme->get_icon(SNAME("gui_gui_tree_arrow_left"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("expanded_arrow", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_down"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("expanded_arrow_mirrored", "FoldableContainer", p_theme->get_icon(SNAME("tree_arrow_up"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("folded_arrow", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_right"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("folded_arrow_mirrored", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_left"), EditorStringName(EditorIcons)));
 
 		p_theme->set_constant("outline_size", "FoldableContainer", 0);
 		p_theme->set_constant("h_separation", "FoldableContainer", p_config.separation_margin);
@@ -1061,8 +1061,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_stylebox("embedded_unfocused_border", "Window", p_config.window_style);
 
 		p_theme->set_color("title_color", "Window", p_config.font_color);
-		p_theme->set_icon("close", "Window", p_theme->get_icon(SNAME("gui_gui_close"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("close_pressed", "Window", p_theme->get_icon(SNAME("gui_gui_close"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("close", "Window", p_theme->get_icon(SNAME("gui_close"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("close_pressed", "Window", p_theme->get_icon(SNAME("gui_close"), EditorStringName(EditorIcons)));
 		p_theme->set_constant("close_h_offset", "Window", EDSCALE_RND(22));
 		p_theme->set_constant("close_v_offset", "Window", EDSCALE_RND(20));
 		p_theme->set_constant("title_height", "Window", EDSCALE_RND(24));
@@ -1080,28 +1080,28 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		// FileDialog.
 		p_theme->set_icon("folder", "FileDialog", p_theme->get_icon("folder_folder", EditorStringName(EditorIcons)));
 		p_theme->set_icon("file", "FileDialog", p_theme->get_icon("file_file", EditorStringName(EditorIcons)));
-		p_theme->set_icon("folder_thumbnail", "FileDialog", p_theme->get_icon("folder_folder_big_thumb", EditorStringName(EditorIcons)));
-		p_theme->set_icon("file_thumbnail", "FileDialog", p_theme->get_icon("file_file_big_thumb", EditorStringName(EditorIcons)));
-		p_theme->set_icon("parent_folder", "FileDialog", p_theme->get_icon("gui_arrow_up", EditorStringName(EditorIcons)));
+		p_theme->set_icon("folder_thumbnail", "FileDialog", p_theme->get_icon("folder_big_thumb", EditorStringName(EditorIcons)));
+		p_theme->set_icon("file_thumbnail", "FileDialog", p_theme->get_icon("file_big_thumb", EditorStringName(EditorIcons)));
+		p_theme->set_icon("parent_folder", "FileDialog", p_theme->get_icon("tree_arrow_up", EditorStringName(EditorIcons)));
 		p_theme->set_icon("back_folder", "FileDialog", p_theme->get_icon("navigation_back", EditorStringName(EditorIcons)));
 		p_theme->set_icon("forward_folder", "FileDialog", p_theme->get_icon("navigation_forward", EditorStringName(EditorIcons)));
 		p_theme->set_icon("reload", "FileDialog", p_theme->get_icon("action_refresh", EditorStringName(EditorIcons)));
 		p_theme->set_icon("toggle_hidden", "FileDialog", p_theme->get_icon("gui_eye_open", EditorStringName(EditorIcons)));
 		p_theme->set_icon("toggle_filename_filter", "FileDialog", p_theme->get_icon("gui_filename_filter", EditorStringName(EditorIcons)));
-		p_theme->set_icon("thumbnail_mode", "FileDialog", p_theme->get_icon("file_file_thumbnail", EditorStringName(EditorIcons)));
+		p_theme->set_icon("thumbnail_mode", "FileDialog", p_theme->get_icon("file_thumbnail", EditorStringName(EditorIcons)));
 		p_theme->set_icon("list_mode", "FileDialog", p_theme->get_icon("gui_file_list", EditorStringName(EditorIcons)));
 		p_theme->set_icon("sort", "FileDialog", p_theme->get_icon("action_sort", EditorStringName(EditorIcons)));
 		p_theme->set_icon("favorite", "FileDialog", p_theme->get_icon("action_favorite", EditorStringName(EditorIcons)));
 		p_theme->set_icon("favorite_up", "FileDialog", p_theme->get_icon("action_move_up", EditorStringName(EditorIcons)));
 		p_theme->set_icon("favorite_down", "FileDialog", p_theme->get_icon("action_move_down", EditorStringName(EditorIcons)));
-		p_theme->set_icon("create_folder", "FileDialog", p_theme->get_icon("folder_folder_create", EditorStringName(EditorIcons)));
+		p_theme->set_icon("create_folder", "FileDialog", p_theme->get_icon("folder_create", EditorStringName(EditorIcons)));
 
 		p_theme->set_icon("menu_copy_path", "FileDialog", p_theme->get_icon("action_copy", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_delete", "FileDialog", p_theme->get_icon("action_remove", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_refresh", "FileDialog", p_theme->get_icon("action_refresh", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_new_folder", "FileDialog", p_theme->get_icon("folder_folder", EditorStringName(EditorIcons)));
 		p_theme->set_icon("menu_show_in_file_manager", "FileDialog", p_theme->get_icon("gui_filesystem", EditorStringName(EditorIcons)));
-		p_theme->set_icon("menu_open_bundle", "FileDialog", p_theme->get_icon("folder_folder_browse", EditorStringName(EditorIcons)));
+		p_theme->set_icon("menu_open_bundle", "FileDialog", p_theme->get_icon("folder_browse", EditorStringName(EditorIcons)));
 		// Use a different color for folder icons to make them easier to distinguish from files.
 		// On a light theme, the icon will be dark, so we need to lighten it before blending it with the accent color.
 		p_theme->set_color("folder_icon_color", "FileDialog", (p_config.dark_icon_and_font ? Color(1, 1, 1) : Color(4.25, 4.25, 4.25)).lerp(p_config.accent_color, 0.7));
@@ -1153,16 +1153,16 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_color("font_separator_color", "PopupMenu", p_config.font_disabled_color);
 			p_theme->set_color("font_outline_color", "PopupMenu", p_config.font_outline_color);
 
-			p_theme->set_icon("checked", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_checked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("unchecked", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_unchecked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("indeterminate", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_indeterminate"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("radio_checked", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_radio_checked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("radio_unchecked", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_radio_unchecked"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("checked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_checked_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("unchecked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_unchecked_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("indeterminate_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_indeterminate_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("radio_checked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_radio_checked_disabled"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("radio_unchecked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_gui_radio_unchecked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("checked", "PopupMenu", p_theme->get_icon(SNAME("gui_checked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("unchecked", "PopupMenu", p_theme->get_icon(SNAME("gui_unchecked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("indeterminate", "PopupMenu", p_theme->get_icon(SNAME("gui_indeterminate"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("radio_checked", "PopupMenu", p_theme->get_icon(SNAME("gui_radio_checked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("radio_unchecked", "PopupMenu", p_theme->get_icon(SNAME("gui_radio_unchecked"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("checked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_checked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("unchecked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_unchecked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("indeterminate_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_indeterminate_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("radio_checked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_radio_checked_disabled"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("radio_unchecked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_radio_unchecked_disabled"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("submenu", "PopupMenu", p_theme->get_icon(SNAME("navigation_arrow_right"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("submenu_mirrored", "PopupMenu", p_theme->get_icon(SNAME("gui_arrow_left"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("search", "PopupMenu", p_theme->get_icon(SNAME("action_search"), EditorStringName(EditorIcons)));
@@ -1186,12 +1186,12 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		if (p_config.enable_touch_optimizations) {
 			p_theme->set_stylebox("scroll", "HScrollBar", EditorThemeManager::make_line_stylebox(p_config.separator_color, 50));
 		} else {
-			p_theme->set_stylebox("scroll", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, -5, 1, -5, 1));
+			p_theme->set_stylebox("scroll", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, -5, 1, -5, 1));
 		}
-		p_theme->set_stylebox("scroll_focus", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
-		p_theme->set_stylebox("grabber", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_grabber"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
-		p_theme->set_stylebox("grabber_highlight", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_grabber_hl"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
-		p_theme->set_stylebox("grabber_pressed", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_grabber_pressed"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
+		p_theme->set_stylebox("scroll_focus", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
+		p_theme->set_stylebox("grabber", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_grabber"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
+		p_theme->set_stylebox("grabber_highlight", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_grabber_hl"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
+		p_theme->set_stylebox("grabber_pressed", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_grabber_pressed"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
 
 		p_theme->set_icon("increment", "HScrollBar", empty_icon);
 		p_theme->set_icon("increment_highlight", "HScrollBar", empty_icon);
@@ -1205,12 +1205,12 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		if (p_config.enable_touch_optimizations) {
 			p_theme->set_stylebox("scroll", "VScrollBar", EditorThemeManager::make_line_stylebox(p_config.separator_color, 50, 1, 1, true));
 		} else {
-			p_theme->set_stylebox("scroll", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, -5, 1, -5));
+			p_theme->set_stylebox("scroll", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, -5, 1, -5));
 		}
-		p_theme->set_stylebox("scroll_focus", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
-		p_theme->set_stylebox("grabber", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_grabber"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
-		p_theme->set_stylebox("grabber_highlight", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_grabber_hl"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
-		p_theme->set_stylebox("grabber_pressed", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_scroll_grabber_pressed"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
+		p_theme->set_stylebox("scroll_focus", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
+		p_theme->set_stylebox("grabber", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_grabber"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
+		p_theme->set_stylebox("grabber_highlight", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_grabber_hl"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
+		p_theme->set_stylebox("grabber_pressed", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_grabber_pressed"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
 
 		p_theme->set_icon("increment", "VScrollBar", empty_icon);
 		p_theme->set_icon("increment_highlight", "VScrollBar", empty_icon);
@@ -1223,8 +1223,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		const int background_margin = MAX(2, p_config.base_margin / 2);
 
 		// HSlider.
-		p_theme->set_icon("grabber_highlight", "HSlider", p_theme->get_icon(SNAME("gui_gui_slider_grabber_hl"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("grabber", "HSlider", p_theme->get_icon(SNAME("gui_gui_slider_grabber"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("grabber_highlight", "HSlider", p_theme->get_icon(SNAME("gui_slider_grabber_hl"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("grabber", "HSlider", p_theme->get_icon(SNAME("gui_slider_grabber"), EditorStringName(EditorIcons)));
 		p_theme->set_stylebox("slider", "HSlider", EditorThemeManager::make_flat_stylebox(p_config.dark_color_3, 0, background_margin, 0, background_margin, p_config.border_radius));
 		p_theme->set_stylebox("grabber_area", "HSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, 0, background_margin, 0, background_margin, p_config.border_radius));
 		p_theme->set_stylebox("grabber_area_highlight", "HSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, 0, background_margin, 0, background_margin));
@@ -1232,8 +1232,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_constant("grabber_offset", "HSlider", 0);
 
 		// VSlider.
-		p_theme->set_icon("grabber", "VSlider", p_theme->get_icon(SNAME("gui_gui_slider_grabber"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("grabber_highlight", "VSlider", p_theme->get_icon(SNAME("gui_gui_slider_grabber_hl"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("grabber", "VSlider", p_theme->get_icon(SNAME("gui_slider_grabber"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("grabber_highlight", "VSlider", p_theme->get_icon(SNAME("gui_slider_grabber_hl"), EditorStringName(EditorIcons)));
 		p_theme->set_stylebox("slider", "VSlider", EditorThemeManager::make_flat_stylebox(p_config.dark_color_3, background_margin, 0, background_margin, 0, p_config.border_radius));
 		p_theme->set_stylebox("grabber_area", "VSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, background_margin, 0, background_margin, 0, p_config.border_radius));
 		p_theme->set_stylebox("grabber_area_highlight", "VSlider", EditorThemeManager::make_flat_stylebox(p_config.contrast_color_1, background_margin, 0, background_margin, 0));
@@ -1289,14 +1289,14 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 	{
 		Ref<Texture2D> empty_icon = memnew(ImageTexture);
 		p_theme->set_icon("updown", "SpinBox", empty_icon);
-		p_theme->set_icon("up", "SpinBox", p_theme->get_icon(SNAME("gui_gui_spinbox_up"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("up_hover", "SpinBox", p_theme->get_icon(SNAME("gui_gui_spinbox_up"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("up_pressed", "SpinBox", p_theme->get_icon(SNAME("gui_gui_spinbox_up"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("up_disabled", "SpinBox", p_theme->get_icon(SNAME("gui_gui_spinbox_up"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("down", "SpinBox", p_theme->get_icon(SNAME("gui_gui_spinbox_down"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("down_hover", "SpinBox", p_theme->get_icon(SNAME("gui_gui_spinbox_down"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("down_pressed", "SpinBox", p_theme->get_icon(SNAME("gui_gui_spinbox_down"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("down_disabled", "SpinBox", p_theme->get_icon(SNAME("gui_gui_spinbox_down"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("up", "SpinBox", p_theme->get_icon(SNAME("gui_spinbox_up"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("up_hover", "SpinBox", p_theme->get_icon(SNAME("gui_spinbox_up"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("up_pressed", "SpinBox", p_theme->get_icon(SNAME("gui_spinbox_up"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("up_disabled", "SpinBox", p_theme->get_icon(SNAME("gui_spinbox_up"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("down", "SpinBox", p_theme->get_icon(SNAME("gui_spinbox_down"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("down_hover", "SpinBox", p_theme->get_icon(SNAME("gui_spinbox_down"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("down_pressed", "SpinBox", p_theme->get_icon(SNAME("gui_spinbox_down"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("down_disabled", "SpinBox", p_theme->get_icon(SNAME("gui_spinbox_down"), EditorStringName(EditorIcons)));
 
 		p_theme->set_stylebox("up_background", "SpinBox", EditorThemeManager::make_empty_stylebox());
 		p_theme->set_stylebox("up_background_hovered", "SpinBox", p_config.button_style_hover);
@@ -1325,8 +1325,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 	}
 
 	// ProgressBar.
-	p_theme->set_stylebox("background", "ProgressBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_progress_bar"), EditorStringName(EditorIcons)), 4, 4, 4, 4, 0, 0, 0, 0));
-	p_theme->set_stylebox("fill", "ProgressBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_gui_progress_fill"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 2, 1, 2, 1));
+	p_theme->set_stylebox("background", "ProgressBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_progress_bar"), EditorStringName(EditorIcons)), 4, 4, 4, 4, 0, 0, 0, 0));
+	p_theme->set_stylebox("fill", "ProgressBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_progress_fill"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 2, 1, 2, 1));
 	p_theme->set_color(SceneStringName(font_color), "ProgressBar", p_config.font_color);
 	p_theme->set_color("font_outline_color", "ProgressBar", p_config.font_outline_color);
 	p_theme->set_constant("outline_size", "ProgressBar", 0);
@@ -1396,7 +1396,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_stylebox("node", "GraphEditMinimap", style_minimap_node);
 
 			const Color minimap_resizer_color = p_config.dark_theme ? Color(1, 1, 1, 0.65) : Color(0, 0, 0, 0.65);
-			p_theme->set_icon("resizer", "GraphEditMinimap", p_theme->get_icon(SNAME("gui_gui_resizer_top_left"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("resizer", "GraphEditMinimap", p_theme->get_icon(SNAME("gui_resizer_top_left"), EditorStringName(EditorIcons)));
 			p_theme->set_color("resizer_color", "GraphEditMinimap", minimap_resizer_color);
 		}
 
@@ -1458,7 +1458,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_stylebox("titlebar_selected", "GraphElement", gn_titlebar_selected_style);
 
 			p_theme->set_color("resizer_color", "GraphElement", gn_decoration_color);
-			p_theme->set_icon("resizer", "GraphElement", p_theme->get_icon(SNAME("gui_gui_resizer"), EditorStringName(EditorIcons)));
+			p_theme->set_icon("resizer", "GraphElement", p_theme->get_icon(SNAME("gui_resizer"), EditorStringName(EditorIcons)));
 
 			// GraphNode.
 
@@ -1479,7 +1479,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_constant("port_h_offset", "GraphNode", 1);
 			p_theme->set_constant("separation", "GraphNode", EDSCALE_RND(1));
 
-			Ref<DPITexture> port_icon = p_theme->get_icon(SNAME("gui_gui_graph_node_port"), EditorStringName(EditorIcons));
+			Ref<DPITexture> port_icon = p_theme->get_icon(SNAME("gui_graph_node_port"), EditorStringName(EditorIcons));
 			// The true size is 24x24 This is necessary for sharp port icons at high zoom levels in GraphEdit (up to ~200%).
 			port_icon->set_size_override(Size2(12, 12));
 			p_theme->set_icon("port", "GraphNode", port_icon);
@@ -1564,15 +1564,15 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_stylebox("picker_focus_circle", "ColorPicker", circle_style_focus);
 		p_theme->set_color("focused_not_editing_cursor_color", "ColorPicker", p_config.highlight_color);
 
-		p_theme->set_icon("menu_option", "ColorPicker", p_theme->get_icon(SNAME("gui_gui_tab_menu_hl"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("expanded_arrow", "ColorPicker", p_theme->get_icon(SNAME("gui_gui_tree_arrow_down"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("folded_arrow", "ColorPicker", p_theme->get_icon(SNAME("gui_gui_tree_arrow_right"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("menu_option", "ColorPicker", p_theme->get_icon(SNAME("gui_tab_menu_hl"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("expanded_arrow", "ColorPicker", p_theme->get_icon(SNAME("gui_tree_arrow_down"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("folded_arrow", "ColorPicker", p_theme->get_icon(SNAME("gui_tree_arrow_right"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("screen_picker", "ColorPicker", p_theme->get_icon(SNAME("action_color_pick"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("shape_circle", "ColorPicker", p_theme->get_icon(SNAME("gui_picker_shape_circle"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("shape_rect", "ColorPicker", p_theme->get_icon(SNAME("gui_picker_shape_rectangle"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("shape_rect_wheel", "ColorPicker", p_theme->get_icon(SNAME("gui_picker_shape_rectangle_wheel"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("add_preset", "ColorPicker", p_theme->get_icon(SNAME("action_add"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("sample_bg", "ColorPicker", p_theme->get_icon(SNAME("gui_gui_mini_checkerboard"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("sample_bg", "ColorPicker", p_theme->get_icon(SNAME("gui_mini_checkerboard"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("sample_revert", "ColorPicker", p_theme->get_icon(SNAME("action_revert"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("overbright_indicator", "ColorPicker", p_theme->get_icon(SNAME("viewport_overbright_indicator"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("bar_arrow", "ColorPicker", p_theme->get_icon(SNAME("gui_color_picker_bar_arrow"), EditorStringName(EditorIcons)));
@@ -1582,11 +1582,11 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_icon("color_copy", "ColorPicker", p_theme->get_icon(SNAME("action_copy"), EditorStringName(EditorIcons)));
 
 		// ColorPickerButton.
-		p_theme->set_icon("bg", "ColorPickerButton", p_theme->get_icon(SNAME("gui_gui_mini_checkerboard"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("bg", "ColorPickerButton", p_theme->get_icon(SNAME("gui_mini_checkerboard"), EditorStringName(EditorIcons)));
 
 		// ColorPresetButton.
 		p_theme->set_stylebox("preset_fg", "ColorPresetButton", EditorThemeManager::make_flat_stylebox(Color(1, 1, 1), 2, 2, 2, 2, 2));
-		p_theme->set_icon("preset_bg", "ColorPresetButton", p_theme->get_icon(SNAME("gui_gui_mini_checkerboard"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("preset_bg", "ColorPresetButton", p_theme->get_icon(SNAME("gui_mini_checkerboard"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("overbright_indicator", "ColorPresetButton", p_theme->get_icon(SNAME("viewport_overbright_indicator"), EditorStringName(EditorIcons)));
 	}
 }
@@ -1602,8 +1602,8 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_stylebox("project_list", "ProjectManager", p_config.tree_panel_style);
 		p_theme->set_stylebox("quick_settings_panel", "ProjectManager", p_config.tree_panel_style);
 		p_theme->set_constant("sidebar_button_icon_separation", "ProjectManager", int(EDSCALE_RND(6)));
-		p_theme->set_icon("browse_folder", "ProjectManager", p_theme->get_icon(SNAME("folder_folder_browse"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("browse_file", "ProjectManager", p_theme->get_icon(SNAME("file_file_browse"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("browse_folder", "ProjectManager", p_theme->get_icon(SNAME("folder_browse"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("browse_file", "ProjectManager", p_theme->get_icon(SNAME("file_browse"), EditorStringName(EditorIcons)));
 
 		// ProjectTag.
 		{
@@ -1822,8 +1822,8 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_stylebox("label_bg", "EditorSpinSlider", editor_spin_label_bg);
 
 		// TODO: Use separate arrows instead like on SpinBox. Planned for a different PR.
-		p_theme->set_icon("updown", "EditorSpinSlider", p_theme->get_icon(SNAME("gui_gui_spinbox_updown"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("updown_disabled", "EditorSpinSlider", p_theme->get_icon(SNAME("gui_gui_spinbox_updown_disabled"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("updown", "EditorSpinSlider", p_theme->get_icon(SNAME("gui_spinbox_updown"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("updown_disabled", "EditorSpinSlider", p_theme->get_icon(SNAME("gui_spinbox_updown_disabled"), EditorStringName(EditorIcons)));
 
 		// EditorSpinSliders with a label have more space on the left, so add an
 		// higher margin to match the location where the text begins.

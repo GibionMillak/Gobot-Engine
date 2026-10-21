@@ -3862,8 +3862,8 @@ void EditorInspector::initialize_section_theme(EditorInspectorSection::ThemeCach
 	p_cache.arrow_collapsed = p_control->get_theme_icon(SNAME("arrow_collapsed"), SNAME("Tree"));
 	p_cache.arrow_collapsed_mirrored = p_control->get_theme_icon(SNAME("arrow_collapsed_mirrored"), SNAME("Tree"));
 	p_cache.icon_gui_revert = p_control->get_editor_theme_icon(SNAME("action_revert"));
-	p_cache.icon_gui_checked = p_control->get_editor_theme_icon(SNAME("gui_gui_checked"));
-	p_cache.icon_gui_unchecked = p_control->get_editor_theme_icon(SNAME("gui_gui_unchecked"));
+	p_cache.icon_gui_checked = p_control->get_editor_theme_icon(SNAME("gui_checked"));
+	p_cache.icon_gui_unchecked = p_control->get_editor_theme_icon(SNAME("gui_unchecked"));
 	p_cache.icon_gui_animation_key = p_control->get_editor_theme_icon(SNAME("animation_key"));
 	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("action_copy"));
 	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("action_paste"));
@@ -3925,8 +3925,8 @@ void EditorInspector::initialize_property_theme(EditorProperty::ThemeCache &p_ca
 	p_cache.key_icon = p_control->get_editor_theme_icon(SNAME("animation_key"));
 	p_cache.key_next_icon = p_control->get_editor_theme_icon(SNAME("animation_key_next"));
 	p_cache.delete_icon = p_control->get_editor_theme_icon(SNAME("action_close"));
-	p_cache.checked_icon = p_control->get_editor_theme_icon(SNAME("gui_gui_checked"));
-	p_cache.unchecked_icon = p_control->get_editor_theme_icon(SNAME("gui_gui_unchecked"));
+	p_cache.checked_icon = p_control->get_editor_theme_icon(SNAME("gui_checked"));
+	p_cache.unchecked_icon = p_control->get_editor_theme_icon(SNAME("gui_unchecked"));
 	p_cache.revert_icon = p_control->get_editor_theme_icon(SNAME("action_revert"));
 	p_cache.pin_icon = p_control->get_editor_theme_icon(SNAME("action_pin"));
 	p_cache.copy_icon = p_control->get_editor_theme_icon(SNAME("action_copy"));

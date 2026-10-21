@@ -460,7 +460,7 @@ void InspectorDock::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED:
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
 			resource_save_button->set_button_icon(get_editor_theme_icon(SNAME("action_save")));
-			resource_extra_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			resource_extra_button->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
 
 			PopupMenu *resource_extra_popup = resource_extra_button->get_popup();
 			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_NEW), get_editor_theme_icon(SNAME("action_new")));
@@ -606,8 +606,8 @@ void InspectorDock::update(Object *p_object) {
 	PopupMenu *p = object_menu->get_popup();
 
 	p->clear();
-	p->add_icon_shortcut(get_editor_theme_icon(SNAME("gui_gui_tree_arrow_down")), ED_SHORTCUT("property_editor/expand_all", TTRC("Expand All")), EXPAND_ALL);
-	p->add_icon_shortcut(get_editor_theme_icon(SNAME("gui_gui_tree_arrow_right")), ED_SHORTCUT("property_editor/collapse_all", TTRC("Collapse All")), COLLAPSE_ALL);
+	p->add_icon_shortcut(get_editor_theme_icon(SNAME("gui_tree_arrow_down")), ED_SHORTCUT("property_editor/expand_all", TTRC("Expand All")), EXPAND_ALL);
+	p->add_icon_shortcut(get_editor_theme_icon(SNAME("gui_tree_arrow_right")), ED_SHORTCUT("property_editor/collapse_all", TTRC("Collapse All")), COLLAPSE_ALL);
 	// Calling it 'revertable' internally, because that's what the implementation is based on, but labeling it as 'non-default' because that's more user friendly, even if not 100% accurate.
 	p->add_shortcut(ED_SHORTCUT("property_editor/expand_revertable", TTRC("Expand Non-Default")), EXPAND_REVERTABLE);
 
@@ -747,7 +747,7 @@ void InspectorDock::shortcut_input(const Ref<InputEvent> &p_event) {
 InspectorDock::InspectorDock(EditorData &p_editor_data) {
 	singleton = this;
 	set_name(TTRC("Inspector"));
-	set_icon_name("animation_animation_track_list");
+	set_icon_name("animation_track_list");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/open_inspector", TTRC("Open Inspector Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_RIGHT_UL);
 

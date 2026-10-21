@@ -1053,7 +1053,7 @@ void QuickOpenResultContainer::_set_display_mode(QuickOpenDisplayMode p_display_
 	_update_result_items(num_visible_results, selection_index);
 
 	if (content_display_mode == QuickOpenDisplayMode::LIST) {
-		display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("file_file_thumbnail")));
+		display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("file_thumbnail")));
 		display_mode_toggle->set_tooltip_text(TTR("Grid view"));
 	} else {
 		display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("gui_file_list")));
@@ -1178,7 +1178,7 @@ void QuickOpenResultContainer::_notification(int p_what) {
 			scroll_container->add_theme_style_override(SceneStringName(panel), tree_style);
 
 			if (content_display_mode == QuickOpenDisplayMode::LIST) {
-				display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("file_file_thumbnail")));
+				display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("file_thumbnail")));
 			} else {
 				display_mode_toggle->set_button_icon(get_editor_theme_icon(SNAME("gui_file_list")));
 			}

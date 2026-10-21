@@ -85,14 +85,14 @@ void ProjectListItemControl::_notification(int p_what) {
 			}
 
 			if (project_is_missing) {
-				explore_button->set_button_icon(get_editor_theme_icon(SNAME("file_file_broken")));
+				explore_button->set_button_icon(get_editor_theme_icon(SNAME("file_broken")));
 #if !defined(ANDROID_ENABLED)
 			} else {
 				explore_button->set_button_icon(get_editor_theme_icon(SNAME("action_load")));
 #endif
 			}
 			if (touch_menu_button) {
-				touch_menu_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+				touch_menu_button->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
 			}
 		} break;
 
@@ -216,7 +216,7 @@ void ProjectListItemControl::_update_version_icon() {
 			project_different_version->set_texture(get_editor_theme_icon(SNAME("gui_project_downgrade")));
 			break;
 		default:
-			project_different_version->set_texture(get_editor_theme_icon(SNAME("status_status_warning")));
+			project_different_version->set_texture(get_editor_theme_icon(SNAME("status_warning")));
 			break;
 	}
 }
@@ -283,7 +283,7 @@ void ProjectListItemControl::set_is_missing(bool p_missing) {
 	project_is_missing = p_missing;
 
 	if (project_is_missing) {
-		explore_button->set_button_icon(get_editor_theme_icon(SNAME("file_file_broken")));
+		explore_button->set_button_icon(get_editor_theme_icon(SNAME("file_broken")));
 		explore_button->set_tooltip_text(TTRC("Error: Project is missing on the filesystem."));
 	} else {
 #if defined(ANDROID_ENABLED)

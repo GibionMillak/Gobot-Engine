@@ -462,7 +462,7 @@ void CreateDialog::_configure_search_option_item(TreeItem *r_item, const StringN
 	bool is_experimental = (class_doc && class_doc->value.is_experimental);
 
 	if (is_deprecated) {
-		r_item->add_button(0, get_editor_theme_icon("status_status_error"), 0, false, TTR("This class is marked as deprecated."));
+		r_item->add_button(0, get_editor_theme_icon("status_error"), 0, false, TTR("This class is marked as deprecated."));
 	} else if (is_experimental) {
 		r_item->add_button(0, get_editor_theme_icon("status_node_warning"), 0, false, TTR("This class is marked as experimental."));
 	}
@@ -666,7 +666,7 @@ void CreateDialog::_notification(int p_what) {
 
 			favorite->set_button_icon(get_editor_theme_icon(favorite_list.has(get_selected_type_name()) ? SNAME("action_unfavorite") : SNAME("action_favorite")));
 			reset_filters_button->set_button_icon(get_editor_theme_icon(SNAME("action_revert")));
-			filters_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_dropdown")));
+			filters_button->set_button_icon(get_editor_theme_icon(SNAME("gui_dropdown")));
 		} break;
 	}
 }

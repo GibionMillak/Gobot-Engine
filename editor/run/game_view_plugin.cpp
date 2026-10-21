@@ -1074,7 +1074,7 @@ void GameView::_debug_hide_selection_button_pressed() {
 
 void GameView::_debug_mute_audio_button_pressed() {
 	debug_mute_audio = !debug_mute_audio;
-	debug_mute_audio_button->set_button_icon(EditorIconManager::get_icon(debug_mute_audio ? SNAME("audio_audio_mute") : SNAME("node_audio_stream_player")));
+	debug_mute_audio_button->set_button_icon(EditorIconManager::get_icon(debug_mute_audio ? SNAME("audio_mute") : SNAME("node_audio_stream_player")));
 	debug_mute_audio_button->set_tooltip_text(debug_mute_audio ? TTRC("Unmute game audio.") : TTRC("Mute game audio."));
 	debugger->set_debug_mute_audio(debug_mute_audio);
 }
@@ -1607,7 +1607,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	camera_override_menu = memnew(MenuButton);
 	camera_hb->add_child(camera_override_menu);
-	camera_override_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
+	camera_override_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
 	camera_override_menu->set_flat(false);
 	camera_override_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
 	camera_override_menu->set_h_size_flags(SIZE_SHRINK_END);
@@ -1640,7 +1640,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	debug_mute_audio_button = memnew(Button);
 	audio_hb->add_child(debug_mute_audio_button);
 	debug_mute_audio_button->set_theme_type_variation(SceneStringName(FlatButton));
-	debug_mute_audio_button->set_button_icon(EditorIconManager::get_icon(debug_mute_audio ? SNAME("audio_audio_mute") : SNAME("node_audio_stream_player")));
+	debug_mute_audio_button->set_button_icon(EditorIconManager::get_icon(debug_mute_audio ? SNAME("audio_mute") : SNAME("node_audio_stream_player")));
 	debug_mute_audio_button->connect(SceneStringName(pressed), callable_mp(this, &GameView::_debug_mute_audio_button_pressed));
 	debug_mute_audio_button->set_tooltip_text(debug_mute_audio ? TTRC("Unmute game audio.") : TTRC("Mute game audio."));
 
@@ -1748,7 +1748,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	n3d_options_menu = memnew(MenuButton);
 	n3d_bar->get_hbox()->add_child(n3d_options_menu);
-	n3d_options_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
+	n3d_options_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
 	n3d_options_menu->set_flat(false);
 	n3d_options_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
 	n3d_options_menu->set_h_size_flags(SIZE_SHRINK_END);
@@ -1815,7 +1815,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	game_window_options_menu = memnew(MenuButton);
 	game_hb->add_child(game_window_options_menu);
-	game_window_options_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
+	game_window_options_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
 	game_window_options_menu->set_flat(false);
 	game_window_options_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
 	game_window_options_menu->set_h_size_flags(SIZE_SHRINK_END);

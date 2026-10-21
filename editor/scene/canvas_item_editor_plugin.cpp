@@ -2504,7 +2504,7 @@ void CanvasItemEditor::_update_editor_settings() {
 	local_space_button->set_button_icon(get_editor_theme_icon(SNAME("variant_object")));
 	smart_snap_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap")));
 	grid_snap_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
-	snap_config_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_dropdown")));
+	snap_config_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_dropdown")));
 	skeleton_menu->set_button_icon(get_editor_theme_icon(SNAME("viewport_bone")));
 	pan_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_pan")));
 	ruler_button->set_button_icon(get_editor_theme_icon(SNAME("action_ruler")));
@@ -2526,7 +2526,7 @@ void CanvasItemEditor::_update_editor_settings() {
 	// with the red color.
 	const Color key_auto_color = EditorThemeManager::is_dark_icon_and_font() ? Color(1, 1, 1) : Color(4.25, 4.25, 4.25);
 	key_auto_insert_button->add_theme_color_override("icon_pressed_color", key_auto_color.lerp(Color(1, 0, 0), 0.55));
-	animation_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+	animation_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
 
 	selection_rectangle_color = EDITOR_GET("editors/2d/selection_rectangle_color");
 	locked_selection_rectangle_color = EDITOR_GET("editors/2d/locked_selection_rectangle_color");

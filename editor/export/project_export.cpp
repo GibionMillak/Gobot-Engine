@@ -359,7 +359,7 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 		patch->set_tooltip_text(0, patch_path);
 		patch->set_metadata(0, i);
 		patch->add_button(0, get_editor_theme_icon(SNAME("action_remove")), 0);
-		patch->add_button(0, get_editor_theme_icon(SNAME("file_file_browse")), 1);
+		patch->add_button(0, get_editor_theme_icon(SNAME("file_browse")), 1);
 	}
 
 	_fill_resource_tree();

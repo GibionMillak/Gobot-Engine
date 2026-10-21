@@ -128,12 +128,12 @@ bool EditorExportPlatform::fill_log_messages(RichTextLabel *p_log, Error p_err) 
 	p_log->add_text(" - ");
 	if (p_err == OK && get_worst_message_type() < EditorExportPlatform::EXPORT_MESSAGE_ERROR) {
 		if (get_worst_message_type() >= EditorExportPlatform::EXPORT_MESSAGE_WARNING) {
-			p_log->add_image(p_log->get_editor_theme_icon(SNAME("status_status_warning")), 16 * EDSCALE, 16 * EDSCALE, Color(1.0, 1.0, 1.0), INLINE_ALIGNMENT_CENTER);
+			p_log->add_image(p_log->get_editor_theme_icon(SNAME("status_warning")), 16 * EDSCALE, 16 * EDSCALE, Color(1.0, 1.0, 1.0), INLINE_ALIGNMENT_CENTER);
 			p_log->add_text(" ");
 			p_log->add_text(TTR("Completed with warnings."));
 			has_messages = true;
 		} else {
-			p_log->add_image(p_log->get_editor_theme_icon(SNAME("status_status_success")), 16 * EDSCALE, 16 * EDSCALE, Color(1.0, 1.0, 1.0), INLINE_ALIGNMENT_CENTER);
+			p_log->add_image(p_log->get_editor_theme_icon(SNAME("status_success")), 16 * EDSCALE, 16 * EDSCALE, Color(1.0, 1.0, 1.0), INLINE_ALIGNMENT_CENTER);
 			p_log->add_text(" ");
 			p_log->add_text(TTR("Completed successfully."));
 			if (msg_count > 0) {
@@ -141,7 +141,7 @@ bool EditorExportPlatform::fill_log_messages(RichTextLabel *p_log, Error p_err) 
 			}
 		}
 	} else {
-		p_log->add_image(p_log->get_editor_theme_icon(SNAME("status_status_error")), 16 * EDSCALE, 16 * EDSCALE, Color(1.0, 1.0, 1.0), INLINE_ALIGNMENT_CENTER);
+		p_log->add_image(p_log->get_editor_theme_icon(SNAME("status_error")), 16 * EDSCALE, 16 * EDSCALE, Color(1.0, 1.0, 1.0), INLINE_ALIGNMENT_CENTER);
 		p_log->add_text(" ");
 		p_log->add_text(TTR("Failed."));
 		has_messages = true;

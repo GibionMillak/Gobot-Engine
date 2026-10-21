@@ -1434,11 +1434,11 @@ void SceneImportSettingsDialog::_save_path_changed(const String &p_path) {
 	if (FileAccess::exists(p_path)) {
 		save_path_item->set_text(2, TTR("Warning: File exists"));
 		save_path_item->set_tooltip_text(2, TTR("Existing file with the same name will be replaced."));
-		save_path_item->set_icon(2, get_editor_theme_icon(SNAME("status_status_warning")));
+		save_path_item->set_icon(2, get_editor_theme_icon(SNAME("status_warning")));
 
 	} else {
 		save_path_item->set_text(2, TTR("Will create new file"));
-		save_path_item->set_icon(2, get_editor_theme_icon(SNAME("status_status_success")));
+		save_path_item->set_icon(2, get_editor_theme_icon(SNAME("status_success")));
 	}
 }
 
@@ -1495,11 +1495,11 @@ void SceneImportSettingsDialog::_save_dir_callback(const String &p_path) {
 						if (FileAccess::exists(path)) {
 							item->set_text(2, TTR("Warning: File exists"));
 							item->set_tooltip_text(2, TTR("Existing file with the same name will be replaced."));
-							item->set_icon(2, get_editor_theme_icon(SNAME("status_status_warning")));
+							item->set_icon(2, get_editor_theme_icon(SNAME("status_warning")));
 
 						} else {
 							item->set_text(2, TTR("Will create new file"));
-							item->set_icon(2, get_editor_theme_icon(SNAME("status_status_success")));
+							item->set_icon(2, get_editor_theme_icon(SNAME("status_success")));
 						}
 
 						item->add_button(1, get_editor_theme_icon(SNAME("folder_folder")));
@@ -1508,7 +1508,7 @@ void SceneImportSettingsDialog::_save_dir_callback(const String &p_path) {
 				} else {
 					item->set_text(2, TTR("No import ID"));
 					item->set_tooltip_text(2, TTR("Material has no name nor any other way to identify on re-import.\nPlease name it or ensure it is exported with an unique ID."));
-					item->set_icon(2, get_editor_theme_icon(SNAME("status_status_error")));
+					item->set_icon(2, get_editor_theme_icon(SNAME("status_error")));
 				}
 
 				save_path_items.push_back(item);
@@ -1549,11 +1549,11 @@ void SceneImportSettingsDialog::_save_dir_callback(const String &p_path) {
 						if (FileAccess::exists(path)) {
 							item->set_text(2, TTR("Warning: File exists"));
 							item->set_tooltip_text(2, TTR("Existing file with the same name will be replaced on import."));
-							item->set_icon(2, get_editor_theme_icon(SNAME("status_status_warning")));
+							item->set_icon(2, get_editor_theme_icon(SNAME("status_warning")));
 
 						} else {
 							item->set_text(2, TTR("Will save to new file"));
-							item->set_icon(2, get_editor_theme_icon(SNAME("status_status_success")));
+							item->set_icon(2, get_editor_theme_icon(SNAME("status_success")));
 						}
 
 						item->add_button(1, get_editor_theme_icon(SNAME("folder_folder")));
@@ -1562,7 +1562,7 @@ void SceneImportSettingsDialog::_save_dir_callback(const String &p_path) {
 				} else {
 					item->set_text(2, TTR("No import ID"));
 					item->set_tooltip_text(2, TTR("Mesh has no name nor any other way to identify on re-import.\nPlease name it or ensure it is exported with an unique ID."));
-					item->set_icon(2, get_editor_theme_icon(SNAME("status_status_error")));
+					item->set_icon(2, get_editor_theme_icon(SNAME("status_error")));
 				}
 
 				save_path_items.push_back(item);
@@ -1602,11 +1602,11 @@ void SceneImportSettingsDialog::_save_dir_callback(const String &p_path) {
 					if (FileAccess::exists(path)) {
 						item->set_text(2, TTR("Warning: File exists"));
 						item->set_tooltip_text(2, TTR("Existing file with the same name will be replaced on import."));
-						item->set_icon(2, get_editor_theme_icon(SNAME("status_status_warning")));
+						item->set_icon(2, get_editor_theme_icon(SNAME("status_warning")));
 
 					} else {
 						item->set_text(2, TTR("Will save to new file"));
-						item->set_icon(2, get_editor_theme_icon(SNAME("status_status_success")));
+						item->set_icon(2, get_editor_theme_icon(SNAME("status_success")));
 					}
 
 					item->add_button(1, get_editor_theme_icon(SNAME("folder_folder")));

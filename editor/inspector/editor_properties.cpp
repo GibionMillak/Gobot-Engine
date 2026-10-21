@@ -774,9 +774,9 @@ void EditorPropertyPath::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			if (folder) {
-				path_edit->set_button_icon(get_editor_theme_icon(SNAME("folder_folder_browse")));
+				path_edit->set_button_icon(get_editor_theme_icon(SNAME("folder_browse")));
 			} else {
-				path_edit->set_button_icon(get_editor_theme_icon(SNAME("file_file_browse")));
+				path_edit->set_button_icon(get_editor_theme_icon(SNAME("file_browse")));
 			}
 			_update_uid_icon();
 		} break;
@@ -1401,9 +1401,9 @@ void EditorPropertyLayersGrid::_bind_methods() {
 void EditorPropertyLayers::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			button->set_texture_normal(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
-			button->set_texture_pressed(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
-			button->set_texture_disabled(get_editor_theme_icon(SNAME("gui_gui_tab_menu")));
+			button->set_texture_normal(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
+			button->set_texture_pressed(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
+			button->set_texture_disabled(get_editor_theme_icon(SNAME("gui_tab_menu")));
 		} break;
 	}
 }
@@ -3276,7 +3276,7 @@ void EditorPropertyNodePath::setup(const Vector<StringName> &p_valid_types, bool
 void EditorPropertyNodePath::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			menu_button->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			menu_button->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
 			if (menu) {
 				menu->set_item_icon(ACTION_CLEAR, get_editor_theme_icon(SNAME("action_clear")));
 				menu->set_item_icon(ACTION_COPY, get_editor_theme_icon(SNAME("action_copy")));

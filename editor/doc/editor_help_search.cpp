@@ -1142,7 +1142,7 @@ TreeItem *EditorHelpSearch::Runner::_create_class_item(TreeItem *p_parent, const
 		item->set_tooltip_text(1, tooltip);
 		item->set_metadata(0, item_meta);
 		if (p_doc->is_deprecated) {
-			Ref<Texture2D> error_icon = ui_service->get_editor_theme_icon(SNAME("status_status_error"));
+			Ref<Texture2D> error_icon = ui_service->get_editor_theme_icon(SNAME("status_error"));
 			item->add_button(0, error_icon, 0, false, TTR("This class is marked as deprecated."));
 		} else if (p_doc->is_experimental) {
 			Ref<Texture2D> warning_icon = ui_service->get_editor_theme_icon(SNAME("status_node_warning"));
@@ -1254,7 +1254,7 @@ TreeItem *EditorHelpSearch::Runner::_create_member_item(TreeItem *p_parent, cons
 		item->set_metadata(0, item_meta);
 
 		if (p_is_deprecated) {
-			Ref<Texture2D> error_icon = ui_service->get_editor_theme_icon(SNAME("status_status_error"));
+			Ref<Texture2D> error_icon = ui_service->get_editor_theme_icon(SNAME("status_error"));
 			item->add_button(0, error_icon, 0, false, TTR("This member is marked as deprecated."));
 		} else if (p_is_experimental) {
 			Ref<Texture2D> warning_icon = ui_service->get_editor_theme_icon(SNAME("status_node_warning"));

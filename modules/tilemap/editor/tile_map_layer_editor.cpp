@@ -3732,7 +3732,7 @@ void TileMapLayerEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			missing_tile_texture = get_editor_theme_icon(SNAME("status_status_warning"));
+			missing_tile_texture = get_editor_theme_icon(SNAME("status_warning"));
 			warning_pattern_texture = get_editor_theme_icon(SNAME("status_warning_pattern"));
 			advanced_menu_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tools")));
 			select_previous_layer->set_button_icon(get_editor_theme_icon(SNAME("action_move_up")));

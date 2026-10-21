@@ -1800,7 +1800,7 @@ void SceneTreeDock::_notification(int p_what) {
 			button_create_script->set_button_icon(get_editor_theme_icon(SNAME("scripting_script_create")));
 			button_detach_script->set_button_icon(get_editor_theme_icon(SNAME("scripting_script_remove")));
 			button_extend_script->set_button_icon(get_editor_theme_icon(SNAME("scripting_script_extend")));
-			button_tree_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
+			button_tree_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
 
 			filter->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 

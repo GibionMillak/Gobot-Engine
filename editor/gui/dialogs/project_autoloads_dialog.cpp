@@ -174,7 +174,7 @@ void ProjectAutoloadsDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			_browse_btn->set_button_icon(get_editor_theme_icon(SNAME("file_file_browse")));
+			_browse_btn->set_button_icon(get_editor_theme_icon(SNAME("file_browse")));
 			_create_script_autoload_btn->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 			_create_scene_autoload_btn->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 		} break;

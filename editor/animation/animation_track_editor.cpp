@@ -5619,9 +5619,9 @@ void AnimationTrackEditor::_notification(int p_what) {
 			snap_keys->set_button_icon(get_editor_theme_icon(SNAME("animation_snap_keys")));
 			insert_at_current_time->set_button_icon(get_editor_theme_icon(SNAME("animation_insert_at_current_time")));
 			fps_compat->set_button_icon(get_editor_theme_icon(SNAME("debugger_fps")));
-			view_group->set_button_icon(get_editor_theme_icon(view_group->is_pressed() ? SNAME("animation_animation_track_list") : SNAME("animation_animation_track_group")));
+			view_group->set_button_icon(get_editor_theme_icon(view_group->is_pressed() ? SNAME("animation_track_list") : SNAME("animation_track_group")));
 			function_name_toggler->set_button_icon(get_editor_theme_icon(SNAME("scripting_member_method")));
-			selected_filter->set_button_icon(get_editor_theme_icon(SNAME("animation_animation_filter")));
+			selected_filter->set_button_icon(get_editor_theme_icon(SNAME("animation_filter")));
 			alphabetic_sorting->set_button_icon(get_editor_theme_icon(SNAME("action_sort")));
 			imported_anim_warning->set_button_icon(get_editor_theme_icon(SNAME("status_node_warning")));
 			dummy_player_warning->set_button_icon(get_editor_theme_icon(SNAME("status_node_warning")));
@@ -5629,8 +5629,8 @@ void AnimationTrackEditor::_notification(int p_what) {
 
 			edit->get_popup()->set_item_icon(edit->get_popup()->get_item_index(EDIT_ADD_RESET_KEY), get_editor_theme_icon(SNAME("action_move_up")));
 			edit->get_popup()->set_item_icon(edit->get_popup()->get_item_index(EDIT_APPLY_RESET), get_editor_theme_icon(SNAME("action_revert")));
-			auto_fit->set_button_icon(get_editor_theme_icon(SNAME("animation_animation_auto_fit")));
-			auto_fit_bezier->set_button_icon(get_editor_theme_icon(SNAME("animation_animation_auto_fit_bezier")));
+			auto_fit->set_button_icon(get_editor_theme_icon(SNAME("animation_auto_fit")));
+			auto_fit_bezier->set_button_icon(get_editor_theme_icon(SNAME("animation_auto_fit_bezier")));
 
 			const int timeline_separation = get_theme_constant(SNAME("timeline_v_separation"), SNAME("AnimationTrackEditor"));
 			timeline_vbox->add_theme_constant_override("separation", timeline_separation);
@@ -7942,7 +7942,7 @@ void AnimationTrackEditor::_toggle_function_names() {
 
 void AnimationTrackEditor::_view_group_toggle() {
 	_update_tracks();
-	view_group->set_button_icon(get_editor_theme_icon(view_group->is_pressed() ? SNAME("animation_animation_track_list") : SNAME("animation_animation_track_group")));
+	view_group->set_button_icon(get_editor_theme_icon(view_group->is_pressed() ? SNAME("animation_track_list") : SNAME("animation_track_group")));
 	bezier_edit->set_filtered(selected_filter->is_pressed());
 }
 
@@ -9243,7 +9243,7 @@ void AnimationMarkerEdit::gui_input(const Ref<InputEvent> &p_event) {
 					menu->add_icon_item(get_editor_theme_icon(SNAME("action_remove")), TTRC("Delete Marker(s)"), MENU_KEY_DELETE);
 				}
 
-				menu->add_icon_item(get_editor_theme_icon(should_show_all_marker_names ? SNAME("gui_gui_checked") : SNAME("gui_gui_unchecked")), TTRC("Show All Marker Names"), MENU_KEY_TOGGLE_MARKER_NAMES);
+				menu->add_icon_item(get_editor_theme_icon(should_show_all_marker_names ? SNAME("gui_checked") : SNAME("gui_unchecked")), TTRC("Show All Marker Names"), MENU_KEY_TOGGLE_MARKER_NAMES);
 				menu->reset_size();
 
 				menu->set_position(get_screen_position() + get_local_mouse_position());

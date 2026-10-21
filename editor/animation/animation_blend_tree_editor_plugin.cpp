@@ -270,7 +270,7 @@ void AnimationNodeBlendTreeEditor::update_graph_immediately() {
 			} else {
 				inspect_filters->set_text(TTR("Edit Filters"));
 			}
-			inspect_filters->set_button_icon(get_editor_theme_icon(SNAME("animation_animation_filter")));
+			inspect_filters->set_button_icon(get_editor_theme_icon(SNAME("animation_filter")));
 			node->add_child(inspect_filters);
 			inspect_filters->connect(SceneStringName(pressed), callable_mp(this, &AnimationNodeBlendTreeEditor::_inspect_filters).bind(E), CONNECT_DEFERRED);
 			inspect_filters->set_h_size_flags(SIZE_SHRINK_CENTER);

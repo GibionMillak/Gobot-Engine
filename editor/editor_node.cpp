@@ -4310,7 +4310,7 @@ Dictionary EditorNode::drag_resource(const Ref<Resource> &p_res, Control *p_from
 
 	{
 		// TODO: make proper previews
-		Ref<Texture2D> texture = theme->get_icon(SNAME("file_file_big_thumb"), EditorStringName(EditorIcons));
+		Ref<Texture2D> texture = theme->get_icon(SNAME("file_big_thumb"), EditorStringName(EditorIcons));
 		if (texture.is_valid()) {
 			Ref<Image> img = texture->get_image();
 			img = img->duplicate();

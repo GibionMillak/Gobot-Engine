@@ -114,10 +114,10 @@ void EditorLog::_update_theme() {
 	button->set_button_icon(get_editor_theme_icon(SNAME("node_viewport_popup")));
 	button->set_custom_minimum_size(Vector2(button->get_minimum_size_for_text_and_icon(wide_text, button->get_button_icon()).x, 0));
 	button = type_filter_map[MSG_TYPE_ERROR]->toggle_button;
-	button->set_button_icon(get_editor_theme_icon(SNAME("status_status_error")));
+	button->set_button_icon(get_editor_theme_icon(SNAME("status_error")));
 	button->set_custom_minimum_size(Vector2(button->get_minimum_size_for_text_and_icon(wide_text, button->get_button_icon()).x, 0));
 	button = type_filter_map[MSG_TYPE_WARNING]->toggle_button;
-	button->set_button_icon(get_editor_theme_icon(SNAME("status_status_warning")));
+	button->set_button_icon(get_editor_theme_icon(SNAME("status_warning")));
 	button->set_custom_minimum_size(Vector2(button->get_minimum_size_for_text_and_icon(wide_text, button->get_button_icon()).x, 0));
 	button = type_filter_map[MSG_TYPE_EDITOR]->toggle_button;
 	button->set_button_icon(get_editor_theme_icon(SNAME("action_edit")));

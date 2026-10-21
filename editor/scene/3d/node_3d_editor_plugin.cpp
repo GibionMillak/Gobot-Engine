@@ -3573,7 +3573,7 @@ Node3DEditor::Node3DEditor() {
 	snap_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
 	snap_menu->set_h_size_flags(SIZE_SHRINK_END);
 	snap_menu->set_tooltip_text(TTRC("Selection options."));
-	snap_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
+	snap_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
 
 	PopupMenu *snap_p = snap_menu->get_popup();
 	snap_p->set_hide_on_checkable_item_selection(false);
@@ -3620,7 +3620,7 @@ Node3DEditor::Node3DEditor() {
 	sun_environ_settings->set_tooltip_text(TTRC("Edit Sun and Environment settings."));
 	sun_environ_settings->set_theme_type_variation(SceneStringName(FlatButton));
 	sun_environ_settings->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_sun_environ_settings_pressed));
-	sun_environ_settings->set_button_icon(EditorIconManager::get_icon(SNAME("gui_gui_dropdown")));
+	sun_environ_settings->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
 
 	environment_hbox->add_child(sun_environ_settings);
 

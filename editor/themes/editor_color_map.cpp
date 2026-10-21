@@ -181,7 +181,7 @@ void EditorColorMap::create() {
 	add_conversion_exception("navigation_zoom_reset");
 	add_conversion_exception("viewport_lock_viewport");
 	add_conversion_exception("viewport_group_viewport");
-	add_conversion_exception("status_status_success");
+	add_conversion_exception("status_success");
 	add_conversion_exception("viewport_overbright_indicator");
 	add_conversion_exception("viewport_material_preview_cube");
 	add_conversion_exception("viewport_material_preview_sphere");
@@ -189,9 +189,9 @@ void EditorColorMap::create() {
 
 	// 3D editor icons (always on a dark background, even in light theme).
 	add_conversion_exception("viewport_camera_3d_dark_background");
-	add_conversion_exception("gui_gui_tab_menu_hl_dark_background");
-	add_conversion_exception("viewport_viewport_speed");
-	add_conversion_exception("viewport_viewport_zoom");
+	add_conversion_exception("gui_tab_menu_hl_dark_background");
+	add_conversion_exception("viewport_speed");
+	add_conversion_exception("viewport_zoom");
 
 	add_conversion_exception("viewport_material_preview_light1");
 	add_conversion_exception("viewport_material_preview_light2");
@@ -214,19 +214,19 @@ void EditorColorMap::create() {
 	add_conversion_exception("viewport_gizmo_voxel_gi");
 
 	// GUI
-	add_conversion_exception("gui_gui_checked");
-	add_conversion_exception("gui_gui_radio_checked");
-	add_conversion_exception("gui_gui_indeterminate");
+	add_conversion_exception("gui_checked");
+	add_conversion_exception("gui_radio_checked");
+	add_conversion_exception("gui_indeterminate");
 	add_conversion_exception("GuiCloseCustomizable");
-	add_conversion_exception("gui_gui_graph_node_port");
-	add_conversion_exception("gui_gui_resizer");
-	add_conversion_exception("gui_gui_mini_checkerboard");
+	add_conversion_exception("gui_graph_node_port");
+	add_conversion_exception("gui_resizer");
+	add_conversion_exception("gui_mini_checkerboard");
 	add_conversion_exception("gui_picker_cursor_bg");
 	add_conversion_exception("navigation_center_view");
 
 	/// Code Editor.
-	add_conversion_exception("gui_gui_tab");
-	add_conversion_exception("gui_gui_space");
+	add_conversion_exception("gui_tab");
+	add_conversion_exception("gui_space");
 	add_conversion_exception("scripting_code_folded_right_arrow");
 	add_conversion_exception("scripting_code_fold_down_arrow");
 	add_conversion_exception("scripting_code_region_folded_right_arrow");
