@@ -917,8 +917,6 @@
 			Input accumulation can be disabled to get slightly more precise/reactive input at the cost of increased CPU usage.
 			[b]Note:[/b] Input accumulation is [i]enabled[/i] by default.
 		</member>
-
-
 		<member name="interface/editor/appearance/collapse_main_menu" type="bool" setter="" getter="">
 			If [code]true[/code], the main menu collapses into a [MenuButton].
 			[b]Note:[/b] This setting is only applicable on macOS when [member interface/editor/appearance/use_embedded_menu] is [code]true[/code].
@@ -935,10 +933,6 @@
 		</member>
 		<member name="interface/editor/appearance/editor_screen" type="int" setter="" getter="">
 			The preferred monitor to display the editor. If [b]Auto[/b], the editor will remember the last screen it was displayed on across multiple sessions.
-		</member>
-		<member name="interface/editor/appearance/expand_to_title" type="bool" setter="" getter="">
-			Expanding main editor window content to the title, if supported by [DisplayServer]. See [constant DisplayServer.WINDOW_FLAG_EXTEND_TO_TITLE].
-			Specific to the macOS platform.
 		</member>
 		<member name="interface/editor/appearance/max_sticky_tree_items" type="int" setter="" getter="">
 			The maximum number of tree items allowed to stick to the top while its children are in view. A value of [code]0[/code] disables sticking.

@@ -325,6 +325,7 @@ class DisplayServerWindows : public DisplayServer {
 #endif
 		bool mpass = false;
 		bool sharp_corners = false;
+		bool extend_to_title = false;
 		bool hide_from_capture = false;
 
 		// Used to transfer data between events using timer.
@@ -740,6 +741,7 @@ public:
 
 	virtual float window_get_output_max_linear_value(DisplayServerEnums::WindowID p_window = DisplayServerEnums::MAIN_WINDOW_ID) const override;
 
+	virtual bool window_maximize_on_title_dbl_click() const override { return true; }
 	virtual void window_start_drag(DisplayServerEnums::WindowID p_window = DisplayServerEnums::MAIN_WINDOW_ID) override;
 	virtual void window_start_resize(DisplayServerEnums::WindowResizeEdge p_edge, DisplayServerEnums::WindowID p_window = DisplayServerEnums::MAIN_WINDOW_ID) override;
 

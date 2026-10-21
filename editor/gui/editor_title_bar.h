@@ -32,19 +32,10 @@
 
 #include "scene/gui/box_container.h"
 
+class Button;
+
 class EditorTitleBar : public HBoxContainer {
 	GDCLASS(EditorTitleBar, HBoxContainer);
-
-	Point2i click_pos;
-	bool moving = false;
-	bool can_move = false;
-	Control *center_control = nullptr;
-
-protected:
-	void _notification(int p_what);
-
-	virtual void gui_input(const Ref<InputEvent> &p_event) override;
-	static void _bind_methods() {}
 
 public:
 	void set_center_control(Control *p_center_control);
@@ -52,4 +43,29 @@ public:
 
 	void set_can_move_window(bool p_enabled);
 	bool get_can_move_window() const;
+
+protected:
+	static void _bind_methods() {}
+
+	void _notification(int p_what);
+
+	virtual void gui_input(const Ref<InputEvent> &p_event) override;
+
+private:
+	void _on_minimize_pressed();
+	void _on_maximize_pressed();
+	void _on_close_pressed();
+	void _update_window_buttons();
+	void _create_window_buttons();
+	void _destroy_window_buttons();
+
+	Point2i _click_pos;
+	bool _moving = false;
+	bool _can_move = false;
+	Control *_center_control = nullptr;
+
+	HBoxContainer *_window_buttons_hb = nullptr;
+	Button *_btn_minimize = nullptr;
+	Button *_btn_maximize = nullptr;
+	Button *_btn_close = nullptr;
 };

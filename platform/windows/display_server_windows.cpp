@@ -41,7 +41,6 @@
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
 #include "core/input/input.h"
-#include "core/io/dir_access.h"
 #include "core/io/file_access.h"
 #include "core/io/marshalls.h"
 #include "core/io/xml_parser.h"
@@ -193,6 +192,7 @@ bool DisplayServerWindows::has_feature(DisplayServerEnums::Feature p_feature) co
 		case DisplayServerEnums::FEATURE_STATUS_INDICATOR:
 		case DisplayServerEnums::FEATURE_WINDOW_EMBEDDING:
 		case DisplayServerEnums::FEATURE_WINDOW_DRAG:
+		case DisplayServerEnums::FEATURE_EXTEND_TO_TITLE:
 		case DisplayServerEnums::FEATURE_HDR_OUTPUT:
 			return true;
 		case DisplayServerEnums::FEATURE_SCREEN_EXCLUDE_FROM_CAPTURE:
@@ -1978,6 +1978,11 @@ DisplayServerEnums::WindowID DisplayServerWindows::create_sub_window(DisplayServ
 	if (p_flags & DisplayServerEnums::WINDOW_FLAG_POPUP_BIT) {
 		wd.is_popup = true;
 	}
+	if (p_flags & DisplayServerEnums::WINDOW_FLAG_EXTEND_TO_TITLE_BIT) {
+		wd.extend_to_title = true;
+		MARGINS margins = { 0, 0, 1, 0 };
+		DwmExtendFrameIntoClientArea(wd.hWnd, &margins);
+	}
 	if (p_flags & DisplayServerEnums::WINDOW_FLAG_TRANSPARENT_BIT) {
 		if (OS::get_singleton()->is_layered_allowed()) {
 			DWM_BLURBEHIND bb;
@@ -3047,6 +3052,19 @@ void DisplayServerWindows::window_set_flag(DisplayServerEnums::WindowFlags p_fla
 			}
 			wd.is_popup = p_enabled;
 		} break;
+		case DisplayServerEnums::WINDOW_FLAG_EXTEND_TO_TITLE: {
+			wd.extend_to_title = p_enabled;
+			if (p_enabled) {
+				MARGINS margins = { 0, 0, 1, 0 };
+				DwmExtendFrameIntoClientArea(wd.hWnd, &margins);
+			} else {
+				MARGINS zero_margins = { 0, 0, 0, 0 };
+				DwmExtendFrameIntoClientArea(wd.hWnd, &zero_margins);
+			}
+			SetWindowPos(wd.hWnd, nullptr, 0, 0, 0, 0,
+					SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
+							((wd.no_focus || wd.is_popup) ? SWP_NOACTIVATE : 0));
+		} break;
 		default:
 			break;
 	}
@@ -3090,6 +3108,9 @@ bool DisplayServerWindows::window_get_flag(DisplayServerEnums::WindowFlags p_fla
 		} break;
 		case DisplayServerEnums::WINDOW_FLAG_POPUP: {
 			return wd.is_popup;
+		} break;
+		case DisplayServerEnums::WINDOW_FLAG_EXTEND_TO_TITLE: {
+			return wd.extend_to_title;
 		} break;
 		default:
 			break;
@@ -5747,9 +5768,69 @@ LRESULT DisplayServerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 				SendMessageW(windows[window_id].hWnd, WM_PAINT, 0, 0);
 			}
 		} break;
+		case WM_NCCALCSIZE: {
+			if (!windows[window_id].extend_to_title || !wParam) {
+				break;
+			}
+			NCCALCSIZE_PARAMS *params = reinterpret_cast<NCCALCSIZE_PARAMS *>(lParam);
+			const WindowData &wd_ncc = windows[window_id];
+			// Query the live state: wd_ncc.maximized is only updated in WM_WINDOWPOSCHANGED,
+			// which arrives after this message when restoring from maximized.
+			if (IsZoomed(hWnd) && !IsIconic(hWnd) && !wd_ncc.fullscreen) {
+				const int border_x = GetSystemMetrics(SM_CXSIZEFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER);
+				const int border_y = GetSystemMetrics(SM_CYSIZEFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER);
+				params->rgrc[0].left += border_x;
+				params->rgrc[0].right -= border_x;
+				params->rgrc[0].top += border_y;
+				params->rgrc[0].bottom -= border_y;
+			}
+			return 0;
+		} break;
 		case WM_NCHITTEST: {
-			if (windows[window_id].mpass) {
+			const WindowData &wd_ht = windows[window_id];
+			if (wd_ht.mpass) {
 				return HTTRANSPARENT;
+			}
+			if (wd_ht.extend_to_title && !wd_ht.fullscreen && !wd_ht.borderless) {
+				if (!wd_ht.maximized && wd_ht.resizable) {
+					POINT cursor = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+					RECT window_rect;
+					GetWindowRect(wd_ht.hWnd, &window_rect);
+
+					const int border_x = GetSystemMetrics(SM_CXSIZEFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER);
+					const int border_y = GetSystemMetrics(SM_CYSIZEFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER);
+
+					const bool on_left = cursor.x < window_rect.left + border_x;
+					const bool on_right = cursor.x >= window_rect.right - border_x;
+					const bool on_top = cursor.y < window_rect.top + border_y;
+					const bool on_bottom = cursor.y >= window_rect.bottom - border_y;
+
+					if (on_top && on_left) {
+						return HTTOPLEFT;
+					}
+					if (on_top && on_right) {
+						return HTTOPRIGHT;
+					}
+					if (on_bottom && on_left) {
+						return HTBOTTOMLEFT;
+					}
+					if (on_bottom && on_right) {
+						return HTBOTTOMRIGHT;
+					}
+					if (on_top) {
+						return HTTOP;
+					}
+					if (on_bottom) {
+						return HTBOTTOM;
+					}
+					if (on_left) {
+						return HTLEFT;
+					}
+					if (on_right) {
+						return HTRIGHT;
+					}
+				}
+				return HTCLIENT;
 			}
 		} break;
 		case WM_MOUSEACTIVATE: {
@@ -6961,7 +7042,6 @@ LRESULT DisplayServerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 
 		} break;
 		case WM_DESTROY: {
-
 			Input::get_singleton()->flush_buffered_events();
 			if (window_mouseover_id == window_id) {
 				window_mouseover_id = DisplayServerEnums::INVALID_WINDOW_ID;
@@ -7295,7 +7375,7 @@ Error DisplayServerWindows::_create_window(DisplayServerEnums::WindowID p_window
 	WindowRect.top += offset.y;
 	WindowRect.bottom += offset.y;
 
-	if (p_mode != DisplayServerEnums::WINDOW_MODE_FULLSCREEN && p_mode != DisplayServerEnums::WINDOW_MODE_EXCLUSIVE_FULLSCREEN) {
+	if (p_mode != DisplayServerEnums::WINDOW_MODE_FULLSCREEN && p_mode != DisplayServerEnums::WINDOW_MODE_EXCLUSIVE_FULLSCREEN && !(p_flags & DisplayServerEnums::WINDOW_FLAG_EXTEND_TO_TITLE_BIT)) {
 		AdjustWindowRectEx(&WindowRect, dwStyle, FALSE, dwExStyle);
 	}
 
@@ -8393,7 +8473,6 @@ DisplayServerWindows::DisplayServerWindows(const String &p_rendering_driver, Dis
 	}
 
 	windows[DisplayServerEnums::MAIN_WINDOW_ID].initialized = true;
-
 
 #if defined(RD_ENABLED)
 	if (rendering_context) {

@@ -227,8 +227,6 @@ static bool init_display_scale_found = false;
 static int init_display_scale = 0;
 static bool init_custom_scale_found = false;
 static float init_custom_scale = 1.0;
-static bool init_expand_to_title = false;
-static bool init_expand_to_title_found = false;
 #endif
 static bool use_custom_res = true;
 static bool force_res = false;
@@ -2787,7 +2785,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 						prefer_wayland_found = true;
 					}
 
-					while (!screen_found || !init_expand_to_title_found || !init_display_scale_found || !init_custom_scale_found || !prefer_wayland_found || !tablet_found) {
+					while (!screen_found || !init_display_scale_found || !init_custom_scale_found || !prefer_wayland_found || !tablet_found) {
 						assign = Variant();
 						next_tag.fields.clear();
 						next_tag.name = String();
@@ -2806,10 +2804,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 									restore_editor_window_layout = value.operator int() == EditorSettings::InitialScreen::INITIAL_SCREEN_AUTO;
 								}
 							}
-							if (!init_expand_to_title_found && assign == "interface/editor/appearance/expand_to_title") {
-								init_expand_to_title = value;
-								init_expand_to_title_found = true;
-							} else if (!init_display_scale_found && assign == "interface/editor/appearance/display_scale") {
+							if (!init_display_scale_found && assign == "interface/editor/appearance/display_scale") {
 								init_display_scale = value;
 								init_display_scale_found = true;
 							} else if (!init_custom_scale_found && assign == "interface/editor/appearance/custom_display_scale") {
@@ -2986,7 +2981,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 		}
 
 #ifdef TOOLS_ENABLED
-		if ((project_manager || editor) && init_expand_to_title) {
+		if (project_manager || editor) {
 			window_flags |= DisplayServerEnums::WINDOW_FLAG_EXTEND_TO_TITLE_BIT;
 		}
 #endif
