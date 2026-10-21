@@ -13,8 +13,8 @@
 #include "clipper2/clipper.core.h"
 #include "clipper2/clipper.engine.h"
 #include "clipper2/clipper.offset.h"
-#include "clipper2/clipper.minkowski.h"
 #include "clipper2/clipper.rectclip.h"
+#include "clipper2/clipper.minkowski.h"
 #include <type_traits>
 
 namespace Clipper2Lib {
