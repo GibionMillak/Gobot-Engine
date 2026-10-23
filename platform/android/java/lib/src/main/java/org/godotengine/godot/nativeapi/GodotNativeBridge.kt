@@ -299,10 +299,6 @@ internal class GodotNativeBridge(private val godot: Godot) {
 		godot.primaryHost?.showEditorGameDock()
 	}
 
-	private fun nativeOnDistractionFreeModeChanged(enabled: Boolean) {
-		godot.primaryHost?.onDistractionFreeModeChanged(enabled)
-	}
-
 	private fun nativeBuildEnvConnect(callback: GodotCallable): Boolean {
 		try {
 			val buildProvider = godot.primaryHost?.buildProvider

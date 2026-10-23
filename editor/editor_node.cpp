@@ -878,16 +878,7 @@ EditorNode::EditorNode() {
 	scene_tabs->connect("tab_changed", callable_mp(this, &EditorNode::_set_current_scene));
 	scene_tabs->connect("tab_closed", callable_mp(this, &EditorNode::_scene_tab_closed));
 
-	distraction_free = memnew(Button);
-	distraction_free->set_theme_type_variation("FlatMenuButton");
-	ED_SHORTCUT_AND_COMMAND("editor/distraction_free_mode", TTRC("Distraction Free Mode"), KeyModifierMask::CTRL | KeyModifierMask::SHIFT | Key::F11);
-	ED_SHORTCUT_OVERRIDE("editor/distraction_free_mode", "macos", KeyModifierMask::META | KeyModifierMask::SHIFT | Key::D);
 	ED_SHORTCUT_AND_COMMAND("editor/toggle_last_opened_bottom_panel", TTRC("Toggle Last Opened Bottom Panel"), KeyModifierMask::CMD_OR_CTRL | Key::J);
-	distraction_free->set_shortcut(ED_GET_SHORTCUT("editor/distraction_free_mode"));
-	distraction_free->set_tooltip_text(TTRC("Toggle distraction-free mode."));
-	distraction_free->set_toggle_mode(true);
-	scene_tabs->add_extra_button(distraction_free);
-	distraction_free->connect(SceneStringName(pressed), callable_mp(this, &EditorNode::_toggle_distraction_free_mode));
 
 	editor_main_screen = memnew(EditorMainScreen);
 	srt->add_child(editor_main_screen);
@@ -2113,46 +2104,6 @@ void EditorNode::trigger_menu_option(int p_option, bool p_confirmed) {
 
 bool EditorNode::has_previous_closed_scenes() const {
 	return !prev_closed_scenes.is_empty();
-}
-
-void EditorNode::update_distraction_free_mode() {
-	if (!EDITOR_GET("interface/editor/behavior/separate_distraction_mode")) {
-		return;
-	}
-	Control *screen = editor_main_screen->get_current_tab_control();
-	if (screen == ScriptEditor::get_singleton()) {
-		set_distraction_free_mode(script_distraction_free);
-	} else {
-		set_distraction_free_mode(scene_distraction_free);
-	}
-}
-
-void EditorNode::set_distraction_free_mode(bool p_enter) {
-	distraction_free->set_pressed(p_enter);
-
-	if (p_enter) {
-		if (editor_dock_manager->are_docks_visible()) {
-			editor_dock_manager->set_docks_visible(false);
-		}
-	} else {
-		editor_dock_manager->set_docks_visible(true);
-	}
-
-	emit_signal(SNAME("distraction_free_mode_changed"), p_enter);
-}
-
-bool EditorNode::is_distraction_free_mode_enabled() const {
-	return distraction_free->is_pressed();
-}
-
-void EditorNode::update_distraction_free_button_theme() {
-	if (distraction_free->get_meta("_scene_tabs_owned", true)) {
-		distraction_free->set_theme_type_variation("FlatMenuButton");
-		distraction_free->add_theme_style_override(SceneStringName(pressed), theme->get_stylebox(CoreStringName(normal), "FlatMenuButton"));
-	} else {
-		distraction_free->set_theme_type_variation("BottomPanelButton");
-		distraction_free->remove_theme_style_override(SceneStringName(pressed));
-	}
 }
 
 void EditorNode::set_center_split_offset(int p_offset) {
@@ -4779,7 +4730,6 @@ void EditorNode::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("scene_closed", PropertyInfo(Variant::STRING, "path")));
 	ADD_SIGNAL(MethodInfo("preview_locale_changed"));
 	ADD_SIGNAL(MethodInfo("resource_counter_changed"));
-	ADD_SIGNAL(MethodInfo("distraction_free_mode_changed", PropertyInfo(Variant::BOOL, "enabled")));
 }
 
 void EditorNode::_notification(int p_what) {
@@ -5290,8 +5240,6 @@ void EditorNode::_update_theme(bool p_skip_creation) {
 
 		editor_main_screen->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("Content"), EditorStringName(EditorStyles)));
 		bottom_panel->_theme_changed();
-		distraction_free->set_button_icon(theme->get_icon(SNAME("view_distraction_free"), EditorStringName(EditorIcons)));
-		update_distraction_free_button_theme();
 
 		_update_system_menu_icons(dark_mode);
 
@@ -8541,21 +8489,6 @@ void EditorNode::_layout_menu_option(int p_id) {
 				_save_editor_layout();
 			}
 		}
-	}
-}
-
-void EditorNode::_toggle_distraction_free_mode() {
-	if (EDITOR_GET("interface/editor/behavior/separate_distraction_mode")) {
-		Control *screen = editor_main_screen->get_current_tab_control();
-		if (screen == ScriptEditor::get_singleton()) {
-			script_distraction_free = !script_distraction_free;
-			set_distraction_free_mode(script_distraction_free);
-		} else {
-			scene_distraction_free = !scene_distraction_free;
-			set_distraction_free_mode(scene_distraction_free);
-		}
-	} else {
-		set_distraction_free_mode(distraction_free->is_pressed());
 	}
 }
 

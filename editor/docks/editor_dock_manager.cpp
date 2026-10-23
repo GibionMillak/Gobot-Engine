@@ -500,41 +500,37 @@ void EditorDockManager::save_docks_to_config(Ref<ConfigFile> p_layout, const Str
 	}
 	p_layout->set_value(p_section, "dock_closed", closed_docks_dump);
 
-	// Distraction-free mode hides both the sides and lower docks, so skip to avoid overriding those values.
-	if (!EditorNode::get_singleton()->is_distraction_free_mode_enabled()) {
-		// Save SplitContainer offsets.
-
-		for (int i = 0; i < vsplits.size(); i++) {
-			if (vsplits[i]->is_visible_in_tree()) {
-				p_layout->set_value(p_section, "dock_split_" + itos(i + 1), vsplits[i]->get_split_offset());
-			}
+	// Save SplitContainer offsets.
+	for (int i = 0; i < vsplits.size(); i++) {
+		if (vsplits[i]->is_visible_in_tree()) {
+			p_layout->set_value(p_section, "dock_split_" + itos(i + 1), vsplits[i]->get_split_offset());
 		}
-
-		PackedInt32Array split_offsets = main_hsplit->get_split_offsets();
-		int index = 0;
-		for (int i = 0; i < vsplits.size(); i++) {
-			int value = 0;
-			if (vsplits[i]->is_visible() && index < split_offsets.size()) {
-				value = split_offsets[index] / EDSCALE;
-				index++;
-			}
-			p_layout->set_value(p_section, "dock_hsplit_" + itos(i + 1), value);
-		}
-
-		// The main v-split contains only one singular split.
-		int value = 0;
-		if (main_vsplit->get_child_as_control(1)->is_visible()) {
-			value = main_vsplit->get_split_offsets()[0];
-		}
-		p_layout->set_value(p_section, "dock_main_split", value);
-
-		// Same for the bottom docks.
-		value = 0;
-		if (bottom_hsplit->get_child_as_control(1)->is_visible()) {
-			value = bottom_hsplit->get_split_offsets()[0];
-		}
-		p_layout->set_value(p_section, "dock_bottom_split", value);
 	}
+
+	PackedInt32Array split_offsets = main_hsplit->get_split_offsets();
+	int index = 0;
+	for (int i = 0; i < vsplits.size(); i++) {
+		int value = 0;
+		if (vsplits[i]->is_visible() && index < split_offsets.size()) {
+			value = split_offsets[index] / EDSCALE;
+			index++;
+		}
+		p_layout->set_value(p_section, "dock_hsplit_" + itos(i + 1), value);
+	}
+
+	// The main v-split contains only one singular split.
+	int value = 0;
+	if (main_vsplit->get_child_as_control(1)->is_visible()) {
+		value = main_vsplit->get_split_offsets()[0];
+	}
+	p_layout->set_value(p_section, "dock_main_split", value);
+
+	// Same for the bottom docks.
+	value = 0;
+	if (bottom_hsplit->get_child_as_control(1)->is_visible()) {
+		value = bottom_hsplit->get_split_offsets()[0];
+	}
+	p_layout->set_value(p_section, "dock_bottom_split", value);
 }
 
 void EditorDockManager::load_docks_from_config(Ref<ConfigFile> p_layout, const String &p_section, bool p_first_load) {
@@ -795,22 +791,6 @@ void EditorDockManager::remove_dock(EditorDock *p_dock) {
 	p_dock->disconnect("_tab_style_changed", callable_mp(this, &EditorDockManager::_queue_update_tab_style));
 	p_dock->disconnect("renamed", callable_mp(this, &EditorDockManager::_queue_update_tab_style));
 	_update_layout();
-}
-
-void EditorDockManager::set_docks_visible(bool p_show) {
-	if (docks_visible == p_show) {
-		return;
-	}
-	docks_visible = p_show;
-	for (int i = 0; i < EditorDock::DOCK_SLOT_MAX; i++) {
-		// Show and hide in reverse order due to the SplitContainer prioritizing the last split offset.
-		dock_slots[docks_visible ? i : EditorDock::DOCK_SLOT_MAX - i - 1]->update_visibility();
-	}
-	_update_layout();
-}
-
-bool EditorDockManager::are_docks_visible() const {
-	return docks_visible;
 }
 
 void EditorDockManager::update_tab_styles() {

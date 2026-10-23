@@ -121,8 +121,6 @@ public:
 	SubViewport *get_editor_viewport_3d(int p_idx = 0) const;
 
 	EditorDock *get_dock_by_name(const String &p_name);
-	void set_distraction_free_mode(bool p_enter);
-	bool is_distraction_free_mode_enabled() const;
 	bool is_multi_window_enabled() const;
 
 	float get_editor_scale() const;

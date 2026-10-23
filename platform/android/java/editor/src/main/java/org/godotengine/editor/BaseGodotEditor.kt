@@ -211,8 +211,6 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 	private val updatedCommandLineParams = ArrayList<String>()
 
 	private var changingOrientationAllowed = false
-	private var distractionFreeModeEnabled = false
-	private var activeWorkspace: String? = null
 	private var currentOrientation = Configuration.ORIENTATION_UNDEFINED
 
 	override fun getGodotAppLayout() = R.layout.godot_editor_layout
@@ -896,15 +894,10 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 	}
 
 	override fun onEditorWorkspaceSelected(workspace: String) {
-		activeWorkspace = workspace
-
 		if (workspace == GAME_WORKSPACE) {
 			showEditorGameDock()
 		}
 
-		if (!isLargeScreen) {
-			toggleEditorOrientation()
-		}
 	}
 
 	final override fun showEditorGameDock() {
@@ -921,23 +914,6 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 			}
 		}
 
-	}
-
-	override fun onDistractionFreeModeChanged(enabled: Boolean) {
-		distractionFreeModeEnabled = enabled
-		if (!isLargeScreen) {
-			toggleEditorOrientation()
-		}
-	}
-
-	private fun toggleEditorOrientation() {
-		if (distractionFreeModeEnabled) {
-			changingOrientationAllowed = true
-			requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
-		} else if (changingOrientationAllowed) {
-			requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-			changingOrientationAllowed = false
-		}
 	}
 
 	internal open fun bringSelfToFront() {

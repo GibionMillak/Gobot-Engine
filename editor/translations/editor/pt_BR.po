@@ -5425,14 +5425,8 @@ msgstr "Desagrupar Nó(s) Selecionado(s)"
 msgid "Pan View"
 msgstr "Deslocar Visão"
 
-msgid "Distraction Free Mode"
-msgstr "Modo Sem Distrações"
-
 msgid "Toggle Last Opened Bottom Panel"
 msgstr "Alternar Último Painel Inferior Aberto"
-
-msgid "Toggle distraction-free mode."
-msgstr "Alternar modo sem distrações."
 
 msgid "Copy Text"
 msgstr "Copiar Texto"

@@ -730,7 +730,7 @@ void SpriteFramesEditor::_notification(int p_what) {
 			anim_search_box->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 			split_sheet_zoom_out->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_less")));
 			split_sheet_zoom_in->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_more")));
-			split_sheet_zoom_fit->set_button_icon(get_editor_theme_icon(SNAME("view_distraction_free")));
+			split_sheet_zoom_fit->set_button_icon(get_editor_theme_icon(SNAME("view_expand")));
 			split_sheet_scroll->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("Tree")));
 
 			_update_show_settings();

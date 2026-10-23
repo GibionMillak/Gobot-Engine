@@ -41,8 +41,6 @@
 #include "editor/themes/editor_scale.h"
 
 void EditorMainScreen::_on_tab_changed(int p_tab) {
-	EditorNode::get_singleton()->update_distraction_free_mode();
-
 	EditorDock *dock = get_dock(p_tab);
 	if (!dock) {
 		return;

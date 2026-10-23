@@ -63,7 +63,6 @@
 #include "main/main.h"
 #include "scene/3d/light_3d.h"
 #include "scene/3d/visual_instance_3d.h"
-#include "scene/gui/box_container.h"
 #include "scene/gui/control.h"
 #include "scene/main/window.h"
 #include "scene/resources/image_texture.h"
@@ -438,14 +437,6 @@ SubViewport *EditorInterface::get_editor_viewport_3d(int p_idx) const {
 
 EditorDock *EditorInterface::get_dock_by_name(const String &p_name) {
 	return EditorDockManager::get_singleton()->get_dock_by_name(p_name);
-}
-
-void EditorInterface::set_distraction_free_mode(bool p_enter) {
-	EditorNode::get_singleton()->set_distraction_free_mode(p_enter);
-}
-
-bool EditorInterface::is_distraction_free_mode_enabled() const {
-	return EditorNode::get_singleton()->is_distraction_free_mode_enabled();
 }
 
 bool EditorInterface::is_multi_window_enabled() const {
@@ -875,8 +866,6 @@ void EditorInterface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_editor_viewport_3d", "idx"), &EditorInterface::get_editor_viewport_3d, DEFVAL(0));
 
 	ClassDB::bind_method(D_METHOD("get_dock_by_name", "name"), &EditorInterface::get_dock_by_name);
-	ClassDB::bind_method(D_METHOD("set_distraction_free_mode", "enter"), &EditorInterface::set_distraction_free_mode);
-	ClassDB::bind_method(D_METHOD("is_distraction_free_mode_enabled"), &EditorInterface::is_distraction_free_mode_enabled);
 	ClassDB::bind_method(D_METHOD("is_multi_window_enabled"), &EditorInterface::is_multi_window_enabled);
 
 	ClassDB::bind_method(D_METHOD("get_editor_scale"), &EditorInterface::get_editor_scale);
@@ -894,8 +883,6 @@ void EditorInterface::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_current_feature_profile"), &EditorInterface::get_current_feature_profile);
 	ClassDB::bind_method(D_METHOD("set_current_feature_profile", "profile_name"), &EditorInterface::set_current_feature_profile);
-
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "distraction_free_mode"), "set_distraction_free_mode", "is_distraction_free_mode_enabled");
 
 	// Editor dialogs.
 

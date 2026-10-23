@@ -441,10 +441,6 @@ void EditorSceneTabs::shortcut_input(const Ref<InputEvent> &p_event) {
 	}
 }
 
-void EditorSceneTabs::add_extra_button(Button *p_button) {
-	tabbar_container->add_child(p_button);
-}
-
 void EditorSceneTabs::set_current_tab(int p_tab) {
 	scene_tabs->set_current_tab(p_tab);
 }

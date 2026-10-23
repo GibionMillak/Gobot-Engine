@@ -528,9 +528,6 @@
 		</method>
 	</methods>
 	<members>
-		<member name="distraction_free_mode" type="bool" setter="set_distraction_free_mode" getter="is_distraction_free_mode_enabled">
-			If [code]true[/code], enables distraction-free mode which hides side docks to increase the space available for the main view.
-		</member>
 		<member name="movie_maker_enabled" type="bool" setter="set_movie_maker_enabled" getter="is_movie_maker_enabled">
 			If [code]true[/code], the Movie Maker mode is enabled in the editor. See [MovieWriter] for more information.
 		</member>

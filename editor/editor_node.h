@@ -300,8 +300,6 @@ public:
 	static EditorBottomPanel *get_bottom_panel() { return singleton->bottom_panel; }
 	static EditorMainScreen *get_editor_main_screen() { return singleton->editor_main_screen; }
 
-	static Button *get_distraction_free_button() { return singleton->distraction_free; }
-
 	static String adjust_scene_name_casing(const String &p_root_name);
 	static String adjust_script_name_casing(const String &p_file_name);
 
@@ -347,11 +345,6 @@ public:
 	bool has_previous_closed_scenes() const;
 
 	void new_inherited_scene() { _menu_option_confirm(SCENE_NEW_INHERITED_SCENE, false); }
-
-	void update_distraction_free_mode();
-	void set_distraction_free_mode(bool p_enter);
-	bool is_distraction_free_mode_enabled() const;
-	void update_distraction_free_button_theme();
 
 	void set_center_split_offset(int p_offset);
 
@@ -742,8 +735,6 @@ private:
 	void _update_layouts_menu();
 	void _layout_menu_option(int p_id);
 
-	void _toggle_distraction_free_mode();
-
 	void _inherit_imported(const String &p_action);
 	void _open_imported();
 
@@ -966,7 +957,6 @@ private:
 	EditorDockManager *editor_dock_manager = nullptr;
 	Timer *editor_layout_save_delay_timer = nullptr;
 	Timer *scan_changes_timer = nullptr;
-	Button *distraction_free = nullptr;
 	Callable palette_file_selected_callback;
 
 	EditorBottomPanel *bottom_panel = nullptr;
@@ -976,9 +966,6 @@ private:
 	bool disk_changed_project = false;
 	Dialog *disk_changed = nullptr;
 	Dialog *project_data_missing = nullptr;
-
-	bool scene_distraction_free = false;
-	bool script_distraction_free = false;
 
 	bool changing_scene = false;
 	bool cmdline_mode = false;
