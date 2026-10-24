@@ -246,7 +246,7 @@ ShaderFileEditor::ShaderFileEditor() {
 	singleton = this;
 
 	set_name(TTRC("ShaderFile"));
-	set_icon_name("resource_rd_shader_file");
+	set_icon_name("dock_shader_file");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_shader_file_bottom_panel", TTRC("Toggle ShaderFile Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);

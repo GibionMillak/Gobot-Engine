@@ -157,7 +157,7 @@ void ReplicationEditor::_pick_node_property_selected(String p_name) {
 /// ReplicationEditor
 ReplicationEditor::ReplicationEditor() {
 	set_name(TTRC("Replication"));
-	set_icon_name("module_multiplayer_replication_dock");
+	set_icon_name("dock_replication");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_replication_bottom_panel", TTRC("Toggle Replication Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

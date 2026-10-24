@@ -1506,7 +1506,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	game_dock = memnew(EditorDock);
 	game_dock->set_name(TTRC("Game"));
-	game_dock->set_icon_name("dock_development_game");
+	game_dock->set_icon_name("dock_game");
 	game_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN);
 	game_dock->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	game_dock->set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_game"));
@@ -2013,7 +2013,7 @@ GameViewPlugin::GameViewPlugin() {
 void GameViewPluginBase::setup_android() {
 	EditorDock *game_dock = memnew(EditorDock);
 	game_dock->set_name(TTRC("Game"));
-	game_dock->set_icon_name("dock_development_game");
+	game_dock->set_icon_name("dock_game");
 	game_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN);
 	game_dock->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	game_dock->set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_game"));

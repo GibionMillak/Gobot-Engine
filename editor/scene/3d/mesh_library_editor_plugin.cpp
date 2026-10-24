@@ -673,7 +673,7 @@ void MeshLibraryEditor::_bind_methods() {
 
 MeshLibraryEditor::MeshLibraryEditor() {
 	set_name(TTRC("MeshLibrary"));
-	set_icon_name("action_mesh_library_editor");
+	set_icon_name("dock_mesh_library");
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_global(false);

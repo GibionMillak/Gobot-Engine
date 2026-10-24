@@ -1208,7 +1208,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	version_commit_dock->set_visible(false);
 	version_commit_dock->set_name(TTRC("Commit"));
 	version_commit_dock->set_layout_key("VersionCommit");
-	version_commit_dock->set_icon_name("dock_development_vcs_commit");
+	version_commit_dock->set_icon_name("dock_commit");
 	version_commit_dock->set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/open_version_control", TTRC("Open Version Control Dock")));
 	version_commit_dock->set_default_slot(EditorDock::DOCK_SLOT_RIGHT_UL);
 
@@ -1535,7 +1535,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	version_control_dock = memnew(EditorDock);
 	version_control_dock->set_name(TTRC("Version Control"));
-	version_control_dock->set_icon_name("gui_vcs_branches");
+	version_control_dock->set_icon_name("dock_version_control");
 	version_control_dock->set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_version_control_bottom_panel", TTRC("Toggle Version Control Dock")));
 	version_control_dock->set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	version_control_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

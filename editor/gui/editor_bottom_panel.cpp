@@ -52,7 +52,7 @@ void EditorBottomPanel::_notification(int p_what) {
 
 		case NOTIFICATION_THEME_CHANGED: {
 			pin_button->set_button_icon(get_editor_theme_icon(SNAME("action_pin")));
-			expand_button->set_button_icon(get_editor_theme_icon(SNAME("dock_expand_bottom_dock")));
+			expand_button->set_button_icon(get_editor_theme_icon(SNAME("gui_expand_bottom_dock")));
 		} break;
 	}
 }

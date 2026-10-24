@@ -5209,7 +5209,7 @@ Dictionary SceneTreeDock::_get_context_data(const List<Node *> &p_selected_nodes
 
 SceneTreeDock::SceneTreeDock(Node *p_scene_root, EditorSelection *p_editor_selection, EditorData &p_editor_data) {
 	set_name(TTRC("Scene"));
-	set_icon_name("resource_packed_scene");
+	set_icon_name("dock_scene");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/open_scene", TTRC("Open Scene Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_LEFT_UR);
 

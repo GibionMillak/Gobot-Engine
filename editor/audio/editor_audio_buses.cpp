@@ -1537,7 +1537,7 @@ void EditorAudioBuses::_bind_methods() {
 
 EditorAudioBuses::EditorAudioBuses() {
 	set_name(TTRC("Audio"));
-	set_icon_name("node_audio_stream_player");
+	set_icon_name("dock_audio");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_audio_bottom_panel", TTRC("Toggle Audio Dock"), KeyModifierMask::ALT | Key::A));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);

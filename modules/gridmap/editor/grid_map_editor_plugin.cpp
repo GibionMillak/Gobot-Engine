@@ -1729,7 +1729,7 @@ void GridMapEditor::_bind_methods() {
 
 GridMapEditor::GridMapEditor() {
 	set_name(TTRC("GridMap"));
-	set_icon_name("module_gridmap_grid_map_dock");
+	set_icon_name("dock_grid_map");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_grid_map_bottom_panel", TTRC("Toggle GridMap Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

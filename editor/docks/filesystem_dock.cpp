@@ -4460,7 +4460,7 @@ void FileSystemDock::_bind_methods() {
 FileSystemDock::FileSystemDock() {
 	singleton = this;
 	set_name(TTRC("FileSystem"));
-	set_icon_name("folder_folder");
+	set_icon_name("dock_file_system");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/open_filesystem", TTRC("Open FileSystem Dock"), KeyModifierMask::ALT | Key::F));
 	set_default_slot(EditorDock::DOCK_SLOT_LEFT_BR);
 	set_available_layouts(DOCK_LAYOUT_ALL);

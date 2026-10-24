@@ -837,7 +837,7 @@ void TileSetEditor::register_split(SplitContainer *p_split) {
 TileSetEditor::TileSetEditor() {
 	singleton = this;
 	set_name(TTRC("TileSet"));
-	set_icon_name("module_tilemap_tile_set");
+	set_icon_name("dock_tile_set");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_tile_set_bottom_panel", TTRC("Open TileSet Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);

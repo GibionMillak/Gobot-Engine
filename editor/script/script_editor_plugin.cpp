@@ -4694,7 +4694,7 @@ ScriptEditorPlugin::ScriptEditorPlugin() {
 
 	script_editor = memnew(ScriptEditor);
 	script_editor->set_name(TTRC("Script"));
-	script_editor->set_icon_name("resource_script");
+	script_editor->set_icon_name("dock_script");
 	script_editor->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN | EditorDock::DOCK_LAYOUT_FLOATING);
 	script_editor->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	script_editor->set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_script"));

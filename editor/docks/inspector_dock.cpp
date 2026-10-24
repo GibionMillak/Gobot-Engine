@@ -747,7 +747,7 @@ void InspectorDock::shortcut_input(const Ref<InputEvent> &p_event) {
 InspectorDock::InspectorDock(EditorData &p_editor_data) {
 	singleton = this;
 	set_name(TTRC("Inspector"));
-	set_icon_name("animation_track_list");
+	set_icon_name("dock_inspector");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/open_inspector", TTRC("Open Inspector Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_RIGHT_UL);
 

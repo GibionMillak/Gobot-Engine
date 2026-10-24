@@ -1697,7 +1697,7 @@ void FindInFilesContainer::_bind_methods() {
 
 FindInFilesContainer::FindInFilesContainer() {
 	set_name(TTRC("Find in Files"));
-	set_icon_name("action_search");
+	set_icon_name("dock_find_in_files");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_search_results_bottom_panel", TTRC("Toggle Find in Files Bottom Panel")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(DOCK_LAYOUT_HORIZONTAL | DOCK_LAYOUT_FLOATING);

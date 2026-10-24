@@ -3376,7 +3376,7 @@ void Node3DEditor::PreviewSunEnvPopup::shortcut_input(const Ref<InputEvent> &p_e
 
 Node3DEditor::Node3DEditor() {
 	set_name(TTRC("3D"));
-	set_icon_name("gui_3d");
+	set_icon_name("dock_3d");
 	set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_3d"));

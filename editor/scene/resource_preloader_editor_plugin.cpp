@@ -385,7 +385,7 @@ void ResourcePreloaderEditor::_bind_methods() {
 
 ResourcePreloaderEditor::ResourcePreloaderEditor() {
 	set_name(TTRC("ResourcePreloader"));
-	set_icon_name("node_resource_preloader");
+	set_icon_name("dock_resource_preloader");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_resource_preloader_bottom_panel", TTRC("Toggle ResourcePreloader Dock")));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);

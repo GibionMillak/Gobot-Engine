@@ -68,7 +68,7 @@ EditorDebuggerNode *EditorDebuggerNode::singleton = nullptr;
 
 EditorDebuggerNode::EditorDebuggerNode() {
 	set_name(TTRC("Debugger"));
-	set_icon_name("gui_debug");
+	set_icon_name("dock_debugger");
 	set_layout_key("Debugger");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_debugger_bottom_panel", TTRC("Toggle Debugger Dock"), KeyModifierMask::ALT | Key::D));
 	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
