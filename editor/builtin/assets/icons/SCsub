@@ -31,8 +31,6 @@ for icon_root, prefix in icon_roots:
         if not path.is_file():
             continue
         relative = path.relative_to(root_path)
-        if "not_in_use" in relative.parts:
-            continue
         if prefix == "" and relative.parts[0] == "module" and relative.parts[1] not in env.module_list:
             continue
         if path.suffix == ".svg":

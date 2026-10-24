@@ -155,7 +155,7 @@ void EditorRunBar::_update_play_buttons() {
 
 	if (active_button) {
 		active_button->set_pressed(true);
-		active_button->set_button_icon(get_editor_theme_icon(SNAME("action_reload")));
+		active_button->set_button_icon(get_editor_theme_icon(SNAME("action_restart")));
 	}
 }
 
