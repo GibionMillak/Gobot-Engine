@@ -6,27 +6,29 @@ replaced by `_`. For example, `action/copy.svg` becomes `action_copy` and
 `node/3d/mesh_instance_3d.svg` becomes `node_3d_mesh_instance_3d`.
 UI code uses these identifiers in the `EditorIcons` theme catalog.
 
-Categories describe the represented concept. Node icons are grouped under
-`node`, including `node/2d`, `node/3d`, `node/control`, and `node/viewport`.
-Resources, Variant types, actions, interface graphics, and editor tools have
-separate categories. Moving or renaming an SVG changes its identifier; update
-its callers in the same change.
+Node icons are grouped under `node`, with subfolders for `2d`, `3d`, `control`,
+and `viewport`. Resource class icons are grouped under `resource`. Other
+categories hold Variant types, actions, interface graphics, and editor tools.
+Moving or renaming an SVG changes its identifier; update its callers in the same
+change.
 
-Optional JSON metadata records an exact engine class or Variant `type`
-association and/or `thumbnail` sizing (`medium` or `big`). Both files share a
-stem. For example, `node/3d/multi_mesh_instance_3d.json` contains:
+Class icon associations are inferred from the filename under `node` or
+`resource`, converting snake_case to PascalCase. Optional JSON metadata
+records an explicit `type` for names that do not convert directly, such as
+`HTTPRequest`, `CPUParticles2D`, and `AABB`, and/or `thumbnail` sizing
+(`medium` or `big`). Both files share a stem. For example,
+`node/2d/cpu_particles_2d.json` can contain:
 
 ```json
 {
-  "type": "MultiMeshInstance3D"
+  "type": "CPUParticles2D"
 }
 ```
 
-Type names are explicit because filenames cannot reliably reconstruct names
-such as `HTTPRequest`, `CPUParticles2D`, and `AABB`, and UI icons must not be
-mistaken for class icons. `editor_get_type_icon_name()` resolves a type to its
-asset identifier, returning an empty name for types without an associated icon.
-Icons without type or thumbnail metadata need only an SVG. Move or rename an
+Variant type associations remain explicit in JSON metadata. UI icons belong in
+their own categories so they are not associated with engine classes.
+`editor_get_type_icon_name()` resolves a type to its asset identifier,
+returning an empty name for types without an associated icon. Move or rename an
 icon's optional JSON file along with its SVG.
 
 Built-in module icons live under `module/<module_name>` and are embedded only
@@ -35,8 +37,7 @@ conventions, with identifiers prefixed by `module_<module_name>_`.
 
 The build recursively discovers SVG and JSON files. It rejects orphan metadata,
 invalid metadata, non-snake_case asset paths, duplicate identifiers, and duplicate
-type associations. Duplicate errors identify both source paths. `not_in_use`
-directories are excluded from discovery.
+type associations. Duplicate errors identify both source paths.
 
 `SCsub` invokes `editor_icons_builders.py` to generate `editor_icons.gen.h` here.
 Do not edit the generated header manually. `editor_icons.cpp` configures icon

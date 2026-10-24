@@ -3867,7 +3867,7 @@ void CanvasItemEditor::center_at(const Point2 &p_pos) {
 
 CanvasItemEditor::CanvasItemEditor() {
 	set_name(TTRC("2D"));
-	set_icon_name("node_2d");
+	set_icon_name("gui_2d");
 	set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
 	set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_2d"));

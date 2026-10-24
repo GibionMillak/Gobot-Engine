@@ -53,8 +53,10 @@ def make_editor_icons_action(target, source, env):
             raise ValueError(f"Duplicate icon identifier '{name}': {identifiers[name]} and {path}")
         identifiers[name] = path
         metadata = icon_metadata.get(asset_path, {})
-        if "type" in metadata:
-            type_name = metadata["type"]
+        type_name = metadata.get("type")
+        if type_name is None and relative_path.startswith(("node/", "resource/")):
+            type_name = _class_name_from_icon_stem(asset_path.stem)
+        if type_name is not None:
             if type_name in types:
                 raise ValueError(f"Duplicate icon type '{type_name}': {types[type_name]} and {path}")
             types[type_name] = path
@@ -99,3 +101,13 @@ inline constexpr int editor_md_thumbs_indices[] = {{ {", ".join(icons_med)} }};
 inline constexpr int editor_bg_thumbs_count = {len(icons_big)};
 inline constexpr int editor_bg_thumbs_indices[] = {{ {", ".join(icons_big)} }};
 """)
+
+
+def _class_name_from_icon_stem(p_stem):
+    pascal_case_parts = []
+    for part in p_stem.split("_"):
+        if re.fullmatch(r"\d+[a-z]", part):
+            pascal_case_parts.append(part[:-1] + part[-1].upper())
+        else:
+            pascal_case_parts.append(part[:1].upper() + part[1:])
+    return "".join(pascal_case_parts)

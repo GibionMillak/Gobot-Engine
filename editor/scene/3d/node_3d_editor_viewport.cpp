@@ -3886,7 +3886,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 
 			view_display_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl_dark_background")));
 			preview_camera->set_button_icon(get_editor_theme_icon(SNAME("viewport_camera_3d_dark_background")));
-			pilot_camera->set_button_icon(get_editor_theme_icon(SNAME("node_3d")));
+			pilot_camera->set_button_icon(get_editor_theme_icon(SNAME("gui_3d")));
 			Control *gui_base = EditorNode::get_singleton()->get_gui_base();
 
 			const Ref<StyleBox> &information_3d_stylebox = gui_base->get_theme_stylebox(SNAME("Information3dViewport"), EditorStringName(EditorStyles));

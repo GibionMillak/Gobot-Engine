@@ -710,7 +710,7 @@ void SpriteFramesEditor::_notification(int p_what) {
 			play_bw_from->set_button_icon(get_editor_theme_icon(SNAME("playback_play_backwards")));
 
 			load->set_button_icon(get_editor_theme_icon(SNAME("action_load")));
-			load_sheet->set_button_icon(get_editor_theme_icon(SNAME("resource_sprite_sheet")));
+			load_sheet->set_button_icon(get_editor_theme_icon(SNAME("gui_sprite_sheet")));
 			copy->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
 			paste->set_button_icon(get_editor_theme_icon(SNAME("action_paste")));
 			empty_before->set_button_icon(get_editor_theme_icon(SNAME("action_insert_before")));
