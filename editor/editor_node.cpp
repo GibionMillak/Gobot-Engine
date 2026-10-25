@@ -217,11 +217,9 @@
 #include "servers/physics_3d/physics_server_3d.h"
 #endif // PHYSICS_3D_DISABLED
 
-#ifdef ANDROID_ENABLED
-#include "editor/gui/touch_actions_panel.h"
-#else
+#ifndef ANDROID_ENABLED
 #include "editor/export/android_sdk_manager.h"
-#endif // ANDROID_ENABLED
+#endif
 
 #include "modules/modules_enabled.gen.h" // For gdscript.
 
@@ -673,34 +671,10 @@ EditorNode::EditorNode() {
 	gui_base->set_end(Point2(0, 0));
 
 	main_vbox = memnew(VBoxContainer);
-
-#ifdef ANDROID_ENABLED
-	base_vbox = memnew(VBoxContainer);
-	base_vbox->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT, Control::PRESET_MODE_MINSIZE, theme->get_constant(SNAME("window_border_margin"), EditorStringName(Editor)));
-
-	title_bar = memnew(EditorTitleBar);
-	base_vbox->add_child(title_bar);
-
-	main_box = memnew(BoxContainer);
-	main_box->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	main_box->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	main_vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	main_vbox->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	main_box->add_child(main_vbox);
-	base_vbox->add_child(main_box);
-
-	_touch_actions_panel_mode_changed();
-
-	vk_spacer = memnew(Control);
-	base_vbox->add_child(vk_spacer);
-
-	gui_base->add_child(base_vbox);
-#else
 	gui_base->add_child(main_vbox);
 
 	title_bar = memnew(EditorTitleBar);
 	main_vbox->add_child(title_bar);
-#endif
 
 	DockSplitContainer *main_vsplit = memnew(DockSplitContainer);
 	main_vsplit->set_name("DockVSplitMain");
@@ -4800,16 +4774,6 @@ void EditorNode::_notification(int p_what) {
 				EditorSettings::get_singleton()->emit_signal(SNAME("settings_changed"));
 				settings_overrides_changed = false;
 			}
-
-#ifdef ANDROID_ENABLED
-			if (portrait_mode) {
-				const int vk_height = DisplayServer::get_singleton()->virtual_keyboard_get_height();
-				if (vk_height != last_vk_height) {
-					last_vk_height = vk_height;
-					vk_spacer->set_custom_minimum_size(Size2(0, vk_height));
-				}
-			}
-#endif
 		} break;
 
 		case NOTIFICATION_ENTER_TREE: {
@@ -5050,11 +5014,6 @@ void EditorNode::_notification(int p_what) {
 				DisplayServer::get_singleton()->screen_set_keep_on(EDITOR_GET("interface/editor/display/keep_screen_on"));
 			}
 
-#ifdef ANDROID_ENABLED
-			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/touchscreen/touch_actions_panel")) {
-				_touch_actions_panel_mode_changed();
-			}
-#endif
 		} break;
 	}
 }
@@ -9145,9 +9104,6 @@ void EditorNode::_update_main_menu_type() {
 		memdelete(main_menu_button);
 		main_menu_button = nullptr;
 	}
-	memdelete(menu_btn_spacer);
-	menu_btn_spacer = nullptr;
-
 	// Create new menu.
 	if (new_menu_type == MENU_TYPE_COMPACT) {
 		main_menu_button = memnew(MenuButton);
@@ -9165,19 +9121,8 @@ void EditorNode::_update_main_menu_type() {
 			}
 		}
 
-#ifdef ANDROID_ENABLED
-		// Align main menu icon visually with TouchActionsPanel buttons.
-		menu_btn_spacer = memnew(Control);
-		menu_btn_spacer->set_custom_minimum_size(Vector2(8, 0) * EDSCALE);
-		title_bar->add_child(menu_btn_spacer);
-		title_bar->move_child(menu_btn_spacer, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
-#endif
 		title_bar->add_child(main_menu_button);
-		if (menu_btn_spacer == nullptr) {
-			title_bar->move_child(main_menu_button, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
-		} else {
-			title_bar->move_child(main_menu_button, menu_btn_spacer->get_index() + 1);
-		}
+		title_bar->move_child(main_menu_button, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
 	} else {
 		main_menu_bar = memnew(MenuBar);
 		main_menu_bar->set_mouse_filter(Control::MOUSE_FILTER_STOP);
@@ -9217,33 +9162,7 @@ void EditorNode::_copy_warning(const String &p_str) {
 }
 
 #ifdef ANDROID_ENABLED
-void EditorNode::_touch_actions_panel_mode_changed() {
-	int panel_mode = EDITOR_GET("interface/touchscreen/touch_actions_panel");
-	switch (panel_mode) {
-		case 1: // Embedded
-			if (touch_actions_panel != nullptr) {
-				touch_actions_panel->queue_free();
-			}
-			touch_actions_panel = memnew(TouchActionsPanel(false));
-			main_box->call_deferred("add_child", touch_actions_panel);
-			break;
-		case 2: // Floating
-			if (touch_actions_panel != nullptr) {
-				touch_actions_panel->queue_free();
-			}
-			touch_actions_panel = memnew(TouchActionsPanel(true));
-			call_deferred("add_child", touch_actions_panel);
-			break;
-		case 0: // Disabled
-			if (touch_actions_panel != nullptr) {
-				touch_actions_panel->queue_free();
-				touch_actions_panel = nullptr;
-			}
-			break;
-	}
-}
 void EditorNode::_screen_orientation_changed(int p_new_orientation) {
 	portrait_mode = p_new_orientation == DisplayServerEnums::SENSOR_ORIENTATION_PORTRAIT;
-	vk_spacer->set_custom_minimum_size(Size2()); // Reset size.
 }
 #endif

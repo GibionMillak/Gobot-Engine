@@ -45,7 +45,6 @@ typedef void (*EditorPluginInitializeCallback)();
 class AndroidSDKManager;
 #endif
 class Dialog;
-class BoxContainer;
 class ColorPicker;
 class Control;
 class FileDialog;
@@ -54,8 +53,6 @@ class ImageTexture;
 class MenuBar;
 class MenuButton;
 class OptionButton;
-class Panel;
-class PanelContainer;
 class RichTextLabel;
 class SubViewport;
 class SystemInformationDialog;
@@ -108,10 +105,6 @@ class ProjectExportDialog;
 class ProjectPluginsDialog;
 class ProjectSettingsEditor;
 class SceneImportSettingsDialog;
-
-#ifdef ANDROID_ENABLED
-class TouchActionsPanel;
-#endif
 
 struct EditorProgress {
 	String task;
@@ -778,7 +771,6 @@ private:
 
 	void _copy_warning(const String &p_str);
 #ifdef ANDROID_ENABLED
-	void _touch_actions_panel_mode_changed();
 	void _screen_orientation_changed(int p_new_orientation);
 #endif
 
@@ -817,15 +809,6 @@ private:
 	Control *gui_base = nullptr;
 	VBoxContainer *main_vbox = nullptr;
 	OptionButton *renderer = nullptr;
-
-#ifdef ANDROID_ENABLED
-	VBoxContainer *base_vbox = nullptr; // It only contains the title_bar, main_box, and vk_spacer.
-	BoxContainer *main_box = nullptr; // It only contains the touch_actions_panel and main_vbox.
-	TouchActionsPanel *touch_actions_panel = nullptr;
-
-	Control *vk_spacer = nullptr;
-	int last_vk_height = -1;
-#endif
 
 	bool portrait_mode = false;
 
@@ -866,7 +849,6 @@ private:
 	HBoxContainer *left_spacer = nullptr;
 	Control *right_spacer = nullptr;
 
-	Control *menu_btn_spacer = nullptr;
 	MenuButton *main_menu_button = nullptr;
 	MenuBar *main_menu_bar = nullptr;
 
