@@ -90,7 +90,7 @@ private:
 	HashMap<StringName, Object *> singleton_ptrs;
 
 	bool editor_hint = false;
-	bool project_manager_hint = false;
+	bool hub_hint = false;
 	bool embedded_in_editor = false;
 	bool recovery_mode_hint = false;
 
@@ -170,8 +170,8 @@ public:
 	_FORCE_INLINE_ void set_editor_hint(bool p_enabled) { editor_hint = p_enabled; }
 	_FORCE_INLINE_ bool is_editor_hint() const { return editor_hint; }
 
-	_FORCE_INLINE_ void set_project_manager_hint(bool p_enabled) { project_manager_hint = p_enabled; }
-	_FORCE_INLINE_ bool is_project_manager_hint() const { return project_manager_hint; }
+	_FORCE_INLINE_ void set_hub_hint(bool p_enabled) { hub_hint = p_enabled; }
+	_FORCE_INLINE_ bool is_hub_hint() const { return hub_hint; }
 
 	_FORCE_INLINE_ void set_recovery_mode_hint(bool p_enabled) { recovery_mode_hint = p_enabled; }
 	_FORCE_INLINE_ bool is_recovery_mode_hint() const { return recovery_mode_hint; }
@@ -179,8 +179,8 @@ public:
 	_FORCE_INLINE_ void set_editor_hint(bool p_enabled) {}
 	_FORCE_INLINE_ bool is_editor_hint() const { return false; }
 
-	_FORCE_INLINE_ void set_project_manager_hint(bool p_enabled) {}
-	_FORCE_INLINE_ bool is_project_manager_hint() const { return false; }
+	_FORCE_INLINE_ void set_hub_hint(bool p_enabled) {}
+	_FORCE_INLINE_ bool is_hub_hint() const { return false; }
 
 	_FORCE_INLINE_ void set_recovery_mode_hint(bool p_enabled) {}
 	_FORCE_INLINE_ bool is_recovery_mode_hint() const { return false; }

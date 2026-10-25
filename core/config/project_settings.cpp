@@ -76,7 +76,7 @@ String ProjectSettings::get_imported_files_path() const {
 
 #ifdef TOOLS_ENABLED
 // Returns the features that a project must have when opened with this build of Godot.
-// This is used by the project manager to provide the initial_settings for config/features.
+// This is used by the hub to provide the initial_settings for config/features.
 const PackedStringArray ProjectSettings::get_required_features() {
 	PackedStringArray features;
 #ifdef REAL_T_IS_DOUBLE

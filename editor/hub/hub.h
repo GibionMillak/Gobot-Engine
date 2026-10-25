@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  project_manager.h                                                     */
+/*  hub.h                                                     */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -50,10 +50,10 @@ class RichTextLabel;
 class TabContainer;
 class VBoxContainer;
 
-class ProjectManager : public Control {
-	GDCLASS(ProjectManager, Control);
+class Hub : public Control {
+	GDCLASS(Hub, Control);
 
-	static ProjectManager *singleton;
+	static Hub *singleton;
 
 	// Utility data.
 
@@ -237,7 +237,7 @@ protected:
 	void _notification(int p_what);
 
 public:
-	static ProjectManager *get_singleton() { return singleton; }
+	static Hub *get_singleton() { return singleton; }
 
 	static constexpr int DEFAULT_WINDOW_WIDTH = 1152;
 	static constexpr int DEFAULT_WINDOW_HEIGHT = 800;
@@ -254,6 +254,6 @@ public:
 	// Theme.
 	Ref<Theme> get_theme() const { return theme; }
 
-	ProjectManager();
-	~ProjectManager();
+	Hub();
+	~Hub();
 };

@@ -5230,9 +5230,9 @@ void WaylandThread::set_default_icon(const Ref<Image> &p_icon) {
 	xdg_icon = xdg_toplevel_icon_manager_v1_create_icon(registry.xdg_toplevel_icon_manager);
 	xdg_toplevel_icon_v1_add_buffer(xdg_icon, icon_buffer, icon_size.width);
 
-	if (Engine::get_singleton()->is_editor_hint() || Engine::get_singleton()->is_project_manager_hint()) {
+	if (Engine::get_singleton()->is_editor_hint() || Engine::get_singleton()->is_hub_hint()) {
 		// Setting a name allows the godot icon to be overridden by a system theme.
-		// We only want the project manager and editor to get themed,
+		// We only want the hub and editor to get themed,
 		// Games will get icons with the protocol and themed icons with .desktop entries.
 		// NOTE: should be synced with the icon name in misc/dist/linuxbsd/Godot.desktop
 		xdg_toplevel_icon_v1_set_name(xdg_icon, "godot");
@@ -5626,7 +5626,7 @@ Error WaylandThread::init() {
 		embedder_enabled = false;
 	}
 
-	if (embedder_enabled && Engine::get_singleton()->is_editor_hint() && !Engine::get_singleton()->is_project_manager_hint()) {
+	if (embedder_enabled && Engine::get_singleton()->is_editor_hint() && !Engine::get_singleton()->is_hub_hint()) {
 		print_verbose("Initializing Wayland embedder.");
 		bool embedder_debug = OS::get_singleton()->get_environment("GODOT_WAYLAND_EMBEDDER_DEBUG") == "1";
 		Error embedder_status = embedder.init(embedder_debug);

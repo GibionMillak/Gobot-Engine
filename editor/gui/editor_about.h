@@ -41,7 +41,7 @@ class Tree;
 
 /**
  * NOTE: Do not assume the EditorNode singleton to be available in this class' methods.
- * EditorAbout is also used from the project manager where EditorNode isn't initialized.
+ * EditorAbout is also used from the hub where EditorNode isn't initialized.
  */
 class EditorAbout : public Dialog {
 	GDCLASS(EditorAbout, Dialog);
@@ -60,7 +60,7 @@ private:
 	Label *_create_section(Control *p_parent, const String &p_name, const char *const *p_src, BitField<SectionFlags> p_flags = 0);
 
 	Label *_about_text_label = nullptr;
-	Label *_project_manager_label = nullptr;
+	Label *_hub_label = nullptr;
 	Tree *_tpl_tree = nullptr;
 	RichTextLabel *license_text_label = nullptr;
 	RichTextLabel *_tpl_text = nullptr;

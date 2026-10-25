@@ -120,7 +120,7 @@
 #include "editor/gui/progress_dialog.h"
 #include "editor/managers/editor_managers.h"
 #include "editor/managers/project_plugin_manager.h"
-#include "editor/project_manager/project_manager.h"
+#include "editor/hub/hub.h"
 #include "editor/register_editor_types.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/translations/editor_translation.h"
@@ -187,7 +187,7 @@ static int audio_driver_idx = -1;
 
 static bool single_window = false;
 static bool editor = false;
-static bool project_manager = false;
+static bool hub = false;
 static bool cmdline_tool = false;
 static String locale;
 static String log_file;
@@ -468,7 +468,7 @@ void Main::print_help(const char *p_binary) {
 	print_help_option("--, ++", "Separator for user-provided arguments. Following arguments are not used by the engine, but can be read from `OS.get_cmdline_user_args()`.\n");
 #ifdef TOOLS_ENABLED
 	print_help_option("-e, --editor", "Start the editor instead of running the scene.\n", CLI_OPTION_AVAILABILITY_EDITOR);
-	print_help_option("-p, --project-manager", "Start the project manager, even if a project is auto-detected.\n", CLI_OPTION_AVAILABILITY_EDITOR);
+	print_help_option("-p, --hub", "Start the hub, even if a project is auto-detected.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--recovery-mode", "Start the editor in recovery mode, which disables features that can typically cause startup crashes, such as tool scripts, editor plugins, and others.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--debug-server <uri>", "Start the editor debug server (<protocol>://<host/IP>[:port], e.g. tcp://127.0.0.1:6007)\n", CLI_OPTION_AVAILABILITY_EDITOR);
 	print_help_option("--dap-port <port>", "Use the specified port for the GDScript Debug Adapter Protocol. Recommended port range [1024, 49151].\n", CLI_OPTION_AVAILABILITY_EDITOR);
@@ -586,7 +586,7 @@ void Main::print_help(const char *p_binary) {
 	print_help_option("--delta-smoothing <enable>", "Enable or disable frame delta smoothing [\"enable\", \"disable\"].\n");
 	print_help_option("--print-fps", "Print the frames per second to the stdout.\n");
 #ifdef TOOLS_ENABLED
-	print_help_option("--editor-pseudolocalization", "Enable pseudolocalization for the editor and the project manager.\n", CLI_OPTION_AVAILABILITY_EDITOR);
+	print_help_option("--editor-pseudolocalization", "Enable pseudolocalization for the editor and the hub.\n", CLI_OPTION_AVAILABILITY_EDITOR);
 #endif
 
 #if defined(OVERRIDE_PATH_ENABLED) || defined(TESTS_ENABLED)
@@ -1444,8 +1444,8 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		} else if (arg == "-e" || arg == "--editor") { // starts editor
 
 			editor = true;
-		} else if (arg == "-p" || arg == "--project-manager") { // starts project manager
-			project_manager = true;
+		} else if (arg == "-p" || arg == "--hub") { // starts hub
+			hub = true;
 		} else if (arg == "--recovery-mode") { // Enables recovery mode.
 			recovery_mode = true;
 		} else if (arg == "--debug-server") {
@@ -1814,9 +1814,9 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	}
 
 #ifdef TOOLS_ENABLED
-	if (editor && project_manager) {
+	if (editor && hub) {
 		OS::get_singleton()->print(
-				"Error: Command line arguments implied opening both editor and project manager, which is not possible. Aborting.\n");
+				"Error: Command line arguments implied opening both editor and hub, which is not possible. Aborting.\n");
 		goto error;
 	}
 #endif
@@ -1890,7 +1890,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	// Initialize WorkerThreadPool.
 	{
 #ifdef THREADS_ENABLED
-		if (editor || project_manager) {
+		if (editor || hub) {
 			WorkerThreadPool::get_singleton()->init(-1, 0.75);
 		} else {
 			int worker_threads = GLOBAL_GET("threading/worker_pool/max_threads");
@@ -1903,9 +1903,9 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	}
 
 #ifdef TOOLS_ENABLED
-	if (!project_manager && !editor) {
-		// If we didn't find a project, we fall back to the project manager.
-		project_manager = !found_project && !cmdline_tool;
+	if (!hub && !editor) {
+		// If we didn't find a project, we fall back to the hub.
+		hub = !found_project && !cmdline_tool;
 	}
 
 	{
@@ -1929,9 +1929,9 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		};
 
 #if defined(WINDOWS_ENABLED) || defined(LINUXBSD_ENABLED)
-		if (editor || project_manager || test_rd_support || test_rd_creation) {
+		if (editor || hub || test_rd_support || test_rd_creation) {
 #else
-		if (editor || project_manager) {
+		if (editor || hub) {
 #endif
 			// Disable Vulkan overlays in editor, they cause various issues.
 			for (const String &layer_disable : layers_to_disable) {
@@ -1984,12 +1984,12 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		}
 	}
 
-	if (project_manager) {
-		Engine::get_singleton()->set_project_manager_hint(true);
+	if (hub) {
+		Engine::get_singleton()->set_hub_hint(true);
 	}
 
 	if (recovery_mode) {
-		if (project_manager || !editor) {
+		if (hub || !editor) {
 			OS::get_singleton()->print("Error: Recovery mode can only be used in the editor. Aborting.\n");
 			goto error;
 		}
@@ -2077,13 +2077,13 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	GLOBAL_DEF("debug/file_logging/log_path", "user://logs/godot.log");
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "debug/file_logging/max_log_files", PROPERTY_HINT_RANGE, "0,20,1,or_greater"), 5);
 
-	// If `--log-file` is used to override the log path, allow creating logs for the project manager or editor
+	// If `--log-file` is used to override the log path, allow creating logs for the hub or editor
 	// and even if file logging is disabled in the Project Settings.
 	// `--log-file` can be used with any path (including absolute paths outside the project folder),
 	// so check for filesystem access if it's used.
 	if (FileAccess::get_create_func(!log_file.is_empty() ? FileAccess::ACCESS_FILESYSTEM : FileAccess::ACCESS_USERDATA) &&
-			(!log_file.is_empty() || (!project_manager && !editor && GLOBAL_GET("debug/file_logging/enable_file_logging")))) {
-		// Don't create logs for the project manager as they would be written to
+			(!log_file.is_empty() || (!hub && !editor && GLOBAL_GET("debug/file_logging/enable_file_logging")))) {
+		// Don't create logs for the hub as they would be written to
 		// the current working directory, which is inconvenient.
 		String base_path;
 		int max_files;
@@ -2100,7 +2100,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 
 	if (main_args.is_empty() && String(GLOBAL_GET("application/run/main_scene")) == "") {
 #ifdef TOOLS_ENABLED
-		if (!editor && !project_manager) {
+		if (!editor && !hub) {
 #endif
 			const String error_msg = "Error: Can't run project: no main scene defined in the project.\n";
 			OS::get_singleton()->print("%s", error_msg.utf8().get_data());
@@ -2111,7 +2111,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 #endif
 	}
 
-	if (editor || project_manager) {
+	if (editor || hub) {
 		Engine::get_singleton()->set_editor_hint(true);
 		use_custom_res = false;
 		input_map->load_default(); //keys for editor
@@ -2267,8 +2267,8 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	if (default_renderer_mobile.is_empty()) {
 		default_renderer_mobile = "gl_compatibility";
 	}
-	// Default to Compatibility when using the project manager.
-	if (rendering_driver.is_empty() && rendering_method.is_empty() && project_manager) {
+	// Default to Compatibility when using the hub.
+	if (rendering_driver.is_empty() && rendering_method.is_empty() && hub) {
 		rendering_driver = "opengl3";
 		rendering_method = "gl_compatibility";
 		default_renderer_mobile = "gl_compatibility";
@@ -2441,11 +2441,11 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	OS::get_singleton()->set_current_rendering_method(rendering_method, rendering_method_source);
 
 #ifdef TOOLS_ENABLED
-	if (!force_res && project_manager) {
-		// Ensure splash screen size matches the project manager window size
-		// (see `editor/project_manager.cpp` for defaults).
-		window_size.width = ProjectManager::DEFAULT_WINDOW_WIDTH;
-		window_size.height = ProjectManager::DEFAULT_WINDOW_HEIGHT;
+	if (!force_res && hub) {
+		// Ensure splash screen size matches the hub window size
+		// (see `editor/hub.cpp` for defaults).
+		window_size.width = Hub::DEFAULT_WINDOW_WIDTH;
+		window_size.height = Hub::DEFAULT_WINDOW_HEIGHT;
 	}
 #endif
 
@@ -2530,8 +2530,8 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	load_shell_env = GLOBAL_GET("application/run/load_shell_environment");
 
 #ifdef TOOLS_ENABLED
-	if (editor || project_manager) {
-		// The editor and project manager always detect and use hiDPI if needed.
+	if (editor || hub) {
+		// The editor and hub always detect and use hiDPI if needed.
 		OS::get_singleton()->_allow_hidpi = true;
 		load_shell_env = true;
 	}
@@ -2544,8 +2544,8 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		separate_thread_render = (int)GLOBAL_DEF("rendering/driver/threads/thread_model", OS::RENDER_THREAD_SAFE) == OS::RENDER_SEPARATE_THREAD;
 	}
 
-	if (editor || project_manager) {
-		// Editor and project manager cannot run with rendering in a separate thread (they will crash on startup).
+	if (editor || hub) {
+		// Editor and hub cannot run with rendering in a separate thread (they will crash on startup).
 		separate_thread_render = 0;
 	}
 #if !defined(THREADS_ENABLED)
@@ -2568,10 +2568,10 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 
 	GLOBAL_DEF_RST_NOVAL("audio/driver/driver", AudioDriverManager::get_driver(0)->get_name());
 	if (audio_driver.is_empty()) { // Specified in project.godot.
-		if (project_manager) {
-			// The project manager doesn't need to play sound (TTS audio output is not emitted by Godot, but by the system itself).
+		if (hub) {
+			// The hub doesn't need to play sound (TTS audio output is not emitted by Godot, but by the system itself).
 			// Disable audio output so it doesn't appear in the list of applications outputting sound in the OS.
-			// On macOS, this also prevents the project manager from inhibiting suspend.
+			// On macOS, this also prevents the hub from inhibiting suspend.
 			audio_driver = "Dummy";
 		} else {
 			audio_driver = GLOBAL_GET("audio/driver/driver");
@@ -2639,7 +2639,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 
 
 #if defined(STEAMAPI_ENABLED)
-	if (editor || project_manager) {
+	if (editor || hub) {
 		steam_tracker = memnew(SteamTracker);
 	}
 #endif
@@ -2747,13 +2747,13 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 #ifdef TOOLS_ENABLED
 	int tablet_driver_editor = -1;
-	if (editor || project_manager || cmdline_tool) {
+	if (editor || hub || cmdline_tool) {
 		OS::get_singleton()->benchmark_begin_measure("Startup", "Initialize Early Settings");
 
 		EditorPaths::create();
 
 		// Editor setting class is not available, load config directly.
-		if (!init_use_custom_screen && (editor || project_manager) && EditorPaths::get_singleton()->are_paths_valid()) {
+		if (!init_use_custom_screen && (editor || hub) && EditorPaths::get_singleton()->are_paths_valid()) {
 			ERR_FAIL_COND_V(!DirAccess::dir_exists_absolute(EditorPaths::get_singleton()->get_config_dir()), FAILED);
 
 			String config_file_path = EditorSettings::get_existing_settings_path();
@@ -2786,8 +2786,8 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 					if (editor) {
 						screen_property = "interface/editor/appearance/editor_screen";
-					} else if (project_manager) {
-						screen_property = "interface/editor/appearance/project_manager_screen";
+					} else if (hub) {
+						screen_property = "interface/editor/appearance/hub_screen";
 					} else {
 						// Skip.
 						screen_found = true;
@@ -2977,7 +2977,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 		DisplayServerEnums::Context context;
 		if (editor) {
 			context = DisplayServerEnums::CONTEXT_EDITOR;
-		} else if (project_manager) {
+		} else if (hub) {
 			context = DisplayServerEnums::CONTEXT_PROJECTMAN;
 		} else {
 			context = DisplayServerEnums::CONTEXT_ENGINE;
@@ -2994,7 +2994,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 		}
 
 #ifdef TOOLS_ENABLED
-		if (project_manager || editor) {
+		if (hub || editor) {
 			window_flags |= DisplayServerEnums::WINDOW_FLAG_EXTEND_TO_TITLE_BIT;
 		}
 #endif
@@ -3048,7 +3048,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 		}
 
 #ifdef TOOLS_ENABLED
-		if (project_manager) {
+		if (hub) {
 			float ui_scale = init_custom_scale;
 			switch (init_display_scale) {
 				case 0:
@@ -3274,7 +3274,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 			id->set_agile_input_event_flushing(agile_input_event_flushing);
 
 			if (bool(GLOBAL_DEF_BASIC("input_devices/pointing/emulate_touch_from_mouse", false)) &&
-					!(editor || project_manager)) {
+					!(editor || hub)) {
 				if (!DisplayServer::get_singleton()->is_touchscreen_available()) {
 					//only if no touchscreen ui hint, set emulation
 					id->set_emulate_touch_from_mouse(true);
@@ -3496,8 +3496,8 @@ Error Main::setup2(bool p_show_boot_logo) {
 	}
 #endif
 
-	if (!project_manager) {
-		// If not running the project manager, and now that the engine is
+	if (!hub) {
+		// If not running the hub, and now that the engine is
 		// able to load resources, load the global shader variables.
 		// If running on editor, don't load the textures because the editor
 		// may want to import them first. Editor will reload those later.
@@ -3569,7 +3569,7 @@ void Main::setup_boot_logo() {
 #ifndef NO_DEFAULT_BOOT_LOGO
 			MAIN_PRINT("Main: Create bootsplash");
 #if defined(TOOLS_ENABLED) && !defined(NO_EDITOR_SPLASH)
-			Ref<Image> splash = (editor || project_manager) ? memnew(Image(boot_splash_editor_png)) : memnew(Image(boot_splash_png));
+			Ref<Image> splash = (editor || hub) ? memnew(Image(boot_splash_editor_png)) : memnew(Image(boot_splash_png));
 #else
 			Ref<Image> splash = memnew(Image(boot_splash_png));
 #endif
@@ -3645,8 +3645,8 @@ int Main::start() {
 			gen_flags.set_flag(DocTools::GENERATE_FLAG_SKIP_BASIC_TYPES);
 		} else if (E->get() == "-e" || E->get() == "--editor") {
 			editor = true;
-		} else if (E->get() == "-p" || E->get() == "--project-manager") {
-			project_manager = true;
+		} else if (E->get() == "-p" || E->get() == "--hub") {
+			hub = true;
 		} else if (E->get() == "--recovery-mode") {
 			recovery_mode = true;
 		} else if (E->get() == "--install-android-build-template") {
@@ -3877,13 +3877,13 @@ int Main::start() {
 	}
 
 #ifdef TOOLS_ENABLED
-	if (!editor && !project_manager && !cmdline_tool && script.is_empty() && game_path.is_empty()) {
+	if (!editor && !hub && !cmdline_tool && script.is_empty() && game_path.is_empty()) {
 		// If we end up here, it means we didn't manage to detect what we want to run.
 		// Let's throw an error gently. The code leading to this is pretty brittle so
 		// this might end up triggered by valid usage, in which case we'll have to
 		// fine-tune further.
-		OS::get_singleton()->alert("Couldn't detect whether to run the editor, the project manager or a specific project. Aborting.");
-		ERR_FAIL_V_MSG(EXIT_FAILURE, "Couldn't detect whether to run the editor, the project manager or a specific project. Aborting.");
+		OS::get_singleton()->alert("Couldn't detect whether to run the editor, the hub or a specific project. Aborting.");
+		ERR_FAIL_V_MSG(EXIT_FAILURE, "Couldn't detect whether to run the editor, the hub or a specific project. Aborting.");
 	}
 #endif
 
@@ -4018,14 +4018,14 @@ int Main::start() {
 
 		bool embed_subwindows = GLOBAL_GET("display/window/subwindows/embed_subwindows");
 
-		if (single_window || (!project_manager && !editor && embed_subwindows) || !DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_SUBWINDOWS)) {
+		if (single_window || (!hub && !editor && embed_subwindows) || !DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_SUBWINDOWS)) {
 			sml->get_root()->set_embedding_subwindows(true);
 		}
 
 		ResourceLoader::add_custom_loaders();
 		ResourceSaver::add_custom_savers();
 
-		if (!project_manager && !editor) { // game
+		if (!hub && !editor) { // game
 			if (!game_path.is_empty() || !script.is_empty()) {
 				//autoload
 				OS::get_singleton()->benchmark_begin_measure("Startup", "Load Autoloads");
@@ -4152,7 +4152,7 @@ int Main::start() {
 		sml->set_auto_accept_quit(GLOBAL_GET("application/config/settings/auto_accept_quit"));
 		sml->set_quit_on_go_back(GLOBAL_GET("application/config/settings/quit_on_go_back"));
 
-		if (!editor && !project_manager) {
+		if (!editor && !hub) {
 			//standard helpers that can be changed from main config
 
 			String stretch_mode = GLOBAL_GET("display/window/stretch/mode");
@@ -4233,7 +4233,7 @@ int Main::start() {
 #endif
 
 		String local_game_path;
-		if (!game_path.is_empty() && !project_manager) {
+		if (!game_path.is_empty() && !hub) {
 			local_game_path = game_path.replace_char('\\', '/');
 
 			if (!local_game_path.begins_with("res://")) {
@@ -4281,7 +4281,7 @@ int Main::start() {
 #endif
 		}
 
-		if (!project_manager && !editor) { // game
+		if (!hub && !editor) { // game
 
 			OS::get_singleton()->benchmark_begin_measure("Startup", "Load Game");
 
@@ -4348,8 +4348,8 @@ int Main::start() {
 		}
 
 #ifdef TOOLS_ENABLED
-		if (project_manager) {
-			OS::get_singleton()->benchmark_begin_measure("Startup", "Project Manager");
+		if (hub) {
+			OS::get_singleton()->benchmark_begin_measure("Startup", "HUB");
 			Engine::get_singleton()->set_editor_hint(true);
 
 			sml->get_root()->set_translation_domain("godot.editor");
@@ -4357,15 +4357,15 @@ int Main::start() {
 				translation_server->get_editor_domain()->set_pseudolocalization_enabled(true);
 			}
 
-			ProjectManager *pmanager = memnew(ProjectManager);
+			Hub *pmanager = memnew(Hub);
 			ProgressDialog *progress_dialog = memnew(ProgressDialog);
 			pmanager->add_child(progress_dialog);
 
 			sml->get_root()->add_child(pmanager);
-			OS::get_singleton()->benchmark_end_measure("Startup", "Project Manager");
+			OS::get_singleton()->benchmark_end_measure("Startup", "HUB");
 		}
 
-		if (project_manager || editor) {
+		if (hub || editor) {
 			// Load SSL Certificates from Editor Settings (or builtin)
 			Crypto::load_default_certificates(
 					EditorSettings::get_singleton()->get_setting("network/tls/editor_tls_certificates").operator String());
@@ -4661,7 +4661,7 @@ bool Main::iteration() {
 	if (frame > 1000000) {
 		// Wait a few seconds before printing FPS, as FPS reporting just after the engine has started is inaccurate.
 		if (hide_print_fps_attempts == 0) {
-			if (editor || project_manager) {
+			if (editor || hub) {
 				if (print_fps) {
 					print_line(vformat("Editor FPS: %d (%s mspf)", frames, rtos(1000.0 / frames).pad_decimals(2)));
 				}

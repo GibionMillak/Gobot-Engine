@@ -556,7 +556,7 @@ class Godot private constructor(val context: Context) {
 
 			// Check whether the render view should be made transparent
 			val shouldBeTransparent =
-				!isProjectManagerHint() &&
+				!isHubHint() &&
 					!isEditorHint() &&
 					java.lang.Boolean.parseBoolean(GodotLib.getGlobal("display/window/per_pixel_transparency/allowed"))
 			Log.d(TAG, "Render view should be transparent: $shouldBeTransparent")
@@ -1120,9 +1120,9 @@ class Godot private constructor(val context: Context) {
 	fun isEditorHint() = isEditorBuild() && GodotLib.isEditorHint()
 
 	/**
-	 * Returns true if this is the Godot project manager.
+	 * Returns true if this is the Godot hub.
 	 */
-	fun isProjectManagerHint() = isEditorBuild() && GodotLib.isProjectManagerHint()
+	fun isHubHint() = isEditorBuild() && GodotLib.isHubHint()
 
 	/**
 	 * Returns true if the feature for the given feature tag is supported in the currently running instance, depending

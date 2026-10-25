@@ -125,7 +125,7 @@ public:
 class ProjectList : public ScrollContainer {
 	GDCLASS(ProjectList, ScrollContainer)
 
-	friend class ProjectManager;
+	friend class Hub;
 	friend class ProjectListItemControl;
 
 public:

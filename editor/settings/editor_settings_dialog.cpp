@@ -231,7 +231,7 @@ void EditorSettingsDialog::popup_edit_settings() {
 
 	// Restore valid window bounds or pop up at default size.
 	Rect2 saved_size;
-	if (!_is_in_project_manager()) {
+	if (!_is_in_hub()) {
 		saved_size = EditorSettings::get_singleton()->get_project_metadata("dialog_bounds", "editor_settings", Rect2());
 	}
 
@@ -242,8 +242,8 @@ void EditorSettingsDialog::popup_edit_settings() {
 #else
 	if (saved_size != Rect2()) {
 		popup(saved_size);
-	} else if (_is_in_project_manager()) {
-		popup_centered_clamped(Size2(800, 600) * EDSCALE, 0.8); // Make it smaller that the default Project Manager size.
+	} else if (_is_in_hub()) {
+		popup_centered_clamped(Size2(800, 600) * EDSCALE, 0.8); // Make it smaller that the default HUB size.
 	} else {
 		popup_centered_clamped(Size2(900, 700) * EDSCALE, 0.8);
 	}
@@ -293,14 +293,14 @@ void EditorSettingsDialog::_remove_setting_override(const String &p_setting) {
 void EditorSettingsDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_VISIBILITY_CHANGED: {
-			if (!is_visible() && !_is_in_project_manager()) {
+			if (!is_visible() && !_is_in_hub()) {
 				EditorSettings::get_singleton()->set_project_metadata("dialog_bounds", "editor_settings", Rect2(get_position(), get_size()));
 				set_process_shortcut_input(false);
 			}
 		} break;
 
 		case NOTIFICATION_READY: {
-			if (_is_in_project_manager()) {
+			if (_is_in_hub()) {
 				return;
 			}
 			EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
@@ -405,7 +405,7 @@ void EditorSettingsDialog::_event_config_confirmed() {
 	}
 }
 
-bool EditorSettingsDialog::_is_in_project_manager() const {
+bool EditorSettingsDialog::_is_in_hub() const {
 	return !ProjectSettings::get_singleton()->is_project_loaded();
 }
 
@@ -416,8 +416,8 @@ void EditorSettingsDialog::_update_builtin_action(const String &p_name, const Ar
 		old_input_array = _event_list_to_array_helper(defaults);
 	}
 
-	if (_is_in_project_manager()) {
-		// Project Manager doesn't have EditorUndoRedoManager, so apply changes directly.
+	if (_is_in_hub()) {
+		// HUB doesn't have EditorUndoRedoManager, so apply changes directly.
 		EditorSettings::get_singleton()->mark_setting_changed("builtin_action_overrides");
 		EditorSettings::get_singleton()->set_builtin_action_override(p_name, p_events);
 		_update_shortcuts();
@@ -440,8 +440,8 @@ void EditorSettingsDialog::_update_builtin_action(const String &p_name, const Ar
 void EditorSettingsDialog::_update_shortcut_events(const String &p_path, const Array &p_events) {
 	Ref<Shortcut> current_sc = EditorSettings::get_singleton()->get_shortcut(p_path);
 
-	if (_is_in_project_manager()) {
-		// Project Manager doesn't have EditorUndoRedoManager, so apply changes directly.
+	if (_is_in_hub()) {
+		// HUB doesn't have EditorUndoRedoManager, so apply changes directly.
 		current_sc->set_events(p_events);
 		EditorSettings::get_singleton()->mark_setting_changed("shortcuts");
 		_update_shortcuts();
@@ -1051,8 +1051,8 @@ EditorSettingsDialog::EditorSettingsDialog() {
 	restart_icon->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
 	restart_hb->add_child(restart_icon);
 	restart_label = memnew(Label);
-	if (_is_in_project_manager()) {
-		restart_label->set_text(TTRC("The Project Manager must be restarted for changes to take effect."));
+	if (_is_in_hub()) {
+		restart_label->set_text(TTRC("The HUB must be restarted for changes to take effect."));
 	} else {
 		restart_label->set_text(TTRC("The editor must be restarted for changes to take effect."));
 	}
@@ -1165,9 +1165,9 @@ void EditorSettingsPropertyWrapper::_setup_override_info() {
 }
 
 void EditorSettingsPropertyWrapper::_update_override() {
-	// Don't allow overriding theme properties, because it causes problems. Overriding Project Manager settings makes no sense.
+	// Don't allow overriding theme properties, because it causes problems. Overriding HUB settings makes no sense.
 	// TODO: Find a better way to define exception prefixes (if the list happens to grow).
-	if (property.begins_with("interface/theme") || property.begins_with("project_manager") || Engine::get_singleton()->is_project_manager_hint()) {
+	if (property.begins_with("interface/theme") || property.begins_with("hub") || Engine::get_singleton()->is_hub_hint()) {
 		can_override = false;
 		return;
 	}

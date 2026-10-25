@@ -86,7 +86,7 @@ if env.editor_build:
     SConscript("import/SCsub")
     SConscript("managers/SCsub")
     SConscript("plugins/SCsub")
-    SConscript("project_manager/SCsub")
+    SConscript("hub/SCsub")
     SConscript("run/SCsub")
     SConscript("settings/SCsub")
     SConscript("scene/SCsub")

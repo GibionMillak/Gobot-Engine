@@ -1592,18 +1592,18 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 }
 
 void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, EditorThemeManager::ThemeConfiguration &p_config) {
-	// Project manager.
+	// HUB.
 	{
 		Ref<StyleBoxFlat> style_panel_container = p_theme->get_stylebox(SceneStringName(panel), SNAME("TabContainer"))->duplicate();
 		style_panel_container->set_corner_radius(CORNER_TOP_LEFT, style_panel_container->get_corner_radius(CORNER_BOTTOM_LEFT));
 		style_panel_container->set_corner_radius(CORNER_TOP_RIGHT, style_panel_container->get_corner_radius(CORNER_BOTTOM_RIGHT));
 
-		p_theme->set_stylebox("panel_container", "ProjectManager", style_panel_container);
-		p_theme->set_stylebox("project_list", "ProjectManager", p_config.tree_panel_style);
-		p_theme->set_stylebox("quick_settings_panel", "ProjectManager", p_config.tree_panel_style);
-		p_theme->set_constant("sidebar_button_icon_separation", "ProjectManager", int(EDSCALE_RND(6)));
-		p_theme->set_icon("browse_folder", "ProjectManager", p_theme->get_icon(SNAME("folder_browse"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("browse_file", "ProjectManager", p_theme->get_icon(SNAME("file_browse"), EditorStringName(EditorIcons)));
+		p_theme->set_stylebox("panel_container", "Hub", style_panel_container);
+		p_theme->set_stylebox("project_list", "Hub", p_config.tree_panel_style);
+		p_theme->set_stylebox("quick_settings_panel", "Hub", p_config.tree_panel_style);
+		p_theme->set_constant("sidebar_button_icon_separation", "Hub", int(EDSCALE_RND(6)));
+		p_theme->set_icon("browse_folder", "Hub", p_theme->get_icon(SNAME("folder_browse"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("browse_file", "Hub", p_theme->get_icon(SNAME("file_browse"), EditorStringName(EditorIcons)));
 
 		// ProjectTag.
 		{

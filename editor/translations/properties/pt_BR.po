@@ -2120,8 +2120,8 @@ msgstr "Entrada"
 msgid "Tablet Driver"
 msgstr "Driver de Tablet"
 
-msgid "Project Manager Screen"
-msgstr "Tela do Gerenciador de Projetos"
+msgid "HUB Screen"
+msgstr "HUB Screen"
 
 msgid "Check for Updates"
 msgstr "Verifique se há atualizações"
@@ -3335,8 +3335,8 @@ msgstr "Buffers"
 msgid "Agile Event Flushing"
 msgstr "Limpeza de Eventos Ágil"
 
-msgid "Project Manager"
-msgstr "Gerenciador de Projetos"
+msgid "HUB"
+msgstr "HUB"
 
 msgid "Sorting Order"
 msgstr "Ordenação"

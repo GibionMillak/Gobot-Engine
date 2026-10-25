@@ -1000,7 +1000,7 @@ void OS_LinuxBSD::run() {
 	Engine *e = Engine::get_singleton();
 	bool use_gamemode = GLOBAL_GET("application/run/use_game_mode");
 	int gamemode_status = -1;
-	if (!e->is_editor_hint() && !e->is_project_manager_hint()) {
+	if (!e->is_editor_hint() && !e->is_hub_hint()) {
 		if (use_gamemode) {
 			gamemode_status = GameMode::gamemode_request_start_for(OS::get_singleton()->get_process_id());
 			if (gamemode_status >= 0) {

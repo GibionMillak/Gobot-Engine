@@ -60,7 +60,7 @@ void EditorAbout::_notification(int p_what) {
 					String(U"© 2014-present ") + TTR("Godot Engine contributors") + ".\n" +
 					String(U"© 2007-2014 Juan Linietsky, Ariel Manzur.\n"));
 
-			_project_manager_label->set_text(TTR("Project Manager", "Job Title"));
+			_hub_label->set_text(TTR("HUB", "Job Title"));
 
 			for (ItemList *il : name_lists) {
 				for (int i = 0; i < il->get_item_count(); i++) {
@@ -262,8 +262,8 @@ EditorAbout::EditorAbout() {
 		_create_section(vb, TTRC("Project Founders"), AUTHORS_FOUNDERS, FLAG_SINGLE_COLUMN);
 		_create_section(vb, TTRC("Lead Developer"), AUTHORS_LEAD_DEVELOPERS);
 		// The section title will be updated in NOTIFICATION_TRANSLATION_CHANGED.
-		_project_manager_label = _create_section(vb, "", AUTHORS_PROJECT_MANAGERS, FLAG_EASTER_EGG);
-		_project_manager_label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+		_hub_label = _create_section(vb, "", AUTHORS_PROJECT_MANAGERS, FLAG_EASTER_EGG);
+		_hub_label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 		_create_section(vb, TTRC("Developers"), AUTHORS_DEVELOPERS);
 	}
 

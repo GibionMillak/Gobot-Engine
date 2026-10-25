@@ -71,7 +71,7 @@ void QuickSettingsDialog::_fetch_setting_values() {
 				editor_network_modes = pi.hint_string.split(",");
 			} else if (pi.name == "network/connection/check_for_updates") {
 				editor_check_for_updates = pi.hint_string.split(",");
-			} else if (pi.name == "project_manager/directory_naming_convention") {
+			} else if (pi.name == "hub/directory_naming_convention") {
 				editor_directory_naming_conventions = pi.hint_string.split(",");
 			}
 		}
@@ -154,7 +154,7 @@ void QuickSettingsDialog::_update_current_values() {
 
 	// Project directory naming options.
 	{
-		const int current_directory_naming = EDITOR_GET("project_manager/directory_naming_convention");
+		const int current_directory_naming = EDITOR_GET("hub/directory_naming_convention");
 
 		for (int i = 0; i < editor_directory_naming_conventions.size(); i++) {
 			const String &directory_naming_value = editor_directory_naming_conventions[i];
@@ -210,7 +210,7 @@ void QuickSettingsDialog::_check_for_update_selected(int p_id) {
 }
 
 void QuickSettingsDialog::_directory_naming_convention_selected(int p_id) {
-	_set_setting_value("project_manager/directory_naming_convention", p_id);
+	_set_setting_value("hub/directory_naming_convention", p_id);
 }
 
 void QuickSettingsDialog::_set_setting_value(const String &p_setting, const Variant &p_value, bool p_restart_required) {
@@ -255,7 +255,7 @@ void QuickSettingsDialog::update_size_limits(const Size2 &p_max_popup_size) {
 void QuickSettingsDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			settings_list_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("quick_settings_panel"), SNAME("ProjectManager")));
+			settings_list_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("quick_settings_panel"), SNAME("Hub")));
 
 			restart_required_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 			custom_theme_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("font_placeholder_color"), EditorStringName(Editor)));
@@ -386,7 +386,7 @@ QuickSettingsDialog::QuickSettingsDialog() {
 				directory_naming_convention_button->add_item(directory_naming_convention, i);
 			}
 
-			_add_setting_control(TTRC("Directory Naming Convention"), "project_manager/directory_naming_convention", directory_naming_convention_button);
+			_add_setting_control(TTRC("Directory Naming Convention"), "hub/directory_naming_convention", directory_naming_convention_button);
 		}
 
 		_update_current_values();
@@ -403,7 +403,7 @@ QuickSettingsDialog::QuickSettingsDialog() {
 
 	// Restart required panel.
 	{
-		restart_required_label = memnew(Label(TTRC("Settings changed! The project manager must be restarted for changes to take effect.")));
+		restart_required_label = memnew(Label(TTRC("Settings changed! The hub must be restarted for changes to take effect.")));
 		restart_required_label->set_custom_minimum_size(Size2(560, 0) * EDSCALE);
 		restart_required_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 		restart_required_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);

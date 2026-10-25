@@ -25,7 +25,7 @@ name is available.
 
     Juan Linietsky (reduz)
 
-## Project Manager
+## HUB
 
     Rémi Verschelde (akien-mga)
 

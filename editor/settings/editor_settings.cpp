@@ -53,7 +53,7 @@
 #include "editor/editor_node.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/inspector/editor_property_name_processor.h"
-#include "editor/project_manager/engine_update_label.h"
+#include "editor/hub/engine_update_label.h"
 #include "editor/themes/editor_theme_manager.h"
 #include "editor/translations/editor_translation.h"
 #include "main/main.h"
@@ -179,7 +179,7 @@ bool EditorSettings::_get(const StringName &p_name, Variant &r_ret) const {
 			if (!sc->has_meta("original")) {
 				// Getting the meta when it doesn't exist will return an empty array. If the 'shortcut_events' have been cleared,
 				// we still want save the shortcut in this case so that shortcuts that the user has customized are not reset,
-				// even if the 'original' has not been populated yet. This can happen when calling save() from the Project Manager.
+				// even if the 'original' has not been populated yet. This can happen when calling save() from the HUB.
 				save_array.push_back(dict);
 				continue;
 			}
@@ -463,11 +463,11 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/input/tablet_driver", -1, "Default:-1");
 #endif
 
-	String project_manager_screen_hints = "Screen With Mouse Pointer:-4,Screen With Keyboard Focus:-3,Primary Screen:-2";
+	String hub_screen_hints = "Screen With Mouse Pointer:-4,Screen With Keyboard Focus:-3,Primary Screen:-2";
 	for (int i = 0; i < DisplayServer::get_singleton()->get_screen_count(); i++) {
-		project_manager_screen_hints += ",Screen " + itos(i + 1) + ":" + itos(i);
+		hub_screen_hints += ",Screen " + itos(i + 1) + ":" + itos(i);
 	}
-	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/appearance/project_manager_screen", EditorSettings::InitialScreen::INITIAL_SCREEN_PRIMARY, project_manager_screen_hints)
+	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/appearance/hub_screen", EditorSettings::InitialScreen::INITIAL_SCREEN_PRIMARY, hub_screen_hints)
 
 	{
 		const String update_hint = vformat("Disable Update Checks,Auto (%s),Check Newest Preview,Check Newest Stable,Check Newest Patch", (str_compare(GODOT_VERSION_STATUS, "stable") == 0) ? "Stable" : "Preview");
@@ -1137,9 +1137,9 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING_USAGE(Variant::BOOL, PROPERTY_HINT_NONE, "input/buffering/agile_event_flushing", false, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED | PROPERTY_USAGE_EDITOR_BASIC_SETTING)
 	EDITOR_SETTING_USAGE(Variant::BOOL, PROPERTY_HINT_NONE, "input/buffering/use_accumulated_input", true, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED | PROPERTY_USAGE_EDITOR_BASIC_SETTING)
 
-	// TRANSLATORS: Project Manager here refers to the tool used to create/manage Godot projects.
-	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "project_manager/sorting_order", 0, "Last Edited,Name,Path")
-	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "project_manager/directory_naming_convention", 1, "No Convention,kebab-case,snake_case,camelCase,PascalCase,Title Case")
+	// TRANSLATORS: HUB here refers to the tool used to create/manage Godot projects.
+	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "hub/sorting_order", 0, "Last Edited,Name,Path")
+	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "hub/directory_naming_convention", 1, "No Convention,kebab-case,snake_case,camelCase,PascalCase,Title Case")
 
 #if defined(FORWARD_RD_ENABLED) && (!defined(ANDROID_ENABLED) || !defined(MOBILE_RD_ENABLED))
 	const String default_renderer = "forward_plus";
@@ -1149,7 +1149,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	// No other options.
 	const String default_renderer = "gl_compatibility";
 #endif
-	EDITOR_SETTING_BASIC(Variant::STRING, PROPERTY_HINT_ENUM, "project_manager/default_renderer", default_renderer, "forward_plus,mobile,gl_compatibility")
+	EDITOR_SETTING_BASIC(Variant::STRING, PROPERTY_HINT_ENUM, "hub/default_renderer", default_renderer, "forward_plus,mobile,gl_compatibility")
 
 #undef EDITOR_SETTING
 #undef EDITOR_SETTING_BASIC
@@ -1614,7 +1614,7 @@ void EditorSettings::set_favorites(const Vector<String> &p_favorites, bool p_upd
 void EditorSettings::set_favorites_bind(const Vector<String> &p_favorites) {
 	favorites = p_favorites;
 	String favorites_file;
-	if (Engine::get_singleton()->is_project_manager_hint()) {
+	if (Engine::get_singleton()->is_hub_hint()) {
 		favorites_file = EditorPaths::get_singleton()->get_config_dir().path_join("favorite_dirs");
 	} else {
 		favorites_file = EditorPaths::get_singleton()->get_project_settings_dir().path_join("favorites");
@@ -1673,7 +1673,7 @@ void EditorSettings::set_recent_dirs(const Vector<String> &p_recent_dirs, bool p
 void EditorSettings::set_recent_dirs_bind(const Vector<String> &p_recent_dirs) {
 	recent_dirs = p_recent_dirs;
 	String recent_dirs_file;
-	if (Engine::get_singleton()->is_project_manager_hint()) {
+	if (Engine::get_singleton()->is_hub_hint()) {
 		recent_dirs_file = EditorPaths::get_singleton()->get_config_dir().path_join("recent_dirs");
 	} else {
 		recent_dirs_file = EditorPaths::get_singleton()->get_project_settings_dir().path_join("recent_dirs");
@@ -1694,7 +1694,7 @@ void EditorSettings::load_favorites_and_recent_dirs() {
 	String favorites_file;
 	String favorite_properties_file;
 	String recent_dirs_file;
-	if (Engine::get_singleton()->is_project_manager_hint()) {
+	if (Engine::get_singleton()->is_hub_hint()) {
 		favorites_file = EditorPaths::get_singleton()->get_config_dir().path_join("favorite_dirs");
 		favorite_properties_file = EditorPaths::get_singleton()->get_config_dir().path_join("favorite_properties");
 		recent_dirs_file = EditorPaths::get_singleton()->get_config_dir().path_join("recent_dirs");

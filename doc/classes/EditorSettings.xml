@@ -783,11 +783,11 @@
 			Path to the SSH executable (used for remote deploy to desktop platforms). If left empty, the editor will attempt to run [code]ssh[/code] from [code]PATH[/code].
 		</member>
 		<member name="filesystem/directories/autoscan_project_path" type="String" setter="" getter="">
-			The folder where projects should be scanned for (recursively), in a way similar to the project manager's [b]Scan[/b] button. This can be set to the same value as [member filesystem/directories/default_project_path] for convenience.
-			[b]Note:[/b] Setting this path to a folder with very large amounts of files/folders can slow down the project manager startup significantly. To keep the project manager quick to start up, it is recommended to set this value to a folder as "specific" as possible.
+			The folder where projects should be scanned for (recursively), in a way similar to the hub's [b]Scan[/b] button. This can be set to the same value as [member filesystem/directories/default_project_path] for convenience.
+			[b]Note:[/b] Setting this path to a folder with very large amounts of files/folders can slow down the hub startup significantly. To keep the hub quick to start up, it is recommended to set this value to a folder as "specific" as possible.
 		</member>
 		<member name="filesystem/directories/default_project_path" type="String" setter="" getter="">
-			The folder where new projects should be created by default when clicking the project manager's [b]New Project[/b] button. This can be set to the same value as [member filesystem/directories/autoscan_project_path] for convenience.
+			The folder where new projects should be created by default when clicking the hub's [b]New Project[/b] button. This can be set to the same value as [member filesystem/directories/autoscan_project_path] for convenience.
 		</member>
 		<member name="filesystem/external_programs/3d_model_editor" type="String" setter="" getter="">
 			The program that opens 3D model scene files when clicking "Open in External Program" option in Filesystem Dock. If not specified, the file will be opened in the system's default program.
@@ -937,8 +937,8 @@
 		<member name="interface/editor/appearance/max_sticky_tree_items" type="int" setter="" getter="">
 			The maximum number of tree items allowed to stick to the top while its children are in view. A value of [code]0[/code] disables sticking.
 		</member>
-		<member name="interface/editor/appearance/project_manager_screen" type="int" setter="" getter="">
-			The preferred monitor to display the project manager.
+		<member name="interface/editor/appearance/hub_screen" type="int" setter="" getter="">
+			The preferred monitor to display the hub.
 		</member>
 		<member name="interface/editor/appearance/show_renderer_selector" type="bool" setter="" getter="">
 			If [code]true[/code], a renderer selector that can be used to change the [member ProjectSettings.rendering/renderer/rendering_method] project setting will be shown in the top right of the main editor window.
@@ -1310,14 +1310,14 @@
 			If [code]true[/code], enable TLSv1.3 negotiation.
 			[b]Note:[/b] Only supported when using Mbed TLS 3.0 or later (Linux distribution packages may be compiled against older system Mbed TLS packages), otherwise the maximum supported TLS version is always TLSv1.2.
 		</member>
-		<member name="project_manager/default_renderer" type="String" setter="" getter="">
+		<member name="hub/default_renderer" type="String" setter="" getter="">
 			The renderer type that will be checked off by default when creating a new project. Accepted strings are "forward_plus", "mobile" or "gl_compatibility".
 		</member>
-		<member name="project_manager/directory_naming_convention" type="int" setter="" getter="">
-			Directory naming convention for the project manager. Options are "No Convention" (project name is directory name), "kebab-case" (default), "snake_case", "camelCase", "PascalCase", or "Title Case".
+		<member name="hub/directory_naming_convention" type="int" setter="" getter="">
+			Directory naming convention for the hub. Options are "No Convention" (project name is directory name), "kebab-case" (default), "snake_case", "camelCase", "PascalCase", or "Title Case".
 		</member>
-		<member name="project_manager/sorting_order" type="int" setter="" getter="">
-			The sorting order to use in the project manager. When changing the sorting order in the project manager, this setting is set permanently in the editor settings.
+		<member name="hub/sorting_order" type="int" setter="" getter="">
+			The sorting order to use in the hub. When changing the sorting order in the hub, this setting is set permanently in the editor settings.
 		</member>
 		<member name="run/auto_save/save_before_running" type="bool" setter="" getter="">
 			If [code]true[/code], saves all scenes and scripts automatically before running the project. Setting this to [code]false[/code] prevents the editor from saving if there are no changes which can speed up the project startup slightly, but it makes it possible to run a project that has unsaved changes. (Unsaved changes will not be visible in the running project.)

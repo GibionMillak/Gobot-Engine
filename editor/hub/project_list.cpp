@@ -39,8 +39,8 @@
 #include "core/version.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_paths.h"
-#include "editor/project_manager/project_manager.h"
-#include "editor/project_manager/project_tag.h"
+#include "editor/hub/hub.h"
+#include "editor/hub/project_tag.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/button.h"
@@ -593,7 +593,7 @@ void ProjectList::_scan_finished() {
 
 	save_config();
 
-	if (ProjectManager::get_singleton()->is_initialized()) {
+	if (Hub::get_singleton()->is_initialized()) {
 		update_project_list();
 	}
 }
@@ -659,7 +659,7 @@ ProjectList::Item ProjectList::load_project_data(const String &p_path, bool p_fa
 	if (cf_err == OK) {
 		int *cached_time = modified_time_cache.getptr(p_path);
 		if (cached_time) {
-			// Modified time may change as a result of Project Manager actions, which will affect sorting.
+			// Modified time may change as a result of HUB actions, which will affect sorting.
 			// For that reason, the time is read only once.
 			last_edited = *cached_time;
 		} else {
@@ -675,7 +675,7 @@ ProjectList::Item ProjectList::load_project_data(const String &p_path, bool p_fa
 	}
 
 	for (const String &tag : tags) {
-		ProjectManager::get_singleton()->add_new_tag(tag);
+		Hub::get_singleton()->add_new_tag(tag);
 	}
 
 	// We can't use OS::get_user_data_dir() because it attempts to load paths from the current loaded project through ProjectSettings,
@@ -728,7 +728,7 @@ void ProjectList::update_project_list() {
 	// If you have 150 projects, it may read through 150 files on your disk at once + load 150 thumbnails.
 	// FIXME: Does it really have to be a full, hard reload? Runtime updates should be made much cheaper.
 
-	if (ProjectManager::get_singleton()->is_initialized()) {
+	if (Hub::get_singleton()->is_initialized()) {
 		// Clear whole list
 		for (int i = 0; i < _projects.size(); ++i) {
 			Item &project = _projects.write[i];
@@ -1080,7 +1080,7 @@ void ProjectList::_list_item_input(const Ref<InputEvent> &p_ev, Control *p_hb) {
 
 			emit_signal(SNAME(SIGNAL_SELECTION_CHANGED));
 
-			// Do not allow opening a project more than once using a single project manager instance.
+			// Do not allow opening a project more than once using a single hub instance.
 			// Opening the same project in several editor instances at once can lead to various issues.
 			if (!mb->is_command_or_control_pressed() && mb->is_double_click() && !project_opening_initiated) {
 				emit_signal(SNAME(SIGNAL_PROJECT_ASK_OPEN));
@@ -1106,7 +1106,7 @@ void ProjectList::_list_item_input(const Ref<InputEvent> &p_ev, Control *p_hb) {
 			} break;
 			case Key::F: {
 				if (kev->is_command_or_control_pressed()) {
-					return; // Focus the search box by the ProjectManager.
+					return; // Focus the search box by the Hub.
 				}
 				_on_favorite_pressed(p_hb);
 				accept_event();
@@ -1427,7 +1427,7 @@ void ProjectList::add_search_tag(const String &p_tag) {
 	} else {
 		_search_term += " " + tag_string;
 	}
-	ProjectManager::get_singleton()->get_search_box()->set_text(_search_term);
+	Hub::get_singleton()->get_search_box()->set_text(_search_term);
 
 	sort_projects();
 }
@@ -1435,7 +1435,7 @@ void ProjectList::add_search_tag(const String &p_tag) {
 void ProjectList::set_order_option(int p_option, bool p_save) {
 	FilterOption selected = (FilterOption)p_option;
 	if (p_save) {
-		EditorSettings::get_singleton()->set("project_manager/sorting_order", p_option);
+		EditorSettings::get_singleton()->set("hub/sorting_order", p_option);
 		EditorSettings::get_singleton()->save();
 	}
 	_order_option = selected;

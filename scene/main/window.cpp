@@ -3158,9 +3158,9 @@ void Window::_update_displayed_title() {
 	displayed_title = atr(title_text);
 
 #ifdef DEBUG_ENABLED
-	if (window_id == DisplayServerEnums::MAIN_WINDOW_ID && !Engine::get_singleton()->is_project_manager_hint()) {
+	if (window_id == DisplayServerEnums::MAIN_WINDOW_ID && !Engine::get_singleton()->is_hub_hint()) {
 		// Append a suffix to the window title to denote that the project is running
-		// from a debug build (including the editor, excluding the project manager).
+		// from a debug build (including the editor, excluding the hub).
 		// Since this results in lower performance, this should be clearly presented
 		// to the user.
 		displayed_title = vformat("%s (DEBUG)", displayed_title);
@@ -3181,7 +3181,7 @@ void Window::_update_displayed_title() {
 	}
 
 #ifdef DEBUG_ENABLED
-	if (EngineDebugger::get_singleton() && window_id == DisplayServerEnums::MAIN_WINDOW_ID && !Engine::get_singleton()->is_project_manager_hint()) {
+	if (EngineDebugger::get_singleton() && window_id == DisplayServerEnums::MAIN_WINDOW_ID && !Engine::get_singleton()->is_hub_hint()) {
 		Array arr = { displayed_title };
 		EngineDebugger::get_singleton()->send_message("window:title", arr);
 	}

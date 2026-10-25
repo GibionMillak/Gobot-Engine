@@ -275,10 +275,10 @@
 			If [code]true[/code], applies linear filtering when scaling the image (recommended for high-resolution artwork). If [code]false[/code], uses nearest-neighbor interpolation (recommended for pixel art).
 		</member>
 		<member name="application/config/about/description" type="String" setter="" getter="" default="&quot;&quot;">
-			The project's description, displayed as a tooltip in the Project Manager when hovering the project and used as the Windows executable file description.
+			The project's description, displayed as a tooltip in the HUB when hovering the project and used as the Windows executable file description.
 		</member>
 		<member name="application/config/about/name" type="String" setter="" getter="" default="&quot;&quot;">
-			The project's name. It is used both by the Project Manager and by exporters. The project name can be translated by translating its value in localization files. The window title will be set to match the project name automatically on startup.
+			The project's name. It is used both by the HUB and by exporters. The project name can be translated by translating its value in localization files. The window title will be set to match the project name automatically on startup.
 			[b]Note:[/b] Changing this value will also change the user data folder's path if [member application/config/settings/custom_user_directory] is empty after sanitization. After renaming the project, you will no longer be able to access existing data in [code]user://[/code] unless you rename the old folder to match the new project name. See [url=$DOCS_URL/tutorials/io/data_paths.html]Data paths[/url] in the documentation for more information.
 		</member>
 		<member name="application/config/about/name_localized" type="Dictionary" setter="" getter="" default="{}">
@@ -286,13 +286,13 @@
 			[b]Note:[/b] When left empty, the application name is translated using the project translations.
 		</member>
 		<member name="application/config/about/thumbnail" type="String" setter="" getter="" default="&quot;&quot;">
-			Project thumbnail displayed in the Project Manager. Also used as the fallback application icon when the platform icon is empty. New projects use [code]res://thumbnail.svg[/code].
+			Project thumbnail displayed in the HUB. Also used as the fallback application icon when the platform icon is empty. New projects use [code]res://thumbnail.svg[/code].
 		</member>
 		<member name="application/config/about/version" type="String" setter="" getter="" default="&quot;&quot;">
 			The project's human-readable version identifier. Exporters use this value with target feature overrides applied. An empty or invalid version uses [code]1.0.0[/code]. Windows formats it as four numeric components; Android permits non-numeric version names.
 		</member>
 		<member name="application/config/editor_version" type="String" setter="" getter="" default="&quot;&quot;">
-			The editor version that last saved the project settings. The editor maintains this metadata automatically. Project Manager uses it for version indicators and compatibility warnings. An empty value means the editor version is unknown; no version is inferred from [code]application/config/features[/code].
+			The editor version that last saved the project settings. The editor maintains this metadata automatically. HUB uses it for version indicators and compatibility warnings. An empty value means the editor version is unknown; no version is inferred from [code]application/config/features[/code].
 		</member>
 		<member name="application/config/legal/copyright_notice" type="String" setter="" getter="" default="&quot;&quot;">
 			Copyright notice for the application. Used by the Windows and macOS exporters.

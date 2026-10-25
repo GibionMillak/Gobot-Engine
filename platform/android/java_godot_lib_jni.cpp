@@ -711,10 +711,10 @@ JNIEXPORT jboolean JNICALL Java_org_godotengine_godot_GodotLib_isEditorHint(JNIE
 	return false;
 }
 
-JNIEXPORT jboolean JNICALL Java_org_godotengine_godot_GodotLib_isProjectManagerHint(JNIEnv *env, jclass clazz) {
+JNIEXPORT jboolean JNICALL Java_org_godotengine_godot_GodotLib_isHubHint(JNIEnv *env, jclass clazz) {
 	Engine *engine = Engine::get_singleton();
 	if (engine) {
-		return engine->is_project_manager_hint();
+		return engine->is_hub_hint();
 	}
 	return false;
 }

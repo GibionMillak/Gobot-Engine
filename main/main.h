@@ -62,7 +62,7 @@ public:
 	static bool is_cmdline_tool();
 #ifdef TOOLS_ENABLED
 	enum CLIScope {
-		CLI_SCOPE_TOOL, // Editor and project manager.
+		CLI_SCOPE_TOOL, // Editor and hub.
 		CLI_SCOPE_PROJECT,
 	};
 	static const Vector<String> &get_forwardable_cli_arguments(CLIScope p_scope);

@@ -4176,7 +4176,7 @@ void FileSystemDock::_file_sort_popup(int p_id) {
 
 // TODO: Could use a unit test.
 Color FileSystemDock::get_dir_icon_color(const String &p_dir_path, const Color &p_default) {
-	if (!singleton) { // This method can be called from the project manager.
+	if (!singleton) { // This method can be called from the hub.
 		return p_default;
 	}
 	Color folder_icon_color = p_default;

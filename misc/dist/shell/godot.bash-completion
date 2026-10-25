@@ -33,7 +33,7 @@ _complete_godot_options() {
 --verbose
 --quiet
 --editor
---project-manager
+--hub
 --debug-server
 --quit
 --language

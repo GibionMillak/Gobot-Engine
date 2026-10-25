@@ -92,7 +92,7 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 		private const val WAIT_FOR_DEBUGGER = false
 
 		internal const val EXTRA_EDITOR_HINT = "editor_hint"
-		internal const val EXTRA_PROJECT_MANAGER_HINT = "project_manager_hint"
+		internal const val EXTRA_HUB_HINT = "hub_hint"
 		internal const val EXTRA_GAME_MENU_STATE = "game_menu_state"
 		internal const val EXTRA_IS_GAME_EMBEDDED = "is_game_embedded"
 		internal const val EXTRA_IS_GAME_RUNNING = "is_game_running"
@@ -106,8 +106,8 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 		private const val FULLSCREEN_ARG_SHORT = "-f"
 		private const val EDITOR_ARG = "--editor"
 		private const val EDITOR_ARG_SHORT = "-e"
-		private const val EDITOR_PROJECT_MANAGER_ARG = "--project-manager"
-		private const val EDITOR_PROJECT_MANAGER_ARG_SHORT = "-p"
+		private const val EDITOR_HUB_ARG = "--hub"
+		private const val EDITOR_HUB_ARG_SHORT = "-p"
 		private const val PATH_ARG = "--path"
 
 		// Info for the various classes used by the editor.
@@ -492,7 +492,7 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 			godot?.isEditorHint() == true &&
 			(editorMessageDispatcher.hasEditorConnection(EMBEDDED_RUN_GAME_INFO) ||
 				editorMessageDispatcher.hasEditorConnection(RUN_GAME_INFO_0))) {
-			// If this is the editor window, and this is not the project manager, and we have a running game, then show
+			// If this is the editor window, and this is not the hub, and we have a running game, then show
 			// a hint for how to resume the playing game.
 			val sharedPrefs = Utils.getDefaultSharedPreferences(applicationContext)
 			if (sharedPrefs?.getBoolean(PREF_KEY_DONT_SHOW_GAME_RESUME_HINT, false) == false) {
@@ -527,7 +527,7 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 		var i = 0
 		while (i < args.size) {
 			when (args[i++]) {
-				EDITOR_ARG, EDITOR_ARG_SHORT, EDITOR_PROJECT_MANAGER_ARG, EDITOR_PROJECT_MANAGER_ARG_SHORT -> hasEditor = true
+				EDITOR_ARG, EDITOR_ARG_SHORT, EDITOR_HUB_ARG, EDITOR_HUB_ARG_SHORT -> hasEditor = true
 			}
 		}
 
@@ -537,8 +537,8 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 
 		// Launching a game.
 
-		// Project manager doesn't support embed mode.
-		if (godot?.isProjectManagerHint() == true) {
+		// HUB doesn't support embed mode.
+		if (godot?.isHubHint() == true) {
 			return RUN_GAME_INFO_0
 		}
 
@@ -563,7 +563,7 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 	}
 
 	protected fun getNewGodotInstanceIntent(editorWindowInfo: EditorWindowInfo, args: Array<String>): Intent {
-		// If we're launching an editor window (project manager or editor) and we're in
+		// If we're launching an editor window (hub or editor) and we're in
 		// fullscreen mode, we want to remain in fullscreen mode.
 		// This doesn't apply to the play / game window since for that window fullscreen is
 		// controlled by the game logic.
@@ -615,7 +615,7 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 		val newInstance = getNewGodotInstanceIntent(editorWindowInfo, args)
 		newInstance.apply {
 			putExtra(EXTRA_EDITOR_HINT, godot?.isEditorHint() == true)
-			putExtra(EXTRA_PROJECT_MANAGER_HINT, godot?.isProjectManagerHint() == true)
+			putExtra(EXTRA_HUB_HINT, godot?.isHubHint() == true)
 			putExtra(EXTRA_GAME_MENU_STATE, gameMenuState)
 		}
 
@@ -697,7 +697,7 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 	/**
 	 * The Godot Android Editor sets its own orientation via its AndroidManifest
 	 */
-	protected open fun overrideOrientationRequest() = isLargeScreen || godot?.isProjectManagerHint() == true || !changingOrientationAllowed
+	protected open fun overrideOrientationRequest() = isLargeScreen || godot?.isHubHint() == true || !changingOrientationAllowed
 
 	protected open fun overrideVolumeButtons() = false
 

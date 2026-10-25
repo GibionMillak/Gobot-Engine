@@ -612,7 +612,7 @@ void TranslationServer::setup() {
 
 String TranslationServer::get_tool_locale() {
 #ifdef TOOLS_ENABLED
-	if (Engine::get_singleton()->is_editor_hint() || Engine::get_singleton()->is_project_manager_hint()) {
+	if (Engine::get_singleton()->is_editor_hint() || Engine::get_singleton()->is_hub_hint()) {
 		if (editor_domain->has_translation_for_locale(locale, true)) {
 			return locale;
 		}

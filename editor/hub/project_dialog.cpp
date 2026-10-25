@@ -199,7 +199,7 @@ void ProjectDialog::_validate_path() {
 	String working_dir = d->get_current_dir();
 	String executable_dir = OS::get_singleton()->get_executable_path().get_base_dir();
 	if (target_path == working_dir || target_path == executable_dir) {
-		_set_message(TTRC("Creating a project at the engine's working directory or executable directory is not allowed, as it would prevent the project manager from starting."), MESSAGE_ERROR, target_path_input_type);
+		_set_message(TTRC("Creating a project at the engine's working directory or executable directory is not allowed, as it would prevent the hub from starting."), MESSAGE_ERROR, target_path_input_type);
 		return;
 	}
 
@@ -318,7 +318,7 @@ void ProjectDialog::_update_target_auto_dir() {
 	} else if (mode == MODE_IMPORT) {
 		new_auto_dir = project_path->get_text().get_file().get_basename();
 	}
-	int naming_convention = (int)EDITOR_GET("project_manager/directory_naming_convention");
+	int naming_convention = (int)EDITOR_GET("hub/directory_naming_convention");
 	switch (naming_convention) {
 		case 0: // No Convention
 			break;
@@ -578,7 +578,7 @@ void ProjectDialog::_on_confirmed() {
 		String renderer_type = renderer_button_group->get_pressed_button()->get_meta(SNAME("rendering_method"));
 		initial_settings["rendering/renderer/rendering_method"] = renderer_type;
 
-		EditorSettings::get_singleton()->set("project_manager/default_renderer", renderer_type);
+		EditorSettings::get_singleton()->set("hub/default_renderer", renderer_type);
 		EditorSettings::get_singleton()->save();
 
 		if (renderer_type == "gl_compatibility") {
@@ -853,7 +853,7 @@ void ProjectDialog::show_dialog(bool p_reset_name, bool p_is_confirmed) {
 		return;
 	}
 	if (mode == MODE_RENAME) {
-		// Name and path are set in `ProjectManager::_rename_project`.
+		// Name and path are set in `Hub::_rename_project`.
 		project_path->set_editable(false);
 
 		set_title(TTRC("Rename Project"));
@@ -1110,8 +1110,8 @@ ProjectDialog::ProjectDialog() :
 	rshc->add_child(rvb);
 
 	String default_renderer_type = "forward_plus";
-	if (EditorSettings::get_singleton()->has_setting("project_manager/default_renderer")) {
-		default_renderer_type = EditorSettings::get_singleton()->get_setting("project_manager/default_renderer");
+	if (EditorSettings::get_singleton()->has_setting("hub/default_renderer")) {
+		default_renderer_type = EditorSettings::get_singleton()->get_setting("hub/default_renderer");
 	}
 
 	Button *rs_button = memnew(CheckBox);

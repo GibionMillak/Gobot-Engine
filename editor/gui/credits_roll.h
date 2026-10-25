@@ -52,7 +52,7 @@ class CreditsRoll : public CanvasLayer {
 
 	bool mouse_enabled = false;
 	VBoxContainer *content = nullptr;
-	Label *project_manager = nullptr;
+	Label *hub = nullptr;
 
 	Label *_create_label(const String &p_with_text, LabelSize p_size = LabelSize::NORMAL);
 	void _create_nothing(int p_size = -1);

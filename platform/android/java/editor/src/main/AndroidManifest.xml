@@ -69,7 +69,7 @@
 
         </activity>
         <activity-alias
-            android:name=".ProjectManager"
+            android:name=".Hub"
             android:exported="true"
             android:icon="@mipmap/themed_icon"
             android:targetActivity=".GodotEditor">

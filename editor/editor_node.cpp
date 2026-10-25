@@ -2055,7 +2055,7 @@ bool EditorNode::is_cmdline_mode() {
 }
 
 // Returns the list of project settings to add to new projects. This is used by the
-// project manager creation dialog, but also applies to empty `project.godot` files
+// hub creation dialog, but also applies to empty `project.godot` files
 // to cover the command line workflow of creating projects using `touch project.godot`.
 //
 // This is used to set better defaults for new projects without affecting existing projects.
@@ -4425,8 +4425,8 @@ void EditorNode::try_autosave() {
 	editor_data.save_editor_external_data();
 }
 
-void EditorNode::restart_editor(bool p_goto_project_manager) {
-	_menu_option_confirm(p_goto_project_manager ? PROJECT_QUIT_TO_PROJECT_MANAGER : PROJECT_RELOAD_CURRENT_PROJECT, false);
+void EditorNode::restart_editor(bool p_goto_hub) {
+	_menu_option_confirm(p_goto_hub ? PROJECT_QUIT_TO_HUB : PROJECT_RELOAD_CURRENT_PROJECT, false);
 }
 
 void EditorNode::open_setting_override(const String &p_property) {
@@ -5165,7 +5165,7 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_SETTINGS), get_editor_theme_native_menu_icon(SNAME("gui_class_list"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_AUTOLOADS), get_editor_theme_native_menu_icon(SNAME("gui_autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_EXPORT), get_editor_theme_native_menu_icon(SNAME("node_resource_preloader"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_QUIT_TO_PROJECT_MANAGER), get_editor_theme_native_menu_icon(SNAME("action_close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
+	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_QUIT_TO_HUB), get_editor_theme_native_menu_icon(SNAME("action_close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 
 #ifdef MACOS_ENABLED
 	if (menu_type != MENU_TYPE_GLOBAL) {
@@ -5287,7 +5287,7 @@ void EditorNode::_dialog_action(String p_file) {
 		case SETTINGS_PICK_MAIN_SCENE: {
 			ProjectSettings::get_singleton()->set("application/run/main_scene", ResourceUID::path_to_uid(p_file));
 			ProjectSettings::get_singleton()->save();
-			// TODO: Would be nice to show the project manager opened with the highlighted field.
+			// TODO: Would be nice to show the hub opened with the highlighted field.
 
 			project_run_bar->play_main_scene((bool)pick_main_scene->get_meta("from_native", false));
 		} break;
@@ -6049,7 +6049,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			OS::get_singleton()->shell_show_in_file_manager(OS::get_singleton()->get_user_data_dir(), true);
 		} break;
 		case SCENE_QUIT:
-		case PROJECT_QUIT_TO_PROJECT_MANAGER:
+		case PROJECT_QUIT_TO_HUB:
 		case TOOLS_CLEAR_PROJECT_CACHE:
 		case PROJECT_RELOAD_CURRENT_PROJECT: {
 			if (p_confirmed && plugin_to_save) {
@@ -6139,7 +6139,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 						save_confirmation->set_text(TTR("Save changes to the following scene(s) before reloading?") + unsaved_scenes);
 					} else {
 						save_confirmation->set_ok_button_text(TTR("Save & Quit"));
-						save_confirmation->set_text((p_option == SCENE_QUIT ? TTR("Save changes to the following scene(s) before quitting?") : TTR("Save changes to the following scene(s) before opening Project Manager?")) + unsaved_scenes);
+						save_confirmation->set_text((p_option == SCENE_QUIT ? TTR("Save changes to the following scene(s) before quitting?") : TTR("Save changes to the following scene(s) before opening HUB?")) + unsaved_scenes);
 					}
 					save_confirmation->reset_size();
 					save_confirmation->popup_centered();
@@ -7205,7 +7205,7 @@ void EditorNode::_discard_changes(const String &p_str) {
 			_exit_editor(EXIT_SUCCESS);
 
 		} break;
-		case PROJECT_QUIT_TO_PROJECT_MANAGER: {
+		case PROJECT_QUIT_TO_HUB: {
 			_restart_editor(true);
 		} break;
 		case PROJECT_RELOAD_CURRENT_PROJECT: {
@@ -8144,10 +8144,10 @@ void EditorNode::_proceed_save_asing_scene_tabs() {
 }
 
 bool EditorNode::_is_closing_editor() const {
-	return tab_closing_menu_option == SCENE_QUIT || tab_closing_menu_option == PROJECT_QUIT_TO_PROJECT_MANAGER || tab_closing_menu_option == PROJECT_RELOAD_CURRENT_PROJECT;
+	return tab_closing_menu_option == SCENE_QUIT || tab_closing_menu_option == PROJECT_QUIT_TO_HUB || tab_closing_menu_option == PROJECT_RELOAD_CURRENT_PROJECT;
 }
 
-void EditorNode::_restart_editor(bool p_goto_project_manager) {
+void EditorNode::_restart_editor(bool p_goto_hub) {
 	exiting = true;
 
 	if (project_run_bar->is_playing()) {
@@ -8155,7 +8155,7 @@ void EditorNode::_restart_editor(bool p_goto_project_manager) {
 	}
 
 	String to_reopen;
-	if (!p_goto_project_manager && get_tree()->get_edited_scene_root()) {
+	if (!p_goto_hub && get_tree()->get_edited_scene_root()) {
 		to_reopen = get_tree()->get_edited_scene_root()->get_scene_file_path();
 	}
 
@@ -8166,8 +8166,8 @@ void EditorNode::_restart_editor(bool p_goto_project_manager) {
 		args.push_back(a);
 	}
 
-	if (p_goto_project_manager) {
-		args.push_back("--project-manager");
+	if (p_goto_hub) {
+		args.push_back("--hub");
 
 		// Setup working directory.
 		const String exec_dir = OS::get_singleton()->get_executable_path().get_base_dir();
@@ -9018,7 +9018,7 @@ void EditorNode::_build_project_menu(bool p_dark_mode) {
 
 	project_menu->add_separator();
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/reload_current_project"), PROJECT_RELOAD_CURRENT_PROJECT);
-	project_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("action_close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/quit_to_project_list"), PROJECT_QUIT_TO_PROJECT_MANAGER, true);
+	project_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("action_close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/quit_to_project_list"), PROJECT_QUIT_TO_HUB, true);
 }
 
 void EditorNode::_build_settings_menu(bool p_dark_mode) {

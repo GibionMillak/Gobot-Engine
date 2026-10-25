@@ -77,11 +77,11 @@ class EditorBenchmarks {
 		Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 	/**
-	 * Navigates to the device's home screen, and launches the Project Manager.
+	 * Navigates to the device's home screen, and launches the HUB.
 	 */
 	@OptIn(ExperimentalMetricApi::class)
 	@Test
-	fun startupProjectManagerUsingOpenGL() = benchmarkRule.measureRepeated(
+	fun startupHubUsingOpenGL() = benchmarkRule.measureRepeated(
 			packageName = PACKAGE_NAME,
 			metrics = listOf(
 				StartupTimingMetric(),
@@ -98,11 +98,11 @@ class EditorBenchmarks {
 	}
 
 	/**
-	 * Navigates to the device's home screen, and launches the Project Manager using the Vulkan renderer.
+	 * Navigates to the device's home screen, and launches the HUB using the Vulkan renderer.
 	 */
 	@OptIn(ExperimentalMetricApi::class)
 	@Test
-	fun startupProjectManagerUsingVulkan() = benchmarkRule.measureRepeated(
+	fun startupHubUsingVulkan() = benchmarkRule.measureRepeated(
 		packageName = PACKAGE_NAME,
 		metrics = listOf(
 			StartupTimingMetric(),

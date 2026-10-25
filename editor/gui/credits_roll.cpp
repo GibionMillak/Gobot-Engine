@@ -38,7 +38,7 @@
 #include "core/string/string_builder.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
-#include "editor/project_manager/project_manager.h"
+#include "editor/hub/hub.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/color_rect.h"
@@ -113,8 +113,8 @@ void CreditsRoll::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED: {
-			if (project_manager) {
-				project_manager->set_text(TTR("Project Manager", "Job Title"));
+			if (hub) {
+				hub->set_text(TTR("HUB", "Job Title"));
 			}
 		} break;
 
@@ -146,12 +146,12 @@ void CreditsRoll::_notification(int p_what) {
 }
 
 void CreditsRoll::roll_credits() {
-	if (!project_manager) {
+	if (!hub) {
 		Ref<Theme> theme;
 		if (EditorNode::get_singleton()) {
 			theme = EditorNode::get_singleton()->get_editor_theme();
-		} else if (ProjectManager::get_singleton()) {
-			theme = ProjectManager::get_singleton()->get_theme();
+		} else if (Hub::get_singleton()) {
+			theme = Hub::get_singleton()->get_theme();
 		} else {
 			return;
 		}
@@ -184,8 +184,8 @@ void CreditsRoll::roll_credits() {
 
 		_create_nothing();
 
-		project_manager = _create_label(TTR("Project Manager", "Job Title"), LabelSize::HEADER);
-		project_manager->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+		hub = _create_label(TTR("HUB", "Job Title"), LabelSize::HEADER);
+		hub->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 		_create_label(_build_string(AUTHORS_PROJECT_MANAGERS));
 
 		_create_nothing();

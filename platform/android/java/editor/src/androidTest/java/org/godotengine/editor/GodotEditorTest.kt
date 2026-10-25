@@ -51,18 +51,18 @@ class GodotEditorTest {
 		private val TAG = GodotEditorTest::class.simpleName
 
 		private val TEST_COMMAND_LINE_PARAMS = arrayOf("This is a test")
-		private val PM_LAUNCH_COMMAND_LINE_PARAMS = arrayOf("--project-manager")
+		private val PM_LAUNCH_COMMAND_LINE_PARAMS = arrayOf("--hub")
 		private val PM_VULKAN_LAUNCH_COMMAND_LINE_PARAMS = PM_LAUNCH_COMMAND_LINE_PARAMS + arrayOf("--rendering-method", "mobile")
 
-		private const val PROJECT_MANAGER_CLASS_NAME = "org.godotengine.editor.ProjectManager"
+		private const val hub_CLASS_NAME = "org.godotengine.editor.Hub"
 		private const val GODOT_EDITOR_CLASS_NAME = "org.godotengine.editor.GodotEditor"
 	}
 
 	/**
-	 * Implicitly launch the project manager.
+	 * Implicitly launch the hub.
 	 */
 	@Test
-	fun testImplicitProjectManagerLaunch() {
+	fun testImplicitHubLaunch() {
 		val implicitLaunchIntent = Intent().apply {
 			setPackage(BuildConfig.APPLICATION_ID)
 			action = Intent.ACTION_MAIN
@@ -71,7 +71,7 @@ class GodotEditorTest {
 		}
 		ActivityScenario.launch<GodotEditor>(implicitLaunchIntent).use { scenario ->
 			scenario.onActivity { activity ->
-				assertEquals(activity.intent.component?.className, PROJECT_MANAGER_CLASS_NAME)
+				assertEquals(activity.intent.component?.className, hub_CLASS_NAME)
 
 				val commandLineParams = activity.intent.getStringArrayExtra(EXTRA_COMMAND_LINE_PARAMS)
 				assertNull(commandLineParams)
@@ -80,17 +80,17 @@ class GodotEditorTest {
 	}
 
 	/**
-	 * Explicitly launch the project manager.
+	 * Explicitly launch the hub.
 	 */
 	@Test
-	fun testExplicitProjectManagerLaunch() {
-		val explicitProjectManagerIntent = Intent().apply {
-			component = ComponentName(BuildConfig.APPLICATION_ID, PROJECT_MANAGER_CLASS_NAME)
+	fun testExplicitHubLaunch() {
+		val explicitHubIntent = Intent().apply {
+			component = ComponentName(BuildConfig.APPLICATION_ID, hub_CLASS_NAME)
 			putExtra(EXTRA_COMMAND_LINE_PARAMS, TEST_COMMAND_LINE_PARAMS)
 		}
-		ActivityScenario.launch<GodotEditor>(explicitProjectManagerIntent).use { scenario ->
+		ActivityScenario.launch<GodotEditor>(explicitHubIntent).use { scenario ->
 			scenario.onActivity { activity ->
-				assertEquals(activity.intent.component?.className, PROJECT_MANAGER_CLASS_NAME)
+				assertEquals(activity.intent.component?.className, hub_CLASS_NAME)
 
 				val commandLineParams = activity.intent.getStringArrayExtra(EXTRA_COMMAND_LINE_PARAMS)
 				assertNull(commandLineParams)
@@ -119,10 +119,10 @@ class GodotEditorTest {
 	}
 
 	/**
-	 * Check that the project manager can launch using vulkan (Forward mobile) without crashing.
+	 * Check that the hub can launch using vulkan (Forward mobile) without crashing.
 	 */
 	@Test
-	fun testVulkanProjectManagerLaunch() {
+	fun testVulkanHubLaunch() {
 		val godotEditorIntent = Intent().apply {
 			component = ComponentName(BuildConfig.APPLICATION_ID, GODOT_EDITOR_CLASS_NAME)
 			putExtra(EXTRA_COMMAND_LINE_PARAMS, PM_VULKAN_LAUNCH_COMMAND_LINE_PARAMS)

@@ -93,7 +93,7 @@ String DisplayServerWayland::_get_app_id_from_context(DisplayServerEnums::Contex
 		} break;
 
 		case DisplayServerEnums::CONTEXT_PROJECTMAN: {
-			app_id = "org.godotengine.ProjectManager";
+			app_id = "org.godotengine.Hub";
 		} break;
 
 		case DisplayServerEnums::CONTEXT_ENGINE:
