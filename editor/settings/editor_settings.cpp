@@ -529,8 +529,8 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 
 	EDITOR_SETTING(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/appearance/show_renderer_selector", false, "")
 
-	_initial_set("docks/scene_tree/derive_script_globals_by_name", true);
-	_initial_set("docks/scene_tree/ask_before_revoking_unique_name", true);
+	_initial_set("docks/hierarchy/derive_script_globals_by_name", true);
+	_initial_set("docks/hierarchy/ask_before_revoking_unique_name", true);
 
 	// Inspector
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_RANGE, "interface/inspector/max_array_dictionary_items_per_page", 20, "10,100,1")
@@ -658,12 +658,12 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 
 	/* Docks */
 
-	// SceneTree
-	_initial_set("docks/scene_tree/ask_before_deleting_related_animation_tracks", true);
-	_initial_set("docks/scene_tree/start_create_dialog_fully_expanded", false);
-	_initial_set("docks/scene_tree/auto_expand_to_selected", true);
-	_initial_set("docks/scene_tree/center_node_on_reparent", false);
-	_initial_set("docks/scene_tree/hide_filtered_out_parents", true);
+	// Hierarchy
+	_initial_set("docks/hierarchy/ask_before_deleting_related_animation_tracks", true);
+	_initial_set("docks/hierarchy/start_create_dialog_fully_expanded", false);
+	_initial_set("docks/hierarchy/auto_expand_to_selected", true);
+	_initial_set("docks/hierarchy/center_node_on_reparent", false);
+	_initial_set("docks/hierarchy/hide_filtered_out_parents", true);
 
 	// FileSystem
 	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_RANGE, "docks/filesystem/thumbnail_size", 64, "32,224,16")

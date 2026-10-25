@@ -36,7 +36,7 @@
 #include "core/object/class_db.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/editor_file_dialog.h"
@@ -214,9 +214,9 @@ void EditorDebuggerTree::update_scene_tree(const SceneDebuggerTree *p_tree, int 
 	set_hide_root(false);
 
 	updating_scene_tree = true;
-	const String filter = SceneTreeDock::get_singleton()->get_filter();
+	const String filter = HierarchyDock::get_singleton()->get_filter();
 	LocalVector<TreeItem *> select_items;
-	bool hide_filtered_out_parents = EDITOR_GET("docks/scene_tree/hide_filtered_out_parents");
+	bool hide_filtered_out_parents = EDITOR_GET("docks/hierarchy/hide_filtered_out_parents");
 	debugger_id = p_debugger; // Needed by hook, could be avoided if every debugger had its own tree.
 
 	bool should_scroll = scrolling_to_item || filter != last_filter;

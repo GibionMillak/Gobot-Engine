@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "scene/gui/dialog.h"
 #include "scene/gui/line_edit.h"
 
@@ -61,7 +61,7 @@ class RenameDialog : public Dialog {
 	void _update_preview_int(int new_value = 0);
 	static void _error_handler(void *p_self, const char *p_func, const char *p_file, int p_line, const char *p_error, const char *p_errorexp, bool p_editor_notify, ErrorHandlerType p_type);
 
-	SceneTreeEditor *scene_tree_editor = nullptr;
+	HierarchyEditor *_hierarchy_editor = nullptr;
 	int global_count = 0;
 
 	LineEdit *lne_search = nullptr;
@@ -107,5 +107,5 @@ public:
 	void reset();
 	void rename();
 
-	RenameDialog(SceneTreeEditor *p_scene_tree_editor);
+	RenameDialog(HierarchyEditor *p_hierarchy_editor);
 };

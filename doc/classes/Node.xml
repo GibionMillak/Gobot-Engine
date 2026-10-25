@@ -40,7 +40,7 @@
 		<method name="_get_configuration_warnings" qualifiers="virtual const">
 			<return type="PackedStringArray" />
 			<description>
-				The elements in the array returned from this method are displayed as warnings in the Scene dock if the script that overrides it is a [code]tool[/code] script.
+				The elements in the array returned from this method are displayed as warnings in the Hierarchy dock if the script that overrides it is a [code]tool[/code] script.
 				Returning an empty array produces no warnings.
 				Call [method update_configuration_warnings] when the warnings need to be updated for this node.
 				[codeblock]
@@ -508,7 +508,7 @@
 		<method name="get_tree_string_pretty">
 			<return type="String" />
 			<description>
-				Similar to [method get_tree_string], this returns the tree as a [String]. This version displays a more graphical representation similar to what is displayed in the Scene Dock. It is useful for inspecting larger trees.
+				Similar to [method get_tree_string], this returns the tree as a [String]. This version displays a more graphical representation similar to what is displayed in the Hierarchy dock. It is useful for inspecting larger trees.
 				May print, for example:
 				[codeblock lang=text]
 				 ┖╴TheGame
@@ -556,7 +556,7 @@
 		<method name="is_displayed_folded" qualifiers="const">
 			<return type="bool" />
 			<description>
-				Returns [code]true[/code] if the node is folded (collapsed) in the Scene dock. This method is intended to be used in editor plugins and tools. See also [method set_display_folded].
+				Returns [code]true[/code] if the node is folded (collapsed) in the Hierarchy dock. This method is intended to be used in editor plugins and tools. See also [method set_display_folded].
 			</description>
 		</method>
 		<method name="is_editable_instance" qualifiers="const">
@@ -716,7 +716,7 @@
 		<method name="print_tree_pretty">
 			<return type="void" />
 			<description>
-				Prints the node and its children to the console, recursively. The node does not have to be inside the tree. Similar to [method print_tree], but the graphical representation looks like what is displayed in the editor's Scene dock. It is useful for inspecting larger trees.
+				Prints the node and its children to the console, recursively. The node does not have to be inside the tree. Similar to [method print_tree], but the graphical representation looks like what is displayed in the editor's Hierarchy dock. It is useful for inspecting larger trees.
 				May print, for example:
 				[codeblock lang=text]
 				 ┖╴TheGame
@@ -850,7 +850,7 @@
 			<return type="void" />
 			<param index="0" name="fold" type="bool" />
 			<description>
-				If set to [code]true[/code], the node appears folded in the Scene dock. As a result, all of its children are hidden. This method is intended to be used in editor plugins and tools, but it also works in release builds. See also [method is_displayed_folded].
+				If set to [code]true[/code], the node appears folded in the Hierarchy dock. As a result, all of its children are hidden. This method is intended to be used in editor plugins and tools, but it also works in release builds. See also [method is_displayed_folded].
 			</description>
 		</method>
 		<method name="set_editable_instance">
@@ -858,7 +858,7 @@
 			<param index="0" name="node" type="Node" />
 			<param index="1" name="is_editable" type="bool" />
 			<description>
-				Set to [code]true[/code] to allow all nodes owned by [param node] to be available, and editable, in the Scene dock, even if their [member owner] is not the scene root. This method is intended to be used in editor plugins and tools, but it also works in release builds. See also [method is_editable_instance].
+				Set to [code]true[/code] to allow all nodes owned by [param node] to be available, and editable, in the Hierarchy dock, even if their [member owner] is not the scene root. This method is intended to be used in editor plugins and tools, but it also works in release builds. See also [method is_editable_instance].
 			</description>
 		</method>
 		<method name="set_multiplayer_authority">
@@ -961,7 +961,7 @@
 		<method name="update_configuration_warnings">
 			<return type="void" />
 			<description>
-				Refreshes the warnings displayed for this node in the Scene dock. Use [method _get_configuration_warnings] to customize the warning messages to display.
+				Refreshes the warnings displayed for this node in the Hierarchy dock. Use [method _get_configuration_warnings] to customize the warning messages to display.
 			</description>
 		</method>
 	</methods>
@@ -971,7 +971,7 @@
 			[b]Note:[/b] For the root node, auto translate mode can also be set via [member ProjectSettings.internationalization/rendering/root_node_auto_translate].
 		</member>
 		<member name="editor_description" type="String" setter="set_editor_description" getter="get_editor_description" default="&quot;&quot;">
-			An optional description to the node. It will be displayed as a tooltip when hovering over the node in the editor's Scene dock.
+			An optional description to the node. It will be displayed as a tooltip when hovering over the node in the editor's Hierarchy dock.
 		</member>
 		<member name="multiplayer" type="MultiplayerAPI" setter="" getter="get_multiplayer">
 			The [MultiplayerAPI] instance associated with this node. See [method SceneTree.get_multiplayer].
@@ -983,7 +983,7 @@
 		</member>
 		<member name="owner" type="Node" setter="set_owner" getter="get_owner">
 			The owner of this node. The owner must be an ancestor of this node. When packing the owner node in a [PackedScene], all the nodes it owns are also saved with it. See also [member unique_name_in_owner].
-			[b]Note:[/b] In the editor, nodes not owned by the scene root are usually not displayed in the Scene dock, and will [b]not[/b] be saved. To prevent this, remember to set the owner after calling [method add_child].
+			[b]Note:[/b] In the editor, nodes not owned by the scene root are usually not displayed in the Hierarchy dock, and will [b]not[/b] be saved. To prevent this, remember to set the owner after calling [method add_child].
 			[b]Note:[/b] The owner needs to be the current scene root. See [url=$DOCS_URL/tutorials/plugins/running_code_in_the_editor.html#instancing-scenes]Instancing scenes[/url] in the documentation for more information.
 		</member>
 		<member name="physics_interpolation_mode" type="int" setter="set_physics_interpolation_mode" getter="get_physics_interpolation_mode" enum="Node.PhysicsInterpolationMode" default="0">

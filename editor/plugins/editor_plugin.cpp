@@ -38,7 +38,7 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_interface.h"
 #include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
@@ -539,7 +539,7 @@ EditorInterface *EditorPlugin::get_editor_interface() {
 }
 
 ScriptCreateDialog *EditorPlugin::get_script_create_dialog() {
-	return SceneTreeDock::get_singleton()->get_script_create_dialog();
+	return HierarchyDock::get_singleton()->get_script_create_dialog();
 }
 
 void EditorPlugin::add_debugger_plugin(const Ref<EditorDebuggerPlugin> &p_plugin) {

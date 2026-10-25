@@ -39,7 +39,7 @@
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/doc/editor_help.h"
 #include "editor/docks/filesystem_dock.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/editor_file_dialog.h"
@@ -1585,14 +1585,14 @@ bool EditorScriptPicker::handle_menu_selected(int p_which) {
 	switch (p_which) {
 		case OBJ_MENU_NEW_SCRIPT: {
 			if (script_owner) {
-				SceneTreeDock::get_singleton()->open_script_dialog(script_owner, false);
+				HierarchyDock::get_singleton()->open_script_dialog(script_owner, false);
 			}
 			return true;
 		}
 
 		case OBJ_MENU_EXTEND_SCRIPT: {
 			if (script_owner) {
-				SceneTreeDock::get_singleton()->open_script_dialog(script_owner, true);
+				HierarchyDock::get_singleton()->open_script_dialog(script_owner, true);
 			}
 			return true;
 		}
@@ -1634,7 +1634,7 @@ bool EditorShaderPicker::handle_menu_selected(int p_which) {
 	switch (p_which) {
 		case OBJ_MENU_NEW_SHADER: {
 			if (ed_material.is_valid()) {
-				SceneTreeDock::get_singleton()->open_shader_dialog(ed_material, preferred_mode);
+				HierarchyDock::get_singleton()->open_shader_dialog(ed_material, preferred_mode);
 				return true;
 			}
 		} break;

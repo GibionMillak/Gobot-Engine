@@ -37,7 +37,7 @@ class Dialog;
 class HBoxContainer;
 class MenuButton;
 class OptionButton;
-class SceneTreeDialog;
+class HierarchyDialog;
 class SpinBox;
 
 class ParticlesEditorPlugin : public EditorPlugin {

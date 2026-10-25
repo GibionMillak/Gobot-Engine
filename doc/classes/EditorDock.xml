@@ -4,7 +4,7 @@
 		Dockable container for the editor.
 	</brief_description>
 	<description>
-		EditorDock is a [Container] node that can be docked in one of the editor's dock slots. Docks are added by plugins to provide space for controls related to an [EditorPlugin]. The editor comes with a few built-in docks, such as the Scene dock, FileSystem dock, etc.
+		EditorDock is a [Container] node that can be docked in one of the editor's dock slots. Docks are added by plugins to provide space for controls related to an [EditorPlugin]. The editor comes with a few built-in docks, such as the Hierarchy dock, FileSystem dock, etc.
 		You can add a dock by using [method EditorPlugin.add_dock]. The dock can be customized by changing its properties.
 		[codeblock]
 		@tool

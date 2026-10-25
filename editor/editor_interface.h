@@ -52,7 +52,7 @@ class FileSystemDock;
 class Mesh;
 class Node;
 class PropertySelector;
-class SceneTreeDialog;
+class HierarchyDialog;
 class ScriptEditor;
 class SubViewport;
 class Texture2D;
@@ -69,7 +69,7 @@ class EditorInterface : public Object {
 
 	PropertySelector *property_selector = nullptr;
 	PropertySelector *method_selector = nullptr;
-	SceneTreeDialog *node_selector = nullptr;
+	HierarchyDialog *node_selector = nullptr;
 	CreateDialog *create_dialog = nullptr;
 
 	void _node_selected(const NodePath &p_node_paths, const Callable &p_callback);

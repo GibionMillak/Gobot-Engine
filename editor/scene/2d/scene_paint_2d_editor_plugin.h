@@ -144,7 +144,7 @@ class ScenePaint2DEditor : public Control {
 	void _scene_picker_toggled(bool p_pressed);
 	void _update_scene_picker(int p_mode, Control *p_control);
 	void _file_system_input(const Ref<InputEvent> &p_event);
-	void _scene_tree_input(const Ref<InputEvent> &p_event);
+	void _hierarchy_input(const Ref<InputEvent> &p_event);
 	void _recent_item_selected(int p_idx);
 	void _custom_source_input(const Ref<InputEvent> &p_event, Control *p_control);
 	Node2D *_get_scene_from_path(const String &p_path);

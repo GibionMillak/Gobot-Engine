@@ -32,7 +32,7 @@
 
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/check_box.h"
 
@@ -77,10 +77,10 @@ ReparentDialog::ReparentDialog() :
 	VBoxContainer *vbc = memnew(VBoxContainer);
 	add_child(vbc);
 
-	tree = memnew(SceneTreeEditor(false));
+	tree = memnew(HierarchyEditor(false));
 	tree->set_update_when_invisible(false);
 	tree->set_show_enabled_subscene(true);
-	tree->get_scene_tree()->connect("item_activated", callable_mp(this, &ReparentDialog::_reparent));
+	tree->get_tree_control()->connect("item_activated", callable_mp(this, &ReparentDialog::_reparent));
 	vbc->add_margin_child(TTR("Select new parent:"), tree, true);
 
 	keep_transform = memnew(CheckBox);

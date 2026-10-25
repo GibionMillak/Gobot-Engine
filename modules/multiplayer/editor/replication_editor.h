@@ -41,7 +41,7 @@ class LineEdit;
 class Tree;
 class TreeItem;
 class PropertySelector;
-class SceneTreeDialog;
+class HierarchyDialog;
 
 class ReplicationEditor : public EditorDock {
 	GDCLASS(ReplicationEditor, EditorDock);
@@ -63,7 +63,7 @@ private:
 	Tree *tree = nullptr;
 
 	PropertySelector *prop_selector = nullptr;
-	SceneTreeDialog *pick_node = nullptr;
+	HierarchyDialog *pick_node = nullptr;
 	NodePath adding_node_path;
 
 	Button *pin = nullptr;

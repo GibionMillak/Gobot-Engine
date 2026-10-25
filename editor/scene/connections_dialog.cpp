@@ -37,14 +37,14 @@
 #include "core/templates/hash_set.h"
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/doc/editor_help.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/docks/signals_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/gui/editor_variant_type_selectors.h"
 #include "editor/inspector/editor_inspector.h"
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
@@ -763,15 +763,15 @@ ConnectDialog::ConnectDialog() :
 	vbc_left->add_margin_child(TTR("From Signal:"), from_signal);
 	from_signal->set_editable(false);
 
-	tree = memnew(SceneTreeEditor(false));
+	tree = memnew(HierarchyEditor(false));
 	tree->set_update_when_invisible(false);
 	tree->set_connecting_signal(true);
 	tree->set_show_enabled_subscene(true);
 	tree->set_v_size_flags(Control::SIZE_FILL | Control::SIZE_EXPAND);
-	tree->get_scene_tree()->connect("item_activated", callable_mp(this, &ConnectDialog::_item_activated));
+	tree->get_tree_control()->connect("item_activated", callable_mp(this, &ConnectDialog::_item_activated));
 	tree->connect("node_selected", callable_mp(this, &ConnectDialog::_tree_node_selected));
 	tree->set_connect_to_script_mode(true);
-	tree->get_scene_tree()->set_theme_type_variation("TreeSecondary");
+	tree->get_tree_control()->set_theme_type_variation("TreeSecondary");
 
 	HBoxContainer *hbc_filter = memnew(HBoxContainer);
 
@@ -780,7 +780,7 @@ ConnectDialog::ConnectDialog() :
 	filter_nodes->set_h_size_flags(Control::SIZE_FILL | Control::SIZE_EXPAND);
 	filter_nodes->set_placeholder(TTR("Filter Nodes"));
 	filter_nodes->set_clear_button_enabled(true);
-	filter_nodes->connect(SceneStringName(text_changed), callable_mp(tree, &SceneTreeEditor::set_filter));
+	filter_nodes->connect(SceneStringName(text_changed), callable_mp(tree, &HierarchyEditor::set_filter));
 
 	Button *focus_current = memnew(Button);
 	hbc_filter->add_child(focus_current);
@@ -1074,8 +1074,8 @@ void ConnectionsDock::_connect(const ConnectDialog::ConnectionData &p_cd) {
 	undo_redo->add_undo_method(source, "disconnect", p_cd.signal, callable);
 	undo_redo->add_do_method(this, "update_tree");
 	undo_redo->add_undo_method(this, "update_tree");
-	undo_redo->add_do_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree"); // To force redraw of scene tree.
-	undo_redo->add_undo_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
+	undo_redo->add_do_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree"); // To force redraw of the Hierarchy dock.
+	undo_redo->add_undo_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
 
 	undo_redo->commit_action();
 }
@@ -1095,8 +1095,8 @@ void ConnectionsDock::_disconnect(const ConnectDialog::ConnectionData &p_cd) {
 	undo_redo->add_undo_method(selected_object, "connect", p_cd.signal, callable, p_cd.flags);
 	undo_redo->add_do_method(this, "update_tree");
 	undo_redo->add_undo_method(this, "update_tree");
-	undo_redo->add_do_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree"); // To force redraw of scene tree.
-	undo_redo->add_undo_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
+	undo_redo->add_do_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree"); // To force redraw of the Hierarchy dock.
+	undo_redo->add_undo_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
 
 	undo_redo->commit_action();
 }
@@ -1129,8 +1129,8 @@ void ConnectionsDock::_disconnect_all() {
 
 	undo_redo->add_do_method(this, "update_tree");
 	undo_redo->add_undo_method(this, "update_tree");
-	undo_redo->add_do_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
-	undo_redo->add_undo_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
+	undo_redo->add_do_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
+	undo_redo->add_undo_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
 
 	undo_redo->commit_action();
 }

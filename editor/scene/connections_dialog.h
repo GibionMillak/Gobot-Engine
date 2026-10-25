@@ -44,7 +44,7 @@ class Label;
 class LineEdit;
 class OptionButton;
 class PopupMenu;
-class SceneTreeEditor;
+class HierarchyEditor;
 class SpinBox;
 
 class ConnectDialog : public Dialog {
@@ -123,7 +123,7 @@ private:
 	bool first_popup = true;
 	NodePath dst_path;
 	VBoxContainer *vbc_right = nullptr;
-	SceneTreeEditor *tree = nullptr;
+	HierarchyEditor *tree = nullptr;
 	Dialog *error = nullptr;
 
 	Button *open_method_tree = nullptr;

@@ -39,7 +39,7 @@ class Dialog;
 class LineEdit;
 class MenuButton;
 class OptionButton;
-class SceneTreeDialog;
+class HierarchyDialog;
 
 class MultiMeshEditor : public Control {
 	GDCLASS(MultiMeshEditor, Control);
@@ -57,7 +57,7 @@ class MultiMeshEditor : public Control {
 	LineEdit *surface_source = nullptr;
 	LineEdit *mesh_source = nullptr;
 
-	SceneTreeDialog *std = nullptr;
+	HierarchyDialog *std = nullptr;
 
 	Dialog *populate_dialog = nullptr;
 	OptionButton *populate_axis = nullptr;

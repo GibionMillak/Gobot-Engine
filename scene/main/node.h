@@ -363,7 +363,7 @@ private:
 	Variant _call_deferred_thread_group_bind(const Variant **p_args, int p_argcount, Callable::CallError &r_error);
 	Variant _call_thread_safe_bind(const Variant **p_args, int p_argcount, Callable::CallError &r_error);
 
-	// Editor only signal to keep the SceneTreeEditor in sync.
+	// Editor only signal to keep the HierarchyEditor in sync.
 #ifdef TOOLS_ENABLED
 	void _emit_editor_state_changed();
 #else

@@ -55,7 +55,7 @@
 #include "editor/scene/3d/node_3d_editor_plugin.h"
 #include "editor/scene/3d/node_3d_editor_viewport.h"
 #include "editor/scene/editor_scene_tabs.h"
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_feature_profile.h"
 #include "editor/settings/editor_settings.h"
@@ -495,7 +495,7 @@ void EditorInterface::set_current_feature_profile(const String &p_profile_name) 
 
 void EditorInterface::popup_node_selector(const Callable &p_callback, const TypedArray<StringName> &p_valid_types, Node *p_current_value) {
 	if (!node_selector) {
-		node_selector = memnew(SceneTreeDialog);
+		node_selector = memnew(HierarchyDialog);
 		get_base_control()->add_child(node_selector);
 	}
 
@@ -506,7 +506,7 @@ void EditorInterface::popup_node_selector(const Callable &p_callback, const Type
 		valid_types.write[i] = p_valid_types[i];
 	}
 	node_selector->set_valid_types(valid_types);
-	node_selector->popup_scenetree_dialog(p_current_value);
+	node_selector->popup_hierarchy_dialog(p_current_value);
 
 	const Callable callback = callable_mp(this, &EditorInterface::_node_selected);
 	node_selector->connect(SNAME("selected"), callback.bind(p_callback), CONNECT_DEFERRED);

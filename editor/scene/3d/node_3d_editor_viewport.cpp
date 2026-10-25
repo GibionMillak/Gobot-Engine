@@ -45,7 +45,7 @@
 #include "editor/animation/animation_player_editor_plugin.h"
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/editor_debugger_node.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -3606,7 +3606,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 				follow_mode->hide();
 			}
 
-			Node *scene_root = SceneTreeDock::get_singleton()->get_editor_data()->get_edited_scene_root();
+			Node *scene_root = HierarchyDock::get_singleton()->get_editor_data()->get_edited_scene_root();
 			if (previewing_cinema && scene_root != nullptr) {
 				Camera3D *cam = scene_root->get_viewport()->get_camera_3d();
 				if (cam != nullptr && cam != previewing) {
@@ -6320,7 +6320,7 @@ void Node3DEditorViewport::drop_data_fw(const Point2 &p_point, const Variant &p_
 			target_node = root_node;
 		} else {
 			// Create a root node so we can add child nodes to it.
-			SceneTreeDock::get_singleton()->add_root_node(memnew(Node3D));
+			HierarchyDock::get_singleton()->add_root_node(memnew(Node3D));
 			target_node = get_tree()->get_edited_scene_root();
 		}
 	}

@@ -50,7 +50,7 @@ class EditorContextMenuPlugin : public RefCounted {
 
 public:
 	enum ContextMenuSlot {
-		CONTEXT_SLOT_SCENE_TREE,
+		CONTEXT_SLOT_HIERARCHY,
 		CONTEXT_SLOT_FILESYSTEM,
 		CONTEXT_SLOT_SCRIPT_EDITOR,
 		CONTEXT_SLOT_FILESYSTEM_CREATE,

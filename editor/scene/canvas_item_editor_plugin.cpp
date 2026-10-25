@@ -42,7 +42,7 @@
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/docks/editor_dock_manager.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -603,7 +603,7 @@ void CanvasItemEditor::_tool_menu_requested(const Point2 &p_pos) {
 	add_node_menu->clear();
 	add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("action_add")), TTRC("Add 2D Node Here..."), ADD_NODE);
 	add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("action_instance")), TTRC("Instantiate Scene Here..."), ADD_INSTANCE);
-	for (Node *node : SceneTreeDock::get_singleton()->get_node_clipboard()) {
+	for (Node *node : HierarchyDock::get_singleton()->get_node_clipboard()) {
 		if (Object::cast_to<CanvasItem>(node)) {
 			add_node_menu->add_icon_item(get_editor_theme_icon(SNAME("action_paste")), TTRC("Paste Node(s) Here"), ADD_PASTE);
 			break;
@@ -815,7 +815,7 @@ void CanvasItemEditor::_add_node_pressed(int p_result) {
 			EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
 			undo_redo->create_action_for_history(TTR("Paste Node(s) at Position"), EditorNode::get_editor_data().get_current_edited_scene_history_id());
 
-			List<Node *> pasted_nodes = SceneTreeDock::get_singleton()->paste_nodes();
+			List<Node *> pasted_nodes = HierarchyDock::get_singleton()->paste_nodes();
 			if (pasted_nodes.is_empty()) {
 				return;
 			}
@@ -863,7 +863,7 @@ void CanvasItemEditor::_create_node() {
 	CanvasItem *child = add_node_dialog->instantiate_selected<CanvasItem>();
 	ERR_FAIL_NULL(child);
 
-	Node *parent = SceneTreeDock::get_singleton()->get_tree_editor()->get_selected();
+	Node *parent = HierarchyDock::get_singleton()->get_hierarchy_editor()->get_selected();
 	if (!parent) {
 		parent = EditorNode::get_editor_data().get_edited_scene_root();
 	}
@@ -876,7 +876,7 @@ void CanvasItemEditor::_create_node() {
 }
 
 void CanvasItemEditor::_instantiate_scene(const String &p_path) {
-	Node *parent = SceneTreeDock::get_singleton()->get_tree_editor()->get_selected();
+	Node *parent = HierarchyDock::get_singleton()->get_hierarchy_editor()->get_selected();
 	if (!parent) {
 		parent = EditorNode::get_editor_data().get_edited_scene_root();
 	}
@@ -4128,7 +4128,7 @@ CanvasItemEditor::CanvasItemEditor() {
 
 	lock_button->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(LOCK_SELECTED));
 	lock_button->set_tooltip_text(TTRC("Lock selected node, preventing selection and movement."));
-	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
+	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
 	lock_button->set_shortcut(ED_GET_SHORTCUT("editor/lock_selected_nodes"));
 
 	unlock_button = memnew(Button);
@@ -4136,7 +4136,7 @@ CanvasItemEditor::CanvasItemEditor() {
 	selection_control_hbox->add_child(unlock_button);
 	unlock_button->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(UNLOCK_SELECTED));
 	unlock_button->set_tooltip_text(TTRC("Unlock selected node, allowing selection and movement."));
-	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
+	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
 	unlock_button->set_shortcut(ED_GET_SHORTCUT("editor/unlock_selected_nodes"));
 
 	group_button = memnew(Button);
@@ -4144,7 +4144,7 @@ CanvasItemEditor::CanvasItemEditor() {
 	selection_control_hbox->add_child(group_button);
 	group_button->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(GROUP_SELECTED));
 	group_button->set_tooltip_text(TTRC("Groups the selected node with its children. This causes the parent to be selected when any child node is clicked in 2D and 3D view."));
-	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
+	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
 	group_button->set_shortcut(ED_GET_SHORTCUT("editor/group_selected_nodes"));
 
 	ungroup_button = memnew(Button);
@@ -4152,7 +4152,7 @@ CanvasItemEditor::CanvasItemEditor() {
 	selection_control_hbox->add_child(ungroup_button);
 	ungroup_button->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(UNGROUP_SELECTED));
 	ungroup_button->set_tooltip_text(TTRC("Ungroups the selected node from its children. Child nodes will be individual items in 2D and 3D view."));
-	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
+	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
 	ungroup_button->set_shortcut(ED_GET_SHORTCUT("editor/ungroup_selected_nodes"));
 
 	main_flow->add_child(memnew(VSeparator));

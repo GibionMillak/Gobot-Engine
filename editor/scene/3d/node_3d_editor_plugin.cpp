@@ -41,7 +41,7 @@
 #include "core/os/os.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/docks/editor_dock_manager.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -2485,7 +2485,7 @@ void Node3DEditor::_add_sun_to_scene(bool p_already_added_environment) {
 	Node *base = get_tree()->get_edited_scene_root();
 	if (!base) {
 		// Create a root node so we can add child nodes to it.
-		SceneTreeDock::get_singleton()->add_root_node(memnew(Node3D));
+		HierarchyDock::get_singleton()->add_root_node(memnew(Node3D));
 		base = get_tree()->get_edited_scene_root();
 	}
 	ERR_FAIL_NULL(base);
@@ -2514,7 +2514,7 @@ void Node3DEditor::_add_environment_to_scene(bool p_already_added_sun) {
 	Node *base = get_tree()->get_edited_scene_root();
 	if (!base) {
 		// Create a root node so we can add child nodes to it.
-		SceneTreeDock::get_singleton()->add_root_node(memnew(Node3D));
+		HierarchyDock::get_singleton()->add_root_node(memnew(Node3D));
 		base = get_tree()->get_edited_scene_root();
 	}
 	ERR_FAIL_NULL(base);
@@ -2570,7 +2570,7 @@ void Node3DEditor::_notification(int p_what) {
 
 			get_tree()->connect("node_removed", callable_mp(this, &Node3DEditor::_node_removed));
 			get_tree()->connect("node_added", callable_mp(this, &Node3DEditor::_node_added));
-			SceneTreeDock::get_singleton()->get_tree_editor()->connect("node_changed", callable_mp(this, &Node3DEditor::_refresh_menu_icons));
+			HierarchyDock::get_singleton()->get_hierarchy_editor()->connect("node_changed", callable_mp(this, &Node3DEditor::_refresh_menu_icons));
 			editor_selection->connect("selection_changed", callable_mp(this, &Node3DEditor::_selection_changed));
 
 			_update_preview_environment();
@@ -3476,7 +3476,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_RULER]->set_toggle_mode(true);
 	tool_button[TOOL_RULER]->set_theme_type_variation(SceneStringName(FlatButton));
 	tool_button[TOOL_RULER]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_RULER));
-	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
+	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
 	tool_button[TOOL_RULER]->set_shortcut(ED_SHORTCUT("spatial_editor/measure", TTRC("Ruler Mode"), Key::M));
 	tool_button[TOOL_RULER]->set_button_icon(EditorIconManager::get_icon(SNAME("action_ruler")));
 
@@ -3490,7 +3490,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_LOCK_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
 	tool_button[TOOL_LOCK_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_LOCK_SELECTED));
 	tool_button[TOOL_LOCK_SELECTED]->set_tooltip_text(TTRC("Lock selected node, preventing selection and movement."));
-	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
+	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
 	tool_button[TOOL_LOCK_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/lock_selected_nodes"));
 	tool_button[TOOL_LOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_lock")));
 
@@ -3499,7 +3499,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_UNLOCK_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
 	tool_button[TOOL_UNLOCK_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_UNLOCK_SELECTED));
 	tool_button[TOOL_UNLOCK_SELECTED]->set_tooltip_text(TTRC("Unlock selected node, allowing selection and movement."));
-	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
+	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
 	tool_button[TOOL_UNLOCK_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/unlock_selected_nodes"));
 	tool_button[TOOL_UNLOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_unlock")));
 
@@ -3508,7 +3508,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_GROUP_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
 	tool_button[TOOL_GROUP_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_GROUP_SELECTED));
 	tool_button[TOOL_GROUP_SELECTED]->set_tooltip_text(TTRC("Groups the selected node with its children. This selects the parent when any child node is clicked in 2D and 3D view."));
-	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
+	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
 	tool_button[TOOL_GROUP_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/group_selected_nodes"));
 	tool_button[TOOL_GROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_group")));
 
@@ -3517,7 +3517,7 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_UNGROUP_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
 	tool_button[TOOL_UNGROUP_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_UNGROUP_SELECTED));
 	tool_button[TOOL_UNGROUP_SELECTED]->set_tooltip_text(TTRC("Ungroups the selected node from its children. Child nodes will be individual items in 2D and 3D view."));
-	// Define the shortcut globally (without a context) so that it works if the Scene tree dock is currently focused.
+	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
 	tool_button[TOOL_UNGROUP_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/ungroup_selected_nodes"));
 	tool_button[TOOL_UNGROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_ungroup")));
 

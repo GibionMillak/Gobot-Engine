@@ -35,7 +35,7 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/scene/3d/node_3d_editor_plugin.h"
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "scene/3d/mesh_instance_3d.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/line_edit.h"
@@ -266,7 +266,7 @@ void MultiMeshEditor::_browse(bool p_source) {
 		browsed_node = node->get_node_or_null(surface_source->get_text());
 		std->set_title(TTR("Select a Target Surface:"));
 	}
-	std->popup_scenetree_dialog(browsed_node);
+	std->popup_hierarchy_dialog(browsed_node);
 }
 
 MultiMeshEditor::MultiMeshEditor() {
@@ -355,7 +355,7 @@ MultiMeshEditor::MultiMeshEditor() {
 	populate_dialog->set_ok_button_text(TTRC("Populate"));
 
 	populate_dialog->get_ok_button()->connect(SceneStringName(pressed), callable_mp(this, &MultiMeshEditor::_populate));
-	std = memnew(SceneTreeDialog);
+	std = memnew(HierarchyDialog);
 	Vector<StringName> valid_types;
 	valid_types.push_back("MeshInstance3D");
 	std->set_valid_types(valid_types);

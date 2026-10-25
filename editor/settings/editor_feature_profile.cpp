@@ -47,7 +47,7 @@
 const char *EditorFeatureProfile::feature_names[FEATURE_MAX] = {
 	TTRC("3D Editor"),
 	TTRC("Script Editor"),
-	TTRC("Scene Tree Editing"),
+	TTRC("Hierarchy Editing"),
 	TTRC("FileSystem Dock"),
 	TTRC("Import Dock"),
 	TTRC("History Dock"),
@@ -59,19 +59,19 @@ const char *EditorFeatureProfile::feature_names[FEATURE_MAX] = {
 const char *EditorFeatureProfile::feature_descriptions[FEATURE_MAX] = {
 	TTRC("Allows to view and edit 3D scenes."),
 	TTRC("Allows to edit scripts using the integrated script editor."),
-	TTRC("Allows editing the node hierarchy in the Scene dock."),
+	TTRC("Allows editing the node hierarchy in the Hierarchy dock."),
 	TTRC("Allows to browse the local file system via a dedicated dock."),
 	TTRC("Allows to configure import settings for individual assets. Requires the FileSystem dock to function."),
 	TTRC("Provides an overview of the editor's and each scene's undo history."),
 	TTRC("Provides tools for selecting and debugging nodes at runtime."),
-	TTRC("Allows to work with signals of the node selected in the Scene dock."),
-	TTRC("Allows to manage groups of the node selected in the Scene dock."),
+	TTRC("Allows to work with signals of the node selected in the Hierarchy dock."),
+	TTRC("Allows to manage groups of the node selected in the Hierarchy dock."),
 };
 
 const char *EditorFeatureProfile::feature_identifiers[FEATURE_MAX] = {
 	"3d",
 	"script",
-	"scene_tree",
+	"hierarchy",
 	"filesystem_dock",
 	"import_dock",
 	"history_dock",
@@ -308,7 +308,7 @@ void EditorFeatureProfile::_bind_methods() {
 
 	BIND_ENUM_CONSTANT(FEATURE_3D);
 	BIND_ENUM_CONSTANT(FEATURE_SCRIPT);
-	BIND_ENUM_CONSTANT(FEATURE_SCENE_TREE);
+	BIND_ENUM_CONSTANT(FEATURE_HIERARCHY);
 	BIND_ENUM_CONSTANT(FEATURE_FILESYSTEM_DOCK);
 	BIND_ENUM_CONSTANT(FEATURE_IMPORT_DOCK);
 	BIND_ENUM_CONSTANT(FEATURE_HISTORY_DOCK);

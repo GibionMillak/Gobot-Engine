@@ -40,7 +40,7 @@
 #include "editor/debugger/script_editor_debugger.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_log.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -97,8 +97,8 @@ EditorDebuggerNode::EditorDebuggerNode() {
 	remote_scene_tree->connect("selection_cleared", callable_mp(this, &EditorDebuggerNode::_remote_selection_cleared));
 	remote_scene_tree->connect("save_node", callable_mp(this, &EditorDebuggerNode::_save_node_requested));
 	remote_scene_tree->connect("button_clicked", callable_mp(this, &EditorDebuggerNode::_remote_tree_button_pressed));
-	SceneTreeDock::get_singleton()->add_remote_tree_editor(remote_scene_tree);
-	SceneTreeDock::get_singleton()->connect("remote_tree_selected", callable_mp(this, &EditorDebuggerNode::request_remote_tree));
+	HierarchyDock::get_singleton()->add_remote_tree_editor(remote_scene_tree);
+	HierarchyDock::get_singleton()->connect("remote_tree_selected", callable_mp(this, &EditorDebuggerNode::request_remote_tree));
 
 	remote_scene_tree_timeout = EDITOR_GET("debugger/remote_scene_tree_refresh_interval");
 	inspect_edited_object_timeout = EDITOR_GET("debugger/remote_inspect_refresh_interval");
@@ -464,10 +464,10 @@ void EditorDebuggerNode::_notification(int p_what) {
 				remote_scene_tree->set_new_session();
 				auto_switch_remote_scene_tree = EDITOR_GET("debugger/auto_switch_to_remote_scene_tree");
 				if (auto_switch_remote_scene_tree) {
-					SceneTreeDock::get_singleton()->show_remote_tree();
+					HierarchyDock::get_singleton()->show_remote_tree();
 				}
 				// Good to go.
-				SceneTreeDock::get_singleton()->show_tab_buttons();
+				HierarchyDock::get_singleton()->show_tab_buttons();
 				debugger->set_editor_remote_tree(remote_scene_tree);
 				debugger->start(server->take_connection());
 				// Send breakpoints.
@@ -549,7 +549,7 @@ void EditorDebuggerNode::_debugger_stopped(int p_id) {
 	} else {
 		EditorRunBar::get_singleton()->get_pause_button()->set_pressed(false);
 		EditorRunBar::get_singleton()->get_pause_button()->set_disabled(true);
-		SceneTreeDock *dock = SceneTreeDock::get_singleton();
+		HierarchyDock *dock = HierarchyDock::get_singleton();
 		if (dock->is_inside_tree()) {
 			dock->hide_remote_tree();
 			dock->hide_tab_buttons();

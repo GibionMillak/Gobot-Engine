@@ -43,7 +43,7 @@ class Particles3DEditorPlugin : public ParticlesEditorPlugin {
 	Dialog *generate_aabb = nullptr;
 	SpinBox *generate_seconds = nullptr;
 
-	SceneTreeDialog *emission_tree_dialog = nullptr;
+	HierarchyDialog *emission_tree_dialog = nullptr;
 	Dialog *emission_dialog = nullptr;
 	SpinBox *emission_amount = nullptr;
 	OptionButton *emission_fill = nullptr;

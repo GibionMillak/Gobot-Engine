@@ -41,7 +41,7 @@ class EditorLocaleDialog;
 class EditorResourcePicker;
 class EditorSpinSlider;
 class EditorVariantTypePopupMenu;
-class SceneTreeDialog;
+class HierarchyDialog;
 class TextEdit;
 class TextureButton;
 
@@ -697,7 +697,7 @@ class EditorPropertyNodePath : public EditorProperty {
 	PopupMenu *menu = nullptr;
 	LineEdit *edit = nullptr;
 
-	SceneTreeDialog *scene_tree = nullptr;
+	HierarchyDialog *_hierarchy_dialog = nullptr;
 	bool use_path_from_scene_root = false;
 	bool editing_node = false;
 	bool dropping = false;
@@ -743,7 +743,7 @@ class EditorPropertyResource : public EditorProperty {
 	GDCLASS(EditorPropertyResource, EditorProperty);
 
 	EditorResourcePicker *resource_picker = nullptr;
-	SceneTreeDialog *scene_tree = nullptr;
+	HierarchyDialog *_hierarchy_dialog = nullptr;
 
 	bool use_sub_inspector = false;
 	EditorInspector *sub_inspector = nullptr;

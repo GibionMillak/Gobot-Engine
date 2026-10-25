@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  scene_tree_editor.h                                                   */
+/*  hierarchy_editor.h                                                   */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -41,12 +41,12 @@ class Label;
 class TextureRect;
 class Timer;
 
-class SceneTreeEditor : public Control {
-	GDCLASS(SceneTreeEditor, Control);
+class HierarchyEditor : public Control {
+	GDCLASS(HierarchyEditor, Control);
 
 	EditorSelection *editor_selection = nullptr;
 
-	enum SceneTreeEditorButton {
+	enum HierarchyEditorButton {
 		BUTTON_SUBSCENE = 0,
 		BUTTON_VISIBILITY = 1,
 		BUTTON_SCRIPT = 2,
@@ -86,7 +86,7 @@ class SceneTreeEditor : public Control {
 			clear();
 		}
 
-		NodeCache(SceneTreeEditor *p_editor) :
+		NodeCache(HierarchyEditor *p_editor) :
 				editor(p_editor) {}
 
 		HashMap<Node *, CachedNode>::Iterator add(Node *p_node, TreeItem *p_item);
@@ -99,7 +99,7 @@ class SceneTreeEditor : public Control {
 		void delete_pending();
 		void clear();
 
-		SceneTreeEditor *editor;
+		HierarchyEditor *editor;
 		HashMap<Node *, CachedNode> cache;
 		HashSet<CachedNode *> to_delete;
 		ObjectID current_scene_id;
@@ -173,7 +173,7 @@ class SceneTreeEditor : public Control {
 	bool can_open_instance;
 	bool updating_tree = false;
 	bool show_enabled_subscene = false;
-	bool is_scene_tree_dock = false;
+	bool _is_hierarchy_dock = false;
 
 	void _edited();
 	void _renamed(TreeItem *p_item, TreeItem *p_batch_item, Node *p_node = nullptr);
@@ -246,7 +246,7 @@ public:
 	String get_filter_term_warning();
 	void set_show_all_nodes(bool p_show_all_nodes);
 
-	void set_as_scene_tree_dock();
+	void set_as_hierarchy_dock();
 	void set_display_foreign_nodes(bool p_display);
 
 	void set_marked(const HashSet<Node *> &p_marked, bool p_selectable = true, bool p_children_selectable = true);
@@ -269,19 +269,19 @@ public:
 	void set_connecting_signal(bool p_enable);
 	void set_update_when_invisible(bool p_enable);
 
-	Tree *get_scene_tree() { return tree; }
+	Tree *get_tree_control() { return tree; }
 
 	void update_warning();
 
-	SceneTreeEditor(bool p_label = true, bool p_can_rename = false, bool p_can_open_instance = false);
-	~SceneTreeEditor();
+	HierarchyEditor(bool p_label = true, bool p_can_rename = false, bool p_can_open_instance = false);
+	~HierarchyEditor();
 };
 
-class SceneTreeDialog : public Dialog {
-	GDCLASS(SceneTreeDialog, Dialog);
+class HierarchyDialog : public Dialog {
+	GDCLASS(HierarchyDialog, Dialog);
 
 	VBoxContainer *content = nullptr;
-	SceneTreeEditor *tree = nullptr;
+	HierarchyEditor *tree = nullptr;
 	FilterLineEdit *filter = nullptr;
 	CheckButton *show_all_nodes = nullptr;
 	LocalVector<TextureRect *> valid_type_icons;
@@ -299,11 +299,11 @@ protected:
 	static void _bind_methods();
 
 public:
-	void popup_scenetree_dialog(Node *p_selected_node = nullptr, Node *p_marked_node = nullptr, bool p_marked_node_selectable = true, bool p_marked_node_children_selectable = true);
+	void popup_hierarchy_dialog(Node *p_selected_node = nullptr, Node *p_marked_node = nullptr, bool p_marked_node_selectable = true, bool p_marked_node_children_selectable = true);
 	void set_valid_types(const Vector<StringName> &p_valid);
 
-	SceneTreeEditor *get_scene_tree() { return tree; }
+	HierarchyEditor *get_hierarchy_editor() { return tree; }
 	LineEdit *get_filter_line_edit();
 
-	SceneTreeDialog();
+	HierarchyDialog();
 };

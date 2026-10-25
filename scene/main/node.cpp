@@ -2945,7 +2945,7 @@ Node *Node::duplicate_from_editor(HashMap<const Node *, Node *> &r_duplimap, Nod
 
 	_duplicate_properties(this, this, dupe, flags);
 
-	// This is used by SceneTreeDock's paste functionality. When pasting to foreign scene, resources are duplicated.
+	// This is used by HierarchyDock's paste functionality. When pasting to foreign scene, resources are duplicated.
 	if (p_scene_root) {
 		remap_node_resources(dupe, p_scene_root, p_resource_remap);
 	}
@@ -3025,7 +3025,7 @@ void Node::remap_nested_resources(Ref<Resource> p_resource, HashMap<Ref<Resource
 }
 
 void Node::_emit_editor_state_changed() {
-	// This is required for the SceneTreeEditor to properly keep track of when an update is needed.
+	// This is required for the HierarchyEditor to properly keep track of when an update is needed.
 	// This signal might be expensive and not needed for anything outside of the editor.
 	if (Engine::get_singleton()->is_editor_hint()) {
 		emit_signal(SNAME("editor_state_changed"));

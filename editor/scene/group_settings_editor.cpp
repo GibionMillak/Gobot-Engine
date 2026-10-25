@@ -36,7 +36,7 @@
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "editor/docks/filesystem_dock.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/gui/editor_validation_panel.h"
@@ -235,7 +235,7 @@ void GroupSettingsEditor::_modify_references(const StringName &p_name, const Str
 	}
 	if (!edited_scenes_path.is_empty()) {
 		EditorNode::get_singleton()->save_scene_list(edited_scenes_path);
-		SceneTreeDock::get_singleton()->get_tree_editor()->update_tree();
+		HierarchyDock::get_singleton()->get_hierarchy_editor()->update_tree();
 	}
 
 	for (const String &E : scenes) {

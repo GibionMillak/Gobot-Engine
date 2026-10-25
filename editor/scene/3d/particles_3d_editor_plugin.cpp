@@ -34,7 +34,7 @@
 #include "core/os/os.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "scene/3d/cpu_particles_3d.h"
 #include "scene/3d/gpu_particles_3d.h"
 #include "scene/3d/mesh_instance_3d.h"
@@ -134,7 +134,7 @@ void Particles3DEditorPlugin::_menu_callback(int p_idx) {
 
 		case MENU_OPTION_CREATE_EMISSION_VOLUME_FROM_NODE: {
 			if (_can_generate_points()) {
-				emission_tree_dialog->popup_scenetree_dialog();
+				emission_tree_dialog->popup_hierarchy_dialog();
 			}
 		} break;
 
@@ -283,7 +283,7 @@ Particles3DEditorPlugin::Particles3DEditorPlugin() {
 
 	generate_aabb->connect(SceneStringName(confirmed), callable_mp(this, &Particles3DEditorPlugin::_generate_aabb));
 
-	emission_tree_dialog = memnew(SceneTreeDialog);
+	emission_tree_dialog = memnew(HierarchyDialog);
 	Vector<StringName> valid_types;
 	valid_types.push_back("MeshInstance3D");
 	emission_tree_dialog->set_valid_types(valid_types);

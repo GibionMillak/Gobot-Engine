@@ -266,7 +266,7 @@ public:
  * Stores and provides access to the nodes currently selected in the editor.
  *
  * This provides a central location for storing "selected" nodes, as a selection can be triggered from multiple places,
- * such as the SceneTreeDock or a main screen editor plugin (e.g. CanvasItemEditor).
+ * such as the HierarchyDock or a main screen editor plugin (e.g. CanvasItemEditor).
  */
 class EditorSelection : public Object {
 	GDCLASS(EditorSelection, Object);

@@ -473,7 +473,7 @@ void CreateDialog::_configure_search_option_item(TreeItem *r_item, const StringN
 		// Don't collapse the root node or an abstract node on the first tree level.
 		bool should_collapse = p_type != base_type && (r_item->get_parent()->get_text(0) != base_type || can_instantiate);
 
-		if (should_collapse && bool(EDITOR_GET("docks/scene_tree/start_create_dialog_fully_expanded"))) {
+		if (should_collapse && bool(EDITOR_GET("docks/hierarchy/start_create_dialog_fully_expanded"))) {
 			should_collapse = false; // Collapse all nodes anyway.
 		}
 		r_item->set_collapsed(should_collapse);
@@ -623,7 +623,7 @@ void CreateDialog::_sbox_input(const Ref<InputEvent> &p_event) {
 void CreateDialog::_notification(int p_what) {
 	switch (p_what) {
 		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {
-			if (!EditorSettings::get_singleton()->check_changed_settings_in_group("docks/scene_tree")) {
+			if (!EditorSettings::get_singleton()->check_changed_settings_in_group("docks/hierarchy")) {
 				break;
 			}
 

@@ -64,7 +64,7 @@
 #include "editor/docks/history_dock.h"
 #include "editor/docks/import_dock.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/docks/signals_dock.h"
 #include "editor/editor_data.h"
 #include "editor/editor_interface.h"
@@ -1022,7 +1022,7 @@ EditorNode::EditorNode() {
 	ED_SHORTCUT_AND_COMMAND("editor/report_a_bug", TTRC("Report a Bug"));
 	ED_SHORTCUT_AND_COMMAND("editor/about", TTRC("About Gobot"));
 
-	// Use the Ctrl modifier so F2 can be used to rename nodes in the scene tree dock.
+	// Use the Ctrl modifier so F2 can be used to rename nodes in the Hierarchy dock.
 	ED_SHORTCUT_AND_COMMAND("editor/editor_2d", TTRC("Open 2D Workspace"), KeyModifierMask::CTRL | Key::F1);
 	ED_SHORTCUT_AND_COMMAND("editor/editor_3d", TTRC("Open 3D Workspace"), KeyModifierMask::CTRL | Key::F2);
 	ED_SHORTCUT_AND_COMMAND("editor/editor_script", TTRC("Open Script Editor"), KeyModifierMask::CTRL | Key::F3);
@@ -1183,8 +1183,8 @@ EditorNode::EditorNode() {
 
 	// Instantiate and place editor docks.
 
-	memnew(SceneTreeDock(scene_root, editor_selection, editor_data));
-	editor_dock_manager->add_dock(SceneTreeDock::get_singleton());
+	memnew(HierarchyDock(scene_root, editor_selection, editor_data));
+	editor_dock_manager->add_dock(HierarchyDock::get_singleton());
 
 	memnew(ImportDock);
 	editor_dock_manager->add_dock(ImportDock::get_singleton());
@@ -1598,7 +1598,7 @@ EditorNode::EditorNode() {
 	default_layout.instantiate();
 	const String docks_section = "docks";
 	{
-		const String scene_key = SceneTreeDock::get_singleton()->get_effective_layout_key();
+		const String scene_key = HierarchyDock::get_singleton()->get_effective_layout_key();
 		const String import_key = ImportDock::get_singleton()->get_effective_layout_key();
 		default_layout->set_value(docks_section, DockTabContainer::get_config_key(EditorDock::DOCK_SLOT_LEFT_UR), vformat("%s,%s", scene_key, import_key));
 		default_layout->set_value(docks_section, DockTabContainer::get_config_key(EditorDock::DOCK_SLOT_LEFT_UR) + "_selected_tab_idx", 0);
@@ -2452,7 +2452,7 @@ void EditorNode::push_item(Object *p_object, const String &p_property, bool p_in
 		InspectorDock::get_inspector_singleton()->edit(nullptr);
 		SignalsDock::get_singleton()->set_object(nullptr);
 		GroupsDock::get_singleton()->set_selection(Vector<Node *>());
-		SceneTreeDock::get_singleton()->set_selected(nullptr);
+		HierarchyDock::get_singleton()->set_selected(nullptr);
 		InspectorDock::get_singleton()->update(nullptr);
 		EditorDebuggerNode::get_singleton()->clear_remote_tree_selection();
 		hide_unused_editors();
@@ -2789,7 +2789,7 @@ void EditorNode::set_edited_scene_root(Node *p_scene, bool p_auto_add) {
 	if (Object::cast_to<Popup>(p_scene)) {
 		Object::cast_to<Popup>(p_scene)->show();
 	}
-	SceneTreeDock::get_singleton()->set_edited_scene(p_scene);
+	HierarchyDock::get_singleton()->set_edited_scene(p_scene);
 	if (get_tree()) {
 		get_tree()->set_edited_scene_root(p_scene);
 	}
@@ -3469,11 +3469,11 @@ void EditorNode::register_hdr_viewport(Viewport *p_viewport) {
 }
 
 void EditorNode::request_instantiate_scene(const String &p_path) {
-	SceneTreeDock::get_singleton()->instantiate(p_path);
+	HierarchyDock::get_singleton()->instantiate(p_path);
 }
 
 void EditorNode::request_instantiate_scenes(const Vector<String> &p_files) {
-	SceneTreeDock::get_singleton()->instantiate_scenes(p_files);
+	HierarchyDock::get_singleton()->instantiate_scenes(p_files);
 }
 
 void EditorNode::notify_all_debug_sessions_exited() {
@@ -4125,7 +4125,7 @@ void EditorNode::reload_instances_with_path_in_edited_scenes() {
 					// How that the editor executes a redraw while destroying or progressing the EditorProgress,
 					// it crashes when the root scene has been replaced because the edited scene
 					// was freed and no longer in the scene tree.
-					SceneTreeDock::get_singleton()->set_edited_scene(current_edited_scene);
+					HierarchyDock::get_singleton()->set_edited_scene(current_edited_scene);
 					if (get_tree()) {
 						get_tree()->set_edited_scene_root(current_edited_scene);
 					}
@@ -4231,7 +4231,7 @@ void EditorNode::reload_instances_with_path_in_edited_scenes() {
 			scene_root->remove_child(current_edited_scene);
 
 			// Ensure the current edited scene is re-added if removed earlier because it has the same name
-			// as the reimported scene. The editor could crash when reloading SceneTreeDock if the current
+			// as the reimported scene. The editor could crash when reloading HierarchyDock if the current
 			// edited scene is not in the scene tree.
 			Node *original_edited_scene_root = editor_data.get_edited_scene_root(original_edited_scene_idx);
 			if (original_edited_scene_root && !original_edited_scene_root->get_parent()) {
@@ -5512,7 +5512,7 @@ void EditorNode::_edit_current(bool p_skip_foreign, bool p_skip_inspector_update
 	bool inspector_only = editor_history.is_current_inspector_only();
 
 	if (!current_obj) {
-		SceneTreeDock::get_singleton()->set_selected(nullptr);
+		HierarchyDock::get_singleton()->set_selected(nullptr);
 		InspectorDock::get_inspector_singleton()->edit(nullptr);
 		SignalsDock::get_singleton()->set_object(nullptr);
 		GroupsDock::get_singleton()->set_selection(Vector<Node *>());
@@ -5544,7 +5544,7 @@ void EditorNode::_edit_current(bool p_skip_foreign, bool p_skip_inspector_update
 
 		if (!p_skip_inspector_update) {
 			InspectorDock::get_inspector_singleton()->edit(current_res);
-			SceneTreeDock::get_singleton()->set_selected(nullptr);
+			HierarchyDock::get_singleton()->set_selected(nullptr);
 			SignalsDock::get_singleton()->set_object(current_res);
 			GroupsDock::get_singleton()->set_selection(Vector<Node *>());
 			InspectorDock::get_singleton()->update(nullptr);
@@ -5578,13 +5578,13 @@ void EditorNode::_edit_current(bool p_skip_foreign, bool p_skip_inspector_update
 		if (current_node->is_inside_tree()) {
 			SignalsDock::get_singleton()->set_object(current_node);
 			GroupsDock::get_singleton()->set_selection(Vector<Node *>{ current_node });
-			SceneTreeDock::get_singleton()->set_selected(current_node);
-			SceneTreeDock::get_singleton()->set_selection({ current_node });
+			HierarchyDock::get_singleton()->set_selected(current_node);
+			HierarchyDock::get_singleton()->set_selection({ current_node });
 			InspectorDock::get_singleton()->update(current_node);
 		} else {
 			SignalsDock::get_singleton()->set_object(nullptr);
 			GroupsDock::get_singleton()->set_selection(Vector<Node *>());
-			SceneTreeDock::get_singleton()->set_selected(nullptr);
+			HierarchyDock::get_singleton()->set_selected(nullptr);
 			InspectorDock::get_singleton()->update(nullptr);
 		}
 		EditorDebuggerNode::get_singleton()->clear_remote_tree_selection();
@@ -5633,8 +5633,8 @@ void EditorNode::_edit_current(bool p_skip_foreign, bool p_skip_inspector_update
 		InspectorDock::get_inspector_singleton()->edit(current_obj);
 		SignalsDock::get_singleton()->set_object(nullptr);
 		GroupsDock::get_singleton()->set_selection(multi_nodes);
-		SceneTreeDock::get_singleton()->set_selected(selected_node);
-		SceneTreeDock::get_singleton()->set_selection(multi_nodes);
+		HierarchyDock::get_singleton()->set_selected(selected_node);
+		HierarchyDock::get_singleton()->set_selection(multi_nodes);
 		InspectorDock::get_singleton()->update(nullptr);
 	}
 
@@ -5643,7 +5643,7 @@ void EditorNode::_edit_current(bool p_skip_foreign, bool p_skip_inspector_update
 			editable_info,
 			info_is_warning);
 
-	Object *editor_owner = (is_node || current_obj->is_class("MultiNodeEdit")) ? (Object *)SceneTreeDock::get_singleton() : is_resource ? (Object *)InspectorDock::get_inspector_singleton()
+	Object *editor_owner = (is_node || current_obj->is_class("MultiNodeEdit")) ? (Object *)HierarchyDock::get_singleton() : is_resource ? (Object *)InspectorDock::get_inspector_singleton()
 																																		: (Object *)this;
 
 	// Take care of the main editor plugin.
@@ -5838,7 +5838,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 					EditorToaster::get_singleton()->popup_str(vformat(TTR("The current scene has no root node, but %d modified external resource(s) and/or plugin data were saved anyway."), saved), EditorToaster::SEVERITY_INFO);
 				} else if (p_option == SCENE_SAVE_AS_SCENE) {
 					// Don't show this dialog when pressing Ctrl + S to avoid interfering with script saving.
-					show_warning(TTR("A root node is required to save the scene. You can add a root node using the Scene dock."));
+					show_warning(TTR("A root node is required to save the scene. You can add a root node using the Hierarchy dock."));
 				}
 
 				break;
@@ -6967,7 +6967,7 @@ void EditorNode::_set_current_scene_nocheck(int p_idx, bool p_ignore_state) {
 	Node *old_scene = get_editor_data().get_edited_scene_root();
 
 	editor_selection->clear();
-	SceneTreeDock::get_singleton()->clear_previous_node_selection();
+	HierarchyDock::get_singleton()->clear_previous_node_selection();
 	editor_data.set_edited_scene(p_idx);
 
 	Node *new_scene = editor_data.get_edited_scene_root();
@@ -6981,7 +6981,7 @@ void EditorNode::_set_current_scene_nocheck(int p_idx, bool p_ignore_state) {
 		p->show();
 	}
 
-	SceneTreeDock::get_singleton()->set_edited_scene(new_scene);
+	HierarchyDock::get_singleton()->set_edited_scene(new_scene);
 	if (get_tree()) {
 		get_tree()->set_edited_scene_root(new_scene);
 	}
@@ -6998,7 +6998,7 @@ void EditorNode::_set_current_scene_nocheck(int p_idx, bool p_ignore_state) {
 		EditorUndoRedoManager::get_singleton()->clear_history(editor_data.get_scene_history_id(p_idx), false);
 	}
 	resource_count.clear();
-	SceneTreeDock::get_singleton()->get_tree_editor()->update_tree();
+	HierarchyDock::get_singleton()->get_hierarchy_editor()->update_tree();
 
 	_update_title();
 
@@ -7843,7 +7843,7 @@ void EditorNode::shortcut_input(const Ref<InputEvent> &p_event) {
 
 void EditorNode::_remove_edited_scene(bool p_change_tab) {
 	// When scene gets closed no node is edited anymore, so make sure the editors are notified before nodes are freed.
-	hide_unused_editors(SceneTreeDock::get_singleton());
+	hide_unused_editors(HierarchyDock::get_singleton());
 	editor_selection->clear();
 	editor_selection->update(false);
 
@@ -8199,22 +8199,22 @@ void EditorNode::_restart_editor(bool p_goto_project_manager) {
 
 Dictionary EditorNode::_get_main_scene_state() {
 	Dictionary state;
-	state["scene_tree_offset"] = SceneTreeDock::get_singleton()->get_tree_editor()->get_scene_tree()->get_vscroll_bar()->get_value();
+	state["hierarchy_offset"] = HierarchyDock::get_singleton()->get_hierarchy_editor()->get_tree_control()->get_vscroll_bar()->get_value();
 	state["property_edit_offset"] = InspectorDock::get_inspector_singleton()->get_scroll_offset();
-	state["node_filter"] = SceneTreeDock::get_singleton()->get_filter();
+	state["node_filter"] = HierarchyDock::get_singleton()->get_filter();
 	return state;
 }
 
 void EditorNode::_set_main_scene_state(const Dictionary &p_state) {
-	if (p_state.has("scene_tree_offset")) {
-		SceneTreeDock::get_singleton()->get_tree_editor()->get_scene_tree()->get_vscroll_bar()->set_value(p_state["scene_tree_offset"]);
+	if (p_state.has("hierarchy_offset")) {
+		HierarchyDock::get_singleton()->get_hierarchy_editor()->get_tree_control()->get_vscroll_bar()->set_value(p_state["hierarchy_offset"]);
 	}
 	if (p_state.has("property_edit_offset")) {
 		InspectorDock::get_inspector_singleton()->set_scroll_offset(p_state["property_edit_offset"]);
 	}
 
 	if (p_state.has("node_filter")) {
-		SceneTreeDock::get_singleton()->set_filter(p_state["node_filter"]);
+		HierarchyDock::get_singleton()->set_filter(p_state["node_filter"]);
 	}
 
 	// This should only happen at the very end.

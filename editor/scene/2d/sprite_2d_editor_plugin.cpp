@@ -33,7 +33,7 @@
 #include "core/math/geometry_2d.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/gui/editor_zoom_widget.h"
@@ -326,7 +326,7 @@ void Sprite2DEditor::_convert_to_mesh_2d_node() {
 
 	EditorUndoRedoManager *ur = EditorUndoRedoManager::get_singleton();
 	ur->create_action(TTR("Convert to MeshInstance2D"), UndoRedo::MERGE_DISABLE, node);
-	SceneTreeDock::get_singleton()->replace_node(node, mesh_instance);
+	HierarchyDock::get_singleton()->replace_node(node, mesh_instance);
 	ur->commit_action(false);
 }
 
@@ -381,7 +381,7 @@ void Sprite2DEditor::_convert_to_polygon_2d_node() {
 
 	EditorUndoRedoManager *ur = EditorUndoRedoManager::get_singleton();
 	ur->create_action(TTR("Convert to Polygon2D"), UndoRedo::MERGE_DISABLE, node);
-	SceneTreeDock::get_singleton()->replace_node(node, polygon_2d_instance);
+	HierarchyDock::get_singleton()->replace_node(node, polygon_2d_instance);
 	ur->commit_action(false);
 }
 

@@ -2228,8 +2228,8 @@ msgstr "Recolher menu principal"
 msgid "Derive Script Globals by Name"
 msgstr "Obter Globais de Script pelo Nome"
 
-msgid "Scene Tree"
-msgstr "Árvore da Cena"
+msgid "Hierarchy"
+msgstr "Hierarquia"
 
 msgid "Ask Before Revoking Unique Name"
 msgstr "Confirmar Remoção de Nome Único"

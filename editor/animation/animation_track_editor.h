@@ -52,7 +52,7 @@ class EditorSpinSlider;
 class HSlider;
 class OptionButton;
 class PanelContainer;
-class SceneTreeDialog;
+class HierarchyDialog;
 class SpinBox;
 class TextureRect;
 class ViewPanner;
@@ -694,7 +694,7 @@ class AnimationTrackEditor : public VBoxContainer {
 
 	PropertySelector *prop_selector = nullptr;
 	PropertySelector *method_selector = nullptr;
-	SceneTreeDialog *pick_track = nullptr;
+	HierarchyDialog *pick_track = nullptr;
 	int adding_track_type = 0;
 	NodePath adding_track_path;
 

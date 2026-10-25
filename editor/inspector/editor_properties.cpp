@@ -39,7 +39,7 @@
 #include "core/string/translation_server.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/create_dialog.h"
@@ -50,7 +50,7 @@
 #include "editor/inspector/editor_properties_vector.h"
 #include "editor/inspector/editor_resource_picker.h"
 #include "editor/inspector/property_selector.h"
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "editor/script/syntax_highlighters.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/settings/project_settings_editor.h"
@@ -3040,12 +3040,12 @@ void EditorPropertyNodePath::_node_selected(const NodePath &p_path, bool p_absol
 }
 
 void EditorPropertyNodePath::_node_assign() {
-	if (!scene_tree) {
-		scene_tree = memnew(SceneTreeDialog);
-		scene_tree->get_scene_tree()->set_show_enabled_subscene(true);
-		scene_tree->set_valid_types(valid_types);
-		add_child(scene_tree);
-		scene_tree->connect("selected", callable_mp(this, &EditorPropertyNodePath::_node_selected).bind(true));
+	if (!_hierarchy_dialog) {
+		_hierarchy_dialog = memnew(HierarchyDialog);
+		_hierarchy_dialog->get_hierarchy_editor()->set_show_enabled_subscene(true);
+		_hierarchy_dialog->set_valid_types(valid_types);
+		add_child(_hierarchy_dialog);
+		_hierarchy_dialog->connect("selected", callable_mp(this, &EditorPropertyNodePath::_node_selected).bind(true));
 	}
 
 	Variant val = get_edited_property_value();
@@ -3056,7 +3056,7 @@ void EditorPropertyNodePath::_node_assign() {
 	} else {
 		n = Object::cast_to<Node>(val);
 	}
-	scene_tree->popup_scenetree_dialog(n, get_base_node());
+	_hierarchy_dialog->popup_hierarchy_dialog(n, get_base_node());
 }
 
 void EditorPropertyNodePath::_assign_draw() {
@@ -3132,8 +3132,8 @@ void EditorPropertyNodePath::_menu_option(int p_idx) {
 			Node *target_node = edited_node->get_node_or_null(np);
 			ERR_FAIL_NULL(target_node);
 
-			SceneTreeDock::get_singleton()->make_visible();
-			callable_mp(SceneTreeDock::get_singleton(), &SceneTreeDock::highlight_node).call_deferred(target_node);
+			HierarchyDock::get_singleton()->make_visible();
+			callable_mp(HierarchyDock::get_singleton(), &HierarchyDock::highlight_node).call_deferred(target_node);
 		} break;
 	}
 }
@@ -3518,19 +3518,19 @@ void EditorPropertyResource::_resource_changed(const Ref<Resource> &p_resource) 
 
 	// Automatically suggest setting up the path for a ViewportTexture.
 	if (vpt.is_valid() && vpt->get_viewport_path_in_scene().is_empty()) {
-		if (!scene_tree) {
-			scene_tree = memnew(SceneTreeDialog);
-			scene_tree->set_title(TTR("Pick a Viewport"));
+		if (!_hierarchy_dialog) {
+			_hierarchy_dialog = memnew(HierarchyDialog);
+			_hierarchy_dialog->set_title(TTR("Pick a Viewport"));
 
 			Vector<StringName> valid_types;
 			valid_types.push_back("Viewport");
-			scene_tree->set_valid_types(valid_types);
-			scene_tree->get_scene_tree()->set_show_enabled_subscene(true);
+			_hierarchy_dialog->set_valid_types(valid_types);
+			_hierarchy_dialog->get_hierarchy_editor()->set_show_enabled_subscene(true);
 
-			add_child(scene_tree);
-			scene_tree->connect("selected", callable_mp(this, &EditorPropertyResource::_viewport_selected));
+			add_child(_hierarchy_dialog);
+			_hierarchy_dialog->connect("selected", callable_mp(this, &EditorPropertyResource::_viewport_selected));
 		}
-		scene_tree->popup_scenetree_dialog();
+		_hierarchy_dialog->popup_hierarchy_dialog();
 	}
 }
 

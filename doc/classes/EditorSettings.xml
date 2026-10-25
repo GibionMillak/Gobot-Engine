@@ -243,10 +243,10 @@
 			The target frame rate shown in the visual profiler graph, in frames per second.
 		</member>
 		<member name="debugger/remote_inspect_refresh_interval" type="float" setter="" getter="">
-			The refresh interval for the remote inspector's properties (in seconds). Lower values are more reactive, but may cause stuttering while the project is running from the editor and the [b]Remote[/b] scene tree is selected in the Scene tree dock.
+			The refresh interval for the remote inspector's properties (in seconds). Lower values are more reactive, but may cause stuttering while the project is running from the editor and the [b]Remote[/b] scene tree is selected in the Hierarchy dock.
 		</member>
 		<member name="debugger/remote_scene_tree_refresh_interval" type="float" setter="" getter="">
-			The refresh interval for the remote scene tree (in seconds). Lower values are more reactive, but may cause stuttering while the project is running from the editor and the [b]Remote[/b] scene tree is selected in the Scene tree dock.
+			The refresh interval for the remote scene tree (in seconds). Lower values are more reactive, but may cause stuttering while the project is running from the editor and the [b]Remote[/b] scene tree is selected in the Hierarchy dock.
 		</member>
 		<member name="docks/filesystem/always_show_folders" type="bool" setter="" getter="">
 			If [code]true[/code], displays folders in the FileSystem dock's bottom pane when split mode is enabled. If [code]false[/code], only files will be displayed in the bottom pane. Split mode can be toggled by pressing the icon next to the [code]res://[/code] folder path.
@@ -274,25 +274,25 @@
 			The tint intensity to use for the subresources background in the Inspector dock. The tint is used to distinguish between different subresources in the inspector. Higher values result in a more noticeable background color difference.
 		</member>
 
-		<member name="docks/scene_tree/ask_before_deleting_related_animation_tracks" type="bool" setter="" getter="">
+		<member name="docks/hierarchy/ask_before_deleting_related_animation_tracks" type="bool" setter="" getter="">
 			If [code]true[/code], when a node is deleted with animation tracks referencing it, a confirmation dialog appears before the tracks are deleted. The dialog will appear even when using the "Delete (No Confirm)" shortcut.
 		</member>
-		<member name="docks/scene_tree/ask_before_revoking_unique_name" type="bool" setter="" getter="">
-			If [code]true[/code], displays a confirmation dialog after left-clicking the "percent" icon next to a node name in the Scene tree dock. When clicked, this icon revokes the node's scene-unique name, which can impact the behavior of scripts that rely on this scene-unique name due to identifiers not being found anymore.
+		<member name="docks/hierarchy/ask_before_revoking_unique_name" type="bool" setter="" getter="">
+			If [code]true[/code], displays a confirmation dialog after left-clicking the "percent" icon next to a node name in the Hierarchy dock. When clicked, this icon revokes the node's scene-unique name, which can impact the behavior of scripts that rely on this scene-unique name due to identifiers not being found anymore.
 		</member>
-		<member name="docks/scene_tree/auto_expand_to_selected" type="bool" setter="" getter="">
-			If [code]true[/code], the scene tree dock will automatically unfold nodes when a node that has folded parents is selected.
+		<member name="docks/hierarchy/auto_expand_to_selected" type="bool" setter="" getter="">
+			If [code]true[/code], the Hierarchy dock will automatically unfold nodes when a node that has folded parents is selected.
 		</member>
-		<member name="docks/scene_tree/center_node_on_reparent" type="bool" setter="" getter="">
+		<member name="docks/hierarchy/center_node_on_reparent" type="bool" setter="" getter="">
 			If [code]true[/code], new node created when reparenting node(s) will be positioned at the average position of the selected node(s).
 		</member>
-		<member name="docks/scene_tree/derive_script_globals_by_name" type="bool" setter="" getter="">
+		<member name="docks/hierarchy/derive_script_globals_by_name" type="bool" setter="" getter="">
 			If [code]true[/code], when extending a script, the global class name of the script is inserted in the script creation dialog, if it exists. If [code]false[/code], the script's file path is always inserted.
 		</member>
-		<member name="docks/scene_tree/hide_filtered_out_parents" type="bool" setter="" getter="">
-			If [code]true[/code], the scene tree dock will only show nodes that match the filter, without showing parents that don't. This settings can also be changed in the Scene dock's top menu.
+		<member name="docks/hierarchy/hide_filtered_out_parents" type="bool" setter="" getter="">
+			If [code]true[/code], the Hierarchy dock will only show nodes that match the filter, without showing parents that don't. This settings can also be changed in the Hierarchy dock's top menu.
 		</member>
-		<member name="docks/scene_tree/start_create_dialog_fully_expanded" type="bool" setter="" getter="">
+		<member name="docks/hierarchy/start_create_dialog_fully_expanded" type="bool" setter="" getter="">
 			If [code]true[/code], the Create dialog (Create New Node/Create New Resource) will start with all its sections expanded. Otherwise, sections will be collapsed until the user starts searching (which will automatically expand sections as needed).
 		</member>
 		<member name="editors/2d/auto_resample_delay" type="float" setter="" getter="">
@@ -593,7 +593,7 @@
 			If [code]true[/code], collision shapes in the 3D editor are visible only when selected. If [code]false[/code], collision shapes are always visible.
 		</member>
 		<member name="editors/animation/autorename_animation_tracks" type="bool" setter="" getter="">
-			If [code]true[/code], automatically updates animation tracks' target paths when renaming or reparenting nodes in the Scene tree dock.
+			If [code]true[/code], automatically updates animation tracks' target paths when renaming or reparenting nodes in the Hierarchy dock.
 		</member>
 		<member name="editors/animation/confirm_insert_track" type="bool" setter="" getter="">
 			If [code]true[/code], display a confirmation dialog when adding a new track to an animation by pressing the "key" icon next to a property. Holding Shift will bypass the dialog.
@@ -1194,7 +1194,7 @@
 			The custom theme resource to use for the editor. Must be a Godot theme resource in [code].tres[/code] or [code].res[/code] format.
 		</member>
 		<member name="interface/theme/draw_relationship_lines" type="int" setter="" getter="">
-			What relationship lines to draw in the editor's [Tree]-based GUIs (such as the Scene tree dock).
+			What relationship lines to draw in the editor's [Tree]-based GUIs (such as the Hierarchy dock).
 			- [b]None[/b] will make it so that no relationship lines are drawn.
 			- [b]Selected Only[/b] will only draw them for selected items.
 			- [b]All[/b] will always draw them for all items.
@@ -1216,7 +1216,7 @@
 			The padding used by various GUI elements in the editor (in pixels).
 		</member>
 		<member name="interface/theme/relationship_line_opacity" type="float" setter="" getter="">
-			The opacity to use when drawing relationship lines in the editor's [Tree]-based GUIs (such as the Scene tree dock).
+			The opacity to use when drawing relationship lines in the editor's [Tree]-based GUIs (such as the Hierarchy dock).
 		</member>
 		<member name="interface/theme/use_monospace_font_for_editor_symbols" type="bool" setter="" getter="">
 			If [code]true[/code], use the monospace font for some labels in the editor that display code symbols, such as signals, properties, and methods.
@@ -1503,7 +1503,7 @@
 			[b]Note:[/b] [member text_editor/behavior/navigation/smooth_scrolling] currently behaves poorly in projects where [member ProjectSettings.physics/common/physics_ticks_per_second] has been increased significantly from its default value ([code]60[/code]). In this case, it is recommended to disable this setting.
 		</member>
 		<member name="text_editor/behavior/navigation/stay_in_script_editor_on_node_selected" type="bool" setter="" getter="">
-			If [code]true[/code], prevents automatically switching between the Script and 2D/3D screens when selecting a node in the Scene tree dock.
+			If [code]true[/code], prevents automatically switching between the Script and 2D/3D screens when selecting a node in the Hierarchy dock.
 		</member>
 		<member name="text_editor/behavior/navigation/use_custom_word_separators" type="bool" setter="" getter="">
 			If [code]true[/code], uses the characters in [member text_editor/behavior/navigation/custom_word_separators] as word separators for word navigation and operations. This is in addition to the default characters if [member text_editor/behavior/navigation/use_default_word_separators] is also enabled. Word navigation and operations include double-clicking on a word or holding [kbd]Ctrl[/kbd] ([kbd]Cmd[/kbd] on macOS) while pressing [kbd]left[/kbd], [kbd]right[/kbd], [kbd]backspace[/kbd], or [kbd]delete[/kbd].
@@ -1525,7 +1525,7 @@
 			If [code]true[/code], automatically adds [url=$DOCS_URL/tutorials/scripting/gdscript/static_typing.html]GDScript static typing[/url] (such as [code]-&gt; void[/code] and [code]: int[/code]) in many situations where it's possible to, including when:
 			- Accepting a suggestion from code autocompletion;
 			- Connecting signals from the Signals dock;
-			- Creating variables prefixed with [annotation @GDScript.@onready], by dropping nodes from the Scene dock into the script editor while holding [kbd]Ctrl[/kbd].
+			- Creating variables prefixed with [annotation @GDScript.@onready], by dropping nodes from the Hierarchy dock into the script editor while holding [kbd]Ctrl[/kbd].
 		</member>
 		<member name="text_editor/completion/auto_brace_complete" type="bool" setter="" getter="">
 			If [code]true[/code], automatically inserts the matching closing brace when the opening brace is inserted by typing or autocompletion. Also automatically removes the closing brace when pressing [kbd]Backspace[/kbd] on the opening brace. This includes brackets ([code]()[/code], [code][][/code], [code]{}[/code]), string quotation marks ([code]''[/code], [code]""[/code]), and comments ([code]/**/[/code]) if the language supports it.

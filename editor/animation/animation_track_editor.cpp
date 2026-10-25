@@ -48,7 +48,7 @@
 #include "editor/gui/editor_spin_slider.h"
 #include "editor/gui/editor_validation_panel.h"
 #include "editor/inspector/multi_node_edit.h"
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
@@ -5877,7 +5877,7 @@ void AnimationTrackEditor::_add_track(int p_type) {
 	}
 	pick_track->set_valid_types(valid_types);
 	pick_track->set_title(title_text);
-	pick_track->popup_scenetree_dialog(nullptr, root_node);
+	pick_track->popup_hierarchy_dialog(nullptr, root_node);
 	pick_track->get_filter_line_edit()->clear();
 	pick_track->get_filter_line_edit()->grab_focus();
 }
@@ -8140,7 +8140,7 @@ void AnimationTrackEditor::_bind_methods() {
 }
 
 void AnimationTrackEditor::_pick_track_filter_text_changed(const String &p_newtext) {
-	TreeItem *root_item = pick_track->get_scene_tree()->get_scene_tree()->get_root();
+	TreeItem *root_item = pick_track->get_hierarchy_editor()->get_tree_control()->get_root();
 
 	Vector<Node *> select_candidates;
 	Node *to_select = nullptr;
@@ -8164,7 +8164,7 @@ void AnimationTrackEditor::_pick_track_filter_text_changed(const String &p_newte
 		}
 	}
 
-	pick_track->get_scene_tree()->set_selected(to_select);
+	pick_track->get_hierarchy_editor()->set_selected(to_select);
 }
 
 void AnimationTrackEditor::_pick_track_select_recursive(TreeItem *p_item, const String &p_filter, Vector<Node *> &p_select_candidates) {
@@ -8545,7 +8545,7 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	edit->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &AnimationTrackEditor::_edit_menu_pressed));
 	edit->get_popup()->connect("about_to_popup", callable_mp(this, &AnimationTrackEditor::_edit_menu_about_to_popup));
 
-	pick_track = memnew(SceneTreeDialog);
+	pick_track = memnew(HierarchyDialog);
 	add_child(pick_track);
 	pick_track->connect("selected", callable_mp(this, &AnimationTrackEditor::_new_track_node_selected));
 	pick_track->get_filter_line_edit()->connect(SceneStringName(text_changed), callable_mp(this, &AnimationTrackEditor::_pick_track_filter_text_changed));

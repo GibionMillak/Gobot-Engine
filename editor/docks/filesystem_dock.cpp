@@ -45,7 +45,7 @@
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/import_dock.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -3313,7 +3313,7 @@ void FileSystemDock::drop_data_fw(const Point2 &p_point, const Variant &p_data, 
 		if (to_dir.is_empty()) {
 			to_dir = get_current_directory();
 		}
-		SceneTreeDock::get_singleton()->save_branch_to_file(to_dir);
+		HierarchyDock::get_singleton()->save_branch_to_file(to_dir);
 	}
 }
 

@@ -35,7 +35,7 @@
 #include "core/object/class_db.h"
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
@@ -88,7 +88,7 @@ void ScenePaint2DEditor::_edit(Object *p_object) {
 	cache_node = Object::cast_to<Node2D>(p_object);
 	if (_is_node_valid() && (pinned || input_tool == INPUT_TOOL_PICK)) {
 		if (input_tool == INPUT_TOOL_PICK) {
-			SceneTreeDock::get_singleton()->set_selection(Vector<Node *>{ node });
+			HierarchyDock::get_singleton()->set_selection(Vector<Node *>{ node });
 		}
 		return;
 	}
@@ -500,7 +500,7 @@ void ScenePaint2DEditor::_file_system_input(const Ref<InputEvent> &p_event) {
 	}
 }
 
-void ScenePaint2DEditor::_scene_tree_input(const Ref<InputEvent> &p_event) {
+void ScenePaint2DEditor::_hierarchy_input(const Ref<InputEvent> &p_event) {
 	if (input_tool != INPUT_TOOL_PICK || input_tool == INPUT_TOOL_QUICK_PICK) {
 		input_tool = INPUT_TOOL_NONE;
 		scene_picker_button->set_pressed(false);
@@ -597,7 +597,7 @@ void ScenePaint2DEditor::_pinned_toggled(bool p_pressed) {
 		pinned_nodes[scene] = node;
 	} else {
 		pinned_nodes.erase(scene);
-		selected_node = SceneTreeDock::get_singleton()->get_tree_editor()->get_selected();
+		selected_node = HierarchyDock::get_singleton()->get_hierarchy_editor()->get_selected();
 	}
 	_set_pinned(p_pressed, pinned_nodes[scene]);
 	_update_node(selected_node);
@@ -617,7 +617,7 @@ void ScenePaint2DEditor::_scene_changed() {
 		}
 	} else {
 		_set_pinned(false);
-		cache_node = Object::cast_to<Node2D>(SceneTreeDock::get_singleton()->get_tree_editor()->get_selected());
+		cache_node = Object::cast_to<Node2D>(HierarchyDock::get_singleton()->get_hierarchy_editor()->get_selected());
 	}
 	_update_node();
 	_update_hint_label();
@@ -635,7 +635,7 @@ void ScenePaint2DEditor::_update_scene_picker(int p_mode, Control *p_control) {
 			node_2d = _get_scene_from_path(FileSystemDock::get_singleton()->get_current_path());
 		} break;
 		case PICK_SCENE_TREE: {
-			node_2d = Object::cast_to<Node2D>(SceneTreeDock::get_singleton()->get_tree_editor()->get_selected());
+			node_2d = Object::cast_to<Node2D>(HierarchyDock::get_singleton()->get_hierarchy_editor()->get_selected());
 		} break;
 		case PICK_CANVAS_ITEM: {
 			CanvasItemEditor *canvas_item_editor = CanvasItemEditor::get_singleton();
@@ -684,7 +684,7 @@ void ScenePaint2DEditor::_edit_properties_toggled(bool p_pressed) {
 	edit_properties = p_pressed;
 	edit_properties_button->set_pressed_no_signal(edit_properties);
 	if (!edit_properties) {
-		Node *selected_node = SceneTreeDock::get_singleton()->get_tree_editor()->get_selected();
+		Node *selected_node = HierarchyDock::get_singleton()->get_hierarchy_editor()->get_selected();
 		if (selected_node) {
 			InspectorDock::get_inspector_singleton()->edit(selected_node);
 		} else if (node) {
@@ -930,7 +930,7 @@ ScenePaint2DEditor::ScenePaint2DEditor() {
 	scene_picker_button = memnew(Button);
 	scene_picker_button->set_toggle_mode(true);
 	scene_picker_button->set_theme_type_variation(SceneStringName(FlatButton));
-	scene_picker_button->set_tooltip_text(vformat(TTRC("When enabled, you can select scenes from the FileSystem dock, Scene dock, or 2D editor's viewport.\nHolding %s enables picking from the 2D editor's viewport."), keycode_get_string(Key::CMD_OR_CTRL)));
+	scene_picker_button->set_tooltip_text(vformat(TTRC("When enabled, you can select scenes from the FileSystem dock, Hierarchy dock, or 2D editor's viewport.\nHolding %s enables picking from the 2D editor's viewport."), keycode_get_string(Key::CMD_OR_CTRL)));
 	scene_picker_button->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_scene_picker_toggled));
 	scene_picker_button->set_shortcut(ED_SHORTCUT("scene_painter/scene_picker", TTRC("Scene Picker"), Key::I));
 	scene_picker_button->set_shortcut_context(CanvasItemEditor::get_singleton());
@@ -987,7 +987,7 @@ void ScenePaint2DEditorPlugin::_canvas_item_tool_changed(int p_tool) {
 		return;
 	}
 
-	Node *selected_node = SceneTreeDock::get_singleton()->get_tree_editor()->get_selected();
+	Node *selected_node = HierarchyDock::get_singleton()->get_hierarchy_editor()->get_selected();
 	if (!selected_node) {
 		make_visible(false);
 		scene_paint_2d_editor->_update_hint_label();
@@ -1008,7 +1008,7 @@ void ScenePaint2DEditorPlugin::_notification(int p_what) {
 			CanvasItemEditor::get_singleton()->connect("grid_visibility_changed", callable_mp(scene_paint_2d_editor, &ScenePaint2DEditor::_grid_toggled));
 			FileSystemDock::get_singleton()->get_tree_control()->connect(SceneStringName(gui_input), callable_mp(scene_paint_2d_editor, &ScenePaint2DEditor::_file_system_input));
 			FileSystemDock::get_singleton()->get_list_control()->connect(SceneStringName(gui_input), callable_mp(scene_paint_2d_editor, &ScenePaint2DEditor::_file_system_input));
-			SceneTreeDock::get_singleton()->get_tree_editor()->get_scene_tree()->connect(SceneStringName(gui_input), callable_mp(scene_paint_2d_editor, &ScenePaint2DEditor::_scene_tree_input));
+			HierarchyDock::get_singleton()->get_hierarchy_editor()->get_tree_control()->connect(SceneStringName(gui_input), callable_mp(scene_paint_2d_editor, &ScenePaint2DEditor::_hierarchy_input));
 			EditorNode::get_singleton()->connect("scene_changed", callable_mp(scene_paint_2d_editor, &ScenePaint2DEditor::_scene_changed));
 			scene_paint_2d_editor->viewport = CanvasItemEditor::get_singleton()->get_viewport_control();
 			scene_paint_2d_editor->viewport->connect(SceneStringName(draw), callable_mp(scene_paint_2d_editor, &ScenePaint2DEditor::_update_draw_overlay));

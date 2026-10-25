@@ -1315,10 +1315,10 @@
 			Show the system's busy mouse cursor when the user hovers the node. Often an arrow with a small hourglass.
 		</constant>
 		<constant name="CURSOR_DRAG" value="6" enum="CursorShape">
-			Show the system's drag mouse cursor, often a closed fist or a cross symbol, when the user hovers the node. It tells the user they're currently dragging an item, like a node in the Scene dock.
+			Show the system's drag mouse cursor, often a closed fist or a cross symbol, when the user hovers the node. It tells the user they're currently dragging an item, like a node in the Hierarchy dock.
 		</constant>
 		<constant name="CURSOR_CAN_DROP" value="7" enum="CursorShape">
-			Show the system's drop mouse cursor when the user hovers the node. It can be an open hand. It tells the user they can drop an item they're currently grabbing, like a node in the Scene dock.
+			Show the system's drop mouse cursor when the user hovers the node. It can be an open hand. It tells the user they can drop an item they're currently grabbing, like a node in the Hierarchy dock.
 		</constant>
 		<constant name="CURSOR_FORBIDDEN" value="8" enum="CursorShape">
 			Show the system's forbidden mouse cursor when the user hovers the node. Often a crossed circle.

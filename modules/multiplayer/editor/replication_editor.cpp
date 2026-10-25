@@ -39,7 +39,7 @@
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/inspector/property_selector.h"
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
@@ -50,7 +50,7 @@
 #include "scene/gui/tree.h"
 
 void ReplicationEditor::_pick_node_filter_text_changed(const String &p_newtext) {
-	TreeItem *root_item = pick_node->get_scene_tree()->get_scene_tree()->get_root();
+	TreeItem *root_item = pick_node->get_hierarchy_editor()->get_tree_control()->get_root();
 
 	Vector<Node *> select_candidates;
 	Node *to_select = nullptr;
@@ -74,7 +74,7 @@ void ReplicationEditor::_pick_node_filter_text_changed(const String &p_newtext) 
 		}
 	}
 
-	pick_node->get_scene_tree()->set_selected(to_select);
+	pick_node->get_hierarchy_editor()->set_selected(to_select);
 }
 
 void ReplicationEditor::_pick_node_select_recursive(TreeItem *p_item, const String &p_filter, Vector<Node *> &p_select_candidates) {
@@ -117,7 +117,7 @@ void ReplicationEditor::_pick_new_property() {
 		EditorNode::get_singleton()->show_warning(TTRC("Not possible to add a new property to synchronize without a root."));
 		return;
 	}
-	pick_node->popup_scenetree_dialog(nullptr, current);
+	pick_node->popup_hierarchy_dialog(nullptr, current);
 	pick_node->get_filter_line_edit()->clear();
 	pick_node->get_filter_line_edit()->grab_focus();
 }
@@ -176,7 +176,7 @@ ReplicationEditor::ReplicationEditor() {
 	vb->set_v_size_flags(SIZE_EXPAND_FILL);
 	add_child(vb);
 
-	pick_node = memnew(SceneTreeDialog);
+	pick_node = memnew(HierarchyDialog);
 	add_child(pick_node);
 	pick_node->set_title(TTRC("Pick a node to synchronize:"));
 	pick_node->connect("selected", callable_mp(this, &ReplicationEditor::_pick_node_selected));

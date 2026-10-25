@@ -49,9 +49,9 @@
 #include "scene/gui/tab_container.h"
 #include "scene/main/scene_tree.h"
 
-RenameDialog::RenameDialog(SceneTreeEditor *p_scene_tree_editor) :
+RenameDialog::RenameDialog(HierarchyEditor *p_hierarchy_editor) :
 		Dialog(true) {
-	scene_tree_editor = p_scene_tree_editor;
+	_hierarchy_editor = p_hierarchy_editor;
 	preview_node = nullptr;
 
 	set_title(TTR("Batch Rename"));
@@ -600,7 +600,7 @@ void RenameDialog::rename() {
 				ERR_PRINT("Skipping missing node: " + E->get().first.get_concatenated_subnames());
 				continue;
 			}
-			scene_tree_editor->rename_node(n, new_name);
+			_hierarchy_editor->rename_node(n, new_name);
 		}
 
 		undo_redo->commit_action();

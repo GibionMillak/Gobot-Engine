@@ -33,12 +33,12 @@
 #include "scene/gui/dialog.h"
 
 class CheckBox;
-class SceneTreeEditor;
+class HierarchyEditor;
 
 class ReparentDialog : public Dialog {
 	GDCLASS(ReparentDialog, Dialog);
 
-	SceneTreeEditor *tree = nullptr;
+	HierarchyEditor *tree = nullptr;
 	CheckBox *keep_transform = nullptr;
 
 	void _reparent();

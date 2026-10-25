@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  scene_tree_dock.h                                                     */
+/*  hierarchy_dock.h                                                     */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -31,7 +31,7 @@
 #pragma once
 
 #include "editor/docks/editor_dock.h"
-#include "editor/scene/scene_tree_editor.h"
+#include "editor/scene/hierarchy_editor.h"
 #include "editor/script/script_create_dialog.h"
 #include "scene/resources/animation.h"
 
@@ -50,8 +50,8 @@ class TextureRect;
 class VBoxContainer;
 class MultiNodeEdit;
 
-class SceneTreeDock : public EditorDock {
-	GDCLASS(SceneTreeDock, EditorDock);
+class HierarchyDock : public EditorDock {
+	GDCLASS(HierarchyDock, EditorDock);
 
 	enum Tool {
 		TOOL_NEW,
@@ -133,7 +133,7 @@ class SceneTreeDock : public EditorDock {
 
 	PanelContainer *button_panel = nullptr;
 	Button *edit_local, *edit_remote;
-	SceneTreeEditor *scene_tree = nullptr;
+	HierarchyEditor *_hierarchy_editor = nullptr;
 	Tree *remote_tree = nullptr;
 
 	void _tool_selected(int p_tool, bool p_confirm_override = false);
@@ -263,16 +263,16 @@ class SceneTreeDock : public EditorDock {
 	Node *node_hovered_now = nullptr;
 	Node *node_hovered_previously = nullptr;
 	Object *edited_object_at_drag_start = nullptr;
-	bool scene_tree_drag_active = false;
+	bool _hierarchy_drag_active = false;
 
 	ObjectID highlighted_item;
 	float highlight_timer = 0;
 
 	virtual void input(const Ref<InputEvent> &p_event) override;
 	virtual void shortcut_input(const Ref<InputEvent> &p_event) override;
-	void _scene_tree_gui_input(Ref<InputEvent> p_event);
-	void _scene_tree_draw();
-	void _scene_tree_item_selected();
+	void _hierarchy_gui_input(Ref<InputEvent> p_event);
+	void _hierarchy_draw();
+	void _hierarchy_item_selected();
 
 	void _new_scene_from(const String &p_file);
 	void _set_node_owner_recursive(Node *p_node, Node *p_owner, const HashMap<const Node *, Node *> &p_inverse_duplimap);
@@ -338,10 +338,10 @@ class SceneTreeDock : public EditorDock {
 	void _replace_node(Node *p_node, Node *p_by_node, bool p_keep_properties = true, bool p_keep_owned_children = true);
 
 private:
-	static SceneTreeDock *singleton;
+	static HierarchyDock *singleton;
 
 public:
-	static SceneTreeDock *get_singleton() { return singleton; }
+	static HierarchyDock *get_singleton() { return singleton; }
 
 protected:
 	void _notification(int p_what);
@@ -365,7 +365,7 @@ public:
 	void fill_path_renames(Node *p_node, Node *p_new_parent, HashMap<Node *, NodePath> *p_renames);
 	void perform_node_renames(Node *p_base, HashMap<Node *, NodePath> *p_renames, HashMap<Ref<Animation>, HashSet<int>> *r_rem_anims = nullptr, LocalVector<Pair<StringName, StringName>> *r_folded_group_renames = nullptr);
 	void perform_node_replace(Node *p_base, Node *p_node, Node *p_by_node);
-	SceneTreeEditor *get_tree_editor() { return scene_tree; }
+	HierarchyEditor *get_hierarchy_editor() { return _hierarchy_editor; }
 	EditorData *get_editor_data() { return editor_data; }
 
 	void add_remote_tree_editor(Tree *p_remote);
@@ -390,6 +390,6 @@ public:
 		return script_create_dialog;
 	}
 
-	SceneTreeDock(Node *p_scene_root, EditorSelection *p_editor_selection, EditorData &p_editor_data);
-	~SceneTreeDock();
+	HierarchyDock(Node *p_scene_root, EditorSelection *p_editor_selection, EditorData &p_editor_data);
+	~HierarchyDock();
 };

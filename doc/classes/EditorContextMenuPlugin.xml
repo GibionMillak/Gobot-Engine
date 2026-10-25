@@ -79,8 +79,8 @@
 		</method>
 	</methods>
 	<constants>
-		<constant name="CONTEXT_SLOT_SCENE_TREE" value="0" enum="ContextMenuSlot">
-			Context menu of Scene dock. The data [Dictionary] contains:
+		<constant name="CONTEXT_SLOT_HIERARCHY" value="0" enum="ContextMenuSlot">
+			Context menu of Hierarchy dock. The data [Dictionary] contains:
 			[code]&amp;"selected_nodes": Array[Node][/code] - The list of currently selected nodes (same as [method EditorSelection.get_top_selected_nodes]).
 		</constant>
 		<constant name="CONTEXT_SLOT_FILESYSTEM" value="1" enum="ContextMenuSlot">

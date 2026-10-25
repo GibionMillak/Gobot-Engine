@@ -32,7 +32,7 @@
 
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
-#include "editor/docks/scene_tree_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
@@ -392,8 +392,8 @@ void GroupsEditor::_item_edited() {
 		undo_redo->add_undo_method(this, "_set_group_checked", name, false);
 
 		// To force redraw of scene tree.
-		undo_redo->add_do_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
-		undo_redo->add_undo_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
+		undo_redo->add_do_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
+		undo_redo->add_undo_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
 
 		undo_redo->commit_action();
 
@@ -409,8 +409,8 @@ void GroupsEditor::_item_edited() {
 		undo_redo->add_undo_method(this, "_set_group_checked", name, true);
 
 		// To force redraw of scene tree.
-		undo_redo->add_do_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
-		undo_redo->add_undo_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
+		undo_redo->add_do_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
+		undo_redo->add_undo_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
 
 		undo_redo->commit_action();
 	}
@@ -569,8 +569,8 @@ void GroupsEditor::_confirm_add() {
 	undo_redo->add_undo_method(this, "_update_tree");
 
 	// To force redraw of scene tree.
-	undo_redo->add_do_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
-	undo_redo->add_undo_method(SceneTreeDock::get_singleton()->get_tree_editor(), "update_tree");
+	undo_redo->add_do_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
+	undo_redo->add_undo_method(HierarchyDock::get_singleton()->get_hierarchy_editor(), "update_tree");
 
 	undo_redo->commit_action();
 	tree->grab_focus(true);
