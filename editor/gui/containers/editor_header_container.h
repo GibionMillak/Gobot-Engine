@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_title_bar.h                                                    */
+/*  editor_header_container.h                                             */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -34,8 +34,8 @@
 
 class Button;
 
-class EditorTitleBar : public HBoxContainer {
-	GDCLASS(EditorTitleBar, HBoxContainer);
+class EditorHeaderContainer : public HBoxContainer {
+	GDCLASS(EditorHeaderContainer, HBoxContainer);
 
 public:
 	void set_center_control(Control *p_center_control);

@@ -81,6 +81,7 @@
 #include "editor/file_system/dependency_editor.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/gui/containers/editor_footer_container.h"
+#include "editor/gui/containers/editor_header_container.h"
 #include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/dialogs/editor_about_dialog.h"
 #include "editor/gui/dialogs/project_autoloads_dialog.h"
@@ -90,7 +91,6 @@
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_icon_manager.h"
 #include "editor/gui/editor_quick_open_dialog.h"
-#include "editor/gui/editor_title_bar.h"
 #include "editor/gui/progress_dialog.h"
 #include "editor/gui/window_wrapper.h"
 #include "editor/import/3d/editor_import_collada.h"
@@ -677,7 +677,7 @@ EditorNode::EditorNode() {
 	main_vbox = memnew(VBoxContainer);
 	gui_base->add_child(main_vbox);
 
-	title_bar = memnew(EditorTitleBar);
+	title_bar = memnew(EditorHeaderContainer);
 	main_vbox->add_child(title_bar);
 
 	DockSplitContainer *main_vsplit = nullptr;

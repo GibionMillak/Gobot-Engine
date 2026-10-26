@@ -35,7 +35,7 @@
 
 class EditorAboutDialog;
 class EditorFileDialog;
-class EditorTitleBar;
+class EditorHeaderContainer;
 class HFlowContainer;
 class LineEdit;
 class MarginContainer;
@@ -83,7 +83,7 @@ class Hub : public Control {
 	Panel *background_panel = nullptr;
 	VBoxContainer *main_vbox = nullptr;
 
-	EditorTitleBar *title_bar = nullptr;
+	EditorHeaderContainer *title_bar = nullptr;
 	Control *left_menu_spacer = nullptr;
 	Control *right_menu_spacer = nullptr;
 	Button *title_bar_logo = nullptr;

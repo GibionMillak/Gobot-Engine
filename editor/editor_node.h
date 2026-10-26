@@ -93,7 +93,7 @@ class EditorRunBar;
 class EditorSceneTabs;
 class EditorSelectionHistory;
 class EditorSettingsDialog;
-class EditorTitleBar;
+class EditorHeaderContainer;
 class ExportTemplateManager;
 class EditorQuickOpenDialog;
 class FBXImporterManager;
@@ -283,7 +283,7 @@ public:
 	static EditorData &get_editor_data() { return singleton->editor_data; }
 	static EditorFolding &get_editor_folding() { return singleton->editor_folding; }
 
-	static EditorTitleBar *get_title_bar() { return singleton->title_bar; }
+	static EditorHeaderContainer *get_title_bar() { return singleton->title_bar; }
 	static VSplitContainer *get_top_split() { return singleton->top_split; }
 	static DockSplitContainer *get_center_split() { return singleton->center_split; }
 	static EditorBottomPanel *get_bottom_panel() { return singleton->bottom_panel; }
@@ -828,7 +828,7 @@ private:
 	Label *project_title = nullptr;
 	Control *left_menu_spacer = nullptr;
 	Control *right_menu_spacer = nullptr;
-	EditorTitleBar *title_bar = nullptr;
+	EditorHeaderContainer *title_bar = nullptr;
 	EditorRunBar *project_run_bar = nullptr;
 
 	// Spacers to center 2D / 3D / Script buttons.

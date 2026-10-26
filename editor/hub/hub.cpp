@@ -43,11 +43,11 @@
 #include "editor/doc/editor_help.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/buttons/editor_version_button.h"
+#include "editor/gui/containers/editor_header_container.h"
 #include "editor/gui/dialogs/editor_about_dialog.h"
 #include "editor/gui/dialogs/project_compatibility_dialog.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_icon_manager.h"
-#include "editor/gui/editor_title_bar.h"
 #include "editor/inspector/editor_inspector.h"
 #include "editor/hub/engine_update_label.h"
 #include "editor/hub/project_dialog.h"
@@ -1193,7 +1193,7 @@ Hub::Hub() {
 	bool can_expand = DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_EXTEND_TO_TITLE);
 
 	{
-		title_bar = memnew(EditorTitleBar);
+		title_bar = memnew(EditorHeaderContainer);
 		main_vbox->add_child(title_bar);
 
 		if (can_expand) {

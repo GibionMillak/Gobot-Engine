@@ -433,6 +433,22 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_color("icon_disabled_color", "PrimaryButton", Color(primary_text_color, 0.5));
 		}
 
+		// HeaderCloseButton.
+		{
+			p_theme->set_type_variation("HeaderCloseButton", "Button");
+
+			Ref<StyleBoxFlat> close_hover = p_config.button_style_hover->duplicate();
+			close_hover->set_bg_color(p_config.error_color);
+			close_hover->set_border_color(p_config.error_color);
+			p_theme->set_stylebox(SceneStringName(hover), "HeaderCloseButton", close_hover);
+
+			Ref<StyleBoxFlat> close_pressed = p_config.button_style_pressed->duplicate();
+			close_pressed->set_bg_color(p_config.error_color.darkened(0.2));
+			close_pressed->set_border_color(p_config.error_color.darkened(0.2));
+			p_theme->set_stylebox(SceneStringName(pressed), "HeaderCloseButton", close_pressed);
+			p_theme->set_stylebox("hover_pressed", "HeaderCloseButton", close_pressed);
+		}
+
 		// MenuBar.
 
 		p_theme->set_stylebox(CoreStringName(normal), "MenuBar", p_config.button_style);

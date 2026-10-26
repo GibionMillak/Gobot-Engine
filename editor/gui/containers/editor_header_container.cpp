@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_title_bar.cpp                                                  */
+/*  editor_header_container.cpp                                           */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,7 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include "editor_title_bar.h"
+#include "editor_header_container.h"
 
 #include "core/object/callable_mp.h"
 #include "editor/editor_string_names.h"
@@ -49,7 +49,7 @@ static Ref<Texture2D> _get_theme_icon_or_fallback(const Control *p_control, cons
 	return Ref<Texture2D>();
 }
 
-void EditorTitleBar::set_center_control(Control *p_center_control) {
+void EditorHeaderContainer::set_center_control(Control *p_center_control) {
 	_center_control = p_center_control;
 
 	if (_center_control->get_parent() != this) {
@@ -57,11 +57,11 @@ void EditorTitleBar::set_center_control(Control *p_center_control) {
 	}
 }
 
-Control *EditorTitleBar::get_center_control() const {
+Control *EditorHeaderContainer::get_center_control() const {
 	return _center_control;
 }
 
-void EditorTitleBar::set_can_move_window(bool p_enabled) {
+void EditorHeaderContainer::set_can_move_window(bool p_enabled) {
 	_can_move = p_enabled;
 	set_process_input(_can_move);
 
@@ -72,18 +72,18 @@ void EditorTitleBar::set_can_move_window(bool p_enabled) {
 	}
 }
 
-bool EditorTitleBar::get_can_move_window() const {
+bool EditorHeaderContainer::get_can_move_window() const {
 	return _can_move;
 }
 
-void EditorTitleBar::_notification(int p_what) {
+void EditorHeaderContainer::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_EXIT_TREE: {
-			SceneTree::get_singleton()->get_root()->disconnect(SceneStringName(nonclient_window_input), callable_mp(this, &EditorTitleBar::gui_input));
+			SceneTree::get_singleton()->get_root()->disconnect(SceneStringName(nonclient_window_input), callable_mp(this, &EditorHeaderContainer::gui_input));
 			get_window()->set_nonclient_area(Rect2i());
 		} break;
 		case NOTIFICATION_ENTER_TREE: {
-			SceneTree::get_singleton()->get_root()->connect(SceneStringName(nonclient_window_input), callable_mp(this, &EditorTitleBar::gui_input));
+			SceneTree::get_singleton()->get_root()->connect(SceneStringName(nonclient_window_input), callable_mp(this, &EditorHeaderContainer::gui_input));
 			[[fallthrough]];
 		}
 		case NOTIFICATION_RESIZED: {
@@ -157,7 +157,7 @@ void EditorTitleBar::_notification(int p_what) {
 	}
 }
 
-void EditorTitleBar::gui_input(const Ref<InputEvent> &p_event) {
+void EditorHeaderContainer::gui_input(const Ref<InputEvent> &p_event) {
 	if (!_can_move) {
 		return;
 	}
@@ -207,7 +207,7 @@ void EditorTitleBar::gui_input(const Ref<InputEvent> &p_event) {
 	}
 }
 
-void EditorTitleBar::_on_minimize_pressed() {
+void EditorHeaderContainer::_on_minimize_pressed() {
 	Window *w = get_window();
 	if (!w) {
 		w = Object::cast_to<Window>(get_viewport());
@@ -217,7 +217,7 @@ void EditorTitleBar::_on_minimize_pressed() {
 	}
 }
 
-void EditorTitleBar::_on_maximize_pressed() {
+void EditorHeaderContainer::_on_maximize_pressed() {
 	Window *w = get_window();
 	if (!w) {
 		w = Object::cast_to<Window>(get_viewport());
@@ -232,7 +232,7 @@ void EditorTitleBar::_on_maximize_pressed() {
 	}
 }
 
-void EditorTitleBar::_on_close_pressed() {
+void EditorHeaderContainer::_on_close_pressed() {
 	Window *w = get_window();
 	if (!w) {
 		w = Object::cast_to<Window>(get_viewport());
@@ -248,7 +248,7 @@ void EditorTitleBar::_on_close_pressed() {
 	}
 }
 
-void EditorTitleBar::_update_window_buttons() {
+void EditorHeaderContainer::_update_window_buttons() {
 	if (!_window_buttons_hb) {
 		return;
 	}
@@ -267,7 +267,7 @@ void EditorTitleBar::_update_window_buttons() {
 	}
 }
 
-void EditorTitleBar::_create_window_buttons() {
+void EditorHeaderContainer::_create_window_buttons() {
 	if (_window_buttons_hb) {
 		return;
 	}
@@ -278,25 +278,26 @@ void EditorTitleBar::_create_window_buttons() {
 	_btn_minimize = memnew(Button);
 	_btn_minimize->set_focus_mode(FOCUS_NONE);
 	_btn_minimize->set_tooltip_text(TTR("Minimize"));
-	_btn_minimize->connect(SceneStringName(pressed), callable_mp(this, &EditorTitleBar::_on_minimize_pressed));
+	_btn_minimize->connect(SceneStringName(pressed), callable_mp(this, &EditorHeaderContainer::_on_minimize_pressed));
 	_window_buttons_hb->add_child(_btn_minimize);
 
 	_btn_maximize = memnew(Button);
 	_btn_maximize->set_focus_mode(FOCUS_NONE);
-	_btn_maximize->connect(SceneStringName(pressed), callable_mp(this, &EditorTitleBar::_on_maximize_pressed));
+	_btn_maximize->connect(SceneStringName(pressed), callable_mp(this, &EditorHeaderContainer::_on_maximize_pressed));
 	_window_buttons_hb->add_child(_btn_maximize);
 
 	_btn_close = memnew(Button);
+	_btn_close->connect(SceneStringName(pressed), callable_mp(this, &EditorHeaderContainer::_on_close_pressed));
 	_btn_close->set_focus_mode(FOCUS_NONE);
+	_btn_close->set_theme_type_variation("HeaderCloseButton");
 	_btn_close->set_tooltip_text(TTR("Close"));
-	_btn_close->connect(SceneStringName(pressed), callable_mp(this, &EditorTitleBar::_on_close_pressed));
 	_window_buttons_hb->add_child(_btn_close);
 
 	add_child(_window_buttons_hb);
 	_update_window_buttons();
 }
 
-void EditorTitleBar::_destroy_window_buttons() {
+void EditorHeaderContainer::_destroy_window_buttons() {
 	if (_window_buttons_hb) {
 		_window_buttons_hb->queue_free();
 		_window_buttons_hb = nullptr;
