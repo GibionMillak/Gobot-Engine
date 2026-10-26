@@ -34,6 +34,7 @@
 #include "core/os/os.h"
 #include "core/version.h"
 #include "editor/themes/editor_scale.h"
+#include "editor/themes/editor_unit.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
 #include "scene/gui/scroll_container.h"
@@ -52,7 +53,7 @@ SystemInformationDialog::SystemInformationDialog() {
 	_copy_btn->connect("pressed", callable_mp(this, &SystemInformationDialog::_copy_information));
 
 	_scroll = memnew(ScrollContainer);
-	_scroll->set_custom_minimum_size(Size2(640, 400) * EDSCALE);
+	_scroll->set_custom_minimum_size(Size2(20, 12.5) * EDUNIT * EDSCALE);
 	_scroll->set_horizontal_scroll_mode(ScrollContainer::SCROLL_MODE_DISABLED);
 	add_child(_scroll);
 
@@ -63,7 +64,28 @@ SystemInformationDialog::SystemInformationDialog() {
 	}
 }
 
-void SystemInformationDialog::show_information() {
+void SystemInformationDialog::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_THEME_CHANGED: {
+			_copy_btn->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
+			for (int i = 0; i < _content_vbox->get_child_count(); i++) {
+				Table *table = Object::cast_to<Table>(_content_vbox->get_child(i));
+				if (table) {
+					for (int j = 0; j < table->get_footer()->get_child_count(); j++) {
+						Button *copy_btn = Object::cast_to<Button>(table->get_footer()->get_child(j));
+						if (copy_btn) {
+							copy_btn->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
+						}
+					}
+				}
+			}
+		} break;
+	}
+}
+
+void SystemInformationDialog::_pre_popup(const Size2i &p_size) {
+	Dialog::_pre_popup(p_size);
+
 	while (_content_vbox->get_child_count() > 0) {
 		Node *child = _content_vbox->get_child(0);
 		_content_vbox->remove_child(child);
@@ -148,34 +170,13 @@ void SystemInformationDialog::show_information() {
 	_add_row(TTR("Speaker Mode"), speaker_mode);
 
 	_scroll->set_v_scroll(0);
-	popup_centered_clamped(Size2i(760, 600) * EDSCALE);
-	get_ok_button()->grab_focus();
-}
-
-void SystemInformationDialog::_notification(int p_what) {
-	switch (p_what) {
-		case NOTIFICATION_THEME_CHANGED: {
-			_copy_btn->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
-			for (int i = 0; i < _content_vbox->get_child_count(); i++) {
-				Table *table = Object::cast_to<Table>(_content_vbox->get_child(i));
-				if (table) {
-					for (int j = 0; j < table->get_footer()->get_child_count(); j++) {
-						Button *copy_btn = Object::cast_to<Button>(table->get_footer()->get_child(j));
-						if (copy_btn) {
-							copy_btn->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
-						}
-					}
-				}
-			}
-		} break;
-	}
 }
 
 void SystemInformationDialog::_add_section(const String &p_title) {
 	_table = memnew(Table);
 	_table->set_column_count(2);
-	_table->set_column_width(0, 200 * EDSCALE);
-	_table->set_column_width(1, 240 * EDSCALE);
+	_table->set_column_width(0, 6.25 * EDUNIT * EDSCALE);
+	_table->set_column_width(1, 7.5 * EDUNIT * EDSCALE);
 	_table->set_column_width_mode(0, Table::FIXED);
 	_table->set_column_width_mode(1, Table::EXPAND);
 	_table->set_fit_content_height(true);

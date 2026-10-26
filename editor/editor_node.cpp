@@ -83,12 +83,10 @@
 #include "editor/gui/containers/editor_footer_container.h"
 #include "editor/gui/containers/editor_header_container.h"
 #include "editor/gui/containers/editor_toaster_container.h"
-#include "editor/gui/dialogs/editor_about_dialog.h"
 #include "editor/gui/dialogs/editor_settings_dialog.h"
 #include "editor/gui/dialogs/project_autoloads_dialog.h"
 #include "editor/gui/dialogs/project_plugins_dialog.h"
 #include "editor/gui/dialogs/project_settings_editor.h"
-#include "editor/gui/dialogs/system_information_dialog.h"
 #include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_icon_manager.h"
@@ -123,6 +121,7 @@
 #include "editor/inspector/editor_resource_picker.h"
 #include "editor/inspector/editor_resource_preview.h"
 #include "editor/inspector/multi_node_edit.h"
+#include "editor/managers/editor_dialog_manager.h"
 #include "editor/managers/editor_managers.h"
 #include "editor/managers/project_autoload_manager.h"
 #include "editor/managers/project_plugin_manager.h"
@@ -990,17 +989,8 @@ EditorNode::EditorNode() {
 	ED_SHORTCUT_AND_COMMAND("editor/quit_to_project_list", TTRC("Quit to Project List"), KeyModifierMask::CTRL + KeyModifierMask::SHIFT + Key::Q);
 	ED_SHORTCUT_OVERRIDE("editor/quit_to_project_list", "macos", KeyModifierMask::META + KeyModifierMask::CTRL + KeyModifierMask::ALT + Key::Q);
 
-	ED_SHORTCUT("editor/command_palette", TTRC("Command Palette..."), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::SHIFT | Key::P);
-
 	ED_SHORTCUT_AND_COMMAND("editor/take_screenshot", TTRC("Take Screenshot"), KeyModifierMask::CTRL | Key::F12);
 	ED_SHORTCUT_OVERRIDE("editor/take_screenshot", "macos", KeyModifierMask::META | Key::F12);
-
-	ED_SHORTCUT_AND_COMMAND("editor/editor_help", TTRC("Documentation"), Key::F1);
-	ED_SHORTCUT_OVERRIDE("editor/editor_help", "macos", KeyModifierMask::ALT | Key::SPACE);
-
-	ED_SHORTCUT_AND_COMMAND("editor/system_information", TTRC("System Information"));
-	ED_SHORTCUT_AND_COMMAND("editor/report_a_bug", TTRC("Report a Bug"));
-	ED_SHORTCUT_AND_COMMAND("editor/about", TTRC("About Gobot"));
 
 	// Use the Ctrl modifier so F2 can be used to rename nodes in the Hierarchy dock.
 	ED_SHORTCUT_AND_COMMAND("editor/editor_2d", TTRC("Open 2D Workspace"), KeyModifierMask::CTRL | Key::F1);
@@ -1042,10 +1032,6 @@ EditorNode::EditorNode() {
 	settings_menu = memnew(PopupMenu);
 	settings_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
 	_add_to_main_menu(TTRC("Editor"), settings_menu);
-
-	help_menu = memnew(PopupMenu);
-	help_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
-	_add_to_main_menu(TTRC("Help"), help_menu);
 
 	_update_main_menu_type();
 
@@ -4831,7 +4817,7 @@ void EditorNode::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_WM_ABOUT: {
-			show_about();
+			EditorDialogManager::get_singleton()->show_about();
 		} break;
 
 		case NOTIFICATION_WM_CLOSE_REQUEST: {
@@ -5030,16 +5016,6 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_AUTOLOADS), get_editor_theme_native_menu_icon(SNAME("gui_autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_EXPORT), get_editor_theme_native_menu_icon(SNAME("node_resource_preloader"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_QUIT_TO_HUB), get_editor_theme_native_menu_icon(SNAME("action_close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-
-	help_menu->set_item_icon(help_menu->get_item_index(HELP_SEARCH), get_editor_theme_native_menu_icon(SNAME("action_help_search"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-	help_menu->set_item_icon(help_menu->get_item_index(HELP_SYSTEM_INFORMATION), get_editor_theme_native_menu_icon(SNAME("status_info"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-#ifdef MACOS_ENABLED
-	if (menu_type != MENU_TYPE_GLOBAL) {
-		help_menu->set_item_icon(help_menu->get_item_index(HELP_ABOUT), get_editor_theme_native_menu_icon(SNAME("branding_logo_solid"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-	}
-#else
-	help_menu->set_item_icon(help_menu->get_item_index(HELP_ABOUT), get_editor_theme_native_menu_icon(SNAME("branding_logo_solid"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-#endif
 }
 
 void EditorNode::_update_theme(bool p_skip_creation) {
@@ -6040,29 +6016,6 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			file->set_title(TTR("Pick a Main Scene"));
 			file->popup_file_dialog();
 
-		} break;
-		case HELP_SEARCH: {
-			emit_signal(SNAME("request_help_search"), "");
-		} break;
-		case EDITOR_COMMAND_PALETTE: {
-			command_palette->open_popup();
-		} break;
-		case HELP_REPORT_A_BUG: {
-			OS::get_singleton()->shell_open("https://github.com/GibionMillak/Gobot-Engine/issues");
-		} break;
-		case HELP_SYSTEM_INFORMATION: {
-			if (!_system_information_dialog) {
-				_system_information_dialog = memnew(SystemInformationDialog);
-				gui_base->add_child(_system_information_dialog);
-			}
-			_system_information_dialog->show_information();
-		} break;
-		case HELP_ABOUT: {
-			if (!about) {
-				about = memnew(EditorAboutDialog);
-				gui_base->add_child(about);
-			}
-			about->popup_centered(Size2(780, 500) * EDSCALE);
 		} break;
 	}
 }
@@ -8729,9 +8682,6 @@ void EditorNode::_build_settings_menu() {
 	}
 	settings_menu->clear(false);
 
-	settings_menu->add_shortcut(ED_GET_SHORTCUT("editor/command_palette"), EDITOR_COMMAND_PALETTE);
-	settings_menu->add_separator();
-
 	settings_menu->add_submenu_node_item(TTRC("Editor Docks"), editor_dock_manager->get_docks_menu());
 
 	if (!editor_layouts) {
@@ -8765,33 +8715,6 @@ void EditorNode::_build_settings_menu() {
 #endif
 }
 
-void EditorNode::_build_help_menu(bool p_dark_mode) {
-	if (!help_menu) {
-		return;
-	}
-	help_menu->clear(false);
-
-	if (menu_type == MENU_TYPE_GLOBAL && NativeMenu::get_singleton()->has_system_menu(NativeMenu::HELP_MENU_ID)) {
-		help_menu->set_system_menu(NativeMenu::HELP_MENU_ID);
-	} else {
-		help_menu->set_system_menu(NativeMenu::INVALID_MENU_ID);
-	}
-
-	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("action_help_search"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/editor_help"), HELP_SEARCH);
-	help_menu->add_separator();
-	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("status_info"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/system_information"), HELP_SYSTEM_INFORMATION);
-	help_menu->add_shortcut(ED_GET_SHORTCUT("editor/report_a_bug"), HELP_REPORT_A_BUG);
-	help_menu->add_separator();
-#ifdef MACOS_ENABLED
-	if (menu_type != MENU_TYPE_GLOBAL) {
-		// On macOS "About" option is in the "app" menu.
-		help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("branding_logo_solid"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/about"), HELP_ABOUT);
-	}
-#else
-	help_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("branding_logo_solid"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/about"), HELP_ABOUT);
-#endif
-}
-
 void EditorNode::_update_main_menu_type() {
 	bool can_expand = DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_EXTEND_TO_TITLE);
 	bool use_menu_button = EDITOR_GET("interface/editor/appearance/collapse_main_menu");
@@ -8815,7 +8738,6 @@ void EditorNode::_update_main_menu_type() {
 	_build_file_menu(dark_mode);
 	_build_project_menu(dark_mode);
 	_build_settings_menu();
-	_build_help_menu(dark_mode);
 
 	// Delete all menu.
 	if (main_menu_bar) {

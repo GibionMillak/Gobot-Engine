@@ -54,6 +54,7 @@
 #include "editor/file_system/editor_file_system.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/gui/buttons/editor_fullscreen_button.h"
+#include "editor/gui/buttons/editor_help_button.h"
 #include "editor/gui/buttons/settings_button.h"
 #include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/editor_file_dialog.h"
@@ -81,6 +82,7 @@
 #include "editor/inspector/input_event_editor_plugin.h"
 #include "editor/inspector/sub_viewport_preview_editor_plugin.h"
 #include "editor/inspector/tool_button_editor_plugin.h"
+#include "editor/managers/editor_dialog_manager.h"
 #include "editor/managers/editor_managers.h"
 #include "editor/managers/project_autoload_manager.h"
 #include "editor/managers/project_plugin_manager.h"
@@ -161,6 +163,8 @@ void register_editor_types() {
 	GDREGISTER_CLASS(EditorSelection);
 	GDREGISTER_CLASS(EditorFileDialog);
 	GDREGISTER_INTERNAL_CLASS(EditorManagers);
+	GDREGISTER_INTERNAL_CLASS(EditorDialogManager);
+	GDREGISTER_INTERNAL_CLASS(EditorHelpButton);
 	GDREGISTER_INTERNAL_CLASS(SettingsButton);
 	GDREGISTER_INTERNAL_CLASS(EditorFullscreenButton);
 	GDREGISTER_INTERNAL_CLASS(ProjectAutoloadManager);

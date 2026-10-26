@@ -33,6 +33,7 @@
 #include "core/object/callable_mp.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/buttons/editor_fullscreen_button.h"
+#include "editor/gui/buttons/editor_help_button.h"
 #include "editor/gui/buttons/settings_button.h"
 #include "scene/gui/button.h"
 #include "scene/main/scene_tree.h"
@@ -60,6 +61,9 @@ void EditorHeaderContainer::add_editor_controls() {
 	add_child(_editor_controls_hbox);
 
 	{
+		EditorHelpButton *help_btn = memnew(EditorHelpButton);
+		_editor_controls_hbox->add_child(help_btn);
+
 		SettingsButton *settings_btn = memnew(SettingsButton);
 		_editor_controls_hbox->add_child(settings_btn);
 

@@ -56,7 +56,6 @@ class OptionButton;
 class PanelContainer;
 class RichTextLabel;
 class SubViewport;
-class SystemInformationDialog;
 class TextureProgressBar;
 class Timer;
 class Translation;
@@ -71,7 +70,6 @@ class BackgroundProgress;
 class DependencyErrorDialog;
 class DockSplitContainer;
 class DynamicFontImportSettingsDialog;
-class EditorAboutDialog;
 class EditorBuildProfileManager;
 class EditorBottomPanel;
 class EditorCommandPalette;
@@ -186,7 +184,6 @@ public:
 		VCS_SETTINGS,
 
 		// Editor menu.
-		EDITOR_COMMAND_PALETTE,
 		EDITOR_TAKE_SCREENSHOT,
 		EDITOR_OPEN_DATA_FOLDER,
 		EDITOR_OPEN_CONFIG_FOLDER,
@@ -197,12 +194,6 @@ public:
 		LAYOUT_SAVE,
 		LAYOUT_DELETE,
 		LAYOUT_DEFAULT,
-
-		// Help menu.
-		HELP_SEARCH,
-		HELP_SYSTEM_INFORMATION,
-		HELP_REPORT_A_BUG,
-		HELP_ABOUT,
 
 		// Non-menu options.
 		SCENE_TAB_CLOSE,
@@ -348,8 +339,6 @@ public:
 	void clear_node_reference(Ref<Resource> p_res);
 	int get_resource_count(Ref<Resource> p_res);
 	List<Node *> get_resource_node_list(Ref<Resource> p_res);
-
-	void show_about() { _menu_option_confirm(HELP_ABOUT, false); }
 
 	void push_item(Object *p_object, const String &p_property = "", bool p_inspector_only = false);
 	void push_item_no_inspector(Object *p_object);
@@ -749,7 +738,6 @@ private:
 	void _build_file_menu(bool p_dark_mode);
 	void _build_project_menu(bool p_dark_mode);
 	void _build_settings_menu();
-	void _build_help_menu(bool p_dark_mode);
 
 	void _update_main_menu_type();
 	void _add_to_main_menu(const String &p_name, PopupMenu *p_menu);
@@ -839,7 +827,6 @@ private:
 	PopupMenu *project_menu = nullptr;
 	PopupMenu *debug_menu = nullptr;
 	PopupMenu *settings_menu = nullptr;
-	PopupMenu *help_menu = nullptr;
 	PopupMenu *tool_menu = nullptr;
 	PopupMenu *export_as_menu = nullptr;
 	Button *export_button = nullptr;
@@ -877,8 +864,6 @@ private:
 	Dialog *open_project_settings = nullptr;
 	Button *select_current_scene_button = nullptr;
 	Dialog *save_accept = nullptr;
-	EditorAboutDialog *about = nullptr;
-	SystemInformationDialog *_system_information_dialog = nullptr;
 	Dialog *warning = nullptr;
 	EditorPlugin *plugin_to_save = nullptr;
 

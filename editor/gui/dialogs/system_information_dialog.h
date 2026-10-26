@@ -43,10 +43,9 @@ class SystemInformationDialog : public Dialog {
 public:
 	SystemInformationDialog();
 
-	void show_information();
-
 protected:
 	void _notification(int p_what);
+	void _pre_popup(const Size2i &p_size) override;
 
 private:
 	void _add_section(const String &p_title);

@@ -32,6 +32,7 @@
 
 #include "scene/main/node.h"
 
+class EditorDialogManager;
 class ProjectAutoloadManager;
 class ProjectPluginManager;
 
@@ -43,12 +44,14 @@ public:
 	~EditorManagers() override;
 
 	static EditorManagers *get_singleton();
+	EditorDialogManager *get_editor_dialog_manager() const;
 	ProjectAutoloadManager *get_project_autoload_manager() const;
 	ProjectPluginManager *get_project_plugin_manager() const;
 
 private:
 	inline static EditorManagers *_singleton = nullptr;
 
+	EditorDialogManager *_editor_dialog_manager = nullptr;
 	ProjectAutoloadManager *_project_autoload_manager = nullptr;
 	ProjectPluginManager *_project_plugin_manager = nullptr;
 };
