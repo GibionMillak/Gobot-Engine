@@ -4706,7 +4706,7 @@ Control *EditorHelpBitTooltip::make_tooltip(
 
 // Copy-paste from `Viewport::_gui_show_tooltip()`.
 void EditorHelpBitTooltip::popup_under_position(const Point2 &p_point) {
-	Point2 tooltip_offset = GLOBAL_GET_CACHED(Point2, "display/mouse_cursor/tooltip_position_offset");
+	Point2 tooltip_offset = GLOBAL_GET_CACHED(Point2, "display/user_interface/cursor/tooltip_position_offset");
 	Rect2 r(p_point + tooltip_offset, get_contents_minimum_size());
 	r.size = r.size.min(get_max_size());
 

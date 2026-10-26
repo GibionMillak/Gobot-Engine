@@ -64,6 +64,7 @@
 #include "scene/main/window.h"
 #include "scene/property_list_helper.h"
 #include "scene/register_scene_types.h"
+#include "scene/resources/cursor_set.h"
 #include "scene/resources/packed_scene.h"
 #include "scene/theme/theme_db.h"
 #include "servers/audio/audio_driver_dummy.h"
@@ -3443,16 +3444,13 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 	OS::get_singleton()->benchmark_end_measure("Startup", "Platforms");
 
-	GLOBAL_DEF_BASIC(PropertyInfo(Variant::STRING, "display/mouse_cursor/custom_image", PROPERTY_HINT_FILE, "*.png,*.hdr,*.jpg,*.jpeg,*.svg,*.exr,*.webp"), String());
-	GLOBAL_DEF_BASIC("display/mouse_cursor/custom_image_hotspot", Vector2());
-	GLOBAL_DEF_BASIC("display/mouse_cursor/tooltip_position_offset", Point2(10, 10));
-
-	if (String(GLOBAL_GET("display/mouse_cursor/custom_image")) != String()) {
-		Ref<Texture2D> cursor = ResourceLoader::load(
-				GLOBAL_GET("display/mouse_cursor/custom_image"));
-		if (cursor.is_valid()) {
-			Vector2 hotspot = GLOBAL_GET("display/mouse_cursor/custom_image_hotspot");
-			Input::get_singleton()->set_custom_mouse_cursor(cursor, Input::CursorShape::CURSOR_ARROW, hotspot);
+	const String cursor_set_path = GLOBAL_GET("display/user_interface/cursor/default_cursor_set");
+	if (!cursor_set_path.is_empty()) {
+		const Ref<CursorSet> cursor_set = ResourceLoader::load(cursor_set_path, CursorSet::get_class_static());
+		if (cursor_set.is_valid()) {
+			cursor_set->apply();
+		} else {
+			ERR_PRINT("Error loading default cursor set '" + cursor_set_path + "'.");
 		}
 	}
 

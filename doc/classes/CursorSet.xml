@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="CursorSet" inherits="Resource" api_type="core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+		A collection of custom mouse cursor textures and hotspots.
+	</brief_description>
+	<description>
+		Stores a [Texture2D] and a hotspot for each shape in [enum Input.CursorShape]. Assign a resource file to [member ProjectSettings.display/user_interface/cursor/default_cursor_set] to apply it at startup, or call [method apply] to switch cursor sets at runtime.
+		Each texture must have dimensions between 1 and 256 pixels. Sizes up to 128×128 are recommended for platform compatibility. Hotspots are measured in pixels from the texture's top-left corner and must be inside the texture. A missing texture restores the system cursor for that shape when the set is applied.
+		Changing this resource does not update active cursors automatically. Call [method apply] after editing it. As with [method Input.set_custom_mouse_cursor], applying a set has no effect in the editor.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="apply" qualifiers="const">
+			<return type="void" />
+			<description>
+				Applies all cursor textures and hotspots using [method Input.set_custom_mouse_cursor]. Shapes with no texture reset to the system cursor, including shapes customized by a previously applied set. Invalid texture sizes or hotspots report an error and leave that shape unchanged.
+			</description>
+		</method>
+		<method name="get_hotspot" qualifiers="const">
+			<return type="Vector2" />
+			<param index="0" name="shape" type="int" enum="Input.CursorShape" />
+			<description>
+				Returns the hotspot for [param shape].
+			</description>
+		</method>
+		<method name="get_texture" qualifiers="const">
+			<return type="Texture2D" />
+			<param index="0" name="shape" type="int" enum="Input.CursorShape" />
+			<description>
+				Returns the texture for [param shape], or [code]null[/code] if the shape uses the system cursor.
+			</description>
+		</method>
+		<method name="set_hotspot">
+			<return type="void" />
+			<param index="0" name="shape" type="int" enum="Input.CursorShape" />
+			<param index="1" name="hotspot" type="Vector2" />
+			<description>
+				Sets the hotspot for [param shape]. The hotspot must be finite and non-negative. When applied, it must be inside the assigned texture.
+			</description>
+		</method>
+		<method name="set_texture">
+			<return type="void" />
+			<param index="0" name="shape" type="int" enum="Input.CursorShape" />
+			<param index="1" name="texture" type="Texture2D" />
+			<description>
+				Sets the texture for [param shape]. Pass [code]null[/code] to use the system cursor when applied.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="arrow/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_ARROW], in texture pixels.
+		</member>
+		<member name="arrow/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_ARROW]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="bdiagsize/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_BDIAGSIZE], in texture pixels.
+		</member>
+		<member name="bdiagsize/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_BDIAGSIZE]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="busy/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_BUSY], in texture pixels.
+		</member>
+		<member name="busy/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_BUSY]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="can_drop/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_CAN_DROP], in texture pixels.
+		</member>
+		<member name="can_drop/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_CAN_DROP]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="cross/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_CROSS], in texture pixels.
+		</member>
+		<member name="cross/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_CROSS]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="drag/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_DRAG], in texture pixels.
+		</member>
+		<member name="drag/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_DRAG]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="fdiagsize/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_FDIAGSIZE], in texture pixels.
+		</member>
+		<member name="fdiagsize/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_FDIAGSIZE]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="forbidden/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_FORBIDDEN], in texture pixels.
+		</member>
+		<member name="forbidden/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_FORBIDDEN]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="help/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_HELP], in texture pixels.
+		</member>
+		<member name="help/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_HELP]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="hsize/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_HSIZE], in texture pixels.
+		</member>
+		<member name="hsize/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_HSIZE]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="hsplit/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_HSPLIT], in texture pixels.
+		</member>
+		<member name="hsplit/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_HSPLIT]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="ibeam/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_IBEAM], in texture pixels.
+		</member>
+		<member name="ibeam/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_IBEAM]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="move/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_MOVE], in texture pixels.
+		</member>
+		<member name="move/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_MOVE]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="pointing_hand/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_POINTING_HAND], in texture pixels.
+		</member>
+		<member name="pointing_hand/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_POINTING_HAND]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="vsize/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_VSIZE], in texture pixels.
+		</member>
+		<member name="vsize/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_VSIZE]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="vsplit/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_VSPLIT], in texture pixels.
+		</member>
+		<member name="vsplit/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_VSPLIT]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+		<member name="wait/hotspot" type="Vector2" setter="set_hotspot" getter="get_hotspot" default="Vector2(0, 0)">
+			Hotspot for [constant Input.CURSOR_WAIT], in texture pixels.
+		</member>
+		<member name="wait/texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			Custom texture for [constant Input.CURSOR_WAIT]. If unset, applying this set restores the system cursor for this shape.
+		</member>
+	</members>
+</class>

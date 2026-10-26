@@ -392,7 +392,9 @@ EditorNode::EditorNode() {
 			Input::get_singleton()->set_emulate_touch_from_mouse(false);
 		}
 		if (DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_CUSTOM_CURSOR_SHAPE)) {
-			DisplayServer::get_singleton()->cursor_set_custom_image(Ref<Resource>());
+			for (int i = 0; i < DisplayServerEnums::CURSOR_MAX; i++) {
+				DisplayServer::get_singleton()->cursor_set_custom_image(Ref<Resource>(), static_cast<DisplayServerEnums::CursorShape>(i));
+			}
 		}
 	}
 
