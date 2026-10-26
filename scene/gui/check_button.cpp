@@ -165,8 +165,6 @@ CheckButton::CheckButton(const String &p_text) :
 		Button(p_text) {
 	set_toggle_mode(true);
 
-	set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
-
 	if (is_layout_rtl()) {
 		_set_internal_margin(SIDE_LEFT, get_icon_size().width);
 	} else {

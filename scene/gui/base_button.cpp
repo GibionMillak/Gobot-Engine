@@ -383,6 +383,10 @@ BaseButton::DrawMode BaseButton::get_draw_mode() const {
 	}
 }
 
+Control::CursorShape BaseButton::get_cursor_shape(const Point2 &p_pos) const {
+	return is_disabled() ? CURSOR_ARROW : get_default_cursor_shape();
+}
+
 bool BaseButton::has_point(const Point2 &p_point) const {
 	ERR_READ_THREAD_GUARD_V(false);
 	bool ret;
@@ -644,6 +648,7 @@ void BaseButton::_bind_methods() {
 
 BaseButton::BaseButton() {
 	set_focus_mode(FOCUS_ALL);
+	set_default_cursor_shape(CURSOR_POINTING_HAND);
 }
 
 BaseButton::~BaseButton() {

@@ -204,10 +204,6 @@ Size2 LinkButton::get_minimum_size() const {
 	return minsize;
 }
 
-Control::CursorShape LinkButton::get_cursor_shape(const Point2 &p_pos) const {
-	return is_disabled() ? CURSOR_ARROW : get_default_cursor_shape();
-}
-
 void LinkButton::_notification(int p_what) {
 	switch (p_what) {
 
@@ -367,7 +363,6 @@ void LinkButton::_bind_methods() {
 LinkButton::LinkButton(const String &p_text) {
 	text_buf.instantiate();
 	set_focus_mode(FOCUS_NONE);
-	set_default_cursor_shape(CURSOR_POINTING_HAND);
 
 	set_text(p_text);
 }

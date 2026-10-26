@@ -51,7 +51,7 @@ private:
 	Ref<Texture2D> icon;
 	bool expand_icon = false;
 	bool clip_text = false;
-	HorizontalAlignment alignment = HORIZONTAL_ALIGNMENT_CENTER;
+	HorizontalAlignment _alignment = HORIZONTAL_ALIGNMENT_LEFT;
 	HorizontalAlignment horizontal_icon_alignment = HORIZONTAL_ALIGNMENT_LEFT;
 	VerticalAlignment vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER;
 	float _internal_margin[4] = {};

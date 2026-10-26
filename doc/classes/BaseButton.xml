@@ -75,6 +75,7 @@
 			If [code]true[/code], the button stays pressed when moving the cursor outside the button while pressing it.
 			[b]Note:[/b] This property only affects the button's visual appearance. Signals will be emitted at the same moment regardless of this property's value.
 		</member>
+		<member name="mouse_default_cursor_shape" type="int" setter="set_default_cursor_shape" getter="get_default_cursor_shape" overrides="Control" enum="Control.CursorShape" default="2" />
 		<member name="shortcut" type="Shortcut" setter="set_shortcut" getter="get_shortcut">
 			[Shortcut] associated to the button.
 		</member>

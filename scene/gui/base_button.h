@@ -111,6 +111,7 @@ public:
 
 	DrawMode get_draw_mode() const;
 
+	CursorShape get_cursor_shape(const Point2 &p_pos) const override;
 	virtual bool has_point(const Point2 &p_point) const override;
 
 	bool is_pressed() const; ///< return whether button is pressed (toggled in)

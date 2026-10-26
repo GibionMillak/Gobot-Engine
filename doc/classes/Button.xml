@@ -24,7 +24,7 @@
 		<link title="Operating System Testing Demo">https://godotengine.org/asset-library/asset/2789</link>
 	</tutorials>
 	<members>
-		<member name="alignment" type="int" setter="set_text_alignment" getter="get_text_alignment" enum="HorizontalAlignment" default="1">
+		<member name="alignment" type="int" setter="set_text_alignment" getter="get_text_alignment" enum="HorizontalAlignment" default="0">
 			Text alignment policy for the button's text.
 		</member>
 		<member name="autowrap_mode" type="int" setter="set_autowrap_mode" getter="get_autowrap_mode" enum="TextServer.AutowrapMode" default="0">

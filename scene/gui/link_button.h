@@ -86,7 +86,6 @@ protected:
 
 public:
 	virtual Size2 get_minimum_size() const override;
-	virtual CursorShape get_cursor_shape(const Point2 &p_pos) const override;
 
 	void set_text(const String &p_text);
 	String get_text() const;

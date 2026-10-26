@@ -242,7 +242,7 @@ void Button::_notification(int p_what) {
 			}
 
 			HorizontalAlignment icon_align_rtl_checked = horizontal_icon_alignment;
-			HorizontalAlignment align_rtl_checked = alignment;
+			HorizontalAlignment align_rtl_checked = _alignment;
 			// Swap icon and text alignment sides if right-to-left layout is set.
 			if (is_layout_rtl()) {
 				if (horizontal_icon_alignment == HORIZONTAL_ALIGNMENT_RIGHT) {
@@ -250,9 +250,9 @@ void Button::_notification(int p_what) {
 				} else if (horizontal_icon_alignment == HORIZONTAL_ALIGNMENT_LEFT) {
 					icon_align_rtl_checked = HORIZONTAL_ALIGNMENT_RIGHT;
 				}
-				if (alignment == HORIZONTAL_ALIGNMENT_RIGHT) {
+				if (_alignment == HORIZONTAL_ALIGNMENT_RIGHT) {
 					align_rtl_checked = HORIZONTAL_ALIGNMENT_LEFT;
-				} else if (alignment == HORIZONTAL_ALIGNMENT_LEFT) {
+				} else if (_alignment == HORIZONTAL_ALIGNMENT_LEFT) {
 					align_rtl_checked = HORIZONTAL_ALIGNMENT_RIGHT;
 				}
 			}
@@ -715,14 +715,14 @@ bool Button::get_clip_text() const {
 }
 
 void Button::set_text_alignment(HorizontalAlignment p_alignment) {
-	if (alignment != p_alignment) {
-		alignment = p_alignment;
+	if (_alignment != p_alignment) {
+		_alignment = p_alignment;
 		queue_redraw();
 	}
 }
 
 HorizontalAlignment Button::get_text_alignment() const {
-	return alignment;
+	return _alignment;
 }
 
 void Button::set_icon_alignment(HorizontalAlignment p_alignment) {
