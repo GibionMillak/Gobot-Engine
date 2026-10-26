@@ -38,13 +38,12 @@ class RendererMethodButton : public OptionButton {
 	GDCLASS(RendererMethodButton, OptionButton);
 
 public:
-	RendererMethodButton() = default;
+	RendererMethodButton();
 
 protected:
 	void _notification(int p_what);
 
 private:
-	void _initialize();
 	void _renderer_selected(int p_index);
 	void _update_labels();
 	void _update_icons();

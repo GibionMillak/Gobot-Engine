@@ -33,6 +33,7 @@
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "core/object/message_queue.h"
+#include "core/templates/local_vector.h"
 #include "editor/editor_string_names.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
@@ -40,50 +41,214 @@
 #include "scene/gui/label.h"
 #include "scene/gui/panel_container.h"
 #include "scene/resources/style_box_flat.h"
+#include "scene/scene_string_names.h"
 #include "servers/display/display_server.h"
+#include "servers/text/text_server.h"
 
-EditorToasterContainer *EditorToasterContainer::singleton = nullptr;
+EditorToasterContainer::EditorToasterContainer() {
+	set_notify_transform(true);
+
+	const Side border_side = is_layout_rtl() ? SIDE_RIGHT : SIDE_LEFT;
+
+	_info_panel_style_background.instantiate();
+	_info_panel_style_background->set_corner_radius_all(STYLEBOX_RADIUS * EDSCALE);
+
+	_warning_panel_style_background.instantiate();
+	_warning_panel_style_background->set_border_width(border_side, STYLEBOX_RADIUS * EDSCALE);
+	_warning_panel_style_background->set_corner_radius_all(STYLEBOX_RADIUS * EDSCALE);
+
+	_error_panel_style_background.instantiate();
+	_error_panel_style_background->set_border_width(border_side, STYLEBOX_RADIUS * EDSCALE);
+	_error_panel_style_background->set_corner_radius_all(STYLEBOX_RADIUS * EDSCALE);
+
+	const Ref<StyleBoxFlat> backgrounds[] = { _info_panel_style_background, _warning_panel_style_background, _error_panel_style_background };
+	for (const Ref<StyleBoxFlat> &background : backgrounds) {
+		background->set_content_margin_individual(int(STYLEBOX_RADIUS * 2.5), 3, int(STYLEBOX_RADIUS * 2.5), 3);
+	}
+
+	_info_panel_style_progress.instantiate();
+	_info_panel_style_progress->set_corner_radius_all(STYLEBOX_RADIUS * EDSCALE);
+
+	_warning_panel_style_progress.instantiate();
+	_warning_panel_style_progress->set_border_width(border_side, STYLEBOX_RADIUS * EDSCALE);
+	_warning_panel_style_progress->set_corner_radius_all(STYLEBOX_RADIUS * EDSCALE);
+
+	_error_panel_style_progress.instantiate();
+	_error_panel_style_progress->set_border_width(border_side, STYLEBOX_RADIUS * EDSCALE);
+	_error_panel_style_progress->set_corner_radius_all(STYLEBOX_RADIUS * EDSCALE);
+
+	_toasts_vbox = memnew(VBoxContainer);
+	_toasts_vbox->connect(SceneStringName(resized), callable_mp(this, &EditorToasterContainer::_update_vbox_position));
+	_toasts_vbox->set_as_top_level(true);
+	add_child(_toasts_vbox);
+
+	_main_btn = memnew(Button);
+	_main_btn->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::_set_notifications_enabled).bind(true));
+	_main_btn->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::_repop_old));
+	_main_btn->connect(SceneStringName(draw), callable_mp(this, &EditorToasterContainer::_draw_button));
+	_main_btn->set_disabled(true);
+	_main_btn->set_tooltip_text(TTRC("No notifications."));
+	add_child(_main_btn);
+
+	_disable_notifications_pc = memnew(PanelContainer);
+	_disable_notifications_pc->add_theme_style_override(SceneStringName(panel), _info_panel_style_background);
+	_disable_notifications_pc->set_as_top_level(true);
+	add_child(_disable_notifications_pc);
+
+	{
+		_disable_notifications_btn = memnew(Button);
+		_disable_notifications_btn->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::_set_notifications_enabled).bind(false));
+		_disable_notifications_btn->set_tooltip_text(TTRC("Silence the notifications."));
+		_disable_notifications_pc->add_child(_disable_notifications_btn);
+	}
+
+	_singleton = this;
+	_error_handler_list.errfunc = _error_handler;
+	add_error_handler(&_error_handler_list);
+}
+
+EditorToasterContainer::~EditorToasterContainer() {
+	_singleton = nullptr;
+	remove_error_handler(&_error_handler_list);
+}
+
+EditorToasterContainer *EditorToasterContainer::get_singleton() {
+	return _singleton;
+}
+
+Control *EditorToasterContainer::popup(Control *p_control, Severity p_severity, double p_time, const String &p_tooltip) {
+	PanelContainer *toast_pc = memnew(PanelContainer);
+	switch (p_severity) {
+		case INFO:
+			toast_pc->add_theme_style_override(SceneStringName(panel), _info_panel_style_background);
+			break;
+		case WARNING:
+			toast_pc->add_theme_style_override(SceneStringName(panel), _warning_panel_style_background);
+			break;
+		case ERROR:
+			toast_pc->add_theme_style_override(SceneStringName(panel), _error_panel_style_background);
+			break;
+	}
+	toast_pc->connect(SceneStringName(draw), callable_mp(this, &EditorToasterContainer::_draw_progress).bind(toast_pc));
+	toast_pc->connect(SceneStringName(theme_changed), callable_mp(this, &EditorToasterContainer::_toast_theme_changed).bind(toast_pc));
+	toast_pc->set_modulate(Color(1, 1, 1, 0));
+	toast_pc->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+	toast_pc->set_tooltip_text(p_tooltip);
+
+	Toast &toast = _toasts[toast_pc];
+	toast.severity = p_severity;
+	toast.duration = p_time > 0.0 ? p_time : -1.0;
+	toast.remaining_time = p_time > 0.0 ? p_time : 0.0;
+	toast.popped = true;
+	_toasts_vbox->add_child(toast_pc);
+
+	{
+		HBoxContainer *content_hbox = memnew(HBoxContainer);
+		content_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
+		toast_pc->add_child(content_hbox);
+
+		{
+			p_control->set_h_size_flags(SIZE_EXPAND_FILL);
+			content_hbox->add_child(p_control);
+
+			if (p_time > 0.0) {
+				Button *copy_btn = memnew(Button);
+				copy_btn->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::copy).bind(toast_pc));
+				content_hbox->add_child(copy_btn);
+				toast.copy_btn = copy_btn;
+
+				Button *close_btn = memnew(Button);
+				close_btn->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::instant_close).bind(toast_pc));
+				content_hbox->add_child(close_btn);
+				toast.close_btn = close_btn;
+			}
+		}
+	}
+
+	_toast_theme_changed(toast_pc);
+	_auto_hide_or_free_toasts();
+	_update_vbox_position();
+	_update_disable_notifications_button();
+	_main_btn->queue_redraw();
+	return toast_pc;
+}
+
+void EditorToasterContainer::popup_str(const String &p_message, Severity p_severity, const String &p_tooltip) {
+	if (_is_processing_error) {
+		return;
+	}
+
+	// Since "_popup_str" adds nodes to the tree, and since the "add_child" method is not
+	// thread-safe, it's better to defer the call to the next cycle to be thread-safe.
+	_is_processing_error = true;
+	MessageQueue::get_main_singleton()->push_callable(callable_mp(this, &EditorToasterContainer::_popup_str), p_message, p_severity, p_tooltip);
+	_is_processing_error = false;
+}
+
+void EditorToasterContainer::close(Control *p_control) {
+	ERR_FAIL_COND(!_toasts.has(p_control));
+	_toasts[p_control].remaining_time = -1.0;
+	_toasts[p_control].popped = false;
+}
+
+void EditorToasterContainer::instant_close(Control *p_control) {
+	close(p_control);
+	p_control->set_modulate(Color(1, 1, 1, 0));
+}
+
+void EditorToasterContainer::copy(Control *p_control) {
+	ERR_FAIL_COND(!_toasts.has(p_control));
+	DisplayServer::get_singleton()->clipboard_set(_toasts[p_control].message);
+}
+
+void EditorToasterContainer::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("push_toast", "message", "severity", "tooltip"), &EditorToasterContainer::_popup_str, DEFVAL(EditorToasterContainer::INFO), DEFVAL(String()));
+
+	BIND_ENUM_CONSTANT(INFO);
+	BIND_ENUM_CONSTANT(WARNING);
+	BIND_ENUM_CONSTANT(ERROR);
+}
 
 void EditorToasterContainer::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_INTERNAL_PROCESS: {
-			double delta = get_process_delta_time();
+			const double delta = get_process_delta_time();
 
-			// Check if one element is hovered, if so, don't elapse time.
+			// Pause notification timers while a toast is hovered.
 			bool hovered = false;
-			for (const KeyValue<Control *, Toast> &element : toasts) {
+			for (const KeyValue<Control *, Toast> &element : _toasts) {
 				if (Rect2(Vector2(), element.key->get_size()).has_point(element.key->get_local_mouse_position())) {
 					hovered = true;
 					break;
 				}
 			}
 
-			// Elapses the time and remove toasts if needed.
+			// Expire timed notifications.
 			if (!hovered) {
-				for (const KeyValue<Control *, Toast> &element : toasts) {
+				for (const KeyValue<Control *, Toast> &element : _toasts) {
 					if (!element.value.popped || element.value.duration <= 0) {
 						continue;
 					}
-					toasts[element.key].remaining_time -= delta;
-					if (toasts[element.key].remaining_time < 0) {
+					_toasts[element.key].remaining_time -= delta;
+					if (_toasts[element.key].remaining_time < 0) {
 						close(element.key);
 					}
 					element.key->queue_redraw();
 				}
 			} else {
 				// Reset the timers when hovered.
-				for (const KeyValue<Control *, Toast> &element : toasts) {
+				for (const KeyValue<Control *, Toast> &element : _toasts) {
 					if (!element.value.popped || element.value.duration <= 0) {
 						continue;
 					}
-					toasts[element.key].remaining_time = element.value.duration;
+					_toasts[element.key].remaining_time = element.value.duration;
 					element.key->queue_redraw();
 				}
 			}
 
 			// Change alpha over time.
 			bool needs_update = false;
-			for (const KeyValue<Control *, Toast> &element : toasts) {
+			for (const KeyValue<Control *, Toast> &element : _toasts) {
 				Color modulate_fade = element.key->get_modulate();
 
 				// Change alpha over time.
@@ -108,40 +273,40 @@ void EditorToasterContainer::_notification(int p_what) {
 			if (needs_update) {
 				_update_vbox_position();
 				_update_disable_notifications_button();
-				main_button->queue_redraw();
+				_main_btn->queue_redraw();
 			}
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			if (vbox_container->is_visible()) {
-				main_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification")));
+			if (_toasts_vbox->is_visible()) {
+				_main_btn->set_button_icon(get_editor_theme_icon(SNAME("status_notification")));
 			} else {
-				main_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification_disabled")));
+				_main_btn->set_button_icon(get_editor_theme_icon(SNAME("status_notification_disabled")));
 			}
-			disable_notifications_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification_disabled")));
+			_disable_notifications_btn->set_button_icon(get_editor_theme_icon(SNAME("status_notification_disabled")));
 
 			// Styleboxes background.
 			const Color base_color = get_theme_color(SNAME("base_color"), EditorStringName(Editor));
 			const Color bg_color = base_color.lerp(get_theme_color(SNAME("mono_color"), EditorStringName(Editor)), 0.08);
 
-			info_panel_style_background->set_bg_color(bg_color);
+			_info_panel_style_background->set_bg_color(bg_color);
 
-			warning_panel_style_background->set_bg_color(bg_color);
-			warning_panel_style_background->set_border_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
+			_warning_panel_style_background->set_bg_color(bg_color);
+			_warning_panel_style_background->set_border_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 
-			error_panel_style_background->set_bg_color(bg_color);
-			error_panel_style_background->set_border_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+			_error_panel_style_background->set_bg_color(bg_color);
+			_error_panel_style_background->set_border_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 
 			// Styleboxes progress.
 			const Color bg_progress_color = base_color.lerp(get_theme_color(SNAME("mono_color"), EditorStringName(Editor)), 0.135);
 
-			info_panel_style_progress->set_bg_color(bg_progress_color);
+			_info_panel_style_progress->set_bg_color(bg_progress_color);
 
-			warning_panel_style_progress->set_bg_color(bg_progress_color);
-			warning_panel_style_progress->set_border_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
+			_warning_panel_style_progress->set_bg_color(bg_progress_color);
+			_warning_panel_style_progress->set_border_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 
-			error_panel_style_progress->set_bg_color(bg_progress_color);
-			error_panel_style_progress->set_border_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+			_error_panel_style_progress->set_bg_color(bg_progress_color);
+			_error_panel_style_progress->set_border_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 		} break;
 
 		case NOTIFICATION_TRANSFORM_CHANGED: {
@@ -163,16 +328,16 @@ void EditorToasterContainer::_error_handler_impl(const String &p_file, int p_lin
 	}
 
 #ifdef DEV_ENABLED
-	bool in_dev = true;
+	const bool in_dev = true;
 #else
-	bool in_dev = false;
+	const bool in_dev = false;
 #endif
 
-	int show_all_setting = EDITOR_GET("interface/editor/behavior/show_internal_errors_in_toast_notifications");
+	const int show_all_setting = EDITOR_GET("interface/editor/behavior/show_internal_errors_in_toast_notifications");
 
 	if (p_editor_notify || (show_all_setting == 0 && in_dev) || show_all_setting == 1) {
 		String err_str = !p_errorexp.is_empty() ? p_errorexp : p_error;
-		String tooltip_str = p_file + ":" + itos(p_line);
+		const String tooltip_str = p_file + ":" + itos(p_line);
 
 		if (!p_editor_notify) {
 			if (p_type == ERR_HANDLER_WARNING) {
@@ -182,42 +347,41 @@ void EditorToasterContainer::_error_handler_impl(const String &p_file, int p_lin
 			}
 		}
 
-		Severity severity = ((ErrorHandlerType)p_type == ERR_HANDLER_WARNING) ? SEVERITY_WARNING : SEVERITY_ERROR;
+		const Severity severity = (static_cast<ErrorHandlerType>(p_type) == ERR_HANDLER_WARNING) ? WARNING : ERROR;
 		EditorToasterContainer::get_singleton()->popup_str(err_str, severity, tooltip_str);
 	}
 }
 
-// This is kind of a workaround because it's hard to keep the VBox anchored to the bottom.
 void EditorToasterContainer::_update_vbox_position() {
-	vbox_container->set_size(Vector2());
+	_toasts_vbox->set_size(Vector2());
 
 	Point2 pos = get_global_position();
-	Size2 vbox_size = vbox_container->get_size();
+	const Size2 vbox_size = _toasts_vbox->get_size();
 	pos.y -= vbox_size.y + 5 * EDSCALE;
 	if (!is_layout_rtl()) {
 		pos.x = pos.x - vbox_size.x + get_size().x;
 	}
 
-	vbox_container->set_position(pos);
+	_toasts_vbox->set_position(pos);
 }
 
 void EditorToasterContainer::_update_disable_notifications_button() {
 	bool any_visible = false;
-	for (KeyValue<Control *, Toast> element : toasts) {
+	for (const KeyValue<Control *, Toast> &element : _toasts) {
 		if (element.key->is_visible()) {
 			any_visible = true;
 			break;
 		}
 	}
 
-	if (!any_visible || !vbox_container->is_visible()) {
-		disable_notifications_panel->hide();
+	if (!any_visible || !_toasts_vbox->is_visible()) {
+		_disable_notifications_pc->hide();
 	} else {
-		disable_notifications_panel->show();
+		_disable_notifications_pc->show();
 
 		Point2 pos = get_global_position();
-		int sep = 5 * EDSCALE;
-		Size2 disable_panel_size = disable_notifications_panel->get_minimum_size();
+		const int sep = 5 * EDSCALE;
+		const Size2 disable_panel_size = _disable_notifications_pc->get_minimum_size();
 		pos.y -= disable_panel_size.y + sep;
 		if (is_layout_rtl()) {
 			pos.x = pos.x - disable_panel_size.x - sep;
@@ -225,7 +389,7 @@ void EditorToasterContainer::_update_disable_notifications_button() {
 			pos.x += get_size().x + sep;
 		}
 
-		disable_notifications_panel->set_position(pos);
+		_disable_notifications_pc->set_position(pos);
 	}
 }
 
@@ -234,9 +398,9 @@ void EditorToasterContainer::_auto_hide_or_free_toasts() {
 	int visible_temporary = 0;
 	int temporary = 0;
 	LocalVector<Control *> to_delete;
-	for (int i = vbox_container->get_child_count() - 1; i >= 0; i--) {
-		Control *control = Object::cast_to<Control>(vbox_container->get_child(i));
-		if (toasts[control].duration <= 0) {
+	for (int i = _toasts_vbox->get_child_count() - 1; i >= 0; i--) {
+		Control *control = Object::cast_to<Control>(_toasts_vbox->get_child(i));
+		if (_toasts[control].duration <= 0) {
 			continue; // Ignore non-temporary toasts.
 		}
 
@@ -246,39 +410,39 @@ void EditorToasterContainer::_auto_hide_or_free_toasts() {
 		}
 
 		// Hide
-		if (visible_temporary > max_temporary_count) {
+		if (visible_temporary > MAX_TEMPORARY_COUNT) {
 			close(control);
 		}
 
 		// Free
-		if (temporary > max_temporary_count * 2) {
+		if (temporary > MAX_TEMPORARY_COUNT * 2) {
 			to_delete.push_back(control);
 		}
 	}
 
-	// Delete the control right away (removed as child) as it might cause issues otherwise when iterative over the vbox_container children.
+	// Remove expired controls before the next traversal of the toast container.
 	for (Control *c : to_delete) {
-		vbox_container->remove_child(c);
+		_toasts_vbox->remove_child(c);
 		c->queue_free();
-		toasts.erase(c);
+		_toasts.erase(c);
 	}
 
-	if (toasts.is_empty()) {
-		main_button->set_tooltip_text(TTRC("No notifications."));
-		main_button->set_modulate(Color(0.5, 0.5, 0.5));
-		main_button->set_disabled(true);
+	if (_toasts.is_empty()) {
+		_main_btn->set_tooltip_text(TTRC("No notifications."));
+		_main_btn->set_modulate(Color(0.5, 0.5, 0.5));
+		_main_btn->set_disabled(true);
 		set_process_internal(false);
 	} else {
-		main_button->set_tooltip_text(TTRC("Show notifications."));
-		main_button->set_modulate(Color(1, 1, 1));
-		main_button->set_disabled(false);
+		_main_btn->set_tooltip_text(TTRC("Show notifications."));
+		_main_btn->set_modulate(Color(1, 1, 1));
+		_main_btn->set_disabled(false);
 	}
 }
 
 void EditorToasterContainer::_draw_button() {
 	bool has_one = false;
-	Severity highest_severity = SEVERITY_INFO;
-	for (const KeyValue<Control *, Toast> &element : toasts) {
+	Severity highest_severity = INFO;
+	for (const KeyValue<Control *, Toast> &element : _toasts) {
 		if (!element.key->is_visible()) {
 			continue;
 		}
@@ -293,168 +457,90 @@ void EditorToasterContainer::_draw_button() {
 	}
 
 	Color color;
-	real_t button_radius = main_button->get_size().x / 8;
+	const real_t button_radius = _main_btn->get_size().x / 8;
 	switch (highest_severity) {
-		case SEVERITY_INFO:
+		case INFO:
 			color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 			break;
-		case SEVERITY_WARNING:
+		case WARNING:
 			color = get_theme_color(SNAME("warning_color"), EditorStringName(Editor));
 			break;
-		case SEVERITY_ERROR:
+		case ERROR:
 			color = get_theme_color(SNAME("error_color"), EditorStringName(Editor));
 			break;
 		default:
 			break;
 	}
-	main_button->draw_circle(Vector2(button_radius * 2, button_radius * 2), button_radius, color);
+	_main_btn->draw_circle(Vector2(button_radius * 2, button_radius * 2), button_radius, color);
 }
 
-void EditorToasterContainer::_draw_progress(Control *panel) {
-	if (toasts.has(panel) && toasts[panel].remaining_time > 0 && toasts[panel].duration > 0) {
+void EditorToasterContainer::_draw_progress(Control *p_panel) {
+	if (_toasts.has(p_panel) && _toasts[p_panel].remaining_time > 0 && _toasts[p_panel].duration > 0) {
 		Ref<StyleBoxFlat> stylebox;
-		switch (toasts[panel].severity) {
-			case SEVERITY_INFO:
-				stylebox = info_panel_style_progress;
+		switch (_toasts[p_panel].severity) {
+			case INFO:
+				stylebox = _info_panel_style_progress;
 				break;
-			case SEVERITY_WARNING:
-				stylebox = warning_panel_style_progress;
+			case WARNING:
+				stylebox = _warning_panel_style_progress;
 				break;
-			case SEVERITY_ERROR:
-				stylebox = error_panel_style_progress;
+			case ERROR:
+				stylebox = _error_panel_style_progress;
 				break;
 			default:
 				break;
 		}
 
-		Size2 size = panel->get_size();
+		const Size2 size = p_panel->get_size();
 		Size2 progress = size;
-		progress.width *= MIN(1, Math::remap(toasts[panel].remaining_time, 0, toasts[panel].duration, 0, 2));
+		progress.width *= MIN(1, Math::remap(_toasts[p_panel].remaining_time, 0, _toasts[p_panel].duration, 0, 2));
 		if (is_layout_rtl()) {
-			panel->draw_style_box(stylebox, Rect2(size - progress, progress));
+			p_panel->draw_style_box(stylebox, Rect2(size - progress, progress));
 		} else {
-			panel->draw_style_box(stylebox, Rect2(Vector2(), progress));
+			p_panel->draw_style_box(stylebox, Rect2(Vector2(), progress));
 		}
 	}
 }
 
 void EditorToasterContainer::_set_notifications_enabled(bool p_enabled) {
-	vbox_container->set_visible(p_enabled);
+	_toasts_vbox->set_visible(p_enabled);
 	if (p_enabled) {
-		main_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification")));
+		_main_btn->set_button_icon(get_editor_theme_icon(SNAME("status_notification")));
 	} else {
-		main_button->set_button_icon(get_editor_theme_icon(SNAME("status_notification_disabled")));
+		_main_btn->set_button_icon(get_editor_theme_icon(SNAME("status_notification_disabled")));
 	}
 	_update_disable_notifications_button();
 }
 
 void EditorToasterContainer::_repop_old() {
-	// Repop olds, up to max_temporary_count
+	// Restore the most recent notifications, up to MAX_TEMPORARY_COUNT.
 	bool needs_update = false;
 	int visible_count = 0;
-	for (int i = vbox_container->get_child_count() - 1; i >= 0; i--) {
-		Control *control = Object::cast_to<Control>(vbox_container->get_child(i));
+	for (int i = _toasts_vbox->get_child_count() - 1; i >= 0; i--) {
+		Control *control = Object::cast_to<Control>(_toasts_vbox->get_child(i));
 		if (!control->is_visible()) {
 			control->show();
-			toasts[control].remaining_time = toasts[control].duration;
-			toasts[control].popped = true;
+			_toasts[control].remaining_time = _toasts[control].duration;
+			_toasts[control].popped = true;
 			needs_update = true;
 		}
 		visible_count++;
-		if (visible_count >= max_temporary_count) {
+		if (visible_count >= MAX_TEMPORARY_COUNT) {
 			break;
 		}
 	}
 	if (needs_update) {
 		_update_vbox_position();
 		_update_disable_notifications_button();
-		main_button->queue_redraw();
+		_main_btn->queue_redraw();
 	}
-}
-
-Control *EditorToasterContainer::popup(Control *p_control, Severity p_severity, double p_time, const String &p_tooltip) {
-	// Create the panel according to the severity.
-	PanelContainer *panel = memnew(PanelContainer);
-	panel->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	panel->set_tooltip_text(p_tooltip);
-	switch (p_severity) {
-		case SEVERITY_INFO:
-			panel->add_theme_style_override(SceneStringName(panel), info_panel_style_background);
-			break;
-		case SEVERITY_WARNING:
-			panel->add_theme_style_override(SceneStringName(panel), warning_panel_style_background);
-			break;
-		case SEVERITY_ERROR:
-			panel->add_theme_style_override(SceneStringName(panel), error_panel_style_background);
-			break;
-		default:
-			break;
-	}
-	panel->set_modulate(Color(1, 1, 1, 0));
-	panel->connect(SceneStringName(draw), callable_mp(this, &EditorToasterContainer::_draw_progress).bind(panel));
-	panel->connect(SceneStringName(theme_changed), callable_mp(this, &EditorToasterContainer::_toast_theme_changed).bind(panel));
-
-	Toast &toast = toasts[panel];
-
-	// Horizontal container.
-	HBoxContainer *hbox_container = memnew(HBoxContainer);
-	hbox_container->set_h_size_flags(SIZE_EXPAND_FILL);
-	panel->add_child(hbox_container);
-
-	// Content control.
-	p_control->set_h_size_flags(SIZE_EXPAND_FILL);
-	hbox_container->add_child(p_control);
-
-	// Add buttons.
-	if (p_time > 0.0) {
-		Button *copy_button = memnew(Button);
-		copy_button->set_flat(true);
-		copy_button->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::copy).bind(panel));
-		hbox_container->add_child(copy_button);
-
-		Button *close_button = memnew(Button);
-		close_button->set_flat(true);
-		close_button->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::instant_close).bind(panel));
-		hbox_container->add_child(close_button);
-
-		toast.copy_button = copy_button;
-		toast.close_button = close_button;
-	}
-
-	toast.severity = p_severity;
-	if (p_time > 0.0) {
-		toast.duration = p_time;
-		toast.remaining_time = p_time;
-	} else {
-		toast.duration = -1.0;
-	}
-	toast.popped = true;
-	vbox_container->add_child(panel);
-	_auto_hide_or_free_toasts();
-	_update_vbox_position();
-	_update_disable_notifications_button();
-	main_button->queue_redraw();
-
-	return panel;
-}
-
-void EditorToasterContainer::popup_str(const String &p_message, Severity p_severity, const String &p_tooltip) {
-	if (is_processing_error) {
-		return;
-	}
-
-	// Since "_popup_str" adds nodes to the tree, and since the "add_child" method is not
-	// thread-safe, it's better to defer the call to the next cycle to be thread-safe.
-	is_processing_error = true;
-	MessageQueue::get_main_singleton()->push_callable(callable_mp(this, &EditorToasterContainer::_popup_str), p_message, p_severity, p_tooltip);
-	is_processing_error = false;
 }
 
 void EditorToasterContainer::_popup_str(const String &p_message, Severity p_severity, const String &p_tooltip) {
-	is_processing_error = true;
+	_is_processing_error = true;
 	// Check if we already have a popup with the given message.
 	Control *control = nullptr;
-	for (KeyValue<Control *, Toast> element : toasts) {
+	for (const KeyValue<Control *, Toast> &element : _toasts) {
 		if (element.value.message == p_message && element.value.severity == p_severity && element.value.tooltip == p_tooltip) {
 			control = element.key;
 			break;
@@ -463,27 +549,28 @@ void EditorToasterContainer::_popup_str(const String &p_message, Severity p_seve
 
 	// Create a new message if needed.
 	if (control == nullptr) {
-		HBoxContainer *hb = memnew(HBoxContainer);
-		hb->add_theme_constant_override("separation", 0);
+		HBoxContainer *message_hbox = memnew(HBoxContainer);
+		message_hbox->add_theme_constant_override("separation", 0);
+		control = popup(message_hbox, p_severity, DEFAULT_MESSAGE_DURATION, p_tooltip);
 
-		Label *label = memnew(Label);
-		label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-		hb->add_child(label);
+		{
+			Label *message_lbl = memnew(Label);
+			message_lbl->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+			message_hbox->add_child(message_lbl);
 
-		Label *count_label = memnew(Label);
-		count_label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-		hb->add_child(count_label);
+			Label *count_lbl = memnew(Label);
+			count_lbl->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+			message_hbox->add_child(count_lbl);
 
-		control = popup(hb, p_severity, default_message_duration, p_tooltip);
-
-		Toast &toast = toasts[control];
-		toast.message = p_message;
-		toast.tooltip = p_tooltip;
-		toast.count = 1;
-		toast.message_label = label;
-		toast.message_count_label = count_label;
+			Toast &toast = _toasts[control];
+			toast.message = p_message;
+			toast.tooltip = p_tooltip;
+			toast.count = 1;
+			toast.message_lbl = message_lbl;
+			toast.message_count_lbl = count_lbl;
+		}
 	} else {
-		Toast &toast = toasts[control];
+		Toast &toast = _toasts[control];
 		if (toast.popped) {
 			toast.count += 1;
 		} else {
@@ -492,153 +579,50 @@ void EditorToasterContainer::_popup_str(const String &p_message, Severity p_seve
 		toast.remaining_time = toast.duration;
 		toast.popped = true;
 		control->show();
-		vbox_container->move_child(control, vbox_container->get_child_count());
+		_toasts_vbox->move_child(control, _toasts_vbox->get_child_count());
 		_auto_hide_or_free_toasts();
 		_update_vbox_position();
 		_update_disable_notifications_button();
-		main_button->queue_redraw();
+		_main_btn->queue_redraw();
 	}
 
 	// Retrieve the label back, then update the text.
-	Label *message_label = toasts[control].message_label;
-	ERR_FAIL_NULL(message_label);
-	message_label->set_text(p_message);
-	message_label->set_text_overrun_behavior(TextServer::OVERRUN_NO_TRIMMING);
-	message_label->set_custom_minimum_size(Size2());
+	Label *message_lbl = _toasts[control].message_lbl;
+	ERR_FAIL_NULL(message_lbl);
+	message_lbl->set_text(p_message);
+	message_lbl->set_text_overrun_behavior(TextServer::OVERRUN_NO_TRIMMING);
+	message_lbl->set_custom_minimum_size(Size2());
 
-	Size2i size = message_label->get_combined_minimum_size();
-	int limit_width = get_viewport_rect().size.x / 2; // Limit label size to half the viewport size.
+	const Size2i size = message_lbl->get_combined_minimum_size();
+	const int limit_width = get_viewport_rect().size.x / 2; // Limit label size to half the viewport size.
 	if (size.x > limit_width) {
-		message_label->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
-		message_label->set_custom_minimum_size(Size2(limit_width, 0));
+		message_lbl->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
+		message_lbl->set_custom_minimum_size(Size2(limit_width, 0));
 	}
 
 	// Retrieve the count label back, then update the text.
-	Label *message_count_label = toasts[control].message_count_label;
-	if (toasts[control].count == 1) {
-		message_count_label->hide();
+	Label *message_count_lbl = _toasts[control].message_count_lbl;
+	if (_toasts[control].count == 1) {
+		message_count_lbl->hide();
 	} else {
-		message_count_label->set_text(vformat("(%d)", toasts[control].count));
-		message_count_label->show();
+		message_count_lbl->set_text(vformat("(%d)", _toasts[control].count));
+		message_count_lbl->show();
 	}
 
-	vbox_container->reset_size();
+	_toasts_vbox->reset_size();
 
-	is_processing_error = false;
+	_is_processing_error = false;
 	set_process_internal(true);
 }
 
 void EditorToasterContainer::_toast_theme_changed(Control *p_control) {
-	ERR_FAIL_COND(!toasts.has(p_control));
+	ERR_FAIL_COND(!_toasts.has(p_control));
 
-	Toast &toast = toasts[p_control];
-	if (toast.close_button) {
-		toast.close_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
+	Toast &toast = _toasts[p_control];
+	if (toast.close_btn) {
+		toast.close_btn->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 	}
-	if (toast.copy_button) {
-		toast.copy_button->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
+	if (toast.copy_btn) {
+		toast.copy_btn->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
 	}
-}
-
-void EditorToasterContainer::close(Control *p_control) {
-	ERR_FAIL_COND(!toasts.has(p_control));
-	toasts[p_control].remaining_time = -1.0;
-	toasts[p_control].popped = false;
-}
-
-void EditorToasterContainer::instant_close(Control *p_control) {
-	close(p_control);
-	p_control->set_modulate(Color(1, 1, 1, 0));
-}
-
-void EditorToasterContainer::copy(Control *p_control) {
-	ERR_FAIL_COND(!toasts.has(p_control));
-	DisplayServer::get_singleton()->clipboard_set(toasts[p_control].message);
-}
-
-void EditorToasterContainer::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("push_toast", "message", "severity", "tooltip"), &EditorToasterContainer::_popup_str, DEFVAL(EditorToasterContainer::SEVERITY_INFO), DEFVAL(String()));
-
-	BIND_ENUM_CONSTANT(SEVERITY_INFO);
-	BIND_ENUM_CONSTANT(SEVERITY_WARNING);
-	BIND_ENUM_CONSTANT(SEVERITY_ERROR);
-}
-
-EditorToasterContainer *EditorToasterContainer::get_singleton() {
-	return singleton;
-}
-
-EditorToasterContainer::EditorToasterContainer() {
-	set_notify_transform(true);
-
-	// VBox.
-	vbox_container = memnew(VBoxContainer);
-	vbox_container->set_as_top_level(true);
-	vbox_container->connect(SceneStringName(resized), callable_mp(this, &EditorToasterContainer::_update_vbox_position));
-	add_child(vbox_container);
-
-	Side border_side = is_layout_rtl() ? SIDE_RIGHT : SIDE_LEFT;
-
-	// Theming (background).
-	info_panel_style_background.instantiate();
-	info_panel_style_background->set_corner_radius_all(stylebox_radius * EDSCALE);
-
-	warning_panel_style_background.instantiate();
-	warning_panel_style_background->set_border_width(border_side, stylebox_radius * EDSCALE);
-	warning_panel_style_background->set_corner_radius_all(stylebox_radius * EDSCALE);
-
-	error_panel_style_background.instantiate();
-	error_panel_style_background->set_border_width(border_side, stylebox_radius * EDSCALE);
-	error_panel_style_background->set_corner_radius_all(stylebox_radius * EDSCALE);
-
-	Ref<StyleBoxFlat> boxes[] = { info_panel_style_background, warning_panel_style_background, error_panel_style_background };
-	for (int i = 0; i < 3; i++) {
-		boxes[i]->set_content_margin_individual(int(stylebox_radius * 2.5), 3, int(stylebox_radius * 2.5), 3);
-	}
-
-	// Theming (progress).
-	info_panel_style_progress.instantiate();
-	info_panel_style_progress->set_corner_radius_all(stylebox_radius * EDSCALE);
-
-	warning_panel_style_progress.instantiate();
-	warning_panel_style_progress->set_border_width(border_side, stylebox_radius * EDSCALE);
-	warning_panel_style_progress->set_corner_radius_all(stylebox_radius * EDSCALE);
-
-	error_panel_style_progress.instantiate();
-	error_panel_style_progress->set_border_width(border_side, stylebox_radius * EDSCALE);
-	error_panel_style_progress->set_corner_radius_all(stylebox_radius * EDSCALE);
-
-	// Main button.
-	main_button = memnew(Button);
-	main_button->set_tooltip_text(TTRC("No notifications."));
-	main_button->set_modulate(Color(0.5, 0.5, 0.5));
-	main_button->set_disabled(true);
-	main_button->set_theme_type_variation("FlatMenuButton");
-	main_button->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::_set_notifications_enabled).bind(true));
-	main_button->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::_repop_old));
-	main_button->connect(SceneStringName(draw), callable_mp(this, &EditorToasterContainer::_draw_button));
-	add_child(main_button);
-
-	// Disable notification button.
-	disable_notifications_panel = memnew(PanelContainer);
-	disable_notifications_panel->set_as_top_level(true);
-	disable_notifications_panel->add_theme_style_override(SceneStringName(panel), info_panel_style_background);
-	add_child(disable_notifications_panel);
-
-	disable_notifications_button = memnew(Button);
-	disable_notifications_button->set_tooltip_text(TTRC("Silence the notifications."));
-	disable_notifications_button->set_flat(true);
-	disable_notifications_button->connect(SceneStringName(pressed), callable_mp(this, &EditorToasterContainer::_set_notifications_enabled).bind(false));
-	disable_notifications_panel->add_child(disable_notifications_button);
-
-	// Other
-	singleton = this;
-
-	eh.errfunc = _error_handler;
-	add_error_handler(&eh);
-}
-
-EditorToasterContainer::~EditorToasterContainer() {
-	singleton = nullptr;
-	remove_error_handler(&eh);
 }

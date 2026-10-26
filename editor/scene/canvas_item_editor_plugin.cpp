@@ -4035,7 +4035,7 @@ CanvasItemEditor::CanvasItemEditor() {
 	ci_manipulator->connect("commit_canvas_state_requested", callable_mp(this, &CanvasItemEditor::_commit_canvas_state_requested));
 	ci_manipulator->connect("commit_guide_meta_requested", callable_mp(this, &CanvasItemEditor::_commit_guide_meta_requested));
 	ci_manipulator->connect("cursor_shape_changed", callable_mp(this, &CanvasItemEditor::_update_cursor));
-	ci_manipulator->connect("warning_emitted", callable_mp(EditorToasterContainer::get_singleton(), &EditorToasterContainer::popup_str).bind(EditorToasterContainer::SEVERITY_WARNING, ""));
+	ci_manipulator->connect("warning_emitted", callable_mp(EditorToasterContainer::get_singleton(), &EditorToasterContainer::popup_str).bind(EditorToasterContainer::WARNING, ""));
 
 	select_button = memnew(Button);
 	select_button->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);

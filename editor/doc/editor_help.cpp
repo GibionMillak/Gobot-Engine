@@ -347,7 +347,7 @@ void EditorHelp::_class_desc_select(const String &p_select) {
 		OS::get_singleton()->shell_open(p_select);
 	} else if (p_select.begins_with("^")) { // Copy button.
 		DisplayServer::get_singleton()->clipboard_set(p_select.substr(1));
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Code snippet copied to clipboard."), EditorToasterContainer::SEVERITY_INFO);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Code snippet copied to clipboard."), EditorToasterContainer::INFO);
 	}
 }
 
@@ -4259,7 +4259,7 @@ void EditorHelpBit::_meta_clicked(const String &p_select) {
 		OS::get_singleton()->shell_open(p_select);
 	} else if (p_select.begins_with("^")) { // Copy button.
 		DisplayServer::get_singleton()->clipboard_set(p_select.substr(1));
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Code snippet copied to clipboard."), EditorToasterContainer::SEVERITY_INFO);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Code snippet copied to clipboard."), EditorToasterContainer::INFO);
 	}
 }
 

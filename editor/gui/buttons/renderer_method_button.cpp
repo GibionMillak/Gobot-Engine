@@ -37,27 +37,9 @@
 #include "editor/editor_node.h"
 #include "scene/gui/dialog.h"
 #include "scene/gui/label.h"
+#include "scene/scene_string_names.h"
 
-void RendererMethodButton::_notification(int p_what) {
-	switch (p_what) {
-		case NOTIFICATION_POSTINITIALIZE: {
-			// Setters can send translation notifications that require OptionButton's initialized theme cache.
-			_initialize();
-		} break;
-		case NOTIFICATION_READY:
-		case NOTIFICATION_THEME_CHANGED: {
-			if (is_inside_tree()) {
-				_update_icons();
-			}
-		} break;
-		case NOTIFICATION_TRANSLATION_CHANGED: {
-			_update_labels();
-		} break;
-	}
-}
-
-void RendererMethodButton::_initialize() {
-	set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+RendererMethodButton::RendererMethodButton() {
 	set_fit_to_longest_item(false);
 	set_focus_mode(FOCUS_NONE);
 	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
@@ -71,8 +53,6 @@ void RendererMethodButton::_initialize() {
 		add_item(String());
 		set_item_metadata(0, current_renderer_os);
 	} else {
-		connect(SceneStringName(item_selected), callable_mp(this, &RendererMethodButton::_renderer_selected));
-
 		const PackedStringArray renderers = ProjectSettings::get_singleton()->get_custom_property_info().get(StringName("rendering/renderer/rendering_method")).hint_string.split(",", false);
 		for (const String &renderer : renderers) {
 			const String rendering_method = renderer.to_lower();
@@ -90,6 +70,28 @@ void RendererMethodButton::_initialize() {
 	}
 
 	_update_labels();
+}
+
+void RendererMethodButton::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_POSTINITIALIZE: {
+			// OptionButton reads its cached arrow icon when translation mode changes.
+			set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+			// The inherited signal is available after the engine initializes this object's class.
+			if (!_rendering_method_overridden) {
+				connect(SceneStringName(item_selected), callable_mp(this, &RendererMethodButton::_renderer_selected));
+			}
+		} break;
+		case NOTIFICATION_READY:
+		case NOTIFICATION_THEME_CHANGED: {
+			if (is_inside_tree()) {
+				_update_icons();
+			}
+		} break;
+		case NOTIFICATION_TRANSLATION_CHANGED: {
+			_update_labels();
+		} break;
+	}
 }
 
 void RendererMethodButton::_renderer_selected(int p_index) {

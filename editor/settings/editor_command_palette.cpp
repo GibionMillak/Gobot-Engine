@@ -261,7 +261,7 @@ void EditorCommandPalette::execute_command(const String &p_command_key) {
 	callable.callp(nullptr, 0, ret, ce);
 
 	if (ce.error != Callable::CallError::CALL_OK) {
-		EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Failed to execute command \"%s\":\n%s."), p_command_key, Variant::get_callable_error_text(callable, nullptr, 0, ce)), EditorToasterContainer::SEVERITY_ERROR);
+		EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Failed to execute command \"%s\":\n%s."), p_command_key, Variant::get_callable_error_text(callable, nullptr, 0, ce)), EditorToasterContainer::ERROR);
 	}
 }
 

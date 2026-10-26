@@ -21,13 +21,13 @@
 		</method>
 	</methods>
 	<constants>
-		<constant name="SEVERITY_INFO" value="0" enum="Severity">
+		<constant name="INFO" value="0" enum="Severity">
 			Toast will display with an INFO severity.
 		</constant>
-		<constant name="SEVERITY_WARNING" value="1" enum="Severity">
+		<constant name="WARNING" value="1" enum="Severity">
 			Toast will display with a WARNING severity and have a corresponding color.
 		</constant>
-		<constant name="SEVERITY_ERROR" value="2" enum="Severity">
+		<constant name="ERROR" value="2" enum="Severity">
 			Toast will display with an ERROR severity and have a corresponding color.
 		</constant>
 	</constants>

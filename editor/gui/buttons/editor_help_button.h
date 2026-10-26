@@ -36,7 +36,7 @@ class EditorHelpButton : public MenuButton {
 	GDCLASS(EditorHelpButton, MenuButton);
 
 public:
-	EditorHelpButton() = default;
+	EditorHelpButton();
 
 protected:
 	void _notification(int p_what);
@@ -50,7 +50,6 @@ private:
 		ABOUT,
 	};
 
-	void _initialize();
 	void _item_selected(int p_id);
 	void _update_icons();
 };

@@ -1299,7 +1299,7 @@ bool EditorBuildProfileManager::_import_profile(const String &p_path) {
 		if (is_visible()) {
 			EditorNode::get_singleton()->show_warning(vformat(TTR("File '%s' format is invalid, import aborted."), basefile));
 		} else {
-			EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Can't load build profile. File '%s' is invalid."), basefile), EditorToasterContainer::SEVERITY_ERROR);
+			EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Can't load build profile. File '%s' is invalid."), basefile), EditorToasterContainer::ERROR);
 		}
 		return false;
 	}

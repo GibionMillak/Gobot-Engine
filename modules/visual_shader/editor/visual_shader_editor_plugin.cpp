@@ -9702,10 +9702,10 @@ Ref<Resource> VisualShaderConversionPlugin::convert(const Ref<Resource> &p_resou
 			WARN_PRINT("Visual Shader conversion cannot convert external dependencies. Resource references from Nodes will have to be rebound as ShaderParameters on a Material.");
 		}
 	} else if (embed == 2) {
-		toast->popup_str(TTR("Cannot convert VisualShader to GDShader because VisualShader has embedded subresources."), EditorToasterContainer::SEVERITY_ERROR);
+		toast->popup_str(TTR("Cannot convert VisualShader to GDShader because VisualShader has embedded subresources."), EditorToasterContainer::ERROR);
 		return Ref<Resource>();
 	} else if (embed == 1) {
-		toast->popup_str(TTR("Visual Shader conversion cannot convert external dependencies. Resource references from Nodes will have to be rebound as ShaderParameters on a Material."), EditorToasterContainer::SEVERITY_WARNING);
+		toast->popup_str(TTR("Visual Shader conversion cannot convert external dependencies. Resource references from Nodes will have to be rebound as ShaderParameters on a Material."), EditorToasterContainer::WARNING);
 	}
 
 	Ref<Shader> shader;

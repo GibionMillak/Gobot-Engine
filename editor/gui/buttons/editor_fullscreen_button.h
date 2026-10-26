@@ -37,7 +37,7 @@ class EditorFullscreenButton : public Button {
 	GDCLASS(EditorFullscreenButton, Button);
 
 public:
-	EditorFullscreenButton() = default;
+	EditorFullscreenButton();
 
 protected:
 	void _notification(int p_what);

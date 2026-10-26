@@ -41,13 +41,12 @@ public:
 		CONTINUOUSLY,
 	};
 
-	RedrawModeButton() = default;
+	RedrawModeButton();
 
 protected:
 	void _notification(int p_what);
 
 private:
-	void _initialize();
 	void _mode_selected(int p_id);
 	void _update_mode();
 	void _update_appearance();

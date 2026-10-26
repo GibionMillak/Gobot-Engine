@@ -1630,12 +1630,12 @@ void DocumentEditorContainer::_update_modified_scripts_for_external_editor(Ref<S
 
 void _import_text_editor_theme(const String &p_file) {
 	if (p_file.get_extension() != "tet") {
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Importing theme failed. File is not a text editor theme file (.tet)."), EditorToasterContainer::SEVERITY_ERROR);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Importing theme failed. File is not a text editor theme file (.tet)."), EditorToasterContainer::ERROR);
 		return;
 	}
 	const String theme_name = p_file.get_file().get_basename();
 	if (EditorSettings::is_default_text_editor_theme(theme_name.to_lower())) {
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Importing theme failed. File name cannot be 'Default', 'Custom', or 'Godot 2'."), EditorToasterContainer::SEVERITY_ERROR);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Importing theme failed. File name cannot be 'Default', 'Custom', or 'Godot 2'."), EditorToasterContainer::ERROR);
 		return;
 	}
 
@@ -1647,7 +1647,7 @@ void _import_text_editor_theme(const String &p_file) {
 	}
 
 	if (err != OK) {
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Importing theme failed. Failed to copy theme file."), EditorToasterContainer::SEVERITY_ERROR);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Importing theme failed. Failed to copy theme file."), EditorToasterContainer::ERROR);
 		return;
 	}
 
@@ -1665,7 +1665,7 @@ void _save_text_editor_theme_as(const String &p_file) {
 
 	const String theme_name = file.get_file().get_basename();
 	if (EditorSettings::is_default_text_editor_theme(theme_name.to_lower())) {
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Saving theme failed. File name cannot be 'Default', 'Custom', or 'Godot 2'."), EditorToasterContainer::SEVERITY_ERROR);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Saving theme failed. File name cannot be 'Default', 'Custom', or 'Godot 2'."), EditorToasterContainer::ERROR);
 		return;
 	}
 
@@ -1683,7 +1683,7 @@ void _save_text_editor_theme_as(const String &p_file) {
 
 	const Error err = cf->save(file);
 	if (err != OK) {
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Saving theme failed."), EditorToasterContainer::SEVERITY_ERROR);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Saving theme failed."), EditorToasterContainer::ERROR);
 		return;
 	}
 
@@ -2023,7 +2023,7 @@ void DocumentEditorContainer::_menu_option(int p_option) {
 			case FILE_MENU_RUN: {
 				Ref<Script> scr = seb->get_edited_resource();
 				if (scr.is_null()) {
-					EditorToasterContainer::get_singleton()->popup_str(TTR("Cannot run the edited file because it's not a script."), EditorToasterContainer::SEVERITY_WARNING);
+					EditorToasterContainer::get_singleton()->popup_str(TTR("Cannot run the edited file because it's not a script."), EditorToasterContainer::WARNING);
 					break;
 				}
 

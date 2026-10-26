@@ -30,6 +30,7 @@
 
 #include "editor_header_container.h"
 
+#include "core/input/input_event.h"
 #include "core/object/callable_mp.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/buttons/editor_fullscreen_button.h"
@@ -38,19 +39,8 @@
 #include "scene/gui/button.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/window.h"
+#include "scene/scene_string_names.h"
 #include "servers/display/display_server.h"
-
-static Ref<Texture2D> _get_theme_icon_or_fallback(const Control *p_control, const StringName &p_name, const StringName &p_fallback) {
-	if (p_control) {
-		if (p_control->has_theme_icon(p_name, EditorStringName(EditorIcons))) {
-			return p_control->get_editor_theme_icon(p_name);
-		}
-		if (p_control->has_theme_icon(p_fallback, EditorStringName(EditorIcons))) {
-			return p_control->get_editor_theme_icon(p_fallback);
-		}
-	}
-	return Ref<Texture2D>();
-}
 
 void EditorHeaderContainer::add_editor_controls() {
 	if (_editor_controls_hbox) {
@@ -117,10 +107,10 @@ void EditorHeaderContainer::_notification(int p_what) {
 			_update_window_buttons();
 		} break;
 		case NOTIFICATION_SORT_CHILDREN: {
-			if (_window_buttons_hb && _window_buttons_hb->get_index() != get_child_count() - 1) {
-				move_child(_window_buttons_hb, get_child_count() - 1);
+			if (_window_buttons_hbox && _window_buttons_hbox->get_index() != get_child_count() - 1) {
+				move_child(_window_buttons_hbox, get_child_count() - 1);
 			}
-			if (_editor_controls_hbox && _window_buttons_hb && _editor_controls_hbox->get_index() != get_child_count() - 2) {
+			if (_editor_controls_hbox && _window_buttons_hbox && _editor_controls_hbox->get_index() != get_child_count() - 2) {
 				move_child(_editor_controls_hbox, get_child_count() - 2);
 			}
 
@@ -131,7 +121,7 @@ void EditorHeaderContainer::_notification(int p_what) {
 			Control *base = nullptr;
 			Control *next = nullptr;
 
-			bool rtl = is_layout_rtl();
+			const bool rtl = is_layout_rtl();
 
 			int start;
 			int end;
@@ -162,15 +152,15 @@ void EditorHeaderContainer::_notification(int p_what) {
 				base = c;
 			}
 			if (base && prev && next) {
-				Size2i title_size = get_size();
-				int center = title_size.x / 2;
+				const Size2i title_size = get_size();
+				const int center = title_size.x / 2;
 				int width = MIN(center - prev->get_position().x, next->get_position().x + next->get_size().x - center) * 1.9;
 				width = MAX(width, base->get_combined_minimum_size().x);
 				base->set_custom_maximum_size(Size2i(width, title_size.y));
-				Size2i c_size = base->get_bound_desired_size();
+				const Size2i c_size = base->get_bound_desired_size();
 
-				int min_offset = prev->get_position().x + prev->get_combined_minimum_size().x;
-				int max_offset = next->get_position().x + next->get_size().x - next->get_combined_minimum_size().x - c_size.x;
+				const int min_offset = prev->get_position().x + prev->get_combined_minimum_size().x;
+				const int max_offset = next->get_position().x + next->get_size().x - next->get_combined_minimum_size().x - c_size.x;
 
 				int offset = (title_size.width - c_size.width) / 2;
 				offset = CLAMP(offset, min_offset, max_offset);
@@ -188,12 +178,12 @@ void EditorHeaderContainer::gui_input(const Ref<InputEvent> &p_event) {
 		return;
 	}
 
-	Ref<InputEventMouseMotion> mm = p_event;
+	const Ref<InputEventMouseMotion> mm = p_event;
 	if (mm.is_valid() && _moving) {
 		if (mm->get_button_mask().has_flag(MouseButtonMask::LEFT)) {
 			Window *w = Object::cast_to<Window>(get_viewport());
 			if (w) {
-				Point2 mouse = DisplayServer::get_singleton()->mouse_get_position();
+				const Point2 mouse = DisplayServer::get_singleton()->mouse_get_position();
 				w->set_position(mouse - _click_pos);
 			}
 		} else {
@@ -201,7 +191,7 @@ void EditorHeaderContainer::gui_input(const Ref<InputEvent> &p_event) {
 		}
 	}
 
-	Ref<InputEventMouseButton> mb = p_event;
+	const Ref<InputEventMouseButton> mb = p_event;
 	if (mb.is_valid() && has_point(mb->get_position())) {
 		Window *w = Object::cast_to<Window>(get_viewport());
 		if (w) {
@@ -231,6 +221,16 @@ void EditorHeaderContainer::gui_input(const Ref<InputEvent> &p_event) {
 			}
 		}
 	}
+}
+
+Ref<Texture2D> EditorHeaderContainer::_get_window_icon(const StringName &p_name, const StringName &p_fallback) const {
+	if (has_theme_icon(p_name, EditorStringName(EditorIcons))) {
+		return get_editor_theme_icon(p_name);
+	}
+	if (has_theme_icon(p_fallback, EditorStringName(EditorIcons))) {
+		return get_editor_theme_icon(p_fallback);
+	}
+	return Ref<Texture2D>();
 }
 
 void EditorHeaderContainer::_on_minimize_pressed() {
@@ -275,60 +275,62 @@ void EditorHeaderContainer::_on_close_pressed() {
 }
 
 void EditorHeaderContainer::_update_window_buttons() {
-	if (!_window_buttons_hb) {
+	if (!_window_buttons_hbox) {
 		return;
 	}
 
-	_btn_minimize->set_button_icon(_get_theme_icon_or_fallback(this, SNAME("editor_window_minimize"), SNAME("collapse")));
-	_btn_close->set_button_icon(_get_theme_icon_or_fallback(this, SNAME("editor_window_close"), SNAME("action_close")));
+	_minimize_btn->set_button_icon(_get_window_icon(SNAME("editor_window_minimize"), SNAME("collapse")));
+	_close_btn->set_button_icon(_get_window_icon(SNAME("editor_window_close"), SNAME("action_close")));
 
 	Window *w = Object::cast_to<Window>(get_viewport());
-	bool is_max = w && (w->get_mode() == Window::MODE_MAXIMIZED);
+	const bool is_max = w && (w->get_mode() == Window::MODE_MAXIMIZED);
 	if (is_max) {
-		_btn_maximize->set_button_icon(_get_theme_icon_or_fallback(this, SNAME("editor_window_restore"), SNAME("editor_window_maximize")));
-		_btn_maximize->set_tooltip_text(TTR("Restore"));
+		_maximize_btn->set_button_icon(_get_window_icon(SNAME("editor_window_restore"), SNAME("editor_window_maximize")));
+		_maximize_btn->set_tooltip_text(TTR("Restore"));
 	} else {
-		_btn_maximize->set_button_icon(_get_theme_icon_or_fallback(this, SNAME("editor_window_maximize"), SNAME("expand_tree")));
-		_btn_maximize->set_tooltip_text(TTR("Maximize"));
+		_maximize_btn->set_button_icon(_get_window_icon(SNAME("editor_window_maximize"), SNAME("expand_tree")));
+		_maximize_btn->set_tooltip_text(TTR("Maximize"));
 	}
 }
 
 void EditorHeaderContainer::_create_window_buttons() {
-	if (_window_buttons_hb) {
+	if (_window_buttons_hbox) {
 		return;
 	}
 
-	_window_buttons_hb = memnew(HBoxContainer);
-	_window_buttons_hb->set_mouse_filter(MOUSE_FILTER_STOP);
+	_window_buttons_hbox = memnew(HBoxContainer);
+	_window_buttons_hbox->set_mouse_filter(MOUSE_FILTER_STOP);
+	add_child(_window_buttons_hbox);
 
-	_btn_minimize = memnew(Button);
-	_btn_minimize->set_focus_mode(FOCUS_NONE);
-	_btn_minimize->set_tooltip_text(TTR("Minimize"));
-	_btn_minimize->connect(SceneStringName(pressed), callable_mp(this, &EditorHeaderContainer::_on_minimize_pressed));
-	_window_buttons_hb->add_child(_btn_minimize);
+	{
+		_minimize_btn = memnew(Button);
+		_minimize_btn->connect(SceneStringName(pressed), callable_mp(this, &EditorHeaderContainer::_on_minimize_pressed));
+		_minimize_btn->set_focus_mode(FOCUS_NONE);
+		_minimize_btn->set_tooltip_text(TTR("Minimize"));
+		_window_buttons_hbox->add_child(_minimize_btn);
 
-	_btn_maximize = memnew(Button);
-	_btn_maximize->set_focus_mode(FOCUS_NONE);
-	_btn_maximize->connect(SceneStringName(pressed), callable_mp(this, &EditorHeaderContainer::_on_maximize_pressed));
-	_window_buttons_hb->add_child(_btn_maximize);
+		_maximize_btn = memnew(Button);
+		_maximize_btn->connect(SceneStringName(pressed), callable_mp(this, &EditorHeaderContainer::_on_maximize_pressed));
+		_maximize_btn->set_focus_mode(FOCUS_NONE);
+		_window_buttons_hbox->add_child(_maximize_btn);
 
-	_btn_close = memnew(Button);
-	_btn_close->connect(SceneStringName(pressed), callable_mp(this, &EditorHeaderContainer::_on_close_pressed));
-	_btn_close->set_focus_mode(FOCUS_NONE);
-	_btn_close->set_theme_type_variation("HeaderCloseButton");
-	_btn_close->set_tooltip_text(TTR("Close"));
-	_window_buttons_hb->add_child(_btn_close);
+		_close_btn = memnew(Button);
+		_close_btn->connect(SceneStringName(pressed), callable_mp(this, &EditorHeaderContainer::_on_close_pressed));
+		_close_btn->set_focus_mode(FOCUS_NONE);
+		_close_btn->set_theme_type_variation("HeaderCloseButton");
+		_close_btn->set_tooltip_text(TTR("Close"));
+		_window_buttons_hbox->add_child(_close_btn);
+	}
 
-	add_child(_window_buttons_hb);
 	_update_window_buttons();
 }
 
 void EditorHeaderContainer::_destroy_window_buttons() {
-	if (_window_buttons_hb) {
-		_window_buttons_hb->queue_free();
-		_window_buttons_hb = nullptr;
-		_btn_minimize = nullptr;
-		_btn_maximize = nullptr;
-		_btn_close = nullptr;
+	if (_window_buttons_hbox) {
+		_window_buttons_hbox->queue_free();
+		_window_buttons_hbox = nullptr;
+		_minimize_btn = nullptr;
+		_maximize_btn = nullptr;
+		_close_btn = nullptr;
 	}
 }

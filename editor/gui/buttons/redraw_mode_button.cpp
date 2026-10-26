@@ -38,12 +38,20 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_theme_manager.h"
 #include "scene/gui/popup_menu.h"
+#include "scene/scene_string_names.h"
+
+RedrawModeButton::RedrawModeButton() {
+	set_focus_mode(FOCUS_NONE);
+	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
+
+	PopupMenu *const mode_popup = get_popup();
+	mode_popup->add_radio_check_item(TTRC("Reactive"), REACTIVE);
+	mode_popup->add_radio_check_item(TTRC("Continuously"), CONTINUOUSLY);
+	mode_popup->connect(SceneStringName(id_pressed), callable_mp(this, &RedrawModeButton::_mode_selected));
+}
 
 void RedrawModeButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_POSTINITIALIZE: {
-			_initialize();
-		} break;
 		case NOTIFICATION_READY: {
 			_last_step_msec = OS::get_singleton()->get_ticks_msec();
 			_last_step_frame = Engine::get_singleton()->get_frames_drawn();
@@ -74,16 +82,6 @@ void RedrawModeButton::_notification(int p_what) {
 			}
 		} break;
 	}
-}
-
-void RedrawModeButton::_initialize() {
-	set_focus_mode(FOCUS_NONE);
-	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
-
-	PopupMenu *const mode_popup = get_popup();
-	mode_popup->add_radio_check_item(TTRC("Reactive"), REACTIVE);
-	mode_popup->add_radio_check_item(TTRC("Continuously"), CONTINUOUSLY);
-	mode_popup->connect(SceneStringName(id_pressed), callable_mp(this, &RedrawModeButton::_mode_selected));
 }
 
 void RedrawModeButton::_mode_selected(int p_id) {

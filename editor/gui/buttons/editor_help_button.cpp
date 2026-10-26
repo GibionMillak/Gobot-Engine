@@ -37,22 +37,9 @@
 #include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/gui/popup_menu.h"
+#include "scene/scene_string_names.h"
 
-void EditorHelpButton::_notification(int p_what) {
-	switch (p_what) {
-		case NOTIFICATION_POSTINITIALIZE: {
-			_initialize();
-		} break;
-		case NOTIFICATION_READY:
-		case NOTIFICATION_THEME_CHANGED: {
-			if (is_inside_tree()) {
-				_update_icons();
-			}
-		} break;
-	}
-}
-
-void EditorHelpButton::_initialize() {
+EditorHelpButton::EditorHelpButton() {
 	set_focus_mode(FOCUS_NONE);
 	set_switch_on_hover(true);
 	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
@@ -68,6 +55,17 @@ void EditorHelpButton::_initialize() {
 	help_popup->add_shortcut(ED_SHORTCUT_AND_COMMAND("editor/report_a_bug", TTRC("Report a Bug")), REPORT_A_BUG);
 	help_popup->add_shortcut(ED_SHORTCUT_AND_COMMAND("editor/about", TTRC("About Gobot")), ABOUT);
 	help_popup->connect(SceneStringName(id_pressed), callable_mp(this, &EditorHelpButton::_item_selected));
+}
+
+void EditorHelpButton::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_READY:
+		case NOTIFICATION_THEME_CHANGED: {
+			if (is_inside_tree()) {
+				_update_icons();
+			}
+		} break;
+	}
 }
 
 void EditorHelpButton::_item_selected(int p_id) {

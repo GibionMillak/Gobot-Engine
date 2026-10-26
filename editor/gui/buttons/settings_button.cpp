@@ -36,23 +36,11 @@
 #include "editor/gui/dialogs/project_settings_editor.h"
 #include "editor/settings/editor_command_palette.h"
 #include "scene/gui/popup_menu.h"
+#include "scene/scene_string_names.h"
 
-void SettingsButton::_notification(int p_what) {
-	switch (p_what) {
-		case NOTIFICATION_POSTINITIALIZE: {
-			_initialize();
-		} break;
-		case NOTIFICATION_READY:
-		case NOTIFICATION_THEME_CHANGED: {
-			if (is_inside_tree()) {
-				_update_icons();
-			}
-		} break;
-	}
-}
-
-void SettingsButton::_initialize() {
+SettingsButton::SettingsButton() {
 	set_focus_mode(FOCUS_NONE);
+	set_switch_on_hover(true);
 	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
 	set_tooltip_text(TTRC("Settings"));
 
@@ -63,6 +51,17 @@ void SettingsButton::_initialize() {
 	settings_popup->add_shortcut(ED_SHORTCUT_AND_COMMAND("editor/project_settings", TTRC("Project Settings"), KeyModifierMask::CMD_OR_CTRL + KeyModifierMask::SHIFT + Key::COMMA, TTRC("Project Settings")), PROJECT_SETTINGS);
 	settings_popup->set_item_text(settings_popup->get_item_index(PROJECT_SETTINGS), TTRC("Project Settings"));
 	settings_popup->connect(SceneStringName(id_pressed), callable_mp(this, &SettingsButton::_item_selected));
+}
+
+void SettingsButton::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_READY:
+		case NOTIFICATION_THEME_CHANGED: {
+			if (is_inside_tree()) {
+				_update_icons();
+			}
+		} break;
+	}
 }
 
 void SettingsButton::_item_selected(int p_id) {

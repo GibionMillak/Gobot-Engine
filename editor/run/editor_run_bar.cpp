@@ -374,7 +374,7 @@ void EditorRunBar::recovery_mode_reload_project() {
 
 void EditorRunBar::play_main_scene(bool p_from_native, const Vector<String> &p_play_args) {
 	if (Engine::get_singleton()->is_recovery_mode_hint()) {
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Recovery Mode is enabled. Disable it to run the project."), EditorToasterContainer::SEVERITY_WARNING);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Recovery Mode is enabled. Disable it to run the project."), EditorToasterContainer::WARNING);
 		return;
 	}
 
@@ -390,7 +390,7 @@ void EditorRunBar::play_main_scene(bool p_from_native, const Vector<String> &p_p
 
 void EditorRunBar::play_current_scene(bool p_reload, const Vector<String> &p_play_args) {
 	if (Engine::get_singleton()->is_recovery_mode_hint()) {
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Recovery Mode is enabled. Disable it to run the project."), EditorToasterContainer::SEVERITY_WARNING);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Recovery Mode is enabled. Disable it to run the project."), EditorToasterContainer::WARNING);
 		return;
 	}
 
@@ -409,7 +409,7 @@ void EditorRunBar::play_current_scene(bool p_reload, const Vector<String> &p_pla
 
 void EditorRunBar::play_custom_scene(const String &p_custom, const Vector<String> &p_play_args) {
 	if (Engine::get_singleton()->is_recovery_mode_hint()) {
-		EditorToasterContainer::get_singleton()->popup_str(TTR("Recovery Mode is enabled. Disable it to run the project."), EditorToasterContainer::SEVERITY_WARNING);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Recovery Mode is enabled. Disable it to run the project."), EditorToasterContainer::WARNING);
 		return;
 	}
 

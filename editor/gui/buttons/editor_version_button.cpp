@@ -38,16 +38,13 @@
 
 EditorVersionButton::EditorVersionButton(VersionFormat p_format) :
 		_format(p_format) {
+	set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+	set_text(_get_version_string(_format));
 }
 
 void EditorVersionButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_POSTINITIALIZE: {
-			// This can't be done in the constructor because theme cache is not ready yet.
-			set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-			set_text(_get_version_string(_format));
-		} break;
-
+		case NOTIFICATION_READY:
 		case NOTIFICATION_TRANSLATION_CHANGED: {
 			String build_date;
 			if (GODOT_VERSION_TIMESTAMP > 0) {

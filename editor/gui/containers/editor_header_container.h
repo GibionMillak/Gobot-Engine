@@ -33,6 +33,7 @@
 #include "scene/gui/box_container.h"
 
 class Button;
+class Texture2D;
 
 class EditorHeaderContainer : public HBoxContainer {
 	GDCLASS(EditorHeaderContainer, HBoxContainer);
@@ -51,9 +52,10 @@ protected:
 
 	void _notification(int p_what);
 
-	virtual void gui_input(const Ref<InputEvent> &p_event) override;
+	void gui_input(const Ref<InputEvent> &p_event) override;
 
 private:
+	Ref<Texture2D> _get_window_icon(const StringName &p_name, const StringName &p_fallback) const;
 	void _on_minimize_pressed();
 	void _on_maximize_pressed();
 	void _on_close_pressed();
@@ -67,8 +69,8 @@ private:
 	Control *_center_control = nullptr;
 
 	HBoxContainer *_editor_controls_hbox = nullptr;
-	HBoxContainer *_window_buttons_hb = nullptr;
-	Button *_btn_minimize = nullptr;
-	Button *_btn_maximize = nullptr;
-	Button *_btn_close = nullptr;
+	HBoxContainer *_window_buttons_hbox = nullptr;
+	Button *_minimize_btn = nullptr;
+	Button *_maximize_btn = nullptr;
+	Button *_close_btn = nullptr;
 };

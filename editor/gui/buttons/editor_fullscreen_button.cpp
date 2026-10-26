@@ -34,15 +34,16 @@
 #include "editor/settings/editor_settings.h"
 #include "servers/display/display_server.h"
 
+EditorFullscreenButton::EditorFullscreenButton() {
+	set_focus_mode(FOCUS_NONE);
+	set_shortcut(ED_SHORTCUT_AND_COMMAND("editor/fullscreen_mode", TTRC("Toggle Fullscreen"), KeyModifierMask::SHIFT | Key::F11));
+	ED_SHORTCUT_OVERRIDE("editor/fullscreen_mode", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::F);
+	set_toggle_mode(true);
+	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
+}
+
 void EditorFullscreenButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_POSTINITIALIZE: {
-			set_focus_mode(FOCUS_NONE);
-			set_shortcut(ED_SHORTCUT_AND_COMMAND("editor/fullscreen_mode", TTRC("Toggle Fullscreen"), KeyModifierMask::SHIFT | Key::F11));
-			ED_SHORTCUT_OVERRIDE("editor/fullscreen_mode", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::F);
-			set_toggle_mode(true);
-			set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
-		} break;
 		case NOTIFICATION_READY: {
 #ifdef ANDROID_ENABLED
 			if (bool(EDITOR_DEF("_is_editor_fullscreen", false))) {

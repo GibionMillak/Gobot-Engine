@@ -245,7 +245,7 @@ void EditorQuickOpenDialog::preview_property() {
 		HashSet<Resource *> resources_found;
 		resources_found.insert(res);
 		if (EditorNode::find_recursive_resources(loaded_resource, resources_found)) {
-			EditorToasterContainer::get_singleton()->popup_str(TTR("Recursion detected, Instant Preview failed."), EditorToasterContainer::SEVERITY_ERROR);
+			EditorToasterContainer::get_singleton()->popup_str(TTR("Recursion detected, Instant Preview failed."), EditorToasterContainer::ERROR);
 			loaded_resource = Ref<Resource>();
 		}
 	}

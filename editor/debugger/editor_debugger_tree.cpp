@@ -153,7 +153,7 @@ void EditorDebuggerTree::_notify_selection_changed() {
 
 	if (selection_surpassed_limit) {
 		selection_surpassed_limit = false;
-		EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Some remote nodes were not selected, as the configured maximum selection is %d. This can be changed at \"debugger/max_node_selection\" in the Editor Settings."), EDITOR_GET("debugger/max_node_selection")), EditorToasterContainer::SEVERITY_WARNING);
+		EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Some remote nodes were not selected, as the configured maximum selection is %d. This can be changed at \"debugger/max_node_selection\" in the Editor Settings."), EDITOR_GET("debugger/max_node_selection")), EditorToasterContainer::WARNING);
 	}
 }
 

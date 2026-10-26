@@ -36,7 +36,7 @@ class SettingsButton : public MenuButton {
 	GDCLASS(SettingsButton, MenuButton);
 
 public:
-	SettingsButton() = default;
+	SettingsButton();
 
 protected:
 	void _notification(int p_what);
@@ -47,7 +47,6 @@ private:
 		PROJECT_SETTINGS,
 	};
 
-	void _initialize();
 	void _item_selected(int p_id);
 	void _update_icons();
 };
