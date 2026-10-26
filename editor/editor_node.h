@@ -71,7 +71,6 @@ class DependencyErrorDialog;
 class DockSplitContainer;
 class DynamicFontImportSettingsDialog;
 class EditorBuildProfileManager;
-class EditorBottomPanel;
 class EditorCommandPalette;
 class EditorDockManager;
 class EditorExport;
@@ -82,7 +81,6 @@ class EditorIconManager;
 class EditorFolding;
 class EditorLayoutsDialog;
 class EditorLog;
-class EditorMainScreen;
 class EditorNativeShaderSourceVisualizer;
 class EditorPluginList;
 class EditorResourcePreview;
@@ -103,6 +101,7 @@ class ProjectAutoloadsDialog;
 class ProjectExportDialog;
 class ProjectPluginsDialog;
 class ProjectSettingsEditor;
+class SceneEditorDock;
 class SceneImportSettingsDialog;
 
 struct EditorProgress {
@@ -130,11 +129,6 @@ public:
 		ACTION_ON_PLAY_DO_NOTHING,
 		ACTION_ON_PLAY_OPEN_OUTPUT,
 		ACTION_ON_PLAY_OPEN_DEBUGGER,
-	};
-
-	enum ActionOnStop {
-		ACTION_ON_STOP_DO_NOTHING,
-		ACTION_ON_STOP_CLOSE_BUTTOM_PANEL,
 	};
 
 	enum MenuOptions {
@@ -272,11 +266,7 @@ public:
 	static EditorData &get_editor_data() { return singleton->editor_data; }
 	static EditorFolding &get_editor_folding() { return singleton->editor_folding; }
 
-	static EditorHeaderContainer *get_title_bar() { return singleton->title_bar; }
-	static VSplitContainer *get_top_split() { return singleton->top_split; }
-	static DockSplitContainer *get_center_split() { return singleton->center_split; }
-	static EditorBottomPanel *get_bottom_panel() { return singleton->bottom_panel; }
-	static EditorMainScreen *get_editor_main_screen() { return singleton->editor_main_screen; }
+	static SceneEditorDock *get_scene_editor_dock() { return singleton->_scene_editor_dock; }
 
 	static String adjust_scene_name_casing(const String &p_root_name);
 	static String adjust_script_name_casing(const String &p_file_name);
@@ -323,8 +313,6 @@ public:
 	bool has_previous_closed_scenes() const;
 
 	void new_inherited_scene() { _menu_option_confirm(SCENE_NEW_INHERITED_SCENE, false); }
-
-	void set_center_split_offset(int p_offset);
 
 	void edit_node(Node *p_node);
 	void edit_resource(const Ref<Resource> &p_resource);
@@ -614,9 +602,6 @@ private:
 	void _update_title();
 	void _update_unsaved_cache();
 	void _version_control_menu_option(int p_idx);
-	void _close_messages();
-	void _show_messages();
-	void _vp_resized();
 	void _titlebar_resized();
 	void _viewport_resized();
 
@@ -646,7 +631,6 @@ private:
 	void _open_command_palette();
 
 	void _project_run_started();
-	void _project_run_stopped();
 
 	void _update_prev_closed_scenes(const String &p_scene_path, bool p_add_scene);
 
@@ -742,8 +726,6 @@ private:
 	void _update_main_menu_type();
 	void _add_to_main_menu(const String &p_name, PopupMenu *p_menu);
 
-	void _bottom_panel_resized();
-
 	void _copy_warning(const String &p_str);
 #ifdef ANDROID_ENABLED
 	void _screen_orientation_changed(int p_new_orientation);
@@ -787,14 +769,6 @@ private:
 
 	bool portrait_mode = false;
 
-	// Split containers.
-	DockSplitContainer *left_l_vsplit = nullptr;
-	DockSplitContainer *left_r_vsplit = nullptr;
-	DockSplitContainer *main_hsplit = nullptr;
-	DockSplitContainer *right_l_vsplit = nullptr;
-	DockSplitContainer *right_r_vsplit = nullptr;
-	DockSplitContainer *center_split = nullptr;
-
 	// Main tabs.
 	EditorSceneTabs *scene_tabs = nullptr;
 
@@ -806,8 +780,6 @@ private:
 	bool exiting = false;
 	bool dimmed = false;
 
-	int old_split_ofs = 0;
-	VSplitContainer *top_split = nullptr;
 	Control *vp_base = nullptr;
 
 	Label *project_title = nullptr;
@@ -885,7 +857,7 @@ private:
 	EditorFileDialog *file_android_build_source = nullptr;
 	EditorFileDialog *file_pack_zip = nullptr;
 
-	EditorMainScreen *editor_main_screen = nullptr;
+	SceneEditorDock *_scene_editor_dock = nullptr;
 
 	AudioStreamPreviewGenerator *audio_preview_gen = nullptr;
 	ProgressDialog *progress_dialog = nullptr;
@@ -902,8 +874,6 @@ private:
 	Timer *editor_layout_save_delay_timer = nullptr;
 	Timer *scan_changes_timer = nullptr;
 	Callable palette_file_selected_callback;
-
-	EditorBottomPanel *bottom_panel = nullptr;
 
 	Tree *disk_changed_list = nullptr;
 	HashSet<String> disk_changed_scenes;

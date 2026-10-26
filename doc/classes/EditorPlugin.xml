@@ -154,8 +154,7 @@
 			<return type="String" />
 			<description>
 				Override this method in your plugin to provide the name of the plugin when displayed in the Godot editor.
-				For main screen plugins, this appears at the top of the screen, to the right of the "2D", "3D", "Script", and "Game" buttons.
-				[b]Note:[/b] Main screen plugins should instead use [member EditorDock.title] of a main screen dock.
+				For plugins that provide a dock, use [member EditorDock.title] to set the dock's displayed title.
 			</description>
 		</method>
 		<method name="_get_state" qualifiers="virtual const">
@@ -466,19 +465,6 @@
 				Gets the undo/redo object. Most actions in the editor can be undoable, so use this object to make sure this happens when it's worth it.
 			</description>
 		</method>
-		<method name="hide_bottom_panel">
-			<return type="void" />
-			<description>
-				Minimizes the bottom panel.
-			</description>
-		</method>
-		<method name="make_bottom_panel_item_visible">
-			<return type="void" />
-			<param index="0" name="item" type="Control" />
-			<description>
-				Makes a specific item in the bottom panel visible.
-			</description>
-		</method>
 		<method name="queue_save_layout">
 			<return type="void" />
 			<description>
@@ -625,12 +611,6 @@
 		</method>
 	</methods>
 	<signals>
-		<signal name="main_screen_changed">
-			<param index="0" name="screen_name" type="String" />
-			<description>
-				Emitted when user changes the workspace ([b]2D[/b], [b]3D[/b], [b]Script[/b], [b]Game[/b]). Also works with custom screens defined by plugins.
-			</description>
-		</signal>
 		<signal name="resource_saved">
 			<param index="0" name="resource" type="Resource" />
 			<description>
@@ -657,74 +637,38 @@
 		</signal>
 	</signals>
 	<constants>
-		<constant name="CONTAINER_TOOLBAR" value="0" enum="CustomControlContainer">
-			Main editor toolbar, next to play buttons.
-		</constant>
-		<constant name="CONTAINER_SPATIAL_EDITOR_MENU" value="1" enum="CustomControlContainer">
+		<constant name="CONTAINER_SPATIAL_EDITOR_MENU" value="0" enum="CustomControlContainer">
 			The toolbar that appears when 3D editor is active.
 		</constant>
-		<constant name="CONTAINER_SPATIAL_EDITOR_SIDE_LEFT" value="2" enum="CustomControlContainer">
+		<constant name="CONTAINER_SPATIAL_EDITOR_SIDE_LEFT" value="1" enum="CustomControlContainer">
 			Left sidebar of the 3D editor.
 		</constant>
-		<constant name="CONTAINER_SPATIAL_EDITOR_SIDE_RIGHT" value="3" enum="CustomControlContainer">
+		<constant name="CONTAINER_SPATIAL_EDITOR_SIDE_RIGHT" value="2" enum="CustomControlContainer">
 			Right sidebar of the 3D editor.
 		</constant>
-		<constant name="CONTAINER_SPATIAL_EDITOR_BOTTOM" value="4" enum="CustomControlContainer">
+		<constant name="CONTAINER_SPATIAL_EDITOR_BOTTOM" value="3" enum="CustomControlContainer">
 			Bottom panel of the 3D editor.
 		</constant>
-		<constant name="CONTAINER_CANVAS_EDITOR_MENU" value="5" enum="CustomControlContainer">
+		<constant name="CONTAINER_CANVAS_EDITOR_MENU" value="4" enum="CustomControlContainer">
 			The toolbar that appears when 2D editor is active.
 		</constant>
-		<constant name="CONTAINER_CANVAS_EDITOR_SIDE_LEFT" value="6" enum="CustomControlContainer">
+		<constant name="CONTAINER_CANVAS_EDITOR_SIDE_LEFT" value="5" enum="CustomControlContainer">
 			Left sidebar of the 2D editor.
 		</constant>
-		<constant name="CONTAINER_CANVAS_EDITOR_SIDE_RIGHT" value="7" enum="CustomControlContainer">
+		<constant name="CONTAINER_CANVAS_EDITOR_SIDE_RIGHT" value="6" enum="CustomControlContainer">
 			Right sidebar of the 2D editor.
 		</constant>
-		<constant name="CONTAINER_CANVAS_EDITOR_BOTTOM" value="8" enum="CustomControlContainer">
+		<constant name="CONTAINER_CANVAS_EDITOR_BOTTOM" value="7" enum="CustomControlContainer">
 			Bottom panel of the 2D editor.
 		</constant>
-		<constant name="CONTAINER_INSPECTOR_BOTTOM" value="9" enum="CustomControlContainer">
+		<constant name="CONTAINER_INSPECTOR_BOTTOM" value="8" enum="CustomControlContainer">
 			Bottom section of the inspector.
 		</constant>
-		<constant name="CONTAINER_PROJECT_SETTING_TAB_LEFT" value="10" enum="CustomControlContainer">
+		<constant name="CONTAINER_PROJECT_SETTING_TAB_LEFT" value="9" enum="CustomControlContainer">
 			Tab of Project Settings dialog, to the left of other tabs.
 		</constant>
-		<constant name="CONTAINER_PROJECT_SETTING_TAB_RIGHT" value="11" enum="CustomControlContainer">
+		<constant name="CONTAINER_PROJECT_SETTING_TAB_RIGHT" value="10" enum="CustomControlContainer">
 			Tab of Project Settings dialog, to the right of other tabs.
-		</constant>
-		<constant name="DOCK_SLOT_NONE" value="-1" enum="DockSlot">
-			The dock is closed.
-		</constant>
-		<constant name="DOCK_SLOT_LEFT_UL" value="0" enum="DockSlot">
-			Dock slot, left side, upper-left (empty in default layout).
-		</constant>
-		<constant name="DOCK_SLOT_LEFT_BL" value="1" enum="DockSlot">
-			Dock slot, left side, bottom-left (empty in default layout).
-		</constant>
-		<constant name="DOCK_SLOT_LEFT_UR" value="2" enum="DockSlot">
-			Dock slot, left side, upper-right (in default layout includes Scene and Import docks).
-		</constant>
-		<constant name="DOCK_SLOT_LEFT_BR" value="3" enum="DockSlot">
-			Dock slot, left side, bottom-right (in default layout includes FileSystem dock).
-		</constant>
-		<constant name="DOCK_SLOT_RIGHT_UL" value="4" enum="DockSlot">
-			Dock slot, right side, upper-left (in default layout includes Inspector, Node, and History docks).
-		</constant>
-		<constant name="DOCK_SLOT_RIGHT_BL" value="5" enum="DockSlot">
-			Dock slot, right side, bottom-left (empty in default layout).
-		</constant>
-		<constant name="DOCK_SLOT_RIGHT_UR" value="6" enum="DockSlot">
-			Dock slot, right side, upper-right (empty in default layout).
-		</constant>
-		<constant name="DOCK_SLOT_RIGHT_BR" value="7" enum="DockSlot">
-			Dock slot, right side, bottom-right (empty in default layout).
-		</constant>
-		<constant name="DOCK_SLOT_BOTTOM" value="8" enum="DockSlot">
-			Bottom panel.
-		</constant>
-		<constant name="DOCK_SLOT_MAX" value="9" enum="DockSlot">
-			Represents the size of the [enum DockSlot] enum.
 		</constant>
 		<constant name="AFTER_GUI_INPUT_PASS" value="0" enum="AfterGUIInput">
 			Forwards the [InputEvent] to other EditorPlugins.

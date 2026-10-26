@@ -30,10 +30,10 @@
 
 #pragma once
 
-#include "editor/docks/editor_dock.h"
 #include "editor/plugins/editor_plugin.h"
 #include "scene/debugger/canvas_item_manipulator.h"
 #include "scene/gui/box_container.h"
+#include "scene/gui/margin_container.h"
 
 class Dialog;
 class Button;
@@ -74,8 +74,8 @@ public:
 	Dictionary undo_state;
 };
 
-class CanvasItemEditor : public EditorDock {
-	GDCLASS(CanvasItemEditor, EditorDock);
+class CanvasItemEditor : public MarginContainer {
+	GDCLASS(CanvasItemEditor, MarginContainer);
 
 public:
 	enum AddNodeOption {

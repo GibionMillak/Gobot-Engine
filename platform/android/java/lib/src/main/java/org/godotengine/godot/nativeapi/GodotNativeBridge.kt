@@ -291,10 +291,6 @@ internal class GodotNativeBridge(private val godot: Godot) {
 		return verifyResult.toNativeValue()
 	}
 
-	private fun nativeOnEditorWorkspaceSelected(workspace: String) {
-		godot.primaryHost?.onEditorWorkspaceSelected(workspace)
-	}
-
 	private fun nativeShowEditorGameDock() {
 		godot.primaryHost?.showEditorGameDock()
 	}

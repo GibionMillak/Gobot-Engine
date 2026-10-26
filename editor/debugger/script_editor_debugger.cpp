@@ -2119,16 +2119,6 @@ void ScriptEditorDebugger::toggle_profiler(const String &p_profiler, bool p_enab
 	_put_msg("profiler:" + p_profiler, msg_data);
 }
 
-void ScriptEditorDebugger::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
-	if (p_slot != EditorDock::DOCK_SLOT_BOTTOM) {
-		vmem_mc->set_theme_type_variation("NoBorderHorizontalBottom");
-		vmem_tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_DISABLED);
-	} else {
-		vmem_mc->set_theme_type_variation("NoBorderHorizontal");
-		vmem_tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTTOM);
-	}
-}
-
 ScriptEditorDebugger::ScriptEditorDebugger() {
 	if (unlikely(parse_message_handlers.is_empty())) {
 		_init_parse_message_handlers();
@@ -2435,8 +2425,8 @@ Instead, use the monitors tab to obtain more precise VRAM usage.
 		vmem_refresh->connect(SceneStringName(pressed), callable_mp(this, &ScriptEditorDebugger::_video_mem_request));
 		vmem_export->connect(SceneStringName(pressed), callable_mp(this, &ScriptEditorDebugger::_video_mem_export));
 
-		vmem_mc = memnew(MarginContainer);
-		vmem_mc->set_theme_type_variation("NoBorderHorizontal");
+		MarginContainer *vmem_mc = memnew(MarginContainer);
+		vmem_mc->set_theme_type_variation("NoBorderHorizontalBottom");
 		vmem_mc->set_v_size_flags(SIZE_EXPAND_FILL);
 		vmem_vb->add_child(vmem_mc);
 
@@ -2456,7 +2446,6 @@ Instead, use the monitors tab to obtain more precise VRAM usage.
 		vmem_tree->set_column_title(3, TTRC("Usage"));
 		vmem_tree->set_column_custom_minimum_width(3, 80 * EDSCALE);
 		vmem_tree->set_hide_root(true);
-		vmem_tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTTOM);
 		vmem_mc->add_child(vmem_tree);
 		vmem_tree->set_allow_rmb_select(true);
 		vmem_tree->connect("item_activated", callable_mp(this, &ScriptEditorDebugger::_vmem_item_activated));

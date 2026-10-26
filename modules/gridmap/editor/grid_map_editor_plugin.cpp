@@ -36,7 +36,6 @@
 #include "core/object/class_db.h"
 #include "core/os/keyboard.h"
 #include "editor/docks/editor_dock_manager.h"
-#include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
@@ -1146,9 +1145,8 @@ void GridMapEditor::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
 		mesh_library_palette->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_DISABLED);
 		mesh_library_palette->set_theme_type_variation("ItemListSecondary");
 	} else {
-		bool is_bottom = p_slot == EditorDock::DOCK_SLOT_BOTTOM;
-		item_palette_mc->set_theme_type_variation(is_bottom ? "NoBorderHorizontal" : "NoBorderHorizontalBottom");
-		mesh_library_palette->set_scroll_hint_mode(is_bottom ? ItemList::SCROLL_HINT_MODE_BOTH : ItemList::SCROLL_HINT_MODE_TOP);
+		item_palette_mc->set_theme_type_variation("NoBorderHorizontalBottom");
+		mesh_library_palette->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_TOP);
 		mesh_library_palette->set_theme_type_variation("");
 	}
 }
@@ -1730,8 +1728,8 @@ void GridMapEditor::_bind_methods() {
 GridMapEditor::GridMapEditor() {
 	set_name(TTRC("GridMap"));
 	set_icon_name("dock_grid_map");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_grid_map_bottom_panel", TTRC("Toggle GridMap Dock")));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_grid_map", TTRC("Toggle GridMap Dock")));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_global(false);
 	set_transient(true);

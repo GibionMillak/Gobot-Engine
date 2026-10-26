@@ -369,7 +369,7 @@ void ResourcePreloaderEditor::drop_data_fw(const Point2 &p_point, const Variant 
 }
 
 void ResourcePreloaderEditor::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
-	if (p_layout == EditorDock::DOCK_LAYOUT_HORIZONTAL && p_slot != EditorDock::DOCK_SLOT_BOTTOM) {
+	if (p_layout == EditorDock::DOCK_LAYOUT_HORIZONTAL) {
 		mc->set_theme_type_variation("NoBorderHorizontal");
 		tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTH);
 	} else {
@@ -386,8 +386,8 @@ void ResourcePreloaderEditor::_bind_methods() {
 ResourcePreloaderEditor::ResourcePreloaderEditor() {
 	set_name(TTRC("ResourcePreloader"));
 	set_icon_name("dock_resource_preloader");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_resource_preloader_bottom_panel", TTRC("Toggle ResourcePreloader Dock")));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_resource_preloader", TTRC("Toggle ResourcePreloader Dock")));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);
 	set_global(false);
 	set_transient(true);

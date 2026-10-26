@@ -190,7 +190,6 @@ class EditorAudioBuses : public EditorDock {
 
 	HBoxContainer *top_hb = nullptr;
 
-	MarginContainer *bus_mc = nullptr;
 	ScrollContainer *bus_scroll = nullptr;
 	HBoxContainer *bus_hb = nullptr;
 
@@ -237,8 +236,6 @@ class EditorAudioBuses : public EditorDock {
 protected:
 	static void _bind_methods();
 	void _notification(int p_what);
-
-	virtual void update_layout(EditorDock::DockLayout p_layout, int p_slot) override;
 
 public:
 	void open_layout(const String &p_path);

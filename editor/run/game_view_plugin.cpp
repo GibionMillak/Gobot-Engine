@@ -37,15 +37,14 @@
 #include "core/string/translation_server.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/debugger/script_editor_debugger.h"
+#include "editor/docks/dock_tab_container.h"
 #include "editor/docks/editor_dock.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/editor_interface.h"
-#include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/containers/editor_toaster_container.h"
-#include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_icon_manager.h"
 #include "editor/gui/editor_toolbar_group.h"
 #include "editor/gui/window_wrapper.h"
@@ -608,7 +607,14 @@ void GameView::_play_pressed() {
 	}
 
 	if (!window_wrapper->get_window_enabled()) {
-		screen_index_before_start = EditorNode::get_singleton()->get_editor_main_screen()->get_current_tab();
+		_dock_before_start = ObjectID();
+		if (DockTabContainer *container = game_dock->get_parent_container()) {
+			if (EditorDock *dock = container->get_dock(container->get_current_tab())) {
+				if (dock != game_dock) {
+					_dock_before_start = dock->get_instance_id();
+				}
+			}
+		}
 	}
 
 	if (embed_on_play && _get_embed_available() == EMBED_AVAILABLE) {
@@ -619,8 +625,6 @@ void GameView::_play_pressed() {
 		_update_embed_window_size();
 		if (!window_wrapper->get_window_enabled()) {
 			EditorDockManager::get_singleton()->force_focus_dock(game_dock);
-			// Reset the normal size of the bottom panel when fully expanded.
-			EditorNode::get_singleton()->get_bottom_panel()->set_expanded(false);
 
 			if (embedded_process->get_focus_mode_with_override() != FOCUS_NONE) {
 				embedded_process->grab_focus();
@@ -649,12 +653,12 @@ void GameView::_stop_pressed() {
 		window_wrapper->set_window_enabled(false);
 	}
 
-	if (screen_index_before_start >= 0 && EditorNode::get_singleton()->get_editor_main_screen()->get_current_tab_control() == game_dock) {
-		// We go back to the screen where the user was before starting the game.
-		EditorNode::get_singleton()->get_editor_main_screen()->set_current_tab(screen_index_before_start);
+	if (EditorDock *dock = ObjectDB::get_instance<EditorDock>(_dock_before_start)) {
+		if (game_dock->is_visible_in_tree() && dock->is_dock_open() && dock->get_parent_container() == game_dock->get_parent_container()) {
+			EditorDockManager::get_singleton()->force_focus_dock(dock);
+		}
 	}
-
-	screen_index_before_start = -1;
+	_dock_before_start = ObjectID();
 
 	InspectorDock::get_inspector_singleton()->disconnect(SNAME("edited_object_changed"), callable_mp(this, &GameView::_inspector_object_changed));
 }
@@ -1505,11 +1509,12 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	singleton = this;
 
 	game_dock = memnew(EditorDock);
-	game_dock->set_name(TTRC("Game"));
-	game_dock->set_icon_name("dock_game");
-	game_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN);
-	game_dock->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
+	game_dock->set_auto_switch_allowed(false);
+	game_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);
+	game_dock->set_default_slot(EditorDock::CENTER_TOP);
 	game_dock->set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_game"));
+	game_dock->set_icon_name("dock_game");
+	game_dock->set_name(TTRC("Game"));
 	dock_singleton = game_dock;
 
 	debugger = p_debugger;
@@ -1949,22 +1954,25 @@ void GameViewPluginBase::_create_empty_info_label(const String &p_message) {
 }
 
 void GameViewPluginBase::_focus_another_editor() {
-	DockTabContainer *main_screen = EditorNode::get_editor_main_screen();
 	EditorDock *game_dock = GameView::get_dock();
-
-	if (main_screen->get_current_tab_control() != game_dock) {
-		// Already showing different screen, so nothing to do.
+	DockTabContainer *container = game_dock->get_parent_container();
+	if (!container) {
 		return;
 	}
-	EditorDock *prev_dock = main_screen->get_dock(main_screen->get_previous_tab());
+
+	if (container->get_current_tab_control() != game_dock) {
+		// Already showing another dock, so nothing to do.
+		return;
+	}
+	EditorDock *prev_dock = container->get_dock(container->get_previous_tab());
 	if (prev_dock && prev_dock != game_dock && prev_dock->is_dock_open()) {
 		EditorDockManager::get_singleton()->force_focus_dock(prev_dock);
 		return;
 	}
-	// The above switch can still fail when a tab is closed. Try to open the first tab that isn't Game.
-	for (int i = 0; i < main_screen->get_tab_count(); i++) {
-		if (main_screen->get_dock(i) != game_dock) {
-			EditorDockManager::get_singleton()->force_focus_dock(main_screen->get_dock(i));
+	// The above switch can still fail when a tab is closed. Try to open the first other dock.
+	for (int i = 0; i < container->get_tab_count(); i++) {
+		if (container->get_dock(i) != game_dock) {
+			EditorDockManager::get_singleton()->force_focus_dock(container->get_dock(i));
 			break;
 		}
 	}
@@ -1980,6 +1988,9 @@ void GameViewPluginBase::_dock_visibility_changed(EditorDock *p_dock) {
 			window_wrapper->grab_window_focus();
 		}
 	} else {
+#ifdef ANDROID_ENABLED
+		_on_show_game_dock();
+#endif
 		_focus_another_editor();
 	}
 }
@@ -2012,11 +2023,12 @@ GameViewPlugin::GameViewPlugin() {
 #ifdef ANDROID_ENABLED
 void GameViewPluginBase::setup_android() {
 	EditorDock *game_dock = memnew(EditorDock);
-	game_dock->set_name(TTRC("Game"));
-	game_dock->set_icon_name("dock_game");
-	game_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN);
-	game_dock->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
+	game_dock->set_auto_switch_allowed(false);
+	game_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);
+	game_dock->set_default_slot(EditorDock::CENTER_TOP);
 	game_dock->set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_game"));
+	game_dock->set_icon_name("dock_game");
+	game_dock->set_name(TTRC("Game"));
 	GameView::dock_singleton = game_dock;
 	EditorDockManager::get_singleton()->add_dock(game_dock);
 	game_dock->connect(SceneStringName(visibility_changed), callable_mp(this, &GameViewPluginBase::_dock_visibility_changed).bind(game_dock));

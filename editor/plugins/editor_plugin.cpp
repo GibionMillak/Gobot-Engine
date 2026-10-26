@@ -40,15 +40,12 @@
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_interface.h"
-#include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/export/editor_export.h"
 #include "editor/export/editor_export_platform.h"
 #include "editor/file_system/editor_file_system.h"
-#include "editor/gui/containers/editor_header_container.h"
 #include "editor/gui/dialogs/project_settings_editor.h"
-#include "editor/gui/editor_bottom_panel.h"
 #include "editor/import/3d/resource_importer_scene.h"
 #include "editor/import/editor_import_plugin.h"
 #include "editor/inspector/editor_inspector.h"
@@ -100,10 +97,6 @@ void EditorPlugin::add_control_to_container(CustomControlContainer p_location, C
 	ERR_FAIL_NULL(p_control);
 
 	switch (p_location) {
-		case CONTAINER_TOOLBAR: {
-			EditorNode::get_title_bar()->get_left_section()->add_child(p_control);
-		} break;
-
 		case CONTAINER_SPATIAL_EDITOR_MENU: {
 			Node3DEditor::get_singleton()->add_control_to_menu_panel(p_control);
 
@@ -152,10 +145,6 @@ void EditorPlugin::remove_control_from_container(CustomControlContainer p_locati
 	ERR_FAIL_NULL(p_control);
 
 	switch (p_location) {
-		case CONTAINER_TOOLBAR: {
-			EditorNode::get_title_bar()->get_left_section()->remove_child(p_control);
-		} break;
-
 		case CONTAINER_SPATIAL_EDITOR_MENU: {
 			Node3DEditor::get_singleton()->remove_control_from_menu_panel(p_control);
 
@@ -227,15 +216,6 @@ void EditorPlugin::notify_scene_changed(const Node *scn_root) {
 	emit_signal(SNAME("scene_changed"), scn_root);
 }
 
-void EditorPlugin::notify_main_screen_changed(const String &screen_name) {
-	if (screen_name == last_main_screen_name) {
-		return;
-	}
-
-	emit_signal(SNAME("main_screen_changed"), screen_name);
-	last_main_screen_name = screen_name;
-}
-
 void EditorPlugin::notify_scene_closed(const String &scene_filepath) {
 	emit_signal(SNAME("scene_closed"), scene_filepath);
 }
@@ -264,7 +244,7 @@ void EditorPlugin::forward_canvas_force_draw_over_viewport(Control *p_overlay) {
 
 // Updates the overlays of the 2D viewport or, if in 3D mode, of every 3D viewport.
 int EditorPlugin::update_overlays() const {
-	if (Node3DEditor::get_singleton()->is_visible()) {
+	if (Node3DEditor::get_singleton()->is_visible_in_tree()) {
 		int count = 0;
 		for (uint32_t i = 0; i < Node3DEditor::VIEWPORTS_COUNT; i++) {
 			Node3DEditorViewport *vp = Node3DEditor::get_singleton()->get_editor_viewport(i);
@@ -526,14 +506,6 @@ void EditorPlugin::queue_save_layout() {
 	EditorNode::get_singleton()->save_editor_layout_delayed();
 }
 
-void EditorPlugin::make_bottom_panel_item_visible(Control *p_item) {
-	EditorNode::get_bottom_panel()->make_item_visible(p_item);
-}
-
-void EditorPlugin::hide_bottom_panel() {
-	EditorNode::get_bottom_panel()->hide_bottom_panel();
-}
-
 EditorInterface *EditorPlugin::get_editor_interface() {
 	return EditorInterface::get_singleton();
 }
@@ -577,9 +549,6 @@ void EditorPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("remove_autoload_singleton", "name"), &EditorPlugin::remove_autoload_singleton);
 
 	ClassDB::bind_method(D_METHOD("update_overlays"), &EditorPlugin::update_overlays);
-
-	ClassDB::bind_method(D_METHOD("make_bottom_panel_item_visible", "item"), &EditorPlugin::make_bottom_panel_item_visible);
-	ClassDB::bind_method(D_METHOD("hide_bottom_panel"), &EditorPlugin::hide_bottom_panel);
 
 	ClassDB::bind_method(D_METHOD("get_undo_redo"), &EditorPlugin::get_undo_redo);
 	ClassDB::bind_method(D_METHOD("add_undo_redo_inspector_hook_callback", "callable"), &EditorPlugin::add_undo_redo_inspector_hook_callback);
@@ -641,12 +610,10 @@ void EditorPlugin::_bind_methods() {
 
 	ADD_SIGNAL(MethodInfo("scene_changed", PropertyInfo(Variant::OBJECT, "scene_root", PROPERTY_HINT_RESOURCE_TYPE, Node::get_class_static())));
 	ADD_SIGNAL(MethodInfo("scene_closed", PropertyInfo(Variant::STRING, "filepath")));
-	ADD_SIGNAL(MethodInfo("main_screen_changed", PropertyInfo(Variant::STRING, "screen_name")));
 	ADD_SIGNAL(MethodInfo("resource_saved", PropertyInfo(Variant::OBJECT, "resource", PROPERTY_HINT_RESOURCE_TYPE, Resource::get_class_static())));
 	ADD_SIGNAL(MethodInfo("scene_saved", PropertyInfo(Variant::STRING, "filepath")));
 	ADD_SIGNAL(MethodInfo("project_settings_changed"));
 
-	BIND_ENUM_CONSTANT(CONTAINER_TOOLBAR);
 	BIND_ENUM_CONSTANT(CONTAINER_SPATIAL_EDITOR_MENU);
 	BIND_ENUM_CONSTANT(CONTAINER_SPATIAL_EDITOR_SIDE_LEFT);
 	BIND_ENUM_CONSTANT(CONTAINER_SPATIAL_EDITOR_SIDE_RIGHT);

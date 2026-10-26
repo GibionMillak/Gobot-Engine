@@ -41,13 +41,11 @@ public:
 	EditorFooterContainer();
 
 	HBoxContainer *get_left_section() const { return _left_hbox; }
-	HBoxContainer *get_middle_section() const { return _center_hbox; }
 	HBoxContainer *get_right_section() const { return _right_hbox; }
 	EditorRunBar *get_run_bar() const { return _run_bar; }
 
 private:
 	HBoxContainer *_left_hbox = nullptr;
-	HBoxContainer *_center_hbox = nullptr;
 	HBoxContainer *_right_hbox = nullptr;
 	EditorRunBar *_run_bar = nullptr;
 };

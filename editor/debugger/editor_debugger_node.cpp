@@ -70,8 +70,8 @@ EditorDebuggerNode::EditorDebuggerNode() {
 	set_name(TTRC("Debugger"));
 	set_icon_name("dock_debugger");
 	set_layout_key("Debugger");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_debugger_bottom_panel", TTRC("Toggle Debugger Dock"), KeyModifierMask::ALT | Key::D));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_debugger", TTRC("Toggle Debugger Dock"), KeyModifierMask::ALT | Key::D));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 
 	_update_margins();
@@ -245,12 +245,6 @@ void EditorDebuggerNode::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("breakpoint_toggled", PropertyInfo(Variant::STRING, "path"), PropertyInfo(Variant::INT, "line"), PropertyInfo(Variant::BOOL, "enabled")));
 	ADD_SIGNAL(MethodInfo("breakpoint_set_in_tree", PropertyInfo("script"), PropertyInfo(Variant::INT, "line"), PropertyInfo(Variant::BOOL, "enabled"), PropertyInfo(Variant::INT, "debugger")));
 	ADD_SIGNAL(MethodInfo("breakpoints_cleared_in_tree", PropertyInfo(Variant::INT, "debugger")));
-}
-
-void EditorDebuggerNode::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
-	_for_all(tabs, [&](ScriptEditorDebugger *dbg) {
-		dbg->update_layout(p_layout, p_slot);
-	});
 }
 
 void EditorDebuggerNode::register_undo_redo(UndoRedo *p_undo_redo) {
@@ -524,11 +518,11 @@ void EditorDebuggerNode::_update_errors(bool p_force) {
 }
 
 void EditorDebuggerNode::_update_margins() {
-	Ref<StyleBox> bottom_panel_margins = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("BottomPanel"), EditorStringName(EditorStyles));
-	add_theme_constant_override("margin_top", -bottom_panel_margins->get_margin(SIDE_TOP));
-	add_theme_constant_override("margin_left", -bottom_panel_margins->get_margin(SIDE_LEFT));
-	add_theme_constant_override("margin_right", -bottom_panel_margins->get_margin(SIDE_RIGHT));
-	add_theme_constant_override("margin_bottom", -bottom_panel_margins->get_margin(SIDE_BOTTOM));
+	Ref<StyleBox> dock_content_margins = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("DockContent"), EditorStringName(EditorStyles));
+	add_theme_constant_override("margin_top", -dock_content_margins->get_margin(SIDE_TOP));
+	add_theme_constant_override("margin_left", -dock_content_margins->get_margin(SIDE_LEFT));
+	add_theme_constant_override("margin_right", -dock_content_margins->get_margin(SIDE_RIGHT));
+	add_theme_constant_override("margin_bottom", -dock_content_margins->get_margin(SIDE_BOTTOM));
 }
 
 void EditorDebuggerNode::_debugger_stopped(int p_id) {

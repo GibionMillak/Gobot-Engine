@@ -41,7 +41,6 @@
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/file_system/editor_file_system.h"
-#include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_spin_slider.h"
 #include "editor/gui/filter_line_edit.h"
@@ -4200,8 +4199,8 @@ void ThemeEditor::load_layout_from_config(const Ref<ConfigFile> &p_layout, const
 ThemeEditor::ThemeEditor() {
 	set_name(TTRC("Theme"));
 	set_icon_name("dock_theme");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_theme_bottom_panel", TTRC("Toggle Theme Dock")));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_theme", TTRC("Toggle Theme Dock")));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_global(false);
 	set_transient(true);

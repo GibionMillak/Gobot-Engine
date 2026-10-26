@@ -65,55 +65,56 @@ void EditorDock::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_title", "title"), &EditorDock::set_title);
 	ClassDB::bind_method(D_METHOD("get_title"), &EditorDock::get_title);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "title"), "set_title", "get_title");
 
 	ClassDB::bind_method(D_METHOD("set_layout_key", "layout_key"), &EditorDock::set_layout_key);
 	ClassDB::bind_method(D_METHOD("get_layout_key"), &EditorDock::get_layout_key);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "layout_key"), "set_layout_key", "get_layout_key");
 
 	ClassDB::bind_method(D_METHOD("set_global", "global"), &EditorDock::set_global);
 	ClassDB::bind_method(D_METHOD("is_global"), &EditorDock::is_global);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "global"), "set_global", "is_global");
 
 	ClassDB::bind_method(D_METHOD("set_transient", "transient"), &EditorDock::set_transient);
 	ClassDB::bind_method(D_METHOD("is_transient"), &EditorDock::is_transient);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "transient"), "set_transient", "is_transient");
 
 	ClassDB::bind_method(D_METHOD("set_closable", "closable"), &EditorDock::set_closable);
 	ClassDB::bind_method(D_METHOD("is_closable"), &EditorDock::is_closable);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "closable"), "set_closable", "is_closable");
 
-	ClassDB::bind_method(D_METHOD("set_allow_switch_screen", "allow"), &EditorDock::set_allow_switch_screen);
-	ClassDB::bind_method(D_METHOD("is_allow_switch_screen"), &EditorDock::is_allow_switch_screen);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "allow_switch_screen"), "set_allow_switch_screen", "is_allow_switch_screen");
+	ClassDB::bind_method(D_METHOD("set_auto_switch_allowed", "auto_switch_allowed"), &EditorDock::set_auto_switch_allowed);
+	ClassDB::bind_method(D_METHOD("is_auto_switch_allowed"), &EditorDock::is_auto_switch_allowed);
 
 	ClassDB::bind_method(D_METHOD("set_icon_name", "icon_name"), &EditorDock::set_icon_name);
 	ClassDB::bind_method(D_METHOD("get_icon_name"), &EditorDock::get_icon_name);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "icon_name"), "set_icon_name", "get_icon_name");
 
 	ClassDB::bind_method(D_METHOD("set_dock_icon", "icon"), &EditorDock::set_dock_icon);
 	ClassDB::bind_method(D_METHOD("get_dock_icon"), &EditorDock::get_dock_icon);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dock_icon", PROPERTY_HINT_RESOURCE_TYPE, Texture2D::get_class_static()), "set_dock_icon", "get_dock_icon");
 
 	ClassDB::bind_method(D_METHOD("set_force_show_icon", "force"), &EditorDock::set_force_show_icon);
 	ClassDB::bind_method(D_METHOD("get_force_show_icon"), &EditorDock::get_force_show_icon);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "force_show_icon"), "set_force_show_icon", "get_force_show_icon");
 
 	ClassDB::bind_method(D_METHOD("set_title_color", "color"), &EditorDock::set_title_color);
 	ClassDB::bind_method(D_METHOD("get_title_color"), &EditorDock::get_title_color);
-	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "title_color"), "set_title_color", "get_title_color");
 
 	ClassDB::bind_method(D_METHOD("set_dock_shortcut", "shortcut"), &EditorDock::set_dock_shortcut);
 	ClassDB::bind_method(D_METHOD("get_dock_shortcut"), &EditorDock::get_dock_shortcut);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dock_shortcut", PROPERTY_HINT_RESOURCE_TYPE, Shortcut::get_class_static()), "set_dock_shortcut", "get_dock_shortcut");
 
 	ClassDB::bind_method(D_METHOD("set_default_slot", "slot"), &EditorDock::_set_default_slot_bind);
 	ClassDB::bind_method(D_METHOD("get_default_slot"), &EditorDock::_get_default_slot_bind);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "default_slot", PROPERTY_HINT_ENUM, "None:-1,Left Side Upper-Left,Left Side Bottom-Left,Left Side Upper-Right,Left Side Bottom-Right,Right Side Upper-Left,Right Side Bottom-Left,Right Side Upper-Right,Right Side Bottom-Right,Bottom,Bottom Left,Bottom Right,Main Screen"), "set_default_slot", "get_default_slot");
 
 	ClassDB::bind_method(D_METHOD("set_available_layouts", "layouts"), &EditorDock::set_available_layouts);
 	ClassDB::bind_method(D_METHOD("get_available_layouts"), &EditorDock::get_available_layouts);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "available_layouts", PROPERTY_HINT_FLAGS, "Vertical:1,Horizontal:2,Floating:4,Main Screen:8"), "set_available_layouts", "get_available_layouts");
+
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "title"), "set_title", "get_title");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "layout_key"), "set_layout_key", "get_layout_key");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "global"), "set_global", "is_global");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "transient"), "set_transient", "is_transient");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "closable"), "set_closable", "is_closable");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "auto_switch_allowed"), "set_auto_switch_allowed", "is_auto_switch_allowed");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "icon_name"), "set_icon_name", "get_icon_name");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dock_icon", PROPERTY_HINT_RESOURCE_TYPE, Texture2D::get_class_static()), "set_dock_icon", "get_dock_icon");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "force_show_icon"), "set_force_show_icon", "get_force_show_icon");
+	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "title_color"), "set_title_color", "get_title_color");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "dock_shortcut", PROPERTY_HINT_RESOURCE_TYPE, Shortcut::get_class_static()), "set_dock_shortcut", "get_dock_shortcut");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "default_slot", PROPERTY_HINT_ENUM, "None:-1,Left Side Upper-Left,Left Side Bottom-Left,Left Side Upper-Right,Left Side Bottom-Right,Right Side Upper-Left,Right Side Bottom-Left,Right Side Upper-Right,Right Side Bottom-Right,Center Top,Center Bottom"), "set_default_slot", "get_default_slot");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "available_layouts", PROPERTY_HINT_FLAGS, "Vertical:1,Horizontal:2,Floating:4"), "set_available_layouts", "get_available_layouts");
 
 	ADD_SIGNAL(MethodInfo("opened"));
 	ADD_SIGNAL(MethodInfo("closed"));
@@ -123,7 +124,6 @@ void EditorDock::_bind_methods() {
 	BIND_BITFIELD_FLAG(DOCK_LAYOUT_VERTICAL);
 	BIND_BITFIELD_FLAG(DOCK_LAYOUT_HORIZONTAL);
 	BIND_BITFIELD_FLAG(DOCK_LAYOUT_FLOATING);
-	BIND_BITFIELD_FLAG(DOCK_LAYOUT_MAIN_SCREEN);
 	BIND_BITFIELD_FLAG(DOCK_LAYOUT_ALL);
 
 	BIND_ENUM_CONSTANT(DOCK_SLOT_NONE);
@@ -135,10 +135,8 @@ void EditorDock::_bind_methods() {
 	BIND_ENUM_CONSTANT(DOCK_SLOT_RIGHT_BL);
 	BIND_ENUM_CONSTANT(DOCK_SLOT_RIGHT_UR);
 	BIND_ENUM_CONSTANT(DOCK_SLOT_RIGHT_BR);
-	BIND_ENUM_CONSTANT(DOCK_SLOT_BOTTOM);
-	BIND_ENUM_CONSTANT(DOCK_SLOT_BOTTOM_L);
-	BIND_ENUM_CONSTANT(DOCK_SLOT_BOTTOM_R);
-	BIND_ENUM_CONSTANT(DOCK_SLOT_MAIN_SCREEN);
+	BIND_ENUM_CONSTANT(CENTER_TOP);
+	BIND_ENUM_CONSTANT(CENTER_BOTTOM);
 	BIND_ENUM_CONSTANT(DOCK_SLOT_MAX);
 
 	GDVIRTUAL_BIND(_update_layout_and_slot, "layout", "slot");

@@ -1657,7 +1657,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		}
 	}
 
-	// Editor and main screen.
+	// Editor styles.
 	{
 		// Editor background.
 		Color background_color_opaque = p_config.dark_color_2;
@@ -1742,26 +1742,17 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		Ref<StyleBoxFlat> menu_transparent_style = p_config.button_style->duplicate();
 		menu_transparent_style->set_bg_color(Color(1, 1, 1, 0));
 		menu_transparent_style->set_border_width_all(0);
-		Ref<StyleBoxFlat> main_screen_button_hover = p_config.button_style_hover->duplicate();
+		Ref<StyleBoxFlat> menu_button_hover = p_config.button_style_hover->duplicate();
 		for (int i = 0; i < 4; i++) {
 			menu_transparent_style->set_content_margin((Side)i, p_config.button_style->get_content_margin((Side)i));
-			main_screen_button_hover->set_content_margin((Side)i, p_config.button_style_hover->get_content_margin((Side)i));
+			menu_button_hover->set_content_margin((Side)i, p_config.button_style_hover->get_content_margin((Side)i));
 		}
-		p_theme->set_color("font_selected_color", "MainScreenContainer", p_config.accent_color);
-		p_theme->set_color("font_unselected_color", "MainScreenContainer", p_config.font_color);
-		p_theme->set_color("icon_selected_color", "MainScreenContainer", p_config.accent_color);
-		p_theme->set_color("icon_unselected_color", "MainScreenContainer", Color(1, 1, 1, 1));
-		p_theme->set_constant("h_separation", "MainScreenContainer", 4);
-		p_theme->set_stylebox("tab_unselected", "MainScreenContainer", menu_transparent_style);
-		p_theme->set_stylebox("tab_selected", "MainScreenContainer", menu_transparent_style);
-		p_theme->set_stylebox("tab_hovered", "MainScreenContainer", main_screen_button_hover);
-		p_theme->set_constant("tab_separation", "MainScreenContainer", 4 * EDSCALE);
 
 		p_theme->set_type_variation("MainMenuBar", "FlatMenuButton");
 		p_theme->set_stylebox(CoreStringName(normal), "MainMenuBar", menu_transparent_style);
-		p_theme->set_stylebox(SceneStringName(pressed), "MainMenuBar", main_screen_button_hover);
-		p_theme->set_stylebox(SceneStringName(hover), "MainMenuBar", main_screen_button_hover);
-		p_theme->set_stylebox("hover_pressed", "MainMenuBar", main_screen_button_hover);
+		p_theme->set_stylebox(SceneStringName(pressed), "MainMenuBar", menu_button_hover);
+		p_theme->set_stylebox(SceneStringName(hover), "MainMenuBar", menu_button_hover);
+		p_theme->set_stylebox("hover_pressed", "MainMenuBar", menu_button_hover);
 
 		// Run bar.
 		p_theme->set_type_variation("RunBarButton", "FlatMenuButton");
@@ -1784,58 +1775,43 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_color("icon_hover_color", "RunBarButtonMovieMakerEnabled", Color(0, 0, 0, 0.9));
 		p_theme->set_color("icon_hover_pressed_color", "RunBarButtonMovieMakerEnabled", Color(0, 0, 0, 0.84));
 
-		// Bottom panel.
-		Ref<StyleBoxFlat> style_bottom_panel = p_config.content_panel_style->duplicate();
-		style_bottom_panel->set_border_width(SIDE_BOTTOM, 0);
-		style_bottom_panel->set_corner_radius_all(EDSCALE_RND(p_config.border_radius));
-		style_bottom_panel->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
-		style_bottom_panel->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
+		// Dock content and toolbar buttons.
+		Ref<StyleBoxFlat> dock_content_style = p_config.content_panel_style->duplicate();
+		dock_content_style->set_border_width(SIDE_BOTTOM, 0);
+		dock_content_style->set_corner_radius_all(EDSCALE_RND(p_config.border_radius));
+		dock_content_style->set_corner_radius(CORNER_BOTTOM_LEFT, 0);
+		dock_content_style->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
 
-		Ref<StyleBoxFlat> style_bottom_panel_hidden = style_bottom_panel->duplicate();
-		style_bottom_panel_hidden->set_content_margin(SIDE_TOP, 0);
+		Ref<StyleBoxFlat> dock_toolbar_button_style = menu_transparent_style->duplicate();
+		dock_toolbar_button_style->set_content_margin(SIDE_TOP, EDSCALE_RND(p_config.increased_margin + 2));
+		dock_toolbar_button_style->set_content_margin(SIDE_BOTTOM, EDSCALE_RND(p_config.increased_margin + 2));
 
-		Ref<StyleBoxFlat> style_bottom_panel_tabbar = p_config.content_panel_style->duplicate();
-		style_bottom_panel_tabbar->set_content_margin(SIDE_TOP, 0);
-		Ref<StyleBoxFlat> style_bottom_tab = menu_transparent_style->duplicate();
-		style_bottom_tab->set_content_margin(SIDE_TOP, EDSCALE_RND(p_config.increased_margin + 2));
-		style_bottom_tab->set_content_margin(SIDE_BOTTOM, EDSCALE_RND(p_config.increased_margin + 2));
+		Ref<StyleBoxFlat> dock_toolbar_button_selected = dock_toolbar_button_style->duplicate();
+		dock_toolbar_button_selected->set_bg_color(p_config.dark_color_1);
 
-		Ref<StyleBoxFlat> style_bottom_tab_selected = style_bottom_tab->duplicate();
-		style_bottom_tab_selected->set_bg_color(p_config.dark_color_1);
+		Ref<StyleBoxFlat> dock_toolbar_button_hover = dock_toolbar_button_style->duplicate();
+		dock_toolbar_button_hover->set_bg_color(p_config.button_style_hover->get_bg_color());
 
-		Ref<StyleBoxFlat> style_bottom_tab_hover = style_bottom_tab->duplicate();
-		style_bottom_tab_hover->set_bg_color(p_config.button_style_hover->get_bg_color());
-
-		p_theme->set_stylebox("BottomPanel", EditorStringName(EditorStyles), style_bottom_panel);
-		p_theme->set_type_variation("BottomPanel", "TabContainer");
-		p_theme->set_stylebox(SceneStringName(panel), "BottomPanel", style_bottom_panel_hidden);
-		p_theme->set_stylebox("tabbar_background", "BottomPanel", style_bottom_panel_tabbar);
-		p_theme->set_stylebox("tab_selected", "BottomPanel", style_bottom_tab_selected);
-		p_theme->set_stylebox("tab_hovered", "BottomPanel", style_bottom_tab_hover);
-		p_theme->set_stylebox("tab_unselected", "BottomPanel", style_bottom_tab);
-		p_theme->set_color("font_unselected_color", "BottomPanel", p_config.font_color);
-		p_theme->set_color("font_hovered_color", "BottomPanel", p_config.font_hover_color);
-		p_theme->set_color("font_selected_color", "BottomPanel", p_config.accent_color);
-		p_theme->set_constant("tab_separation", "BottomPanel", p_config.separation_margin);
-		p_theme->set_type_variation("BottomPanelButton", "FlatMenuButton");
-		p_theme->set_stylebox(CoreStringName(normal), "BottomPanelButton", menu_transparent_style);
-		p_theme->set_stylebox(SceneStringName(pressed), "BottomPanelButton", style_bottom_tab_selected);
-		p_theme->set_stylebox("hover_pressed", "BottomPanelButton", style_bottom_tab_hover);
-		p_theme->set_stylebox(SceneStringName(hover), "BottomPanelButton", style_bottom_tab_hover);
+		p_theme->set_stylebox("DockContent", EditorStringName(EditorStyles), dock_content_style);
+		p_theme->set_type_variation("DockToolbarButton", "FlatMenuButton");
+		p_theme->set_stylebox(CoreStringName(normal), "DockToolbarButton", menu_transparent_style);
+		p_theme->set_stylebox(SceneStringName(pressed), "DockToolbarButton", dock_toolbar_button_selected);
+		p_theme->set_stylebox("hover_pressed", "DockToolbarButton", dock_toolbar_button_hover);
+		p_theme->set_stylebox(SceneStringName(hover), "DockToolbarButton", dock_toolbar_button_hover);
 		// Don't tint the icon even when in "pressed" state.
-		p_theme->set_color("icon_pressed_color", "BottomPanelButton", Color(1, 1, 1, 1));
+		p_theme->set_color("icon_pressed_color", "DockToolbarButton", Color(1, 1, 1, 1));
 		Color icon_hover_color = p_config.icon_normal_color * (p_config.dark_icon_and_font ? 1.15 : 1.0);
 		icon_hover_color.a = 1.0;
-		p_theme->set_color("icon_hover_color", "BottomPanelButton", icon_hover_color);
-		p_theme->set_color("icon_hover_pressed_color", "BottomPanelButton", icon_hover_color);
+		p_theme->set_color("icon_hover_color", "DockToolbarButton", icon_hover_color);
+		p_theme->set_color("icon_hover_pressed_color", "DockToolbarButton", icon_hover_color);
 
 		// Audio bus.
-		p_theme->set_stylebox(CoreStringName(normal), "EditorAudioBus", style_bottom_panel);
+		p_theme->set_stylebox(CoreStringName(normal), "EditorAudioBus", dock_content_style);
 		p_theme->set_stylebox("master", "EditorAudioBus", p_config.button_style_disabled);
 		p_theme->set_stylebox("focus", "EditorAudioBus", p_config.button_style_focus);
 
 		p_theme->set_type_variation("EditorAudioBusAddBusPanel", "PanelContainer");
-		p_theme->set_stylebox(SceneStringName(panel), "EditorAudioBusAddBusPanel", style_bottom_panel);
+		p_theme->set_stylebox(SceneStringName(panel), "EditorAudioBusAddBusPanel", dock_content_style);
 	}
 
 	// Editor GUI widgets.

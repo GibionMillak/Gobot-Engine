@@ -63,12 +63,10 @@ class EditorPlugin : public Node {
 	bool input_event_forwarding_always_enabled = false;
 	bool force_draw_over_forwarding_enabled = false;
 
-	String last_main_screen_name;
 	String plugin_version;
 
 public:
 	enum CustomControlContainer {
-		CONTAINER_TOOLBAR,
 		CONTAINER_SPATIAL_EDITOR_MENU,
 		CONTAINER_SPATIAL_EDITOR_SIDE_LEFT,
 		CONTAINER_SPATIAL_EDITOR_SIDE_RIGHT,
@@ -143,7 +141,6 @@ public:
 	void set_force_draw_over_forwarding_enabled();
 	bool is_force_draw_over_forwarding_enabled() { return force_draw_over_forwarding_enabled; }
 
-	void notify_main_screen_changed(const String &screen_name);
 	void notify_scene_changed(const Node *scn_root);
 	void notify_scene_closed(const String &scene_filepath);
 	void notify_resource_saved(const Ref<Resource> &p_resource);
@@ -190,8 +187,6 @@ public:
 
 	void queue_save_layout();
 
-	void make_bottom_panel_item_visible(Control *p_item);
-	void hide_bottom_panel();
 
 	void add_translation_parser_plugin(const Ref<EditorTranslationParserPlugin> &p_parser);
 	void remove_translation_parser_plugin(const Ref<EditorTranslationParserPlugin> &p_parser);

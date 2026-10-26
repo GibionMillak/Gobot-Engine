@@ -1796,7 +1796,7 @@ void AnimationPlayerEditor::_prepare_onion_layers_2_prolog() {
 	}
 
 	// Hide superfluous elements that would make the overlay unnecessary cluttered.
-	if (Node3DEditor::get_singleton()->is_visible()) {
+	if (Node3DEditor::get_singleton()->is_visible_in_tree()) {
 		// 3D
 		onion.temp.spatial_edit_state = Node3DEditor::get_singleton()->get_state();
 		Dictionary new_state = onion.temp.spatial_edit_state.duplicate();
@@ -1943,7 +1943,7 @@ void AnimationPlayerEditor::_prepare_onion_layers_2_epilog() {
 	player->restore(onion.temp.anim_values_backup);
 
 	// Restore state of main editors.
-	if (Node3DEditor::get_singleton()->is_visible()) {
+	if (Node3DEditor::get_singleton()->is_visible_in_tree()) {
 		// 3D
 		Node3DEditor::get_singleton()->set_state(onion.temp.spatial_edit_state);
 	} else { // CanvasItemEditor
@@ -2076,8 +2076,8 @@ AnimationPlayerEditor::AnimationPlayerEditor(AnimationPlayerEditorPlugin *p_plug
 
 	set_name(TTRC("Animation"));
 	set_icon_name("dock_animation");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_animation_bottom_panel", TTRC("Toggle Animation Dock"), KeyModifierMask::ALT | Key::N));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_animation", TTRC("Toggle Animation Dock"), KeyModifierMask::ALT | Key::N));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 
 	set_focus_mode(FOCUS_ALL);

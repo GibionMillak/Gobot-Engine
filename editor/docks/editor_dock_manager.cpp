@@ -33,7 +33,6 @@
 #include "core/object/callable_mp.h"
 #include "editor/docks/dock_tab_container.h"
 #include "editor/docks/editor_dock.h"
-#include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/window_wrapper.h"
@@ -122,10 +121,6 @@ void DockSplitContainer::remove_child_notify(Node *p_child) {
 
 	child_control->disconnect(SceneStringName(visibility_changed), callable_mp(this, &DockSplitContainer::_update_visibility));
 	_update_visibility();
-}
-
-Control *DockSplitContainer::get_child_as_control(int p_index) const {
-	return Object::cast_to<Control>(get_child(p_index));
 }
 
 DockSplitContainer::DockSplitContainer() {
@@ -434,9 +429,9 @@ void EditorDockManager::save_docks_to_config(Ref<ConfigFile> p_layout, const Str
 		dock_slots[i]->save_docks_to_config(p_layout, p_section);
 	}
 
-	// Clear the special dock slot for docks without default slots (index -1 = dock_0).
+	// Clear the special dock slot for docks without default slots (index -1).
 	// This prevents closed docks from being infinitely appended to the config on each save.
-	const String no_slot_config_key = "dock_0";
+	const String no_slot_config_key = DockTabContainer::get_config_key(EditorDock::DOCK_SLOT_NONE);
 	if (p_layout->has_section_key(p_section, no_slot_config_key)) {
 		p_layout->erase_section_key(p_section, no_slot_config_key);
 	}
@@ -503,34 +498,29 @@ void EditorDockManager::save_docks_to_config(Ref<ConfigFile> p_layout, const Str
 	// Save SplitContainer offsets.
 	for (int i = 0; i < vsplits.size(); i++) {
 		if (vsplits[i]->is_visible_in_tree()) {
-			p_layout->set_value(p_section, "dock_split_" + itos(i + 1), vsplits[i]->get_split_offset());
+			p_layout->set_value(p_section, "dock_column_split_" + itos(i + 1), vsplits[i]->get_split_offset());
+		}
+		const String offset_key = "dock_column_offset_" + itos(i + 1);
+		if (p_layout->has_section_key(p_section, offset_key)) {
+			p_layout->erase_section_key(p_section, offset_key);
 		}
 	}
 
-	PackedInt32Array split_offsets = main_hsplit->get_split_offsets();
-	int index = 0;
+	// Each horizontal offset belongs to the visible column before a splitter.
+	const PackedInt32Array split_offsets = main_hsplit->get_split_offsets();
+	int previous_column = -1;
+	int offset_index = 0;
 	for (int i = 0; i < vsplits.size(); i++) {
-		int value = 0;
-		if (vsplits[i]->is_visible() && index < split_offsets.size()) {
-			value = split_offsets[index] / EDSCALE;
-			index++;
+		if (!vsplits[i]->is_visible()) {
+			continue;
 		}
-		p_layout->set_value(p_section, "dock_hsplit_" + itos(i + 1), value);
+		if (previous_column >= 0) {
+			const int offset = offset_index < split_offsets.size() ? split_offsets[offset_index] / EDSCALE : 0;
+			p_layout->set_value(p_section, "dock_column_offset_" + itos(previous_column + 1), offset);
+			offset_index++;
+		}
+		previous_column = i;
 	}
-
-	// The main v-split contains only one singular split.
-	int value = 0;
-	if (main_vsplit->get_child_as_control(1)->is_visible()) {
-		value = main_vsplit->get_split_offsets()[0];
-	}
-	p_layout->set_value(p_section, "dock_main_split", value);
-
-	// Same for the bottom docks.
-	value = 0;
-	if (bottom_hsplit->get_child_as_control(1)->is_visible()) {
-		value = bottom_hsplit->get_split_offsets()[0];
-	}
-	p_layout->set_value(p_section, "dock_bottom_split", value);
 }
 
 void EditorDockManager::load_docks_from_config(Ref<ConfigFile> p_layout, const String &p_section, bool p_first_load) {
@@ -598,33 +588,22 @@ void EditorDockManager::load_docks_from_config(Ref<ConfigFile> p_layout, const S
 	// Load SplitContainer offsets.
 
 	PackedInt32Array offsets;
-
+	int previous_column = -1;
 	for (int i = 0; i < vsplits.size(); i++) {
-		if (!p_layout->has_section_key(p_section, "dock_split_" + itos(i + 1))) {
+		const String split_key = "dock_column_split_" + itos(i + 1);
+		if (p_layout->has_section_key(p_section, split_key)) {
+			vsplits[i]->set_split_offset(p_layout->get_value(p_section, split_key));
+		}
+		if (!vsplits[i]->is_visible()) {
 			continue;
 		}
-		int ofs = p_layout->get_value(p_section, "dock_split_" + itos(i + 1));
-		vsplits[i]->set_split_offset(ofs);
-
-		// Only visible ones need a split offset for the main hsplit, even though they all have a value saved.
-		if (vsplits[i]->is_visible() && p_layout->has_section_key(p_section, "dock_hsplit_" + itos(i + 1))) {
-			int offset = p_layout->get_value(p_section, "dock_hsplit_" + itos(i + 1));
+		if (previous_column >= 0) {
+			const int offset = p_layout->get_value(p_section, "dock_column_offset_" + itos(previous_column + 1), 0);
 			offsets.push_back(offset * EDSCALE);
 		}
+		previous_column = i;
 	}
 	main_hsplit->set_split_offsets(offsets);
-
-	// The main v-split contains only one singular split.
-	if (main_vsplit->get_child_as_control(1)->is_visible()) {
-		offsets = { p_layout->get_value(p_section, "dock_main_split", 0) };
-		main_vsplit->set_split_offsets(offsets);
-	}
-
-	// Same for the bottom docks.
-	if (bottom_hsplit->get_child_as_control(1)->is_visible()) {
-		offsets = { p_layout->get_value(p_section, "dock_bottom_split", 0) };
-		bottom_hsplit->set_split_offsets(offsets);
-	}
 
 	update_docks_menu();
 }
@@ -665,11 +644,6 @@ void EditorDockManager::close_dock(EditorDock *p_dock) {
 
 	p_dock->is_open = false;
 	p_dock->emit_signal(SNAME("closed"));
-
-	DockTabContainer *parent_container = p_dock->get_parent_container();
-	if (parent_container) {
-		parent_container->dock_closed(p_dock);
-	}
 
 	_move_dock(p_dock, closed_dock_parent);
 
@@ -805,13 +779,13 @@ void EditorDockManager::set_tab_icon_max_width(int p_max_width) {
 	}
 }
 
-void EditorDockManager::_register_split(DockSplitContainer **p_var, DockSplitContainer *p_split) {
-	*p_var = p_split;
+void EditorDockManager::add_vsplit(DockSplitContainer *p_split) {
+	vsplits.push_back(p_split);
 	p_split->connect("dragged", callable_mp(this, &EditorDockManager::_dock_split_dragged));
 }
 
-void EditorDockManager::add_vsplit(DockSplitContainer *p_split) {
-	vsplits.push_back(p_split);
+void EditorDockManager::set_main_hsplit(DockSplitContainer *p_split) {
+	main_hsplit = p_split;
 	p_split->connect("dragged", callable_mp(this, &EditorDockManager::_dock_split_dragged));
 }
 
@@ -1022,13 +996,8 @@ void DockShortcutHandler::shortcut_input(const Ref<InputEvent> &p_event) {
 	for (EditorDock *dock : EditorDockManager::get_singleton()->all_docks) {
 		const Ref<Shortcut> &dock_shortcut = dock->get_dock_shortcut();
 		if (dock_shortcut.is_valid() && dock_shortcut->matches_event(p_event)) {
-			bool was_visible = dock->is_visible();
 			if (!dock->transient || dock->is_open) {
 				EditorDockManager::get_singleton()->force_focus_dock(dock);
-			}
-			DockTabContainer *dock_container = dock->get_parent_container();
-			if (dock_container) {
-				dock_container->dock_focused(dock, was_visible);
 			}
 			get_viewport()->set_input_as_handled();
 			break;

@@ -49,12 +49,6 @@ EditorHeaderContainer::EditorHeaderContainer() {
 	_left_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
 	add_child(_left_hbox);
 
-	_center_hbox = memnew(HBoxContainer);
-	_center_hbox->set_alignment(ALIGNMENT_CENTER);
-	_center_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
-	_center_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
-	add_child(_center_hbox);
-
 	_right_hbox = memnew(HBoxContainer);
 	_right_hbox->set_alignment(ALIGNMENT_END);
 	_right_hbox->set_h_size_flags(SIZE_EXPAND_FILL);

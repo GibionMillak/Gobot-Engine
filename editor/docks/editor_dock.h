@@ -46,7 +46,6 @@ public:
 		DOCK_LAYOUT_VERTICAL = 1,
 		DOCK_LAYOUT_HORIZONTAL = 2,
 		DOCK_LAYOUT_FLOATING = 4,
-		DOCK_LAYOUT_MAIN_SCREEN = 8,
 		DOCK_LAYOUT_ALL = DOCK_LAYOUT_VERTICAL | DOCK_LAYOUT_HORIZONTAL | DOCK_LAYOUT_FLOATING,
 	};
 
@@ -60,10 +59,8 @@ public:
 		DOCK_SLOT_RIGHT_BL,
 		DOCK_SLOT_RIGHT_UR,
 		DOCK_SLOT_RIGHT_BR,
-		DOCK_SLOT_BOTTOM,
-		DOCK_SLOT_BOTTOM_L,
-		DOCK_SLOT_BOTTOM_R,
-		DOCK_SLOT_MAIN_SCREEN,
+		CENTER_TOP,
+		CENTER_BOTTOM,
 		DOCK_SLOT_MAX
 	};
 
@@ -85,7 +82,7 @@ private:
 	bool global = true;
 	bool transient = false;
 	bool closable = false;
-	bool allow_switch_screen = false;
+	bool _auto_switch_allowed = true;
 
 	DockLayout current_layout = DOCK_LAYOUT_NONE;
 	BitField<DockLayout> available_layouts = DOCK_LAYOUT_VERTICAL | DOCK_LAYOUT_FLOATING;
@@ -133,8 +130,8 @@ public:
 	void set_closable(bool p_closable) { closable = p_closable; }
 	bool is_closable() const { return closable; }
 
-	void set_allow_switch_screen(bool p_allow) { allow_switch_screen = p_allow; }
-	bool is_allow_switch_screen() const { return allow_switch_screen; }
+	void set_auto_switch_allowed(bool p_allowed) { _auto_switch_allowed = p_allowed; }
+	bool is_auto_switch_allowed() const { return _auto_switch_allowed; }
 
 	void set_icon_name(const StringName &p_name);
 	StringName get_icon_name() const { return icon_name; }

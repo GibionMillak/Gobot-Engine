@@ -281,8 +281,6 @@ public:
 	void stop_search();
 	void replace_all();
 
-	void update_layout(EditorDock::DockLayout p_layout, int p_slot);
-
 	FindInFilesResultsPanel();
 };
 
@@ -333,8 +331,6 @@ protected:
 	static void _bind_methods();
 
 public:
-	virtual void update_layout(EditorDock::DockLayout p_layout, int p_slot) override;
-
 	FindInFilesSearchPanel *get_search_control() { return search_control; }
 	FindInFilesResultsPanel *create_new_panel();
 	void create_rename_control(const String &p_symbol, const EditorLanguage::LookupResult &p_lookup);

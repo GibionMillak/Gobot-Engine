@@ -195,12 +195,12 @@ private:
 
 	void patterns_item_list_empty_clicked(const Vector2 &p_pos, MouseButton p_mouse_button_index);
 
-	///// Bottom panel common ////
+	///// Shared dock controls ////
 	BoxContainer *split_container_left_side = nullptr;
 
 	void _tab_changed();
 
-	///// Bottom panel tiles ////
+	///// Tiles panel ////
 	VBoxContainer *tiles_bottom_panel = nullptr;
 	Label *missing_source_label = nullptr;
 	Label *invalid_source_label = nullptr;
@@ -242,7 +242,7 @@ private:
 	void _scenes_list_multi_selected(int p_index, bool p_selected);
 	void _scenes_list_lmb_empty_clicked(const Vector2 &p_pos, MouseButton p_mouse_button_index);
 
-	///// Bottom panel patterns ////
+	///// Patterns panel ////
 	MarginContainer *patterns_mc = nullptr;
 	ItemList *patterns_item_list = nullptr;
 	Label *patterns_help_label = nullptr;
@@ -342,7 +342,7 @@ private:
 	void _prune_last_selected_terrain_cache();
 	void _restore_terrain_selection();
 
-	// Bottom panel.
+	// Dock controls.
 	Tree *terrains_tree = nullptr;
 	ItemList *terrains_tile_list = nullptr;
 
@@ -428,7 +428,7 @@ private:
 	MenuButton *advanced_menu_button = nullptr;
 	void _advanced_menu_button_id_pressed(int p_id);
 
-	// Bottom panel.
+	// Dock controls.
 	Label *cant_edit_label = nullptr;
 	TabBar *tabs_bar = nullptr;
 	PanelContainer *tabs_panel = nullptr;

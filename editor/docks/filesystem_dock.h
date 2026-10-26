@@ -191,7 +191,6 @@ private:
 	DisplayMode old_display_mode;
 
 	bool horizontal = false;
-	bool touches_bottom = false;
 
 	PopupMenu *file_list_popup = nullptr;
 	PopupMenu *tree_popup = nullptr;

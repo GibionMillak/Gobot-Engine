@@ -58,18 +58,19 @@
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/debugger/script_editor_debugger.h"
 #include "editor/doc/editor_help.h"
+#include "editor/docks/dock_tab_container.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/groups_dock.h"
+#include "editor/docks/hierarchy_dock.h"
 #include "editor/docks/history_dock.h"
 #include "editor/docks/import_dock.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/hierarchy_dock.h"
+#include "editor/docks/scene_editor_dock.h"
 #include "editor/docks/signals_dock.h"
 #include "editor/editor_data.h"
 #include "editor/editor_interface.h"
 #include "editor/editor_log.h"
-#include "editor/editor_main_screen.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/export/dedicated_server_export_plugin.h"
@@ -87,7 +88,6 @@
 #include "editor/gui/dialogs/project_autoloads_dialog.h"
 #include "editor/gui/dialogs/project_plugins_dialog.h"
 #include "editor/gui/dialogs/project_settings_editor.h"
-#include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_icon_manager.h"
 #include "editor/gui/editor_quick_open_dialog.h"
@@ -679,162 +679,61 @@ EditorNode::EditorNode() {
 	title_bar = memnew(EditorHeaderContainer);
 	main_vbox->add_child(title_bar);
 
-	DockSplitContainer *main_vsplit = nullptr;
+	editor_dock_manager = memnew(EditorDockManager);
+	DockSplitContainer *main_hsplit = nullptr;
 	_dock_panel_pc = memnew(PanelContainer);
 	_dock_panel_pc->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	_dock_panel_pc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	main_vbox->add_child(_dock_panel_pc);
 
 	{
-		main_vsplit = memnew(DockSplitContainer);
-		main_vsplit->set_name("DockVSplitMain");
-		main_vsplit->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-		main_vsplit->set_vertical(true);
-		_dock_panel_pc->add_child(main_vsplit);
+		main_hsplit = memnew(DockSplitContainer);
+		main_hsplit->set_name("DockColumns");
+		main_hsplit->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+		_dock_panel_pc->add_child(main_hsplit);
+		{
+			const EditorDock::DockSlot column_slots[5][2] = {
+				{ EditorDock::DOCK_SLOT_LEFT_UL, EditorDock::DOCK_SLOT_LEFT_BL },
+				{ EditorDock::DOCK_SLOT_LEFT_UR, EditorDock::DOCK_SLOT_LEFT_BR },
+				{ EditorDock::CENTER_TOP, EditorDock::CENTER_BOTTOM },
+				{ EditorDock::DOCK_SLOT_RIGHT_UL, EditorDock::DOCK_SLOT_RIGHT_BL },
+				{ EditorDock::DOCK_SLOT_RIGHT_UR, EditorDock::DOCK_SLOT_RIGHT_BR },
+			};
+			for (int column = 0; column < 5; column++) {
+				DockSplitContainer *column_split = memnew(DockSplitContainer);
+				column_split->set_h_size_flags(column == 2 ? Control::SIZE_EXPAND_FILL : Control::SIZE_FILL);
+				column_split->set_name("DockColumn" + itos(column + 1));
+				column_split->set_vertical(true);
+				main_hsplit->add_child(column_split);
+				{
+					for (int row = 0; row < 2; row++) {
+						DockTabContainer *dock_container = memnew(SideDockTabContainer(column_slots[column][row], Rect2i(column * 2, row * 4, 2, 4)));
+						if (column == 2) {
+							dock_container->layout = EditorDock::DOCK_LAYOUT_HORIZONTAL;
+							dock_container->set_custom_minimum_size(Size2(170, 80) * EDSCALE);
+						}
+						dock_container->set_name("DockSlot" + itos(column_slots[column][row]));
+						dock_container->set_use_hidden_tabs_for_min_size(column != 2);
+						column_split->add_child(dock_container);
+						dock_container->add_margin_valid_drop(row == 0 ? SIDE_BOTTOM : SIDE_TOP, column_slots[column][1 - row]);
+						if (column > 0) {
+							dock_container->add_margin_valid_drop(SIDE_LEFT, column_slots[column - 1][row]);
+						}
+						if (column < 4) {
+							dock_container->add_margin_valid_drop(SIDE_RIGHT, column_slots[column + 1][row]);
+						}
+						editor_dock_manager->register_dock_slot(dock_container);
+					}
+				}
+				editor_dock_manager->add_vsplit(column_split);
+				if (column == 2) {
+					column_split->set_split_offset(-270 * EDSCALE);
+				}
+			}
+		}
 	}
 
-	main_hsplit = memnew(DockSplitContainer);
-	main_hsplit->set_name("DockHSplitMain");
-	main_hsplit->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	main_vsplit->add_child(main_hsplit);
-
-	left_l_vsplit = memnew(DockSplitContainer);
-	left_l_vsplit->set_name("DockVSplitLeftL");
-	left_l_vsplit->set_vertical(true);
-	main_hsplit->add_child(left_l_vsplit);
-
-	LocalVector<DockTabContainer *> dock_slots;
-	{
-		DockTabContainer *dock_container = memnew(SideDockTabContainer(EditorDock::DOCK_SLOT_LEFT_UL, Rect2i(0, 0, 1, 3)));
-		dock_container->set_name("DockSlotLeftUL");
-		dock_container->add_margin_valid_drop(SIDE_RIGHT, EditorDock::DOCK_SLOT_LEFT_UR);
-		dock_container->add_margin_valid_drop(SIDE_BOTTOM, EditorDock::DOCK_SLOT_LEFT_BL);
-		left_l_vsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-	{
-		DockTabContainer *dock_container = memnew(SideDockTabContainer(EditorDock::DOCK_SLOT_LEFT_BL, Rect2i(0, 3, 1, 3)));
-		dock_container->set_name("DockSlotLeftBL");
-		dock_container->add_margin_valid_drop(SIDE_TOP, EditorDock::DOCK_SLOT_LEFT_UL);
-		dock_container->add_margin_valid_drop(SIDE_RIGHT, EditorDock::DOCK_SLOT_LEFT_BR);
-		dock_container->add_margin_valid_drop(SIDE_BOTTOM, EditorDock::DOCK_SLOT_BOTTOM_L);
-		left_l_vsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-
-	left_r_vsplit = memnew(DockSplitContainer);
-	left_r_vsplit->set_name("DockVSplitLeftR");
-	left_r_vsplit->set_vertical(true);
-	main_hsplit->add_child(left_r_vsplit);
-	{
-		DockTabContainer *dock_container = memnew(SideDockTabContainer(EditorDock::DOCK_SLOT_LEFT_UR, Rect2i(1, 0, 1, 3)));
-		dock_container->set_name("DockSlotLeftUR");
-		dock_container->add_margin_valid_drop(SIDE_LEFT, EditorDock::DOCK_SLOT_LEFT_UL);
-		dock_container->add_margin_valid_drop(SIDE_BOTTOM, EditorDock::DOCK_SLOT_LEFT_BR);
-		left_r_vsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-	{
-		DockTabContainer *dock_container = memnew(SideDockTabContainer(EditorDock::DOCK_SLOT_LEFT_BR, Rect2i(1, 3, 1, 3)));
-		dock_container->set_name("DockSlotLeftBR");
-		dock_container->add_margin_valid_drop(SIDE_TOP, EditorDock::DOCK_SLOT_LEFT_UR);
-		dock_container->add_margin_valid_drop(SIDE_LEFT, EditorDock::DOCK_SLOT_LEFT_BL);
-		dock_container->add_margin_valid_drop(SIDE_BOTTOM, EditorDock::DOCK_SLOT_BOTTOM_L);
-		left_r_vsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-
-	VBoxContainer *center_vb = memnew(VBoxContainer);
-	center_vb->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	main_hsplit->add_child(center_vb);
-
-	center_split = memnew(DockSplitContainer);
-	center_split->set_name("DockVSplitCenter");
-	center_split->set_vertical(true);
-	center_split->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	center_split->set_collapsed(true);
-	center_vb->add_child(center_split);
-	center_split->connect("drag_ended", callable_mp(this, &EditorNode::_bottom_panel_resized));
-
-	right_l_vsplit = memnew(DockSplitContainer);
-	right_l_vsplit->set_name("DockVSplitRightL");
-	right_l_vsplit->set_vertical(true);
-	main_hsplit->add_child(right_l_vsplit);
-	{
-		DockTabContainer *dock_container = memnew(SideDockTabContainer(EditorDock::DOCK_SLOT_RIGHT_UL, Rect2i(6, 0, 1, 3)));
-		dock_container->set_name("DockSlotRightUL");
-		dock_container->add_margin_valid_drop(SIDE_RIGHT, EditorDock::DOCK_SLOT_RIGHT_UR);
-		dock_container->add_margin_valid_drop(SIDE_BOTTOM, EditorDock::DOCK_SLOT_RIGHT_BL);
-		right_l_vsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-	{
-		DockTabContainer *dock_container = memnew(SideDockTabContainer(EditorDock::DOCK_SLOT_RIGHT_BL, Rect2i(6, 3, 1, 3)));
-		dock_container->set_name("DockSlotRightBL");
-		dock_container->add_margin_valid_drop(SIDE_TOP, EditorDock::DOCK_SLOT_RIGHT_UL);
-		dock_container->add_margin_valid_drop(SIDE_RIGHT, EditorDock::DOCK_SLOT_RIGHT_BR);
-		dock_container->add_margin_valid_drop(SIDE_BOTTOM, EditorDock::DOCK_SLOT_BOTTOM_R);
-		right_l_vsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-
-	right_r_vsplit = memnew(DockSplitContainer);
-	right_r_vsplit->set_name("DockVSplitRightR");
-	right_r_vsplit->set_vertical(true);
-	main_hsplit->add_child(right_r_vsplit);
-	{
-		DockTabContainer *dock_container = memnew(SideDockTabContainer(EditorDock::DOCK_SLOT_RIGHT_UR, Rect2i(7, 0, 1, 3)));
-		dock_container->set_name("DockSlotRightUR");
-		dock_container->add_margin_valid_drop(SIDE_LEFT, EditorDock::DOCK_SLOT_RIGHT_UL);
-		dock_container->add_margin_valid_drop(SIDE_BOTTOM, EditorDock::DOCK_SLOT_RIGHT_BR);
-		right_r_vsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-	{
-		DockTabContainer *dock_container = memnew(SideDockTabContainer(EditorDock::DOCK_SLOT_RIGHT_BR, Rect2i(7, 3, 1, 3)));
-		dock_container->set_name("DockSlotRightBR");
-		dock_container->add_margin_valid_drop(SIDE_TOP, EditorDock::DOCK_SLOT_RIGHT_UR);
-		dock_container->add_margin_valid_drop(SIDE_LEFT, EditorDock::DOCK_SLOT_RIGHT_BL);
-		dock_container->add_margin_valid_drop(SIDE_BOTTOM, EditorDock::DOCK_SLOT_BOTTOM_R);
-		right_r_vsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-
-	DockSplitContainer *bottom_hsplit = memnew(DockSplitContainer);
-	bottom_hsplit->set_name("DockHSplitBottom");
-	main_vsplit->add_child(bottom_hsplit);
-	{
-		DockTabContainer *dock_container = memnew(BottomSideDockTabContainer(EditorDock::DOCK_SLOT_BOTTOM_L, Rect2i(0, 6, 4, 2)));
-		dock_container->set_name("DockSlotBottomL");
-		dock_container->add_margin_valid_drop(SIDE_TOP, EditorDock::DOCK_SLOT_LEFT_BL);
-		dock_container->add_margin_valid_drop(SIDE_RIGHT, EditorDock::DOCK_SLOT_BOTTOM_R);
-		bottom_hsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-	{
-		DockTabContainer *dock_container = memnew(BottomSideDockTabContainer(EditorDock::DOCK_SLOT_BOTTOM_R, Rect2i(4, 6, 4, 2)));
-		dock_container->set_name("DockSlotBottomR");
-		dock_container->add_margin_valid_drop(SIDE_TOP, EditorDock::DOCK_SLOT_RIGHT_BR);
-		dock_container->add_margin_valid_drop(SIDE_LEFT, EditorDock::DOCK_SLOT_BOTTOM_L);
-		bottom_hsplit->add_child(dock_container);
-		dock_slots.push_back(dock_container);
-	}
-
-	editor_dock_manager = memnew(EditorDockManager);
-
-	// Save the splits for easier access.
-	editor_dock_manager->add_vsplit(left_l_vsplit);
-	editor_dock_manager->add_vsplit(left_r_vsplit);
-	editor_dock_manager->add_vsplit(right_l_vsplit);
-	editor_dock_manager->add_vsplit(right_r_vsplit);
-
-	editor_dock_manager->set_main_vsplit(main_vsplit);
 	editor_dock_manager->set_main_hsplit(main_hsplit);
-	editor_dock_manager->set_bottom_hsplit(bottom_hsplit);
-
-	for (DockTabContainer *dock_container : dock_slots) {
-		editor_dock_manager->register_dock_slot(dock_container);
-	}
 
 	editor_layout_save_delay_timer = memnew(Timer);
 	add_child(editor_layout_save_delay_timer);
@@ -848,28 +747,11 @@ EditorNode::EditorNode() {
 	scan_changes_timer->connect("timeout", callable_mp(EditorFileSystem::get_singleton(), &EditorFileSystem::scan_changes));
 	add_child(scan_changes_timer);
 
-	top_split = memnew(VSplitContainer);
-	center_split->add_child(top_split);
-	top_split->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	top_split->set_collapsed(true);
-
-	VBoxContainer *srt = memnew(VBoxContainer);
-	srt->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	srt->add_theme_constant_override("separation", 0);
-	top_split->add_child(srt);
-
-	scene_tabs = memnew(EditorSceneTabs);
-	srt->add_child(scene_tabs);
+	_scene_editor_dock = memnew(SceneEditorDock);
+	editor_dock_manager->add_dock(_scene_editor_dock);
+	scene_tabs = _scene_editor_dock->get_scene_tabs();
 	scene_tabs->connect("tab_changed", callable_mp(this, &EditorNode::_set_current_scene));
 	scene_tabs->connect("tab_closed", callable_mp(this, &EditorNode::_scene_tab_closed));
-
-	ED_SHORTCUT_AND_COMMAND("editor/toggle_last_opened_bottom_panel", TTRC("Toggle Last Opened Bottom Panel"), KeyModifierMask::CMD_OR_CTRL | Key::J);
-
-	editor_main_screen = memnew(EditorMainScreen);
-	srt->add_child(editor_main_screen);
-	editor_main_screen->get_internal_container()->reparent(title_bar->get_middle_section());
-
-	editor_dock_manager->register_dock_slot(editor_main_screen);
 
 	scene_root = memnew(SubViewport);
 	scene_root->set_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
@@ -1003,9 +885,6 @@ EditorNode::EditorNode() {
 	ED_SHORTCUT_OVERRIDE("editor/editor_script", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::KEY_3);
 	ED_SHORTCUT_OVERRIDE("editor/editor_game", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::KEY_4);
 
-	ED_SHORTCUT_AND_COMMAND("editor/editor_next", TTRC("Open the next Editor"));
-	ED_SHORTCUT_AND_COMMAND("editor/editor_prev", TTRC("Open the previous Editor"));
-
 	// Editor menu and toolbar.
 	bool can_expand = DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_EXTEND_TO_TITLE);
 
@@ -1053,7 +932,6 @@ EditorNode::EditorNode() {
 	{
 		project_run_bar = footer_container->get_run_bar();
 		project_run_bar->connect("play_pressed", callable_mp(this, &EditorNode::_project_run_started));
-		project_run_bar->connect("stop_pressed", callable_mp(this, &EditorNode::_project_run_stopped));
 	}
 
 	if (can_expand) {
@@ -1104,17 +982,8 @@ EditorNode::EditorNode() {
 	const int dock_hsize_scaled = dock_hsize * EDSCALE;
 	main_hsplit->set_split_offsets({ dock_hsize_scaled, -dock_hsize_scaled });
 
-	// Bottom panels.
-
-	bottom_panel = memnew(EditorBottomPanel);
-	editor_dock_manager->register_dock_slot(bottom_panel);
-	center_split->add_child(bottom_panel);
-	center_split->set_dragger_visibility(SplitContainer::DRAGGER_HIDDEN);
-
 	log = memnew(EditorLog);
 	editor_dock_manager->add_dock(log);
-
-	center_split->connect(SceneStringName(resized), callable_mp(this, &EditorNode::_vp_resized));
 
 	native_shader_source_visualizer = memnew(EditorNativeShaderSourceVisualizer);
 	gui_base->add_child(native_shader_source_visualizer);
@@ -1504,34 +1373,22 @@ EditorNode::EditorNode() {
 		default_layout->set_value(docks_section, DockTabContainer::get_config_key(EditorDock::DOCK_SLOT_RIGHT_UL) + "_selected_tab_idx", 0);
 	}
 	{
-		const String _2d_key = CanvasItemEditor::get_singleton()->get_effective_layout_key();
-		const String _3d_key = Node3DEditor::get_singleton()->get_effective_layout_key();
+		const String scene_editor_key = _scene_editor_dock->get_effective_layout_key();
 		const String script_key = ScriptEditor::get_singleton()->get_effective_layout_key();
 		String game_key;
 		if (GameView::get_dock()) {
 			game_key = GameView::get_dock()->get_effective_layout_key();
 		}
-		default_layout->set_value(docks_section, DockTabContainer::get_config_key(EditorDock::DOCK_SLOT_MAIN_SCREEN), vformat("%s,%s,%s,%s", _2d_key, _3d_key, script_key, game_key));
+		default_layout->set_value(docks_section, DockTabContainer::get_config_key(EditorDock::CENTER_TOP), vformat("%s,%s,%s", scene_editor_key, script_key, game_key));
+		default_layout->set_value(docks_section, DockTabContainer::get_config_key(EditorDock::CENTER_TOP) + "_selected_tab_idx", 0);
 	}
 
-	int hsplits[] = { 0, dock_hsize, -dock_hsize, 0 };
+	const int hsplits[] = { 0, dock_hsize, -dock_hsize, 0 };
 	for (int i = 0; i < (int)std_size(hsplits); i++) {
-		default_layout->set_value(docks_section, "dock_hsplit_" + itos(i + 1), hsplits[i]);
+		default_layout->set_value(docks_section, "dock_column_offset_" + itos(i + 1), hsplits[i]);
 	}
 	for (int i = 0; i < editor_dock_manager->get_vsplit_count(); i++) {
-		default_layout->set_value(docks_section, "dock_split_" + itos(i + 1), 0);
-	}
-
-	{
-		const String output_key = log->get_effective_layout_key();
-		const String audio_key = audio_bus_editor->get_effective_layout_key();
-		const String shader_key = ShaderEditorPlugin::get_singleton()->get_shader_dock()->get_effective_layout_key();
-
-		Dictionary offsets;
-		offsets[output_key] = -270;
-		offsets[audio_key] = -450;
-		offsets[shader_key] = -348;
-		default_layout->set_value(EDITOR_NODE_CONFIG_SECTION, "bottom_panel_offsets", offsets);
+		default_layout->set_value(docks_section, "dock_column_split_" + itos(i + 1), i == 2 ? -270 * EDSCALE : 0);
 	}
 
 	_update_layouts_menu();
@@ -1991,10 +1848,6 @@ void EditorNode::trigger_menu_option(int p_option, bool p_confirmed) {
 
 bool EditorNode::has_previous_closed_scenes() const {
 	return !prev_closed_scenes.is_empty();
-}
-
-void EditorNode::set_center_split_offset(int p_offset) {
-	center_split->set_split_offset(p_offset);
 }
 
 void EditorNode::edit_node(Node *p_node) {
@@ -4728,14 +4581,9 @@ void EditorNode::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_READY: {
-			// Store the default order of bottom docks. It can only be determined dynamically.
-			PackedStringArray bottom_docks;
-			bottom_docks.reserve_exact(bottom_panel->get_tab_count());
-			for (int i = 0; i < bottom_panel->get_tab_count(); i++) {
-				EditorDock *dock = Object::cast_to<EditorDock>(bottom_panel->get_tab_control(i));
-				bottom_docks.append(dock->get_effective_layout_key());
-			}
-			default_layout->set_value("docks", "dock_9", String(",").join(bottom_docks));
+			// Store the default order of the center lower docks. It can only be determined dynamically.
+			DockTabContainer *center_bottom = editor_dock_manager->get_dock_container(EditorDock::CENTER_BOTTOM);
+			center_bottom->save_docks_to_config(default_layout, "docks");
 
 			RenderingServer::get_singleton()->viewport_set_disable_2d(get_scene_root()->get_viewport_rid(), true);
 			RenderingServer::get_singleton()->viewport_set_environment_mode(get_viewport()->get_viewport_rid(), RSE::VIEWPORT_ENVIRONMENT_DISABLED);
@@ -5054,9 +4902,6 @@ void EditorNode::_update_theme(bool p_skip_creation) {
 		if (main_menu_button != nullptr) {
 			main_menu_button->set_button_icon(theme->get_icon(SNAME("gui_triple_bar"), EditorStringName(EditorIcons)));
 		}
-
-		editor_main_screen->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("Content"), EditorStringName(EditorStyles)));
-		bottom_panel->_theme_changed();
 
 		_update_system_menu_icons(dark_mode);
 	}
@@ -6085,9 +5930,9 @@ void EditorNode::_save_screenshot(const String &p_path) {
 	Viewport *viewport = get_viewport();
 	ERR_FAIL_NULL_MSG(viewport, "Cannot get a viewport from the EditorNode.");
 	Ref<ViewportTexture> texture = viewport->get_texture();
-	ERR_FAIL_COND_MSG(texture.is_null(), "Cannot get a viewport texture from the editor main screen.");
+	ERR_FAIL_COND_MSG(texture.is_null(), "Cannot get a viewport texture from the editor window.");
 	Ref<Image> img = texture->get_image();
-	ERR_FAIL_COND_MSG(img.is_null(), "Cannot get an image from a viewport texture of the editor main screen.");
+	ERR_FAIL_COND_MSG(img.is_null(), "Cannot get an image from a viewport texture of the editor window.");
 #ifdef RD_ENABLED
 	RenderingDevice *rendering_device = RD::get_singleton();
 	if (rendering_device && RenderingServer::get_singleton()->viewport_is_using_hdr_2d(viewport->get_viewport_rid())) {
@@ -6106,9 +5951,9 @@ void EditorNode::_save_screenshot_with_embedded_process(int64_t p_w, int64_t p_h
 	Viewport *viewport = get_viewport();
 	ERR_FAIL_NULL_MSG(viewport, "Cannot get a viewport from the EditorNode.");
 	Ref<ViewportTexture> texture = viewport->get_texture();
-	ERR_FAIL_COND_MSG(texture.is_null(), "Cannot get a viewport texture from the editor main screen.");
+	ERR_FAIL_COND_MSG(texture.is_null(), "Cannot get a viewport texture from the editor window.");
 	Ref<Image> img = texture->get_image();
-	ERR_FAIL_COND_MSG(img.is_null(), "Cannot get an image from a viewport texture of the editor main screen.");
+	ERR_FAIL_COND_MSG(img.is_null(), "Cannot get an image from a viewport texture of the editor window.");
 #ifdef RD_ENABLED
 	RenderingDevice *rendering_device = RD::get_singleton();
 	if (rendering_device && RenderingServer::get_singleton()->viewport_is_using_hdr_2d(viewport->get_viewport_rid())) {
@@ -6577,18 +6422,6 @@ void EditorNode::_version_control_menu_option(int p_idx) {
 			VersionControlEditorPlugin::get_singleton()->popup_vcs_set_up_dialog(gui_base);
 		} break;
 	}
-}
-
-void EditorNode::_close_messages() {
-	old_split_ofs = center_split->get_split_offset();
-	center_split->set_split_offset(0);
-}
-
-void EditorNode::_show_messages() {
-	center_split->set_split_offset(old_split_ofs);
-}
-
-void EditorNode::_vp_resized() {
 }
 
 void EditorNode::_titlebar_resized() {
@@ -7068,18 +6901,11 @@ void EditorNode::_project_run_started() {
 		log->clear();
 	}
 
-	int action_on_play = EDITOR_GET("run/bottom_panel/action_on_play");
+	int action_on_play = EDITOR_GET("run/docks/action_on_play");
 	if (action_on_play == ACTION_ON_PLAY_OPEN_OUTPUT) {
 		editor_dock_manager->open_dock(log, true);
 	} else if (action_on_play == ACTION_ON_PLAY_OPEN_DEBUGGER) {
 		editor_dock_manager->open_dock(EditorDebuggerNode::get_singleton(), true);
-	}
-}
-
-void EditorNode::_project_run_stopped() {
-	int action_on_stop = EDITOR_GET("run/bottom_panel/action_on_stop");
-	if (action_on_stop == ACTION_ON_STOP_CLOSE_BUTTOM_PANEL) {
-		bottom_panel->hide_bottom_panel();
 	}
 }
 
@@ -7484,14 +7310,11 @@ void EditorNode::shortcut_input(const Ref<InputEvent> &p_event) {
 			FileSystemDock::get_singleton()->focus_on_filter();
 		} else if (ED_IS_SHORTCUT("editor/editor_help", p_event)) {
 			emit_signal(SNAME("request_help_search"), "");
-		} else if (ED_IS_SHORTCUT("editor/editor_next", p_event)) {
-			editor_main_screen->select_next();
-		} else if (ED_IS_SHORTCUT("editor/editor_prev", p_event)) {
-			editor_main_screen->select_prev();
+		} else if (ED_IS_SHORTCUT("editor/editor_2d", p_event) || ED_IS_SHORTCUT("editor/editor_3d", p_event)) {
+			_scene_editor_dock->set_3d_mode(ED_IS_SHORTCUT("editor/editor_3d", p_event));
+			editor_dock_manager->force_focus_dock(_scene_editor_dock);
 		} else if (ED_IS_SHORTCUT("editor/command_palette", p_event)) {
 			_open_command_palette();
-		} else if (ED_IS_SHORTCUT("editor/toggle_last_opened_bottom_panel", p_event)) {
-			bottom_panel->toggle_last_opened_bottom_panel();
 		} else if (ED_IS_SHORTCUT("editor/toggle_selected_nodes_visibility", p_event)) {
 			EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
 			undo_redo->create_action(TTR("Toggle Selected Node(s) Visibility"));
@@ -7958,8 +7781,7 @@ void EditorNode::_load_editor_layout() {
 			_layout_menu_option(LAYOUT_DEFAULT);
 		} else {
 			ep.step(TTR("Loading docks..."), 1, true);
-			// Initialize some default values.
-			bottom_panel->load_layout_from_config(default_layout, EDITOR_NODE_CONFIG_SECTION);
+			editor_dock_manager->load_docks_from_config(default_layout, "docks", true);
 		}
 	} else {
 		ep.step(TTR("Loading docks..."), 1, true);
@@ -7980,10 +7802,6 @@ void EditorNode::_load_editor_layout() {
 }
 
 void EditorNode::_save_central_editor_layout_to_config(Ref<ConfigFile> p_config_file) {
-	// Bottom panel.
-
-	bottom_panel->save_layout_to_config(p_config_file, EDITOR_NODE_CONFIG_SECTION);
-
 	// Debugger tab.
 
 	int selected_default_debugger_tab_idx = EditorDebuggerNode::get_singleton()->get_default_debugger()->get_current_debugger_tab();
@@ -7991,10 +7809,6 @@ void EditorNode::_save_central_editor_layout_to_config(Ref<ConfigFile> p_config_
 }
 
 void EditorNode::_load_central_editor_layout_from_config(Ref<ConfigFile> p_config_file) {
-	// Bottom panel.
-
-	bottom_panel->load_layout_from_config(p_config_file, EDITOR_NODE_CONFIG_SECTION);
-
 	// Debugger tab.
 
 	if (p_config_file->has_section_key(EDITOR_NODE_CONFIG_SECTION, "selected_default_debugger_tab_idx")) {
@@ -8316,7 +8130,7 @@ void EditorNode::_feature_profile_changed() {
 		editor_dock_manager->set_dock_enabled(ImportDock::get_singleton(), !fs_dock_disabled && !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_IMPORT_DOCK));
 		editor_dock_manager->set_dock_enabled(history_dock, !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_HISTORY_DOCK));
 
-		editor_dock_manager->set_dock_enabled(Node3DEditor::get_singleton(), !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_3D));
+		_scene_editor_dock->set_3d_enabled(!profile->is_feature_disabled(EditorFeatureProfile::FEATURE_3D));
 		editor_dock_manager->set_dock_enabled(ScriptEditor::get_singleton(), !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_SCRIPT));
 		if (!Engine::get_singleton()->is_recovery_mode_hint()) {
 			editor_dock_manager->set_dock_enabled(GameView::get_dock(), !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_GAME));
@@ -8327,7 +8141,7 @@ void EditorNode::_feature_profile_changed() {
 		editor_dock_manager->set_dock_enabled(GroupsDock::get_singleton(), true);
 		editor_dock_manager->set_dock_enabled(FileSystemDock::get_singleton(), true);
 		editor_dock_manager->set_dock_enabled(history_dock, true);
-		editor_dock_manager->set_dock_enabled(Node3DEditor::get_singleton(), true);
+		_scene_editor_dock->set_3d_enabled(true);
 		editor_dock_manager->set_dock_enabled(ScriptEditor::get_singleton(), true);
 		if (!Engine::get_singleton()->is_recovery_mode_hint() && GameView::get_dock()) {
 			editor_dock_manager->set_dock_enabled(GameView::get_dock(), true);
@@ -8750,7 +8564,7 @@ void EditorNode::_update_main_menu_type() {
 	if (new_menu_type == MENU_TYPE_COMPACT) {
 		main_menu_button = memnew(MenuButton);
 		main_menu_button->set_text(TTRC("Main Menu"));
-		main_menu_button->set_theme_type_variation("MainScreenButton");
+		main_menu_button->set_theme_type_variation("MainMenuButton");
 		main_menu_button->set_focus_mode(Control::FOCUS_NONE);
 		if (is_inside_tree()) {
 			main_menu_button->set_button_icon(theme->get_icon(SNAME("gui_triple_bar"), EditorStringName(EditorIcons)));
@@ -8789,10 +8603,6 @@ void EditorNode::_update_main_menu_type() {
 void EditorNode::_add_to_main_menu(const String &p_name, PopupMenu *p_menu) {
 	p_menu->set_name(p_name);
 	main_menu_items.push_back(p_menu);
-}
-
-void EditorNode::_bottom_panel_resized() {
-	bottom_panel->set_bottom_panel_offset(center_split->get_split_offset());
 }
 
 void EditorNode::_copy_warning(const String &p_str) {

@@ -85,7 +85,7 @@ String _remove_symlink(const String &dir) {
 #ifdef TOOLS_ENABLED
 _FORCE_INLINE_ static GameViewPlugin *_get_game_view_plugin() {
 	ERR_FAIL_NULL_V(EditorNode::get_singleton(), nullptr);
-	ERR_FAIL_NULL_V(EditorNode::get_singleton()->get_editor_main_screen(), nullptr);
+	ERR_FAIL_NULL_V(GameView::get_dock(), nullptr);
 	return Object::cast_to<GameViewPlugin>(EditorNode::get_singleton()->get_editor_data().get_editor_by_name("Game"));
 }
 #endif
@@ -347,7 +347,6 @@ void OS_Android::main_loop_begin() {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		GameViewPlugin *game_view_plugin = _get_game_view_plugin();
 		if (game_view_plugin != nullptr) {
-			game_view_plugin->connect("main_screen_changed", callable_mp_static(&OS_Android::_on_main_screen_changed));
 			game_view_plugin->connect("show_android_game_dock", callable_mp_static(&OS_Android::_show_editor_game_dock));
 		}
 
@@ -384,7 +383,6 @@ void OS_Android::main_loop_end() {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		GameViewPlugin *game_view_plugin = _get_game_view_plugin();
 		if (game_view_plugin != nullptr) {
-			game_view_plugin->disconnect("main_screen_changed", callable_mp_static(&OS_Android::_on_main_screen_changed));
 			game_view_plugin->disconnect("show_android_game_dock", callable_mp_static(&OS_Android::_show_editor_game_dock));
 		}
 
@@ -401,12 +399,6 @@ void OS_Android::main_loop_end() {
 }
 
 #ifdef TOOLS_ENABLED
-void OS_Android::_on_main_screen_changed(const String &p_screen_name) {
-	if (OS_Android::get_singleton() != nullptr && OS_Android::get_singleton()->get_godot_java() != nullptr) {
-		OS_Android::get_singleton()->get_godot_java()->on_editor_workspace_selected(p_screen_name);
-	}
-}
-
 void OS_Android::_show_editor_game_dock() {
 	if (OS_Android::get_singleton() != nullptr && OS_Android::get_singleton()->get_godot_java() != nullptr) {
 		OS_Android::get_singleton()->get_godot_java()->show_editor_game_dock();

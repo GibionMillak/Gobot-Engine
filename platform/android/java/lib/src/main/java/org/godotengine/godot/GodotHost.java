@@ -149,11 +149,6 @@ public interface GodotHost {
 	}
 
 	/**
-	 * Invoked on the render thread when an editor workspace has been selected.
-	 */
-	default void onEditorWorkspaceSelected(String workspace) {}
-
-	/**
 	 * Invoked on the render thread to request showing the editor game dock.
 	 */
 	default void showEditorGameDock() {}

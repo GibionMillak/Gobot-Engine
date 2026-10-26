@@ -511,7 +511,7 @@ void FileSystemDock::_update_display_mode(bool p_force) {
 			if (horizontal) {
 				toolbar2_hbc->hide();
 
-				tree->set_scroll_hint_mode(touches_bottom ? Tree::SCROLL_HINT_MODE_TOP : Tree::SCROLL_HINT_MODE_BOTH);
+				tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_TOP);
 				tree_mc->set_theme_type_variation("NoBorderHorizontal");
 			} else {
 				toolbar2_hbc->show();
@@ -4226,12 +4226,10 @@ MenuButton *FileSystemDock::_create_file_menu_button() {
 
 void FileSystemDock::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
 	bool new_horizontal = (p_layout == EditorDock::DOCK_LAYOUT_HORIZONTAL);
-	bool new_touches_bottom = (p_slot != EditorDock::DOCK_SLOT_BOTTOM);
-	if (horizontal == new_horizontal && touches_bottom == new_touches_bottom) {
+	if (horizontal == new_horizontal) {
 		return;
 	}
 	horizontal = new_horizontal;
-	touches_bottom = new_touches_bottom;
 
 	if (horizontal) {
 		path_hb->reparent(toolbar_hbc);

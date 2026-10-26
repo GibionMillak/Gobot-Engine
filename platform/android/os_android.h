@@ -187,7 +187,6 @@ private:
 	bool copy_dynamic_library(const String &p_library_path, const String &p_target_dir, String *r_copy_path = nullptr);
 
 #ifdef TOOLS_ENABLED
-	static void _on_main_screen_changed(const String &p_screen_name);
 	static void _show_editor_game_dock();
 #endif
 };

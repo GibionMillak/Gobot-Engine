@@ -40,9 +40,8 @@
 #include "core/os/keyboard.h"
 #include "core/os/os.h"
 #include "editor/debugger/editor_debugger_node.h"
-#include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/hierarchy_dock.h"
-#include "editor/editor_main_screen.h"
+#include "editor/docks/scene_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
@@ -2066,7 +2065,7 @@ void Node3DEditor::_selection_changed() {
 
 	// Ensure gizmo updates are performed when the selection changes
 	// outside of the 3D view (see GH-106713).
-	if (!is_visible()) {
+	if (!is_visible_in_tree()) {
 		const List<Node *> &top_selected = editor_selection->get_top_selected_node_list();
 		if (top_selected.size() == 1) {
 			Node3D *new_selected = Object::cast_to<Node3D>(top_selected.back()->get());
@@ -3376,11 +3375,6 @@ void Node3DEditor::PreviewSunEnvPopup::shortcut_input(const Ref<InputEvent> &p_e
 
 Node3DEditor::Node3DEditor() {
 	set_name(TTRC("3D"));
-	set_icon_name("dock_3d");
-	set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN | EditorDock::DOCK_LAYOUT_FLOATING);
-	set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
-	set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_3d"));
-	set_allow_switch_screen(true);
 
 	gizmo.visible = true;
 	gizmo.scale = 1.0;
@@ -4248,7 +4242,8 @@ void Node3DEditorPlugin::edited_scene_changed() {
 
 void Node3DEditorPlugin::make_visible(bool p_visible) {
 	if (p_visible) {
-		spatial_editor->make_visible();
+		EditorNode::get_scene_editor_dock()->set_3d_mode(true);
+		EditorNode::get_scene_editor_dock()->make_visible();
 	}
 }
 
@@ -4441,7 +4436,5 @@ Vector<Node3D *> Node3DEditor::gizmo_bvh_frustum_query(const Vector<Plane> &p_fr
 Node3DEditorPlugin::Node3DEditorPlugin() {
 	spatial_editor = memnew(Node3DEditor);
 	spatial_editor->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	EditorDockManager::get_singleton()->add_dock(spatial_editor);
-
-	spatial_editor->hide();
+	EditorNode::get_scene_editor_dock()->set_3d_editor(spatial_editor);
 }

@@ -44,7 +44,6 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_file_system.h"
-#include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_command_palette.h"
@@ -1536,8 +1535,8 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	version_control_dock = memnew(EditorDock);
 	version_control_dock->set_name(TTRC("Version Control"));
 	version_control_dock->set_icon_name("dock_version_control");
-	version_control_dock->set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_version_control_bottom_panel", TTRC("Toggle Version Control Dock")));
-	version_control_dock->set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	version_control_dock->set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_version_control", TTRC("Toggle Version Control Dock")));
+	version_control_dock->set_default_slot(EditorDock::CENTER_BOTTOM);
 	version_control_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 	version_control_dock->set_global(false);
 	version_control_dock->set_transient(true);

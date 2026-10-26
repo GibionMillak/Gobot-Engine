@@ -52,7 +52,6 @@
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/editor_interface.h"
-#include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_paths.h"
@@ -4311,7 +4310,7 @@ void ScriptEditor::_update_margins() {
 
 void ScriptEditor::_apply_editor_settings() {
 	external_editor_active = EDITOR_GET("text_editor/external/use_external_editor");
-	set_allow_switch_screen(!bool(EDITOR_GET("text_editor/behavior/navigation/stay_in_script_editor_on_node_selected")));
+	set_auto_switch_allowed(!bool(EDITOR_GET("text_editor/behavior/navigation/stay_in_script_editor_on_node_selected")));
 }
 
 void ScriptEditor::_on_find_in_files_result_selected(const String &fpath, int line_number, int begin, int end) {
@@ -4695,8 +4694,8 @@ ScriptEditorPlugin::ScriptEditorPlugin() {
 	script_editor = memnew(ScriptEditor);
 	script_editor->set_name(TTRC("Script"));
 	script_editor->set_icon_name("dock_script");
-	script_editor->set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN | EditorDock::DOCK_LAYOUT_FLOATING);
-	script_editor->set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
+	script_editor->set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);
+	script_editor->set_default_slot(EditorDock::CENTER_TOP);
 	script_editor->set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_script"));
 
 	EditorDockManager::get_singleton()->add_dock(script_editor);

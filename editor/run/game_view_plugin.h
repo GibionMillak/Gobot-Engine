@@ -32,7 +32,6 @@
 
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/debugger/editor_debugger_plugin.h"
-#include "editor/editor_main_screen.h"
 #include "editor/plugins/editor_plugin.h"
 #include "scene/debugger/canvas_item_manipulator.h"
 #include "scene/debugger/runtime_node_select.h"
@@ -184,7 +183,7 @@ class GameView : public VBoxContainer {
 
 	bool is_feature_enabled = true;
 	int active_sessions = 0;
-	int screen_index_before_start = -1;
+	ObjectID _dock_before_start;
 	ScriptEditorDebugger *embedded_script_debugger = nullptr;
 
 	bool embed_on_play = true;

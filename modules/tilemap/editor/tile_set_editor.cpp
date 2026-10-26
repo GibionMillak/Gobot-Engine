@@ -415,16 +415,6 @@ void TileSetEditor::_notification(int p_what) {
 	}
 }
 
-void TileSetEditor::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
-	if (p_slot != EditorDock::DOCK_SLOT_BOTTOM) {
-		patterns_mc->set_theme_type_variation("NoBorderHorizontalBottom");
-		patterns_item_list->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_TOP);
-	} else {
-		patterns_mc->set_theme_type_variation("NoBorderHorizontal");
-		patterns_item_list->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_BOTH);
-	}
-}
-
 void TileSetEditor::_patterns_item_list_gui_input(const Ref<InputEvent> &p_event) {
 	ERR_FAIL_COND(tile_set.is_null());
 
@@ -838,8 +828,8 @@ TileSetEditor::TileSetEditor() {
 	singleton = this;
 	set_name(TTRC("TileSet"));
 	set_icon_name("dock_tile_set");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_tile_set_bottom_panel", TTRC("Open TileSet Dock")));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_tile_set", TTRC("Open TileSet Dock")));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_global(false);
 	set_transient(true);
@@ -974,8 +964,8 @@ TileSetEditor::TileSetEditor() {
 	tile_set_scenes_collection_source_editor->hide();
 
 	patterns_mc = memnew(MarginContainer);
+	patterns_mc->set_theme_type_variation("NoBorderHorizontalBottom");
 	patterns_mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	patterns_mc->set_theme_type_variation("NoBorderHorizontal");
 	main_vb->add_child(patterns_mc);
 	patterns_mc->hide();
 
@@ -988,7 +978,7 @@ TileSetEditor::TileSetEditor() {
 	patterns_item_list->set_fixed_column_width(thumbnail_size * 3 / 2);
 	patterns_item_list->set_max_text_lines(2);
 	patterns_item_list->set_fixed_icon_size(Size2(thumbnail_size, thumbnail_size));
-	patterns_item_list->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_BOTH);
+	patterns_item_list->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_TOP);
 	patterns_item_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	patterns_item_list->connect(SceneStringName(gui_input), callable_mp(this, &TileSetEditor::_patterns_item_list_gui_input));
 	patterns_mc->add_child(patterns_item_list);

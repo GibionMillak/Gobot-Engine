@@ -46,6 +46,7 @@
 #include "editor/themes/editor_theme_manager.h"
 #include "scene/gui/dialog.h"
 #include "scene/gui/line_edit.h"
+#include "scene/gui/margin_container.h"
 #include "scene/gui/separator.h"
 #include "scene/gui/tree.h"
 
@@ -158,8 +159,8 @@ void ReplicationEditor::_pick_node_property_selected(String p_name) {
 ReplicationEditor::ReplicationEditor() {
 	set_name(TTRC("Replication"));
 	set_icon_name("dock_replication");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_replication_bottom_panel", TTRC("Toggle Replication Dock")));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_replication", TTRC("Toggle Replication Dock")));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 	set_global(false);
 	set_transient(true);
@@ -264,8 +265,8 @@ ReplicationEditor::ReplicationEditor() {
 	pin->set_tooltip_text(TTRC("Pin replication editor"));
 	hb->add_child(pin);
 
-	tree_mc = memnew(MarginContainer);
-	tree_mc->set_theme_type_variation("NoBorderHorizontal");
+	MarginContainer *tree_mc = memnew(MarginContainer);
+	tree_mc->set_theme_type_variation("NoBorderHorizontalBottom");
 	tree_mc->set_v_size_flags(SIZE_EXPAND_FILL);
 	vb->add_child(tree_mc);
 
@@ -528,16 +529,6 @@ void ReplicationEditor::_update_config() {
 	for (int i = 0; i < props.size(); i++) {
 		const NodePath path = props[i];
 		_add_property(path, config->property_get_spawn(path), config->property_get_replication_mode(path));
-	}
-}
-
-void ReplicationEditor::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
-	if (p_slot != EditorDock::DOCK_SLOT_BOTTOM) {
-		tree_mc->set_theme_type_variation("NoBorderHorizontalBottom");
-		tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_DISABLED);
-	} else {
-		tree_mc->set_theme_type_variation("NoBorderHorizontal");
-		tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTTOM);
 	}
 }
 

@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_bottom_panel.h                                                 */
+/*  scene_editor_dock.h                                                 */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,54 +30,42 @@
 
 #pragma once
 
-#include "editor/docks/dock_tab_container.h"
+#include "editor/docks/editor_dock.h"
 
 class Button;
-class ConfigFile;
-class EditorDock;
-class HBoxContainer;
+class CanvasItemEditor;
+class EditorSceneTabs;
+class MarginContainer;
+class Node3DEditor;
 
-class EditorBottomPanel : public DockTabContainer {
-	GDCLASS(EditorBottomPanel, DockTabContainer);
+class SceneEditorDock : public EditorDock {
+	GDCLASS(SceneEditorDock, EditorDock);
 
-	HBoxContainer *bottom_hbox = nullptr;
-	Button *pin_button = nullptr;
-	Button *expand_button = nullptr;
+public:
+	SceneEditorDock();
 
-	int previous_tab = -1;
-	bool lock_panel_switching = false;
-	HashMap<String, int> dock_offsets;
+	EditorSceneTabs *get_scene_tabs() const { return _scene_tabs; }
 
-	void _repaint();
-	void _on_tab_changed();
-	void _pin_button_toggled(bool p_pressed);
-	void _expand_button_toggled(bool p_pressed);
-	void _update_center_split_offset();
-	EditorDock *_get_dock_from_control(Control *p_control) const;
+	// The dock takes ownership of both viewport controls.
+	void set_2d_editor(CanvasItemEditor *p_editor);
+	void set_3d_editor(Node3DEditor *p_editor);
+	void set_3d_mode(bool p_enabled);
+	void set_3d_enabled(bool p_enabled);
+
+	void save_layout_to_config(Ref<ConfigFile> &r_layout, const String &p_section) const override;
+	void load_layout_from_config(const Ref<ConfigFile> &p_layout, const String &p_section) override;
 
 protected:
 	void _notification(int p_what);
 
-public:
-	virtual void dock_closed(EditorDock *p_dock) override;
-	virtual void dock_focused(EditorDock *p_dock, bool p_was_visible) override;
-	virtual void update_visibility() override { show(); } // Never hide bottom panel.
-	virtual TabStyle get_tab_style() const override;
-	virtual bool can_switch_dock() const override;
-	virtual Rect2 get_floating_dock_rect(EditorDock *p_dock) override;
-	virtual void load_selected_tab(int p_idx) override;
+private:
+	void _update_editor_visibility();
 
-	void save_layout_to_config(Ref<ConfigFile> p_config_file, const String &p_section) const;
-	void load_layout_from_config(Ref<ConfigFile> p_config_file, const String &p_section);
-	void make_item_visible(Control *p_item, bool p_visible = true, bool p_ignore_lock = false);
-	void hide_bottom_panel();
-	void toggle_last_opened_bottom_panel();
-	void set_expanded(bool p_expanded);
-	void _theme_changed();
-	bool is_locked() const { return lock_panel_switching; }
-
-	void set_bottom_panel_offset(int p_offset);
-	int get_bottom_panel_offset();
-
-	EditorBottomPanel();
+	EditorSceneTabs *_scene_tabs = nullptr;
+	Button *_viewport_mode_btn = nullptr;
+	MarginContainer *_viewport_mc = nullptr;
+	CanvasItemEditor *_editor_2d = nullptr;
+	Node3DEditor *_editor_3d = nullptr;
+	bool _3d_mode = true;
+	bool _3d_enabled = true;
 };

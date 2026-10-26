@@ -144,8 +144,8 @@ ShaderEditorPlugin::ShaderEditorPlugin() {
 	shader_dock = memnew(EditorDock);
 	shader_dock->set_name(TTRC("Shader Editor"));
 	shader_dock->set_icon_name("dock_shader_editor");
-	shader_dock->set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_shader_editor_bottom_panel", TTRC("Toggle Shader Editor Dock"), KeyModifierMask::ALT | Key::S));
-	shader_dock->set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	shader_dock->set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_shader_editor", TTRC("Toggle Shader Editor Dock"), KeyModifierMask::ALT | Key::S));
+	shader_dock->set_default_slot(EditorDock::CENTER_BOTTOM);
 	shader_dock->set_available_layouts(EditorDock::DOCK_LAYOUT_HORIZONTAL | EditorDock::DOCK_LAYOUT_FLOATING);
 	EditorDockManager::get_singleton()->add_dock(shader_dock);
 

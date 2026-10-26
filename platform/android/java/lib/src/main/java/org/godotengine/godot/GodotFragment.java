@@ -279,13 +279,6 @@ public class GodotFragment extends Fragment implements GodotHost {
 	}
 
 	@Override
-	public void onEditorWorkspaceSelected(String workspace) {
-		if (parentHost != null) {
-			parentHost.onEditorWorkspaceSelected(workspace);
-		}
-	}
-
-	@Override
 	public void showEditorGameDock() {
 		if (parentHost != null) {
 			parentHost.showEditorGameDock();

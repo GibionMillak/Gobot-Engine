@@ -2176,12 +2176,12 @@ void TileMapLayerEditorTilesPlugin::update_layout(EditorDock::DockLayout p_layou
 	bucket_contiguous_checkbox->reparent(is_vertical ? wide_toolbar : tools_settings);
 	scatter_controls_container->reparent(is_vertical ? wide_toolbar : tools_settings);
 
-	if (p_layout == EditorDock::DOCK_LAYOUT_FLOATING || (!is_vertical && p_slot != EditorDock::DOCK_SLOT_BOTTOM)) {
+	if (!is_vertical) {
 		patterns_mc->set_theme_type_variation("NoBorderHorizontalBottom");
 		patterns_item_list->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_TOP);
 	} else {
-		patterns_mc->set_theme_type_variation(is_vertical ? "" : "NoBorderHorizontal");
-		patterns_item_list->set_scroll_hint_mode(is_vertical ? ItemList::SCROLL_HINT_MODE_DISABLED : ItemList::SCROLL_HINT_MODE_BOTH);
+		patterns_mc->set_theme_type_variation("");
+		patterns_item_list->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_DISABLED);
 	}
 	patterns_item_list->set_theme_type_variation(is_vertical ? "ItemListSecondary" : "");
 }
@@ -2353,7 +2353,7 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	paint_tool_button->set_pressed(true);
 	_update_toolbar();
 
-	// --- Bottom panel tiles ---
+	// --- Tiles panel ---
 	tiles_bottom_panel = memnew(VBoxContainer);
 	// FIXME: This can trigger theme updates when the nodes that we want to update are not yet available.
 	// The toolbar should be extracted to a dedicated control and theme updates should be handled through
@@ -2364,7 +2364,7 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	tiles_bottom_panel->set_name(TTRC("Tiles"));
 
 	missing_source_label = memnew(Label);
-	missing_source_label->set_text(TTRC("This TileMap's TileSet has no Tile Source configured. Go to the TileSet bottom panel to add one."));
+	missing_source_label->set_text(TTRC("This TileMap's TileSet has no Tile Source configured. Go to the TileSet dock to add one."));
 	missing_source_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	missing_source_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	missing_source_label->set_v_size_flags(Control::SIZE_EXPAND_FILL);
@@ -2453,7 +2453,7 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	invalid_source_label->hide();
 	atlas_sources_split_container->add_child(invalid_source_label);
 
-	// --- Bottom panel patterns ---
+	// --- Patterns panel ---
 	patterns_mc = memnew(MarginContainer);
 	patterns_mc->set_name(TTRC("Patterns"));
 	patterns_mc->connect(SceneStringName(visibility_changed), callable_mp(this, &TileMapLayerEditorTilesPlugin::_tab_changed));
@@ -4531,8 +4531,8 @@ TileMapLayerEditor::TileMapLayerEditor() {
 	set_process_internal(true);
 	set_name(TTRC("TileMap"));
 	set_icon_name("dock_tile_map");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_tile_map_bottom_panel", TTRC("Open TileMap Dock")));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_tile_map", TTRC("Open TileMap Dock")));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);
 	set_global(false);
 	set_transient(true);

@@ -74,7 +74,7 @@ public:
 	bool is_at_end() const;
 
 	// Adds an object to the selection history. A property name can be passed if the target is a subresource of the given object.
-	// If the object should not change the main screen plugin, it can be set as inspector only.
+	// If the object should not activate its editor plugin, it can be set as inspector only.
 	void add_object(ObjectID p_object, const String &p_property = String(), bool p_inspector_only = false);
 	void replace_object(ObjectID p_old_object, ObjectID p_new_object);
 
@@ -266,7 +266,7 @@ public:
  * Stores and provides access to the nodes currently selected in the editor.
  *
  * This provides a central location for storing "selected" nodes, as a selection can be triggered from multiple places,
- * such as the HierarchyDock or a main screen editor plugin (e.g. CanvasItemEditor).
+ * such as the HierarchyDock or a scene editor plugin (e.g. CanvasItemEditor).
  */
 class EditorSelection : public Object {
 	GDCLASS(EditorSelection, Object);

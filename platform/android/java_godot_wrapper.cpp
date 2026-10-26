@@ -87,7 +87,6 @@ GodotJavaWrapper::GodotJavaWrapper(JNIEnv *p_env, jobject p_godot_native_bridge)
 	_enable_immersive_mode = p_env->GetMethodID(godot_native_bridge_class, "nativeEnableImmersiveMode", "(Z)V");
 	_is_in_immersive_mode = p_env->GetMethodID(godot_native_bridge_class, "isInImmersiveMode", "()Z");
 	_set_window_color = p_env->GetMethodID(godot_native_bridge_class, "setWindowColor", "(Ljava/lang/String;)V");
-	_on_editor_workspace_selected = p_env->GetMethodID(godot_native_bridge_class, "nativeOnEditorWorkspaceSelected", "(Ljava/lang/String;)V");
 	_show_editor_game_dock = p_env->GetMethodID(godot_native_bridge_class, "nativeShowEditorGameDock", "()V");
 	_get_activity = p_env->GetMethodID(godot_native_bridge_class, "getActivity", "()Landroid/app/Activity;");
 	_build_env_connect = p_env->GetMethodID(godot_native_bridge_class, "nativeBuildEnvConnect", "(Lorg/godotengine/godot/variant/Callable;)Z");
@@ -590,16 +589,6 @@ void GodotJavaWrapper::set_window_color(const Color &p_color) {
 		String color = "#" + p_color.to_html(false);
 		jstring jStrColor = env->NewStringUTF(color.utf8().get_data());
 		env->CallVoidMethod(godot_native_bridge, _set_window_color, jStrColor);
-	}
-}
-
-void GodotJavaWrapper::on_editor_workspace_selected(const String &p_workspace) {
-	if (_on_editor_workspace_selected) {
-		JNIEnv *env = get_jni_env();
-		ERR_FAIL_NULL(env);
-
-		jstring j_workspace = env->NewStringUTF(p_workspace.utf8().get_data());
-		env->CallVoidMethod(godot_native_bridge, _on_editor_workspace_selected, j_workspace);
 	}
 }
 

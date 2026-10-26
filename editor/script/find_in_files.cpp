@@ -918,10 +918,6 @@ void FindInFilesResultsPanel::_remove_result(TreeItem *p_item) {
 	_update_matches_text();
 }
 
-void FindInFilesResultsPanel::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
-	results_display->set_scroll_hint_mode(p_slot == EditorDock::DOCK_SLOT_BOTTOM ? Tree::SCROLL_HINT_MODE_BOTH : Tree::SCROLL_HINT_MODE_TOP);
-}
-
 void FindInFilesContainer::create_rename_control(const String &p_symbol, const EditorLanguage::LookupResult &p_lookup) {
 	FindInFilesResultsPanel *new_panel = memnew(FindInFilesResultsPanel);
 	tabs->add_child(new_panel);
@@ -1456,7 +1452,7 @@ FindInFilesResultsPanel::FindInFilesResultsPanel() {
 
 	results_display = memnew(Tree);
 	results_display->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	results_display->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTH);
+	results_display->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_TOP);
 	results_display->connect(SceneStringName(item_selected), callable_mp(this, &FindInFilesResultsPanel::_on_result_selected));
 	results_display->connect("item_edited", callable_mp(this, &FindInFilesResultsPanel::_on_item_edited));
 	results_display->connect("button_clicked", callable_mp(this, &FindInFilesResultsPanel::_on_button_clicked));
@@ -1523,6 +1519,9 @@ void FindInFilesContainer::_notification(int p_what) {
 		case NOTIFICATION_POSTINITIALIZE: {
 			connect("closed", callable_mp(this, &FindInFilesContainer::_on_dock_closed));
 		} break;
+		case NOTIFICATION_READY: {
+			callable_mp(this, &FindInFilesContainer::_on_theme_changed).call_deferred();
+		} break;
 		case NOTIFICATION_THEME_CHANGED: {
 			new_tab_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 		} break;
@@ -1530,13 +1529,13 @@ void FindInFilesContainer::_notification(int p_what) {
 }
 
 void FindInFilesContainer::_on_theme_changed() {
-	const Ref<StyleBox> bottom_panel_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("BottomPanel"), EditorStringName(EditorStyles));
-	if (bottom_panel_style.is_valid()) {
+	const Ref<StyleBox> dock_content_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("DockContent"), EditorStringName(EditorStyles));
+	if (dock_content_style.is_valid()) {
 		begin_bulk_theme_override();
-		add_theme_constant_override("margin_top", -bottom_panel_style->get_margin(SIDE_TOP));
-		add_theme_constant_override("margin_left", -bottom_panel_style->get_margin(SIDE_LEFT));
-		add_theme_constant_override("margin_right", -bottom_panel_style->get_margin(SIDE_RIGHT));
-		add_theme_constant_override("margin_bottom", get_current_slot() == DOCK_SLOT_BOTTOM ? 0 : -bottom_panel_style->get_margin(SIDE_BOTTOM));
+		add_theme_constant_override("margin_top", -dock_content_style->get_margin(SIDE_TOP));
+		add_theme_constant_override("margin_left", -dock_content_style->get_margin(SIDE_LEFT));
+		add_theme_constant_override("margin_right", -dock_content_style->get_margin(SIDE_RIGHT));
+		add_theme_constant_override("margin_bottom", -dock_content_style->get_margin(SIDE_BOTTOM));
 		end_bulk_theme_override();
 	}
 	hsplit->add_theme_style_override("split_bar_background", get_theme_stylebox(SceneStringName(panel), "ItemListSecondary"));
@@ -1672,19 +1671,6 @@ void FindInFilesContainer::_bar_input(const Ref<InputEvent> &p_input) {
 	}
 }
 
-void FindInFilesContainer::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
-	for (Node *node : tabs->iterate_children()) {
-		FindInFilesResultsPanel *panel = Object::cast_to<FindInFilesResultsPanel>(node);
-		if (panel) {
-			panel->update_layout(p_layout, p_slot);
-		}
-	}
-
-	search_control->set_scroll_hint_mode(p_slot == DOCK_SLOT_BOTTOM ? ScrollContainer::SCROLL_HINT_MODE_BOTTOM_AND_RIGHT : ScrollContainer::SCROLL_HINT_MODE_DISABLED);
-	// Deferring is necessary, or the splitter style won't be correct.
-	callable_mp(this, &FindInFilesContainer::_on_theme_changed).call_deferred();
-}
-
 void FindInFilesContainer::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("result_selected",
 			PropertyInfo(Variant::STRING, "path"),
@@ -1698,8 +1684,8 @@ void FindInFilesContainer::_bind_methods() {
 FindInFilesContainer::FindInFilesContainer() {
 	set_name(TTRC("Find in Files"));
 	set_icon_name("dock_find_in_files");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_search_results_bottom_panel", TTRC("Toggle Find in Files Bottom Panel")));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_search_results", TTRC("Toggle Find in Files Dock")));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(DOCK_LAYOUT_HORIZONTAL | DOCK_LAYOUT_FLOATING);
 	set_global(false);
 	set_transient(true);
@@ -1710,7 +1696,6 @@ FindInFilesContainer::FindInFilesContainer() {
 	add_child(hsplit);
 
 	search_control = memnew(FindInFilesSearchPanel);
-	search_control->set_scroll_hint_mode(ScrollContainer::SCROLL_HINT_MODE_BOTTOM_AND_RIGHT);
 	search_control->connect("find_requested", callable_mp(this, &FindInFilesContainer::_start_find_in_files));
 	search_control->connect("replace_all_requested", callable_mp(this, &FindInFilesContainer::_replace_all));
 	search_control->connect("close_tab_requested", callable_mp(this, &FindInFilesContainer::_close_current_tab));
@@ -1742,7 +1727,7 @@ FindInFilesContainer::FindInFilesContainer() {
 	tabs_context_menu->add_item(TTRC("Close All Tabs"), PANEL_CLOSE_ALL);
 	tabs_context_menu->connect(SceneStringName(id_pressed), callable_mp(this, &FindInFilesContainer::_bar_menu_option));
 
-	EditorNode::get_singleton()->get_gui_base()->connect(SceneStringName(theme_changed), callable_mp(this, &FindInFilesContainer::_on_theme_changed));
+	EditorNode::get_singleton()->get_gui_base()->connect(SceneStringName(theme_changed), callable_mp(this, &FindInFilesContainer::_on_theme_changed), CONNECT_DEFERRED);
 }
 
 void FindInFiles::open_dock(const String &p_initial_text, bool p_replace) {

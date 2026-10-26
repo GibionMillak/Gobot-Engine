@@ -41,9 +41,8 @@
 #include "editor/animation/animation_player_editor_plugin.h"
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/editor_debugger_node.h"
-#include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/hierarchy_dock.h"
-#include "editor/editor_main_screen.h"
+#include "editor/docks/scene_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
@@ -3867,11 +3866,6 @@ void CanvasItemEditor::center_at(const Point2 &p_pos) {
 
 CanvasItemEditor::CanvasItemEditor() {
 	set_name(TTRC("2D"));
-	set_icon_name("dock_2d");
-	set_available_layouts(EditorDock::DOCK_LAYOUT_MAIN_SCREEN | EditorDock::DOCK_LAYOUT_FLOATING);
-	set_default_slot(EditorDock::DOCK_SLOT_MAIN_SCREEN);
-	set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_2d"));
-	set_allow_switch_screen(true);
 
 	editor_selection = EditorNode::get_singleton()->get_editor_selection();
 	editor_selection->add_editor_plugin(this);
@@ -4449,7 +4443,8 @@ bool CanvasItemEditorPlugin::handles(Object *p_object) const {
 
 void CanvasItemEditorPlugin::make_visible(bool p_visible) {
 	if (p_visible) {
-		canvas_item_editor->make_visible();
+		EditorNode::get_scene_editor_dock()->set_3d_mode(false);
+		EditorNode::get_scene_editor_dock()->make_visible();
 	}
 }
 
@@ -4476,7 +4471,7 @@ void CanvasItemEditorPlugin::_notification(int p_what) {
 
 CanvasItemEditorPlugin::CanvasItemEditorPlugin() {
 	canvas_item_editor = memnew(CanvasItemEditor);
-	EditorDockManager::get_singleton()->add_dock(canvas_item_editor);
+	EditorNode::get_scene_editor_dock()->set_2d_editor(canvas_item_editor);
 }
 
 void CanvasItemEditorViewport::_on_mouse_exit() {

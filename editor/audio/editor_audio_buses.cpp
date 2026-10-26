@@ -48,6 +48,7 @@
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme_manager.h"
 #include "scene/gui/box_container.h"
+#include "scene/gui/margin_container.h"
 #include "scene/gui/separator.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/timer.h"
@@ -1520,16 +1521,6 @@ void EditorAudioBuses::_file_dialog_callback(const String &p_string) {
 	open_layout(ResourceUID::path_to_uid(p_string));
 }
 
-void EditorAudioBuses::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
-	if (p_slot != EditorDock::DOCK_SLOT_BOTTOM) {
-		bus_mc->set_theme_type_variation("NoBorderBottomPanel");
-		bus_scroll->set_scroll_hint_mode(ScrollContainer::SCROLL_HINT_MODE_TOP_AND_LEFT);
-	} else {
-		bus_mc->set_theme_type_variation("NoBorderPanel");
-		bus_scroll->set_scroll_hint_mode(ScrollContainer::SCROLL_HINT_MODE_ALL);
-	}
-}
-
 void EditorAudioBuses::_bind_methods() {
 	ClassDB::bind_method("_update_bus", &EditorAudioBuses::_update_bus);
 	ClassDB::bind_method("_update_sends", &EditorAudioBuses::_update_sends);
@@ -1538,8 +1529,8 @@ void EditorAudioBuses::_bind_methods() {
 EditorAudioBuses::EditorAudioBuses() {
 	set_name(TTRC("Audio"));
 	set_icon_name("dock_audio");
-	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("bottom_panels/toggle_audio_bottom_panel", TTRC("Toggle Audio Dock"), KeyModifierMask::ALT | Key::A));
-	set_default_slot(EditorDock::DOCK_SLOT_BOTTOM);
+	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/toggle_audio", TTRC("Toggle Audio Dock"), KeyModifierMask::ALT | Key::A));
+	set_default_slot(EditorDock::CENTER_BOTTOM);
 	set_available_layouts(EditorDock::DOCK_LAYOUT_ALL);
 	set_custom_minimum_size(Vector2(150, 150) * EDSCALE);
 
@@ -1569,14 +1560,14 @@ EditorAudioBuses::EditorAudioBuses() {
 	top_hb->add_child(menu);
 	menu->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &EditorAudioBuses::_menu_option));
 
-	bus_mc = memnew(MarginContainer);
-	bus_mc->set_theme_type_variation("NoBorderPanel");
+	MarginContainer *bus_mc = memnew(MarginContainer);
+	bus_mc->set_theme_type_variation("NoBorderBottomPanel");
 	bus_mc->set_v_size_flags(SIZE_EXPAND_FILL);
 	main_vb->add_child(bus_mc);
 
 	bus_scroll = memnew(ScrollContainer);
-	bus_scroll->set_scroll_hint_mode(ScrollContainer::SCROLL_HINT_MODE_ALL);
 	bus_scroll->set_custom_minimum_size(Size2(0, 40 * EDSCALE));
+	bus_scroll->set_scroll_hint_mode(ScrollContainer::SCROLL_HINT_MODE_TOP_AND_LEFT);
 	bus_mc->add_child(bus_scroll);
 
 	HBoxContainer *bus_parent_hb = memnew(HBoxContainer);

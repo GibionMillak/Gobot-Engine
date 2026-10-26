@@ -150,8 +150,6 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 		internal const val GAME_MENU_ACTION_RESET_TIME_SCALE = "resetTimeScale"
 		internal const val GAME_MENU_ACTION_SET_TIME_SCALE = "setTimeScale"
 
-		private const val GAME_WORKSPACE = "Game"
-		private const val SCRIPT_WORKSPACE = "Script"
 
 		internal const val SNACKBAR_SHOW_DURATION_MS = 5000L
 
@@ -891,13 +889,6 @@ abstract class BaseGodotEditor : GodotActivity(), GameMenuFragment.GameMenuListe
 		gameMenuState.putBoolean(EXTRA_IS_GAME_EMBEDDED, gameEmbedded)
 		gameMenuState.putBoolean(EXTRA_IS_GAME_RUNNING, gameRunning)
 		gameMenuFragment?.refreshGameMenu(gameMenuState)
-	}
-
-	override fun onEditorWorkspaceSelected(workspace: String) {
-		if (workspace == GAME_WORKSPACE) {
-			showEditorGameDock()
-		}
-
 	}
 
 	final override fun showEditorGameDock() {

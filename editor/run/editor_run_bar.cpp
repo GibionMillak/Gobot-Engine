@@ -41,7 +41,6 @@
 #include "editor/export/editor_export_preset.h"
 #include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/dialogs/project_settings_editor.h"
-#include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_quick_open_dialog.h"
 #include "editor/run/editor_run_native.h"
 #include "editor/settings/editor_command_palette.h"
@@ -351,7 +350,7 @@ void EditorRunBar::_run_native(const Ref<EditorExportPreset> &p_preset) {
 }
 
 void EditorRunBar::_profiler_autostart_indicator_pressed() {
-	// Switch to the first profiler tab in the bottom panel.
+	// Switch to the first profiler tab in the Debugger dock.
 	EditorDebuggerNode::get_singleton()->make_visible();
 
 	if (EditorSettings::get_singleton()->get_project_metadata("debug_options", "autostart_profiler", false)) {

@@ -49,16 +49,16 @@ EditorFooterContainer::EditorFooterContainer() {
 		_left_hbox->add_child(redraw_mode_btn);
 	}
 
-	_center_hbox = memnew(HBoxContainer);
-	_center_hbox->set_alignment(ALIGNMENT_CENTER);
-	_center_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
-	_center_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
-	add_child(_center_hbox);
+	HBoxContainer *center_hbox = memnew(HBoxContainer);
+	center_hbox->set_alignment(ALIGNMENT_CENTER);
+	center_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
+	center_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
+	add_child(center_hbox);
 
 	{
 		_run_bar = memnew(EditorRunBar);
 		_run_bar->set_mouse_filter(MOUSE_FILTER_STOP);
-		_center_hbox->add_child(_run_bar);
+		center_hbox->add_child(_run_bar);
 	}
 
 	_right_hbox = memnew(HBoxContainer);
