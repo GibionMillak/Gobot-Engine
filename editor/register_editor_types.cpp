@@ -53,9 +53,9 @@
 #include "editor/export/register_exporters.h"
 #include "editor/file_system/editor_file_system.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_spin_slider.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/import/3d/resource_importer_obj.h"
 #include "editor/import/3d/resource_importer_scene.h"
 #include "editor/import/editor_import_plugin.h"
@@ -162,7 +162,7 @@ void register_editor_types() {
 	GDREGISTER_INTERNAL_CLASS(ProjectAutoloadManager);
 	GDREGISTER_INTERNAL_CLASS(ProjectPluginManager);
 	GDREGISTER_VIRTUAL_CLASS(EditorSettings);
-	GDREGISTER_ABSTRACT_CLASS(EditorToaster);
+	GDREGISTER_ABSTRACT_CLASS(EditorToasterContainer);
 	GDREGISTER_ABSTRACT_CLASS(EditorResourcePreview);
 	GDREGISTER_CLASS(EditorResourcePreviewGenerator);
 	GDREGISTER_CLASS(EditorResourceTooltipPlugin);

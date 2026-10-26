@@ -51,7 +51,7 @@
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_file_system.h"
 #include "editor/file_system/editor_paths.h"
-#include "editor/gui/editor_toaster.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/inspector/editor_property_name_processor.h"
 #include "editor/script/script_editor_navigation_marker.h"
 #include "editor/script/script_editor_plugin.h"
@@ -347,7 +347,7 @@ void EditorHelp::_class_desc_select(const String &p_select) {
 		OS::get_singleton()->shell_open(p_select);
 	} else if (p_select.begins_with("^")) { // Copy button.
 		DisplayServer::get_singleton()->clipboard_set(p_select.substr(1));
-		EditorToaster::get_singleton()->popup_str(TTR("Code snippet copied to clipboard."), EditorToaster::SEVERITY_INFO);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Code snippet copied to clipboard."), EditorToasterContainer::SEVERITY_INFO);
 	}
 }
 
@@ -4259,7 +4259,7 @@ void EditorHelpBit::_meta_clicked(const String &p_select) {
 		OS::get_singleton()->shell_open(p_select);
 	} else if (p_select.begins_with("^")) { // Copy button.
 		DisplayServer::get_singleton()->clipboard_set(p_select.substr(1));
-		EditorToaster::get_singleton()->popup_str(TTR("Code snippet copied to clipboard."), EditorToaster::SEVERITY_INFO);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Code snippet copied to clipboard."), EditorToasterContainer::SEVERITY_INFO);
 	}
 }
 

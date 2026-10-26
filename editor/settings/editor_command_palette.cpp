@@ -36,7 +36,7 @@
 #include "core/os/os.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
-#include "editor/gui/editor_toaster.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/filter_line_edit.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
@@ -261,7 +261,7 @@ void EditorCommandPalette::execute_command(const String &p_command_key) {
 	callable.callp(nullptr, 0, ret, ce);
 
 	if (ce.error != Callable::CallError::CALL_OK) {
-		EditorToaster::get_singleton()->popup_str(vformat(TTR("Failed to execute command \"%s\":\n%s."), p_command_key, Variant::get_callable_error_text(callable, nullptr, 0, ce)), EditorToaster::SEVERITY_ERROR);
+		EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Failed to execute command \"%s\":\n%s."), p_command_key, Variant::get_callable_error_text(callable, nullptr, 0, ce)), EditorToasterContainer::SEVERITY_ERROR);
 	}
 }
 

@@ -81,6 +81,7 @@
 #include "editor/file_system/dependency_editor.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/gui/containers/editor_footer_container.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/dialogs/editor_about_dialog.h"
 #include "editor/gui/dialogs/project_autoloads_dialog.h"
 #include "editor/gui/dialogs/project_plugins_dialog.h"
@@ -90,7 +91,6 @@
 #include "editor/gui/editor_icon_manager.h"
 #include "editor/gui/editor_quick_open_dialog.h"
 #include "editor/gui/editor_title_bar.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/gui/progress_dialog.h"
 #include "editor/gui/window_wrapper.h"
 #include "editor/import/3d/editor_import_collada.h"
@@ -2096,8 +2096,8 @@ void EditorNode::save_resource_in_path(const Ref<Resource> &p_resource, const St
 			if (file_size >= LARGE_RESOURCE_WARNING_SIZE_THRESHOLD) {
 				// File is larger than 500 KiB, likely because it contains binary data serialized as Base64.
 				// This is slow to save and load, so warn the user.
-				EditorToaster::get_singleton()->popup_str(
-						vformat(TTR("The text-based resource at path \"%s\" is large on disk (%s), likely because it has embedded binary data.\nThis slows down resource saving and loading.\nConsider saving its binary subresource(s) to a binary `.res` file or saving the resource as a binary `.res` file.\nThis warning can be disabled in the Editor Settings (FileSystem > On Save > Warn on Saving Large Text Resources)."), p_path, String::humanize_size(file_size)), EditorToaster::SEVERITY_WARNING);
+				EditorToasterContainer::get_singleton()->popup_str(
+						vformat(TTR("The text-based resource at path \"%s\" is large on disk (%s), likely because it has embedded binary data.\nThis slows down resource saving and loading.\nConsider saving its binary subresource(s) to a binary `.res` file or saving the resource as a binary `.res` file.\nThis warning can be disabled in the Editor Settings (FileSystem > On Save > Warn on Saving Large Text Resources)."), p_path, String::humanize_size(file_size)), EditorToasterContainer::SEVERITY_WARNING);
 			}
 		}
 	}
@@ -4596,7 +4596,7 @@ bool EditorNode::validate_custom_directory() {
 void EditorNode::run_editor_script(const Ref<Script> &p_script) {
 	Error err = p_script->reload(true); // Always hard reload the script before running.
 	if (err != OK || !p_script->is_script_valid()) {
-		EditorToaster::get_singleton()->popup_str(TTR("Cannot run the script because it contains errors, check the output log."), EditorToaster::SEVERITY_WARNING);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Cannot run the script because it contains errors, check the output log."), EditorToasterContainer::SEVERITY_WARNING);
 		return;
 	}
 
@@ -4606,12 +4606,12 @@ void EditorNode::run_editor_script(const Ref<Script> &p_script) {
 	if (!ClassDB::is_parent_class(p_script->get_instance_base_type(), "EditorScript")) {
 		is_runnable = false;
 
-		EditorToaster::get_singleton()->popup_str(TTR("Cannot run the script because it doesn't extend EditorScript."), EditorToaster::SEVERITY_WARNING);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Cannot run the script because it doesn't extend EditorScript."), EditorToasterContainer::SEVERITY_WARNING);
 	}
 	if (!p_script->is_tool()) {
 		is_runnable = false;
 
-		EditorToaster::get_singleton()->popup_str(TTR("Cannot run the script because it's not a tool script (add the @tool annotation at the top)."), EditorToaster::SEVERITY_WARNING);
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Cannot run the script because it's not a tool script (add the @tool annotation at the top)."), EditorToasterContainer::SEVERITY_WARNING);
 	}
 	if (!is_runnable) {
 		return;
@@ -4819,7 +4819,7 @@ void EditorNode::_notification(int p_what) {
 			}
 
 			if (Engine::get_singleton()->is_recovery_mode_hint()) {
-				EditorToaster::get_singleton()->popup_str(TTR("Recovery Mode is enabled. Editor functionality has been restricted."), EditorToaster::SEVERITY_WARNING);
+				EditorToasterContainer::get_singleton()->popup_str(TTR("Recovery Mode is enabled. Editor functionality has been restricted."), EditorToasterContainer::SEVERITY_WARNING);
 			}
 
 			/* DO NOT LOAD SCENES HERE, WAIT FOR FILE SCANNING AND REIMPORT TO COMPLETE */
@@ -5719,7 +5719,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 
 				const int saved = _save_external_resources(true);
 				if (saved > 0) {
-					EditorToaster::get_singleton()->popup_str(vformat(TTR("The current scene has no root node, but %d modified external resource(s) and/or plugin data were saved anyway."), saved), EditorToaster::SEVERITY_INFO);
+					EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("The current scene has no root node, but %d modified external resource(s) and/or plugin data were saved anyway."), saved), EditorToasterContainer::SEVERITY_INFO);
 				} else if (p_option == SCENE_SAVE_AS_SCENE) {
 					// Don't show this dialog when pressing Ctrl + S to avoid interfering with script saving.
 					show_warning(TTR("A root node is required to save the scene. You can add a root node using the Hierarchy dock."));
@@ -6978,8 +6978,8 @@ void EditorNode::_save_scene(String p_file, int p_idx) {
 				if (file_size >= LARGE_RESOURCE_WARNING_SIZE_THRESHOLD) {
 					// File is larger than 500 KiB, likely because it contains binary data serialized as Base64.
 					// This is slow to save and load, so warn the user.
-					EditorToaster::get_singleton()->popup_str(
-							vformat(TTR("The text-based scene at path \"%s\" is large on disk (%s), likely because it has embedded binary data.\nThis slows down scene saving and loading.\nConsider saving its binary subresource(s) to a binary `.res` file or saving the scene as a binary `.scn` file.\nThis warning can be disabled in the Editor Settings (FileSystem > On Save > Warn on Saving Large Text Resources)."), p_file, String::humanize_size(file_size)), EditorToaster::SEVERITY_WARNING);
+					EditorToasterContainer::get_singleton()->popup_str(
+							vformat(TTR("The text-based scene at path \"%s\" is large on disk (%s), likely because it has embedded binary data.\nThis slows down scene saving and loading.\nConsider saving its binary subresource(s) to a binary `.res` file or saving the scene as a binary `.scn` file.\nThis warning can be disabled in the Editor Settings (FileSystem > On Save > Warn on Saving Large Text Resources)."), p_file, String::humanize_size(file_size)), EditorToasterContainer::SEVERITY_WARNING);
 				}
 			}
 		}

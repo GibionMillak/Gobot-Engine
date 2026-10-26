@@ -47,9 +47,9 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/create_dialog.h"
 #include "editor/gui/editor_quick_open_dialog.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/gui/editor_toolbar_group.h"
 #include "editor/gui/editor_zoom_widget.h"
 #include "editor/inspector/editor_context_menu_plugin.h"
@@ -4035,7 +4035,7 @@ CanvasItemEditor::CanvasItemEditor() {
 	ci_manipulator->connect("commit_canvas_state_requested", callable_mp(this, &CanvasItemEditor::_commit_canvas_state_requested));
 	ci_manipulator->connect("commit_guide_meta_requested", callable_mp(this, &CanvasItemEditor::_commit_guide_meta_requested));
 	ci_manipulator->connect("cursor_shape_changed", callable_mp(this, &CanvasItemEditor::_update_cursor));
-	ci_manipulator->connect("warning_emitted", callable_mp(EditorToaster::get_singleton(), &EditorToaster::popup_str).bind(EditorToaster::SEVERITY_WARNING, ""));
+	ci_manipulator->connect("warning_emitted", callable_mp(EditorToasterContainer::get_singleton(), &EditorToasterContainer::popup_str).bind(EditorToasterContainer::SEVERITY_WARNING, ""));
 
 	select_button = memnew(Button);
 	select_button->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);

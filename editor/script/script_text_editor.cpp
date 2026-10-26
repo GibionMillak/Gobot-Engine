@@ -47,7 +47,7 @@
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
-#include "editor/gui/editor_toaster.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/inspector/editor_context_menu_plugin.h"
 #include "editor/inspector/editor_inspector.h"
 #include "editor/inspector/multi_node_edit.h"
@@ -2115,14 +2115,14 @@ void ScriptTextEditor::drop_data_fw(const Point2 &p_point, const Variant &p_data
 		const String &path = resource->get_path();
 		if (path.is_empty() || path.ends_with("::")) {
 			String warning = TTR("The resource does not have a valid path because it has not been saved.\nPlease save the scene or resource that contains this resource and try again.");
-			EditorToaster::get_singleton()->popup_str(warning, EditorToaster::SEVERITY_ERROR);
+			EditorToasterContainer::get_singleton()->popup_str(warning, EditorToasterContainer::SEVERITY_ERROR);
 			return;
 		}
 
 		if (member_drop_modifier_pressed) {
 			if (resource->is_built_in()) {
 				String warning = TTR("Preloading internal resources is not supported.");
-				EditorToaster::get_singleton()->popup_str(warning, EditorToaster::SEVERITY_ERROR);
+				EditorToasterContainer::get_singleton()->popup_str(warning, EditorToasterContainer::SEVERITY_ERROR);
 			} else {
 				text_to_drop = _get_dropped_resource_as_member(resource, is_empty_line, allow_uid);
 			}
@@ -2187,7 +2187,7 @@ void ScriptTextEditor::drop_data_fw(const Point2 &p_point, const Variant &p_data
 
 		Ref<Script> script = edited_res;
 		if (!ClassDB::is_parent_class(script->get_instance_base_type(), "Node")) {
-			EditorToaster::get_singleton()->popup_str(vformat(TTR("Can't drop nodes because script '%s' does not inherit Node."), get_document_name()), EditorToaster::SEVERITY_WARNING);
+			EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Can't drop nodes because script '%s' does not inherit Node."), get_document_name()), EditorToasterContainer::SEVERITY_WARNING);
 			return;
 		}
 

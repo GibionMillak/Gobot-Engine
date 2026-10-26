@@ -40,8 +40,8 @@
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_file_system.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/editor_file_dialog.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/line_edit.h"
@@ -1299,7 +1299,7 @@ bool EditorBuildProfileManager::_import_profile(const String &p_path) {
 		if (is_visible()) {
 			EditorNode::get_singleton()->show_warning(vformat(TTR("File '%s' format is invalid, import aborted."), basefile));
 		} else {
-			EditorToaster::get_singleton()->popup_str(vformat(TTR("Can't load build profile. File '%s' is invalid."), basefile), EditorToaster::SEVERITY_ERROR);
+			EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Can't load build profile. File '%s' is invalid."), basefile), EditorToasterContainer::SEVERITY_ERROR);
 		}
 		return false;
 	}

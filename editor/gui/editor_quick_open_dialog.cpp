@@ -43,7 +43,7 @@
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_file_system.h"
 #include "editor/file_system/editor_paths.h"
-#include "editor/gui/editor_toaster.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/inspector/editor_resource_preview.h"
 #include "editor/inspector/multi_node_edit.h"
 #include "editor/settings/editor_settings.h"
@@ -245,7 +245,7 @@ void EditorQuickOpenDialog::preview_property() {
 		HashSet<Resource *> resources_found;
 		resources_found.insert(res);
 		if (EditorNode::find_recursive_resources(loaded_resource, resources_found)) {
-			EditorToaster::get_singleton()->popup_str(TTR("Recursion detected, Instant Preview failed."), EditorToaster::SEVERITY_ERROR);
+			EditorToasterContainer::get_singleton()->popup_str(TTR("Recursion detected, Instant Preview failed."), EditorToasterContainer::SEVERITY_ERROR);
 			loaded_resource = Ref<Resource>();
 		}
 	}

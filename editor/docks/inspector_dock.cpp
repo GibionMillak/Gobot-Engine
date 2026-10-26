@@ -40,9 +40,9 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_object_selector.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_settings.h"
@@ -161,7 +161,7 @@ void InspectorDock::_menu_option_confirm(int p_option, bool p_confirmed) {
 					const EditorPropertyNameProcessor::Style name_style = inspector->get_property_name_style();
 					const String propname = EditorPropertyNameProcessor::get_singleton()->process_name(properties_to_unique[0], name_style);
 
-					EditorToaster::get_singleton()->popup_str(vformat(TTR("Resource \"%s\" was made unique."), propname));
+					EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Resource \"%s\" was made unique."), propname));
 					p_confirmed = true;
 				} else if (!properties_to_unique.is_empty()) {
 					const EditorPropertyNameProcessor::Style name_style = inspector->get_property_name_style();
@@ -176,7 +176,7 @@ void InspectorDock::_menu_option_confirm(int p_option, bool p_confirmed) {
 					unique_resources_confirmation->popup_centered();
 				} else {
 					current_option = -1;
-					EditorToaster::get_singleton()->popup_str(TTR("This object has no resources to duplicate."), EditorToaster::SEVERITY_WARNING);
+					EditorToasterContainer::get_singleton()->popup_str(TTR("This object has no resources to duplicate."), EditorToasterContainer::SEVERITY_WARNING);
 				}
 			}
 

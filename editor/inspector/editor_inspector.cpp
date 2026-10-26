@@ -43,7 +43,7 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
-#include "editor/gui/editor_toaster.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/inspector/add_metadata_dialog.h"
 #include "editor/inspector/editor_properties.h"
 #include "editor/inspector/editor_property_name_processor.h"
@@ -1267,7 +1267,7 @@ void EditorProperty::gui_input(const Ref<InputEvent> &p_event) {
 				object->get_property_list(&pinfo);
 				for (const PropertyInfo &E : pinfo) {
 					if (E.type == Variant::OBJECT && E.name == property_path) {
-						EditorToaster::get_singleton()->popup_str(TTR("Toggling the checkbox is disabled for Resource properties. Modify the property using the resource picker instead."), EditorToaster::SEVERITY_WARNING);
+						EditorToasterContainer::get_singleton()->popup_str(TTR("Toggling the checkbox is disabled for Resource properties. Modify the property using the resource picker instead."), EditorToasterContainer::SEVERITY_WARNING);
 						return; // Disallow clicking to toggle the checkbox of type Resource to checked.
 					}
 				}

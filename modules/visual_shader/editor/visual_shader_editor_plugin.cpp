@@ -50,8 +50,8 @@
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/editor_icon_manager.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/gui/filter_line_edit.h"
 #include "editor/inspector/editor_properties_vector.h"
 #include "editor/scene/curve_editor_plugin.h"
@@ -9695,17 +9695,17 @@ Ref<Resource> VisualShaderConversionPlugin::convert(const Ref<Resource> &p_resou
 	ERR_FAIL_COND_V(vshader.is_null(), Ref<Resource>());
 	int embed = vshader->has_node_embeds();
 
-	EditorToaster *toast = EditorToaster::get_singleton();
+	EditorToasterContainer *toast = EditorToasterContainer::get_singleton();
 	if (toast == nullptr) {
 		ERR_FAIL_COND_V_MSG(embed == 2, Ref<Resource>(), "Cannot convert VisualShader to GDShader because VisualShader has embedded subresources.");
 		if (embed == 1) {
 			WARN_PRINT("Visual Shader conversion cannot convert external dependencies. Resource references from Nodes will have to be rebound as ShaderParameters on a Material.");
 		}
 	} else if (embed == 2) {
-		toast->popup_str(TTR("Cannot convert VisualShader to GDShader because VisualShader has embedded subresources."), EditorToaster::SEVERITY_ERROR);
+		toast->popup_str(TTR("Cannot convert VisualShader to GDShader because VisualShader has embedded subresources."), EditorToasterContainer::SEVERITY_ERROR);
 		return Ref<Resource>();
 	} else if (embed == 1) {
-		toast->popup_str(TTR("Visual Shader conversion cannot convert external dependencies. Resource references from Nodes will have to be rebound as ShaderParameters on a Material."), EditorToaster::SEVERITY_WARNING);
+		toast->popup_str(TTR("Visual Shader conversion cannot convert external dependencies. Resource references from Nodes will have to be rebound as ShaderParameters on a Material."), EditorToasterContainer::SEVERITY_WARNING);
 	}
 
 	Ref<Shader> shader;

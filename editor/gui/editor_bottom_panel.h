@@ -35,14 +35,12 @@
 class Button;
 class ConfigFile;
 class EditorDock;
-class EditorToaster;
 class HBoxContainer;
 
 class EditorBottomPanel : public DockTabContainer {
 	GDCLASS(EditorBottomPanel, DockTabContainer);
 
 	HBoxContainer *bottom_hbox = nullptr;
-	EditorToaster *editor_toaster = nullptr;
 	Button *pin_button = nullptr;
 	Button *expand_button = nullptr;
 

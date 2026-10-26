@@ -45,7 +45,7 @@ class EditorPlugin;
 class EditorResourcePreview;
 class EditorSelection;
 class EditorSettings;
-class EditorToaster;
+class EditorToasterContainer;
 class EditorUndoRedoManager;
 class ScenePaint2DEditor;
 class FileSystemDock;
@@ -101,7 +101,7 @@ public:
 	EditorResourcePreview *get_resource_previewer() const;
 	EditorSelection *get_selection() const;
 	Ref<EditorSettings> get_editor_settings() const;
-	EditorToaster *get_editor_toaster() const;
+	EditorToasterContainer *get_editor_toaster_container() const;
 	EditorUndoRedoManager *get_editor_undo_redo() const;
 	ScenePaint2DEditor *get_scene_paint_2d() const;
 

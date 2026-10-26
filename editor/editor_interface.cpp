@@ -42,9 +42,9 @@
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/create_dialog.h"
 #include "editor/gui/editor_quick_open_dialog.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/inspector/editor_preview_plugins.h"
 #include "editor/inspector/editor_resource_preview.h"
 #include "editor/inspector/property_selector.h"
@@ -110,8 +110,8 @@ Ref<EditorSettings> EditorInterface::get_editor_settings() const {
 	return EditorSettings::get_singleton();
 }
 
-EditorToaster *EditorInterface::get_editor_toaster() const {
-	return EditorToaster::get_singleton();
+EditorToasterContainer *EditorInterface::get_editor_toaster_container() const {
+	return EditorToasterContainer::get_singleton();
 }
 
 EditorUndoRedoManager *EditorInterface::get_editor_undo_redo() const {
@@ -848,7 +848,7 @@ void EditorInterface::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_resource_previewer"), &EditorInterface::get_resource_previewer);
 	ClassDB::bind_method(D_METHOD("get_selection"), &EditorInterface::get_selection);
 	ClassDB::bind_method(D_METHOD("get_editor_settings"), &EditorInterface::get_editor_settings);
-	ClassDB::bind_method(D_METHOD("get_editor_toaster"), &EditorInterface::get_editor_toaster);
+	ClassDB::bind_method(D_METHOD("get_editor_toaster_container"), &EditorInterface::get_editor_toaster_container);
 	ClassDB::bind_method(D_METHOD("get_editor_undo_redo"), &EditorInterface::get_editor_undo_redo);
 	ClassDB::bind_method(D_METHOD("get_scene_paint_2d"), &EditorInterface::get_scene_paint_2d);
 

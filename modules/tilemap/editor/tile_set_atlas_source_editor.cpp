@@ -41,7 +41,7 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
-#include "editor/gui/editor_toaster.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/inspector/editor_inspector.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"

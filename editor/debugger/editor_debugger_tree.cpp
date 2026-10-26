@@ -39,8 +39,8 @@
 #include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/editor_file_dialog.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/debugger/scene_debugger_object.h"
 #include "scene/gui/texture_rect.h"
@@ -153,7 +153,7 @@ void EditorDebuggerTree::_notify_selection_changed() {
 
 	if (selection_surpassed_limit) {
 		selection_surpassed_limit = false;
-		EditorToaster::get_singleton()->popup_str(vformat(TTR("Some remote nodes were not selected, as the configured maximum selection is %d. This can be changed at \"debugger/max_node_selection\" in the Editor Settings."), EDITOR_GET("debugger/max_node_selection")), EditorToaster::SEVERITY_WARNING);
+		EditorToasterContainer::get_singleton()->popup_str(vformat(TTR("Some remote nodes were not selected, as the configured maximum selection is %d. This can be changed at \"debugger/max_node_selection\" in the Editor Settings."), EDITOR_GET("debugger/max_node_selection")), EditorToasterContainer::SEVERITY_WARNING);
 	}
 }
 

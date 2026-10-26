@@ -570,7 +570,7 @@ void RuntimeNodeSelect::_update_cursor_shape() {
 }
 
 void RuntimeNodeSelect::_show_toaster(const String &p_message, int p_level) {
-	// Levels are the same as the ones in `EditorToaster`.
+	// Levels are the same as the ones in `EditorToasterContainer`.
 	EngineDebugger::get_singleton()->send_message("game_view:show_toaster", { p_message, p_level });
 }
 

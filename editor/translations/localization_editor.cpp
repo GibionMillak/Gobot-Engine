@@ -37,9 +37,9 @@
 #include "core/string/translation_server.h"
 #include "editor/docks/filesystem_dock.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_quick_open_dialog.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/settings/project_settings_editor.h"
@@ -423,7 +423,7 @@ void LocalizationEditor::_template_generate_command() {
 	const String current_path = template_generate_dialog->get_current_path();
 	if (!current_path.is_empty() && current_path.get_file().is_valid_filename()) {
 		_template_generate(current_path);
-		EditorToaster::get_singleton()->popup_str(TTR("Template generated."));
+		EditorToasterContainer::get_singleton()->popup_str(TTR("Template generated."));
 	} else {
 		ProjectSettingsEditor::get_singleton()->popup_project_settings();
 		_template_generate_open();

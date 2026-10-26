@@ -36,7 +36,6 @@
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
@@ -238,9 +237,6 @@ EditorBottomPanel::EditorBottomPanel() :
 	get_internal_container()->add_child(bottom_hbox);
 
 	bottom_hbox->add_child(memnew(VSeparator));
-
-	editor_toaster = memnew(EditorToaster);
-	bottom_hbox->add_child(editor_toaster);
 
 	// Add a dummy control node for horizontal spacing.
 	Control *h_spacer = memnew(Control);

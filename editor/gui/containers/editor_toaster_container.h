@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_toaster.h                                                      */
+/*  editor_toaster_container.h                                            */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -36,8 +36,8 @@ class Button;
 class PanelContainer;
 class StyleBoxFlat;
 
-class EditorToaster : public HBoxContainer {
-	GDCLASS(EditorToaster, HBoxContainer);
+class EditorToasterContainer : public HBoxContainer {
+	GDCLASS(EditorToasterContainer, HBoxContainer);
 
 public:
 	enum Severity {
@@ -86,7 +86,7 @@ private:
 	};
 	HashMap<Control *, Toast> toasts;
 
-	bool is_processing_error = false; // Makes sure that we don't handle errors that are triggered within the EditorToaster error processing.
+	bool is_processing_error = false; // Makes sure that we don't handle errors that are triggered within the EditorToasterContainer error processing.
 
 	const double default_message_duration = 5.0;
 
@@ -106,12 +106,12 @@ private:
 
 protected:
 	static void _bind_methods();
-	static EditorToaster *singleton;
+	static EditorToasterContainer *singleton;
 
 	void _notification(int p_what);
 
 public:
-	static EditorToaster *get_singleton();
+	static EditorToasterContainer *get_singleton();
 
 	Control *popup(Control *p_control, Severity p_severity = SEVERITY_INFO, double p_time = 0.0, const String &p_tooltip = String());
 	void popup_str(const String &p_message, Severity p_severity = SEVERITY_INFO, const String &p_tooltip = String());
@@ -119,8 +119,8 @@ public:
 	void instant_close(Control *p_control);
 	void copy(Control *p_control);
 
-	EditorToaster();
-	~EditorToaster();
+	EditorToasterContainer();
+	~EditorToasterContainer();
 };
 
-VARIANT_ENUM_CAST(EditorToaster::Severity);
+VARIANT_ENUM_CAST(EditorToasterContainer::Severity);

@@ -38,8 +38,8 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/buttons/editor_version_button.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/credits_roll.h"
-#include "editor/gui/editor_toaster.h"
 #include "editor/run/editor_run_bar.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/item_list.h"
@@ -125,7 +125,7 @@ void EditorAboutDialog::_item_activated(int p_idx, ItemList *p_il) {
 		// Easter egg! :D
 		if (EditorRunBar::get_singleton() && EditorRunBar::get_singleton()->is_playing()) {
 			// Don't allow if the game is running, as it will look weird if it's embedded.
-			EditorToaster::get_singleton()->popup_str(TTR("No distractions for this, close that game first."));
+			EditorToasterContainer::get_singleton()->popup_str(TTR("No distractions for this, close that game first."));
 			return;
 		}
 

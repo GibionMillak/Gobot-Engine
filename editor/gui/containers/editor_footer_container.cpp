@@ -33,6 +33,7 @@
 #include "editor/gui/buttons/editor_version_button.h"
 #include "editor/gui/buttons/redraw_mode_button.h"
 #include "editor/gui/buttons/renderer_method_button.h"
+#include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/run/editor_run_bar.h"
 #include "scene/gui/box_container.h"
 
@@ -72,5 +73,8 @@ EditorFooterContainer::EditorFooterContainer() {
 
 		EditorVersionButton *version_btn = memnew(EditorVersionButton(EditorVersionButton::BASIC));
 		_right_hbox->add_child(version_btn);
+
+		EditorToasterContainer *toaster = memnew(EditorToasterContainer);
+		_right_hbox->add_child(toaster);
 	}
 }
