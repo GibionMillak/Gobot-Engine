@@ -1200,14 +1200,10 @@ Hub::Hub() {
 			// Add spacer to avoid other controls under window minimize/maximize/close buttons (left side).
 			left_menu_spacer = memnew(Control);
 			left_menu_spacer->set_mouse_filter(Control::MOUSE_FILTER_PASS);
-			title_bar->add_child(left_menu_spacer);
+			title_bar->get_left_section()->add_child(left_menu_spacer);
 		}
 
-		HBoxContainer *left_hbox = memnew(HBoxContainer);
-		left_hbox->set_alignment(BoxContainer::ALIGNMENT_BEGIN);
-		left_hbox->set_h_size_flags(Control::SIZE_FILL);
-		left_hbox->set_stretch_ratio(1.0);
-		title_bar->add_child(left_hbox);
+		HBoxContainer *left_hbox = title_bar->get_left_section();
 
 		title_bar_logo = memnew(Button);
 		title_bar_logo->set_flat(true);
@@ -1235,16 +1231,7 @@ Hub::Hub() {
 				main_menu_bar->add_child(help_menu);
 			}
 		}
-		Control *title_spacer = memnew(Control);
-		title_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-		title_spacer->set_mouse_filter(Control::MOUSE_FILTER_PASS);
-		title_bar->add_child(title_spacer);
-
-		HBoxContainer *right_hbox = memnew(HBoxContainer);
-		right_hbox->set_alignment(BoxContainer::ALIGNMENT_END);
-		right_hbox->set_h_size_flags(Control::SIZE_FILL);
-		right_hbox->set_stretch_ratio(1.0);
-		title_bar->add_child(right_hbox);
+		HBoxContainer *right_hbox = title_bar->get_right_section();
 
 		quick_settings_button = memnew(Button);
 		quick_settings_button->set_flat(true);
@@ -1256,7 +1243,7 @@ Hub::Hub() {
 			// Add spacer to avoid other controls under the window minimize/maximize/close buttons (right side).
 			right_menu_spacer = memnew(Control);
 			right_menu_spacer->set_mouse_filter(Control::MOUSE_FILTER_PASS);
-			title_bar->add_child(right_menu_spacer);
+			title_bar->get_right_section()->add_child(right_menu_spacer);
 		}
 	}
 

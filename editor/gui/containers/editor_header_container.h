@@ -39,10 +39,13 @@ class EditorHeaderContainer : public HBoxContainer {
 	GDCLASS(EditorHeaderContainer, HBoxContainer);
 
 public:
-	void add_editor_controls();
+	EditorHeaderContainer();
 
-	void set_center_control(Control *p_center_control);
-	Control *get_center_control() const;
+	HBoxContainer *get_left_section() const { return _left_hbox; }
+	HBoxContainer *get_middle_section() const { return _center_hbox; }
+	HBoxContainer *get_right_section() const { return _right_hbox; }
+
+	void add_editor_controls();
 
 	void set_can_move_window(bool p_enabled);
 	bool get_can_move_window() const;
@@ -66,9 +69,10 @@ private:
 	Point2i _click_pos;
 	bool _moving = false;
 	bool _can_move = false;
-	Control *_center_control = nullptr;
-
-	HBoxContainer *_editor_controls_hbox = nullptr;
+	HBoxContainer *_left_hbox = nullptr;
+	HBoxContainer *_center_hbox = nullptr;
+	HBoxContainer *_right_hbox = nullptr;
+	bool _editor_controls_added = false;
 	HBoxContainer *_window_buttons_hbox = nullptr;
 	Button *_minimize_btn = nullptr;
 	Button *_maximize_btn = nullptr;

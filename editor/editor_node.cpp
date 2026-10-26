@@ -867,7 +867,7 @@ EditorNode::EditorNode() {
 
 	editor_main_screen = memnew(EditorMainScreen);
 	srt->add_child(editor_main_screen);
-	title_bar->set_center_control(editor_main_screen->get_internal_container());
+	editor_main_screen->get_internal_container()->reparent(title_bar->get_middle_section());
 
 	editor_dock_manager->register_dock_slot(editor_main_screen);
 
@@ -1013,7 +1013,7 @@ EditorNode::EditorNode() {
 		// Add spacer to avoid other controls under window minimize/maximize/close buttons (left side).
 		left_menu_spacer = memnew(Control);
 		left_menu_spacer->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
-		title_bar->add_child(left_menu_spacer);
+		title_bar->get_left_section()->add_child(left_menu_spacer);
 	}
 
 	file_menu = memnew(PopupMenu);
@@ -1035,12 +1035,6 @@ EditorNode::EditorNode() {
 
 	_update_main_menu_type();
 
-	// Spacer to center 2D / 3D / Script buttons.
-	left_spacer = memnew(HBoxContainer);
-	left_spacer->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
-	left_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	title_bar->add_child(left_spacer);
-
 	project_title = memnew(Label);
 	project_title->add_theme_font_override(SceneStringName(font), theme->get_font(SNAME("bold"), EditorStringName(EditorFonts)));
 	project_title->add_theme_font_size_override(SceneStringName(font_size), theme->get_font_size(SNAME("bold_size"), EditorStringName(EditorFonts)));
@@ -1049,13 +1043,7 @@ EditorNode::EditorNode() {
 	project_title->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	project_title->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
 	project_title->set_visible(can_expand && menu_type == MENU_TYPE_GLOBAL);
-	left_spacer->add_child(project_title);
-
-	// Spacer to center 2D / 3D / Script buttons.
-	right_spacer = memnew(Control);
-	right_spacer->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
-	right_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	title_bar->add_child(right_spacer);
+	title_bar->get_left_section()->add_child(project_title);
 
 	title_bar->add_editor_controls();
 
@@ -1068,13 +1056,11 @@ EditorNode::EditorNode() {
 		project_run_bar->connect("stop_pressed", callable_mp(this, &EditorNode::_project_run_stopped));
 	}
 
-	title_bar->move_child(editor_main_screen->get_internal_container(), left_spacer->get_index());
-
 	if (can_expand) {
 		// Add spacer to avoid other controls under the window minimize/maximize/close buttons (right side).
 		right_menu_spacer = memnew(Control);
 		right_menu_spacer->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
-		title_bar->add_child(right_menu_spacer);
+		title_bar->get_right_section()->add_child(right_menu_spacer);
 	}
 
 	progress_hb = memnew(BackgroundProgress);
@@ -8775,8 +8761,8 @@ void EditorNode::_update_main_menu_type() {
 			main_menu_button->get_popup()->add_submenu_node_item(menu->get_name(), menu);
 		}
 
-		title_bar->add_child(main_menu_button);
-		title_bar->move_child(main_menu_button, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
+		title_bar->get_left_section()->add_child(main_menu_button);
+		title_bar->get_left_section()->move_child(main_menu_button, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
 	} else {
 		main_menu_bar = memnew(MenuBar);
 		main_menu_bar->set_mouse_filter(Control::MOUSE_FILTER_STOP);
@@ -8790,8 +8776,8 @@ void EditorNode::_update_main_menu_type() {
 			main_menu_bar->add_child(menu);
 		}
 
-		title_bar->add_child(main_menu_bar);
-		title_bar->move_child(main_menu_bar, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
+		title_bar->get_left_section()->add_child(main_menu_bar);
+		title_bar->get_left_section()->move_child(main_menu_bar, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
 	}
 
 	// Show/hide project title.

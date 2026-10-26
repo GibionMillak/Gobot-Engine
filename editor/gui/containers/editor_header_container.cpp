@@ -42,36 +42,44 @@
 #include "scene/scene_string_names.h"
 #include "servers/display/display_server.h"
 
+EditorHeaderContainer::EditorHeaderContainer() {
+	_left_hbox = memnew(HBoxContainer);
+	_left_hbox->set_alignment(ALIGNMENT_BEGIN);
+	_left_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
+	_left_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
+	add_child(_left_hbox);
+
+	_center_hbox = memnew(HBoxContainer);
+	_center_hbox->set_alignment(ALIGNMENT_CENTER);
+	_center_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
+	_center_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
+	add_child(_center_hbox);
+
+	_right_hbox = memnew(HBoxContainer);
+	_right_hbox->set_alignment(ALIGNMENT_END);
+	_right_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
+	_right_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
+	add_child(_right_hbox);
+}
+
 void EditorHeaderContainer::add_editor_controls() {
-	if (_editor_controls_hbox) {
+	if (_editor_controls_added) {
 		return;
 	}
+	_editor_controls_added = true;
 
-	_editor_controls_hbox = memnew(HBoxContainer);
-	add_child(_editor_controls_hbox);
+	EditorHelpButton *help_btn = memnew(EditorHelpButton);
+	_right_hbox->add_child(help_btn);
 
-	{
-		EditorHelpButton *help_btn = memnew(EditorHelpButton);
-		_editor_controls_hbox->add_child(help_btn);
+	SettingsButton *settings_btn = memnew(SettingsButton);
+	_right_hbox->add_child(settings_btn);
 
-		SettingsButton *settings_btn = memnew(SettingsButton);
-		_editor_controls_hbox->add_child(settings_btn);
+	EditorFullscreenButton *fullscreen_btn = memnew(EditorFullscreenButton);
+	_right_hbox->add_child(fullscreen_btn);
 
-		EditorFullscreenButton *fullscreen_btn = memnew(EditorFullscreenButton);
-		_editor_controls_hbox->add_child(fullscreen_btn);
+	if (_window_buttons_hbox) {
+		_right_hbox->move_child(_window_buttons_hbox, _right_hbox->get_child_count() - 1);
 	}
-}
-
-void EditorHeaderContainer::set_center_control(Control *p_center_control) {
-	_center_control = p_center_control;
-
-	if (_center_control->get_parent() != this) {
-		_center_control->reparent(this);
-	}
-}
-
-Control *EditorHeaderContainer::get_center_control() const {
-	return _center_control;
 }
 
 void EditorHeaderContainer::set_can_move_window(bool p_enabled) {
@@ -105,70 +113,6 @@ void EditorHeaderContainer::_notification(int p_what) {
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
 			_update_window_buttons();
-		} break;
-		case NOTIFICATION_SORT_CHILDREN: {
-			if (_window_buttons_hbox && _window_buttons_hbox->get_index() != get_child_count() - 1) {
-				move_child(_window_buttons_hbox, get_child_count() - 1);
-			}
-			if (_editor_controls_hbox && _window_buttons_hbox && _editor_controls_hbox->get_index() != get_child_count() - 2) {
-				move_child(_editor_controls_hbox, get_child_count() - 2);
-			}
-
-			if (!_center_control) {
-				break;
-			}
-			Control *prev = nullptr;
-			Control *base = nullptr;
-			Control *next = nullptr;
-
-			const bool rtl = is_layout_rtl();
-
-			int start;
-			int end;
-			int delta;
-			if (rtl) {
-				start = get_child_count() - 1;
-				end = -1;
-				delta = -1;
-			} else {
-				start = 0;
-				end = get_child_count();
-				delta = +1;
-			}
-
-			for (int i = start; i != end; i += delta) {
-				Control *c = as_sortable_control(get_child(i));
-				if (!c) {
-					continue;
-				}
-				if (base) {
-					next = c;
-					break;
-				}
-				if (c != _center_control) {
-					prev = c;
-					continue;
-				}
-				base = c;
-			}
-			if (base && prev && next) {
-				const Size2i title_size = get_size();
-				const int center = title_size.x / 2;
-				int width = MIN(center - prev->get_position().x, next->get_position().x + next->get_size().x - center) * 1.9;
-				width = MAX(width, base->get_combined_minimum_size().x);
-				base->set_custom_maximum_size(Size2i(width, title_size.y));
-				const Size2i c_size = base->get_bound_desired_size();
-
-				const int min_offset = prev->get_position().x + prev->get_combined_minimum_size().x;
-				const int max_offset = next->get_position().x + next->get_size().x - next->get_combined_minimum_size().x - c_size.x;
-
-				int offset = (title_size.width - c_size.width) / 2;
-				offset = CLAMP(offset, min_offset, max_offset);
-
-				fit_child_in_rect(prev, Rect2i(prev->get_position().x, 0, offset - prev->get_position().x, title_size.height));
-				fit_child_in_rect(next, Rect2i(offset + c_size.width, 0, next->get_position().x + next->get_size().x - (offset + c_size.width), title_size.height));
-				fit_child_in_rect(base, Rect2i(offset, 0, c_size.width, title_size.height));
-			}
 		} break;
 	}
 }
@@ -300,7 +244,7 @@ void EditorHeaderContainer::_create_window_buttons() {
 
 	_window_buttons_hbox = memnew(HBoxContainer);
 	_window_buttons_hbox->set_mouse_filter(MOUSE_FILTER_STOP);
-	add_child(_window_buttons_hbox);
+	_right_hbox->add_child(_window_buttons_hbox);
 
 	{
 		_minimize_btn = memnew(Button);
