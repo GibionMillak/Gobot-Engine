@@ -35,7 +35,6 @@
 #include "editor/file_system/editor_file_system.h"
 #include "editor/file_system/file_info.h"
 #include "editor/script/script_create_dialog.h"
-#include "editor/script/script_editor_plugin.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/control.h"
 #include "scene/gui/dialog.h"

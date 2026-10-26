@@ -52,7 +52,6 @@
 #include "editor/run/embedded_process.h"
 #include "editor/run/run_instances_dialog.h"
 #include "editor/scene/canvas_item_editor_plugin.h"
-#include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_feature_profile.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"

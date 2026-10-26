@@ -36,6 +36,7 @@
 #include "core/io/zip_io.h"
 #include "core/os/os.h"
 #include "core/string/translation_server.h"
+#include "editor/docks/script_editor/script_editor.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/export/editor_export.h"
@@ -51,7 +52,6 @@
 #include "core/object/callable_mp.h"
 #include "core/os/process_id.h"
 #include "editor/file_system/editor_paths.h"
-#include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
 #endif
 

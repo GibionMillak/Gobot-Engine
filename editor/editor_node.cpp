@@ -67,6 +67,8 @@
 #include "editor/docks/import_dock.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/scene_editor_dock.h"
+#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_plugin.h"
 #include "editor/docks/signals_dock.h"
 #include "editor/editor_data.h"
 #include "editor/editor_interface.h"

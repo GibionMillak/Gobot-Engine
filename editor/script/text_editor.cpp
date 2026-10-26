@@ -31,8 +31,10 @@
 #include "text_editor.h"
 
 #include "core/io/json.h"
-#include "editor/script/script_editor_plugin.h"
+#include "editor/docks/script_editor/script_editor.h"
+#include "editor/script/script_editor_base.h"
 #include "editor/settings/editor_settings.h"
+#include "scene/resources/text_file.h"
 
 void TextEditor::_validate_script() {
 	TextEditorBase::_validate_script();

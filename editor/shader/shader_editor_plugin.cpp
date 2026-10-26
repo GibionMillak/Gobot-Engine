@@ -34,6 +34,7 @@
 #include "core/variant/variant.h"
 #include "editor/docks/editor_dock.h"
 #include "editor/docks/editor_dock_manager.h"
+#include "editor/docks/script_editor/components/document_editor_container.h"
 #include "editor/editor_node.h"
 #include "editor/script/script_editor_base.h"
 #include "editor/settings/editor_command_palette.h"

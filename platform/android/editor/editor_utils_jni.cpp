@@ -36,10 +36,11 @@
 #include "core/os/os.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/debugger/script_editor_debugger.h"
+#include "editor/docks/script_editor/script_editor.h"
 #include "editor/editor_node.h"
 #include "editor/gui/containers/editor_header_container.h"
 #include "editor/run/editor_run_bar.h"
-#include "editor/script/script_editor_plugin.h"
+#include "editor/script/script_editor_base.h"
 #include "editor/settings/editor_settings.h"
 #include "main/main.h"
 #endif

@@ -46,6 +46,7 @@
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/import_dock.h"
 #include "editor/docks/hierarchy_dock.h"
+#include "editor/docks/script_editor/script_editor.h"
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"

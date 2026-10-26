@@ -56,7 +56,6 @@
 #include "editor/scene/3d/node_3d_editor_plugin.h"
 #include "editor/scene/3d/node_3d_editor_viewport.h"
 #include "editor/scene/canvas_item_editor_plugin.h"
-#include "editor/script/script_editor_plugin.h"
 #include "editor/translations/editor_translation_parser.h"
 #include "scene/3d/camera_3d.h"
 #include "scene/gui/popup_menu.h"

@@ -30,7 +30,9 @@
 
 #pragma once
 
-#include "editor/script/script_editor_plugin.h"
+#include "core/input/shortcut.h"
+#include "editor/docks/script_editor/components/document_editor_container.h"
+#include "editor/plugins/editor_plugin.h"
 
 class ShaderEditorPlugin : public EditorPlugin {
 	GDCLASS(ShaderEditorPlugin, EditorPlugin);

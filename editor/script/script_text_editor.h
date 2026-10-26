@@ -33,13 +33,13 @@
 #include "core/object/editor_language.h"
 #include "editor/gui/code_editor.h"
 #include "editor/script/script_editor_base.h"
-#include "editor/script/script_editor_plugin.h"
 #include "scene/gui/color_picker.h"
 #include "scene/gui/dialog.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/tree.h"
 
 class RichTextLabel;
+class ScriptEditorQuickOpen;
 
 class ConnectionInfoDialog : public Dialog {
 	GDCLASS(ConnectionInfoDialog, Dialog);

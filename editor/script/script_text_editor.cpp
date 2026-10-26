@@ -44,6 +44,9 @@
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/doc/editor_help.h"
 #include "editor/docks/filesystem_dock.h"
+#include "editor/docks/script_editor/components/document_editor_container.h"
+#include "editor/docks/script_editor/components/script_editor_quick_open.h"
+#include "editor/docks/script_editor/script_editor.h"
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -1459,7 +1462,7 @@ void ScriptTextEditor::_show_symbol_tooltip(const String &p_symbol, int p_row, i
 		}
 	}
 
-	// NOTE: See also `ScriptEditor::_get_debug_tooltip()` for documentation tooltips disabled.
+	// NOTE: See also `DocumentEditorContainer::_get_debug_tooltip()` for documentation tooltips disabled.
 	String debug_value = EditorDebuggerNode::get_singleton()->get_var_value(p_symbol);
 	if (!debug_value.is_empty()) {
 		constexpr int DISPLAY_LIMIT = 1024;

@@ -37,9 +37,9 @@
 #include "editor/debugger/editor_file_server.h"
 #include "editor/debugger/script_editor_debugger.h"
 #include "editor/docks/editor_dock_manager.h"
+#include "editor/docks/script_editor/script_editor.h"
 #include "editor/editor_node.h"
 #include "editor/run/run_instances_dialog.h"
-#include "editor/script/script_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/gui/popup_menu.h"
 

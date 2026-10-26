@@ -33,10 +33,10 @@
 #include "core/io/json.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
+#include "editor/docks/script_editor/components/document_editor_container.h"
 #include "editor/editor_node.h"
 #include "editor/script/find_in_files.h"
 #include "editor/script/script_editor_navigation_marker.h"
-#include "editor/script/script_editor_plugin.h"
 #include "editor/script/syntax_highlighters.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/gui/menu_button.h"
@@ -44,6 +44,7 @@
 #include "scene/gui/split_container.h"
 #include "scene/resources/shader.h"
 #include "scene/resources/shader_include.h"
+#include "scene/resources/text_file.h"
 #include "servers/display/display_server.h"
 
 void ScriptEditorBase::_bind_methods() {
