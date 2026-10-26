@@ -33,7 +33,7 @@
 #include "scene/gui/dialog.h"
 #include "scene/gui/scroll_container.h"
 
-class EditorAbout;
+class EditorAboutDialog;
 class EditorFileDialog;
 class EditorTitleBar;
 class HFlowContainer;
@@ -97,7 +97,7 @@ class Hub : public Control {
 
 	VBoxContainer *_local_projects_vbox = nullptr;
 
-	EditorAbout *about_dialog = nullptr;
+	EditorAboutDialog *about_dialog = nullptr;
 
 	void _show_about();
 	void _project_list_menu_option(int p_option);

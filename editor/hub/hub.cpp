@@ -42,12 +42,12 @@
 #include "core/version.h"
 #include "editor/doc/editor_help.h"
 #include "editor/editor_string_names.h"
+#include "editor/gui/buttons/editor_version_button.h"
+#include "editor/gui/dialogs/editor_about_dialog.h"
 #include "editor/gui/dialogs/project_compatibility_dialog.h"
-#include "editor/gui/editor_about.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_icon_manager.h"
 #include "editor/gui/editor_title_bar.h"
-#include "editor/gui/editor_version_button.h"
 #include "editor/inspector/editor_inspector.h"
 #include "editor/hub/engine_update_label.h"
 #include "editor/hub/project_dialog.h"
@@ -325,7 +325,7 @@ void Hub::_update_theme(bool p_skip_creation) {
 
 void Hub::_show_about() {
 	if (!about_dialog) {
-		about_dialog = memnew(EditorAbout);
+		about_dialog = memnew(EditorAboutDialog);
 		add_child(about_dialog);
 	}
 	about_dialog->popup_centered(Size2(780, 500) * EDSCALE);
@@ -1474,7 +1474,7 @@ Hub::Hub() {
 		update_label->connect("offline_clicked", callable_mp(this, &Hub::_show_quick_settings));
 #endif
 
-		EditorVersionButton *version_btn = memnew(EditorVersionButton(EditorVersionButton::FORMAT_WITH_BUILD));
+		EditorVersionButton *version_btn = memnew(EditorVersionButton(EditorVersionButton::WITH_BUILD));
 		// Fade the version label to be less prominent, but still readable.
 		version_btn->set_self_modulate(Color(1, 1, 1, 0.6));
 		footer_bar->add_child(version_btn);

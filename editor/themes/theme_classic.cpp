@@ -415,8 +415,16 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_stylebox("disabled", "PrimaryButton", primary_disabled);
 
 			const StringName primary_colors[] = {
-				"font_color", "font_hover_color", "font_focus_color", "font_pressed_color", "font_hover_pressed_color",
-				"icon_normal_color", "icon_hover_color", "icon_focus_color", "icon_pressed_color", "icon_hover_pressed_color",
+				"font_color",
+				"font_hover_color",
+				"font_focus_color",
+				"font_pressed_color",
+				"font_hover_pressed_color",
+				"icon_normal_color",
+				"icon_hover_color",
+				"icon_focus_color",
+				"icon_pressed_color",
+				"icon_hover_pressed_color",
 			};
 			for (const StringName &color_name : primary_colors) {
 				p_theme->set_color(color_name, "PrimaryButton", primary_text_color);
@@ -1641,6 +1649,10 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_color("background", EditorStringName(Editor), background_color_opaque);
 		p_theme->set_stylebox("Background", EditorStringName(EditorStyles), EditorThemeManager::make_flat_stylebox(background_color_opaque, p_config.base_margin, p_config.base_margin, p_config.base_margin, p_config.base_margin));
 
+		Color dock_background_color = p_config.dark_color_3;
+		dock_background_color.a = 1.0;
+		p_theme->set_stylebox("DockBackground", EditorStringName(EditorStyles), EditorThemeManager::make_flat_stylebox(dock_background_color, p_config.base_margin, p_config.base_margin, p_config.base_margin, p_config.base_margin));
+
 		Ref<StyleBoxFlat> editor_panel_foreground = p_config.base_style->duplicate();
 		editor_panel_foreground->set_corner_radius_all(0);
 		p_theme->set_stylebox("PanelForeground", EditorStringName(EditorStyles), editor_panel_foreground);
@@ -1995,13 +2007,6 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_theme->set_stylebox("disabled", "PanelBackgroundButton", panel_button_style_disabled);
 		}
 
-		// Top bar selectors.
-		{
-			p_theme->set_type_variation("TopBarOptionButton", "OptionButton");
-			p_theme->set_font(SceneStringName(font), "TopBarOptionButton", p_theme->get_font(SNAME("bold"), EditorStringName(EditorFonts)));
-			p_theme->set_font_size(SceneStringName(font_size), "TopBarOptionButton", p_theme->get_font_size(SNAME("bold_size"), EditorStringName(EditorFonts)));
-		}
-
 		// Complex editor windows.
 		{
 			Ref<StyleBoxFlat> style_complex_window = p_config.window_style->duplicate();
@@ -2009,7 +2014,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			style_complex_window->set_border_color(p_config.dark_color_2);
 			p_theme->set_stylebox(SceneStringName(panel), "EditorSettingsDialog", style_complex_window);
 			p_theme->set_stylebox(SceneStringName(panel), "ProjectSettingsEditor", style_complex_window);
-			p_theme->set_stylebox(SceneStringName(panel), "EditorAbout", style_complex_window);
+			p_theme->set_stylebox(SceneStringName(panel), "EditorAboutDialog", style_complex_window);
 		}
 
 		// InspectorActionButton.

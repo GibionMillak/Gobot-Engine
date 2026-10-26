@@ -53,6 +53,7 @@ class ImageTexture;
 class MenuBar;
 class MenuButton;
 class OptionButton;
+class PanelContainer;
 class RichTextLabel;
 class SubViewport;
 class SystemInformationDialog;
@@ -70,7 +71,7 @@ class BackgroundProgress;
 class DependencyErrorDialog;
 class DockSplitContainer;
 class DynamicFontImportSettingsDialog;
-class EditorAbout;
+class EditorAboutDialog;
 class EditorBuildProfileManager;
 class EditorBottomPanel;
 class EditorCommandPalette;
@@ -204,11 +205,6 @@ public:
 		HELP_SYSTEM_INFORMATION,
 		HELP_REPORT_A_BUG,
 		HELP_ABOUT,
-
-		// Update spinner menu.
-		SPINNER_UPDATE_CONTINUOUSLY,
-		SPINNER_UPDATE_WHEN_CHANGED,
-		SPINNER_UPDATE_SPINNER_HIDE,
 
 		// Non-menu options.
 		SCENE_TAB_CLOSE,
@@ -682,11 +678,6 @@ private:
 	void _queue_resource_counter_changed();
 	void _emit_resource_counter_changed();
 
-	void _renderer_selected(int p_index);
-	void _update_renderer_color();
-	String _to_rendering_method_display_name(const String &p_rendering_method) const;
-	void _set_renderer_name_save_and_restart(const String &p_rendering_method);
-
 	void _exit_editor(int p_exit_code);
 
 	virtual void input(const Ref<InputEvent> &p_event) override;
@@ -730,8 +721,6 @@ private:
 
 	void _inherit_imported(const String &p_action);
 	void _open_imported();
-
-	void _update_update_spinner();
 
 	void _resources_changed(const Vector<String> &p_resources);
 	void _scan_external_changes();
@@ -808,11 +797,9 @@ private:
 
 	Control *gui_base = nullptr;
 	VBoxContainer *main_vbox = nullptr;
-	OptionButton *renderer = nullptr;
+	PanelContainer *_dock_panel_pc = nullptr;
 
 	bool portrait_mode = false;
-
-	Dialog *video_restart_dialog = nullptr;
 
 	// Split containers.
 	DockSplitContainer *left_l_vsplit = nullptr;
@@ -843,7 +830,6 @@ private:
 	Control *right_menu_spacer = nullptr;
 	EditorTitleBar *title_bar = nullptr;
 	EditorRunBar *project_run_bar = nullptr;
-	HBoxContainer *right_menu_hb = nullptr;
 
 	// Spacers to center 2D / 3D / Script buttons.
 	HBoxContainer *left_spacer = nullptr;
@@ -895,7 +881,7 @@ private:
 	Dialog *open_project_settings = nullptr;
 	Button *select_current_scene_button = nullptr;
 	Dialog *save_accept = nullptr;
-	EditorAbout *about = nullptr;
+	EditorAboutDialog *about = nullptr;
 	SystemInformationDialog *_system_information_dialog = nullptr;
 	Dialog *warning = nullptr;
 	EditorPlugin *plugin_to_save = nullptr;
@@ -921,7 +907,6 @@ private:
 	EditorFileDialog *file_export_lib = nullptr;
 	EditorFileDialog *file_android_build_source = nullptr;
 	EditorFileDialog *file_pack_zip = nullptr;
-	MenuButton *update_spinner = nullptr;
 
 	EditorMainScreen *editor_main_screen = nullptr;
 
@@ -973,10 +958,6 @@ private:
 	HashSet<Ref<Resource>> saving_resources_in_path;
 	HashMap<Ref<Resource>, List<Node *>> resource_count;
  // Keeps track of linked Resources from a Scene.
-
-	uint64_t update_spinner_step_msec = 0;
-	uint64_t update_spinner_step_frame = 0;
-	int update_spinner_step = 0;
 
 	String saving_scene;
 	EditorProgress *save_scene_progress = nullptr;

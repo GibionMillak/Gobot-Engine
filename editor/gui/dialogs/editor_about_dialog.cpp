@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_about.cpp                                                      */
+/*  editor_about_dialog.cpp                                               */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,7 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include "editor_about.h"
+#include "editor_about_dialog.h"
 
 #include "core/authors.gen.h"
 #include "core/donors.gen.h"
@@ -37,9 +37,9 @@
 #include "core/os/os.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
+#include "editor/gui/buttons/editor_version_button.h"
 #include "editor/gui/credits_roll.h"
 #include "editor/gui/editor_toaster.h"
-#include "editor/gui/editor_version_button.h"
 #include "editor/run/editor_run_bar.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/item_list.h"
@@ -53,7 +53,7 @@
 #include "scene/main/scene_tree.h"
 #include "scene/resources/style_box.h"
 
-void EditorAbout::_notification(int p_what) {
+void EditorAboutDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED: {
 			_about_text_label->set_text(
@@ -102,13 +102,13 @@ void EditorAbout::_notification(int p_what) {
 	}
 }
 
-void EditorAbout::_license_tree_selected() {
+void EditorAboutDialog::_license_tree_selected() {
 	TreeItem *selected = _tpl_tree->get_selected();
 	_tpl_text->scroll_to_line(0);
 	_tpl_text->set_text(selected->get_metadata(0));
 }
 
-void EditorAbout::_credits_visibility_changed() {
+void EditorAboutDialog::_credits_visibility_changed() {
 	if (!credits_roll->is_visible()) {
 		credits_roll->queue_free();
 		credits_roll = nullptr;
@@ -117,7 +117,7 @@ void EditorAbout::_credits_visibility_changed() {
 	}
 }
 
-void EditorAbout::_item_activated(int p_idx, ItemList *p_il) {
+void EditorAboutDialog::_item_activated(int p_idx, ItemList *p_il) {
 	const Variant val = p_il->get_item_metadata(p_idx);
 	if (val.get_type() == Variant::STRING) {
 		OS::get_singleton()->shell_open(val);
@@ -131,7 +131,7 @@ void EditorAbout::_item_activated(int p_idx, ItemList *p_il) {
 
 		if (!credits_roll) {
 			credits_roll = memnew(CreditsRoll);
-			credits_roll->connect("visibility_changed", callable_mp(this, &EditorAbout::_credits_visibility_changed));
+			credits_roll->connect("visibility_changed", callable_mp(this, &EditorAboutDialog::_credits_visibility_changed));
 			get_tree()->get_root()->add_child(credits_roll);
 		}
 		credits_roll->roll_credits();
@@ -139,11 +139,11 @@ void EditorAbout::_item_activated(int p_idx, ItemList *p_il) {
 	}
 }
 
-void EditorAbout::_item_list_resized(ItemList *p_il) {
+void EditorAboutDialog::_item_list_resized(ItemList *p_il) {
 	p_il->set_fixed_column_width(p_il->get_size().x / 3.0 - 16 * EDSCALE * 2.5); // Weird. Should be 3.0 and that's it?.
 }
 
-Label *EditorAbout::_create_section(Control *p_parent, const String &p_name, const char *const *p_src, BitField<SectionFlags> p_flags) {
+Label *EditorAboutDialog::_create_section(Control *p_parent, const String &p_name, const char *const *p_src, BitField<SectionFlags> p_flags) {
 	Label *lbl = memnew(Label(p_name));
 	lbl->set_theme_type_variation("HeaderSmall");
 	lbl->set_focus_mode(Control::FOCUS_NONE);
@@ -160,7 +160,7 @@ Label *EditorAbout::_create_section(Control *p_parent, const String &p_name, con
 	const char *const *names_ptr = p_src;
 	bool has_website = false;
 	if (p_flags.has_flag(FLAG_ALLOW_WEBSITE)) {
-		il->connect(SceneStringName(resized), callable_mp(this, &EditorAbout::_item_list_resized).bind(il));
+		il->connect(SceneStringName(resized), callable_mp(this, &EditorAboutDialog::_item_list_resized).bind(il));
 		il->connect(SceneStringName(focus_exited), callable_mp(il, &ItemList::deselect_all));
 
 		while (*names_ptr) {
@@ -193,7 +193,7 @@ Label *EditorAbout::_create_section(Control *p_parent, const String &p_name, con
 		il->add_theme_style_override("focus", empty_stylebox);
 		il->add_theme_style_override("selected", empty_stylebox);
 
-		il->connect("item_activated", callable_mp(this, &EditorAbout::_item_activated).bind(il));
+		il->connect("item_activated", callable_mp(this, &EditorAboutDialog::_item_activated).bind(il));
 	} else {
 		il->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
 		il->set_focus_mode(Control::FOCUS_NONE);
@@ -210,7 +210,7 @@ Label *EditorAbout::_create_section(Control *p_parent, const String &p_name, con
 	return lbl;
 }
 
-EditorAbout::EditorAbout() {
+EditorAboutDialog::EditorAboutDialog() {
 	set_title(TTRC("Thanks from the Godot community!"));
 	set_hide_on_ok(true);
 
@@ -233,7 +233,7 @@ EditorAbout::EditorAbout() {
 	Control *v_spacer = memnew(Control);
 	version_info_vbc->add_child(v_spacer);
 
-	version_info_vbc->add_child(memnew(EditorVersionButton(EditorVersionButton::FORMAT_WITH_NAME_AND_BUILD)));
+	version_info_vbc->add_child(memnew(EditorVersionButton(EditorVersionButton::WITH_NAME_AND_BUILD)));
 
 	_about_text_label = memnew(Label);
 	_about_text_label->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
@@ -377,7 +377,7 @@ EditorAbout::EditorAbout() {
 	_tpl_text->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	tpl_hbc->add_child(_tpl_text);
 
-	_tpl_tree->connect(SceneStringName(item_selected), callable_mp(this, &EditorAbout::_license_tree_selected));
+	_tpl_tree->connect(SceneStringName(item_selected), callable_mp(this, &EditorAboutDialog::_license_tree_selected));
 	tpl_ti_all->select(0);
 	_tpl_text->set_text(tpl_ti_all->get_metadata(0));
 }

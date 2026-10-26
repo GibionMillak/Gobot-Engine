@@ -1,0 +1,76 @@
+/**************************************************************************/
+/*  editor_footer_container.cpp                                           */
+/**************************************************************************/
+/*                         This file is part of:                          */
+/*                             GODOT ENGINE                               */
+/*                        https://godotengine.org                         */
+/**************************************************************************/
+/* Copyright (c) 2014-present Godot Engine contributors (see AUTHORS.md). */
+/* Copyright (c) 2007-2014 Juan Linietsky, Ariel Manzur.                  */
+/*                                                                        */
+/* Permission is hereby granted, free of charge, to any person obtaining  */
+/* a copy of this software and associated documentation files (the        */
+/* "Software"), to deal in the Software without restriction, including    */
+/* without limitation the rights to use, copy, modify, merge, publish,    */
+/* distribute, sublicense, and/or sell copies of the Software, and to     */
+/* permit persons to whom the Software is furnished to do so, subject to  */
+/* the following conditions:                                              */
+/*                                                                        */
+/* The above copyright notice and this permission notice shall be         */
+/* included in all copies or substantial portions of the Software.        */
+/*                                                                        */
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        */
+/* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     */
+/* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. */
+/* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   */
+/* CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   */
+/* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE      */
+/* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
+/**************************************************************************/
+
+#include "editor_footer_container.h"
+
+#include "editor/gui/buttons/editor_version_button.h"
+#include "editor/gui/buttons/redraw_mode_button.h"
+#include "editor/gui/buttons/renderer_method_button.h"
+#include "editor/run/editor_run_bar.h"
+#include "scene/gui/box_container.h"
+
+EditorFooterContainer::EditorFooterContainer() {
+	_left_hbox = memnew(HBoxContainer);
+	_left_hbox->set_alignment(ALIGNMENT_BEGIN);
+	_left_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
+	_left_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
+	add_child(_left_hbox);
+
+	{
+		RedrawModeButton *redraw_mode_btn = memnew(RedrawModeButton);
+		_left_hbox->add_child(redraw_mode_btn);
+	}
+
+	_center_hbox = memnew(HBoxContainer);
+	_center_hbox->set_alignment(ALIGNMENT_CENTER);
+	_center_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
+	_center_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
+	add_child(_center_hbox);
+
+	{
+		_run_bar = memnew(EditorRunBar);
+		_run_bar->set_mouse_filter(MOUSE_FILTER_STOP);
+		_center_hbox->add_child(_run_bar);
+	}
+
+	_right_hbox = memnew(HBoxContainer);
+	_right_hbox->set_alignment(ALIGNMENT_END);
+	_right_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
+	_right_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
+	add_child(_right_hbox);
+
+	{
+		RendererMethodButton *renderer_method_btn = memnew(RendererMethodButton);
+		_right_hbox->add_child(renderer_method_btn);
+
+		EditorVersionButton *version_btn = memnew(EditorVersionButton(EditorVersionButton::BASIC));
+		_right_hbox->add_child(version_btn);
+	}
+}

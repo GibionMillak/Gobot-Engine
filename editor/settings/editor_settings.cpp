@@ -52,6 +52,7 @@
 #include "editor/docks/dock_tab_container.h"
 #include "editor/editor_node.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/buttons/redraw_mode_button.h"
 #include "editor/inspector/editor_property_name_processor.h"
 #include "editor/hub/engine_update_label.h"
 #include "editor/themes/editor_theme_manager.h"
@@ -505,10 +506,8 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING_BASIC(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/behavior/save_on_focus_loss", false, "")
 #ifdef DEV_ENABLED
 	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/behavior/show_internal_errors_in_toast_notifications", 0, "Auto (Enabled),Enabled,Disabled")
-	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/appearance/show_update_spinner", 0, "Auto (Enabled),Enabled,Disabled")
 #else
 	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/behavior/show_internal_errors_in_toast_notifications", 0, "Auto (Disabled),Enabled,Disabled")
-	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/appearance/show_update_spinner", 0, "Auto (Disabled),Enabled,Disabled")
 #endif
 
 	_initial_set("interface/editor/display/keep_screen_on", false, true);
@@ -523,11 +522,9 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING_BASIC(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/behavior/import_resources_when_unfocused", false, "")
 
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/display/vsync_mode", 1, "Disabled,Enabled,Adaptive,Mailbox")
-	EDITOR_SETTING(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/display/update_continuously", false, "")
+	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/display/redraw_mode", (int32_t)RedrawModeButton::REACTIVE, "Reactive,Continuously")
 
 	EDITOR_SETTING(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/appearance/collapse_main_menu", is_android_editor, "")
-
-	EDITOR_SETTING(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/appearance/show_renderer_selector", false, "")
 
 	_initial_set("docks/hierarchy/derive_script_globals_by_name", true);
 	_initial_set("docks/hierarchy/ask_before_revoking_unique_name", true);

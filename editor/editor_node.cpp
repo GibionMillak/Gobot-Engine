@@ -80,10 +80,11 @@
 #include "editor/export/register_exporters.h"
 #include "editor/file_system/dependency_editor.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/containers/editor_footer_container.h"
+#include "editor/gui/dialogs/editor_about_dialog.h"
 #include "editor/gui/dialogs/project_autoloads_dialog.h"
 #include "editor/gui/dialogs/project_plugins_dialog.h"
 #include "editor/gui/dialogs/system_information_dialog.h"
-#include "editor/gui/editor_about.h"
 #include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_icon_manager.h"
@@ -170,6 +171,7 @@
 #include "scene/gui/menu_button.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/panel.h"
+#include "scene/gui/panel_container.h"
 #include "scene/gui/popup.h"
 #include "scene/gui/rich_text_label.h"
 #include "scene/gui/split_container.h"
@@ -676,11 +678,19 @@ EditorNode::EditorNode() {
 	title_bar = memnew(EditorTitleBar);
 	main_vbox->add_child(title_bar);
 
-	DockSplitContainer *main_vsplit = memnew(DockSplitContainer);
-	main_vsplit->set_name("DockVSplitMain");
-	main_vsplit->set_vertical(true);
-	main_vsplit->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	main_vbox->add_child(main_vsplit);
+	DockSplitContainer *main_vsplit = nullptr;
+	_dock_panel_pc = memnew(PanelContainer);
+	_dock_panel_pc->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	_dock_panel_pc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	main_vbox->add_child(_dock_panel_pc);
+
+	{
+		main_vsplit = memnew(DockSplitContainer);
+		main_vsplit->set_name("DockVSplitMain");
+		main_vsplit->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+		main_vsplit->set_vertical(true);
+		_dock_panel_pc->add_child(main_vsplit);
+	}
 
 	main_hsplit = memnew(DockSplitContainer);
 	main_hsplit->set_name("DockHSplitMain");
@@ -1077,28 +1087,16 @@ EditorNode::EditorNode() {
 	right_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	title_bar->add_child(right_spacer);
 
-	project_run_bar = memnew(EditorRunBar);
-	project_run_bar->set_mouse_filter(Control::MOUSE_FILTER_STOP);
-	title_bar->add_child(project_run_bar);
-	project_run_bar->connect("play_pressed", callable_mp(this, &EditorNode::_project_run_started));
-	project_run_bar->connect("stop_pressed", callable_mp(this, &EditorNode::_project_run_stopped));
+	EditorFooterContainer *footer_container = memnew(EditorFooterContainer);
+	main_vbox->add_child(footer_container);
 
-	right_menu_hb = memnew(HBoxContainer);
-	right_menu_hb->set_mouse_filter(Control::MOUSE_FILTER_STOP);
-	title_bar->add_child(right_menu_hb);
+	{
+		project_run_bar = footer_container->get_run_bar();
+		project_run_bar->connect("play_pressed", callable_mp(this, &EditorNode::_project_run_started));
+		project_run_bar->connect("stop_pressed", callable_mp(this, &EditorNode::_project_run_stopped));
+	}
 
 	title_bar->move_child(editor_main_screen->get_internal_container(), left_spacer->get_index());
-
-	renderer = memnew(OptionButton);
-	renderer->set_flat(true);
-	renderer->set_theme_type_variation("TopBarOptionButton");
-	renderer->set_fit_to_longest_item(false);
-	renderer->set_focus_mode(Control::FOCUS_NONE);
-	renderer->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	renderer->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
-	renderer->set_tooltip_text(TTRC("Choose a renderer.\n\nOn mobile platforms, the Mobile renderer is used if Forward+ is selected here."));
-
-	right_menu_hb->add_child(renderer);
 
 	if (can_expand) {
 		// Add spacer to avoid other controls under the window minimize/maximize/close buttons (right side).
@@ -1107,35 +1105,6 @@ EditorNode::EditorNode() {
 		title_bar->add_child(right_menu_spacer);
 	}
 
-	const String current_renderer_ps = String(GLOBAL_GET("rendering/renderer/rendering_method")).to_lower();
-	const String current_renderer_os = OS::get_singleton()->get_current_rendering_method().to_lower();
-
-	// Add the renderers name to the UI.
-	if (current_renderer_ps == current_renderer_os) {
-		renderer->connect(SceneStringName(item_selected), callable_mp(this, &EditorNode::_renderer_selected));
-		// As we are doing string comparisons, keep in standard case to prevent problems with capitals
-		// "vulkan" in particular uses lowercase "v" in the code, and uppercase in the UI.
-		PackedStringArray renderers = ProjectSettings::get_singleton()->get_custom_property_info().get(StringName("rendering/renderer/rendering_method")).hint_string.split(",", false);
-		for (int i = 0; i < renderers.size(); i++) {
-			const String rendering_method = renderers[i].to_lower();
-			if (rendering_method == "dummy") {
-				continue;
-			}
-			renderer->add_item(String()); // Set in NOTIFICATION_TRANSLATION_CHANGED.
-			renderer->set_item_metadata(-1, rendering_method);
-			if (current_renderer_ps == rendering_method) {
-				renderer->select(i);
-			}
-		}
-	} else {
-		// It's an CLI-overridden rendering method.
-		renderer->add_item(String()); // Set in NOTIFICATION_TRANSLATION_CHANGED.
-		renderer->set_item_metadata(-1, current_renderer_os);
-	}
-	_update_renderer_color();
-
-	renderer->set_visible(EDITOR_GET("interface/editor/appearance/show_renderer_selector"));
-
 	progress_hb = memnew(BackgroundProgress);
 
 	layout_dialog = memnew(EditorLayoutsDialog);
@@ -1143,17 +1112,6 @@ EditorNode::EditorNode() {
 	layout_dialog->set_hide_on_ok(false);
 	layout_dialog->set_size(Size2(225, 270) * EDSCALE);
 	layout_dialog->connect("name_confirmed", callable_mp(this, &EditorNode::_dialog_action));
-
-	update_spinner = memnew(MenuButton);
-	right_menu_hb->add_child(update_spinner);
-	update_spinner->set_button_icon(theme->get_icon(SNAME("status_progress1"), EditorStringName(EditorIcons)));
-	update_spinner->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
-	PopupMenu *p = update_spinner->get_popup();
-	p->add_radio_check_item(TTRC("Update Continuously"), SPINNER_UPDATE_CONTINUOUSLY);
-	p->add_radio_check_item(TTRC("Update When Changed"), SPINNER_UPDATE_WHEN_CHANGED);
-	p->add_separator();
-	p->add_item(TTRC("Hide Update Spinner"), SPINNER_UPDATE_SPINNER_HIDE);
-	_update_update_spinner();
 
 	// Instantiate and place editor docks.
 
@@ -1419,9 +1377,6 @@ EditorNode::EditorNode() {
 		fog_mat_convert.instantiate();
 		resource_conversion_plugins.push_back(fog_mat_convert);
 	}
-
-	update_spinner_step_msec = OS::get_singleton()->get_ticks_msec();
-	update_spinner_step_frame = Engine::get_singleton()->get_frames_drawn();
 
 	editor_plugins_over = memnew(EditorPluginList);
 	editor_plugins_force_over = memnew(EditorPluginList);
@@ -4712,18 +4667,6 @@ void EditorNode::_notification(int p_what) {
 			_update_title();
 			callable_mp(this, &EditorNode::_titlebar_resized).call_deferred();
 
-			// The rendering method selector.
-			const String current_renderer_ps = String(GLOBAL_GET("rendering/renderer/rendering_method")).to_lower();
-			const String current_renderer_os = OS::get_singleton()->get_current_rendering_method().to_lower();
-			if (current_renderer_ps == current_renderer_os) {
-				for (int i = 0; i < renderer->get_item_count(); i++) {
-					renderer->set_item_text(i, _to_rendering_method_display_name(renderer->get_item_metadata(i)));
-				}
-			} else {
-				// TRANSLATORS: The placeholder is the rendering method that has overridden the default one.
-				renderer->set_item_text(0, vformat(TTR("%s (Overridden)"), _to_rendering_method_display_name(current_renderer_os)));
-			}
-
 			EditorHelpBit::clear_cache();
 		} break;
 
@@ -4737,23 +4680,6 @@ void EditorNode::_notification(int p_what) {
 		case NOTIFICATION_PROCESS: {
 			if (editor_data.is_scene_changed(-1)) {
 				scene_tabs->update_scene_tabs();
-			}
-
-			if (update_spinner->is_visible()) {
-				// Update the animation frame of the update spinner.
-				uint64_t frame = Engine::get_singleton()->get_frames_drawn();
-				uint64_t tick = OS::get_singleton()->get_ticks_msec();
-
-				if (frame != update_spinner_step_frame && (tick - update_spinner_step_msec) > (1000 / 8)) {
-					update_spinner_step++;
-					if (update_spinner_step >= 8) {
-						update_spinner_step = 0;
-					}
-
-					update_spinner_step_msec = tick;
-					update_spinner_step_frame = frame + 1;
-					update_spinner->set_button_icon(theme->get_icon("status_progress" + itos(update_spinner_step + 1), EditorStringName(EditorIcons)));
-				}
 			}
 
 			editor_selection->update();
@@ -5005,9 +4931,7 @@ void EditorNode::_notification(int p_what) {
 			}
 
 			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/editor/appearance")) {
-				_update_update_spinner();
 				_update_main_menu_type();
-				renderer->set_visible(EDITOR_GET("interface/editor/appearance/show_renderer_selector"));
 			}
 			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/editor/display")) {
 				_update_vsync_mode();
@@ -5190,6 +5114,7 @@ void EditorNode::_update_theme(bool p_skip_creation) {
 		bool dark_mode = DisplayServer::get_singleton()->is_dark_mode_supported() && DisplayServer::get_singleton()->is_dark_mode();
 
 		gui_base->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("Background"), EditorStringName(EditorStyles)));
+		_dock_panel_pc->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("DockBackground"), EditorStringName(EditorStyles)));
 		main_vbox->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT, Control::PRESET_MODE_MINSIZE, theme->get_constant(SNAME("window_border_margin"), EditorStringName(Editor)));
 		main_vbox->add_theme_constant_override("separation", theme->get_constant(SNAME("top_bar_separation"), EditorStringName(Editor)));
 
@@ -5201,8 +5126,6 @@ void EditorNode::_update_theme(bool p_skip_creation) {
 		bottom_panel->_theme_changed();
 
 		_update_system_menu_icons(dark_mode);
-
-		_update_renderer_color();
 	}
 
 	Ref<Texture2D> thumbnail_icon = gui_base->get_theme_icon(SNAME("file_thumbnail"), SNAME("FileDialog"));
@@ -6110,19 +6033,6 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			_save_external_resources();
 			_discard_changes();
 		} break;
-		case SPINNER_UPDATE_CONTINUOUSLY: {
-			EditorSettings::get_singleton()->set("interface/editor/display/update_continuously", true);
-			_update_update_spinner();
-			show_warning(TTR("This option is deprecated. Situations where refresh must be forced are now considered a bug. Please report."));
-		} break;
-		case SPINNER_UPDATE_WHEN_CHANGED: {
-			EditorSettings::get_singleton()->set("interface/editor/display/update_continuously", false);
-			_update_update_spinner();
-		} break;
-		case SPINNER_UPDATE_SPINNER_HIDE: {
-			EditorSettings::get_singleton()->set("interface/editor/appearance/show_update_spinner", 2); // Disabled
-			_update_update_spinner();
-		} break;
 		case EDITOR_OPEN_SETTINGS: {
 			editor_settings_dialog->popup_edit_settings();
 		} break;
@@ -6198,7 +6108,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 		} break;
 		case HELP_ABOUT: {
 			if (!about) {
-				about = memnew(EditorAbout);
+				about = memnew(EditorAboutDialog);
 				gui_base->add_child(about);
 			}
 			about->popup_centered(Size2(780, 500) * EDSCALE);
@@ -7638,84 +7548,6 @@ void EditorNode::_emit_resource_counter_changed() {
 	emit_signal(SNAME("resource_counter_changed"));
 }
 
-void EditorNode::_renderer_selected(int p_index) {
-	const String rendering_method = renderer->get_item_metadata(p_index);
-	const String current_renderer = GLOBAL_GET("rendering/renderer/rendering_method");
-	if (rendering_method == current_renderer) {
-		return;
-	}
-
-	// Don't change selection.
-	for (int i = 0; i < renderer->get_item_count(); i++) {
-		if (renderer->get_item_metadata(i) == current_renderer) {
-			renderer->select(i);
-			break;
-		}
-	}
-
-	if (video_restart_dialog == nullptr) {
-		video_restart_dialog = memnew(Dialog(true));
-		video_restart_dialog->set_ok_button_text(TTRC("Save & Restart"));
-		video_restart_dialog->get_label()->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-		gui_base->add_child(video_restart_dialog);
-	} else {
-		video_restart_dialog->disconnect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_set_renderer_name_save_and_restart));
-	}
-
-	const String mobile_rendering_method = rendering_method == "forward_plus" ? "mobile" : rendering_method;
-	video_restart_dialog->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_set_renderer_name_save_and_restart).bind(rendering_method));
-	video_restart_dialog->set_text(
-			vformat(TTR("Changing the renderer requires restarting the editor.\n\nChoosing Save & Restart will change the renderer to:\n- Desktop platforms: %s\n- Mobile platforms: %s"),
-					_to_rendering_method_display_name(rendering_method), _to_rendering_method_display_name(mobile_rendering_method)));
-	video_restart_dialog->popup_centered();
-
-	_update_renderer_color();
-}
-
-void EditorNode::_update_renderer_color() {
-	String rendering_method = renderer->get_selected_metadata();
-
-	const Color renderer_normal_color = theme->get_color(rendering_method + "_color", EditorStringName(Editor));
-	const Color mono_color = theme->get_color(SNAME("mono_color"), EditorStringName(Editor));
-
-	renderer->add_theme_color_override(SceneStringName(font_color), renderer_normal_color);
-	renderer->add_theme_color_override("font_hover_color", renderer_normal_color.lerp(mono_color, 0.3));
-	renderer->add_theme_color_override("font_pressed_color", renderer_normal_color.lerp(mono_color, 0.4));
-	renderer->add_theme_color_override("font_hover_pressed_color", renderer_normal_color.lerp(mono_color, 0.5));
-}
-
-String EditorNode::_to_rendering_method_display_name(const String &p_rendering_method) const {
-	if (p_rendering_method == "forward_plus") {
-		return TTR("Forward+");
-	}
-	if (p_rendering_method == "mobile") {
-		return TTR("Mobile");
-	}
-	if (p_rendering_method == "gl_compatibility") {
-		return TTR("Compatibility");
-	}
-	return p_rendering_method;
-}
-
-void EditorNode::_set_renderer_name_save_and_restart(const String &p_rendering_method) {
-	ProjectSettings::get_singleton()->set("rendering/renderer/rendering_method", p_rendering_method);
-
-	if (p_rendering_method == "mobile" || p_rendering_method == "gl_compatibility") {
-		// Also change the mobile override if changing to a compatible renderer.
-		// This prevents visual discrepancies between desktop and mobile platforms.
-		ProjectSettings::get_singleton()->set("rendering/renderer/rendering_method.mobile", p_rendering_method);
-	} else if (p_rendering_method == "forward_plus") {
-		// Use the equivalent mobile renderer. This prevents the renderer from staying
-		// on its old choice if moving from `gl_compatibility` to `forward_plus`.
-		ProjectSettings::get_singleton()->set("rendering/renderer/rendering_method.mobile", "mobile");
-	}
-
-	ProjectSettings::get_singleton()->save();
-
-	save_all_scenes();
-	restart_editor();
-}
-
 void EditorNode::_exit_editor(int p_exit_code) {
 	exiting = true;
 	waiting_for_first_scan = false;
@@ -8458,45 +8290,6 @@ void EditorNode::_inherit_imported(const String &p_action) {
 
 void EditorNode::_open_imported() {
 	open_scene(open_import_request, true, false, true);
-}
-
-void EditorNode::_update_update_spinner() {
-	bool should_display_spinner = false;
-	if (!RenderingServer::get_singleton()->canvas_item_get_debug_redraw()) {
-#ifdef DEV_ENABLED
-		const bool in_dev = true;
-#else
-		const bool in_dev = false;
-#endif
-		const int show_update_spinner_setting = EDITOR_GET("interface/editor/appearance/show_update_spinner");
-		should_display_spinner = (show_update_spinner_setting == 0 && in_dev) || show_update_spinner_setting == 1;
-	}
-	update_spinner->set_visible(should_display_spinner);
-
-	const bool update_continuously = EDITOR_GET("interface/editor/display/update_continuously");
-	OS::get_singleton()->set_low_processor_usage_mode(!update_continuously);
-
-	if (!update_spinner->is_visible()) {
-		return;
-	}
-
-	PopupMenu *update_popup = update_spinner->get_popup();
-	update_popup->set_item_checked(update_popup->get_item_index(SPINNER_UPDATE_CONTINUOUSLY), update_continuously);
-	update_popup->set_item_checked(update_popup->get_item_index(SPINNER_UPDATE_WHEN_CHANGED), !update_continuously);
-
-	if (update_continuously) {
-		update_spinner->set_tooltip_text(TTRC("Spins when the editor window redraws.\nUpdate Continuously is enabled, which can increase power usage. Click to disable it."));
-
-		// Use a different color for the update spinner when Update Continuously is enabled,
-		// as this feature should only be enabled for troubleshooting purposes.
-		// Make the icon modulate color overbright because icons are not completely white on a dark theme.
-		// On a light theme, icons are dark, so we need to modulate them with an even brighter color.
-		const bool dark_icon_and_font = EditorThemeManager::is_dark_icon_and_font();
-		update_spinner->set_self_modulate(theme->get_color(SNAME("error_color"), EditorStringName(Editor)) * (dark_icon_and_font ? Color(1.1, 1.1, 1.1) : Color(4.25, 4.25, 4.25)));
-	} else {
-		update_spinner->set_tooltip_text(TTRC("Spins when the editor window redraws."));
-		update_spinner->set_self_modulate(Color(1, 1, 1));
-	}
 }
 
 void EditorNode::_resources_changed(const Vector<String> &p_resources) {

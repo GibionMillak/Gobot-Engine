@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_about.h                                                        */
+/*  renderer_method_button.h                                              */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,47 +30,28 @@
 
 #pragma once
 
-#include "scene/gui/dialog.h"
+#include "scene/gui/option_button.h"
 
-class CreditsRoll;
-class ItemList;
-class Label;
-class RichTextLabel;
-class TextureRect;
-class Tree;
+class Dialog;
 
-/**
- * NOTE: Do not assume the EditorNode singleton to be available in this class' methods.
- * EditorAbout is also used from the hub where EditorNode isn't initialized.
- */
-class EditorAbout : public Dialog {
-	GDCLASS(EditorAbout, Dialog);
+class RendererMethodButton : public OptionButton {
+	GDCLASS(RendererMethodButton, OptionButton);
 
-private:
-	enum SectionFlags {
-		FLAG_SINGLE_COLUMN = 1 << 0,
-		FLAG_ALLOW_WEBSITE = 1 << 1,
-		FLAG_EASTER_EGG = 1 << 2,
-	};
-
-	void _license_tree_selected();
-	void _credits_visibility_changed();
-	void _item_activated(int p_idx, ItemList *p_il);
-	void _item_list_resized(ItemList *p_il);
-	Label *_create_section(Control *p_parent, const String &p_name, const char *const *p_src, BitField<SectionFlags> p_flags = 0);
-
-	Label *_about_text_label = nullptr;
-	Label *_hub_label = nullptr;
-	Tree *_tpl_tree = nullptr;
-	RichTextLabel *license_text_label = nullptr;
-	RichTextLabel *_tpl_text = nullptr;
-	TextureRect *_logo = nullptr;
-	Vector<ItemList *> name_lists;
-	CreditsRoll *credits_roll = nullptr;
+public:
+	RendererMethodButton() = default;
 
 protected:
 	void _notification(int p_what);
 
-public:
-	EditorAbout();
+private:
+	void _initialize();
+	void _renderer_selected(int p_index);
+	void _update_labels();
+	void _update_icons();
+	static String _to_rendering_method_display_name(const String &p_rendering_method);
+	void _save_and_restart();
+
+	bool _rendering_method_overridden = false;
+	String _pending_rendering_method;
+	Dialog *_restart_dialog = nullptr;
 };

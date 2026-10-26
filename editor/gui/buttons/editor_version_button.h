@@ -30,29 +30,30 @@
 
 #pragma once
 
-#include "scene/gui/link_button.h"
+#include "scene/gui/button.h"
 
-class EditorVersionButton : public LinkButton {
-	GDCLASS(EditorVersionButton, LinkButton);
+class EditorVersionButton : public Button {
+	GDCLASS(EditorVersionButton, Button);
 
 public:
 	enum VersionFormat {
 		// 4.3.2.stable
-		FORMAT_BASIC,
+		BASIC,
 		// v4.3.2.stable [HASH]
-		FORMAT_WITH_BUILD,
+		WITH_BUILD,
 		// Godot Engine v4.3.2.stable.official [HASH]
-		FORMAT_WITH_NAME_AND_BUILD,
+		WITH_NAME_AND_BUILD,
 	};
 
-private:
-	VersionFormat format = FORMAT_WITH_NAME_AND_BUILD;
+	explicit EditorVersionButton(VersionFormat p_format);
 
 protected:
 	void _notification(int p_what);
 
-	virtual void pressed() override;
+	void pressed() override;
 
-public:
-	EditorVersionButton(VersionFormat p_format);
+private:
+	static String _get_version_string(VersionFormat p_format);
+
+	const VersionFormat _format;
 };

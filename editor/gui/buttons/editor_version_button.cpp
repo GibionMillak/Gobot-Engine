@@ -30,33 +30,14 @@
 
 #include "editor_version_button.h"
 
+#include "core/error/error_macros.h"
 #include "core/os/time.h"
 #include "core/version.h"
 #include "editor/gui/editor_toaster.h"
 #include "servers/display/display_server.h"
 
-String _get_version_string(EditorVersionButton::VersionFormat p_format) {
-	String main;
-	switch (p_format) {
-		case EditorVersionButton::FORMAT_BASIC: {
-			return GODOT_VERSION_FULL_CONFIG;
-		} break;
-		case EditorVersionButton::FORMAT_WITH_BUILD: {
-			main = "v" GODOT_VERSION_FULL_BUILD;
-		} break;
-		case EditorVersionButton::FORMAT_WITH_NAME_AND_BUILD: {
-			main = GODOT_VERSION_FULL_NAME;
-		} break;
-		default: {
-			ERR_FAIL_V_MSG(GODOT_VERSION_FULL_NAME, "Unexpected format: " + itos(p_format));
-		} break;
-	}
-
-	String hash = GODOT_VERSION_HASH;
-	if (!hash.is_empty()) {
-		hash = vformat(" [%s]", hash.left(9));
-	}
-	return main + hash;
+EditorVersionButton::EditorVersionButton(VersionFormat p_format) :
+		_format(p_format) {
 }
 
 void EditorVersionButton::_notification(int p_what) {
@@ -64,7 +45,7 @@ void EditorVersionButton::_notification(int p_what) {
 		case NOTIFICATION_POSTINITIALIZE: {
 			// This can't be done in the constructor because theme cache is not ready yet.
 			set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-			set_text(_get_version_string(format));
+			set_text(_get_version_string(_format));
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED: {
@@ -80,14 +61,33 @@ void EditorVersionButton::_notification(int p_what) {
 }
 
 void EditorVersionButton::pressed() {
-	DisplayServer::get_singleton()->clipboard_set(_get_version_string(FORMAT_WITH_BUILD));
-	EditorToaster *toaster = EditorToaster::get_singleton();
+	DisplayServer::get_singleton()->clipboard_set(_get_version_string(WITH_BUILD));
+	EditorToaster *const toaster = EditorToaster::get_singleton();
 	if (toaster) {
 		toaster->popup_str(TTR("Copied Godot editor version."));
 	}
 }
 
-EditorVersionButton::EditorVersionButton(VersionFormat p_format) {
-	format = p_format;
-	set_underline_mode(LinkButton::UNDERLINE_MODE_ON_HOVER);
+String EditorVersionButton::_get_version_string(VersionFormat p_format) {
+	String version_string;
+	switch (p_format) {
+		case BASIC: {
+			return GODOT_VERSION_FULL_CONFIG;
+		} break;
+		case WITH_BUILD: {
+			version_string = "v" GODOT_VERSION_FULL_BUILD;
+		} break;
+		case WITH_NAME_AND_BUILD: {
+			version_string = GODOT_VERSION_FULL_NAME;
+		} break;
+		default: {
+			ERR_FAIL_V_MSG(GODOT_VERSION_FULL_NAME, "Unexpected format: " + itos(p_format));
+		} break;
+	}
+
+	String hash = GODOT_VERSION_HASH;
+	if (!hash.is_empty()) {
+		hash = vformat(" [%s]", hash.left(9));
+	}
+	return version_string + hash;
 }
