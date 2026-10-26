@@ -186,10 +186,8 @@ public:
 		VCS_SETTINGS,
 
 		// Editor menu.
-		EDITOR_OPEN_SETTINGS,
 		EDITOR_COMMAND_PALETTE,
 		EDITOR_TAKE_SCREENSHOT,
-		EDITOR_TOGGLE_FULLSCREEN,
 		EDITOR_OPEN_DATA_FOLDER,
 		EDITOR_OPEN_CONFIG_FOLDER,
 		EDITOR_MANAGE_FEATURE_PROFILES,
@@ -750,7 +748,7 @@ private:
 
 	void _build_file_menu(bool p_dark_mode);
 	void _build_project_menu(bool p_dark_mode);
-	void _build_settings_menu(bool p_dark_mode);
+	void _build_settings_menu();
 	void _build_help_menu(bool p_dark_mode);
 
 	void _update_main_menu_type();
@@ -820,7 +818,6 @@ private:
 	bool exiting = false;
 	bool dimmed = false;
 
-	DisplayServerEnums::WindowMode prev_mode = DisplayServerEnums::WINDOW_MODE_MAXIMIZED;
 	int old_split_ofs = 0;
 	VSplitContainer *top_split = nullptr;
 	Control *vp_base = nullptr;
@@ -838,7 +835,6 @@ private:
 	MenuButton *main_menu_button = nullptr;
 	MenuBar *main_menu_bar = nullptr;
 
-	PopupMenu *apple_menu = nullptr;
 	PopupMenu *file_menu = nullptr;
 	PopupMenu *project_menu = nullptr;
 	PopupMenu *debug_menu = nullptr;

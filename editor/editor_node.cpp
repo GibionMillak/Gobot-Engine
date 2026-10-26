@@ -84,8 +84,10 @@
 #include "editor/gui/containers/editor_header_container.h"
 #include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/dialogs/editor_about_dialog.h"
+#include "editor/gui/dialogs/editor_settings_dialog.h"
 #include "editor/gui/dialogs/project_autoloads_dialog.h"
 #include "editor/gui/dialogs/project_plugins_dialog.h"
+#include "editor/gui/dialogs/project_settings_editor.h"
 #include "editor/gui/dialogs/system_information_dialog.h"
 #include "editor/gui/editor_bottom_panel.h"
 #include "editor/gui/editor_file_dialog.h"
@@ -148,8 +150,6 @@
 #include "editor/settings/editor_feature_profile.h"
 #include "editor/settings/editor_layouts_dialog.h"
 #include "editor/settings/editor_settings.h"
-#include "editor/settings/editor_settings_dialog.h"
-#include "editor/settings/project_settings_editor.h"
 #include "editor/shader/editor_native_shader_source_visualizer.h"
 #include "editor/shader/shader_editor_plugin.h"
 #include "editor/shader/shader_text_editor.h"
@@ -975,11 +975,8 @@ EditorNode::EditorNode() {
 	ED_SHORTCUT_AND_COMMAND("editor/close_all_scenes", TTRC("Close All Scenes"));
 	ED_SHORTCUT_OVERRIDE("editor/close_scene", "macos", KeyModifierMask::CMD_OR_CTRL + Key::W);
 
-	ED_SHORTCUT_AND_COMMAND("editor/editor_settings", TTRC("Editor Settings..."), KeyModifierMask::CMD_OR_CTRL + Key::COMMA);
-
 	ED_SHORTCUT_AND_COMMAND("editor/file_quit", TTRC("Quit"), KeyModifierMask::CMD_OR_CTRL + Key::Q);
 
-	ED_SHORTCUT_AND_COMMAND("editor/project_settings", TTRC("Project Settings..."), KeyModifierMask::CMD_OR_CTRL + KeyModifierMask::SHIFT + Key::COMMA, TTRC("Project Settings"));
 	ED_SHORTCUT_AND_COMMAND("editor/find_in_files", TTRC("Find in Files..."), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::SHIFT | Key::F);
 	ED_SHORTCUT_AND_COMMAND("editor/replace_in_files", TTRC("Replace in Files..."), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::SHIFT | Key::R);
 
@@ -997,9 +994,6 @@ EditorNode::EditorNode() {
 
 	ED_SHORTCUT_AND_COMMAND("editor/take_screenshot", TTRC("Take Screenshot"), KeyModifierMask::CTRL | Key::F12);
 	ED_SHORTCUT_OVERRIDE("editor/take_screenshot", "macos", KeyModifierMask::META | Key::F12);
-
-	ED_SHORTCUT_AND_COMMAND("editor/fullscreen_mode", TTRC("Toggle Fullscreen"), KeyModifierMask::SHIFT | Key::F11);
-	ED_SHORTCUT_OVERRIDE("editor/fullscreen_mode", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::F);
 
 	ED_SHORTCUT_AND_COMMAND("editor/editor_help", TTRC("Documentation"), Key::F1);
 	ED_SHORTCUT_OVERRIDE("editor/editor_help", "macos", KeyModifierMask::ALT | Key::SPACE);
@@ -1024,18 +1018,6 @@ EditorNode::EditorNode() {
 
 	// Editor menu and toolbar.
 	bool can_expand = DisplayServer::get_singleton()->has_feature(DisplayServerEnums::FEATURE_EXTEND_TO_TITLE);
-
-#ifdef MACOS_ENABLED
-	if (NativeMenu::get_singleton()->has_system_menu(NativeMenu::APPLICATION_MENU_ID)) {
-		apple_menu = memnew(PopupMenu);
-		apple_menu->set_system_menu(NativeMenu::APPLICATION_MENU_ID);
-		_add_to_main_menu("Apple", apple_menu);
-
-		apple_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("viewport_tools"), menu_type == MENU_TYPE_GLOBAL, DisplayServer::get_singleton()->is_dark_mode_supported() && DisplayServer::get_singleton()->is_dark_mode()), ED_GET_SHORTCUT("editor/editor_settings"), EDITOR_OPEN_SETTINGS);
-		apple_menu->add_separator();
-		apple_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
-	}
-#endif
 
 	if (can_expand) {
 		// Add spacer to avoid other controls under window minimize/maximize/close buttons (left side).
@@ -1088,6 +1070,8 @@ EditorNode::EditorNode() {
 	right_spacer->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
 	right_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	title_bar->add_child(right_spacer);
+
+	title_bar->add_editor_controls();
 
 	EditorFooterContainer *footer_container = memnew(EditorFooterContainer);
 	main_vbox->add_child(footer_container);
@@ -4726,10 +4710,6 @@ void EditorNode::_notification(int p_what) {
 			get_tree()->set_auto_accept_quit(false);
 #ifdef ANDROID_ENABLED
 			get_tree()->set_quit_on_go_back(false);
-			bool is_fullscreen = EDITOR_DEF("_is_editor_fullscreen", false);
-			if (is_fullscreen) {
-				DisplayServer::get_singleton()->window_set_mode(DisplayServerEnums::WINDOW_MODE_FULLSCREEN);
-			}
 			DisplayServer::get_singleton()->connect("orientation_changed", callable_mp(this, &EditorNode::_screen_orientation_changed));
 #endif
 			get_tree()->get_root()->connect("files_dropped", callable_mp(this, &EditorNode::_dropped_files));
@@ -5047,20 +5027,9 @@ void EditorNode::_update_system_menu_icons(bool p_dark_mode) {
 #endif
 
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_PLUGINS), get_editor_theme_native_menu_icon(SNAME("action_plugin"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_SETTINGS), get_editor_theme_native_menu_icon(SNAME("gui_class_list"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_AUTOLOADS), get_editor_theme_native_menu_icon(SNAME("gui_autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_EXPORT), get_editor_theme_native_menu_icon(SNAME("node_resource_preloader"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_QUIT_TO_HUB), get_editor_theme_native_menu_icon(SNAME("action_close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-
-#ifdef MACOS_ENABLED
-	if (menu_type != MENU_TYPE_GLOBAL) {
-		settings_menu->set_item_icon(settings_menu->get_item_index(EDITOR_OPEN_SETTINGS), get_editor_theme_native_menu_icon(SNAME("viewport_tools"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-	} else {
-		apple_menu->set_item_icon(apple_menu->get_item_index(EDITOR_OPEN_SETTINGS), get_editor_theme_native_menu_icon(SNAME("viewport_tools"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-	}
-#else
-	settings_menu->set_item_icon(settings_menu->get_item_index(EDITOR_OPEN_SETTINGS), get_editor_theme_native_menu_icon(SNAME("viewport_tools"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
-#endif
 
 	help_menu->set_item_icon(help_menu->get_item_index(HELP_SEARCH), get_editor_theme_native_menu_icon(SNAME("action_help_search"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
 	help_menu->set_item_icon(help_menu->get_item_index(HELP_SYSTEM_INFORMATION), get_editor_theme_native_menu_icon(SNAME("status_info"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode));
@@ -6035,9 +6004,6 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			_save_external_resources();
 			_discard_changes();
 		} break;
-		case EDITOR_OPEN_SETTINGS: {
-			editor_settings_dialog->popup_edit_settings();
-		} break;
 		case EDITOR_OPEN_DATA_FOLDER: {
 			OS::get_singleton()->shell_show_in_file_manager(EditorPaths::get_singleton()->get_data_dir(), true);
 		} break;
@@ -6054,23 +6020,6 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 		} break;
 		case EDITOR_MANAGE_FEATURE_PROFILES: {
 			feature_profile_manager->popup_centered_clamped(Size2(900, 800) * EDSCALE, 0.8);
-		} break;
-		case EDITOR_TOGGLE_FULLSCREEN: {
-			DisplayServerEnums::WindowMode mode = DisplayServer::get_singleton()->window_get_mode();
-			if (mode == DisplayServerEnums::WINDOW_MODE_FULLSCREEN || mode == DisplayServerEnums::WINDOW_MODE_EXCLUSIVE_FULLSCREEN) {
-				DisplayServer::get_singleton()->window_set_mode(prev_mode);
-#ifdef ANDROID_ENABLED
-				EditorSettings::get_singleton()->set("_is_editor_fullscreen", false);
-				EditorSettings::get_singleton()->save();
-#endif
-			} else {
-				prev_mode = mode;
-				DisplayServer::get_singleton()->window_set_mode(DisplayServerEnums::WINDOW_MODE_FULLSCREEN);
-#ifdef ANDROID_ENABLED
-				EditorSettings::get_singleton()->set("_is_editor_fullscreen", true);
-				EditorSettings::get_singleton()->save();
-#endif
-			}
 		} break;
 		case EDITOR_TAKE_SCREENSHOT: {
 			screenshot_timer->start();
@@ -8736,7 +8685,6 @@ void EditorNode::_build_project_menu(bool p_dark_mode) {
 	}
 	project_menu->clear(false);
 
-	project_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("gui_class_list"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/project_settings"), PROJECT_OPEN_SETTINGS);
 	project_menu->add_icon_item(get_editor_theme_native_menu_icon(SNAME("gui_autoload"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), TTRC("Autoloads"), PROJECT_OPEN_AUTOLOADS);
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/find_in_files"), PROJECT_FIND_IN_FILES);
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/replace_in_files"), PROJECT_REPLACE_IN_FILES);
@@ -8775,20 +8723,12 @@ void EditorNode::_build_project_menu(bool p_dark_mode) {
 	project_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("action_close"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/quit_to_project_list"), PROJECT_QUIT_TO_HUB, true);
 }
 
-void EditorNode::_build_settings_menu(bool p_dark_mode) {
+void EditorNode::_build_settings_menu() {
 	if (!settings_menu) {
 		return;
 	}
 	settings_menu->clear(false);
 
-#ifdef MACOS_ENABLED
-	if (menu_type != MENU_TYPE_GLOBAL) {
-		// On macOS "Settings" option is in the "app" menu.
-		settings_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("viewport_tools"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/editor_settings"), EDITOR_OPEN_SETTINGS);
-	}
-#else
-	settings_menu->add_icon_shortcut(get_editor_theme_native_menu_icon(SNAME("viewport_tools"), menu_type == MENU_TYPE_GLOBAL, p_dark_mode), ED_GET_SHORTCUT("editor/editor_settings"), EDITOR_OPEN_SETTINGS);
-#endif
 	settings_menu->add_shortcut(ED_GET_SHORTCUT("editor/command_palette"), EDITOR_COMMAND_PALETTE);
 	settings_menu->add_separator();
 
@@ -8804,7 +8744,6 @@ void EditorNode::_build_settings_menu(bool p_dark_mode) {
 	settings_menu->add_shortcut(ED_GET_SHORTCUT("editor/take_screenshot"), EDITOR_TAKE_SCREENSHOT);
 	settings_menu->set_item_tooltip(-1, TTRC("Screenshots are stored in the user data folder (\"user://\")."));
 
-	settings_menu->add_shortcut(ED_GET_SHORTCUT("editor/fullscreen_mode"), EDITOR_TOGGLE_FULLSCREEN);
 	settings_menu->add_separator();
 
 #ifndef ANDROID_ENABLED
@@ -8875,7 +8814,7 @@ void EditorNode::_update_main_menu_type() {
 	bool dark_mode = DisplayServer::get_singleton()->is_dark_mode_supported() && DisplayServer::get_singleton()->is_dark_mode();
 	_build_file_menu(dark_mode);
 	_build_project_menu(dark_mode);
-	_build_settings_menu(dark_mode);
+	_build_settings_menu();
 	_build_help_menu(dark_mode);
 
 	// Delete all menu.
@@ -8911,9 +8850,7 @@ void EditorNode::_update_main_menu_type() {
 		main_menu_button->set_switch_on_hover(true);
 
 		for (PopupMenu *menu : main_menu_items) {
-			if (menu != apple_menu) {
-				main_menu_button->get_popup()->add_submenu_node_item(menu->get_name(), menu);
-			}
+			main_menu_button->get_popup()->add_submenu_node_item(menu->get_name(), menu);
 		}
 
 		title_bar->add_child(main_menu_button);
@@ -8928,9 +8865,7 @@ void EditorNode::_update_main_menu_type() {
 		main_menu_bar->set_switch_on_hover(true);
 
 		for (PopupMenu *menu : main_menu_items) {
-			if (menu != apple_menu || menu_type == MENU_TYPE_GLOBAL) {
-				main_menu_bar->add_child(menu);
-			}
+			main_menu_bar->add_child(menu);
 		}
 
 		title_bar->add_child(main_menu_bar);

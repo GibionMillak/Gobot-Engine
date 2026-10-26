@@ -53,6 +53,8 @@
 #include "editor/export/register_exporters.h"
 #include "editor/file_system/editor_file_system.h"
 #include "editor/file_system/editor_paths.h"
+#include "editor/gui/buttons/editor_fullscreen_button.h"
+#include "editor/gui/buttons/settings_button.h"
 #include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "editor/gui/editor_spin_slider.h"
@@ -159,6 +161,8 @@ void register_editor_types() {
 	GDREGISTER_CLASS(EditorSelection);
 	GDREGISTER_CLASS(EditorFileDialog);
 	GDREGISTER_INTERNAL_CLASS(EditorManagers);
+	GDREGISTER_INTERNAL_CLASS(SettingsButton);
+	GDREGISTER_INTERNAL_CLASS(EditorFullscreenButton);
 	GDREGISTER_INTERNAL_CLASS(ProjectAutoloadManager);
 	GDREGISTER_INTERNAL_CLASS(ProjectPluginManager);
 	GDREGISTER_VIRTUAL_CLASS(EditorSettings);

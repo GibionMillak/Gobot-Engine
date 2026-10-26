@@ -32,6 +32,8 @@
 
 #include "core/object/callable_mp.h"
 #include "editor/editor_string_names.h"
+#include "editor/gui/buttons/editor_fullscreen_button.h"
+#include "editor/gui/buttons/settings_button.h"
 #include "scene/gui/button.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/window.h"
@@ -47,6 +49,23 @@ static Ref<Texture2D> _get_theme_icon_or_fallback(const Control *p_control, cons
 		}
 	}
 	return Ref<Texture2D>();
+}
+
+void EditorHeaderContainer::add_editor_controls() {
+	if (_editor_controls_hbox) {
+		return;
+	}
+
+	_editor_controls_hbox = memnew(HBoxContainer);
+	add_child(_editor_controls_hbox);
+
+	{
+		SettingsButton *settings_btn = memnew(SettingsButton);
+		_editor_controls_hbox->add_child(settings_btn);
+
+		EditorFullscreenButton *fullscreen_btn = memnew(EditorFullscreenButton);
+		_editor_controls_hbox->add_child(fullscreen_btn);
+	}
 }
 
 void EditorHeaderContainer::set_center_control(Control *p_center_control) {
@@ -96,6 +115,9 @@ void EditorHeaderContainer::_notification(int p_what) {
 		case NOTIFICATION_SORT_CHILDREN: {
 			if (_window_buttons_hb && _window_buttons_hb->get_index() != get_child_count() - 1) {
 				move_child(_window_buttons_hb, get_child_count() - 1);
+			}
+			if (_editor_controls_hbox && _window_buttons_hb && _editor_controls_hbox->get_index() != get_child_count() - 2) {
+				move_child(_editor_controls_hbox, get_child_count() - 2);
 			}
 
 			if (!_center_control) {

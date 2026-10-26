@@ -38,6 +38,8 @@ class EditorHeaderContainer : public HBoxContainer {
 	GDCLASS(EditorHeaderContainer, HBoxContainer);
 
 public:
+	void add_editor_controls();
+
 	void set_center_control(Control *p_center_control);
 	Control *get_center_control() const;
 
@@ -64,6 +66,7 @@ private:
 	bool _can_move = false;
 	Control *_center_control = nullptr;
 
+	HBoxContainer *_editor_controls_hbox = nullptr;
 	HBoxContainer *_window_buttons_hb = nullptr;
 	Button *_btn_minimize = nullptr;
 	Button *_btn_maximize = nullptr;
