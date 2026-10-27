@@ -1715,19 +1715,16 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_constant("margin_left", "MainToolBarMargin", EDSCALE_RND(4));
 		p_theme->set_constant("margin_right", "MainToolBarMargin", EDSCALE_RND(4));
 
-		// 2D and 3D contextual toolbar.
-		// Use a custom stylebox to make contextual menu items stand out from the rest.
-		// This helps with editor usability as contextual menu items change when selecting nodes,
-		// even though it may not be immediately obvious at first.
-		Ref<StyleBoxFlat> toolbar_stylebox = memnew(StyleBoxFlat);
-		toolbar_stylebox->set_bg_color(p_config.accent_color * Color(1, 1, 1, 0.1));
-		toolbar_stylebox->set_anti_aliased(false);
-		// Add an underline to the StyleBox, but prevent its minimum vertical size from changing.
-		toolbar_stylebox->set_border_color(p_config.accent_color);
-		toolbar_stylebox->set_border_width(SIDE_BOTTOM, Math::round(EDSCALE_RND(2)));
-		toolbar_stylebox->set_content_margin(SIDE_BOTTOM, 0);
-		toolbar_stylebox->set_expand_margin_individual(EDSCALE_RND(4), EDSCALE_RND(2), EDSCALE_RND(4), EDSCALE_RND(4));
-		p_theme->set_stylebox("ContextualToolbar", EditorStringName(EditorStyles), toolbar_stylebox);
+		// Floating 2D and 3D viewport toolbars.
+		p_theme->set_type_variation("ViewportToolbar", "ScrollContainer");
+		p_theme->set_type_variation("ViewportToolbarGroups", "VFlowContainer");
+		p_theme->set_constant("h_separation", "ViewportToolbarGroups", EDSCALE_RND(8));
+		p_theme->set_constant("v_separation", "ViewportToolbarGroups", EDSCALE_RND(8));
+		p_theme->set_constant("margin", "ViewportToolbar", EDSCALE_RND(4));
+		Ref<StyleBoxFlat> toolbar_stylebox = EditorThemeManager::make_flat_stylebox(p_config.dark_color_1 * Color(1, 1, 1, 0.8), 4, 4, 4, 4, 3);
+		toolbar_stylebox->set_border_color(p_config.font_color * Color(1, 1, 1, 0.2));
+		toolbar_stylebox->set_border_width_all(EDSCALE_RND(1));
+		p_theme->set_stylebox(SceneStringName(panel), "ViewportToolbar", toolbar_stylebox);
 
 		// Script editor.
 		p_theme->set_stylebox("ScriptEditorDock", EditorStringName(EditorStyles), EditorThemeManager::make_empty_stylebox(0, 0, 0, 0));

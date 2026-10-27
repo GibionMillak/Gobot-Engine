@@ -35,6 +35,7 @@
 #include "scene/gui/box_container.h"
 #include "scene/gui/margin_container.h"
 
+class EditorToolbarFlowContainer;
 class Dialog;
 class Button;
 class ButtonGroup;
@@ -42,17 +43,18 @@ class CanvasItemEditorViewport;
 class CreateDialog;
 class EditorData;
 class EditorSelection;
-class EditorZoomWidget;
+class EditorViewportToolbar;
+class EditorZoomContainer;
 class Gradient;
 class HScrollBar;
 class HSplitContainer;
 class MenuButton;
 class PanelContainer;
+class Popup;
 class RichTextLabel;
 class Timer;
 class ViewPanner;
 class VScrollBar;
-class VSeparator;
 class VSplitContainer;
 
 class CanvasItemEditorSelectedItem : public Object {
@@ -154,9 +156,8 @@ private:
 
 	// Used for secondary menu items which are displayed depending on the currently selected node
 	// (such as MeshInstance's "Mesh" menu).
-	PanelContainer *context_toolbar_panel = nullptr;
-	HBoxContainer *context_toolbar_hbox = nullptr;
-	HashMap<Control *, VSeparator *> context_toolbar_separators;
+	EditorViewportToolbar *_viewport_toolbar = nullptr;
+	EditorToolbarFlowContainer *_context_toolbar_vflow = nullptr;
 
 	void _update_context_toolbar();
 
@@ -241,43 +242,43 @@ private:
 	};
 	List<PoseClipboard> pose_clipboard;
 
-	Button *select_button = nullptr;
+	Button *_select_btn = nullptr;
 
-	Button *move_button = nullptr;
-	Button *scene_paint_button = nullptr;
-	Button *scale_button = nullptr;
-	Button *rotate_button = nullptr;
+	Button *_move_btn = nullptr;
+	Button *_scene_paint_btn = nullptr;
+	Button *_scale_btn = nullptr;
+	Button *_rotate_btn = nullptr;
 
-	Button *list_select_button = nullptr;
-	Button *pivot_button = nullptr;
-	Button *pan_button = nullptr;
+	Button *_list_select_btn = nullptr;
+	Button *_pivot_btn = nullptr;
+	Button *_pan_btn = nullptr;
 
-	Button *ruler_button = nullptr;
+	Button *_ruler_btn = nullptr;
 
-	Button *local_space_button = nullptr;
-	Button *smart_snap_button = nullptr;
-	Button *grid_snap_button = nullptr;
+	Button *_local_space_btn = nullptr;
+	Button *_smart_snap_btn = nullptr;
+	Button *_grid_snap_btn = nullptr;
 	MenuButton *snap_config_menu = nullptr;
 	PopupMenu *smartsnap_config_popup = nullptr;
 
-	Button *lock_button = nullptr;
-	Button *unlock_button = nullptr;
+	Button *_lock_btn = nullptr;
+	Button *_unlock_btn = nullptr;
 
-	Button *group_button = nullptr;
-	Button *ungroup_button = nullptr;
+	Button *_group_btn = nullptr;
+	Button *_ungroup_btn = nullptr;
 
 	MenuButton *view_menu = nullptr;
 	PopupMenu *grid_menu = nullptr;
 	PopupMenu *theme_menu = nullptr;
 	PopupMenu *gizmos_menu = nullptr;
-	HBoxContainer *animation_hb = nullptr;
+	EditorToolbarFlowContainer *_animation_vflow = nullptr;
 	MenuButton *animation_menu = nullptr;
 
-	Button *key_loc_button = nullptr;
-	Button *key_rot_button = nullptr;
-	Button *key_scale_button = nullptr;
-	Button *key_insert_button = nullptr;
-	Button *key_auto_insert_button = nullptr;
+	Button *_key_loc_btn = nullptr;
+	Button *_key_rot_btn = nullptr;
+	Button *_key_scale_btn = nullptr;
+	Button *_key_insert_btn = nullptr;
+	Button *_key_auto_insert_btn = nullptr;
 
 	PopupMenu *selection_menu = nullptr;
 	PopupMenu *add_node_menu = nullptr;
@@ -329,12 +330,14 @@ private:
 	void _commit_canvas_state_requested(const Array &p_selection, const String &p_message, bool p_commit_bones);
 
 	Vector2 _anchor_to_position(const Control *p_control, Vector2 anchor);
-	Vector2 _position_to_anchor(const Control *p_control, Vector2 position);
 
 	void _prepare_view_menu();
 	void _popup_callback(int p_op);
 	bool updating_scroll = false;
 	void _update_scroll(real_t);
+	void _queue_viewport_overlay_update();
+	void _update_viewport_overlays();
+	bool _viewport_overlay_update_pending = false;
 	void _update_scrollbars();
 	void _snap_changed();
 	void _selection_result_pressed(int);
@@ -411,8 +414,8 @@ private:
 	VBoxContainer *controls_vb = nullptr;
 	Control *info_panel_container = nullptr;
 	Control *frame_time_panel_container = nullptr;
-	Button *button_center_view = nullptr;
-	EditorZoomWidget *zoom_widget = nullptr;
+	Button *_center_view_btn = nullptr;
+	EditorZoomContainer *zoom_widget = nullptr;
 	void _update_zoom(real_t p_zoom);
 	void _shortcut_zoom_set(real_t p_zoom);
 	void _zoom_on_position(real_t p_zoom, Point2 p_position = Point2());
@@ -461,6 +464,8 @@ public:
 
 	void add_control_to_menu_panel(Control *p_control);
 	void remove_control_from_menu_panel(Control *p_control);
+	// Opens a toolbar popup toward the inside of the viewport.
+	void popup_toolbar_tool(Popup *p_popup, Control *p_anchor);
 
 	void add_control_to_left_panel(Control *p_control);
 	void remove_control_from_left_panel(Control *p_control);

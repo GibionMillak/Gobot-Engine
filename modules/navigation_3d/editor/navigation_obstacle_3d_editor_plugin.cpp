@@ -36,6 +36,7 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/scene/3d/node_3d_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/3d/navigation/navigation_obstacle_3d.h"
@@ -250,7 +251,7 @@ void NavigationObstacle3DEditorPlugin::_notification(int p_what) {
 
 		case NOTIFICATION_READY: {
 			_update_theme();
-			button_edit->set_pressed(true);
+			_edit_btn->set_pressed(true);
 			get_tree()->connect("node_removed", callable_mp(this, &NavigationObstacle3DEditorPlugin::_node_removed));
 			EditorNode::get_singleton()->get_gui_base()->connect(SceneStringName(theme_changed), callable_mp(this, &NavigationObstacle3DEditorPlugin::_update_theme));
 		} break;
@@ -298,9 +299,9 @@ bool NavigationObstacle3DEditorPlugin::handles(Object *p_object) const {
 
 void NavigationObstacle3DEditorPlugin::make_visible(bool p_visible) {
 	if (p_visible) {
-		obstacle_editor->show();
+		obstacle_vflow->show();
 	} else {
-		obstacle_editor->hide();
+		obstacle_vflow->hide();
 		edit(nullptr);
 	}
 }
@@ -338,16 +339,16 @@ void NavigationObstacle3DEditorPlugin::action_clear_vertices() {
 }
 
 void NavigationObstacle3DEditorPlugin::_update_theme() {
-	button_create->set_tooltip_text(TTR("Add Vertex"));
-	button_edit->set_tooltip_text(TTR("Edit Vertex"));
-	button_delete->set_tooltip_text(TTR("Delete Vertex"));
-	button_flip->set_tooltip_text(TTR("Flip Winding"));
-	button_clear->set_tooltip_text(TTR("Clear Vertices"));
-	button_create->set_button_icon(button_create->get_editor_theme_icon(SNAME("action_curve_create")));
-	button_edit->set_button_icon(button_edit->get_editor_theme_icon(SNAME("node_control_curve_edit")));
-	button_delete->set_button_icon(button_delete->get_editor_theme_icon(SNAME("action_curve_delete")));
-	button_flip->set_button_icon(button_flip->get_editor_theme_icon(SNAME("action_flip_winding")));
-	button_clear->set_button_icon(button_clear->get_editor_theme_icon(SNAME("action_clear")));
+	_create_btn->set_tooltip_text(TTR("Add Vertex"));
+	_edit_btn->set_tooltip_text(TTR("Edit Vertex"));
+	_delete_btn->set_tooltip_text(TTR("Delete Vertex"));
+	_flip_btn->set_tooltip_text(TTR("Flip Winding"));
+	_clear_btn->set_tooltip_text(TTR("Clear Vertices"));
+	_create_btn->set_button_icon(_create_btn->get_editor_theme_icon(SNAME("action_curve_create")));
+	_edit_btn->set_button_icon(_edit_btn->get_editor_theme_icon(SNAME("node_control_curve_edit")));
+	_delete_btn->set_button_icon(_delete_btn->get_editor_theme_icon(SNAME("action_curve_delete")));
+	_flip_btn->set_button_icon(_flip_btn->get_editor_theme_icon(SNAME("action_flip_winding")));
+	_clear_btn->set_button_icon(_clear_btn->get_editor_theme_icon(SNAME("action_clear")));
 }
 
 void NavigationObstacle3DEditorPlugin::_node_removed(Node *p_node) {
@@ -358,19 +359,19 @@ void NavigationObstacle3DEditorPlugin::_node_removed(Node *p_node) {
 		rs->mesh_clear(point_lines_mesh_rid);
 		rs->mesh_clear(point_handle_mesh_rid);
 
-		obstacle_editor->hide();
+		obstacle_vflow->hide();
 	}
 }
 
 void NavigationObstacle3DEditorPlugin::set_mode(int p_option) {
 	if (p_option == NavigationObstacle3DEditorPlugin::ACTION_FLIP) {
-		button_flip->set_pressed(false);
+		_flip_btn->set_pressed(false);
 		action_flip_vertices();
 		return;
 	}
 
 	if (p_option == NavigationObstacle3DEditorPlugin::ACTION_CLEAR) {
-		button_clear->set_pressed(false);
+		_clear_btn->set_pressed(false);
 		button_clear_dialog->reset_size();
 		button_clear_dialog->popup_centered();
 		return;
@@ -378,11 +379,11 @@ void NavigationObstacle3DEditorPlugin::set_mode(int p_option) {
 
 	mode = p_option;
 
-	button_create->set_pressed(p_option == NavigationObstacle3DEditorPlugin::MODE_CREATE);
-	button_edit->set_pressed(p_option == NavigationObstacle3DEditorPlugin::MODE_EDIT);
-	button_delete->set_pressed(p_option == NavigationObstacle3DEditorPlugin::MODE_DELETE);
-	button_flip->set_pressed(false);
-	button_clear->set_pressed(false);
+	_create_btn->set_pressed(p_option == NavigationObstacle3DEditorPlugin::MODE_CREATE);
+	_edit_btn->set_pressed(p_option == NavigationObstacle3DEditorPlugin::MODE_EDIT);
+	_delete_btn->set_pressed(p_option == NavigationObstacle3DEditorPlugin::MODE_DELETE);
+	_flip_btn->set_pressed(false);
+	_clear_btn->set_pressed(false);
 }
 
 void NavigationObstacle3DEditorPlugin::_wip_cancel() {
@@ -416,8 +417,8 @@ void NavigationObstacle3DEditorPlugin::_wip_close() {
 		wip_active = false;
 		//mode = MODE_EDIT;
 		NavigationObstacle3DEditorPlugin::singleton->set_mode(NavigationObstacle3DEditorPlugin::MODE_EDIT);
-		button_edit->set_pressed(true);
-		button_create->set_pressed(false);
+		_edit_btn->set_pressed(true);
+		_create_btn->set_pressed(false);
 		edited_point = -1;
 	}
 }
@@ -824,54 +825,55 @@ NavigationObstacle3DEditorPlugin::NavigationObstacle3DEditorPlugin() {
 	rs->instance_set_base(point_lines_instance_rid, point_lines_mesh_rid);
 	rs->instance_set_base(point_handles_instance_rid, point_handle_mesh_rid);
 
-	obstacle_editor = memnew(HBoxContainer);
-	obstacle_editor->hide();
+	obstacle_vflow = memnew(EditorToolbarFlowContainer);
+	obstacle_vflow->hide();
 
-	Ref<ButtonGroup> bg;
-	bg.instantiate();
+	{
+		Ref<ButtonGroup> bg;
+		bg.instantiate();
 
-	button_create = memnew(Button);
-	button_create->set_theme_type_variation(SceneStringName(FlatButton));
-	obstacle_editor->add_child(button_create);
-	button_create->set_tooltip_text(TTR("Add Vertex"));
-	button_create->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::MODE_CREATE));
-	button_create->set_toggle_mode(true);
-	button_create->set_button_group(bg);
+		_create_btn = memnew(Button);
+		_create_btn->set_button_group(bg);
+		_create_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_create_btn->set_toggle_mode(true);
+		_create_btn->set_tooltip_text(TTR("Add Vertex"));
+		obstacle_vflow->add_child(_create_btn);
+		_create_btn->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::MODE_CREATE));
 
-	button_edit = memnew(Button);
-	button_edit->set_theme_type_variation(SceneStringName(FlatButton));
-	obstacle_editor->add_child(button_edit);
-	button_edit->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::MODE_EDIT));
-	button_edit->set_toggle_mode(true);
-	button_edit->set_button_group(bg);
+		_edit_btn = memnew(Button);
+		_edit_btn->set_button_group(bg);
+		_edit_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_edit_btn->set_toggle_mode(true);
+		obstacle_vflow->add_child(_edit_btn);
+		_edit_btn->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::MODE_EDIT));
 
-	button_delete = memnew(Button);
-	button_delete->set_theme_type_variation(SceneStringName(FlatButton));
-	obstacle_editor->add_child(button_delete);
-	button_delete->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::MODE_DELETE));
-	button_delete->set_toggle_mode(true);
-	button_delete->set_button_group(bg);
+		_delete_btn = memnew(Button);
+		_delete_btn->set_button_group(bg);
+		_delete_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_delete_btn->set_toggle_mode(true);
+		obstacle_vflow->add_child(_delete_btn);
+		_delete_btn->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::MODE_DELETE));
 
-	button_flip = memnew(Button);
-	button_flip->set_theme_type_variation(SceneStringName(FlatButton));
-	obstacle_editor->add_child(button_flip);
-	button_flip->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::ACTION_FLIP));
-	button_flip->set_toggle_mode(true);
+		_flip_btn = memnew(Button);
+		_flip_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_flip_btn->set_toggle_mode(true);
+		obstacle_vflow->add_child(_flip_btn);
+		_flip_btn->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::ACTION_FLIP));
 
-	button_clear = memnew(Button);
-	button_clear->set_theme_type_variation(SceneStringName(FlatButton));
-	obstacle_editor->add_child(button_clear);
-	button_clear->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::ACTION_CLEAR));
-	button_clear->set_toggle_mode(true);
+		_clear_btn = memnew(Button);
+		_clear_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_clear_btn->set_toggle_mode(true);
+		obstacle_vflow->add_child(_clear_btn);
+		_clear_btn->connect(SceneStringName(pressed), callable_mp(this, &NavigationObstacle3DEditorPlugin::set_mode).bind(NavigationObstacle3DEditorPlugin::ACTION_CLEAR));
 
-	button_clear_dialog = memnew(Dialog(true));
-	button_clear_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
-	button_clear_dialog->set_title(TTR("Please Confirm..."));
-	button_clear_dialog->set_text(TTR("Remove all vertices?"));
-	button_clear_dialog->connect(SceneStringName(confirmed), callable_mp(NavigationObstacle3DEditorPlugin::singleton, &NavigationObstacle3DEditorPlugin::action_clear_vertices));
-	obstacle_editor->add_child(button_clear_dialog);
-
-	Node3DEditor::get_singleton()->add_control_to_menu_panel(obstacle_editor);
+		button_clear_dialog = memnew(Dialog(true));
+		button_clear_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
+		button_clear_dialog->set_title(TTR("Please Confirm..."));
+		button_clear_dialog->set_text(TTR("Remove all vertices?"));
+		button_clear_dialog->connect(SceneStringName(confirmed), callable_mp(NavigationObstacle3DEditorPlugin::singleton, &NavigationObstacle3DEditorPlugin::action_clear_vertices));
+		obstacle_vflow->add_child(button_clear_dialog);
+	}
+	Node3DEditor::get_singleton()->add_control_to_menu_panel(obstacle_vflow);
 
 	Ref<NavigationObstacle3DGizmoPlugin> gizmo_plugin = memnew(NavigationObstacle3DGizmoPlugin());
 	obstacle_3d_gizmo_plugin = gizmo_plugin;

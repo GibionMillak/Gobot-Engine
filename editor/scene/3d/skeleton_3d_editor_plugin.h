@@ -38,8 +38,10 @@
 #include "scene/3d/camera_3d.h"
 #include "scene/3d/mesh_instance_3d.h"
 #include "scene/3d/skeleton_3d.h"
+#include "scene/gui/box_container.h"
 #include "scene/resources/immediate_mesh.h"
 
+class EditorToolbarFlowContainer;
 class EditorInspectorPluginSkeleton;
 class EditorPropertyVector3;
 class Joint;
@@ -48,7 +50,6 @@ class Skeleton3DEditorPlugin;
 class Button;
 class Tree;
 class TreeItem;
-class VSeparator;
 
 class BonePropertiesEditor : public VBoxContainer {
 	GDCLASS(BonePropertiesEditor, VBoxContainer);
@@ -140,20 +141,20 @@ class Skeleton3DEditor : public VBoxContainer {
 	BonePropertiesEditor *rest_editor = nullptr;
 	BonePropertiesEditor *pose_editor = nullptr;
 
-	HBoxContainer *topmenu_bar = nullptr;
+	EditorToolbarFlowContainer *_topmenu_vflow = nullptr;
 	MenuButton *skeleton_options = nullptr;
-	Button *edit_mode_button = nullptr;
+	Button *_edit_mode_btn = nullptr;
 
 	bool edit_mode = false;
 
-	HBoxContainer *animation_hb = nullptr;
-	Button *key_loc_button = nullptr;
-	Button *key_rot_button = nullptr;
-	Button *key_scale_button = nullptr;
-	Button *key_insert_button = nullptr;
-	Button *key_insert_new_button = nullptr;
-	Button *key_mod_insert_button = nullptr;
-	Button *key_mod_insert_new_button = nullptr;
+	EditorToolbarFlowContainer *_animation_vflow = nullptr;
+	Button *_key_loc_btn = nullptr;
+	Button *_key_rot_btn = nullptr;
+	Button *_key_scale_btn = nullptr;
+	Button *_key_insert_btn = nullptr;
+	Button *_key_insert_new_btn = nullptr;
+	Button *_key_mod_insert_btn = nullptr;
+	Button *_key_mod_insert_new_btn = nullptr;
 
 	// To maintain the status while running editor.
 	void _loc_toggled(bool p_toggled_on);

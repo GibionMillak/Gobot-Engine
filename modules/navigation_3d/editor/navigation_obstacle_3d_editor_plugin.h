@@ -32,8 +32,8 @@
 
 #include "editor/plugins/editor_plugin.h"
 #include "editor/scene/3d/node_3d_editor_gizmos.h"
-#include "scene/gui/box_container.h"
 
+class EditorToolbarFlowContainer;
 class Button;
 class Dialog;
 class NavigationObstacle3D;
@@ -97,11 +97,11 @@ private:
 	void _wip_cancel();
 	void _update_theme();
 
-	Button *button_create = nullptr;
-	Button *button_edit = nullptr;
-	Button *button_delete = nullptr;
-	Button *button_flip = nullptr;
-	Button *button_clear = nullptr;
+	Button *_create_btn = nullptr;
+	Button *_edit_btn = nullptr;
+	Button *_delete_btn = nullptr;
+	Button *_flip_btn = nullptr;
+	Button *_clear_btn = nullptr;
 
 	Dialog *button_clear_dialog = nullptr;
 
@@ -110,7 +110,7 @@ protected:
 	void _node_removed(Node *p_node);
 
 public:
-	HBoxContainer *obstacle_editor = nullptr;
+	EditorToolbarFlowContainer *obstacle_vflow = nullptr;
 	static NavigationObstacle3DEditorPlugin *singleton;
 
 	void redraw();

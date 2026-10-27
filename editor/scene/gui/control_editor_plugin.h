@@ -215,8 +215,8 @@ public:
 	SizeFlagPresetPicker(bool p_vertical);
 };
 
-class ControlEditorToolbar : public HBoxContainer {
-	GDCLASS(ControlEditorToolbar, HBoxContainer);
+class ControlEditorToolbar : public VBoxContainer {
+	GDCLASS(ControlEditorToolbar, VBoxContainer);
 
 	EditorSelection *editor_selection = nullptr;
 

@@ -32,7 +32,7 @@
 
 #include "../tile_set.h"
 
-#include "editor/gui/editor_zoom_widget.h"
+#include "editor/gui/containers/editor_zoom_container.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
 #include "scene/gui/center_container.h"
@@ -50,7 +50,7 @@ private:
 	int source_id = TileSet::INVALID_SOURCE;
 
 	float previous_zoom = 1.0;
-	EditorZoomWidget *zoom_widget = nullptr;
+	EditorZoomContainer *zoom_widget = nullptr;
 	Button *button_center_view = nullptr;
 	CenterContainer *center_container = nullptr;
 	Vector2 panning;

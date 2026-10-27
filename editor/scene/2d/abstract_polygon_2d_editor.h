@@ -30,16 +30,16 @@
 
 #pragma once
 
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/plugins/editor_plugin.h"
 #include "scene/2d/node_2d.h"
-#include "scene/gui/box_container.h"
 
 class Button;
 class CanvasItemEditor;
 class Dialog;
 
-class AbstractPolygon2DEditor : public HBoxContainer {
-	GDCLASS(AbstractPolygon2DEditor, HBoxContainer);
+class AbstractPolygon2DEditor : public EditorToolbarFlowContainer {
+	GDCLASS(AbstractPolygon2DEditor, EditorToolbarFlowContainer);
 
 	Button *button_create = nullptr;
 	Button *button_edit = nullptr;
@@ -94,7 +94,6 @@ class AbstractPolygon2DEditor : public HBoxContainer {
 	bool _polygon_editing_enabled = false;
 
 	CanvasItemEditor *canvas_item_editor = nullptr;
-	Panel *panel = nullptr;
 	Dialog *create_resource = nullptr;
 
 protected:

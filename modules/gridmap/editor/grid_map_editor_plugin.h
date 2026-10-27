@@ -40,7 +40,7 @@ class BaseButton;
 class Button;
 class ButtonGroup;
 class Dialog;
-class EditorZoomWidget;
+class EditorZoomContainer;
 class FilterLineEdit;
 class HSlider;
 class ItemList;
@@ -98,7 +98,7 @@ class GridMapEditor : public EditorDock {
 	Button *rotate_z_button = nullptr;
 	Button *clear_rotation_button = nullptr;
 
-	EditorZoomWidget *zoom_widget = nullptr;
+	EditorZoomContainer *zoom_widget = nullptr;
 	Button *mode_thumbnail = nullptr;
 	Button *mode_list = nullptr;
 	FilterLineEdit *search_box = nullptr;

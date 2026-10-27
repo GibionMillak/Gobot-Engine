@@ -848,6 +848,8 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING(Variant::FLOAT, PROPERTY_HINT_RANGE, "editors/grid_map/pick_distance", 5000.0, "1,8192,0.1,or_greater");
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_RANGE, "editors/grid_map/preview_size", 64, "16,128,1")
 
+	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "editors/viewport/toolbar_side", 0, "Left,Right")
+
 	// 3D
 	EDITOR_SETTING_BASIC(Variant::COLOR, PROPERTY_HINT_NONE, "editors/3d/primary_grid_color", Color(0.56, 0.56, 0.56, 0.5), "")
 	EDITOR_SETTING_BASIC(Variant::COLOR, PROPERTY_HINT_NONE, "editors/3d/secondary_grid_color", Color(0.38, 0.38, 0.38, 0.5), "")
@@ -1467,13 +1469,6 @@ void EditorSettings::erase(const String &p_setting) {
 	_THREAD_SAFE_METHOD_
 
 	props.erase(p_setting);
-}
-
-void EditorSettings::raise_order(const String &p_setting) {
-	_THREAD_SAFE_METHOD_
-
-	ERR_FAIL_COND(!props.has(p_setting));
-	props[p_setting].order = ++last_order;
 }
 
 void EditorSettings::set_restart_if_changed(const StringName &p_setting, bool p_restart) {

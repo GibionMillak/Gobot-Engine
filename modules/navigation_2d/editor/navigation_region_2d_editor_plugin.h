@@ -33,8 +33,8 @@
 #include "editor/plugins/editor_plugin.h"
 #include "editor/scene/2d/abstract_polygon_2d_editor.h"
 
+class EditorToolbarFlowContainer;
 class Dialog;
-class HBoxContainer;
 class NavigationPolygon;
 class NavigationRegion2D;
 class Timer;
@@ -50,10 +50,9 @@ class NavigationRegion2DEditor : public AbstractPolygon2DEditor {
 
 	Dialog *err_dialog = nullptr;
 
-	HBoxContainer *bake_hbox = nullptr;
-	Button *button_bake = nullptr;
-	Button *button_reset = nullptr;
-	Label *bake_info = nullptr;
+	EditorToolbarFlowContainer *_bake_vflow = nullptr;
+	Button *_bake_btn = nullptr;
+	Button *_reset_btn = nullptr;
 
 	Timer *rebake_timer = nullptr;
 	float _rebake_timer_delay = 1.5;

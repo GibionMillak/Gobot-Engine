@@ -34,13 +34,12 @@
 #include "core/object/callable_mp.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/inspector/multi_node_edit.h"
 #include "editor/scene/3d/node_3d_editor_plugin.h"
 #include "scene/3d/navigation/navigation_region_3d.h"
-#include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
 #include "scene/gui/dialog.h"
-#include "scene/gui/label.h"
 #include "scene/main/scene_tree.h"
 #include "servers/navigation_3d/navigation_server_3d.h"
 
@@ -62,8 +61,8 @@ void NavigationRegion3DEditor::_node_removed(Node *p_node) {
 void NavigationRegion3DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
-			button_bake->set_button_icon(get_theme_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
-			button_reset->set_button_icon(get_theme_icon(SNAME("action_revert"), EditorStringName(EditorIcons)));
+			_bake_btn->set_button_icon(get_theme_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
+			_reset_btn->set_button_icon(get_theme_icon(SNAME("action_revert"), EditorStringName(EditorIcons)));
 		} break;
 		case NOTIFICATION_PROCESS: {
 			if (currently_baking_region) {
@@ -77,7 +76,7 @@ void NavigationRegion3DEditor::_notification(int p_what) {
 }
 
 void NavigationRegion3DEditor::_bake_pressed() {
-	button_bake->set_pressed(false);
+	_bake_btn->set_pressed(false);
 
 	if (selected_regions.is_empty()) {
 		return;
@@ -207,8 +206,7 @@ void NavigationRegion3DEditor::_on_navmesh_multibake_canceled() {
 }
 
 void NavigationRegion3DEditor::_clear_pressed() {
-	button_bake->set_pressed(false);
-	bake_info->set_text("");
+	_bake_btn->set_pressed(false);
 
 	if (!selected_regions.is_empty()) {
 		for (NavigationRegion3D *region : selected_regions) {
@@ -229,25 +227,23 @@ void NavigationRegion3DEditor::edit(LocalVector<NavigationRegion3D *> p_regions)
 }
 
 NavigationRegion3DEditor::NavigationRegion3DEditor() {
-	bake_hbox = memnew(HBoxContainer);
+	_bake_vflow = memnew(EditorToolbarFlowContainer);
 
-	button_bake = memnew(Button);
-	button_bake->set_theme_type_variation(SceneStringName(FlatButton));
-	bake_hbox->add_child(button_bake);
-	button_bake->set_toggle_mode(true);
-	button_bake->set_text(TTR("Bake NavigationMesh"));
-	button_bake->set_tooltip_text(TTR("Bakes the NavigationMesh by first parsing the scene for source geometry and then creating the navigation mesh vertices and polygons."));
-	button_bake->connect(SceneStringName(pressed), callable_mp(this, &NavigationRegion3DEditor::_bake_pressed));
+	{
+		_bake_btn = memnew(Button);
+		_bake_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_bake_btn->set_toggle_mode(true);
+		_bake_btn->set_tooltip_text(TTR("Bakes the NavigationMesh by first parsing the scene for source geometry and then creating the navigation mesh vertices and polygons."));
+		_bake_vflow->add_child(_bake_btn);
+		_bake_btn->connect(SceneStringName(pressed), callable_mp(this, &NavigationRegion3DEditor::_bake_pressed));
 
-	button_reset = memnew(Button);
-	button_reset->set_theme_type_variation(SceneStringName(FlatButton));
-	bake_hbox->add_child(button_reset);
-	button_reset->set_text(TTR("Clear NavigationMesh"));
-	button_reset->set_tooltip_text(TTR("Clears the internal NavigationMesh vertices and polygons."));
-	button_reset->connect(SceneStringName(pressed), callable_mp(this, &NavigationRegion3DEditor::_clear_pressed));
+		_reset_btn = memnew(Button);
+		_reset_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_reset_btn->set_tooltip_text(TTR("Clears the internal NavigationMesh vertices and polygons."));
+		_bake_vflow->add_child(_reset_btn);
+		_reset_btn->connect(SceneStringName(pressed), callable_mp(this, &NavigationRegion3DEditor::_clear_pressed));
 
-	bake_info = memnew(Label);
-	bake_hbox->add_child(bake_info);
+	}
 
 	err_dialog = memnew(Dialog);
 	err_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
@@ -307,10 +303,10 @@ bool NavigationRegion3DEditorPlugin::handles(Object *p_object) const {
 void NavigationRegion3DEditorPlugin::make_visible(bool p_visible) {
 	if (p_visible) {
 		navigation_region_editor->show();
-		navigation_region_editor->bake_hbox->show();
+		navigation_region_editor->_bake_vflow->show();
 	} else {
 		navigation_region_editor->hide();
-		navigation_region_editor->bake_hbox->hide();
+		navigation_region_editor->_bake_vflow->hide();
 		navigation_region_editor->edit(LocalVector<NavigationRegion3D *>());
 	}
 }
@@ -318,9 +314,9 @@ void NavigationRegion3DEditorPlugin::make_visible(bool p_visible) {
 NavigationRegion3DEditorPlugin::NavigationRegion3DEditorPlugin() {
 	navigation_region_editor = memnew(NavigationRegion3DEditor);
 	EditorNode::get_singleton()->get_gui_base()->add_child(navigation_region_editor);
-	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, navigation_region_editor->bake_hbox);
+	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, navigation_region_editor->_bake_vflow);
 	navigation_region_editor->hide();
-	navigation_region_editor->bake_hbox->hide();
+	navigation_region_editor->_bake_vflow->hide();
 
 	gizmo_plugin.instantiate();
 	Node3DEditor::get_singleton()->add_gizmo_plugin(gizmo_plugin);

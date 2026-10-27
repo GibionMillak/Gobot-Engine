@@ -39,7 +39,7 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
-#include "editor/gui/editor_zoom_widget.h"
+#include "editor/gui/containers/editor_zoom_container.h"
 #include "editor/gui/filter_line_edit.h"
 #include "editor/inspector/editor_resource_preview.h"
 #include "editor/scene/3d/mesh_library_editor_plugin.h"
@@ -1922,7 +1922,7 @@ GridMapEditor::GridMapEditor() {
 	toolbar->add_child(search_box);
 	search_box->connect(SceneStringName(text_changed), callable_mp(this, &GridMapEditor::_text_changed));
 
-	zoom_widget = memnew(EditorZoomWidget);
+	zoom_widget = memnew(EditorZoomContainer);
 	toolbar->add_child(zoom_widget);
 	zoom_widget->setup_zoom_limits(0.2, 4);
 	zoom_widget->set_zoom(1.0);

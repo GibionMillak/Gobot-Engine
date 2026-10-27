@@ -36,7 +36,7 @@
 class Dialog;
 class ButtonGroup;
 class EditorDock;
-class EditorZoomWidget;
+class EditorZoomContainer;
 class HScrollBar;
 class HSlider;
 class Label;
@@ -45,6 +45,7 @@ class Panel;
 class ScrollContainer;
 class SpinBox;
 class TextureRect;
+class VBoxContainer;
 class ViewPanner;
 class VScrollBar;
 
@@ -96,7 +97,7 @@ class Polygon2DEditor : public AbstractPolygon2DEditor {
 	Control *canvas = nullptr;
 	Panel *canvas_background = nullptr;
 	Polygon2D *preview_polygon = nullptr;
-	EditorZoomWidget *zoom_widget = nullptr;
+	EditorZoomContainer *zoom_widget = nullptr;
 	HScrollBar *hscroll = nullptr;
 	VScrollBar *vscroll = nullptr;
 	bool center_view_on_draw = false;

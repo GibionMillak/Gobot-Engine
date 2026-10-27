@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_zoom_widget.h                                                  */
+/*  editor_toolbar_flow_container.h                                       */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,40 +30,27 @@
 
 #pragma once
 
-#include "scene/gui/box_container.h"
-#include "scene/gui/button.h"
+#include "scene/gui/flow_container.h"
 
-class EditorZoomWidget : public HBoxContainer {
-	GDCLASS(EditorZoomWidget, HBoxContainer);
+class EditorToolbarFlowContainer : public VFlowContainer {
+	GDCLASS(EditorToolbarFlowContainer, VFlowContainer);
 
-	Button *zoom_minus = nullptr;
-	Button *zoom_reset = nullptr;
-	Button *zoom_plus = nullptr;
-
-	float zoom = 1.0;
-	float min_zoom = 1.0 / 128;
-	float max_zoom = 128.0;
-	void _update_zoom_label();
-	void _button_zoom_by(int p_direction);
-	void _button_zoom_minus();
-	void _button_zoom_reset();
-	void _button_zoom_plus();
+public:
+	// Keeps the children in one column until they exceed this height, in pixels.
+	// A nonpositive height leaves the column unrestricted.
+	void set_height_limit(int p_height);
+	// Draws themed dividers in the gaps between direct child groups and columns.
+	void set_group_separators_enabled(bool p_enabled);
+	Size2 get_minimum_size() const override;
+	Size2 get_desired_size() const override;
 
 protected:
 	void _notification(int p_what);
-	static void _bind_methods();
 
-public:
-	EditorZoomWidget();
+private:
+	Size2 _get_layout_size() const;
+	void _draw_group_separators();
 
-	float get_zoom();
-	void set_zoom(float p_zoom);
-	void set_zoom_by_increments(int p_increment_count, bool p_integer_only = false);
-
-	float get_min_zoom();
-	float get_max_zoom();
-	// It's best to setup simultaneously, so min < max can be checked easily.
-	void setup_zoom_limits(float p_min, float p_max);
-	// Sets the shortcut context for the zoom buttons. By default their context is this EditorZoomWidget control.
-	void set_shortcut_context(Node *p_node) const;
+	int _height_limit = 0;
+	bool _group_separators_enabled = false;
 };

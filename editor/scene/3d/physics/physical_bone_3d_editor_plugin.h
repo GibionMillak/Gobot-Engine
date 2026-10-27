@@ -31,16 +31,16 @@
 #pragma once
 
 #include "editor/plugins/editor_plugin.h"
-#include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
 
+class EditorToolbarFlowContainer;
 class PhysicalBone3D;
 
 class PhysicalBone3DEditor : public Object {
 	GDCLASS(PhysicalBone3DEditor, Object);
 
-	HBoxContainer *spatial_editor_hb = nullptr;
-	Button *button_transform_joint = nullptr;
+	EditorToolbarFlowContainer *_spatial_editor_vflow = nullptr;
+	Button *_transform_joint_btn = nullptr;
 
 	PhysicalBone3D *selected = nullptr;
 

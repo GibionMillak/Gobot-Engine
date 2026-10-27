@@ -38,6 +38,7 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/scene/3d/node_3d_editor_plugin.h"
 #include "editor/scene/3d/node_3d_editor_viewport.h"
 #include "editor/settings/editor_settings.h"
@@ -261,7 +262,7 @@ void Path3DGizmo::commit_handle(int p_id, bool p_secondary, const Variant &p_res
 	EditorUndoRedoManager *ur = EditorUndoRedoManager::get_singleton();
 
 	// Primary handles: position.
-	if (!p_secondary && !Path3DEditorPlugin::singleton->curve_edit->is_pressed()) {
+	if (!p_secondary && !Path3DEditorPlugin::singleton->_curve_edit_btn->is_pressed()) {
 		// Special case for primary handle, the handle id equals control point id.
 		const int idx = p_id;
 		if (p_cancel) {
@@ -456,7 +457,7 @@ void Path3DGizmo::redraw() {
 			info.point_idx = idx;
 
 			// Collect in-handles except for the first point.
-			if (idx > (c->is_closed() ? -1 : 0) && Path3DEditorPlugin::singleton->curve_edit_curve->is_pressed()) {
+			if (idx > (c->is_closed() ? -1 : 0) && Path3DEditorPlugin::singleton->_curve_edit_curve_btn->is_pressed()) {
 				const Vector3 in = c->get_point_in(idx);
 
 				info.type = HandleType::HANDLE_TYPE_IN;
@@ -470,7 +471,7 @@ void Path3DGizmo::redraw() {
 			}
 
 			// Collect out-handles except for the last point.
-			if (idx < (c->is_closed() ? c->get_point_count() : c->get_point_count() - 1) && Path3DEditorPlugin::singleton->curve_edit_curve->is_pressed()) {
+			if (idx < (c->is_closed() ? c->get_point_count() : c->get_point_count() - 1) && Path3DEditorPlugin::singleton->_curve_edit_curve_btn->is_pressed()) {
 				const Vector3 out = c->get_point_out(idx);
 
 				info.type = HandleType::HANDLE_TYPE_OUT;
@@ -484,7 +485,7 @@ void Path3DGizmo::redraw() {
 			}
 
 			// Collect tilt-handles.
-			if (Path3DEditorPlugin::singleton->curve_edit_tilt->is_pressed()) {
+			if (Path3DEditorPlugin::singleton->_curve_edit_tilt_btn->is_pressed()) {
 				// Tilt handle.
 				{
 					info.type = HandleType::HANDLE_TYPE_TILT;
@@ -527,7 +528,7 @@ void Path3DGizmo::redraw() {
 			add_lines(tilt_handle_lines, path_tilt_material);
 		}
 
-		if (!Path3DEditorPlugin::singleton->curve_edit->is_pressed() && primary_handle_points.size()) {
+		if (!Path3DEditorPlugin::singleton->_curve_edit_btn->is_pressed() && primary_handle_points.size()) {
 			// Need to define indices separately.
 			// Point count.
 			const int pc = primary_handle_points.size();
@@ -587,11 +588,11 @@ Path3DGizmo::Path3DGizmo(Path3D *p_path) {
 	path->connect("curve_changed", callable_mp(this, &Path3DGizmo::_update_transform_gizmo));
 	path->connect("debug_color_changed", callable_mp(this, &Path3DGizmo::redraw));
 
-	Path3DEditorPlugin::singleton->curve_edit->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
-	Path3DEditorPlugin::singleton->curve_edit_curve->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
-	Path3DEditorPlugin::singleton->curve_create->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
-	Path3DEditorPlugin::singleton->curve_del->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
-	Path3DEditorPlugin::singleton->curve_closed->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
+	Path3DEditorPlugin::singleton->_curve_edit_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
+	Path3DEditorPlugin::singleton->_curve_edit_curve_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
+	Path3DEditorPlugin::singleton->_curve_create_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
+	Path3DEditorPlugin::singleton->_curve_del_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
+	Path3DEditorPlugin::singleton->_curve_closed_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DGizmo::redraw));
 }
 
 EditorPlugin::AfterGUIInput Path3DEditorPlugin::forward_3d_gui_input(Camera3D *p_camera, const Ref<InputEvent> &p_event) {
@@ -634,7 +635,7 @@ EditorPlugin::AfterGUIInput Path3DEditorPlugin::forward_3d_gui_input(Camera3D *p
 			set_handle_clicked(false);
 		}
 
-		if (mb->is_pressed() && mb->get_button_index() == MouseButton::LEFT && (curve_create->is_pressed() || (curve_edit->is_pressed() && mb->is_command_or_control_pressed()))) {
+		if (mb->is_pressed() && mb->get_button_index() == MouseButton::LEFT && (_curve_create_btn->is_pressed() || (_curve_edit_btn->is_pressed() && mb->is_command_or_control_pressed()))) {
 			//click into curve, break it down
 			Vector<Vector3> v3a = c->tessellate();
 			int rc = v3a.size();
@@ -739,7 +740,7 @@ EditorPlugin::AfterGUIInput Path3DEditorPlugin::forward_3d_gui_input(Camera3D *p
 				//add new at pos
 			}
 
-		} else if (mb->is_pressed() && ((mb->get_button_index() == MouseButton::LEFT && curve_del->is_pressed()) || (mb->get_button_index() == MouseButton::RIGHT && curve_edit->is_pressed()))) {
+		} else if (mb->is_pressed() && ((mb->get_button_index() == MouseButton::LEFT && _curve_del_btn->is_pressed()) || (mb->get_button_index() == MouseButton::RIGHT && _curve_edit_btn->is_pressed()))) {
 			const float disk_size = EDITOR_GET("editors/3d_gizmos/gizmo_settings/path3d_tilt_disk_size");
 			for (int i = 0; i < c->get_point_count(); i++) {
 				real_t dist_to_p = viewport->point_to_screen(gt.xform(c->get_point_position(i))).distance_to(mbpos);
@@ -812,20 +813,20 @@ bool Path3DEditorPlugin::handles(Object *p_object) const {
 
 void Path3DEditorPlugin::make_visible(bool p_visible) {
 	if (p_visible) {
-		topmenu_bar->show();
+		_topmenu_vflow->show();
 	} else {
-		topmenu_bar->hide();
+		_topmenu_vflow->hide();
 		path = nullptr;
 	}
 	set_physics_process(p_visible);
 }
 
 void Path3DEditorPlugin::_mode_changed(int p_mode) {
-	curve_create->set_pressed_no_signal(p_mode == MODE_CREATE);
-	curve_edit_curve->set_pressed_no_signal(p_mode == MODE_EDIT_CURVE);
-	curve_edit_tilt->set_pressed_no_signal(p_mode == MODE_EDIT_TILT);
-	curve_edit->set_pressed_no_signal(p_mode == MODE_EDIT);
-	curve_del->set_pressed_no_signal(p_mode == MODE_DELETE);
+	_curve_create_btn->set_pressed_no_signal(p_mode == MODE_CREATE);
+	_curve_edit_curve_btn->set_pressed_no_signal(p_mode == MODE_EDIT_CURVE);
+	_curve_edit_tilt_btn->set_pressed_no_signal(p_mode == MODE_EDIT_TILT);
+	_curve_edit_btn->set_pressed_no_signal(p_mode == MODE_EDIT);
+	_curve_del_btn->set_pressed_no_signal(p_mode == MODE_DELETE);
 
 	Node3DEditor::get_singleton()->clear_subgizmo_selection();
 }
@@ -928,14 +929,15 @@ void Path3DEditorPlugin::_restore_curve_points(const PackedVector3Array &p_point
 }
 
 void Path3DEditorPlugin::_update_theme() {
-	curve_edit->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("node_control_curve_edit")));
-	curve_edit_curve->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_curve")));
-	curve_edit_tilt->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_tilt")));
-	curve_create->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_create")));
-	curve_del->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_delete")));
-	curve_closed->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_curve_close")));
-	curve_clear_points->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("action_clear")));
-	create_curve_button->set_button_icon(topmenu_bar->get_editor_theme_icon(SNAME("resource_curve_3d")));
+	_curve_edit_btn->set_button_icon(_topmenu_vflow->get_editor_theme_icon(SNAME("node_control_curve_edit")));
+	_curve_edit_curve_btn->set_button_icon(_topmenu_vflow->get_editor_theme_icon(SNAME("action_curve_curve")));
+	_curve_edit_tilt_btn->set_button_icon(_topmenu_vflow->get_editor_theme_icon(SNAME("action_curve_tilt")));
+	_curve_create_btn->set_button_icon(_topmenu_vflow->get_editor_theme_icon(SNAME("action_curve_create")));
+	_curve_del_btn->set_button_icon(_topmenu_vflow->get_editor_theme_icon(SNAME("action_curve_delete")));
+	_curve_closed_btn->set_button_icon(_topmenu_vflow->get_editor_theme_icon(SNAME("action_curve_close")));
+	_curve_clear_points_btn->set_button_icon(_topmenu_vflow->get_editor_theme_icon(SNAME("action_clear")));
+	_create_curve_btn->set_button_icon(_topmenu_vflow->get_editor_theme_icon(SNAME("resource_curve_3d")));
+	handle_menu->set_button_icon(_topmenu_vflow->get_editor_theme_icon(SNAME("viewport_tools")));
 }
 
 void Path3DEditorPlugin::_update_toolbar() {
@@ -943,8 +945,8 @@ void Path3DEditorPlugin::_update_toolbar() {
 		return;
 	}
 	bool has_curve = path->get_curve().is_valid();
-	toolbar->set_visible(has_curve);
-	create_curve_button->set_visible(!has_curve);
+	_toolbar_vflow->set_visible(has_curve);
+	_create_curve_btn->set_visible(!has_curve);
 }
 
 void Path3DEditorPlugin::_notification(int p_what) {
@@ -1028,98 +1030,100 @@ Path3DEditorPlugin::Path3DEditorPlugin() {
 	Node3DEditor::get_singleton()->add_gizmo_plugin(gizmo_plugin);
 	path_3d_gizmo_plugin = gizmo_plugin;
 
-	topmenu_bar = memnew(HBoxContainer);
-	topmenu_bar->hide();
+	_topmenu_vflow = memnew(EditorToolbarFlowContainer);
+	_topmenu_vflow->hide();
 
-	toolbar = memnew(HBoxContainer);
-	topmenu_bar->add_child(toolbar);
+	{
+		_toolbar_vflow = memnew(EditorToolbarFlowContainer);
+		_topmenu_vflow->add_child(_toolbar_vflow);
 
-	curve_edit = memnew(Button);
-	curve_edit->set_theme_type_variation(SceneStringName(FlatButton));
-	curve_edit->set_toggle_mode(true);
-	curve_edit->set_focus_mode(Control::FOCUS_NONE);
-	curve_edit->set_tooltip_text(TTR("Select Points") + "\n" + TTR("Shift+Click: Select multiple Points") + "\n" + vformat(TTR("%s+Click: Add Point"), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + TTR("Right Click: Delete Point"));
-	toolbar->add_child(curve_edit);
-	curve_edit->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_EDIT));
+		{
+			_curve_edit_btn = memnew(Button);
+			_curve_edit_btn->set_focus_mode(Control::FOCUS_NONE);
+			_curve_edit_btn->set_theme_type_variation(SceneStringName(FlatButton));
+			_curve_edit_btn->set_toggle_mode(true);
+			_curve_edit_btn->set_tooltip_text(TTR("Select Points") + "\n" + TTR("Shift+Click: Select multiple Points") + "\n" + vformat(TTR("%s+Click: Add Point"), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + TTR("Right Click: Delete Point"));
+			_toolbar_vflow->add_child(_curve_edit_btn);
+			_curve_edit_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_EDIT));
 
-	curve_edit_curve = memnew(Button);
-	curve_edit_curve->set_theme_type_variation(SceneStringName(FlatButton));
-	curve_edit_curve->set_toggle_mode(true);
-	curve_edit_curve->set_focus_mode(Control::FOCUS_NONE);
-	curve_edit_curve->set_tooltip_text(TTR("Select Control Points") + "\n" + TTR("Shift+Click: Drag out Control Points"));
-	toolbar->add_child(curve_edit_curve);
-	curve_edit_curve->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_EDIT_CURVE));
+			_curve_edit_curve_btn = memnew(Button);
+			_curve_edit_curve_btn->set_focus_mode(Control::FOCUS_NONE);
+			_curve_edit_curve_btn->set_theme_type_variation(SceneStringName(FlatButton));
+			_curve_edit_curve_btn->set_toggle_mode(true);
+			_curve_edit_curve_btn->set_tooltip_text(TTR("Select Control Points") + "\n" + TTR("Shift+Click: Drag out Control Points"));
+			_toolbar_vflow->add_child(_curve_edit_curve_btn);
+			_curve_edit_curve_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_EDIT_CURVE));
 
-	curve_edit_tilt = memnew(Button);
-	curve_edit_tilt->set_theme_type_variation(SceneStringName(FlatButton));
-	curve_edit_tilt->set_toggle_mode(true);
-	curve_edit_tilt->set_focus_mode(Control::FOCUS_NONE);
-	curve_edit_tilt->set_tooltip_text(TTR("Select Tilt Handles"));
-	toolbar->add_child(curve_edit_tilt);
-	curve_edit_tilt->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_EDIT_TILT));
+			_curve_edit_tilt_btn = memnew(Button);
+			_curve_edit_tilt_btn->set_focus_mode(Control::FOCUS_NONE);
+			_curve_edit_tilt_btn->set_theme_type_variation(SceneStringName(FlatButton));
+			_curve_edit_tilt_btn->set_toggle_mode(true);
+			_curve_edit_tilt_btn->set_tooltip_text(TTR("Select Tilt Handles"));
+			_toolbar_vflow->add_child(_curve_edit_tilt_btn);
+			_curve_edit_tilt_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_EDIT_TILT));
 
-	curve_create = memnew(Button);
-	curve_create->set_theme_type_variation(SceneStringName(FlatButton));
-	curve_create->set_toggle_mode(true);
-	curve_create->set_focus_mode(Control::FOCUS_NONE);
-	curve_create->set_tooltip_text(TTR("Add Point (in empty space)") + "\n" + TTR("Split Segment (in curve)"));
-	toolbar->add_child(curve_create);
-	curve_create->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_CREATE));
+			_curve_create_btn = memnew(Button);
+			_curve_create_btn->set_focus_mode(Control::FOCUS_NONE);
+			_curve_create_btn->set_theme_type_variation(SceneStringName(FlatButton));
+			_curve_create_btn->set_toggle_mode(true);
+			_curve_create_btn->set_tooltip_text(TTR("Add Point (in empty space)") + "\n" + TTR("Split Segment (in curve)"));
+			_toolbar_vflow->add_child(_curve_create_btn);
+			_curve_create_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_CREATE));
 
-	curve_del = memnew(Button);
-	curve_del->set_theme_type_variation(SceneStringName(FlatButton));
-	curve_del->set_toggle_mode(true);
-	curve_del->set_focus_mode(Control::FOCUS_NONE);
-	curve_del->set_tooltip_text(TTR("Delete Point"));
-	toolbar->add_child(curve_del);
-	curve_del->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_DELETE));
+			_curve_del_btn = memnew(Button);
+			_curve_del_btn->set_focus_mode(Control::FOCUS_NONE);
+			_curve_del_btn->set_theme_type_variation(SceneStringName(FlatButton));
+			_curve_del_btn->set_toggle_mode(true);
+			_curve_del_btn->set_tooltip_text(TTR("Delete Point"));
+			_toolbar_vflow->add_child(_curve_del_btn);
+			_curve_del_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_mode_changed).bind(MODE_DELETE));
 
-	curve_closed = memnew(Button);
-	curve_closed->set_theme_type_variation(SceneStringName(FlatButton));
-	curve_closed->set_focus_mode(Control::FOCUS_NONE);
-	curve_closed->set_tooltip_text(TTR("Close Curve"));
-	toolbar->add_child(curve_closed);
-	curve_closed->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_toggle_closed_curve));
+			_curve_closed_btn = memnew(Button);
+			_curve_closed_btn->set_focus_mode(Control::FOCUS_NONE);
+			_curve_closed_btn->set_theme_type_variation(SceneStringName(FlatButton));
+			_curve_closed_btn->set_tooltip_text(TTR("Close Curve"));
+			_toolbar_vflow->add_child(_curve_closed_btn);
+			_curve_closed_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_toggle_closed_curve));
 
-	curve_clear_points = memnew(Button);
-	curve_clear_points->set_theme_type_variation(SceneStringName(FlatButton));
-	curve_clear_points->set_focus_mode(Control::FOCUS_NONE);
-	curve_clear_points->set_tooltip_text(TTR("Clear Points"));
-	curve_clear_points->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_confirm_clear_points));
-	toolbar->add_child(curve_clear_points);
+			_curve_clear_points_btn = memnew(Button);
+			_curve_clear_points_btn->set_focus_mode(Control::FOCUS_NONE);
+			_curve_clear_points_btn->set_theme_type_variation(SceneStringName(FlatButton));
+			_curve_clear_points_btn->set_tooltip_text(TTR("Clear Points"));
+			_toolbar_vflow->add_child(_curve_clear_points_btn);
+			_curve_clear_points_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_confirm_clear_points));
 
-	clear_points_dialog = memnew(Dialog(true));
-	clear_points_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
-	clear_points_dialog->set_title(TTR("Please Confirm..."));
-	clear_points_dialog->set_text(TTR("Remove all curve points?"));
-	clear_points_dialog->connect(SceneStringName(confirmed), callable_mp(this, &Path3DEditorPlugin::_clear_points));
-	toolbar->add_child(clear_points_dialog);
+			clear_points_dialog = memnew(Dialog(true));
+			clear_points_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
+			clear_points_dialog->set_title(TTR("Please Confirm..."));
+			clear_points_dialog->set_text(TTR("Remove all curve points?"));
+			clear_points_dialog->connect(SceneStringName(confirmed), callable_mp(this, &Path3DEditorPlugin::_clear_points));
+			_toolbar_vflow->add_child(clear_points_dialog);
 
-	handle_menu = memnew(MenuButton);
-	handle_menu->set_flat(false);
-	handle_menu->set_theme_type_variation("FlatMenuButton");
-	handle_menu->set_text(TTR("Options"));
-	toolbar->add_child(handle_menu);
+			handle_menu = memnew(MenuButton);
+			handle_menu->set_flat(false);
+			handle_menu->set_theme_type_variation("FlatMenuButton");
+			handle_menu->set_tooltip_text(TTR("Options"));
+			_toolbar_vflow->add_child(handle_menu);
 
-	create_curve_button = memnew(Button);
-	create_curve_button->set_text(TTR("Create Curve"));
-	create_curve_button->hide();
-	topmenu_bar->add_child(create_curve_button);
-	create_curve_button->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_create_curve));
+			PopupMenu *menu = handle_menu->get_popup();
+			menu->add_check_item(TTR("Mirror Handle Angles"));
+			menu->set_item_checked(HANDLE_OPTION_ANGLE, mirror_handle_angle);
+			menu->add_check_item(TTR("Mirror Handle Lengths"));
+			menu->set_item_checked(HANDLE_OPTION_LENGTH, mirror_handle_length);
+			menu->add_check_item(TTR("Snap to Colliders"));
+			menu->set_item_checked(HANDLE_OPTION_SNAP_COLLIDER, snap_to_collider);
+			menu->connect(SceneStringName(id_pressed), callable_mp(this, &Path3DEditorPlugin::_handle_option_pressed));
+		}
+		_create_curve_btn = memnew(Button);
+		_create_curve_btn->hide();
+		_create_curve_btn->set_tooltip_text(TTR("Create Curve"));
+		_topmenu_vflow->add_child(_create_curve_btn);
+		_create_curve_btn->connect(SceneStringName(pressed), callable_mp(this, &Path3DEditorPlugin::_create_curve));
 
-	PopupMenu *menu = handle_menu->get_popup();
-	menu->add_check_item(TTR("Mirror Handle Angles"));
-	menu->set_item_checked(HANDLE_OPTION_ANGLE, mirror_handle_angle);
-	menu->add_check_item(TTR("Mirror Handle Lengths"));
-	menu->set_item_checked(HANDLE_OPTION_LENGTH, mirror_handle_length);
-	menu->add_check_item(TTR("Snap to Colliders"));
-	menu->set_item_checked(HANDLE_OPTION_SNAP_COLLIDER, snap_to_collider);
-	menu->connect(SceneStringName(id_pressed), callable_mp(this, &Path3DEditorPlugin::_handle_option_pressed));
-
-	curve_edit->set_pressed_no_signal(true);
-
-	topmenu_bar->connect(SceneStringName(theme_changed), callable_mp(this, &Path3DEditorPlugin::_update_theme));
-	Node3DEditor::get_singleton()->add_control_to_menu_panel(topmenu_bar);
+		_curve_edit_btn->set_pressed_no_signal(true);
+	}
+	_topmenu_vflow->connect(SceneStringName(theme_changed), callable_mp(this, &Path3DEditorPlugin::_update_theme));
+	Node3DEditor::get_singleton()->add_control_to_menu_panel(_topmenu_vflow);
 }
 
 Ref<EditorNode3DGizmo> Path3DGizmoPlugin::create_gizmo(Node3D *p_spatial) {
@@ -1196,7 +1200,7 @@ int Path3DGizmoPlugin::subgizmos_intersect_ray(const EditorNode3DGizmo *p_gizmo,
 	ERR_FAIL_COND_V(curve.is_null(), -1);
 
 	int ret = -1;
-	if (Path3DEditorPlugin::singleton->curve_edit->is_pressed()) {
+	if (Path3DEditorPlugin::singleton->_curve_edit_btn->is_pressed()) {
 		for (int idx = 0; idx < curve->get_point_count(); ++idx) {
 			Vector3 pos = path->get_global_transform().xform(curve->get_point_position(idx));
 			if (p_camera->unproject_position(pos).distance_to(p_point) < 20) {
@@ -1221,7 +1225,7 @@ Vector<int> Path3DGizmoPlugin::subgizmos_intersect_frustum(const EditorNode3DGiz
 	Ref<Curve3D> curve = path->get_curve();
 	ERR_FAIL_COND_V(curve.is_null(), contained_points);
 
-	if (Path3DEditorPlugin::singleton->curve_edit->is_pressed()) {
+	if (Path3DEditorPlugin::singleton->_curve_edit_btn->is_pressed()) {
 		for (int idx = 0; idx < curve->get_point_count(); ++idx) {
 			Vector3 pos = path->get_global_transform().xform(curve->get_point_position(idx));
 			bool is_contained_in_frustum = true;

@@ -33,17 +33,17 @@
 #include "editor/plugins/editor_plugin.h"
 #include "scene/3d/voxel_gi.h"
 
+class EditorToolbarFlowContainer;
 class EditorFileDialog;
 struct EditorProgress;
-class HBoxContainer;
 
 class VoxelGIEditorPlugin : public EditorPlugin {
 	GDCLASS(VoxelGIEditorPlugin, EditorPlugin);
 
 	VoxelGI *voxel_gi = nullptr;
 
-	HBoxContainer *bake_hb = nullptr;
-	Button *bake = nullptr;
+	EditorToolbarFlowContainer *_bake_vflow = nullptr;
+	Button *_bake_btn = nullptr;
 
 	EditorFileDialog *probe_file = nullptr;
 

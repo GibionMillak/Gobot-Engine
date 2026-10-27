@@ -32,13 +32,13 @@
 
 #include "editor/plugins/editor_plugin.h"
 
+class EditorToolbarFlowContainer;
 class Node2D;
-class HBoxContainer;
 class BaseButton;
 class CheckBox;
 class SpinBox;
 class ItemList;
-class OptionButton;
+class MenuButton;
 
 class ScenePaint2DEditor : public Control {
 	GDCLASS(ScenePaint2DEditor, Control);
@@ -102,14 +102,14 @@ class ScenePaint2DEditor : public Control {
 	Node2D *instance = nullptr;
 	Node2D *instance_container = nullptr;
 
-	HBoxContainer *toolbar = nullptr;
+	EditorToolbarFlowContainer *_toolbar_vflow = nullptr;
 
-	Button *pin_node_button = nullptr;
-	Button *scene_picker_button = nullptr;
-	OptionButton *recent_scenes_button = nullptr;
-	Button *edit_properties_button = nullptr;
+	Button *_pin_node_btn = nullptr;
+	Button *_scene_picker_btn = nullptr;
+	MenuButton *_recent_scenes_menu = nullptr;
+	Button *_edit_properties_btn = nullptr;
 
-	Button *advanced_settings_button = nullptr;
+	Button *_advanced_settings_btn = nullptr;
 
 	Node2D *selected_scene = nullptr;
 

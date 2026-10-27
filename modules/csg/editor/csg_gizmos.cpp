@@ -155,10 +155,10 @@ void CSGShapeEditor::_create_baked_collision_shape() {
 CSGShapeEditor::CSGShapeEditor() {
 	options = memnew(MenuButton);
 	options->hide();
-	options->set_text(TTR("CSG"));
-	options->set_switch_on_hover(true);
 	options->set_flat(false);
+	options->set_switch_on_hover(true);
 	options->set_theme_type_variation("FlatMenuButton");
+	options->set_tooltip_text(TTR("CSG"));
 	Node3DEditor::get_singleton()->add_control_to_menu_panel(options);
 
 	options->get_popup()->add_item(TTR("Bake Mesh Instance"), MENU_OPTION_BAKE_MESH_INSTANCE);

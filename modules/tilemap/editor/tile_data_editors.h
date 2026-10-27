@@ -82,7 +82,6 @@ public:
 	bool has_dummy_property(const StringName &p_name);
 	void add_dummy_property(const StringName &p_name);
 	void remove_dummy_property(const StringName &p_name);
-	void clear_dummy_properties();
 };
 
 class GenericTilePolygonEditor : public VBoxContainer {
@@ -134,7 +133,7 @@ private:
 
 	Panel *panel = nullptr;
 	Control *base_control = nullptr;
-	EditorZoomWidget *editor_zoom_widget = nullptr;
+	EditorZoomContainer *editor_zoom_widget = nullptr;
 	Button *button_center_view = nullptr;
 	Vector2 panning;
 	bool initializing = true;

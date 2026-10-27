@@ -45,9 +45,10 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/gui/editor_icon_manager.h"
 #include "editor/gui/editor_spin_slider.h"
-#include "editor/gui/editor_toolbar_group.h"
+#include "editor/gui/editor_viewport_toolbar.h"
 #include "editor/plugins/editor_plugin_list.h"
 #include "editor/run/editor_run_bar.h"
 #include "editor/scene/3d/gizmos/audio_listener_3d_gizmo_plugin.h"
@@ -99,7 +100,6 @@
 #include "scene/gui/center_container.h"
 #include "scene/gui/check_box.h"
 #include "scene/gui/color_picker.h"
-#include "scene/gui/flow_container.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/option_button.h"
@@ -360,8 +360,8 @@ Dictionary Node3DEditor::get_state() const {
 	d["rotate_snap"] = snap_rotate_value;
 	d["scale_snap"] = snap_scale_value;
 
-	d["local_coords"] = tool_option_button[TOOL_OPT_LOCAL_COORDS]->is_pressed();
-	d["preserve_children_transform"] = tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->is_pressed();
+	d["local_coords"] = _tool_option_btn[TOOL_OPT_LOCAL_COORDS]->is_pressed();
+	d["preserve_children_transform"] = _tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->is_pressed();
 
 	int vc = 0;
 	if (view_layout_menu->get_popup()->is_item_checked(view_layout_menu->get_popup()->get_item_index(MENU_VIEW_USE_1_VIEWPORT))) {
@@ -423,8 +423,8 @@ Dictionary Node3DEditor::get_state() const {
 		pd["sun_color"] = sun_color->get_pick_color();
 		pd["sun_energy"] = sun_energy->get_value();
 
-		pd["sun_enabled"] = sun_button->is_pressed();
-		pd["environ_enabled"] = environ_button->is_pressed();
+		pd["sun_enabled"] = _sun_btn->is_pressed();
+		pd["environ_enabled"] = _environ_btn->is_pressed();
 
 		d["preview_sun_env"] = pd;
 	}
@@ -437,12 +437,12 @@ void Node3DEditor::set_state(const Dictionary &p_state) {
 
 	if (d.has("snap_enabled")) {
 		snap_enabled = d["snap_enabled"];
-		tool_option_button[TOOL_OPT_USE_SNAP]->set_pressed(d["snap_enabled"]);
+		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_pressed(d["snap_enabled"]);
 	}
 
 	if (d.has("trackball_enabled")) {
 		trackball_enabled = d["trackball_enabled"];
-		tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_pressed(d["trackball_enabled"]);
+		_tool_option_btn[TOOL_OPT_USE_TRACKBALL]->set_pressed(d["trackball_enabled"]);
 	}
 
 	if (d.has("translate_snap")) {
@@ -460,7 +460,7 @@ void Node3DEditor::set_state(const Dictionary &p_state) {
 	_snap_update();
 
 	if (d.has("preserve_children_transform")) {
-		tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_pressed(d["preserve_children_transform"]);
+		_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_pressed(d["preserve_children_transform"]);
 	}
 
 	if (d.has("vertex_snap_origin_mode")) {
@@ -480,7 +480,7 @@ void Node3DEditor::set_state(const Dictionary &p_state) {
 	}
 
 	if (d.has("local_coords")) {
-		tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_pressed(d["local_coords"]);
+		_tool_option_btn[TOOL_OPT_LOCAL_COORDS]->set_pressed(d["local_coords"]);
 		update_transform_gizmo();
 	}
 
@@ -582,8 +582,8 @@ void Node3DEditor::set_state(const Dictionary &p_state) {
 		sun_color->set_pick_color(pd["sun_color"]);
 		sun_energy->set_value_no_signal(pd["sun_energy"]);
 
-		sun_button->set_pressed(pd["sun_enabled"]);
-		environ_button->set_pressed(pd["environ_enabled"]);
+		_sun_btn->set_pressed(pd["sun_enabled"]);
+		_environ_btn->set_pressed(pd["environ_enabled"]);
 
 		sun_environ_updating = false;
 
@@ -591,8 +591,8 @@ void Node3DEditor::set_state(const Dictionary &p_state) {
 		_update_preview_environment();
 	} else {
 		_load_default_preview_settings();
-		sun_button->set_pressed(true);
-		environ_button->set_pressed(true);
+		_sun_btn->set_pressed(true);
+		_environ_btn->set_pressed(true);
 		_preview_settings_changed();
 		_update_preview_environment();
 	}
@@ -721,17 +721,17 @@ void Node3DEditor::_xform_dialog_action() {
 void Node3DEditor::_menu_item_toggled(bool pressed, int p_option) {
 	switch (p_option) {
 		case MENU_TOOL_LOCAL_COORDS: {
-			tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_pressed(pressed);
+			_tool_option_btn[TOOL_OPT_LOCAL_COORDS]->set_pressed(pressed);
 			update_transform_gizmo();
 		} break;
 
 		case MENU_TOOL_USE_SNAP: {
-			tool_option_button[TOOL_OPT_USE_SNAP]->set_pressed(pressed);
+			_tool_option_btn[TOOL_OPT_USE_SNAP]->set_pressed(pressed);
 			snap_enabled = pressed;
 		} break;
 
 		case MENU_TOOL_USE_TRACKBALL: {
-			tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_pressed(pressed);
+			_tool_option_btn[TOOL_OPT_USE_TRACKBALL]->set_pressed(pressed);
 			trackball_enabled = pressed;
 			for (uint32_t i = 0; i < VIEWPORTS_COUNT; i++) {
 				viewports[i]->update_transform_gizmo_highlight();
@@ -739,7 +739,7 @@ void Node3DEditor::_menu_item_toggled(bool pressed, int p_option) {
 		} break;
 
 		case MENU_TOOL_PRESERVE_CHILDREN_TRANSFORM: {
-			tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_pressed(pressed);
+			_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_pressed(pressed);
 			if (pressed) {
 				EditorNode::get_editor_data().add_undo_redo_inspector_hook_callback(callable_mp(this, &Node3DEditor::_undo_redo_inspector_callback));
 			} else {
@@ -820,7 +820,7 @@ void Node3DEditor::_menu_item_pressed(int p_option) {
 			}
 
 			for (int i = 0; i < TOOL_MAX; i++) {
-				tool_button[i]->set_pressed(i == p_option);
+				_tool_btn[i]->set_pressed(i == p_option);
 			}
 			tool_mode = (ToolMode)p_option;
 			update_transform_gizmo();
@@ -1073,9 +1073,9 @@ void Node3DEditor::_menu_item_pressed(int p_option) {
 		} break;
 		case MENU_RULER: {
 			for (int i = 0; i < TOOL_MAX; i++) {
-				tool_button[i]->set_pressed(i == p_option);
+				_tool_btn[i]->set_pressed(i == p_option);
 			}
-			tool_button[TOOL_RULER]->set_pressed(true);
+			_tool_btn[TOOL_RULER]->set_pressed(true);
 			tool_mode = ToolMode::TOOL_RULER;
 			update_transform_gizmo();
 		} break;
@@ -2124,15 +2124,15 @@ void Node3DEditor::_refresh_menu_icons() {
 	all_locked = all_locked && has_node3d_item;
 	all_grouped = all_grouped && has_node3d_item;
 
-	tool_button[TOOL_LOCK_SELECTED]->set_visible(!all_locked);
-	tool_button[TOOL_LOCK_SELECTED]->set_disabled(!has_node3d_item);
-	tool_button[TOOL_UNLOCK_SELECTED]->set_visible(all_locked);
-	tool_button[TOOL_UNLOCK_SELECTED]->set_disabled(!has_node3d_item);
+	_tool_btn[TOOL_LOCK_SELECTED]->set_visible(!all_locked);
+	_tool_btn[TOOL_LOCK_SELECTED]->set_disabled(!has_node3d_item);
+	_tool_btn[TOOL_UNLOCK_SELECTED]->set_visible(all_locked);
+	_tool_btn[TOOL_UNLOCK_SELECTED]->set_disabled(!has_node3d_item);
 
-	tool_button[TOOL_GROUP_SELECTED]->set_visible(!all_grouped);
-	tool_button[TOOL_GROUP_SELECTED]->set_disabled(!has_node3d_item);
-	tool_button[TOOL_UNGROUP_SELECTED]->set_visible(all_grouped);
-	tool_button[TOOL_UNGROUP_SELECTED]->set_disabled(!has_node3d_item);
+	_tool_btn[TOOL_GROUP_SELECTED]->set_visible(!all_grouped);
+	_tool_btn[TOOL_GROUP_SELECTED]->set_disabled(!has_node3d_item);
+	_tool_btn[TOOL_UNGROUP_SELECTED]->set_visible(all_grouped);
+	_tool_btn[TOOL_UNGROUP_SELECTED]->set_disabled(!has_node3d_item);
 }
 
 template <typename T>
@@ -2305,10 +2305,7 @@ void Node3DEditor::_snap_selected_nodes_to_floor() {
 }
 
 void Node3DEditor::_sun_environ_settings_pressed() {
-	Vector2 pos = sun_environ_settings->get_screen_position() + sun_environ_settings->get_size();
-	sun_environ_popup->set_position(pos - Vector2(sun_environ_popup->get_contents_minimum_size().width / 2, 0));
-	sun_environ_popup->reset_size();
-	sun_environ_popup->popup();
+	_viewport_toolbar->popup_tool(sun_environ_popup, _sun_environ_settings_btn);
 	// Grabbing the focus is required for Shift modifier checking to be functional
 	// (when the Add sun/environment buttons are pressed).
 	sun_environ_popup->grab_focus();
@@ -2316,23 +2313,18 @@ void Node3DEditor::_sun_environ_settings_pressed() {
 
 #ifdef MODULE_TEXTURE_STREAMING_ENABLED
 void Node3DEditor::_textures_button_pressed() {
-	if (textures_button->is_disabled()) {
+	if (_textures_btn->is_disabled()) {
 		return;
 	}
 
-	Vector2 pos = textures_button->get_screen_position();
-	pos.y += +textures_button->get_size().y;
-	textures_popup->set_position(pos);
-	textures_popup->reset_size();
-	textures_popup->popup();
+	_viewport_toolbar->popup_tool(textures_popup, _textures_btn);
 }
 
 void Node3DEditor::_textures_button_update_state() {
 	const bool texture_streaming_enabled = GLOBAL_GET("rendering/textures/streaming/enabled");
 
 	if (!texture_streaming_enabled) {
-		textures_button->hide();
-		textures_button_separator->hide();
+		_textures_btn->hide();
 		textures_popup->hide();
 	}
 }
@@ -2544,26 +2536,69 @@ void Node3DEditor::_update_theme() {
 	environ_sky_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("inspector_property_height"), EditorStringName(Editor))));
 	environ_ground_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("inspector_property_height"), EditorStringName(Editor))));
 
-	context_toolbar_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("ContextualToolbar"), EditorStringName(EditorStyles)));
+	transform_menu->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_transform")));
+	view_layout_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_eye_open")));
+#ifdef MODULE_TEXTURE_STREAMING_ENABLED
+	_textures_btn->set_button_icon(get_editor_theme_icon(SNAME("resource_texture_2d")));
+#endif
+}
+
+void Node3DEditor::_queue_viewport_overlay_update() {
+	if (_viewport_overlay_update_pending || !is_inside_tree()) {
+		return;
+	}
+	_viewport_overlay_update_pending = true;
+	callable_mp(this, &Node3DEditor::_update_viewport_overlays).call_deferred();
+}
+
+void Node3DEditor::_update_viewport_overlays() {
+	_viewport_overlay_update_pending = false;
+	if (!is_inside_tree()) {
+		return;
+	}
+	const real_t margin = _viewport_toolbar->get_theme_constant(SNAME("margin"), SNAME("ViewportToolbar"));
+	const Vector2 toolbar_insets = _viewport_toolbar->get_overlay_insets();
+	const Rect2 toolbar_area = _viewport_toolbar->get_global_rect();
+
+	for (uint32_t i = 0; i < VIEWPORTS_COUNT; i++) {
+		Node3DEditorViewport *editor_viewport = viewports[i];
+		if (!editor_viewport->is_visible_in_tree()) {
+			continue;
+		}
+
+		const Rect2 surface_rect = editor_viewport->surface->get_global_rect();
+		const Size2 surface_size = editor_viewport->surface->get_size();
+		const real_t left_inset = MAX(margin, toolbar_area.position.x + toolbar_insets.x - surface_rect.position.x);
+		const real_t right_inset = MAX(margin, surface_rect.get_end().x - (toolbar_area.get_end().x - toolbar_insets.y));
+
+		editor_viewport->_top_left_vbox->set_position(Vector2(left_inset, margin));
+		editor_viewport->top_right_vbox->set_position(Vector2(surface_size.x - right_inset - editor_viewport->top_right_vbox->get_size().x, margin));
+		editor_viewport->info_panel->set_position(Vector2(surface_size.x - right_inset - editor_viewport->info_panel->get_size().x, surface_size.y - margin - editor_viewport->info_panel->get_size().y));
+		editor_viewport->position_control->set_position(Vector2(left_inset, surface_size.y - margin - editor_viewport->position_control->get_size().y));
+		editor_viewport->look_control->set_position(Vector2(surface_size.x - right_inset - editor_viewport->look_control->get_size().x, surface_size.y - margin - editor_viewport->look_control->get_size().y));
+		editor_viewport->bottom_center_vbox->set_position(Vector2((left_inset + surface_size.x - right_inset - editor_viewport->bottom_center_vbox->get_size().x) * 0.5f, surface_size.y - margin - editor_viewport->bottom_center_vbox->get_size().y));
+		editor_viewport->cinema_label->set_offset(SIDE_TOP, margin);
+	}
 }
 
 void Node3DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED: {
 			const String show_list_tooltip = vformat(TTR("%s+RMB: Show list of all nodes at position clicked, including locked."), keycode_get_string((Key)KeyModifierMask::ALT));
-			tool_button[TOOL_MODE_TRANSFORM]->set_tooltip_text(vformat(TTR("%s+Drag: Rotate selected node around pivot."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + show_list_tooltip);
-			tool_button[TOOL_MODE_MOVE]->set_tooltip_text(vformat(TTR("%s+Drag: Use snap."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + show_list_tooltip);
-			tool_button[TOOL_MODE_ROTATE]->set_tooltip_text(vformat(TTR("%s+Drag: Use snap."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + show_list_tooltip);
-			tool_button[TOOL_MODE_SCALE]->set_tooltip_text(vformat(TTR("%s+Drag: Use snap."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + show_list_tooltip);
-			tool_button[TOOL_MODE_SELECT]->set_tooltip_text(show_list_tooltip);
-			tool_button[TOOL_MODE_LIST_SELECT]->set_tooltip_text(TTR("Show list of selectable nodes at position clicked.") + "\n" + show_list_tooltip);
-			tool_button[TOOL_RULER]->set_tooltip_text(TTR("LMB+Drag: Measure the distance between two points in 3D space.") + "\n" + TTR("Shift+LMB+Drag: Show component measurements.") + "\n" + show_list_tooltip);
+			_tool_btn[TOOL_MODE_TRANSFORM]->set_tooltip_text(vformat(TTR("%s+Drag: Rotate selected node around pivot."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + show_list_tooltip);
+			_tool_btn[TOOL_MODE_MOVE]->set_tooltip_text(vformat(TTR("%s+Drag: Use snap."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + show_list_tooltip);
+			_tool_btn[TOOL_MODE_ROTATE]->set_tooltip_text(vformat(TTR("%s+Drag: Use snap."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + show_list_tooltip);
+			_tool_btn[TOOL_MODE_SCALE]->set_tooltip_text(vformat(TTR("%s+Drag: Use snap."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + show_list_tooltip);
+			_tool_btn[TOOL_MODE_SELECT]->set_tooltip_text(show_list_tooltip);
+			_tool_btn[TOOL_MODE_LIST_SELECT]->set_tooltip_text(TTR("Show list of selectable nodes at position clicked.") + "\n" + show_list_tooltip);
+			_tool_btn[TOOL_RULER]->set_tooltip_text(TTR("LMB+Drag: Measure the distance between two points in 3D space.") + "\n" + TTR("Shift+LMB+Drag: Show component measurements.") + "\n" + show_list_tooltip);
 			_update_gizmos_menu();
 			_update_vertex_snap_tooltips();
 		} break;
 
 		case NOTIFICATION_READY: {
 			_menu_item_pressed(MENU_VIEW_USE_1_VIEWPORT);
+			_queue_viewport_overlay_update();
 
 			_refresh_menu_icons();
 
@@ -2697,10 +2732,7 @@ void Node3DEditor::add_control_to_menu_panel(Control *p_control) {
 	ERR_FAIL_NULL(p_control);
 	ERR_FAIL_COND(p_control->get_parent());
 
-	VSeparator *sep = memnew(VSeparator);
-	context_toolbar_hbox->add_child(sep);
-	context_toolbar_hbox->add_child(p_control);
-	context_toolbar_separators[p_control] = sep;
+	_context_toolbar_vflow->add_child(p_control);
 
 	p_control->connect(SceneStringName(visibility_changed), callable_mp(this, &Node3DEditor::_update_context_toolbar));
 
@@ -2709,38 +2741,30 @@ void Node3DEditor::add_control_to_menu_panel(Control *p_control) {
 
 void Node3DEditor::remove_control_from_menu_panel(Control *p_control) {
 	ERR_FAIL_NULL(p_control);
-	ERR_FAIL_COND(p_control->get_parent() != context_toolbar_hbox);
+	ERR_FAIL_COND(p_control->get_parent() != _context_toolbar_vflow);
 
 	p_control->disconnect(SceneStringName(visibility_changed), callable_mp(this, &Node3DEditor::_update_context_toolbar));
 
-	VSeparator *sep = context_toolbar_separators[p_control];
-	context_toolbar_hbox->remove_child(sep);
-	context_toolbar_hbox->remove_child(p_control);
-	context_toolbar_separators.erase(p_control);
-	memdelete(sep);
+	_context_toolbar_vflow->remove_child(p_control);
 
 	_update_context_toolbar();
 }
 
 void Node3DEditor::_update_context_toolbar() {
 	bool has_visible = false;
-	bool first_visible = false;
 
-	for (int i = 0; i < context_toolbar_hbox->get_child_count(); i++) {
-		Control *child = Object::cast_to<Control>(context_toolbar_hbox->get_child(i));
-		if (!child || !context_toolbar_separators.has(child)) {
+	for (int i = 0; i < _context_toolbar_vflow->get_child_count(); i++) {
+		Control *child = Object::cast_to<Control>(_context_toolbar_vflow->get_child(i));
+		if (!child) {
 			continue;
 		}
 		if (child->is_visible()) {
-			first_visible = !has_visible;
 			has_visible = true;
 		}
-
-		VSeparator *sep = context_toolbar_separators[child];
-		sep->set_visible(!first_visible && child->is_visible());
 	}
 
-	context_toolbar_panel->set_visible(has_visible);
+	_context_toolbar_vflow->set_visible(has_visible);
+	_viewport_toolbar->set_context_visible(has_visible);
 }
 
 void Node3DEditor::set_can_preview(Camera3D *p_preview) {
@@ -2783,30 +2807,6 @@ void Node3DEditor::remove_control_from_left_panel(Control *p_control) {
 
 void Node3DEditor::remove_control_from_right_panel(Control *p_control) {
 	right_panel_split->remove_child(p_control);
-}
-
-void Node3DEditor::move_control_to_left_panel(Control *p_control) {
-	ERR_FAIL_NULL(p_control);
-	if (p_control->get_parent() == left_panel_split) {
-		return;
-	}
-
-	ERR_FAIL_COND(p_control->get_parent() != right_panel_split);
-	right_panel_split->remove_child(p_control);
-
-	add_control_to_left_panel(p_control);
-}
-
-void Node3DEditor::move_control_to_right_panel(Control *p_control) {
-	ERR_FAIL_NULL(p_control);
-	if (p_control->get_parent() == right_panel_split) {
-		return;
-	}
-
-	ERR_FAIL_COND(p_control->get_parent() != left_panel_split);
-	left_panel_split->remove_child(p_control);
-
-	add_control_to_right_panel(p_control);
 }
 
 void Node3DEditor::_request_gizmo(Object *p_obj) {
@@ -3156,9 +3156,9 @@ void Node3DEditor::_load_default_preview_settings() {
 }
 
 void Node3DEditor::_update_preview_environment() {
-	bool disable_light = directional_light_count > 0 || !sun_button->is_pressed();
+	bool disable_light = directional_light_count > 0 || !_sun_btn->is_pressed();
 
-	sun_button->set_disabled(directional_light_count > 0);
+	_sun_btn->set_disabled(directional_light_count > 0);
 
 	if (disable_light) {
 		if (preview_sun->get_parent()) {
@@ -3186,9 +3186,9 @@ void Node3DEditor::_update_preview_environment() {
 	sun_angle_altitude->set_value_no_signal(-Math::rad_to_deg(sun_rotation.x));
 	sun_angle_azimuth->set_value_no_signal(180.0 - Math::rad_to_deg(sun_rotation.y));
 
-	bool disable_env = world_env_count > 0 || !environ_button->is_pressed();
+	bool disable_env = world_env_count > 0 || !_environ_btn->is_pressed();
 
-	environ_button->set_disabled(world_env_count > 0);
+	_environ_btn->set_disabled(world_env_count > 0);
 
 	if (disable_env) {
 		if (preview_environment->get_parent()) {
@@ -3389,317 +3389,290 @@ Node3DEditor::Node3DEditor() {
 	editor_selection = EditorNode::get_singleton()->get_editor_selection();
 	editor_selection->add_editor_plugin(this);
 
-	MarginContainer *toolbar_margin = memnew(MarginContainer);
-	toolbar_margin->set_theme_type_variation("MainToolBarMargin");
-	vbc->add_child(toolbar_margin);
+	_viewport_toolbar = memnew(EditorViewportToolbar);
+	_viewport_toolbar->connect("overlay_insets_changed", callable_mp(this, &Node3DEditor::_queue_viewport_overlay_update));
+	PopupMenu *p = nullptr;
+	EditorToolbarFlowContainer *tool_button_vflow = _viewport_toolbar->create_group();
+	{
+		_tool_btn[TOOL_MODE_TRANSFORM] = memnew(Button);
+		_tool_btn[TOOL_MODE_TRANSFORM]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_TRANSFORM));
+		_tool_btn[TOOL_MODE_TRANSFORM]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_transform")));
+		_tool_btn[TOOL_MODE_TRANSFORM]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_transform", TTRC("Transform Mode"), Key::Q, true));
+		_tool_btn[TOOL_MODE_TRANSFORM]->set_shortcut_context(this);
+		_tool_btn[TOOL_MODE_TRANSFORM]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_MODE_TRANSFORM]->set_toggle_mode(true);
+		tool_button_vflow->add_child(_tool_btn[TOOL_MODE_TRANSFORM]);
+		_tool_btn[TOOL_MODE_TRANSFORM]->set_pressed(true);
 
-	// A fluid container for all toolbars.
-	HFlowContainer *main_flow = memnew(HFlowContainer);
-	toolbar_margin->add_child(main_flow);
+		_tool_btn[TOOL_MODE_MOVE] = memnew(Button);
+		_tool_btn[TOOL_MODE_MOVE]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_MOVE));
+		_tool_btn[TOOL_MODE_MOVE]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_move")));
+		_tool_btn[TOOL_MODE_MOVE]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_move", TTRC("Move Mode"), Key::W, true));
+		_tool_btn[TOOL_MODE_MOVE]->set_shortcut_context(this);
+		_tool_btn[TOOL_MODE_MOVE]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_MODE_MOVE]->set_toggle_mode(true);
+		_tool_btn[TOOL_MODE_MOVE]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+		tool_button_vflow->add_child(_tool_btn[TOOL_MODE_MOVE]);
 
-	// Main toolbars.
-	// Split into separate `HBoxContainer` so they can wrap onto multiple lines as the window width decreases (the parent is a `FlowContainer`).
-	// These are not grouped by any particular criteria. Only some of the end children are grouped separately, based on their separators.
-	HBoxContainer *tool_button_hbox = EditorToolbarGroup::create(main_flow);
+		_tool_btn[TOOL_MODE_ROTATE] = memnew(Button);
+		_tool_btn[TOOL_MODE_ROTATE]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_ROTATE));
+		_tool_btn[TOOL_MODE_ROTATE]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_rotate")));
+		_tool_btn[TOOL_MODE_ROTATE]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_rotate", TTRC("Rotate Mode"), Key::E, true));
+		_tool_btn[TOOL_MODE_ROTATE]->set_shortcut_context(this);
+		_tool_btn[TOOL_MODE_ROTATE]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_MODE_ROTATE]->set_toggle_mode(true);
+		_tool_btn[TOOL_MODE_ROTATE]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+		tool_button_vflow->add_child(_tool_btn[TOOL_MODE_ROTATE]);
 
-	tool_button[TOOL_MODE_TRANSFORM] = memnew(Button);
-	tool_button_hbox->add_child(tool_button[TOOL_MODE_TRANSFORM]);
-	tool_button[TOOL_MODE_TRANSFORM]->set_toggle_mode(true);
-	tool_button[TOOL_MODE_TRANSFORM]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_MODE_TRANSFORM]->set_pressed(true);
-	tool_button[TOOL_MODE_TRANSFORM]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_TRANSFORM));
-	tool_button[TOOL_MODE_TRANSFORM]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_transform", TTRC("Transform Mode"), Key::Q, true));
-	tool_button[TOOL_MODE_TRANSFORM]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_TRANSFORM]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_transform")));
+		_tool_btn[TOOL_MODE_SCALE] = memnew(Button);
+		_tool_btn[TOOL_MODE_SCALE]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_SCALE));
+		_tool_btn[TOOL_MODE_SCALE]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_scale")));
+		_tool_btn[TOOL_MODE_SCALE]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_scale", TTRC("Scale Mode"), Key::R, true));
+		_tool_btn[TOOL_MODE_SCALE]->set_shortcut_context(this);
+		_tool_btn[TOOL_MODE_SCALE]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_MODE_SCALE]->set_toggle_mode(true);
+		_tool_btn[TOOL_MODE_SCALE]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+		tool_button_vflow->add_child(_tool_btn[TOOL_MODE_SCALE]);
 
-	tool_button[TOOL_MODE_MOVE] = memnew(Button);
-	tool_button_hbox->add_child(tool_button[TOOL_MODE_MOVE]);
-	tool_button[TOOL_MODE_MOVE]->set_toggle_mode(true);
-	tool_button[TOOL_MODE_MOVE]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	tool_button[TOOL_MODE_MOVE]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_MODE_SELECT] = memnew(Button);
+		_tool_btn[TOOL_MODE_SELECT]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_SELECT));
+		_tool_btn[TOOL_MODE_SELECT]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_select")));
+		_tool_btn[TOOL_MODE_SELECT]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_select", TTRC("Select Mode"), Key::V, true));
+		_tool_btn[TOOL_MODE_SELECT]->set_shortcut_context(this);
+		_tool_btn[TOOL_MODE_SELECT]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_MODE_SELECT]->set_toggle_mode(true);
+		_tool_btn[TOOL_MODE_SELECT]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+		tool_button_vflow->add_child(_tool_btn[TOOL_MODE_SELECT]);
 
-	tool_button[TOOL_MODE_MOVE]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_MOVE));
-	tool_button[TOOL_MODE_MOVE]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_move", TTRC("Move Mode"), Key::W, true));
-	tool_button[TOOL_MODE_MOVE]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_MOVE]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_move")));
+		HSeparator *hsep = memnew(HSeparator);
+		tool_button_vflow->add_child(hsep);
 
-	tool_button[TOOL_MODE_ROTATE] = memnew(Button);
-	tool_button_hbox->add_child(tool_button[TOOL_MODE_ROTATE]);
-	tool_button[TOOL_MODE_ROTATE]->set_toggle_mode(true);
-	tool_button[TOOL_MODE_ROTATE]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	tool_button[TOOL_MODE_ROTATE]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_MODE_ROTATE]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_ROTATE));
-	tool_button[TOOL_MODE_ROTATE]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_rotate", TTRC("Rotate Mode"), Key::E, true));
-	tool_button[TOOL_MODE_ROTATE]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_ROTATE]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_rotate")));
+		_tool_btn[TOOL_MODE_LIST_SELECT] = memnew(Button);
+		_tool_btn[TOOL_MODE_LIST_SELECT]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_LIST_SELECT));
+		_tool_btn[TOOL_MODE_LIST_SELECT]->set_button_icon(EditorIconManager::get_icon(SNAME("action_list_select")));
+		_tool_btn[TOOL_MODE_LIST_SELECT]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_MODE_LIST_SELECT]->set_toggle_mode(true);
+		_tool_btn[TOOL_MODE_LIST_SELECT]->set_tooltip_text(TTR("Show list of selectable nodes at position clicked.") + "\n" + vformat(TTR("%s+RMB: Show list of all nodes at position clicked, including locked."), keycode_get_string((Key)KeyModifierMask::ALT)));
+		tool_button_vflow->add_child(_tool_btn[TOOL_MODE_LIST_SELECT]);
 
-	tool_button[TOOL_MODE_SCALE] = memnew(Button);
-	tool_button_hbox->add_child(tool_button[TOOL_MODE_SCALE]);
-	tool_button[TOOL_MODE_SCALE]->set_toggle_mode(true);
-	tool_button[TOOL_MODE_SCALE]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	tool_button[TOOL_MODE_SCALE]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_MODE_SCALE]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_SCALE));
-	tool_button[TOOL_MODE_SCALE]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_scale", TTRC("Scale Mode"), Key::R, true));
-	tool_button[TOOL_MODE_SCALE]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_SCALE]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_scale")));
+		_tool_btn[TOOL_RULER] = memnew(Button);
+		_tool_btn[TOOL_RULER]->set_button_icon(EditorIconManager::get_icon(SNAME("action_ruler")));
+		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
+		_tool_btn[TOOL_RULER]->set_shortcut(ED_SHORTCUT("spatial_editor/measure", TTRC("Ruler Mode"), Key::M));
+		_tool_btn[TOOL_RULER]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_RULER]->set_toggle_mode(true);
+		tool_button_vflow->add_child(_tool_btn[TOOL_RULER]);
+		_tool_btn[TOOL_RULER]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_RULER));
+	}
 
-	tool_button[TOOL_MODE_SELECT] = memnew(Button);
-	tool_button_hbox->add_child(tool_button[TOOL_MODE_SELECT]);
-	tool_button[TOOL_MODE_SELECT]->set_toggle_mode(true);
-	tool_button[TOOL_MODE_SELECT]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	tool_button[TOOL_MODE_SELECT]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_MODE_SELECT]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_SELECT));
-	tool_button[TOOL_MODE_SELECT]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_select", TTRC("Select Mode"), Key::V, true));
-	tool_button[TOOL_MODE_SELECT]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_SELECT]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_tool_select")));
+	EditorToolbarFlowContainer *lock_group_vflow = _viewport_toolbar->create_group();
+	{
+		_tool_btn[TOOL_LOCK_SELECTED] = memnew(Button);
+		_tool_btn[TOOL_LOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_lock")));
+		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
+		_tool_btn[TOOL_LOCK_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/lock_selected_nodes"));
+		_tool_btn[TOOL_LOCK_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_LOCK_SELECTED]->set_tooltip_text(TTRC("Lock selected node, preventing selection and movement."));
+		lock_group_vflow->add_child(_tool_btn[TOOL_LOCK_SELECTED]);
+		_tool_btn[TOOL_LOCK_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_LOCK_SELECTED));
 
-	VSeparator *vsep = memnew(VSeparator);
-	vsep->set_theme_type_variation("VSeparatorButtonGroup");
-	tool_button_hbox->add_child(vsep);
+		_tool_btn[TOOL_UNLOCK_SELECTED] = memnew(Button);
+		_tool_btn[TOOL_UNLOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_unlock")));
+		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
+		_tool_btn[TOOL_UNLOCK_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/unlock_selected_nodes"));
+		_tool_btn[TOOL_UNLOCK_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_UNLOCK_SELECTED]->set_tooltip_text(TTRC("Unlock selected node, allowing selection and movement."));
+		lock_group_vflow->add_child(_tool_btn[TOOL_UNLOCK_SELECTED]);
+		_tool_btn[TOOL_UNLOCK_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_UNLOCK_SELECTED));
 
-	tool_button[TOOL_MODE_LIST_SELECT] = memnew(Button);
-	tool_button_hbox->add_child(tool_button[TOOL_MODE_LIST_SELECT]);
-	tool_button[TOOL_MODE_LIST_SELECT]->set_toggle_mode(true);
-	tool_button[TOOL_MODE_LIST_SELECT]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_MODE_LIST_SELECT]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_LIST_SELECT));
-	tool_button[TOOL_MODE_LIST_SELECT]->set_tooltip_text(TTR("Show list of selectable nodes at position clicked.") + "\n" + vformat(TTR("%s+RMB: Show list of all nodes at position clicked, including locked."), keycode_get_string((Key)KeyModifierMask::ALT)));
-	tool_button[TOOL_MODE_LIST_SELECT]->set_button_icon(EditorIconManager::get_icon(SNAME("action_list_select")));
+		_tool_btn[TOOL_GROUP_SELECTED] = memnew(Button);
+		_tool_btn[TOOL_GROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_group")));
+		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
+		_tool_btn[TOOL_GROUP_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/group_selected_nodes"));
+		_tool_btn[TOOL_GROUP_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_GROUP_SELECTED]->set_tooltip_text(TTRC("Groups the selected node with its children. This selects the parent when any child node is clicked in 2D and 3D view."));
+		lock_group_vflow->add_child(_tool_btn[TOOL_GROUP_SELECTED]);
+		_tool_btn[TOOL_GROUP_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_GROUP_SELECTED));
 
-	tool_button[TOOL_RULER] = memnew(Button);
-	tool_button_hbox->add_child(tool_button[TOOL_RULER]);
-	tool_button[TOOL_RULER]->set_toggle_mode(true);
-	tool_button[TOOL_RULER]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_RULER]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_RULER));
-	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
-	tool_button[TOOL_RULER]->set_shortcut(ED_SHORTCUT("spatial_editor/measure", TTRC("Ruler Mode"), Key::M));
-	tool_button[TOOL_RULER]->set_button_icon(EditorIconManager::get_icon(SNAME("action_ruler")));
+		_tool_btn[TOOL_UNGROUP_SELECTED] = memnew(Button);
+		_tool_btn[TOOL_UNGROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_ungroup")));
+		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
+		_tool_btn[TOOL_UNGROUP_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/ungroup_selected_nodes"));
+		_tool_btn[TOOL_UNGROUP_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_btn[TOOL_UNGROUP_SELECTED]->set_tooltip_text(TTRC("Ungroups the selected node from its children. Child nodes will be individual items in 2D and 3D view."));
+		lock_group_vflow->add_child(_tool_btn[TOOL_UNGROUP_SELECTED]);
+		_tool_btn[TOOL_UNGROUP_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_UNGROUP_SELECTED));
+	}
 
-	main_flow->add_child(memnew(VSeparator));
+	EditorToolbarFlowContainer *misc_vflow = _viewport_toolbar->create_group();
+	{
+		_tool_option_btn[TOOL_OPT_LOCAL_COORDS] = memnew(Button);
+		_tool_option_btn[TOOL_OPT_LOCAL_COORDS]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_LOCAL_COORDS));
+		_tool_option_btn[TOOL_OPT_LOCAL_COORDS]->set_button_icon(EditorIconManager::get_icon(SNAME("variant_object")));
+		_tool_option_btn[TOOL_OPT_LOCAL_COORDS]->set_shortcut(ED_SHORTCUT("spatial_editor/local_coords", TTRC("Use Local Space"), Key::T));
+		_tool_option_btn[TOOL_OPT_LOCAL_COORDS]->set_shortcut_context(this);
+		_tool_option_btn[TOOL_OPT_LOCAL_COORDS]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_option_btn[TOOL_OPT_LOCAL_COORDS]->set_toggle_mode(true);
+		misc_vflow->add_child(_tool_option_btn[TOOL_OPT_LOCAL_COORDS]);
 
-	HBoxContainer *lock_group_hbox = memnew(HBoxContainer);
-	main_flow->add_child(lock_group_hbox);
+		_tool_option_btn[TOOL_OPT_USE_TRACKBALL] = memnew(Button);
+		_tool_option_btn[TOOL_OPT_USE_TRACKBALL]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_USE_TRACKBALL));
+		_tool_option_btn[TOOL_OPT_USE_TRACKBALL]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_trackball")));
+		_tool_option_btn[TOOL_OPT_USE_TRACKBALL]->set_shortcut(ED_SHORTCUT("spatial_editor/trackball", TTRC("Use Trackball"), Key::U));
+		_tool_option_btn[TOOL_OPT_USE_TRACKBALL]->set_shortcut_context(this);
+		_tool_option_btn[TOOL_OPT_USE_TRACKBALL]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_option_btn[TOOL_OPT_USE_TRACKBALL]->set_toggle_mode(true);
+		misc_vflow->add_child(_tool_option_btn[TOOL_OPT_USE_TRACKBALL]);
 
-	tool_button[TOOL_LOCK_SELECTED] = memnew(Button);
-	lock_group_hbox->add_child(tool_button[TOOL_LOCK_SELECTED]);
-	tool_button[TOOL_LOCK_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_LOCK_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_LOCK_SELECTED));
-	tool_button[TOOL_LOCK_SELECTED]->set_tooltip_text(TTRC("Lock selected node, preventing selection and movement."));
-	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
-	tool_button[TOOL_LOCK_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/lock_selected_nodes"));
-	tool_button[TOOL_LOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_lock")));
+		_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM] = memnew(Button);
+		_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_PRESERVE_CHILDREN_TRANSFORM));
+		_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_button_icon(EditorIconManager::get_icon(SNAME("action_pin")));
+		_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_shortcut(ED_SHORTCUT("spatial_editor/preserve_children_transform", TTRC("Preserve Children Transform"), Key::P));
+		_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_shortcut_context(this);
+		_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_toggle_mode(true);
+		_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_tooltip_text(TTRC("When enabled, transforming a node will preserve the global transform of its children.\nThis also applies when editing transform properties in the Inspector."));
+		misc_vflow->add_child(_tool_option_btn[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]);
+	}
 
-	tool_button[TOOL_UNLOCK_SELECTED] = memnew(Button);
-	lock_group_hbox->add_child(tool_button[TOOL_UNLOCK_SELECTED]);
-	tool_button[TOOL_UNLOCK_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_UNLOCK_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_UNLOCK_SELECTED));
-	tool_button[TOOL_UNLOCK_SELECTED]->set_tooltip_text(TTRC("Unlock selected node, allowing selection and movement."));
-	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
-	tool_button[TOOL_UNLOCK_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/unlock_selected_nodes"));
-	tool_button[TOOL_UNLOCK_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_unlock")));
+	EditorToolbarFlowContainer *snap_vflow = _viewport_toolbar->create_group();
+	{
+		_tool_option_btn[TOOL_OPT_USE_SNAP] = memnew(Button);
+		_tool_option_btn[TOOL_OPT_USE_SNAP]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_USE_SNAP));
+		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_button_icon(EditorIconManager::get_icon(SNAME("action_snap")));
+		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_shortcut(ED_SHORTCUT("spatial_editor/snap", TTRC("Use Snap"), Key::Y));
+		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_shortcut_context(this);
+		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_theme_type_variation(SceneStringName(FlatButton));
+		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_toggle_mode(true);
+		snap_vflow->add_child(_tool_option_btn[TOOL_OPT_USE_SNAP]);
 
-	tool_button[TOOL_GROUP_SELECTED] = memnew(Button);
-	lock_group_hbox->add_child(tool_button[TOOL_GROUP_SELECTED]);
-	tool_button[TOOL_GROUP_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_GROUP_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_GROUP_SELECTED));
-	tool_button[TOOL_GROUP_SELECTED]->set_tooltip_text(TTRC("Groups the selected node with its children. This selects the parent when any child node is clicked in 2D and 3D view."));
-	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
-	tool_button[TOOL_GROUP_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/group_selected_nodes"));
-	tool_button[TOOL_GROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_group")));
+		snap_menu = memnew(MenuButton);
+		snap_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
+		snap_menu->set_flat(false);
+		snap_menu->set_h_size_flags(SIZE_SHRINK_END);
+		snap_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
+		snap_menu->set_tooltip_text(TTRC("Selection options."));
+		snap_vflow->add_child(snap_menu);
 
-	tool_button[TOOL_UNGROUP_SELECTED] = memnew(Button);
-	lock_group_hbox->add_child(tool_button[TOOL_UNGROUP_SELECTED]);
-	tool_button[TOOL_UNGROUP_SELECTED]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_UNGROUP_SELECTED]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_UNGROUP_SELECTED));
-	tool_button[TOOL_UNGROUP_SELECTED]->set_tooltip_text(TTRC("Ungroups the selected node from its children. Child nodes will be individual items in 2D and 3D view."));
-	// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
-	tool_button[TOOL_UNGROUP_SELECTED]->set_shortcut(ED_GET_SHORTCUT("editor/ungroup_selected_nodes"));
-	tool_button[TOOL_UNGROUP_SELECTED]->set_button_icon(EditorIconManager::get_icon(SNAME("action_ungroup")));
+		PopupMenu *snap_p = snap_menu->get_popup();
+		snap_p->set_hide_on_checkable_item_selection(false);
+		snap_p->add_radio_check_item(TTRC("Snap Vertex to Vertex"), MENU_VERTEX_SNAP_BASE_VERTEX);
+		snap_p->set_item_checked(snap_p->get_item_index(MENU_VERTEX_SNAP_BASE_VERTEX), true);
+		snap_p->add_radio_check_item(TTRC("Snap Origin to Vertex"), MENU_VERTEX_SNAP_BASE_ORIGIN);
 
-	main_flow->add_child(memnew(VSeparator));
+		snap_p->add_separator();
+		snap_p->add_radio_check_item(TTRC("Snap to Mesh Vertices"), MENU_VERTEX_SNAP_SOURCE_MESH);
+		snap_p->set_item_checked(snap_p->get_item_index(MENU_VERTEX_SNAP_SOURCE_MESH), true);
+		snap_p->add_radio_check_item(TTRC("Snap to Collision Vertices"), MENU_VERTEX_SNAP_SOURCE_COLLISION);
 
-	HBoxContainer *misc_hbox = memnew(HBoxContainer);
-	main_flow->add_child(misc_hbox);
+		snap_p->add_separator();
+		snap_p->add_shortcut(ED_SHORTCUT("spatial_editor/configure_snap", TTRC("Configure Snap...")), MENU_TRANSFORM_CONFIGURE_SNAP);
+		snap_p->connect(SceneStringName(id_pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed));
+	}
 
-	tool_option_button[TOOL_OPT_LOCAL_COORDS] = memnew(Button);
-	misc_hbox->add_child(tool_option_button[TOOL_OPT_LOCAL_COORDS]);
-	tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_toggle_mode(true);
-	tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_option_button[TOOL_OPT_LOCAL_COORDS]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_LOCAL_COORDS));
-	tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_shortcut(ED_SHORTCUT("spatial_editor/local_coords", TTRC("Use Local Space"), Key::T));
-	tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_shortcut_context(this);
-	tool_option_button[TOOL_OPT_LOCAL_COORDS]->set_button_icon(EditorIconManager::get_icon(SNAME("variant_object")));
+	EditorToolbarFlowContainer *environment_vflow = _viewport_toolbar->create_group();
+	{
+		_sun_btn = memnew(Button);
+		_sun_btn->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_update_preview_environment), CONNECT_DEFERRED);
+		_sun_btn->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_preview_sun")));
+		_sun_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_sun_btn->set_toggle_mode(true);
+		_sun_btn->set_tooltip_text(TTRC("Toggle preview sunlight.\nIf a DirectionalLight3D node is added to the scene, preview sunlight is disabled."));
+		environment_vflow->add_child(_sun_btn);
 
-	tool_option_button[TOOL_OPT_USE_TRACKBALL] = memnew(Button);
-	misc_hbox->add_child(tool_option_button[TOOL_OPT_USE_TRACKBALL]);
-	tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_toggle_mode(true);
-	tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_option_button[TOOL_OPT_USE_TRACKBALL]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_USE_TRACKBALL));
-	tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_shortcut(ED_SHORTCUT("spatial_editor/trackball", TTRC("Use Trackball"), Key::U));
-	tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_shortcut_context(this);
-	tool_option_button[TOOL_OPT_USE_TRACKBALL]->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_trackball")));
+		// Preview is enabled by default - ensure this applies on editor startup when there is no state yet.
+		_sun_btn->set_pressed(true);
 
-	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM] = memnew(Button);
-	misc_hbox->add_child(tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]);
-	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_toggle_mode(true);
-	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_PRESERVE_CHILDREN_TRANSFORM));
-	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_shortcut(ED_SHORTCUT("spatial_editor/preserve_children_transform", TTRC("Preserve Children Transform"), Key::P));
-	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_shortcut_context(this);
-	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_tooltip_text(TTRC("When enabled, transforming a node will preserve the global transform of its children.\nThis also applies when editing transform properties in the Inspector."));
-	tool_option_button[TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->set_button_icon(EditorIconManager::get_icon(SNAME("action_pin")));
+		_environ_btn = memnew(Button);
+		_environ_btn->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_update_preview_environment), CONNECT_DEFERRED);
+		_environ_btn->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_preview_environment")));
+		_environ_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_environ_btn->set_toggle_mode(true);
+		_environ_btn->set_tooltip_text(TTRC("Toggle preview environment.\nIf a WorldEnvironment node is added to the scene, preview environment is disabled."));
+		environment_vflow->add_child(_environ_btn);
 
-	main_flow->add_child(memnew(VSeparator));
+		// Preview is enabled by default - ensure this applies on editor startup when there is no state yet.
+		_environ_btn->set_pressed(true);
 
-	HBoxContainer *snap_hbox = EditorToolbarGroup::create(main_flow);
+		_sun_environ_settings_btn = memnew(Button);
+		_sun_environ_settings_btn->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_sun_environ_settings_pressed));
+		_sun_environ_settings_btn->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
+		_sun_environ_settings_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_sun_environ_settings_btn->set_tooltip_text(TTRC("Edit Sun and Environment settings."));
+		environment_vflow->add_child(_sun_environ_settings_btn);
+	}
 
-	tool_option_button[TOOL_OPT_USE_SNAP] = memnew(Button);
-	snap_hbox->add_child(tool_option_button[TOOL_OPT_USE_SNAP]);
-	tool_option_button[TOOL_OPT_USE_SNAP]->set_toggle_mode(true);
-	tool_option_button[TOOL_OPT_USE_SNAP]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_option_button[TOOL_OPT_USE_SNAP]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_USE_SNAP));
-	tool_option_button[TOOL_OPT_USE_SNAP]->set_shortcut(ED_SHORTCUT("spatial_editor/snap", TTRC("Use Snap"), Key::Y));
-	tool_option_button[TOOL_OPT_USE_SNAP]->set_shortcut_context(this);
-	tool_option_button[TOOL_OPT_USE_SNAP]->set_button_icon(EditorIconManager::get_icon(SNAME("action_snap")));
+	EditorToolbarFlowContainer *transform_view_vflow = _viewport_toolbar->create_group();
+	{
+		// Drag and drop support;
+		preview_node = memnew(Node3D);
+		preview_bounds = AABB();
 
-	snap_menu = memnew(MenuButton);
-	snap_hbox->add_child(snap_menu);
-	snap_menu->set_flat(false);
-	snap_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
-	snap_menu->set_h_size_flags(SIZE_SHRINK_END);
-	snap_menu->set_tooltip_text(TTRC("Selection options."));
-	snap_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
+		ED_SHORTCUT("spatial_editor/bottom_view", TTRC("Bottom View"), KeyModifierMask::ALT + Key::KP_7);
+		ED_SHORTCUT("spatial_editor/top_view", TTRC("Top View"), Key::KP_7);
+		ED_SHORTCUT("spatial_editor/rear_view", TTRC("Rear View"), KeyModifierMask::ALT + Key::KP_1);
+		ED_SHORTCUT("spatial_editor/front_view", TTRC("Front View"), Key::KP_1);
+		ED_SHORTCUT("spatial_editor/left_view", TTRC("Left View"), KeyModifierMask::ALT + Key::KP_3);
+		ED_SHORTCUT("spatial_editor/right_view", TTRC("Right View"), Key::KP_3);
+		ED_SHORTCUT("spatial_editor/orbit_view_down", TTRC("Orbit View Down"), Key::KP_2);
+		ED_SHORTCUT("spatial_editor/orbit_view_left", TTRC("Orbit View Left"), Key::KP_4);
+		ED_SHORTCUT("spatial_editor/orbit_view_right", TTRC("Orbit View Right"), Key::KP_6);
+		ED_SHORTCUT("spatial_editor/orbit_view_up", TTRC("Orbit View Up"), Key::KP_8);
+		ED_SHORTCUT("spatial_editor/orbit_view_180", TTRC("Orbit View 180"), Key::KP_9);
+		ED_SHORTCUT("spatial_editor/switch_perspective_orthogonal", TTRC("Switch Perspective/Orthogonal View"), Key::KP_5);
+		ED_SHORTCUT("spatial_editor/insert_anim_key", TTRC("Insert Animation Key"), Key::K);
+		ED_SHORTCUT("spatial_editor/focus_origin", TTRC("Focus Origin"), Key::O);
+		ED_SHORTCUT("spatial_editor/focus_selection", TTRC("Focus Selection"), KeyModifierMask::CMD_OR_CTRL + Key::F);
+		ED_SHORTCUT("spatial_editor/focus_aabb", TTRC("Focus and Frame Selection"), Key::F);
+		ED_SHORTCUT_ARRAY("spatial_editor/align_transform_with_view", TTRC("Align Transform with View"),
+				{ int32_t(KeyModifierMask::ALT | KeyModifierMask::CTRL | Key::KP_0),
+						int32_t(KeyModifierMask::ALT | KeyModifierMask::CTRL | Key::M),
+						int32_t(KeyModifierMask::ALT | KeyModifierMask::CTRL | Key::G) });
+		ED_SHORTCUT_OVERRIDE_ARRAY("spatial_editor/align_transform_with_view", "macos",
+				{ int32_t(KeyModifierMask::ALT | KeyModifierMask::META | Key::KP_0),
+						int32_t(KeyModifierMask::ALT | KeyModifierMask::META | Key::G) });
+		ED_SHORTCUT("spatial_editor/align_rotation_with_view", TTRC("Align Rotation with View"), KeyModifierMask::ALT + KeyModifierMask::CMD_OR_CTRL + Key::F);
+		ED_SHORTCUT("spatial_editor/freelook_toggle", TTRC("Toggle Freelook"), KeyModifierMask::SHIFT + Key::F);
+		ED_SHORTCUT("spatial_editor/decrease_fov", TTRC("Decrease Field of View"), KeyModifierMask::CMD_OR_CTRL + Key::EQUAL); // Usually direct access key for `KEY_PLUS`.
+		ED_SHORTCUT("spatial_editor/increase_fov", TTRC("Increase Field of View"), KeyModifierMask::CMD_OR_CTRL + Key::MINUS);
+		ED_SHORTCUT("spatial_editor/reset_fov", TTRC("Reset Field of View to Default"), KeyModifierMask::CMD_OR_CTRL + Key::KEY_0);
 
-	PopupMenu *snap_p = snap_menu->get_popup();
-	snap_p->set_hide_on_checkable_item_selection(false);
-	snap_p->add_radio_check_item(TTRC("Snap Vertex to Vertex"), MENU_VERTEX_SNAP_BASE_VERTEX);
-	snap_p->set_item_checked(snap_p->get_item_index(MENU_VERTEX_SNAP_BASE_VERTEX), true);
-	snap_p->add_radio_check_item(TTRC("Snap Origin to Vertex"), MENU_VERTEX_SNAP_BASE_ORIGIN);
+		transform_menu = memnew(MenuButton);
+		transform_menu->set_flat(false);
+		transform_menu->set_shortcut_context(this);
+		transform_menu->set_switch_on_hover(true);
+		transform_menu->set_theme_type_variation("FlatMenuButton");
+		transform_menu->set_tooltip_text(TTRC("Transform"));
+		transform_view_vflow->add_child(transform_menu);
 
-	snap_p->add_separator();
-	snap_p->add_radio_check_item(TTRC("Snap to Mesh Vertices"), MENU_VERTEX_SNAP_SOURCE_MESH);
-	snap_p->set_item_checked(snap_p->get_item_index(MENU_VERTEX_SNAP_SOURCE_MESH), true);
-	snap_p->add_radio_check_item(TTRC("Snap to Collision Vertices"), MENU_VERTEX_SNAP_SOURCE_COLLISION);
+		p = transform_menu->get_popup();
+		p->add_shortcut(ED_SHORTCUT("spatial_editor/snap_to_floor", TTRC("Snap Object to Floor"), Key::PAGEDOWN), MENU_SNAP_TO_FLOOR);
+		p->add_shortcut(ED_SHORTCUT("spatial_editor/transform_dialog", TTRC("Transform Dialog...")), MENU_TRANSFORM_DIALOG);
+		ED_SHORTCUT("spatial_editor/vertex_snap", TTRC("Vertex Snap"), Key::B);
+		_update_vertex_snap_tooltips();
 
-	snap_p->add_separator();
-	snap_p->add_shortcut(ED_SHORTCUT("spatial_editor/configure_snap", TTRC("Configure Snap...")), MENU_TRANSFORM_CONFIGURE_SNAP);
-	snap_p->connect(SceneStringName(id_pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed));
+		p->connect(SceneStringName(id_pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed));
 
-	main_flow->add_child(memnew(VSeparator));
-
-	HBoxContainer *environment_hbox = EditorToolbarGroup::create(main_flow);
-
-	sun_button = memnew(Button);
-	sun_button->set_tooltip_text(TTRC("Toggle preview sunlight.\nIf a DirectionalLight3D node is added to the scene, preview sunlight is disabled."));
-	sun_button->set_toggle_mode(true);
-	sun_button->set_theme_type_variation(SceneStringName(FlatButton));
-	sun_button->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_update_preview_environment), CONNECT_DEFERRED);
-	// Preview is enabled by default - ensure this applies on editor startup when there is no state yet.
-	sun_button->set_pressed(true);
-	sun_button->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_preview_sun")));
-
-	environment_hbox->add_child(sun_button);
-
-	environ_button = memnew(Button);
-	environ_button->set_tooltip_text(TTRC("Toggle preview environment.\nIf a WorldEnvironment node is added to the scene, preview environment is disabled."));
-	environ_button->set_toggle_mode(true);
-	environ_button->set_theme_type_variation(SceneStringName(FlatButton));
-	environ_button->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_update_preview_environment), CONNECT_DEFERRED);
-	// Preview is enabled by default - ensure this applies on editor startup when there is no state yet.
-	environ_button->set_pressed(true);
-	environ_button->set_button_icon(EditorIconManager::get_icon(SNAME("viewport_preview_environment")));
-
-	environment_hbox->add_child(environ_button);
-
-	sun_environ_settings = memnew(Button);
-	sun_environ_settings->set_tooltip_text(TTRC("Edit Sun and Environment settings."));
-	sun_environ_settings->set_theme_type_variation(SceneStringName(FlatButton));
-	sun_environ_settings->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_sun_environ_settings_pressed));
-	sun_environ_settings->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
-
-	environment_hbox->add_child(sun_environ_settings);
-
-	main_flow->add_child(memnew(VSeparator));
-
-	HBoxContainer *transform_view_hbox = memnew(HBoxContainer);
-	main_flow->add_child(transform_view_hbox);
-
-	// Drag and drop support;
-	preview_node = memnew(Node3D);
-	preview_bounds = AABB();
-
-	ED_SHORTCUT("spatial_editor/bottom_view", TTRC("Bottom View"), KeyModifierMask::ALT + Key::KP_7);
-	ED_SHORTCUT("spatial_editor/top_view", TTRC("Top View"), Key::KP_7);
-	ED_SHORTCUT("spatial_editor/rear_view", TTRC("Rear View"), KeyModifierMask::ALT + Key::KP_1);
-	ED_SHORTCUT("spatial_editor/front_view", TTRC("Front View"), Key::KP_1);
-	ED_SHORTCUT("spatial_editor/left_view", TTRC("Left View"), KeyModifierMask::ALT + Key::KP_3);
-	ED_SHORTCUT("spatial_editor/right_view", TTRC("Right View"), Key::KP_3);
-	ED_SHORTCUT("spatial_editor/orbit_view_down", TTRC("Orbit View Down"), Key::KP_2);
-	ED_SHORTCUT("spatial_editor/orbit_view_left", TTRC("Orbit View Left"), Key::KP_4);
-	ED_SHORTCUT("spatial_editor/orbit_view_right", TTRC("Orbit View Right"), Key::KP_6);
-	ED_SHORTCUT("spatial_editor/orbit_view_up", TTRC("Orbit View Up"), Key::KP_8);
-	ED_SHORTCUT("spatial_editor/orbit_view_180", TTRC("Orbit View 180"), Key::KP_9);
-	ED_SHORTCUT("spatial_editor/switch_perspective_orthogonal", TTRC("Switch Perspective/Orthogonal View"), Key::KP_5);
-	ED_SHORTCUT("spatial_editor/insert_anim_key", TTRC("Insert Animation Key"), Key::K);
-	ED_SHORTCUT("spatial_editor/focus_origin", TTRC("Focus Origin"), Key::O);
-	ED_SHORTCUT("spatial_editor/focus_selection", TTRC("Focus Selection"), KeyModifierMask::CMD_OR_CTRL + Key::F);
-	ED_SHORTCUT("spatial_editor/focus_aabb", TTRC("Focus and Frame Selection"), Key::F);
-	ED_SHORTCUT_ARRAY("spatial_editor/align_transform_with_view", TTRC("Align Transform with View"),
-			{ int32_t(KeyModifierMask::ALT | KeyModifierMask::CTRL | Key::KP_0),
-					int32_t(KeyModifierMask::ALT | KeyModifierMask::CTRL | Key::M),
-					int32_t(KeyModifierMask::ALT | KeyModifierMask::CTRL | Key::G) });
-	ED_SHORTCUT_OVERRIDE_ARRAY("spatial_editor/align_transform_with_view", "macos",
-			{ int32_t(KeyModifierMask::ALT | KeyModifierMask::META | Key::KP_0),
-					int32_t(KeyModifierMask::ALT | KeyModifierMask::META | Key::G) });
-	ED_SHORTCUT("spatial_editor/align_rotation_with_view", TTRC("Align Rotation with View"), KeyModifierMask::ALT + KeyModifierMask::CMD_OR_CTRL + Key::F);
-	ED_SHORTCUT("spatial_editor/freelook_toggle", TTRC("Toggle Freelook"), KeyModifierMask::SHIFT + Key::F);
-	ED_SHORTCUT("spatial_editor/decrease_fov", TTRC("Decrease Field of View"), KeyModifierMask::CMD_OR_CTRL + Key::EQUAL); // Usually direct access key for `KEY_PLUS`.
-	ED_SHORTCUT("spatial_editor/increase_fov", TTRC("Increase Field of View"), KeyModifierMask::CMD_OR_CTRL + Key::MINUS);
-	ED_SHORTCUT("spatial_editor/reset_fov", TTRC("Reset Field of View to Default"), KeyModifierMask::CMD_OR_CTRL + Key::KEY_0);
-
-	PopupMenu *p;
-
-	transform_menu = memnew(MenuButton);
-	transform_menu->set_flat(false);
-	transform_menu->set_theme_type_variation("FlatMenuButton");
-	transform_menu->set_text(TTRC("Transform"));
-	transform_menu->set_switch_on_hover(true);
-	transform_menu->set_shortcut_context(this);
-	transform_view_hbox->add_child(transform_menu);
-
-	p = transform_menu->get_popup();
-	p->add_shortcut(ED_SHORTCUT("spatial_editor/snap_to_floor", TTRC("Snap Object to Floor"), Key::PAGEDOWN), MENU_SNAP_TO_FLOOR);
-	p->add_shortcut(ED_SHORTCUT("spatial_editor/transform_dialog", TTRC("Transform Dialog...")), MENU_TRANSFORM_DIALOG);
-	ED_SHORTCUT("spatial_editor/vertex_snap", TTRC("Vertex Snap"), Key::B);
-	_update_vertex_snap_tooltips();
-
-	p->connect(SceneStringName(id_pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed));
-
-	view_layout_menu = memnew(MenuButton);
-	view_layout_menu->set_flat(false);
-	view_layout_menu->set_theme_type_variation("FlatMenuButton");
-	// TRANSLATORS: Noun, name of the 2D/3D View menus.
-	view_layout_menu->set_text(TTRC("View"));
-	view_layout_menu->set_switch_on_hover(true);
-	view_layout_menu->set_shortcut_context(this);
-	transform_view_hbox->add_child(view_layout_menu);
-	transform_view_hbox->add_child(memnew(VSeparator));
+		view_layout_menu = memnew(MenuButton);
+		view_layout_menu->set_flat(false);
+		view_layout_menu->set_shortcut_context(this);
+		view_layout_menu->set_switch_on_hover(true);
+		view_layout_menu->set_theme_type_variation("FlatMenuButton");
+		view_layout_menu->set_tooltip_text(TTRC("View"));
+		transform_view_vflow->add_child(view_layout_menu);
+	}
 
 #ifdef MODULE_TEXTURE_STREAMING_ENABLED
-	textures_button = memnew(Button);
-	textures_button_separator = memnew(VSeparator);
-	textures_button->set_text(TTRC("Textures"));
-	textures_button->set_tooltip_text(TTRC("Edit texture streaming quality settings."));
-	textures_button->set_theme_type_variation(SceneStringName(FlatButton));
-	textures_button->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_textures_button_pressed));
+	_textures_btn = memnew(Button);
+	_textures_btn->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_textures_button_pressed));
+	_textures_btn->set_theme_type_variation(SceneStringName(FlatButton));
+	_textures_btn->set_tooltip_text(TTRC("Edit texture streaming quality settings."));
+	_viewport_toolbar->create_group()->add_child(_textures_btn);
 
-	main_flow->add_child(textures_button);
-	main_flow->add_child(textures_button_separator);
 #endif
 
-	context_toolbar_panel = memnew(PanelContainer);
-	context_toolbar_hbox = memnew(HBoxContainer);
-	context_toolbar_panel->add_child(context_toolbar_hbox);
-	main_flow->add_child(context_toolbar_panel);
+	_context_toolbar_vflow = memnew(EditorToolbarFlowContainer);
+	_viewport_toolbar->set_context_control(_context_toolbar_vflow);
 
 	// Get the view menu popup and have it stay open when a checkable item is selected
 	p = view_layout_menu->get_popup();
@@ -3756,18 +3729,34 @@ Node3DEditor::Node3DEditor() {
 	shader_split = memnew(VSplitContainer);
 	shader_split->set_h_size_flags(SIZE_EXPAND_FILL);
 	right_panel_split->add_child(shader_split);
-	viewport_base = memnew(Node3DEditorViewportContainer);
-	shader_split->add_child(viewport_base);
-	viewport_base->set_v_size_flags(SIZE_EXPAND_FILL);
-	for (uint32_t i = 0; i < VIEWPORTS_COUNT; i++) {
-		viewports[i] = memnew(Node3DEditorViewport(this, i));
-		viewports[i]->connect("toggle_maximize_view", callable_mp(this, &Node3DEditor::_toggle_maximize_view));
-		viewports[i]->connect("clicked", callable_mp(this, &Node3DEditor::_viewport_clicked).bind(i));
-		viewports[i]->assign_pending_data_pointers(preview_node, &preview_bounds, accept);
-		viewports[i]->set_h_size_flags(SIZE_EXPAND_FILL);
-		viewports[i]->set_v_size_flags(SIZE_EXPAND_FILL);
-		viewports[i]->set_custom_minimum_size(Size2(39, 39));
-		viewport_base->add_viewport(viewports[i], i);
+	MarginContainer *viewport_mc = memnew(MarginContainer);
+	viewport_mc->set_h_size_flags(SIZE_EXPAND_FILL);
+	viewport_mc->set_mouse_filter(MOUSE_FILTER_IGNORE);
+	viewport_mc->set_v_size_flags(SIZE_EXPAND_FILL);
+	shader_split->add_child(viewport_mc);
+	{
+		viewport_base = memnew(Node3DEditorViewportContainer);
+		viewport_mc->add_child(viewport_base);
+		{
+			for (uint32_t i = 0; i < VIEWPORTS_COUNT; i++) {
+				viewports[i] = memnew(Node3DEditorViewport(this, i));
+				viewports[i]->assign_pending_data_pointers(preview_node, &preview_bounds, accept);
+				viewports[i]->set_custom_minimum_size(Size2(39, 39));
+				viewports[i]->set_h_size_flags(SIZE_EXPAND_FILL);
+				viewports[i]->set_v_size_flags(SIZE_EXPAND_FILL);
+				viewport_base->add_viewport(viewports[i], i);
+				viewports[i]->connect("toggle_maximize_view", callable_mp(this, &Node3DEditor::_toggle_maximize_view));
+				viewports[i]->connect("clicked", callable_mp(this, &Node3DEditor::_viewport_clicked).bind(i));
+				const Callable queue_overlays = callable_mp(this, &Node3DEditor::_queue_viewport_overlay_update);
+				viewports[i]->connect(SceneStringName(visibility_changed), queue_overlays);
+				viewports[i]->surface->connect(SceneStringName(resized), queue_overlays);
+				Control *overlays[] = { viewports[i]->_top_left_vbox, viewports[i]->top_right_vbox, viewports[i]->info_panel, viewports[i]->position_control, viewports[i]->look_control, viewports[i]->bottom_center_vbox };
+				for (Control *overlay : overlays) {
+					overlay->connect(SceneStringName(resized), queue_overlays);
+				}
+			}
+		}
+		viewport_mc->add_child(_viewport_toolbar);
 	}
 
 	/* SNAP DIALOG */
@@ -4309,15 +4298,15 @@ bool Node3DEditor::is_gizmo_visible() const {
 }
 
 bool Node3DEditor::are_local_coords_enabled() const {
-	return tool_option_button[Node3DEditor::TOOL_OPT_LOCAL_COORDS]->is_pressed();
+	return _tool_option_btn[Node3DEditor::TOOL_OPT_LOCAL_COORDS]->is_pressed();
 }
 
 void Node3DEditor::set_local_coords_enabled(bool on) const {
-	tool_option_button[Node3DEditor::TOOL_OPT_LOCAL_COORDS]->set_pressed(on);
+	_tool_option_btn[Node3DEditor::TOOL_OPT_LOCAL_COORDS]->set_pressed(on);
 }
 
 bool Node3DEditor::is_preserve_children_transform_enabled() const {
-	return tool_option_button[Node3DEditor::TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->is_pressed();
+	return _tool_option_btn[Node3DEditor::TOOL_OPT_PRESERVE_CHILDREN_TRANSFORM]->is_pressed();
 }
 
 bool Node3DEditor::can_preserve_owned_children_transform(Node *p_node) const {

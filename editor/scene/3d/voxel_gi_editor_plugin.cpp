@@ -36,6 +36,7 @@
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "scene/main/scene_tree.h"
 
@@ -128,21 +129,21 @@ void VoxelGIEditorPlugin::_notification(int p_what) {
 			text += vformat(TTR("Video RAM size: %s MB (%s)"), String::num(size_mb, 2), size_quality);
 
 			// Only update the tooltip when needed to avoid constant redrawing.
-			if (bake->get_tooltip(Point2()) == text) {
+			if (_bake_btn->get_tooltip(Point2()) == text) {
 				return;
 			}
 
-			bake->set_tooltip_text(text);
+			_bake_btn->set_tooltip_text(text);
 		} break;
 	}
 }
 
 void VoxelGIEditorPlugin::make_visible(bool p_visible) {
 	if (p_visible) {
-		bake_hb->show();
+		_bake_vflow->show();
 		set_process(true);
 	} else {
-		bake_hb->hide();
+		_bake_vflow->hide();
 		set_process(false);
 	}
 }
@@ -181,19 +182,21 @@ void VoxelGIEditorPlugin::_voxel_gi_save_path_and_bake(const String &p_path) {
 }
 
 VoxelGIEditorPlugin::VoxelGIEditorPlugin() {
-	bake_hb = memnew(HBoxContainer);
-	bake_hb->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	bake_hb->hide();
-	bake = memnew(Button);
-	bake->set_theme_type_variation(SceneStringName(FlatButton));
-	// TODO: Rework this as a dedicated toolbar control so we can hook into theme changes and update it
-	// when the editor theme updates.
-	bake->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
-	bake->set_text(TTR("Bake VoxelGI"));
-	bake->connect(SceneStringName(pressed), callable_mp(this, &VoxelGIEditorPlugin::_bake));
-	bake_hb->add_child(bake);
+	_bake_vflow = memnew(EditorToolbarFlowContainer);
+	_bake_vflow->hide();
+	_bake_vflow->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, _bake_vflow);
+	{
+		_bake_btn = memnew(Button);
+		_bake_btn->connect(SceneStringName(pressed), callable_mp(this, &VoxelGIEditorPlugin::_bake));
+		// TODO: Rework this as a dedicated toolbar control so we can hook into theme changes and update it
+		// when the editor theme updates.
+		_bake_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
+		_bake_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_bake_btn->set_tooltip_text(TTR("Bake VoxelGI"));
+		_bake_vflow->add_child(_bake_btn);
+	}
 
-	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, bake_hb);
 	voxel_gi = nullptr;
 	probe_file = memnew(EditorFileDialog);
 	probe_file->set_file_mode(EditorFileDialog::FILE_MODE_SAVE_FILE);

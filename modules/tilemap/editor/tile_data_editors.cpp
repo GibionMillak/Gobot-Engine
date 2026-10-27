@@ -128,10 +128,6 @@ void DummyObject::remove_dummy_property(const StringName &p_name) {
 	properties.erase(p_name);
 }
 
-void DummyObject::clear_dummy_properties() {
-	properties.clear();
-}
-
 void GenericTilePolygonEditor::_base_control_draw() {
 	ERR_FAIL_COND(tile_set.is_null());
 
@@ -1013,7 +1009,7 @@ GenericTilePolygonEditor::GenericTilePolygonEditor() {
 	snap_subdivision->connect(SceneStringName(value_changed), callable_mp((CanvasItem *)base_control, &CanvasItem::queue_redraw).unbind(1));
 	snap_subdivision->connect(SceneStringName(value_changed), callable_mp(this, &GenericTilePolygonEditor::_store_snap_options).unbind(1));
 
-	editor_zoom_widget = memnew(EditorZoomWidget);
+	editor_zoom_widget = memnew(EditorZoomContainer);
 	editor_zoom_widget->setup_zoom_limits(0.125, 128.0);
 	editor_zoom_widget->set_position(Vector2(5, 5));
 	editor_zoom_widget->connect("zoom_changed", callable_mp(this, &GenericTilePolygonEditor::_zoom_changed).unbind(1));

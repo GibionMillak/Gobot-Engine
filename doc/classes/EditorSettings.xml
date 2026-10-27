@@ -706,6 +706,9 @@
 		<member name="editors/tiles_editor/highlight_selected_layer" type="bool" setter="" getter="">
 			Highlight the currently selected TileMapLayer by dimming the other ones in the scene.
 		</member>
+		<member name="editors/viewport/toolbar_side" type="int" setter="" getter="">
+			The edge of the 2D and 3D viewports where the main floating toolbar appears. Set to [code]0[/code] for the left edge or [code]1[/code] for the right edge. The contextual tools toolbar always appears on the opposite edge. Changes apply immediately.
+		</member>
 		<member name="editors/visual_editors/category_colors/color_color" type="Color" setter="" getter="">
 			The color of a graph node's header when it belongs to the "Color" category.
 		</member>

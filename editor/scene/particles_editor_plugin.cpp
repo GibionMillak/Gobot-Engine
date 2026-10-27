@@ -34,6 +34,7 @@
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/menu_button.h"
@@ -43,15 +44,15 @@ void ParticlesEditorPlugin::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
 			if (handled_type.ends_with("2D")) {
-				add_control_to_container(CONTAINER_CANVAS_EDITOR_MENU, toolbar);
+				add_control_to_container(CONTAINER_CANVAS_EDITOR_MENU, _toolbar_vflow);
 			} else if (handled_type.ends_with("3D")) {
-				add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, toolbar);
+				add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, _toolbar_vflow);
 			} else {
 				DEV_ASSERT(false);
 			}
 
 			menu->set_button_icon(menu->get_editor_theme_icon(editor_get_type_icon_name(handled_type)));
-			menu->set_text(handled_type);
+			menu->set_tooltip_text(handled_type);
 
 			PopupMenu *popup = menu->get_popup();
 			popup->add_shortcut(ED_SHORTCUT("particles/restart_emission", TTRC("Restart Emission"), KeyModifierMask::CTRL | Key::R), MENU_RESTART);
@@ -100,17 +101,21 @@ bool ParticlesEditorPlugin::handles(Object *p_object) const {
 }
 
 void ParticlesEditorPlugin::make_visible(bool p_visible) {
-	toolbar->set_visible(p_visible);
+	_toolbar_vflow->set_visible(p_visible);
 }
 
 ParticlesEditorPlugin::ParticlesEditorPlugin() {
-	toolbar = memnew(HBoxContainer);
-	toolbar->hide();
+	_toolbar_vflow = memnew(EditorToolbarFlowContainer);
+	_toolbar_vflow->hide();
 
-	menu = memnew(MenuButton);
-	menu->set_switch_on_hover(true);
-	menu->set_flat(false);
-	menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
-	toolbar->add_child(menu);
-	menu->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &ParticlesEditorPlugin::_menu_callback));
+	{
+		menu = memnew(MenuButton);
+		menu->set_flat(false);
+		menu->set_switch_on_hover(true);
+		menu->set_theme_type_variation("FlatMenuButtonNoIconTint");
+		_toolbar_vflow->add_child(menu);
+
+		menu->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &ParticlesEditorPlugin::_menu_callback));
+	}
+
 }

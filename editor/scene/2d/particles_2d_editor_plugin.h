@@ -33,6 +33,7 @@
 #include "editor/scene/particles_editor_plugin.h"
 
 class EditorFileDialog;
+class HBoxContainer;
 class MarginContainer;
 class LineEdit;
 

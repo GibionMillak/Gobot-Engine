@@ -32,9 +32,9 @@
 
 #include "editor/plugins/editor_plugin.h"
 
+class EditorToolbarFlowContainer;
 class CheckBox;
 class Dialog;
-class HBoxContainer;
 class MenuButton;
 class OptionButton;
 class HierarchyDialog;
@@ -49,7 +49,7 @@ private:
 		MENU_RESTART
 	};
 
-	HBoxContainer *toolbar = nullptr;
+	EditorToolbarFlowContainer *_toolbar_vflow = nullptr;
 	MenuButton *menu = nullptr;
 
 protected:

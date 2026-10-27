@@ -30,18 +30,19 @@
 
 #pragma once
 
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/plugins/editor_plugin.h"
-#include "scene/gui/box_container.h"
 
 class ArrayMesh;
+class Button;
 class CanvasItemEditor;
 class ImmediateMesh;
 class MenuButton;
 class MeshInstance3D;
 class StandardMaterial3D;
 
-class Polygon3DEditor : public HBoxContainer {
-	GDCLASS(Polygon3DEditor, HBoxContainer);
+class Polygon3DEditor : public EditorToolbarFlowContainer {
+	GDCLASS(Polygon3DEditor, EditorToolbarFlowContainer);
 
 	enum Mode {
 		MODE_CREATE,
@@ -57,7 +58,6 @@ class Polygon3DEditor : public HBoxContainer {
 	Ref<StandardMaterial3D> line_material;
 	Ref<StandardMaterial3D> handle_material;
 
-	Panel *panel = nullptr;
 	Node3D *node = nullptr;
 	Ref<Resource> node_resource;
 	Ref<ImmediateMesh> imesh;

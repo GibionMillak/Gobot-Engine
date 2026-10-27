@@ -34,10 +34,9 @@
 
 #include "editor/plugins/editor_plugin.h"
 
+class EditorToolbarFlowContainer;
 class Dialog;
 class Button;
-class HBoxContainer;
-class Label;
 class NavigationRegion3D;
 
 class NavigationRegion3DEditor : public Control {
@@ -48,10 +47,9 @@ class NavigationRegion3DEditor : public Control {
 	Dialog *err_dialog = nullptr;
 	Dialog *multibake_dialog = nullptr;
 
-	HBoxContainer *bake_hbox = nullptr;
-	Button *button_bake = nullptr;
-	Button *button_reset = nullptr;
-	Label *bake_info = nullptr;
+	EditorToolbarFlowContainer *_bake_vflow = nullptr;
+	Button *_bake_btn = nullptr;
+	Button *_reset_btn = nullptr;
 
 	LocalVector<NavigationRegion3D *> selected_regions;
 

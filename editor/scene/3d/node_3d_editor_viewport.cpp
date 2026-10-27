@@ -4078,7 +4078,7 @@ void Node3DEditorViewport::_draw() {
 	if (message_time > 0) {
 		Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
 		int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
-		Point2 msgpos = Point2(10 * EDSCALE, get_size().y - 14 * EDSCALE);
+		Point2 msgpos = Point2(_top_left_vbox->get_position().x, get_size().y - 14 * EDSCALE);
 		font->draw_string(ci, msgpos + Point2(1, 1), message, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.8));
 		font->draw_string(ci, msgpos + Point2(-1, -1), message, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.8));
 		font->draw_string(ci, msgpos, message, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1, 1, 1, 1));
@@ -6966,13 +6966,13 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	surface->connect(SceneStringName(focus_entered), callable_mp(this, &Node3DEditorViewport::_surface_focus_enter));
 	surface->connect(SceneStringName(focus_exited), callable_mp(this, &Node3DEditorViewport::_surface_focus_exit));
 
-	VBoxContainer *vbox = memnew(VBoxContainer);
-	surface->add_child(vbox);
-	vbox->set_offset(SIDE_LEFT, 10 * EDSCALE);
-	vbox->set_offset(SIDE_TOP, 10 * EDSCALE);
+	_top_left_vbox = memnew(VBoxContainer);
+	_top_left_vbox->set_offset(SIDE_LEFT, 10 * EDSCALE);
+	_top_left_vbox->set_offset(SIDE_TOP, 10 * EDSCALE);
+	surface->add_child(_top_left_vbox);
 
 	HBoxContainer *hbox = memnew(HBoxContainer);
-	vbox->add_child(hbox);
+	_top_left_vbox->add_child(hbox);
 
 	view_display_menu = memnew(MenuButton);
 	view_display_menu->set_flat(false);
@@ -7123,7 +7123,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	follow_mode = memnew(Button);
 	follow_mode->set_tooltip_text(TTR("Click to stop following this node as it moves."));
 	follow_mode->hide();
-	vbox->add_child(follow_mode);
+	_top_left_vbox->add_child(follow_mode);
 	follow_mode->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditorViewport::_disable_follow_mode));
 
 	preview_camera = memnew(CheckBox);
@@ -7131,7 +7131,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	preview_camera->set_tooltip_text(TTRC("Preview through the selected camera.\nHold Shift while clicking to also enable Pilot mode."));
 	// Using Control even on macOS to avoid conflict with Quick Open shortcut.
 	preview_camera->set_shortcut(ED_SHORTCUT("spatial_editor/toggle_camera_preview", TTRC("Toggle Camera Preview"), KeyModifierMask::CTRL | Key::P));
-	vbox->add_child(preview_camera);
+	_top_left_vbox->add_child(preview_camera);
 	preview_camera->set_h_size_flags(SIZE_SHRINK_BEGIN);
 	preview_camera->set_theme_type_variation("CheckBoxNoIconTintNoDim");
 	preview_camera->hide();
@@ -7141,7 +7141,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	pilot_camera->set_text(TTRC("Pilot"));
 	pilot_camera->set_tooltip_text(TTRC("Enable pilot mode for the preview camera.\nAllows WASD movement and mouse look when in preview mode."));
 	pilot_camera->set_shortcut(ED_SHORTCUT("spatial_editor/toggle_pilot_preview", TTRC("Toggle Pilot Mode in Preview")));
-	vbox->add_child(pilot_camera);
+	_top_left_vbox->add_child(pilot_camera);
 	pilot_camera->set_h_size_flags(SIZE_SHRINK_BEGIN);
 	pilot_camera->set_theme_type_variation("CheckBoxNoIconTintNoDim");
 	pilot_camera->hide();
@@ -7199,7 +7199,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	bottom_center_vbox->add_child(zoom_limit_label);
 
 	tooltip_panel = memnew(RichTextLabel);
-	vbox->add_child(tooltip_panel);
+	_top_left_vbox->add_child(tooltip_panel);
 	tooltip_panel->hide();
 	tooltip_panel->set_h_grow_direction(GROW_DIRECTION_BEGIN);
 	tooltip_panel->set_v_grow_direction(GROW_DIRECTION_BEGIN);
@@ -7488,10 +7488,6 @@ void Node3DEditorViewportContainer::set_view(View p_view) {
 			_update_split_drag_margin();
 		} break;
 	}
-}
-
-Node3DEditorViewportContainer::View Node3DEditorViewportContainer::get_view() {
-	return view;
 }
 
 void Node3DEditorViewportContainer::add_viewport(Node3DEditorViewport *p_viewport, int p_index) {

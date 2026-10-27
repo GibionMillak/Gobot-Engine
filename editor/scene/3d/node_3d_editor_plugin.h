@@ -40,6 +40,7 @@
 
 #include "modules/modules_enabled.gen.h"
 
+class EditorToolbarFlowContainer;
 class Dialog;
 class Button;
 class CheckBox;
@@ -47,6 +48,7 @@ class ColorPickerButton;
 class DirectionalLight3D;
 class EditorSelection;
 class EditorSpinSlider;
+class EditorViewportToolbar;
 class HSlider;
 class HSplitContainer;
 class Label;
@@ -58,7 +60,6 @@ class OptionButton;
 class PanelContainer;
 class ProceduralSkyMaterial;
 class SpinBox;
-class VSeparator;
 class VSplitContainer;
 class WorldEnvironment;
 
@@ -216,8 +217,8 @@ private:
 		MENU_VERTEX_SNAP_SOURCE_COLLISION,
 	};
 
-	Button *tool_button[TOOL_MAX];
-	Button *tool_option_button[TOOL_OPT_MAX];
+	Button *_tool_btn[TOOL_MAX];
+	Button *_tool_option_btn[TOOL_OPT_MAX];
 
 	MenuButton *snap_menu = nullptr;
 	MenuButton *transform_menu = nullptr;
@@ -262,9 +263,8 @@ private:
 	void _menu_gizmo_toggled(int p_option);
 	// Used for secondary menu items which are displayed depending on the currently selected node
 	// (such as MeshInstance's "Mesh" menu).
-	PanelContainer *context_toolbar_panel = nullptr;
-	HBoxContainer *context_toolbar_hbox = nullptr;
-	HashMap<Control *, VSeparator *> context_toolbar_separators;
+	EditorViewportToolbar *_viewport_toolbar = nullptr;
+	EditorToolbarFlowContainer *_context_toolbar_vflow = nullptr;
 
 	void _update_context_toolbar();
 
@@ -324,7 +324,7 @@ private:
 	uint32_t world_env_count = 0;
 	uint32_t directional_light_count = 0;
 
-	Button *sun_button = nullptr;
+	Button *_sun_btn = nullptr;
 	Label *sun_state = nullptr;
 	Label *sun_title = nullptr;
 	VBoxContainer *sun_vb = nullptr;
@@ -342,7 +342,7 @@ private:
 	Ref<Shader> sun_direction_shader;
 	Ref<ShaderMaterial> sun_direction_material;
 
-	Button *environ_button = nullptr;
+	Button *_environ_btn = nullptr;
 	Label *environ_state = nullptr;
 	Label *environ_title = nullptr;
 	VBoxContainer *environ_vb = nullptr;
@@ -355,10 +355,10 @@ private:
 	Button *environ_gi_button = nullptr;
 	Button *environ_add_to_scene = nullptr;
 
-	Button *sun_environ_settings = nullptr;
+	Button *_sun_environ_settings_btn = nullptr;
 
 #ifdef MODULE_TEXTURE_STREAMING_ENABLED
-	Button *textures_button = nullptr;
+	Button *_textures_btn = nullptr;
 	PopupPanel *textures_popup = nullptr;
 	Button *textures_very_low = nullptr;
 	Button *textures_low = nullptr;
@@ -371,7 +371,6 @@ private:
 	EditorSpinSlider *textures_min_lod_slider = nullptr;
 	CheckBox *textures_budget_enable = nullptr;
 	EditorSpinSlider *textures_budget_slider = nullptr;
-	VSeparator *textures_button_separator = nullptr;
 
 	enum TextureQualityPreset {
 		TEXTURE_QUALITY_VERY_LOW,
@@ -431,6 +430,9 @@ private:
 	void _add_environment_to_scene(bool p_already_added_sun = false);
 
 	void _update_theme();
+	void _queue_viewport_overlay_update();
+	void _update_viewport_overlays();
+	bool _viewport_overlay_update_pending = false;
 
 	void _undo_redo_inspector_callback(Object *p_undo_redo, Object *p_edited, const String &p_property, const Variant &p_new_value);
 
@@ -497,8 +499,6 @@ public:
 	void add_control_to_right_panel(Control *p_control);
 	void remove_control_from_right_panel(Control *p_control);
 
-	void move_control_to_left_panel(Control *p_control);
-	void move_control_to_right_panel(Control *p_control);
 
 	VSplitContainer *get_shader_split();
 

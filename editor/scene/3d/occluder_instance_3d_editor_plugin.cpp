@@ -110,7 +110,7 @@ OccluderInstance3DEditorPlugin::OccluderInstance3DEditorPlugin() {
 	bake = memnew(Button);
 	bake->set_theme_type_variation(SceneStringName(FlatButton));
 	bake->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
-	bake->set_text(TTR("Bake Occluders"));
+	bake->set_tooltip_text(TTR("Bake Occluders"));
 	bake->hide();
 	bake->connect(SceneStringName(pressed), Callable(this, "_bake"));
 	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, bake);

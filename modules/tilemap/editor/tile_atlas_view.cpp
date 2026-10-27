@@ -675,7 +675,7 @@ TileAtlasView::TileAtlasView() {
 	panel->set_v_size_flags(SIZE_EXPAND_FILL);
 	add_child(panel);
 
-	zoom_widget = memnew(EditorZoomWidget);
+	zoom_widget = memnew(EditorZoomContainer);
 	add_child(zoom_widget);
 	zoom_widget->set_anchors_and_offsets_preset(Control::PRESET_TOP_LEFT, Control::PRESET_MODE_MINSIZE, 2 * EDSCALE);
 	zoom_widget->connect("zoom_changed", callable_mp(this, &TileAtlasView::_zoom_widget_changed).unbind(1));

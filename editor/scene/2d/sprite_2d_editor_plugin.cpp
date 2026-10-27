@@ -36,7 +36,8 @@
 #include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
-#include "editor/gui/editor_zoom_widget.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
+#include "editor/gui/containers/editor_zoom_container.h"
 #include "editor/scene/canvas_item_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
@@ -454,7 +455,7 @@ void Sprite2DEditor::_add_as_sibling_or_child(Node *p_own_node, Node *p_new_node
 
 void Sprite2DEditor::_sync_sprite_resize_mode() {
 	if (node != nullptr) {
-		node->_editor_set_dragging_to_resize_rect(resize_region_rect->is_pressed());
+		node->_editor_set_dragging_to_resize_rect(_resize_region_rect_btn->is_pressed());
 	}
 }
 
@@ -462,9 +463,9 @@ void Sprite2DEditor::_update_sprite_resize_mode_button() {
 	if (node == nullptr) {
 		return;
 	}
-	resize_region_rect->set_disabled(!node->is_region_enabled());
-	resize_region_rect->set_pressed(node->_editor_is_dragging_to_resiz_rect());
-	resize_region_rect->set_tooltip_text(node->is_region_enabled() ? "" : TTRC("Sprite's region needs to be enabled in the inspector."));
+	_resize_region_rect_btn->set_disabled(!node->is_region_enabled());
+	_resize_region_rect_btn->set_pressed(node->_editor_is_dragging_to_resiz_rect());
+	_resize_region_rect_btn->set_tooltip_text(node->is_region_enabled() ? "" : TTRC("Sprite's region needs to be enabled in the inspector."));
 }
 
 void Sprite2DEditor::_debug_uv_input(const Ref<InputEvent> &p_input) {
@@ -591,7 +592,7 @@ void Sprite2DEditor::_notification(int p_what) {
 			options->get_popup()->set_item_icon(MENU_OPTION_CREATE_COLLISION_POLY_2D, get_editor_theme_icon(SNAME("node_2d_collision_polygon_2d")));
 			options->get_popup()->set_item_icon(MENU_OPTION_CREATE_LIGHT_OCCLUDER_2D, get_editor_theme_icon(SNAME("node_2d_light_occluder_2d")));
 
-			resize_region_rect->set_button_icon(get_editor_theme_icon(SNAME("gui_keep_aspect")));
+			_resize_region_rect_btn->set_button_icon(get_editor_theme_icon(SNAME("gui_keep_aspect")));
 		} break;
 	}
 }
@@ -618,39 +619,35 @@ void Sprite2DEditor::edit(Sprite2D *p_sprite) {
 }
 
 Sprite2DEditor::Sprite2DEditor() {
-	// Top HBoxContainer definition
-	top_hb = memnew(HBoxContainer);
+	// Contextual toolbar.
+	_toolbar_vflow = memnew(EditorToolbarFlowContainer);
 
-	CanvasItemEditor::get_singleton()->add_control_to_menu_panel(top_hb);
+	CanvasItemEditor::get_singleton()->add_control_to_menu_panel(_toolbar_vflow);
 
-	// Options definition
-	options = memnew(MenuButton);
+	{
+		// Options definition
+		options = memnew(MenuButton);
+		options->set_flat(false);
+		options->set_theme_type_variation("FlatMenuButtonNoIconTint");
+		options->set_tooltip_text(TTR("Sprite2D"));
+		_toolbar_vflow->add_child(options);
 
-	top_hb->add_child(options);
+		options->get_popup()->add_item(TTR("Convert to MeshInstance2D"), MENU_OPTION_CONVERT_TO_MESH_2D);
+		options->get_popup()->add_item(TTR("Convert to Polygon2D"), MENU_OPTION_CONVERT_TO_POLYGON_2D);
+		options->get_popup()->add_item(TTR("Create CollisionPolygon2D Sibling"), MENU_OPTION_CREATE_COLLISION_POLY_2D);
+		options->get_popup()->add_item(TTR("Create LightOccluder2D Sibling"), MENU_OPTION_CREATE_LIGHT_OCCLUDER_2D);
+		options->set_switch_on_hover(true);
 
-	options->set_text(TTR("Sprite2D"));
-	options->set_flat(false);
-	options->set_theme_type_variation("FlatMenuButtonNoIconTint");
+		options->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &Sprite2DEditor::_menu_option));
 
-	options->get_popup()->add_item(TTR("Convert to MeshInstance2D"), MENU_OPTION_CONVERT_TO_MESH_2D);
-	options->get_popup()->add_item(TTR("Convert to Polygon2D"), MENU_OPTION_CONVERT_TO_POLYGON_2D);
-	options->get_popup()->add_item(TTR("Create CollisionPolygon2D Sibling"), MENU_OPTION_CREATE_COLLISION_POLY_2D);
-	options->get_popup()->add_item(TTR("Create LightOccluder2D Sibling"), MENU_OPTION_CREATE_LIGHT_OCCLUDER_2D);
-	options->set_switch_on_hover(true);
-
-	options->get_popup()->connect(SceneStringName(id_pressed), callable_mp(this, &Sprite2DEditor::_menu_option));
-
-	// Resize region rect definition
-	resize_region_rect = memnew(Button);
-
-	resize_region_rect->set_theme_type_variation("FlatMenuButton");
-	resize_region_rect->set_toggle_mode(true);
-	resize_region_rect->set_shortcut(ED_SHORTCUT("canvas_item_editor/resize_region_rect", TTRC("Drag to Resize Region Rect"), KeyModifierMask::CMD_OR_CTRL | Key::R));
-
-	resize_region_rect->connect(SceneStringName(pressed), callable_mp(this, &Sprite2DEditor::_sync_sprite_resize_mode));
-
-	top_hb->add_child(resize_region_rect);
-
+		// Resize region rect definition
+		_resize_region_rect_btn = memnew(Button);
+		_resize_region_rect_btn->set_shortcut(ED_SHORTCUT("canvas_item_editor/resize_region_rect", TTRC("Drag to Resize Region Rect"), KeyModifierMask::CMD_OR_CTRL | Key::R));
+		_resize_region_rect_btn->set_theme_type_variation("FlatMenuButton");
+		_resize_region_rect_btn->set_toggle_mode(true);
+		_toolbar_vflow->add_child(_resize_region_rect_btn);
+		_resize_region_rect_btn->connect(SceneStringName(pressed), callable_mp(this, &Sprite2DEditor::_sync_sprite_resize_mode));
+	}
 	// Other elements definition
 	err_dialog = memnew(Dialog);
 	err_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
@@ -669,7 +666,7 @@ Sprite2DEditor::Sprite2DEditor() {
 	panner.instantiate();
 	panner->set_callbacks(callable_mp(this, &Sprite2DEditor::_pan_callback), callable_mp(this, &Sprite2DEditor::_zoom_callback));
 
-	zoom_widget = memnew(EditorZoomWidget);
+	zoom_widget = memnew(EditorZoomContainer);
 	debug_uv->add_child(zoom_widget);
 	zoom_widget->set_anchors_and_offsets_preset(Control::PRESET_TOP_LEFT, Control::PRESET_MODE_MINSIZE, 2 * EDSCALE);
 	zoom_widget->connect("zoom_changed", callable_mp(this, &Sprite2DEditor::_update_zoom_and_pan).bind(true).unbind(1));
@@ -728,9 +725,9 @@ bool Sprite2DEditorPlugin::handles(Object *p_object) const {
 
 void Sprite2DEditorPlugin::make_visible(bool p_visible) {
 	if (p_visible) {
-		sprite_editor->top_hb->show();
+		sprite_editor->_toolbar_vflow->show();
 	} else {
-		sprite_editor->top_hb->hide();
+		sprite_editor->_toolbar_vflow->hide();
 		sprite_editor->edit(nullptr);
 	}
 }

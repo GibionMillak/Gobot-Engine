@@ -104,7 +104,7 @@ private:
 	bool camera_first_override = true;
 	bool is_panning = false;
 
-	// Values taken from EditorZoomWidget.
+	// Values taken from EditorZoomContainer.
 	const float VIEW_2D_MIN_ZOOM = 1.0 / 128;
 	const float VIEW_2D_MAX_ZOOM = 128;
 

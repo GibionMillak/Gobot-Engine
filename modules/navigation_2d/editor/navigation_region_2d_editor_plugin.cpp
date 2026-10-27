@@ -33,8 +33,10 @@
 #include "core/object/callable_mp.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/2d/navigation/navigation_region_2d.h"
+#include "scene/gui/button.h"
 #include "scene/gui/dialog.h"
 #include "scene/main/timer.h"
 
@@ -141,26 +143,24 @@ void NavigationRegion2DEditor::_create_resource() {
 }
 
 NavigationRegion2DEditor::NavigationRegion2DEditor() {
-	bake_hbox = memnew(HBoxContainer);
-	add_child(bake_hbox);
+	_bake_vflow = memnew(EditorToolbarFlowContainer);
+	add_child(_bake_vflow);
 
-	button_bake = memnew(Button);
-	button_bake->set_flat(true);
-	bake_hbox->add_child(button_bake);
-	button_bake->set_toggle_mode(true);
-	button_bake->set_text(TTR("Bake NavigationPolygon"));
-	button_bake->set_tooltip_text(TTR("Bakes the NavigationPolygon by first parsing the scene for source geometry and then creating the navigation polygon vertices and polygons."));
-	button_bake->connect(SceneStringName(pressed), callable_mp(this, &NavigationRegion2DEditor::_bake_pressed));
+	{
+		_bake_btn = memnew(Button);
+		_bake_btn->set_flat(true);
+		_bake_btn->set_toggle_mode(true);
+		_bake_btn->set_tooltip_text(TTR("Bakes the NavigationPolygon by first parsing the scene for source geometry and then creating the navigation polygon vertices and polygons."));
+		_bake_vflow->add_child(_bake_btn);
+		_bake_btn->connect(SceneStringName(pressed), callable_mp(this, &NavigationRegion2DEditor::_bake_pressed));
 
-	button_reset = memnew(Button);
-	button_reset->set_flat(true);
-	bake_hbox->add_child(button_reset);
-	button_reset->set_text(TTR("Clear NavigationPolygon"));
-	button_reset->set_tooltip_text(TTR("Clears the internal NavigationPolygon outlines, vertices and polygons."));
-	button_reset->connect(SceneStringName(pressed), callable_mp(this, &NavigationRegion2DEditor::_clear_pressed));
+		_reset_btn = memnew(Button);
+		_reset_btn->set_flat(true);
+		_reset_btn->set_tooltip_text(TTR("Clears the internal NavigationPolygon outlines, vertices and polygons."));
+		_bake_vflow->add_child(_reset_btn);
+		_reset_btn->connect(SceneStringName(pressed), callable_mp(this, &NavigationRegion2DEditor::_clear_pressed));
 
-	bake_info = memnew(Label);
-	bake_hbox->add_child(bake_info);
+	}
 
 	rebake_timer = memnew(Timer);
 	add_child(rebake_timer);
@@ -180,8 +180,8 @@ NavigationRegion2DEditor::NavigationRegion2DEditor() {
 void NavigationRegion2DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
-			button_bake->set_button_icon(get_editor_theme_icon(SNAME("action_bake")));
-			button_reset->set_button_icon(get_editor_theme_icon(SNAME("action_revert")));
+			_bake_btn->set_button_icon(get_editor_theme_icon(SNAME("action_bake")));
+			_reset_btn->set_button_icon(get_editor_theme_icon(SNAME("action_revert")));
 		} break;
 		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {
 			if (rebake_timer) {
@@ -198,7 +198,7 @@ void NavigationRegion2DEditor::_bake_pressed() {
 	if (rebake_timer) {
 		rebake_timer->stop();
 	}
-	button_bake->set_pressed(false);
+	_bake_btn->set_pressed(false);
 
 	ERR_FAIL_NULL(node);
 	Ref<NavigationPolygon> navigation_polygon = node->get_navigation_polygon();
@@ -225,8 +225,7 @@ void NavigationRegion2DEditor::_clear_pressed() {
 		}
 	}
 
-	button_bake->set_pressed(false);
-	bake_info->set_text("");
+	_bake_btn->set_pressed(false);
 
 	if (node) {
 		node->queue_redraw();
@@ -239,9 +238,9 @@ void NavigationRegion2DEditor::_update_polygon_editing_state() {
 	}
 
 	if (node != nullptr && node->get_navigation_polygon().is_valid()) {
-		bake_hbox->show();
+		_bake_vflow->show();
 	} else {
-		bake_hbox->hide();
+		_bake_vflow->hide();
 	}
 }
 

@@ -33,6 +33,7 @@
 #include "core/object/callable_mp.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/scene/3d/node_3d_editor_plugin.h"
 #include "scene/3d/physics/physical_bone_3d.h"
 
@@ -42,33 +43,32 @@ void PhysicalBone3DEditor::_on_toggle_button_transform_joint(bool p_is_pressed) 
 
 void PhysicalBone3DEditor::_set_move_joint() {
 	if (selected) {
-		selected->_set_gizmo_move_joint(button_transform_joint->is_pressed());
+		selected->_set_gizmo_move_joint(_transform_joint_btn->is_pressed());
 		Node3DEditor::get_singleton()->update_transform_gizmo();
 	}
 }
 
 PhysicalBone3DEditor::PhysicalBone3DEditor() {
-	spatial_editor_hb = memnew(HBoxContainer);
-	spatial_editor_hb->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	spatial_editor_hb->set_alignment(BoxContainer::ALIGNMENT_BEGIN);
-	Node3DEditor::get_singleton()->add_control_to_menu_panel(spatial_editor_hb);
+	_spatial_editor_vflow = memnew(EditorToolbarFlowContainer);
+	_spatial_editor_vflow->set_alignment(FlowContainer::ALIGNMENT_BEGIN);
+	_spatial_editor_vflow->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	Node3DEditor::get_singleton()->add_control_to_menu_panel(_spatial_editor_vflow);
 
-	button_transform_joint = memnew(Button);
-	button_transform_joint->set_theme_type_variation(SceneStringName(FlatButton));
-	spatial_editor_hb->add_child(button_transform_joint);
-
-	button_transform_joint->set_text(TTR("Move Joint"));
-	// TODO: Rework this as a dedicated toolbar control so we can hook into theme changes and update it
-	// when the editor theme updates.
-	button_transform_joint->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("node_3d_physical_bone_3d"), EditorStringName(EditorIcons)));
-	button_transform_joint->set_toggle_mode(true);
-	button_transform_joint->connect(SceneStringName(toggled), callable_mp(this, &PhysicalBone3DEditor::_on_toggle_button_transform_joint));
-
+	{
+		_transform_joint_btn = memnew(Button);
+		_transform_joint_btn->connect(SceneStringName(toggled), callable_mp(this, &PhysicalBone3DEditor::_on_toggle_button_transform_joint));
+		// TODO: Rework this as a dedicated toolbar control so we can update its icon on theme changes.
+		_transform_joint_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("node_3d_physical_bone_3d"), EditorStringName(EditorIcons)));
+		_transform_joint_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_transform_joint_btn->set_toggle_mode(true);
+		_transform_joint_btn->set_tooltip_text(TTR("Move Joint"));
+		_spatial_editor_vflow->add_child(_transform_joint_btn);
+	}
 	hide();
 }
 
 void PhysicalBone3DEditor::set_selected(PhysicalBone3D *p_pb) {
-	button_transform_joint->set_pressed(false);
+	_transform_joint_btn->set_pressed(false);
 
 	_set_move_joint();
 	selected = p_pb;
@@ -76,11 +76,11 @@ void PhysicalBone3DEditor::set_selected(PhysicalBone3D *p_pb) {
 }
 
 void PhysicalBone3DEditor::hide() {
-	spatial_editor_hb->hide();
+	_spatial_editor_vflow->hide();
 }
 
 void PhysicalBone3DEditor::show() {
-	spatial_editor_hb->show();
+	_spatial_editor_vflow->show();
 }
 
 void PhysicalBone3DEditorPlugin::make_visible(bool p_visible) {

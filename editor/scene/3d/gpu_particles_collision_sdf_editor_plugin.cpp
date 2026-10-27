@@ -35,6 +35,7 @@
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/gui/editor_file_dialog.h"
 #include "scene/3d/gpu_particles_collision_3d.h"
 #include "scene/main/scene_tree.h"
@@ -102,21 +103,21 @@ void GPUParticlesCollisionSDF3DEditorPlugin::_notification(int p_what) {
 			text += vformat(TTR("Video RAM size: %s MB (%s)"), String::num(size_mb, 2), size_quality);
 
 			// Only update the tooltip when needed to avoid constant redrawing.
-			if (bake->get_tooltip(Point2()) == text) {
+			if (_bake_btn->get_tooltip(Point2()) == text) {
 				return;
 			}
 
-			bake->set_tooltip_text(text);
+			_bake_btn->set_tooltip_text(text);
 		} break;
 	}
 }
 
 void GPUParticlesCollisionSDF3DEditorPlugin::make_visible(bool p_visible) {
 	if (p_visible) {
-		bake_hb->show();
+		_bake_vflow->show();
 		set_process(true);
 	} else {
-		bake_hb->hide();
+		_bake_vflow->hide();
 		set_process(false);
 	}
 }
@@ -179,17 +180,19 @@ void GPUParticlesCollisionSDF3DEditorPlugin::_sdf_save_path_and_bake(const Strin
 }
 
 GPUParticlesCollisionSDF3DEditorPlugin::GPUParticlesCollisionSDF3DEditorPlugin() {
-	bake_hb = memnew(HBoxContainer);
-	bake_hb->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	bake_hb->hide();
-	bake = memnew(Button);
-	bake->set_theme_type_variation(SceneStringName(FlatButton));
-	bake->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
-	bake->set_text(TTR("Bake SDF"));
-	bake->connect(SceneStringName(pressed), callable_mp(this, &GPUParticlesCollisionSDF3DEditorPlugin::_bake));
-	bake_hb->add_child(bake);
+	_bake_vflow = memnew(EditorToolbarFlowContainer);
+	_bake_vflow->hide();
+	_bake_vflow->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, _bake_vflow);
+	{
+		_bake_btn = memnew(Button);
+		_bake_btn->connect(SceneStringName(pressed), callable_mp(this, &GPUParticlesCollisionSDF3DEditorPlugin::_bake));
+		_bake_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
+		_bake_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_bake_btn->set_tooltip_text(TTR("Bake SDF"));
+		_bake_vflow->add_child(_bake_btn);
+	}
 
-	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, bake_hb);
 	col_sdf = nullptr;
 	probe_file = memnew(EditorFileDialog);
 	probe_file->set_file_mode(EditorFileDialog::FILE_MODE_SAVE_FILE);

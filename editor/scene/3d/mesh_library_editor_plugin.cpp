@@ -39,8 +39,8 @@
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_zoom_container.h"
 #include "editor/gui/editor_file_dialog.h"
-#include "editor/gui/editor_zoom_widget.h"
 #include "editor/gui/filter_line_edit.h"
 #include "editor/inspector/editor_inspector.h"
 #include "editor/inspector/editor_resource_preview.h"
@@ -729,7 +729,7 @@ MeshLibraryEditor::MeshLibraryEditor() {
 	toolbar->add_child(search_box);
 	search_box->connect(SceneStringName(text_changed), callable_mp(update_items_delay, &Timer::start).bind(UPDATE_ITEMS_DELAY_TIMEOUT).unbind(1));
 
-	zoom_widget = memnew(EditorZoomWidget);
+	zoom_widget = memnew(EditorZoomContainer);
 	zoom_widget->setup_zoom_limits(0.2, 4);
 	zoom_widget->connect("zoom_changed", callable_mp(this, &MeshLibraryEditor::_icon_size_changed));
 	zoom_widget->set_shortcut_context(this);

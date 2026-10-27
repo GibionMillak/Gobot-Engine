@@ -36,7 +36,7 @@
 class Dialog;
 class EditorFileDialog;
 class EditorInspector;
-class EditorZoomWidget;
+class EditorZoomContainer;
 class FilterLineEdit;
 class HSplitContainer;
 class ItemList;
@@ -80,7 +80,7 @@ class MeshLibraryEditor : public EditorDock {
 	Button *remove_item = nullptr;
 	MenuButton *import_scene = nullptr;
 	FilterLineEdit *search_box = nullptr;
-	EditorZoomWidget *zoom_widget = nullptr;
+	EditorZoomContainer *zoom_widget = nullptr;
 	HSplitContainer *item_split = nullptr;
 	ItemList *mesh_items = nullptr;
 	EditorInspector *inspector = nullptr;

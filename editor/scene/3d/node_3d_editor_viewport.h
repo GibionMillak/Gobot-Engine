@@ -300,6 +300,7 @@ private:
 
 	RichTextLabel *tooltip_panel = nullptr;
 
+	VBoxContainer *_top_left_vbox = nullptr;
 	VBoxContainer *top_right_vbox = nullptr;
 	VBoxContainer *bottom_center_vbox = nullptr;
 	ViewportNavigationControl *position_control = nullptr;
@@ -610,7 +611,6 @@ protected:
 
 public:
 	void set_view(View p_view);
-	View get_view();
 
 	void add_viewport(Node3DEditorViewport *p_viewport, int p_index);
 

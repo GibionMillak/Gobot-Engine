@@ -33,17 +33,17 @@
 #include "editor/plugins/editor_plugin.h"
 
 struct EditorProgress;
+class EditorToolbarFlowContainer;
 class EditorFileDialog;
 class GPUParticlesCollisionSDF3D;
-class HBoxContainer;
 
 class GPUParticlesCollisionSDF3DEditorPlugin : public EditorPlugin {
 	GDCLASS(GPUParticlesCollisionSDF3DEditorPlugin, EditorPlugin);
 
 	GPUParticlesCollisionSDF3D *col_sdf = nullptr;
 
-	HBoxContainer *bake_hb = nullptr;
-	Button *bake = nullptr;
+	EditorToolbarFlowContainer *_bake_vflow = nullptr;
+	Button *_bake_btn = nullptr;
 
 	EditorFileDialog *probe_file = nullptr;
 

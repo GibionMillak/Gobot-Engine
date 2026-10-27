@@ -38,6 +38,7 @@
 #include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/scene/canvas_item_editor_plugin.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
@@ -50,14 +51,15 @@
 #endif
 #include "scene/gui/box_container.h"
 #include "scene/gui/item_list.h"
-#include "scene/gui/option_button.h"
+#include "scene/gui/menu_button.h"
+#include "scene/gui/popup_menu.h"
 #include "scene/gui/tree.h"
 
 void ScenePaint2DEditor::_can_handle(bool p_is_node_2d, bool p_edit) {
 	if ((p_is_node_2d || pinned) && is_tool_selected && _is_node_valid()) {
-		toolbar->show();
+		_toolbar_vflow->show();
 	} else {
-		toolbar->hide();
+		_toolbar_vflow->hide();
 		if (p_edit) {
 			_edit(nullptr);
 		}
@@ -286,7 +288,7 @@ void ScenePaint2DEditor::_gui_input_viewport(const Ref<InputEvent> &p_event) {
 	if (k.is_valid()) {
 		if (k->get_keycode() == Key::CMD_OR_CTRL) {
 			input_tool = k->is_pressed() ? INPUT_TOOL_QUICK_PICK : INPUT_TOOL_NONE;
-			scene_picker_button->set_pressed_no_signal(input_tool == INPUT_TOOL_QUICK_PICK);
+			_scene_picker_btn->set_pressed_no_signal(input_tool == INPUT_TOOL_QUICK_PICK);
 		} else if (k->get_keycode() == Key::ALT) {
 			paint_mode = k->is_pressed() ? quick_paint_mode : _reload_paint_mode();
 			_update_paint_mode();
@@ -489,7 +491,7 @@ void ScenePaint2DEditor::_scene_picker_toggled(bool p_pressed) {
 void ScenePaint2DEditor::_file_system_input(const Ref<InputEvent> &p_event) {
 	if (input_tool != INPUT_TOOL_PICK || input_tool == INPUT_TOOL_QUICK_PICK) {
 		input_tool = INPUT_TOOL_NONE;
-		scene_picker_button->set_pressed(false);
+		_scene_picker_btn->set_pressed(false);
 		return;
 	}
 
@@ -502,7 +504,7 @@ void ScenePaint2DEditor::_file_system_input(const Ref<InputEvent> &p_event) {
 void ScenePaint2DEditor::_hierarchy_input(const Ref<InputEvent> &p_event) {
 	if (input_tool != INPUT_TOOL_PICK || input_tool == INPUT_TOOL_QUICK_PICK) {
 		input_tool = INPUT_TOOL_NONE;
-		scene_picker_button->set_pressed(false);
+		_scene_picker_btn->set_pressed(false);
 		return;
 	}
 
@@ -514,9 +516,8 @@ void ScenePaint2DEditor::_hierarchy_input(const Ref<InputEvent> &p_event) {
 
 void ScenePaint2DEditor::_recent_item_selected(int p_idx) {
 	recent_idx = p_idx;
-	if (recent_idx == recent_scenes_button->get_item_count() - 1) {
+	if (recent_idx == _recent_scenes_menu->get_popup()->get_item_count() - 1) {
 		_set_picked_scene(nullptr);
-		recent_scenes_button->select(-1);
 		EditorSettings::get_singleton()->set_project_metadata("scene_paint_2d_editor", "recent_scenes", PackedStringArray());
 		return;
 	}
@@ -526,7 +527,7 @@ void ScenePaint2DEditor::_recent_item_selected(int p_idx) {
 void ScenePaint2DEditor::_custom_source_input(const Ref<InputEvent> &p_event, Control *p_control) {
 	if (input_tool != INPUT_TOOL_PICK || input_tool == INPUT_TOOL_QUICK_PICK) {
 		input_tool = INPUT_TOOL_NONE;
-		scene_picker_button->set_pressed(false);
+		_scene_picker_btn->set_pressed(false);
 		return;
 	}
 
@@ -581,12 +582,12 @@ Node2D *ScenePaint2DEditor::_get_node_root(Node *p_node) const {
 
 void ScenePaint2DEditor::_set_pinned(bool p_pinned, Node *p_pinned_node) {
 	pinned = p_pinned;
-	pin_node_button->set_pressed_no_signal(pinned);
+	_pin_node_btn->set_pressed_no_signal(pinned);
 	String tooltip_text = TTR("Pin the current node.\nWhen enabled, the painting parent node will not change when selecting other nodes in the scene.");
 	if (p_pinned_node && pinned) {
 		tooltip_text += vformat("\n" + TTR("Pinned Node: %s"), EditorNode::get_singleton()->get_edited_scene()->get_path_to(p_pinned_node));
 	}
-	pin_node_button->set_tooltip_text(tooltip_text);
+	_pin_node_btn->set_tooltip_text(tooltip_text);
 }
 
 void ScenePaint2DEditor::_pinned_toggled(bool p_pressed) {
@@ -651,7 +652,7 @@ void ScenePaint2DEditor::_update_scene_picker(int p_mode, Control *p_control) {
 			}
 		} break;
 		case PICK_RECENT_LIST: {
-			String scene_path = recent_scenes_button->get_item_metadata(recent_idx);
+			String scene_path = _recent_scenes_menu->get_popup()->get_item_metadata(recent_idx);
 			node_2d = _get_scene_from_path(scene_path);
 			if (!node_2d) {
 				PackedStringArray rc = EditorSettings::get_singleton()->get_project_metadata("scene_paint_2d_editor", "recent_scenes", PackedStringArray());
@@ -681,7 +682,7 @@ void ScenePaint2DEditor::_update_scene_picker(int p_mode, Control *p_control) {
 
 void ScenePaint2DEditor::_edit_properties_toggled(bool p_pressed) {
 	edit_properties = p_pressed;
-	edit_properties_button->set_pressed_no_signal(edit_properties);
+	_edit_properties_btn->set_pressed_no_signal(edit_properties);
 	if (!edit_properties) {
 		Node *selected_node = HierarchyDock::get_singleton()->get_hierarchy_editor()->get_selected();
 		if (selected_node) {
@@ -698,10 +699,7 @@ void ScenePaint2DEditor::_edit_properties_toggled(bool p_pressed) {
 }
 
 void ScenePaint2DEditor::_advanced_settings_pressed() {
-	Vector2 pos = advanced_settings_button->get_screen_position() + advanced_settings_button->get_size();
-	advanced_settings_popup->set_position(pos - Vector2(advanced_settings_popup->get_contents_minimum_size().width / 2, 0));
-	advanced_settings_popup->reset_size();
-	advanced_settings_popup->popup();
+	CanvasItemEditor::get_singleton()->popup_toolbar_tool(advanced_settings_popup, _advanced_settings_btn);
 	advanced_settings_popup->grab_focus();
 }
 
@@ -738,13 +736,13 @@ void ScenePaint2DEditor::_paint_mode_changed(int p_mode) {
 void ScenePaint2DEditor::_update_paint_mode() {
 	switch (paint_mode) {
 		case PAINT_MODE_FREE:
-			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_disable")));
+			_advanced_settings_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap_disable")));
 			break;
 		case PAINT_MODE_SNAP_GRID:
-			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
+			_advanced_settings_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
 			break;
 		case PAINT_MODE_SNAP_GRID_CELL_CENTER:
-			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap")));
+			_advanced_settings_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap")));
 			break;
 	}
 	advanced_settings_popup->set_item_disabled(MENU_ITEM_ALLOW_OVERLAPPING, paint_mode == PAINT_MODE_FREE);
@@ -770,24 +768,25 @@ void ScenePaint2DEditor::_bind_methods() {
 void ScenePaint2DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED: {
-			advanced_settings_button->set_tooltip_text(TTR("Advanced Settings") + "\n" + vformat(TTR("Hold %s while painting to temporarily switch to the previously used paint snap mode."), keycode_get_string((Key)KeyModifierMask::ALT)));
-			if (toolbar->is_visible()) {
+			_advanced_settings_btn->set_tooltip_text(TTR("Advanced Settings") + "\n" + vformat(TTR("Hold %s while painting to temporarily switch to the previously used paint snap mode."), keycode_get_string((Key)KeyModifierMask::ALT)));
+			if (_toolbar_vflow->is_visible()) {
 				_update_hint_label();
 			}
 		} break;
 
 		case NOTIFICATION_DRAG_END: {
 			// Dragging something into 2D viewport might override the label, so it needs to be restored.
-			if (toolbar->is_visible()) {
+			if (_toolbar_vflow->is_visible()) {
 				callable_mp(this, &ScenePaint2DEditor::_update_hint_label).call_deferred();
 			}
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			pin_node_button->set_button_icon(get_editor_theme_icon(SNAME("action_pin")));
-			scene_picker_button->set_button_icon(get_editor_theme_icon(SNAME("action_color_pick")));
-			edit_properties_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tools")));
-			advanced_settings_button->set_button_icon(get_editor_theme_icon(SNAME("action_snap_disable")));
+			_pin_node_btn->set_button_icon(get_editor_theme_icon(SNAME("action_pin")));
+			_scene_picker_btn->set_button_icon(get_editor_theme_icon(SNAME("action_color_pick")));
+			_recent_scenes_menu->set_button_icon(get_editor_theme_icon(SNAME("action_list_select")));
+			_edit_properties_btn->set_button_icon(get_editor_theme_icon(SNAME("viewport_tools")));
+			_advanced_settings_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap_disable")));
 			advanced_settings_popup->add_theme_style_override(SceneStringName(panel),
 					get_theme_stylebox(SceneStringName(panel), SNAME("Dialog")));
 			advanced_settings_popup->set_item_icon(MENU_ITEM_FREE_PAINT_MODE,
@@ -812,12 +811,11 @@ void ScenePaint2DEditor::_set_picked_scene(Node2D *p_scene) {
 	selected_scene = p_scene;
 	_update_hint_label();
 
-	scene_picker_button->set_pressed(false);
+	_scene_picker_btn->set_pressed(false);
 	input_tool = INPUT_TOOL_NONE;
 	if (!selected_scene) {
-		recent_scenes_button->select(-1);
 		if (edit_properties) {
-			edit_properties_button->set_pressed(false);
+			_edit_properties_btn->set_pressed(false);
 		}
 	}
 	String scene_path = selected_scene ? selected_scene->get_scene_file_path() : String();
@@ -842,29 +840,24 @@ void ScenePaint2DEditor::_add_to_recent_scenes(const String &p_scene) {
 }
 
 void ScenePaint2DEditor::_update_recent_scenes() {
-	PackedStringArray rc = EditorSettings::get_singleton()->get_project_metadata("scene_paint_2d_editor", "recent_scenes", PackedStringArray());
-	recent_scenes_button->clear();
+	const PackedStringArray recent_scenes = EditorSettings::get_singleton()->get_project_metadata("scene_paint_2d_editor", "recent_scenes", PackedStringArray());
+	PopupMenu *recent_popup = _recent_scenes_menu->get_popup();
+	recent_popup->clear();
 
-	if (rc.is_empty()) {
-		recent_scenes_button->add_item(TTRC("No Recent Scenes"), -1);
-		recent_scenes_button->set_item_disabled(-1, true);
-		recent_scenes_button->get_popup()->set_item_as_radio_checkable(-1, false);
+	if (recent_scenes.is_empty()) {
+		recent_popup->add_item(TTRC("No Recent Scenes"));
+		recent_popup->set_item_disabled(-1, true);
 	} else {
-		for (const String &uid : rc) {
-			String path = ResourceUID::ensure_path(uid);
-			recent_scenes_button->add_item(path.get_file());
-			recent_scenes_button->set_item_tooltip(-1, path);
-			recent_scenes_button->set_item_metadata(-1, uid);
-			recent_scenes_button->get_popup()->set_item_as_radio_checkable(-1, false);
+		for (const String &uid : recent_scenes) {
+			const String path = ResourceUID::ensure_path(uid);
+			recent_popup->add_item(path.get_file());
+			recent_popup->set_item_tooltip(-1, path);
+			recent_popup->set_item_metadata(-1, uid);
 		}
-		recent_scenes_button->add_separator();
-		recent_scenes_button->add_item(TTRC("Clear Recent Scenes"), -1);
-		recent_scenes_button->get_popup()->set_item_as_radio_checkable(-1, false);
+		recent_popup->add_separator();
+		recent_popup->add_item(TTRC("Clear Recent Scenes"));
 	}
-	recent_scenes_button->set_item_auto_translate_mode(-1, AUTO_TRANSLATE_MODE_ALWAYS);
-	if (!selected_scene) {
-		recent_scenes_button->select(-1);
-	}
+	recent_popup->set_item_auto_translate_mode(-1, AUTO_TRANSLATE_MODE_ALWAYS);
 }
 
 void ScenePaint2DEditor::forward_canvas_draw_over_viewport(Control *p_overlay) {
@@ -912,54 +905,56 @@ Node2D *ScenePaint2DEditor::get_painted_scene() const {
 ScenePaint2DEditor::ScenePaint2DEditor() {
 	singleton = this;
 
-	toolbar = memnew(HBoxContainer);
+	_toolbar_vflow = memnew(EditorToolbarFlowContainer);
 	CanvasItemEditor *canvas_item_editor = CanvasItemEditor::get_singleton();
-	canvas_item_editor->add_control_to_menu_panel(toolbar);
-	toolbar->hide();
+	_toolbar_vflow->hide();
+	canvas_item_editor->add_control_to_menu_panel(_toolbar_vflow);
 
-	pin_node_button = memnew(Button);
-	pin_node_button->set_toggle_mode(true);
-	pin_node_button->set_theme_type_variation(SceneStringName(FlatButton));
-	pin_node_button->set_tooltip_text(TTRC("When enabled, the painting parent node will not change when selecting other nodes in the scene."));
-	pin_node_button->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_pinned_toggled));
-	pin_node_button->set_shortcut(ED_SHORTCUT("scene_painter/pin_node", TTRC("Pin Node"), Key::P));
-	pin_node_button->set_shortcut_context(canvas_item_editor);
-	toolbar->add_child(pin_node_button);
+	{
+		_pin_node_btn = memnew(Button);
+		_pin_node_btn->set_shortcut(ED_SHORTCUT("scene_painter/pin_node", TTRC("Pin Node"), Key::P));
+		_pin_node_btn->set_shortcut_context(canvas_item_editor);
+		_pin_node_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_pin_node_btn->set_toggle_mode(true);
+		_pin_node_btn->set_tooltip_text(TTRC("When enabled, the painting parent node will not change when selecting other nodes in the scene."));
+		_toolbar_vflow->add_child(_pin_node_btn);
+		_pin_node_btn->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_pinned_toggled));
 
-	scene_picker_button = memnew(Button);
-	scene_picker_button->set_toggle_mode(true);
-	scene_picker_button->set_theme_type_variation(SceneStringName(FlatButton));
-	scene_picker_button->set_tooltip_text(vformat(TTRC("When enabled, you can select scenes from the FileSystem dock, Hierarchy dock, or 2D editor's viewport.\nHolding %s enables picking from the 2D editor's viewport."), keycode_get_string(Key::CMD_OR_CTRL)));
-	scene_picker_button->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_scene_picker_toggled));
-	scene_picker_button->set_shortcut(ED_SHORTCUT("scene_painter/scene_picker", TTRC("Scene Picker"), Key::I));
-	scene_picker_button->set_shortcut_context(CanvasItemEditor::get_singleton());
-	toolbar->add_child(scene_picker_button);
+		_scene_picker_btn = memnew(Button);
+		_scene_picker_btn->set_shortcut(ED_SHORTCUT("scene_painter/scene_picker", TTRC("Scene Picker"), Key::I));
+		_scene_picker_btn->set_shortcut_context(CanvasItemEditor::get_singleton());
+		_scene_picker_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_scene_picker_btn->set_toggle_mode(true);
+		_scene_picker_btn->set_tooltip_text(vformat(TTRC("When enabled, you can select scenes from the FileSystem dock, Hierarchy dock, or 2D editor's viewport.\nHolding %s enables picking from the 2D editor's viewport."), keycode_get_string(Key::CMD_OR_CTRL)));
+		_toolbar_vflow->add_child(_scene_picker_btn);
+		_scene_picker_btn->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_scene_picker_toggled));
 
-	recent_scenes_button = memnew(OptionButton);
-	recent_scenes_button->set_theme_type_variation(SceneStringName(FlatButton));
-	recent_scenes_button->set_custom_minimum_size(Vector2(128 * EDSCALE, 0));
-	recent_scenes_button->set_fit_to_longest_item(false);
-	recent_scenes_button->connect(SceneStringName(item_selected), callable_mp(this, &ScenePaint2DEditor::_recent_item_selected));
-	toolbar->add_child(recent_scenes_button);
+		_recent_scenes_menu = memnew(MenuButton);
+		_recent_scenes_menu->set_theme_type_variation(SceneStringName(FlatButton));
+		_recent_scenes_menu->set_tooltip_text(TTRC("Recent Scenes"));
+		_toolbar_vflow->add_child(_recent_scenes_menu);
 
-	PopupMenu *popup = recent_scenes_button->get_popup();
-	popup->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	popup->connect("about_to_popup", callable_mp(this, &ScenePaint2DEditor::_update_recent_scenes));
+		{
+			PopupMenu *recent_popup = _recent_scenes_menu->get_popup();
+			recent_popup->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+			recent_popup->connect(SNAME("about_to_popup"), callable_mp(this, &ScenePaint2DEditor::_update_recent_scenes));
+			recent_popup->connect(SceneStringName(id_pressed), callable_mp(this, &ScenePaint2DEditor::_recent_item_selected));
+		}
 
-	edit_properties_button = memnew(Button);
-	edit_properties_button->set_toggle_mode(true);
-	edit_properties_button->set_theme_type_variation(SceneStringName(FlatButton));
-	edit_properties_button->set_tooltip_text(TTRC("Edit properties of the selected scene."));
-	edit_properties_button->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_edit_properties_toggled));
-	edit_properties_button->set_shortcut(ED_SHORTCUT("scene_painter/edit_properties", TTRC("Edit Properties"), Key::O));
-	edit_properties_button->set_shortcut_context(CanvasItemEditor::get_singleton());
-	toolbar->add_child(edit_properties_button);
+		_edit_properties_btn = memnew(Button);
+		_edit_properties_btn->set_shortcut(ED_SHORTCUT("scene_painter/edit_properties", TTRC("Edit Properties"), Key::O));
+		_edit_properties_btn->set_shortcut_context(CanvasItemEditor::get_singleton());
+		_edit_properties_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_edit_properties_btn->set_toggle_mode(true);
+		_edit_properties_btn->set_tooltip_text(TTRC("Edit properties of the selected scene."));
+		_toolbar_vflow->add_child(_edit_properties_btn);
+		_edit_properties_btn->connect(SceneStringName(toggled), callable_mp(this, &ScenePaint2DEditor::_edit_properties_toggled));
 
-	advanced_settings_button = memnew(Button);
-	advanced_settings_button->set_theme_type_variation(SceneStringName(FlatButton));
-	advanced_settings_button->connect(SceneStringName(pressed), callable_mp(this, &ScenePaint2DEditor::_advanced_settings_pressed));
-	toolbar->add_child(advanced_settings_button);
-
+		_advanced_settings_btn = memnew(Button);
+		_advanced_settings_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_toolbar_vflow->add_child(_advanced_settings_btn);
+		_advanced_settings_btn->connect(SceneStringName(pressed), callable_mp(this, &ScenePaint2DEditor::_advanced_settings_pressed));
+	}
 	advanced_settings_popup = memnew(PopupMenu);
 	add_child(advanced_settings_popup);
 

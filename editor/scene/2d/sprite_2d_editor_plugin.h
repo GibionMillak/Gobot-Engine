@@ -34,10 +34,10 @@
 #include "scene/2d/sprite_2d.h"
 #include "scene/gui/spin_box.h"
 
+class EditorToolbarFlowContainer;
 class Dialog;
 class Button;
-class EditorZoomWidget;
-class HBoxContainer;
+class EditorZoomContainer;
 class HScrollBar;
 class MenuButton;
 class Panel;
@@ -54,14 +54,14 @@ class Sprite2DEditor : public Control {
 		MENU_OPTION_CREATE_LIGHT_OCCLUDER_2D
 	};
 
-	HBoxContainer *top_hb = nullptr;
+	EditorToolbarFlowContainer *_toolbar_vflow = nullptr;
 
 	Menu selected_menu_item;
 
 	Sprite2D *node = nullptr;
 
 	MenuButton *options = nullptr;
-	Button *resize_region_rect = nullptr;
+	Button *_resize_region_rect_btn = nullptr;
 
 	Dialog *outline_dialog = nullptr;
 
@@ -78,7 +78,7 @@ class Sprite2DEditor : public Control {
 
 	HScrollBar *h_scroll = nullptr;
 	VScrollBar *v_scroll = nullptr;
-	EditorZoomWidget *zoom_widget = nullptr;
+	EditorZoomContainer *zoom_widget = nullptr;
 	Ref<ViewPanner> panner;
 	Vector2 draw_offset;
 	real_t draw_zoom = 1.0;

@@ -303,7 +303,7 @@ Camera2DEditor::Camera2DEditor(EditorPlugin *p_plugin) {
 	plugin = p_plugin;
 
 	options = memnew(MenuButton);
-	options->set_text(TTRC("Camera2D"));
+	options->set_tooltip_text(TTRC("Camera2D"));
 	options->set_flat(false);
 	options->set_theme_type_variation("FlatMenuButtonNoIconTint");
 	options->get_popup()->add_item(TTRC("Snap the Limits to the Viewport"), MENU_SNAP_LIMITS_TO_VIEWPORT);

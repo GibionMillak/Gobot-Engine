@@ -30,21 +30,21 @@
 
 #pragma once
 
+#include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/plugins/editor_plugin.h"
 #include "scene/2d/path_2d.h"
-#include "scene/gui/box_container.h"
 
+class Button;
 class CanvasItemEditor;
 class Dialog;
 class MenuButton;
 
-class Path2DEditor : public HBoxContainer {
-	GDCLASS(Path2DEditor, HBoxContainer);
+class Path2DEditor : public EditorToolbarFlowContainer {
+	GDCLASS(Path2DEditor, EditorToolbarFlowContainer);
 
 	friend class Path2DEditorPlugin;
 
 	CanvasItemEditor *canvas_item_editor = nullptr;
-	Panel *panel = nullptr;
 	Path2D *node = nullptr;
 
 	enum Mode {
@@ -57,16 +57,16 @@ class Path2DEditor : public HBoxContainer {
 	};
 
 	Mode mode = MODE_EDIT;
-	HBoxContainer *toolbar = nullptr;
-	Button *curve_clear_points = nullptr;
-	Button *curve_close = nullptr;
-	Button *curve_create = nullptr;
-	Button *curve_del = nullptr;
-	Button *curve_edit = nullptr;
-	Button *curve_edit_curve = nullptr;
+	EditorToolbarFlowContainer *_toolbar_vflow = nullptr;
+	Button *_curve_clear_points_btn = nullptr;
+	Button *_curve_close_btn = nullptr;
+	Button *_curve_create_btn = nullptr;
+	Button *_curve_del_btn = nullptr;
+	Button *_curve_edit_btn = nullptr;
+	Button *_curve_edit_curve_btn = nullptr;
 	MenuButton *handle_menu = nullptr;
 
-	Button *create_curve_button = nullptr;
+	Button *_create_curve_btn = nullptr;
 	Dialog *clear_points_dialog = nullptr;
 
 	bool mirror_handle_angle = true;

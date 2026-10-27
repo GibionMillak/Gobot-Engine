@@ -35,7 +35,7 @@
 #include "scene/3d/camera_3d.h"
 #include "scene/3d/path_3d.h"
 
-class HBoxContainer;
+class EditorToolbarFlowContainer;
 class MenuButton;
 class Dialog;
 
@@ -113,19 +113,19 @@ class Path3DEditorPlugin : public EditorPlugin {
 
 	Ref<Path3DGizmoPlugin> path_3d_gizmo_plugin;
 
-	HBoxContainer *topmenu_bar = nullptr;
+	EditorToolbarFlowContainer *_topmenu_vflow = nullptr;
 
-	HBoxContainer *toolbar = nullptr;
-	Button *curve_create = nullptr;
-	Button *curve_edit = nullptr;
-	Button *curve_edit_curve = nullptr;
-	Button *curve_edit_tilt = nullptr;
-	Button *curve_del = nullptr;
-	Button *curve_closed = nullptr;
-	Button *curve_clear_points = nullptr;
+	EditorToolbarFlowContainer *_toolbar_vflow = nullptr;
+	Button *_curve_create_btn = nullptr;
+	Button *_curve_edit_btn = nullptr;
+	Button *_curve_edit_curve_btn = nullptr;
+	Button *_curve_edit_tilt_btn = nullptr;
+	Button *_curve_del_btn = nullptr;
+	Button *_curve_closed_btn = nullptr;
+	Button *_curve_clear_points_btn = nullptr;
 	MenuButton *handle_menu = nullptr;
 
-	Button *create_curve_button = nullptr;
+	Button *_create_curve_btn = nullptr;
 	Dialog *clear_points_dialog = nullptr;
 
 	enum Mode {
