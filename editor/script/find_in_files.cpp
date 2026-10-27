@@ -38,7 +38,6 @@
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/script_editor/components/document_editor_container.h"
 #include "editor/docks/script_editor/script_editor.h"
-#include "editor/docks/script_editor/script_editor_plugin.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_file_system.h"
@@ -318,13 +317,13 @@ TextEditorBase *get_text_editor_base(const String &p_fpath) {
 	}
 
 	ShaderEditorPlugin *shader_editor_plugin = ShaderEditorPlugin::get_singleton();
-	ScriptEditorPlugin *script_editor_plugin = ScriptEditorPlugin::get_singleton();
+	ScriptEditor *script_editor = ScriptEditor::get_singleton();
 
 	DocumentEditorContainer *document_editor_container = nullptr;
 	if (shader_editor_plugin && shader_editor_plugin->handles(res.ptr())) {
 		document_editor_container = shader_editor_plugin->get_shader_container();
-	} else if (script_editor_plugin && script_editor_plugin->handles(res.ptr())) {
-		document_editor_container = ScriptEditor::get_singleton()->get_script_container();
+	} else if (script_editor && script_editor->handles_resource(res.ptr())) {
+		document_editor_container = script_editor->get_script_container();
 	}
 	if (document_editor_container) {
 		return Object::cast_to<TextEditorBase>(document_editor_container->get_resource_editor(res));

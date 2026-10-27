@@ -30,11 +30,16 @@
 
 #include "script_editor.h"
 
+#include "core/config/project_settings.h"
+#include "core/input/shortcut.h"
+#include "core/io/config_file.h"
 #include "core/io/file_access.h"
 #include "core/io/json.h"
 #include "core/io/resource_loader.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
+#include "core/os/keyboard.h"
+#include "core/os/os.h"
 #include "editor/doc/editor_help_search.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/script_editor/components/document_editor_container.h"
@@ -45,15 +50,33 @@
 #include "editor/script/script_text_editor.h"
 #include "editor/script/syntax_highlighters.h"
 #include "editor/script/text_editor.h"
+#include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/shader/shader_editor_plugin.h"
 #include "editor/shader/shader_text_editor.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/line_edit.h"
+#include "scene/resources/text_file.h"
 #include "scene/resources/theme.h"
 
 ScriptEditor::ScriptEditor() {
 	_script_editor = this;
+
+	ED_SHORTCUT("script_editor/reopen_closed_script", TTRC("Reopen Closed Script"), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::SHIFT | Key::T);
+	ED_SHORTCUT("script_editor/clear_recent", TTRC("Clear Recent Scripts"));
+
+	ED_SHORTCUT("script_text_editor/convert_to_uppercase", TTRC("Uppercase"), KeyModifierMask::SHIFT | Key::F4);
+	ED_SHORTCUT("script_text_editor/convert_to_lowercase", TTRC("Lowercase"), KeyModifierMask::SHIFT | Key::F5);
+	ED_SHORTCUT("script_text_editor/capitalize", TTRC("Capitalize"), KeyModifierMask::SHIFT | Key::F6);
+
+	_make_floating_shortcut = ED_SHORTCUT_AND_COMMAND("script_editor/make_floating", TTRC("Make Floating"));
+	set_process_shortcut_input(true);
+
+	set_available_layouts(DOCK_LAYOUT_ALL);
+	set_default_slot(CENTER_TOP);
+	set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_script"));
+	set_icon_name("dock_script_editor");
+	set_name(TTRC("Script"));
 
 	_script_container = memnew(DocumentEditorContainer(true, "ScriptEditor", "script_editor_cache.cfg"));
 	_script_container->set_handled_resource_types({ "GDScript", "Script", "JSON" });
@@ -73,6 +96,144 @@ ScriptEditor::ScriptEditor() {
 
 ScriptEditor::~ScriptEditor() {
 	ScriptEditorNavigationMarker::release_singleton();
+	_script_editor = nullptr;
+}
+
+bool ScriptEditor::open_in_external_editor(const String &p_path, int p_line, int p_col, bool p_ignore_project) {
+	const String path = EDITOR_GET("text_editor/external/exec_path");
+	if (path.is_empty()) {
+		return false;
+	}
+
+	String flags = EDITOR_GET("text_editor/external/exec_flags");
+
+	List<String> args;
+	bool has_file_flag = false;
+
+	if (!flags.is_empty()) {
+		flags = flags.replacen("{line}", itos(MAX(p_line + 1, 1)));
+		flags = flags.replacen("{col}", itos(p_col + 1));
+		flags = flags.strip_edges().replace("\\\\", "\\");
+
+		int from = 0;
+		int num_chars = 0;
+		bool inside_quotes = false;
+
+		for (int i = 0; i < flags.size(); i++) {
+			if (flags[i] == '"' && (!i || flags[i - 1] != '\\')) {
+				if (!inside_quotes) {
+					from++;
+				}
+				inside_quotes = !inside_quotes;
+
+			} else if (flags[i] == '\0' || (!inside_quotes && flags[i] == ' ')) {
+				String arg = flags.substr(from, num_chars);
+				if (arg.contains("{file}")) {
+					has_file_flag = true;
+				}
+
+				// Do path replacement here, else there will be issues with spaces and quotes
+				if (p_ignore_project) {
+					arg = arg.replacen("{project}", String());
+				} else {
+					arg = arg.replacen("{project}", ProjectSettings::get_singleton()->get_resource_path());
+				}
+				arg = arg.replacen("{file}", p_path);
+				args.push_back(arg);
+
+				from = i + 1;
+				num_chars = 0;
+			} else {
+				num_chars++;
+			}
+		}
+	}
+
+	// Default to passing script path if no {file} flag is specified.
+	if (!has_file_flag) {
+		args.push_back(p_path);
+	}
+	return OS::get_singleton()->create_process(path, args) == OK;
+}
+
+bool ScriptEditor::handles_resource(Object *p_object) const {
+	if (Object::cast_to<Script>(p_object) || Object::cast_to<TextFile>(p_object)) {
+		return true;
+	}
+	const JSON *json = Object::cast_to<JSON>(p_object);
+	return json && json->get_path().get_extension().to_lower() == "json";
+}
+
+void ScriptEditor::edit_resource(Object *p_object) {
+	if (!handles_resource(p_object)) {
+		return;
+	}
+
+	const Ref<Resource> resource = Object::cast_to<Resource>(p_object);
+	if (Script *script = Object::cast_to<Script>(resource.ptr())) {
+		const String scene_path = script->get_path().get_slice("::", 0);
+		if (script->is_built_in() && !scene_path.is_empty()) {
+			EditorNode::get_singleton()->load_scene_or_resource(scene_path, false, false);
+		}
+	}
+
+	if (edit(resource)) {
+		focus_editor();
+		_script_container->ensure_select_current();
+	}
+}
+
+String ScriptEditor::get_unsaved_status(const String &p_for_scene) const {
+	PackedStringArray unsaved_documents;
+	for (Control *editor : _script_container->get_all_editors()) {
+		ScriptEditorBase *document = Object::cast_to<ScriptEditorBase>(editor);
+		if (!document || !document->is_unsaved()) {
+			continue;
+		}
+		if (!p_for_scene.is_empty()) {
+			const Ref<Resource> resource = document->get_edited_resource();
+			if (resource.is_null() || !resource->is_built_in() || resource->get_path().get_slice("::", 0) != p_for_scene) {
+				continue;
+			}
+		}
+		unsaved_documents.append(document->get_document_name());
+	}
+	if (unsaved_documents.is_empty()) {
+		return String();
+	}
+
+	PackedStringArray message;
+	if (p_for_scene.is_empty()) {
+		message.push_back(TTR("Save changes to the following file(s) before quitting?"));
+	} else {
+		message.push_back(TTR("There are unsaved changes in the following built-in resource(s)"));
+	}
+	message.append_array(unsaved_documents);
+	return String("\n").join(message);
+}
+
+void ScriptEditor::save_external_data() {
+	if (!EditorNode::get_singleton()->is_exiting()) {
+		save_all_scripts();
+	}
+}
+
+void ScriptEditor::apply_changes() {
+	_script_container->apply_scripts();
+}
+
+void ScriptEditor::set_window_layout(const Ref<ConfigFile> &p_layout) {
+	if (bool(EDITOR_GET("text_editor/behavior/files/restore_scripts_on_load"))) {
+		_script_container->set_window_layout(p_layout);
+	}
+}
+
+void ScriptEditor::get_window_layout(Ref<ConfigFile> r_layout) {
+	_script_container->get_window_layout(r_layout);
+}
+
+void ScriptEditor::edited_scene_changed() {
+	_script_container->edited_scene_changed();
 }
 
 bool ScriptEditor::should_use_external_editor(const Ref<Script> &p_for_script) {
@@ -259,6 +420,16 @@ void ScriptEditor::_notification(int p_what) {
 				_apply_editor_settings();
 			}
 		} break;
+	}
+}
+
+void ScriptEditor::shortcut_input(const Ref<InputEvent> &p_event) {
+	if (p_event.is_null() || !p_event->is_pressed() || p_event->is_echo()) {
+		return;
+	}
+
+	if (_make_floating_shortcut.is_valid() && _make_floating_shortcut->matches_event(p_event)) {
+		make_floating();
 	}
 }
 

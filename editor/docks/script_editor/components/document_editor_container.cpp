@@ -52,7 +52,6 @@
 #include "editor/docks/script_editor/components/document_list.h"
 #include "editor/docks/script_editor/components/document_outline.h"
 #include "editor/docks/script_editor/script_editor.h"
-#include "editor/docks/script_editor/script_editor_plugin.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_file_system.h"
@@ -693,7 +692,7 @@ bool DocumentEditorContainer::edit(const Ref<Resource> &p_resource, int p_line, 
 	if (use_external_editor &&
 			(EditorDebuggerNode::get_singleton()->get_dump_stack_script() != p_resource || (EditorDebuggerNode::get_singleton()->get_debug_with_external_editor() && scr.is_valid())) &&
 			p_resource->get_path().is_resource_file()) {
-		if (ScriptEditorPlugin::open_in_external_editor(ProjectSettings::get_singleton()->globalize_path(p_resource->get_path()), p_line, p_col)) {
+		if (ScriptEditor::open_in_external_editor(ProjectSettings::get_singleton()->globalize_path(p_resource->get_path()), p_line, p_col)) {
 			return false;
 		} else {
 			ERR_PRINT("Couldn't open external text editor, falling back to the internal editor. Review your `text_editor/external/` editor settings.");

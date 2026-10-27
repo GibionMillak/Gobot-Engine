@@ -37,17 +37,28 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/script/script_editor_base.h"
 
+class ConfigFile;
 class DocumentEditorContainer;
 class EditorHelpSearch;
+class Shortcut;
 
 class ScriptEditor : public EditorDock {
 	GDCLASS(ScriptEditor, EditorDock);
 
 public:
 	ScriptEditor();
-	~ScriptEditor();
+	~ScriptEditor() override;
 	static ScriptEditor *get_singleton() { return _script_editor; }
+	static bool open_in_external_editor(const String &p_path, int p_line, int p_col, bool p_ignore_project = false);
 	DocumentEditorContainer *get_script_container() { return _script_container; }
+	bool handles_resource(Object *p_object) const;
+	void edit_resource(Object *p_object);
+	String get_unsaved_status(const String &p_for_scene = "") const;
+	void save_external_data();
+	void apply_changes();
+	void set_window_layout(const Ref<ConfigFile> &p_layout);
+	void get_window_layout(Ref<ConfigFile> r_layout);
+	void edited_scene_changed();
 	bool should_use_external_editor(const Ref<Script> &p_for_script);
 	void focus_editor();
 	void focus_script_editor(const Ref<Resource> &p_for_resource);
@@ -86,6 +97,7 @@ public:
 protected:
 	static void _bind_methods();
 	void _notification(int p_what);
+	void shortcut_input(const Ref<InputEvent> &p_event) override;
 	virtual void update_layout(EditorDock::DockLayout p_layout, int p_slot) override;
 
 private:
@@ -100,4 +112,5 @@ private:
 	DocumentEditorContainer *_script_container = nullptr;
 	EditorHelpSearch *_help_search_dialog = nullptr;
 	bool _external_editor_active = false;
+	Ref<Shortcut> _make_floating_shortcut;
 };

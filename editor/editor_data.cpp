@@ -31,11 +31,13 @@
 #include "editor_data.h"
 
 #include "core/config/project_settings.h"
+#include "core/io/config_file.h"
 #include "core/io/file_access.h"
 #include "core/io/resource_loader.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "core/os/time.h"
+#include "editor/docks/script_editor/script_editor.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/inspector/editor_context_menu_plugin.h"
@@ -294,9 +296,12 @@ void EditorData::copy_object_params(Object *p_object) {
 	}
 }
 
-void EditorData::get_editor_breakpoints(List<String> *p_breakpoints) {
+void EditorData::get_editor_breakpoints(List<String> *r_breakpoints) {
+	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+		script_editor->get_breakpoints(r_breakpoints);
+	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
-		editor_plugins[i]->get_breakpoints(p_breakpoints);
+		editor_plugins[i]->get_breakpoints(r_breakpoints);
 	}
 }
 
@@ -351,6 +356,9 @@ void EditorData::set_editor_plugin_states(const Dictionary &p_states) {
 }
 
 void EditorData::notify_edited_scene_changed() {
+	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+		script_editor->edited_scene_changed();
+	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
 		editor_plugins[i]->edited_scene_changed();
 		editor_plugins[i]->notify_scene_changed(get_edited_scene_root());
@@ -405,13 +413,44 @@ void EditorData::clear_editor_states() {
 	}
 }
 
+String EditorData::get_unsaved_status(const String &p_for_scene, Callable *r_save_callback) const {
+	if (r_save_callback) {
+		*r_save_callback = Callable();
+	}
+	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+		const String status = script_editor->get_unsaved_status(p_for_scene);
+		if (!status.is_empty()) {
+			if (r_save_callback) {
+				*r_save_callback = callable_mp(script_editor, &ScriptEditor::save_external_data);
+			}
+			return status;
+		}
+	}
+	for (EditorPlugin *plugin : editor_plugins) {
+		const String status = plugin->get_unsaved_status(p_for_scene);
+		if (!status.is_empty()) {
+			if (r_save_callback) {
+				*r_save_callback = callable_mp(plugin, &EditorPlugin::save_external_data);
+			}
+			return status;
+		}
+	}
+	return String();
+}
+
 void EditorData::save_editor_external_data() {
+	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+		script_editor->save_external_data();
+	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
 		editor_plugins[i]->save_external_data();
 	}
 }
 
 void EditorData::apply_changes_in_editors() {
+	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+		script_editor->apply_changes();
+	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
 		editor_plugins[i]->apply_changes();
 	}
@@ -999,15 +1038,21 @@ void EditorData::clear_edited_scenes() {
 	SceneTree::get_singleton()->set_edited_scene_root(nullptr);
 }
 
-void EditorData::set_plugin_window_layout(Ref<ConfigFile> p_layout) {
+void EditorData::set_editor_window_layout(const Ref<ConfigFile> &p_layout) {
+	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+		script_editor->set_window_layout(p_layout);
+	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
 		editor_plugins[i]->set_window_layout(p_layout);
 	}
 }
 
-void EditorData::get_plugin_window_layout(Ref<ConfigFile> p_layout) {
+void EditorData::get_editor_window_layout(Ref<ConfigFile> r_layout) {
+	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+		script_editor->get_window_layout(r_layout);
+	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
-		editor_plugins[i]->get_window_layout(p_layout);
+		editor_plugins[i]->get_window_layout(r_layout);
 	}
 }
 

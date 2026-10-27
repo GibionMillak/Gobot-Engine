@@ -40,6 +40,7 @@
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/hierarchy_dock.h"
+#include "editor/docks/script_editor/script_editor.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/create_dialog.h"
@@ -3725,15 +3726,8 @@ void EditorPropertyResource::update_property() {
 
 				resource_picker->set_toggle_pressed(true);
 
-				Array editor_list;
-				for (int i = 0; i < EditorNode::get_editor_data().get_editor_plugin_count(); i++) {
-					EditorPlugin *ep = EditorNode::get_editor_data().get_editor_plugin(i);
-					if (ep->handles(res.ptr())) {
-						editor_list.push_back(ep);
-					}
-				}
-
-				if (!editor_list.is_empty()) {
+				ScriptEditor *script_editor = ScriptEditor::get_singleton();
+				if ((script_editor && script_editor->handles_resource(res.ptr())) || !EditorNode::get_editor_data().get_handling_sub_editors(res.ptr()).is_empty()) {
 					// Open editor directly.
 					_open_editor_pressed();
 					opened_editor = true;

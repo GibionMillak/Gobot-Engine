@@ -39,7 +39,6 @@
 #include "core/version.h"
 #include "editor/docks/editor_dock.h"
 #include "editor/docks/script_editor/script_editor.h"
-#include "editor/docks/script_editor/script_editor_plugin.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/settings/editor_command_palette.h"
@@ -246,7 +245,7 @@ void EditorLog::_meta_clicked(const String &p_meta) {
 			return;
 		}
 
-		if (!ScriptEditorPlugin::open_in_external_editor(path, line, -1, true)) {
+		if (!ScriptEditor::open_in_external_editor(path, line, -1, true)) {
 			OS::get_singleton()->shell_open(path);
 		}
 	} else {

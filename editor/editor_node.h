@@ -833,7 +833,7 @@ private:
 	Button *select_current_scene_button = nullptr;
 	Dialog *save_accept = nullptr;
 	Dialog *warning = nullptr;
-	EditorPlugin *plugin_to_save = nullptr;
+	Callable _editor_save_callback;
 
 	bool overridden_default_layout = false;
 	Ref<ConfigFile> default_layout;

@@ -829,7 +829,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	_initial_set("text_editor/completion/use_single_quotes", false, true);
 	_initial_set("text_editor/completion/colorize_suggestions", true);
 
-	// External editor (ScriptEditorPlugin)
+	// External editor (ScriptEditor)
 	_initial_set("text_editor/external/use_external_editor", false, true);
 	_initial_set("text_editor/external/exec_path", "");
 

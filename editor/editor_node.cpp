@@ -68,7 +68,6 @@
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/scene_editor_dock.h"
 #include "editor/docks/script_editor/script_editor.h"
-#include "editor/docks/script_editor/script_editor_plugin.h"
 #include "editor/docks/signals_dock.h"
 #include "editor/editor_data.h"
 #include "editor/editor_interface.h"
@@ -1129,7 +1128,8 @@ EditorNode::EditorNode() {
 
 	add_editor_plugin(memnew(CanvasItemEditorPlugin));
 	add_editor_plugin(memnew(Node3DEditorPlugin));
-	add_editor_plugin(memnew(ScriptEditorPlugin));
+	memnew(FindInFiles);
+	editor_dock_manager->add_dock(memnew(ScriptEditor));
 
 	if (!Engine::get_singleton()->is_recovery_mode_hint()) {
 		add_editor_plugin(get_game_view_plugin());
@@ -1412,6 +1412,9 @@ EditorNode::~EditorNode() {
 	memdelete(editor_plugins_force_over);
 	memdelete(editor_plugins_force_input_forwarding);
 	memdelete(progress_hb);
+	if (FindInFiles *find_in_files = FindInFiles::get_singleton()) {
+		memdelete(find_in_files);
+	}
 	memdelete(editor_dock_manager);
 
 	EditorSettings::destroy();
@@ -2225,6 +2228,16 @@ void EditorNode::edit_item(Object *p_object, Object *p_editing_owner, bool p_set
 		return;
 	}
 
+	const ObjectID owner_id = p_editing_owner->get_instance_id();
+	const ObjectID object_id = p_object->get_instance_id();
+	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+		script_editor->edit_resource(p_object);
+		// Opening a built-in script can load a scene and replace the editing context.
+		if (!ObjectDB::get_instance(owner_id) || !ObjectDB::get_instance(object_id)) {
+			return;
+		}
+	}
+
 	// Get a list of editor plugins that can handle this type of object.
 	Vector<EditorPlugin *> available_plugins = editor_data.get_handling_sub_editors(p_object);
 	if (available_plugins.is_empty()) {
@@ -2232,8 +2245,6 @@ void EditorNode::edit_item(Object *p_object, Object *p_editing_owner, bool p_set
 		hide_unused_editors(p_editing_owner);
 		return;
 	}
-
-	ObjectID owner_id = p_editing_owner->get_instance_id();
 
 	// Remove editor plugins no longer used by this editing owner. Keep the ones that can
 	// still be reused by the new edited object.
@@ -4446,10 +4457,8 @@ bool EditorNode::is_scene_unsaved(int p_idx) {
 	const String &scene_path = scene->get_scene_file_path();
 	if (!scene_path.is_empty()) {
 		// Check if scene has unsaved changes in built-in resources.
-		for (int j = 0; j < editor_data.get_editor_plugin_count(); j++) {
-			if (!editor_data.get_editor_plugin(j)->get_unsaved_status(scene_path).is_empty()) {
-				return true;
-			}
+		if (!editor_data.get_unsaved_status(scene_path).is_empty()) {
+			return true;
 		}
 	}
 	return false;
@@ -5714,8 +5723,9 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 		case PROJECT_QUIT_TO_HUB:
 		case TOOLS_CLEAR_PROJECT_CACHE:
 		case PROJECT_RELOAD_CURRENT_PROJECT: {
-			if (p_confirmed && plugin_to_save) {
-				plugin_to_save->save_external_data();
+			if (p_confirmed && _editor_save_callback.is_valid()) {
+				_editor_save_callback.call();
+				_editor_save_callback = Callable();
 				p_confirmed = false;
 			}
 
@@ -5757,25 +5767,12 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 						break;
 					}
 
-					plugin_to_save = nullptr;
-					for (int i = 0; i < editor_data.get_editor_plugin_count(); i++) {
-						const String unsaved_status = editor_data.get_editor_plugin(i)->get_unsaved_status();
-						if (!unsaved_status.is_empty()) {
-							if (is_restart) {
-								save_confirmation->set_ok_button_text(TTR("Save & Reload"));
-								save_confirmation->set_text(unsaved_status);
-							} else {
-								save_confirmation->set_ok_button_text(TTR("Save & Quit"));
-								save_confirmation->set_text(unsaved_status);
-							}
-							save_confirmation->reset_size();
-							save_confirmation->popup_centered();
-							plugin_to_save = editor_data.get_editor_plugin(i);
-							break;
-						}
-					}
-
-					if (plugin_to_save) {
+					const String unsaved_status = editor_data.get_unsaved_status("", &_editor_save_callback);
+					if (!unsaved_status.is_empty()) {
+						save_confirmation->set_ok_button_text(is_restart ? TTR("Save & Reload") : TTR("Save & Quit"));
+						save_confirmation->set_text(unsaved_status);
+						save_confirmation->reset_size();
+						save_confirmation->popup_centered();
 						break;
 					}
 
@@ -6511,6 +6508,11 @@ int EditorNode::_save_external_resources(bool p_also_save_external_data) {
 	}
 
 	if (p_also_save_external_data) {
+		ScriptEditor *script_editor = ScriptEditor::get_singleton();
+		if (!script_editor->get_unsaved_status().is_empty()) {
+			script_editor->save_external_data();
+			saved++;
+		}
 		for (int i = 0; i < editor_data.get_editor_plugin_count(); i++) {
 			EditorPlugin *plugin = editor_data.get_editor_plugin(i);
 			if (!plugin->get_unsaved_status().is_empty()) {
@@ -6762,12 +6764,8 @@ int EditorNode::_next_unsaved_scene(bool p_valid_filename, int p_start) {
 		bool unsaved = EditorUndoRedoManager::get_singleton()->is_history_unsaved(editor_data.get_scene_history_id(i));
 		if (unsaved) {
 			return i;
-		} else {
-			for (int j = 0; j < editor_data.get_editor_plugin_count(); j++) {
-				if (!editor_data.get_editor_plugin(j)->get_unsaved_status(scene_filename).is_empty()) {
-					return i;
-				}
-			}
+		} else if (!editor_data.get_unsaved_status(scene_filename).is_empty()) {
+			return i;
 		}
 	}
 	return -1;
@@ -6841,13 +6839,7 @@ void EditorNode::_scene_tab_closed(int p_tab) {
 			unsaved_message = _get_unsaved_scene_dialog_text(scene_filename, time_opened);
 		}
 	} else {
-		// Check if any plugin has unsaved changes in that scene.
-		for (int i = 0; i < editor_data.get_editor_plugin_count(); i++) {
-			unsaved_message = editor_data.get_editor_plugin(i)->get_unsaved_status(scene_filename);
-			if (!unsaved_message.is_empty()) {
-				break;
-			}
-		}
+		unsaved_message = editor_data.get_unsaved_status(scene_filename);
 	}
 
 	if (!unsaved_message.is_empty()) {
@@ -7756,7 +7748,7 @@ void EditorNode::_save_editor_layout() {
 	_save_open_scenes_to_config(config);
 	_save_central_editor_layout_to_config(config);
 	_save_window_settings_to_config(config, "EditorWindow");
-	editor_data.get_plugin_window_layout(config);
+	editor_data.get_editor_window_layout(config);
 
 	config->save(EditorPaths::get_singleton()->get_project_settings_dir().path_join("editor_layout.cfg"));
 }
@@ -7795,8 +7787,8 @@ void EditorNode::_load_editor_layout() {
 		ep.step(TTR("Loading central editor layout..."), 3, true);
 		_load_central_editor_layout_from_config(config);
 
-		ep.step(TTR("Loading plugin window layout..."), 4, true);
-		editor_data.set_plugin_window_layout(config);
+		ep.step(TTR("Loading editor window layout..."), 4, true);
+		editor_data.set_editor_window_layout(config);
 
 		ep.step(TTR("Editor layout ready."), 5, true);
 	}
