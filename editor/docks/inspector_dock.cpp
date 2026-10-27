@@ -36,7 +36,7 @@
 #include "editor/debugger/editor_debugger_inspector.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/docks/filesystem_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
@@ -111,7 +111,7 @@ void InspectorDock::_menu_option_confirm(int p_option, bool p_confirmed) {
 
 		case OBJECT_REQUEST_HELP: {
 			if (current) {
-				ScriptEditor::get_singleton()->focus_editor();
+				ScriptEditorDock::get_singleton()->focus_editor();
 				emit_signal(SNAME("request_help"), current->get_class());
 			}
 		} break;
@@ -261,7 +261,7 @@ void InspectorDock::_resource_file_selected(const String &p_file) {
 	} else {
 		const Vector<String> textfile_ext = ((String)(EDITOR_GET("docks/filesystem/textfile_extensions"))).split(",", false);
 		if (textfile_ext.has(p_file.get_extension())) {
-			res = ScriptEditor::get_singleton()->open_file(p_file);
+			res = ScriptEditorDock::get_singleton()->open_file(p_file);
 		}
 	}
 

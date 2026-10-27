@@ -47,7 +47,7 @@
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/script_editor/components/document_editor_container.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
@@ -7749,7 +7749,7 @@ ScriptEditorBase *VisualShaderEditor::create_editor(const Ref<Resource> &p_resou
 }
 
 void VisualShaderEditor::register_editor() {
-	ScriptEditor::register_create_script_editor_function(create_editor);
+	ScriptEditorDock::register_create_script_editor_function(create_editor);
 }
 
 VisualShaderEditor::VisualShaderEditor() {

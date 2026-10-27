@@ -37,7 +37,7 @@
 #include "core/io/resource_loader.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/settings/editor_settings.h"
 #include "servers/display/display_server.h"
 
@@ -66,7 +66,7 @@ void GDScriptTextDocument::willSaveWaitUntil(const Variant &p_param) {
 	String path = GDScriptLanguageProtocol::get_singleton()->get_workspace()->get_file_path(doc.uri);
 	Ref<Script> scr = ResourceLoader::load(path);
 	if (scr.is_valid()) {
-		ScriptEditor::get_singleton()->clear_docs_from_script(scr);
+		ScriptEditorDock::get_singleton()->clear_docs_from_script(scr);
 	}
 }
 
@@ -95,9 +95,9 @@ void GDScriptTextDocument::didSave(const Variant &p_param) {
 }
 
 void GDScriptTextDocument::reload_script(Ref<GDScript> p_to_reload_script) {
-	ScriptEditor::get_singleton()->reload_scripts(true);
-	ScriptEditor::get_singleton()->update_docs_from_script(p_to_reload_script);
-	ScriptEditor::get_singleton()->trigger_live_script_reload(p_to_reload_script->get_path());
+	ScriptEditorDock::get_singleton()->reload_scripts(true);
+	ScriptEditorDock::get_singleton()->update_docs_from_script(p_to_reload_script);
+	ScriptEditorDock::get_singleton()->trigger_live_script_reload(p_to_reload_script->get_path());
 }
 
 void GDScriptTextDocument::notify_client_show_symbol(const LSP::DocumentSymbol *symbol) {
@@ -354,7 +354,7 @@ GDScriptTextDocument::GDScriptTextDocument() {
 }
 
 void GDScriptTextDocument::show_native_symbol_in_editor(const String &p_symbol_id) {
-	callable_mp(ScriptEditor::get_singleton(), &ScriptEditor::goto_help).call_deferred(p_symbol_id);
+	callable_mp(ScriptEditorDock::get_singleton(), &ScriptEditorDock::goto_help).call_deferred(p_symbol_id);
 
 	DisplayServer::get_singleton()->window_move_to_foreground();
 }

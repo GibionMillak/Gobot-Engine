@@ -36,7 +36,7 @@
 #include "core/io/zip_io.h"
 #include "core/os/os.h"
 #include "core/string/translation_server.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/export/editor_export.h"
@@ -2958,7 +2958,7 @@ Error EditorExportPlatformAppleEmbedded::run(const Ref<EditorExportPreset> &p_pr
 		cmd_args_list.push_back(get_debug_protocol() + host + ":" + String::num_int64(remote_port));
 
 		List<String> breakpoints;
-		ScriptEditor::get_singleton()->get_breakpoints(&breakpoints);
+		ScriptEditorDock::get_singleton()->get_breakpoints(&breakpoints);
 
 		if (breakpoints.size()) {
 			cmd_args_list.push_back("--breakpoints");

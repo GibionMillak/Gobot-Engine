@@ -40,7 +40,7 @@
 #include "editor/docks/editor_dock.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/filesystem_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -357,7 +357,7 @@ void VersionControlEditorPlugin::_branch_item_selected(int p_index) {
 	EditorVCSInterface::get_singleton()->checkout_branch(branch_name);
 
 	EditorFileSystem::get_singleton()->scan_changes();
-	ScriptEditor::get_singleton()->reload_scripts();
+	ScriptEditorDock::get_singleton()->reload_scripts();
 
 	_refresh_branch_list();
 	_refresh_commit_list();
@@ -613,7 +613,7 @@ void VersionControlEditorPlugin::_cell_button_pressed(Object *p_item, int p_colu
 			EditorNode::get_singleton()->open_scene(file_path);
 		} else if (file_path.ends_with(".gd")) {
 			EditorNode::get_singleton()->load_resource(file_path);
-			ScriptEditor::get_singleton()->reload_scripts();
+			ScriptEditorDock::get_singleton()->reload_scripts();
 		} else {
 			FileSystemDock::get_singleton()->navigate_to_path(file_path);
 		}

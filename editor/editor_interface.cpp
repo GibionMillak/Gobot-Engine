@@ -38,7 +38,7 @@
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/file_system/editor_paths.h"
@@ -422,8 +422,8 @@ Control *EditorInterface::get_base_control() const {
 	return EditorNode::get_singleton()->get_gui_base();
 }
 
-ScriptEditor *EditorInterface::get_script_editor() const {
-	return ScriptEditor::get_singleton();
+ScriptEditorDock *EditorInterface::get_script_editor() const {
+	return ScriptEditorDock::get_singleton();
 }
 
 SubViewport *EditorInterface::get_editor_viewport_2d() const {
@@ -692,7 +692,7 @@ void EditorInterface::edit_node(Node *p_node) {
 }
 
 void EditorInterface::edit_script(const Ref<Script> &p_script, int p_line, int p_col, bool p_grab_focus) {
-	ScriptEditor::get_singleton()->edit(p_script, p_line - 1, p_col - 1, p_grab_focus);
+	ScriptEditorDock::get_singleton()->edit(p_script, p_line - 1, p_col - 1, p_grab_focus);
 }
 
 void EditorInterface::open_scene_from_path(const String &scene_path, bool p_set_inherited) {

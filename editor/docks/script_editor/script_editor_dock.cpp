@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  script_editor.cpp                                                     */
+/*  script_editor_dock.cpp                                                */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,7 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include "script_editor.h"
+#include "script_editor_dock.h"
 
 #include "core/config/project_settings.h"
 #include "core/input/shortcut.h"
@@ -59,8 +59,8 @@
 #include "scene/resources/text_file.h"
 #include "scene/resources/theme.h"
 
-ScriptEditor::ScriptEditor() {
-	_script_editor = this;
+ScriptEditorDock::ScriptEditorDock() {
+	_script_editor_dock = this;
 
 	ED_SHORTCUT("script_editor/reopen_closed_script", TTRC("Reopen Closed Script"), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::SHIFT | Key::T);
 	ED_SHORTCUT("script_editor/clear_recent", TTRC("Clear Recent Scripts"));
@@ -74,11 +74,11 @@ ScriptEditor::ScriptEditor() {
 
 	set_available_layouts(DOCK_LAYOUT_ALL);
 	set_default_slot(CENTER_TOP);
-	set_dock_shortcut(ED_GET_SHORTCUT("editor/editor_script"));
+	set_dock_shortcut(ED_GET_SHORTCUT("editor/script_editor"));
 	set_icon_name("dock_script_editor");
-	set_name(TTRC("Script"));
+	set_name(TTRC("Script Editor"));
 
-	_script_container = memnew(DocumentEditorContainer(true, "ScriptEditor", "script_editor_cache.cfg"));
+	_script_container = memnew(DocumentEditorContainer(true, "ScriptEditorDock", "script_editor_cache.cfg"));
 	_script_container->set_handled_resource_types({ "GDScript", "Script", "JSON" });
 	add_child(_script_container);
 	connect("_focused", callable_mp(_script_container, &DocumentEditorContainer::focus_active_editor));
@@ -88,18 +88,18 @@ ScriptEditor::ScriptEditor() {
 	_help_search_dialog->connect("go_to_help", callable_mp(_script_container, &DocumentEditorContainer::goto_help));
 
 	FindInFilesContainer *find_in_files = FindInFiles::get_singleton()->get_container();
-	find_in_files->connect("result_selected", callable_mp(this, &ScriptEditor::_on_find_in_files_result_selected));
+	find_in_files->connect("result_selected", callable_mp(this, &ScriptEditorDock::_on_find_in_files_result_selected));
 	find_in_files->connect("files_modified", callable_mp(_script_container, &DocumentEditorContainer::reload_open_files));
 
-	EditorNode::get_singleton()->get_gui_base()->connect(SceneStringName(theme_changed), callable_mp(this, &ScriptEditor::_update_margins));
+	EditorNode::get_singleton()->get_gui_base()->connect(SceneStringName(theme_changed), callable_mp(this, &ScriptEditorDock::_update_margins));
 }
 
-ScriptEditor::~ScriptEditor() {
+ScriptEditorDock::~ScriptEditorDock() {
 	ScriptEditorNavigationMarker::release_singleton();
-	_script_editor = nullptr;
+	_script_editor_dock = nullptr;
 }
 
-bool ScriptEditor::open_in_external_editor(const String &p_path, int p_line, int p_col, bool p_ignore_project) {
+bool ScriptEditorDock::open_in_external_editor(const String &p_path, int p_line, int p_col, bool p_ignore_project) {
 	const String path = EDITOR_GET("text_editor/external/exec_path");
 	if (path.is_empty()) {
 		return false;
@@ -156,7 +156,7 @@ bool ScriptEditor::open_in_external_editor(const String &p_path, int p_line, int
 	return OS::get_singleton()->create_process(path, args) == OK;
 }
 
-bool ScriptEditor::handles_resource(Object *p_object) const {
+bool ScriptEditorDock::handles_resource(Object *p_object) const {
 	if (Object::cast_to<Script>(p_object) || Object::cast_to<TextFile>(p_object)) {
 		return true;
 	}
@@ -164,7 +164,7 @@ bool ScriptEditor::handles_resource(Object *p_object) const {
 	return json && json->get_path().get_extension().to_lower() == "json";
 }
 
-void ScriptEditor::edit_resource(Object *p_object) {
+void ScriptEditorDock::edit_resource(Object *p_object) {
 	if (!handles_resource(p_object)) {
 		return;
 	}
@@ -183,7 +183,7 @@ void ScriptEditor::edit_resource(Object *p_object) {
 	}
 }
 
-String ScriptEditor::get_unsaved_status(const String &p_for_scene) const {
+String ScriptEditorDock::get_unsaved_status(const String &p_for_scene) const {
 	PackedStringArray unsaved_documents;
 	for (Control *editor : _script_container->get_all_editors()) {
 		ScriptEditorBase *document = Object::cast_to<ScriptEditorBase>(editor);
@@ -212,101 +212,101 @@ String ScriptEditor::get_unsaved_status(const String &p_for_scene) const {
 	return String("\n").join(message);
 }
 
-void ScriptEditor::save_external_data() {
+void ScriptEditorDock::save_external_data() {
 	if (!EditorNode::get_singleton()->is_exiting()) {
 		save_all_scripts();
 	}
 }
 
-void ScriptEditor::apply_changes() {
+void ScriptEditorDock::apply_changes() {
 	_script_container->apply_scripts();
 }
 
-void ScriptEditor::set_window_layout(const Ref<ConfigFile> &p_layout) {
+void ScriptEditorDock::set_window_layout(const Ref<ConfigFile> &p_layout) {
 	if (bool(EDITOR_GET("text_editor/behavior/files/restore_scripts_on_load"))) {
 		_script_container->set_window_layout(p_layout);
 	}
 }
 
-void ScriptEditor::get_window_layout(Ref<ConfigFile> r_layout) {
+void ScriptEditorDock::get_window_layout(Ref<ConfigFile> r_layout) {
 	_script_container->get_window_layout(r_layout);
 }
 
-void ScriptEditor::edited_scene_changed() {
+void ScriptEditorDock::edited_scene_changed() {
 	_script_container->edited_scene_changed();
 }
 
-bool ScriptEditor::should_use_external_editor(const Ref<Script> &p_for_script) {
+bool ScriptEditorDock::should_use_external_editor(const Ref<Script> &p_for_script) {
 	return _external_editor_active && !(p_for_script.is_valid() && p_for_script->is_built_in()); // Ignore external editor for built-in scripts.
 }
 
-void ScriptEditor::focus_editor() {
+void ScriptEditorDock::focus_editor() {
 	EditorDockManager::get_singleton()->force_focus_dock(this);
 }
 
-void ScriptEditor::focus_script_editor(const Ref<Resource> &p_for_resource) {
+void ScriptEditorDock::focus_script_editor(const Ref<Resource> &p_for_resource) {
 	if (!should_use_external_editor(p_for_resource)) {
 		focus_editor();
 	}
 }
 
-void ScriptEditor::reload_scripts(bool p_refresh_only) {
+void ScriptEditorDock::reload_scripts(bool p_refresh_only) {
 	_script_container->reload_scripts(p_refresh_only);
 }
 
-void ScriptEditor::open_help_search_dialog(const String &p_search_text) {
+void ScriptEditorDock::open_help_search_dialog(const String &p_search_text) {
 	_help_search_dialog->popup_dialog(p_search_text);
 }
 
-void ScriptEditor::open_script_create_dialog(const String &p_base_name, const String &p_base_path) {
+void ScriptEditorDock::open_script_create_dialog(const String &p_base_name, const String &p_base_path) {
 	_script_container->open_script_create_dialog(p_base_name, p_base_path);
 }
 
-void ScriptEditor::open_text_file_create_dialog(const String &p_base_path, const String &p_base_name) {
+void ScriptEditorDock::open_text_file_create_dialog(const String &p_base_path, const String &p_base_name) {
 	_script_container->open_text_file_create_dialog(p_base_path, p_base_name);
 }
 
-Ref<Resource> ScriptEditor::open_file(const String &p_file) {
+Ref<Resource> ScriptEditorDock::open_file(const String &p_file) {
 	return _script_container->open_file(p_file);
 }
 
-Error ScriptEditor::close_file(const String &p_file) {
+Error ScriptEditorDock::close_file(const String &p_file) {
 	return _script_container->close_file(p_file);
 }
 
-bool ScriptEditor::edit(const Ref<Resource> &p_resource, int p_line, int p_col, bool p_grab_focus) {
+bool ScriptEditorDock::edit(const Ref<Resource> &p_resource, int p_line, int p_col, bool p_grab_focus) {
 	return _script_container->edit(p_resource, p_line, p_col, p_grab_focus);
 }
 
-Vector<String> ScriptEditor::_get_breakpoints() {
+Vector<String> ScriptEditorDock::_get_breakpoints() {
 	return _script_container->_get_breakpoints();
 }
 
-void ScriptEditor::get_breakpoints(List<String> *r_breakpoints) {
+void ScriptEditorDock::get_breakpoints(List<String> *r_breakpoints) {
 	_script_container->get_breakpoints(r_breakpoints);
 }
 
-void ScriptEditor::reload_open_files() {
+void ScriptEditorDock::reload_open_files() {
 	_script_container->reload_open_files();
 }
 
-PackedStringArray ScriptEditor::get_unsaved_files() const {
+PackedStringArray ScriptEditorDock::get_unsaved_files() const {
 	return _script_container->get_unsaved_files();
 }
 
-void ScriptEditor::save_current_script() {
+void ScriptEditorDock::save_current_script() {
 	_script_container->save_current_script();
 }
 
-void ScriptEditor::save_all_scripts() {
+void ScriptEditorDock::save_all_scripts() {
 	_script_container->save_all_scripts();
 }
 
-void ScriptEditor::update_script_times() {
+void ScriptEditorDock::update_script_times() {
 	_script_container->update_script_times();
 }
 
-void ScriptEditor::set_scene_root_script(const Ref<Script> &p_script) {
+void ScriptEditorDock::set_scene_root_script(const Ref<Script> &p_script) {
 	if (p_script.is_null() || should_use_external_editor(p_script)) {
 		return;
 	}
@@ -317,43 +317,43 @@ void ScriptEditor::set_scene_root_script(const Ref<Script> &p_script) {
 	}
 }
 
-Vector<Ref<Script>> ScriptEditor::get_open_scripts() const {
+Vector<Ref<Script>> ScriptEditorDock::get_open_scripts() const {
 	return _script_container->get_open_scripts();
 }
 
-ScriptEditorBase *ScriptEditor::get_current_editor() const {
+ScriptEditorBase *ScriptEditorDock::get_current_editor() const {
 	return _script_container->get_current_editor();
 }
 
-bool ScriptEditor::script_goto_method(Ref<Script> p_script, const String &p_method) {
+bool ScriptEditorDock::script_goto_method(Ref<Script> p_script, const String &p_method) {
 	return _script_container->script_goto_method(p_script, p_method);
 }
 
-void ScriptEditor::notify_script_close(const Ref<Script> &p_script) {
+void ScriptEditorDock::notify_script_close(const Ref<Script> &p_script) {
 	emit_signal(SNAME("script_close"), p_script);
 }
 
-void ScriptEditor::notify_script_changed(const Ref<Script> &p_script) {
+void ScriptEditorDock::notify_script_changed(const Ref<Script> &p_script) {
 	emit_signal(SNAME("editor_script_changed"), p_script);
 }
 
-void ScriptEditor::goto_help(const String &p_desc) {
+void ScriptEditorDock::goto_help(const String &p_desc) {
 	_script_container->goto_help(p_desc);
 }
 
-void ScriptEditor::update_doc(const String &p_name) {
+void ScriptEditorDock::update_doc(const String &p_name) {
 	_script_container->update_doc(p_name);
 }
 
-void ScriptEditor::clear_docs_from_script(const Ref<Script> &p_script) {
+void ScriptEditorDock::clear_docs_from_script(const Ref<Script> &p_script) {
 	_script_container->clear_docs_from_script(p_script);
 }
 
-void ScriptEditor::update_docs_from_script(const Ref<Script> &p_script) {
+void ScriptEditorDock::update_docs_from_script(const Ref<Script> &p_script) {
 	_script_container->update_docs_from_script(p_script);
 }
 
-void ScriptEditor::rename_symbol(const String &p_symbol, const EditorLanguage::LookupResult &p_lookup) {
+void ScriptEditorDock::rename_symbol(const String &p_symbol, const EditorLanguage::LookupResult &p_lookup) {
 	FindInFiles::get_singleton()->get_container()->create_rename_control(p_symbol, p_lookup);
 	EditorDockManager::get_singleton()->focus_dock(FindInFiles::get_singleton()->get_container());
 
@@ -362,54 +362,54 @@ void ScriptEditor::rename_symbol(const String &p_symbol, const EditorLanguage::L
 	callable_mp(name_edit, &LineEdit::select_all).call_deferred();
 }
 
-void ScriptEditor::trigger_live_script_reload(const String &p_script_path) {
+void ScriptEditorDock::trigger_live_script_reload(const String &p_script_path) {
 	_script_container->trigger_live_script_reload(p_script_path);
 }
 
-void ScriptEditor::set_live_auto_reload_running_scripts(bool p_enabled) {
+void ScriptEditorDock::set_live_auto_reload_running_scripts(bool p_enabled) {
 	_script_container->set_live_auto_reload_running_scripts(p_enabled);
 }
 
-void ScriptEditor::register_syntax_highlighter(const Ref<EditorSyntaxHighlighter> &p_syntax_highlighter) {
+void ScriptEditorDock::register_syntax_highlighter(const Ref<EditorSyntaxHighlighter> &p_syntax_highlighter) {
 	_script_container->register_syntax_highlighter(p_syntax_highlighter);
 }
 
-void ScriptEditor::unregister_syntax_highlighter(const Ref<EditorSyntaxHighlighter> &p_syntax_highlighter) {
+void ScriptEditorDock::unregister_syntax_highlighter(const Ref<EditorSyntaxHighlighter> &p_syntax_highlighter) {
 	_script_container->unregister_syntax_highlighter(p_syntax_highlighter);
 }
 
-void ScriptEditor::register_create_script_editor_function(CreateScriptEditorFunc p_func) {
+void ScriptEditorDock::register_create_script_editor_function(CreateScriptEditorFunc p_func) {
 	DocumentEditorContainer::register_create_script_editor_function(p_func);
 }
 
-void ScriptEditor::_bind_methods() {
-	ClassDB::bind_method("get_current_editor", &ScriptEditor::get_current_editor);
-	ClassDB::bind_method("get_open_script_editors", &ScriptEditor::_get_open_script_editors);
-	ClassDB::bind_method("get_breakpoints", &ScriptEditor::_get_breakpoints);
+void ScriptEditorDock::_bind_methods() {
+	ClassDB::bind_method("get_current_editor", &ScriptEditorDock::get_current_editor);
+	ClassDB::bind_method("get_open_script_editors", &ScriptEditorDock::_get_open_script_editors);
+	ClassDB::bind_method("get_breakpoints", &ScriptEditorDock::_get_breakpoints);
 
-	ClassDB::bind_method(D_METHOD("register_syntax_highlighter", "syntax_highlighter"), &ScriptEditor::register_syntax_highlighter);
-	ClassDB::bind_method(D_METHOD("unregister_syntax_highlighter", "syntax_highlighter"), &ScriptEditor::unregister_syntax_highlighter);
+	ClassDB::bind_method(D_METHOD("register_syntax_highlighter", "syntax_highlighter"), &ScriptEditorDock::register_syntax_highlighter);
+	ClassDB::bind_method(D_METHOD("unregister_syntax_highlighter", "syntax_highlighter"), &ScriptEditorDock::unregister_syntax_highlighter);
 
-	ClassDB::bind_method(D_METHOD("goto_line", "line_number"), &ScriptEditor::_goto_line);
-	ClassDB::bind_method(D_METHOD("get_current_script"), &ScriptEditor::_get_current_script);
-	ClassDB::bind_method(D_METHOD("get_open_scripts"), &ScriptEditor::_get_open_scripts);
-	ClassDB::bind_method(D_METHOD("open_script_create_dialog", "base_name", "base_path"), &ScriptEditor::open_script_create_dialog);
-	ClassDB::bind_method(D_METHOD("reload_open_files"), &ScriptEditor::reload_open_files);
+	ClassDB::bind_method(D_METHOD("goto_line", "line_number"), &ScriptEditorDock::_goto_line);
+	ClassDB::bind_method(D_METHOD("get_current_script"), &ScriptEditorDock::_get_current_script);
+	ClassDB::bind_method(D_METHOD("get_open_scripts"), &ScriptEditorDock::_get_open_scripts);
+	ClassDB::bind_method(D_METHOD("open_script_create_dialog", "base_name", "base_path"), &ScriptEditorDock::open_script_create_dialog);
+	ClassDB::bind_method(D_METHOD("reload_open_files"), &ScriptEditorDock::reload_open_files);
 
-	ClassDB::bind_method(D_METHOD("goto_help", "topic"), &ScriptEditor::goto_help);
-	ClassDB::bind_method(D_METHOD("update_docs_from_script", "script"), &ScriptEditor::update_docs_from_script);
-	ClassDB::bind_method(D_METHOD("clear_docs_from_script", "script"), &ScriptEditor::clear_docs_from_script);
+	ClassDB::bind_method(D_METHOD("goto_help", "topic"), &ScriptEditorDock::goto_help);
+	ClassDB::bind_method(D_METHOD("update_docs_from_script", "script"), &ScriptEditorDock::update_docs_from_script);
+	ClassDB::bind_method(D_METHOD("clear_docs_from_script", "script"), &ScriptEditorDock::clear_docs_from_script);
 
-	ClassDB::bind_method(D_METHOD("get_unsaved_files"), &ScriptEditor::get_unsaved_files);
+	ClassDB::bind_method(D_METHOD("get_unsaved_files"), &ScriptEditorDock::get_unsaved_files);
 
-	ClassDB::bind_method(D_METHOD("save_all_scripts"), &ScriptEditor::save_all_scripts);
-	ClassDB::bind_method(D_METHOD("close_file", "path"), &ScriptEditor::close_file);
+	ClassDB::bind_method(D_METHOD("save_all_scripts"), &ScriptEditorDock::save_all_scripts);
+	ClassDB::bind_method(D_METHOD("close_file", "path"), &ScriptEditorDock::close_file);
 
 	ADD_SIGNAL(MethodInfo("editor_script_changed", PropertyInfo(Variant::OBJECT, "script", PROPERTY_HINT_RESOURCE_TYPE, Script::get_class_static())));
 	ADD_SIGNAL(MethodInfo("script_close", PropertyInfo(Variant::OBJECT, "script", PROPERTY_HINT_RESOURCE_TYPE, Script::get_class_static())));
 }
 
-void ScriptEditor::_notification(int p_what) {
+void ScriptEditorDock::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY: {
 			_apply_editor_settings();
@@ -423,7 +423,7 @@ void ScriptEditor::_notification(int p_what) {
 	}
 }
 
-void ScriptEditor::shortcut_input(const Ref<InputEvent> &p_event) {
+void ScriptEditorDock::shortcut_input(const Ref<InputEvent> &p_event) {
 	if (p_event.is_null() || !p_event->is_pressed() || p_event->is_echo()) {
 		return;
 	}
@@ -433,7 +433,7 @@ void ScriptEditor::shortcut_input(const Ref<InputEvent> &p_event) {
 	}
 }
 
-void ScriptEditor::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
+void ScriptEditorDock::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
 	begin_bulk_theme_override();
 	if (p_layout == DOCK_LAYOUT_FLOATING) {
 		remove_theme_constant_override("margin_left");
@@ -448,7 +448,7 @@ void ScriptEditor::update_layout(EditorDock::DockLayout p_layout, int p_slot) {
 	end_bulk_theme_override();
 }
 
-void ScriptEditor::_on_find_in_files_result_selected(const String &p_path, int p_line_number, int p_begin, int p_end) {
+void ScriptEditorDock::_on_find_in_files_result_selected(const String &p_path, int p_line_number, int p_begin, int p_end) {
 	ScriptEditorNavigationMarker::get_singleton()->locate_begin();
 	if (ResourceLoader::exists(p_path)) {
 		Ref<Resource> res = ResourceLoader::load(p_path);
@@ -495,7 +495,7 @@ void ScriptEditor::_on_find_in_files_result_selected(const String &p_path, int p
 					ScriptTextEditor *ste = Object::cast_to<ScriptTextEditor>(get_current_editor());
 
 					if (ste) {
-						callable_mp(this, &ScriptEditor::focus_editor).call_deferred();
+						callable_mp(this, &ScriptEditorDock::focus_editor).call_deferred();
 						if (p_line_number == 0) {
 							const int source_len = strlen(source_header);
 							ste->goto_line_selection(p_line_number, p_begin - source_len, p_end - source_len);
@@ -535,7 +535,7 @@ void ScriptEditor::_on_find_in_files_result_selected(const String &p_path, int p
 	ScriptEditorNavigationMarker::get_singleton()->locate_end();
 }
 
-TypedArray<ScriptEditorBase> ScriptEditor::_get_open_script_editors() const {
+TypedArray<ScriptEditorBase> ScriptEditorDock::_get_open_script_editors() const {
 	TypedArray<ScriptEditorBase> script_editors;
 	for (Control *editor : _script_container->get_all_editors()) {
 		ScriptEditorBase *seb = Object::cast_to<ScriptEditorBase>(editor);
@@ -546,7 +546,7 @@ TypedArray<ScriptEditorBase> ScriptEditor::_get_open_script_editors() const {
 	return script_editors;
 }
 
-void ScriptEditor::_goto_line(int p_line) {
+void ScriptEditorDock::_goto_line(int p_line) {
 	TextEditorBase *teb = Object::cast_to<TextEditorBase>(get_current_editor());
 	if (teb) {
 		ScriptEditorNavigationMarker::get_singleton()->locate_begin();
@@ -555,7 +555,7 @@ void ScriptEditor::_goto_line(int p_line) {
 	}
 }
 
-Ref<Script> ScriptEditor::_get_current_script() {
+Ref<Script> ScriptEditorDock::_get_current_script() {
 	ScriptEditorBase *seb = get_current_editor();
 	if (seb) {
 		Ref<Script> scr = seb->get_edited_resource();
@@ -565,7 +565,7 @@ Ref<Script> ScriptEditor::_get_current_script() {
 	}
 }
 
-TypedArray<Script> ScriptEditor::_get_open_scripts() const {
+TypedArray<Script> ScriptEditorDock::_get_open_scripts() const {
 	TypedArray<Script> ret;
 	Vector<Ref<Script>> scripts = get_open_scripts();
 	for (const Ref<Script> &script : scripts) {
@@ -574,11 +574,11 @@ TypedArray<Script> ScriptEditor::_get_open_scripts() const {
 	return ret;
 }
 
-void ScriptEditor::_update_margins() {
+void ScriptEditorDock::_update_margins() {
 	update_layout(get_current_layout(), get_current_slot());
 }
 
-void ScriptEditor::_apply_editor_settings() {
+void ScriptEditorDock::_apply_editor_settings() {
 	_external_editor_active = EDITOR_GET("text_editor/external/use_external_editor");
 	set_auto_switch_allowed(!bool(EDITOR_GET("text_editor/behavior/navigation/stay_in_script_editor_on_node_selected")));
 }

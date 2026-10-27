@@ -46,7 +46,7 @@
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/script_editor/components/document_editor_container.h"
 #include "editor/docks/script_editor/components/script_editor_quick_open.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -408,7 +408,7 @@ void ScriptTextEditor::_error_clicked(const Variant &p_line) {
 			if (scr.is_null()) {
 				EditorNode::get_singleton()->show_warning(TTR("Could not load file at:") + "\n\n" + path, TTR("Error!"));
 			} else {
-				ScriptEditor::get_singleton()->edit(scr, line, column);
+				ScriptEditorDock::get_singleton()->edit(scr, line, column);
 			}
 		}
 	}
@@ -1857,7 +1857,7 @@ bool ScriptTextEditor::_edit_option(int p_op) {
 				// Don't allow renaming native symbols.
 				break;
 			}
-			ScriptEditor::get_singleton()->rename_symbol(text, result);
+			ScriptEditorDock::get_singleton()->rename_symbol(text, result);
 		} break;
 
 		default: {
@@ -2639,7 +2639,7 @@ void ScriptTextEditor::register_editor() {
 	ED_SHORTCUT("script_text_editor/goto_next_breakpoint", TTRC("Go to Next Breakpoint"), KeyModifierMask::CTRL | Key::PERIOD);
 	ED_SHORTCUT("script_text_editor/goto_previous_breakpoint", TTRC("Go to Previous Breakpoint"), KeyModifierMask::CTRL | Key::COMMA);
 
-	ScriptEditor::register_create_script_editor_function(create_editor);
+	ScriptEditorDock::register_create_script_editor_function(create_editor);
 }
 
 void ScriptTextEditor::_enable_code_editor() {

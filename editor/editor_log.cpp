@@ -38,7 +38,7 @@
 #include "core/os/os.h"
 #include "core/version.h"
 #include "editor/docks/editor_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/settings/editor_command_palette.h"
@@ -215,13 +215,13 @@ void EditorLog::_meta_clicked(const String &p_meta) {
 	if (path.begins_with("res://")) {
 		if (ResourceLoader::exists(path)) {
 			const Ref<Resource> res = ResourceLoader::load(path);
-			ScriptEditor::get_singleton()->edit(res, line, 0);
+			ScriptEditorDock::get_singleton()->edit(res, line, 0);
 			EditorNode *editor_node = EditorNode::get_singleton();
 			if (res.is_valid() && editor_node->get_editor_selection_history()->get_current() != res->get_instance_id()) {
 				// Avoid re-editing the current script without the clicked line number.
 				editor_node->push_item(res.ptr(), "", true);
 			}
-			ScriptEditor::get_singleton()->focus_script_editor(res);
+			ScriptEditorDock::get_singleton()->focus_script_editor(res);
 		}
 	} else if (path.has_extension("cpp") || path.has_extension("h") || path.has_extension("mm") || path.has_extension("hpp")) {
 		// Godot source file. Try to open it in external editor.
@@ -245,7 +245,7 @@ void EditorLog::_meta_clicked(const String &p_meta) {
 			return;
 		}
 
-		if (!ScriptEditor::open_in_external_editor(path, line, -1, true)) {
+		if (!ScriptEditorDock::open_in_external_editor(path, line, -1, true)) {
 			OS::get_singleton()->shell_open(path);
 		}
 	} else {

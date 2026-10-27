@@ -46,7 +46,7 @@
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/import_dock.h"
 #include "editor/docks/hierarchy_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -2733,7 +2733,7 @@ void FileSystemDock::_file_option(int p_option, const Vector<String> &p_selected
 				fpath = fpath.get_base_dir();
 			}
 			String dir = ProjectSettings::get_singleton()->globalize_path(fpath);
-			ScriptEditor::get_singleton()->open_text_file_create_dialog(dir);
+			ScriptEditorDock::get_singleton()->open_text_file_create_dialog(dir);
 		} break;
 		case FILE_MENU_RUN_SCRIPT: {
 			if (p_selected.size() == 1) {

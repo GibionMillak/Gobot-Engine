@@ -40,7 +40,7 @@
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/hierarchy_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/create_dialog.h"
@@ -3726,7 +3726,7 @@ void EditorPropertyResource::update_property() {
 
 				resource_picker->set_toggle_pressed(true);
 
-				ScriptEditor *script_editor = ScriptEditor::get_singleton();
+				ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton();
 				if ((script_editor && script_editor->handles_resource(res.ptr())) || !EditorNode::get_editor_data().get_handling_sub_editors(res.ptr()).is_empty()) {
 					// Open editor directly.
 					_open_editor_pressed();

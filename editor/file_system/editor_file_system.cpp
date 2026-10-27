@@ -42,7 +42,7 @@
 #include "core/os/os.h"
 #include "core/variant/variant_parser.h"
 #include "editor/doc/editor_help.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/inspector/editor_resource_preview.h"
@@ -2197,7 +2197,7 @@ void EditorFileSystem::_update_script_documentation() {
 								EditorHelp::add_doc(cd);
 								if (!first_scan) {
 									// Update the documentation in the Script Editor if it is open.
-									ScriptEditor::get_singleton()->update_doc(cd.name);
+									ScriptEditorDock::get_singleton()->update_doc(cd.name);
 								}
 							}
 						}
@@ -2224,7 +2224,7 @@ void EditorFileSystem::_update_script_documentation() {
 					EditorHelp::add_doc(cd);
 					if (!first_scan) {
 						// Update the documentation in the Script Editor if it is open.
-						ScriptEditor::get_singleton()->update_doc(cd.name);
+						ScriptEditorDock::get_singleton()->update_doc(cd.name);
 					}
 				}
 			}
@@ -2252,7 +2252,7 @@ bool EditorFileSystem::_should_reload_script(const String &p_path) {
 	}
 
 	// Scripts are reloaded via the script editor if they are currently opened.
-	if (ScriptEditor::get_singleton()->get_open_scripts().has(scr)) {
+	if (ScriptEditorDock::get_singleton()->get_open_scripts().has(scr)) {
 		return false;
 	}
 

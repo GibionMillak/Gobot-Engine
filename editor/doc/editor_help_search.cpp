@@ -33,7 +33,7 @@
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "core/os/os.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/filter_line_edit.h"
@@ -189,7 +189,7 @@ void EditorHelpSearch::_confirmed() {
 	}
 
 	// Activate the script editor and emit the signal with the documentation link to display.
-	ScriptEditor::get_singleton()->focus_editor();
+	ScriptEditorDock::get_singleton()->focus_editor();
 
 	emit_signal(SNAME("go_to_help"), item->get_metadata(0));
 

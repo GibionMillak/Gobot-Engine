@@ -53,7 +53,7 @@ class Mesh;
 class Node;
 class PropertySelector;
 class HierarchyDialog;
-class ScriptEditor;
+class ScriptEditorDock;
 class SubViewport;
 class Texture2D;
 class Theme;
@@ -116,7 +116,7 @@ public:
 	Ref<Theme> get_editor_theme() const;
 
 	Control *get_base_control() const;
-	ScriptEditor *get_script_editor() const;
+	ScriptEditorDock *get_script_editor() const;
 	SubViewport *get_editor_viewport_2d() const;
 	SubViewport *get_editor_viewport_3d(int p_idx = 0) const;
 

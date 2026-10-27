@@ -37,7 +37,7 @@
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "core/os/time.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/inspector/editor_context_menu_plugin.h"
@@ -297,7 +297,7 @@ void EditorData::copy_object_params(Object *p_object) {
 }
 
 void EditorData::get_editor_breakpoints(List<String> *r_breakpoints) {
-	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+	if (ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton()) {
 		script_editor->get_breakpoints(r_breakpoints);
 	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
@@ -356,7 +356,7 @@ void EditorData::set_editor_plugin_states(const Dictionary &p_states) {
 }
 
 void EditorData::notify_edited_scene_changed() {
-	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+	if (ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton()) {
 		script_editor->edited_scene_changed();
 	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
@@ -417,11 +417,11 @@ String EditorData::get_unsaved_status(const String &p_for_scene, Callable *r_sav
 	if (r_save_callback) {
 		*r_save_callback = Callable();
 	}
-	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+	if (ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton()) {
 		const String status = script_editor->get_unsaved_status(p_for_scene);
 		if (!status.is_empty()) {
 			if (r_save_callback) {
-				*r_save_callback = callable_mp(script_editor, &ScriptEditor::save_external_data);
+				*r_save_callback = callable_mp(script_editor, &ScriptEditorDock::save_external_data);
 			}
 			return status;
 		}
@@ -439,7 +439,7 @@ String EditorData::get_unsaved_status(const String &p_for_scene, Callable *r_sav
 }
 
 void EditorData::save_editor_external_data() {
-	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+	if (ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton()) {
 		script_editor->save_external_data();
 	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
@@ -448,7 +448,7 @@ void EditorData::save_editor_external_data() {
 }
 
 void EditorData::apply_changes_in_editors() {
-	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+	if (ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton()) {
 		script_editor->apply_changes();
 	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
@@ -1039,7 +1039,7 @@ void EditorData::clear_edited_scenes() {
 }
 
 void EditorData::set_editor_window_layout(const Ref<ConfigFile> &p_layout) {
-	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+	if (ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton()) {
 		script_editor->set_window_layout(p_layout);
 	}
 	for (int i = 0; i < editor_plugins.size(); i++) {
@@ -1048,7 +1048,7 @@ void EditorData::set_editor_window_layout(const Ref<ConfigFile> &p_layout) {
 }
 
 void EditorData::get_editor_window_layout(Ref<ConfigFile> r_layout) {
-	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+	if (ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton()) {
 		script_editor->get_window_layout(r_layout);
 	}
 	for (int i = 0; i < editor_plugins.size(); i++) {

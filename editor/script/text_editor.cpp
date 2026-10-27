@@ -31,7 +31,7 @@
 #include "text_editor.h"
 
 #include "core/io/json.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/script/script_editor_base.h"
 #include "editor/settings/editor_settings.h"
 #include "scene/resources/text_file.h"
@@ -75,7 +75,7 @@ ScriptEditorBase *TextEditor::create_editor(const Ref<Resource> &p_resource) {
 }
 
 void TextEditor::register_editor() {
-	ScriptEditor::register_create_script_editor_function(create_editor);
+	ScriptEditorDock::register_create_script_editor_function(create_editor);
 }
 
 TextEditor::TextEditor() {

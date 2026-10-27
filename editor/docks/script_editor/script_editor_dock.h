@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  script_editor.h                                                       */
+/*  script_editor_dock.h                                                  */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -42,13 +42,13 @@ class DocumentEditorContainer;
 class EditorHelpSearch;
 class Shortcut;
 
-class ScriptEditor : public EditorDock {
-	GDCLASS(ScriptEditor, EditorDock);
+class ScriptEditorDock : public EditorDock {
+	GDCLASS(ScriptEditorDock, EditorDock);
 
 public:
-	ScriptEditor();
-	~ScriptEditor() override;
-	static ScriptEditor *get_singleton() { return _script_editor; }
+	ScriptEditorDock();
+	~ScriptEditorDock() override;
+	static ScriptEditorDock *get_singleton() { return _script_editor_dock; }
 	static bool open_in_external_editor(const String &p_path, int p_line, int p_col, bool p_ignore_project = false);
 	DocumentEditorContainer *get_script_container() { return _script_container; }
 	bool handles_resource(Object *p_object) const;
@@ -108,7 +108,7 @@ private:
 	TypedArray<Script> _get_open_scripts() const;
 	void _update_margins();
 	void _apply_editor_settings();
-	inline static ScriptEditor *_script_editor = nullptr;
+	inline static ScriptEditorDock *_script_editor_dock = nullptr;
 	DocumentEditorContainer *_script_container = nullptr;
 	EditorHelpSearch *_help_search_dialog = nullptr;
 	bool _external_editor_active = false;

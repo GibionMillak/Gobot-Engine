@@ -42,7 +42,7 @@
 #include "editor/animation/animation_track_editor_plugins.h"
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
@@ -3495,8 +3495,8 @@ bool AnimationTrackEdit::_lookup_key(int p_key_idx) const {
 			while (target_script) {
 				if (target_script->has_method(method)) {
 					found_in_script = true;
-					// Tell ScriptEditor to show the method's line.
-					ScriptEditor::get_singleton()->script_goto_method(target_script, animation->method_track_get_name(track, p_key_idx));
+					// Tell ScriptEditorDock to show the method's line.
+					ScriptEditorDock::get_singleton()->script_goto_method(target_script, animation->method_track_get_name(track, p_key_idx));
 					break;
 				}
 				target_script = target_script->get_base_script().ptr();
@@ -3506,7 +3506,7 @@ bool AnimationTrackEdit::_lookup_key(int p_key_idx) const {
 				// Not found in script, so it must be a native method.
 				if (ClassDB::has_method(target->get_class_name(), method)) {
 					// Show help page instead.
-					ScriptEditor::get_singleton()->goto_help(vformat("class_method:%s:%s", target->get_class_name(), method));
+					ScriptEditorDock::get_singleton()->goto_help(vformat("class_method:%s:%s", target->get_class_name(), method));
 				} else {
 					// Still not found, which means the target doesn't have this method. Warn the user.
 					WARN_PRINT_ED(vformat(TTR("Failed to lookup method: \"%s\""), method));

@@ -42,7 +42,7 @@
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/groups_dock.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/docks/signals_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -1348,9 +1348,9 @@ void HierarchyDock::_tool_selected(int p_tool, bool p_confirm_override) {
 					class_name = full_selection->get_class();
 				}
 
-				ScriptEditor::get_singleton()->goto_help("class_name:" + class_name);
+				ScriptEditorDock::get_singleton()->goto_help("class_name:" + class_name);
 			}
-			ScriptEditor::get_singleton()->focus_editor();
+			ScriptEditorDock::get_singleton()->focus_editor();
 		} break;
 		case TOOL_AUTO_EXPAND: {
 			_hierarchy_editor->set_auto_expand_selected(!EDITOR_GET("docks/hierarchy/auto_expand_to_selected"), true);

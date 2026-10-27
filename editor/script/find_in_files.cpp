@@ -37,7 +37,7 @@
 #include "core/os/os.h"
 #include "editor/docks/editor_dock_manager.h"
 #include "editor/docks/script_editor/components/document_editor_container.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_file_system.h"
@@ -317,7 +317,7 @@ TextEditorBase *get_text_editor_base(const String &p_fpath) {
 	}
 
 	ShaderEditorPlugin *shader_editor_plugin = ShaderEditorPlugin::get_singleton();
-	ScriptEditor *script_editor = ScriptEditor::get_singleton();
+	ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton();
 
 	DocumentEditorContainer *document_editor_container = nullptr;
 	if (shader_editor_plugin && shader_editor_plugin->handles(res.ptr())) {
@@ -1253,7 +1253,7 @@ void FindInFilesResultsPanel::replace_all() {
 
 	if (!symbol_rename.script_path.is_empty()) {
 		// Go back to the Script Editor.
-		ScriptTextEditor *script_editor = Object::cast_to<ScriptTextEditor>(ScriptEditor::get_singleton()->get_current_editor());
+		ScriptTextEditor *script_editor = Object::cast_to<ScriptTextEditor>(ScriptEditorDock::get_singleton()->get_current_editor());
 		if (script_editor && script_editor->is_visible_in_tree()) {
 			script_editor->get_code_editor()->get_text_editor()->grab_focus();
 		}

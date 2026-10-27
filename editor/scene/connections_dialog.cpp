@@ -38,7 +38,7 @@
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/doc/editor_help.h"
 #include "editor/docks/hierarchy_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/docks/signals_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -1258,16 +1258,16 @@ void ConnectionsDock::_go_to_method(TreeItem &p_item) {
 		return;
 	}
 
-	if (scr.is_valid() && ScriptEditor::get_singleton()->script_goto_method(scr, cd.method)) {
-		ScriptEditor::get_singleton()->focus_script_editor(scr); // TODO: Move this to goto_method().
+	if (scr.is_valid() && ScriptEditorDock::get_singleton()->script_goto_method(scr, cd.method)) {
+		ScriptEditorDock::get_singleton()->focus_script_editor(scr); // TODO: Move this to goto_method().
 	}
 }
 
 void ConnectionsDock::_handle_class_menu_option(int p_option) {
 	switch (p_option) {
 		case CLASS_MENU_OPEN_DOCS:
-			ScriptEditor::get_singleton()->goto_help("class:" + class_menu_doc_class_name);
-			ScriptEditor::get_singleton()->focus_editor(); // TODO: Move this to goto_help().
+			ScriptEditorDock::get_singleton()->goto_help("class:" + class_menu_doc_class_name);
+			ScriptEditorDock::get_singleton()->focus_editor(); // TODO: Move this to goto_help().
 			break;
 	}
 }
@@ -1296,8 +1296,8 @@ void ConnectionsDock::_handle_signal_menu_option(int p_option) {
 			DisplayServer::get_singleton()->clipboard_set(meta["name"]);
 		} break;
 		case SIGNAL_MENU_OPEN_DOCS: {
-			ScriptEditor::get_singleton()->goto_help("class_signal:" + String(meta["class"]) + ":" + String(meta["name"]));
-			ScriptEditor::get_singleton()->focus_editor();
+			ScriptEditorDock::get_singleton()->goto_help("class_signal:" + String(meta["class"]) + ":" + String(meta["name"]));
+			ScriptEditorDock::get_singleton()->focus_editor();
 		} break;
 	}
 }

@@ -35,7 +35,7 @@
 #include "editor/debugger/debug_adapter/debug_adapter_protocol.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/debugger/script_editor_debugger.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/export/editor_export.h"
 #include "editor/run/editor_run_bar.h"
 
@@ -145,7 +145,7 @@ Dictionary DebugAdapterParser::req_initialize(const Dictionary &p_params) const 
 	if (DebugAdapterProtocol::get_singleton()->_sync_breakpoints) {
 		// Send all current breakpoints
 		List<String> breakpoints;
-		ScriptEditor::get_singleton()->get_breakpoints(&breakpoints);
+		ScriptEditorDock::get_singleton()->get_breakpoints(&breakpoints);
 		for (const String &breakpoint : breakpoints) {
 			String path = breakpoint.left(breakpoint.find_char(':', 6)); // Skip initial part of path, aka "res://"
 			int line = breakpoint.substr(path.size()).to_int();

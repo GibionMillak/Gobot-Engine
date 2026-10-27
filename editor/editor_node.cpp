@@ -67,7 +67,7 @@
 #include "editor/docks/import_dock.h"
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/scene_editor_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/docks/signals_dock.h"
 #include "editor/editor_data.h"
 #include "editor/editor_interface.h"
@@ -878,12 +878,12 @@ EditorNode::EditorNode() {
 	// Use the Ctrl modifier so F2 can be used to rename nodes in the Hierarchy dock.
 	ED_SHORTCUT_AND_COMMAND("editor/editor_2d", TTRC("Open 2D Workspace"), KeyModifierMask::CTRL | Key::F1);
 	ED_SHORTCUT_AND_COMMAND("editor/editor_3d", TTRC("Open 3D Workspace"), KeyModifierMask::CTRL | Key::F2);
-	ED_SHORTCUT_AND_COMMAND("editor/editor_script", TTRC("Open Script Editor"), KeyModifierMask::CTRL | Key::F3);
+	ED_SHORTCUT_AND_COMMAND("editor/script_editor", TTRC("Open Script Editor"), KeyModifierMask::CTRL | Key::F3);
 	ED_SHORTCUT_AND_COMMAND("editor/editor_game", TTRC("Open Game View"), KeyModifierMask::CTRL | Key::F4);
 
 	ED_SHORTCUT_OVERRIDE("editor/editor_2d", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::KEY_1);
 	ED_SHORTCUT_OVERRIDE("editor/editor_3d", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::KEY_2);
-	ED_SHORTCUT_OVERRIDE("editor/editor_script", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::KEY_3);
+	ED_SHORTCUT_OVERRIDE("editor/script_editor", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::KEY_3);
 	ED_SHORTCUT_OVERRIDE("editor/editor_game", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::KEY_4);
 
 	// Editor menu and toolbar.
@@ -1129,7 +1129,7 @@ EditorNode::EditorNode() {
 	add_editor_plugin(memnew(CanvasItemEditorPlugin));
 	add_editor_plugin(memnew(Node3DEditorPlugin));
 	memnew(FindInFiles);
-	editor_dock_manager->add_dock(memnew(ScriptEditor));
+	editor_dock_manager->add_dock(memnew(ScriptEditorDock));
 
 	if (!Engine::get_singleton()->is_recovery_mode_hint()) {
 		add_editor_plugin(get_game_view_plugin());
@@ -1376,7 +1376,7 @@ EditorNode::EditorNode() {
 	}
 	{
 		const String scene_editor_key = _scene_editor_dock->get_effective_layout_key();
-		const String script_key = ScriptEditor::get_singleton()->get_effective_layout_key();
+		const String script_key = ScriptEditorDock::get_singleton()->get_effective_layout_key();
 		String game_key;
 		if (GameView::get_dock()) {
 			game_key = GameView::get_dock()->get_effective_layout_key();
@@ -2230,7 +2230,7 @@ void EditorNode::edit_item(Object *p_object, Object *p_editing_owner, bool p_set
 
 	const ObjectID owner_id = p_editing_owner->get_instance_id();
 	const ObjectID object_id = p_object->get_instance_id();
-	if (ScriptEditor *script_editor = ScriptEditor::get_singleton()) {
+	if (ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton()) {
 		script_editor->edit_resource(p_object);
 		// Opening a built-in script can load a scene and replace the editing context.
 		if (!ObjectDB::get_instance(owner_id) || !ObjectDB::get_instance(object_id)) {
@@ -2782,13 +2782,13 @@ Error EditorNode::load_resource(const String &p_resource, bool p_ignore_broken_d
 		if (res.is_null()) {
 			res = ResourceCache::get_ref(p_resource);
 			if (res.is_null() || !res->is_class("TextFile")) {
-				res = ScriptEditor::get_singleton()->open_file(p_resource);
+				res = ScriptEditorDock::get_singleton()->open_file(p_resource);
 			}
 		}
 	} else if (ResourceLoader::exists(p_resource, "")) {
 		res = ResourceLoader::load(p_resource, "", ResourceFormatLoader::CACHE_MODE_REUSE, &err);
 	} else if (textfile_extensions.has(p_resource.get_extension())) {
-		res = ScriptEditor::get_singleton()->open_file(p_resource);
+		res = ScriptEditorDock::get_singleton()->open_file(p_resource);
 	} else if (other_file_extensions.has(p_resource.get_extension())) {
 		OS::get_singleton()->shell_open(ProjectSettings::get_singleton()->globalize_path(p_resource));
 		return OK;
@@ -5501,7 +5501,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 				if (p_option == SCENE_SAVE_SCENE) {
 					// Pressing Ctrl + S saves the current script if a scene is currently open, but it won't if the scene has no root node.
 					// Work around this by explicitly saving the script in this case (similar to pressing Ctrl + Alt + S).
-					ScriptEditor::get_singleton()->save_current_script();
+					ScriptEditorDock::get_singleton()->save_current_script();
 				}
 
 				const int saved = _save_external_resources(true);
@@ -6504,11 +6504,11 @@ int EditorNode::_save_external_resources(bool p_also_save_external_data) {
 	}
 
 	if (script_was_saved) {
-		ScriptEditor::get_singleton()->update_script_times();
+		ScriptEditorDock::get_singleton()->update_script_times();
 	}
 
 	if (p_also_save_external_data) {
-		ScriptEditor *script_editor = ScriptEditor::get_singleton();
+		ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton();
 		if (!script_editor->get_unsaved_status().is_empty()) {
 			script_editor->save_external_data();
 			saved++;
@@ -7718,7 +7718,7 @@ void EditorNode::_set_main_scene_state(const Dictionary &p_state) {
 	// This should only happen at the very end.
 
 	EditorDebuggerNode::get_singleton()->update_live_edit_root();
-	ScriptEditor::get_singleton()->set_scene_root_script(editor_data.get_scene_root_script(editor_data.get_edited_scene()));
+	ScriptEditorDock::get_singleton()->set_scene_root_script(editor_data.get_scene_root_script(editor_data.get_edited_scene()));
 	editor_data.notify_edited_scene_changed();
 	emit_signal(SNAME("scene_changed"));
 
@@ -8125,7 +8125,7 @@ void EditorNode::_feature_profile_changed() {
 		editor_dock_manager->set_dock_enabled(history_dock, !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_HISTORY_DOCK));
 
 		_scene_editor_dock->set_3d_enabled(!profile->is_feature_disabled(EditorFeatureProfile::FEATURE_3D));
-		editor_dock_manager->set_dock_enabled(ScriptEditor::get_singleton(), !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_SCRIPT));
+		editor_dock_manager->set_dock_enabled(ScriptEditorDock::get_singleton(), !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_SCRIPT));
 		if (!Engine::get_singleton()->is_recovery_mode_hint()) {
 			editor_dock_manager->set_dock_enabled(GameView::get_dock(), !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_GAME));
 		}
@@ -8136,7 +8136,7 @@ void EditorNode::_feature_profile_changed() {
 		editor_dock_manager->set_dock_enabled(FileSystemDock::get_singleton(), true);
 		editor_dock_manager->set_dock_enabled(history_dock, true);
 		_scene_editor_dock->set_3d_enabled(true);
-		editor_dock_manager->set_dock_enabled(ScriptEditor::get_singleton(), true);
+		editor_dock_manager->set_dock_enabled(ScriptEditorDock::get_singleton(), true);
 		if (!Engine::get_singleton()->is_recovery_mode_hint() && GameView::get_dock()) {
 			editor_dock_manager->set_dock_enabled(GameView::get_dock(), true);
 		}

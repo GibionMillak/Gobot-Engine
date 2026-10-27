@@ -38,7 +38,7 @@
 #include "gdscript_utility_functions.h"
 
 #ifdef TOOLS_ENABLED
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/gdscript_editor_language.h"
 #include "editor/gdscript_highlighter.h"
 #include "editor/gdscript_translation_parser_plugin.h"
@@ -129,7 +129,7 @@ static void _editor_init() {
 #ifdef TOOLS_ENABLED
 	Ref<GDScriptSyntaxHighlighter> gdscript_syntax_highlighter;
 	gdscript_syntax_highlighter.instantiate();
-	ScriptEditor::get_singleton()->register_syntax_highlighter(gdscript_syntax_highlighter);
+	ScriptEditorDock::get_singleton()->register_syntax_highlighter(gdscript_syntax_highlighter);
 #endif
 }
 

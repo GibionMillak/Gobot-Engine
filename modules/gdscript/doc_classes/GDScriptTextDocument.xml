@@ -99,7 +99,7 @@
 			<description>
 			</description>
 		</method>
-		<method name="show_native_symbol_in_editor" deprecated="Use [method ScriptEditor.goto_help] instead.">
+		<method name="show_native_symbol_in_editor" deprecated="Use [method ScriptEditorDock.goto_help] instead.">
 			<return type="void" />
 			<param index="0" name="symbol_id" type="String" />
 			<description>

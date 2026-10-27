@@ -39,7 +39,7 @@
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/doc/doc_tools.h"
 #include "editor/docks/inspector_dock.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_interface.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -1582,8 +1582,8 @@ void EditorProperty::menu_option(int p_option) {
 			update_property();
 		} break;
 		case MENU_OPEN_DOCUMENTATION: {
-			ScriptEditor::get_singleton()->goto_help(doc_path);
-			ScriptEditor::get_singleton()->focus_editor();
+			ScriptEditorDock::get_singleton()->goto_help(doc_path);
+			ScriptEditorDock::get_singleton()->focus_editor();
 		} break;
 		default: {
 			if (p_option >= EditorContextMenuPlugin::BASE_ID) {
@@ -1751,7 +1751,7 @@ void EditorProperty::_update_popup() {
 			menu->add_icon_item(theme_cache.revert_icon, TTR("Revert Value"), MENU_REVERT_VALUE);
 		}
 	}
-	if (!doc_path.is_empty() && ScriptEditor::get_singleton() && EditorNode::get_singleton()) {
+	if (!doc_path.is_empty() && ScriptEditorDock::get_singleton() && EditorNode::get_singleton()) {
 		menu->add_separator();
 		menu->add_icon_item(theme_cache.help_icon, TTR("Open Documentation"), MENU_OPEN_DOCUMENTATION);
 	}
@@ -2021,8 +2021,8 @@ void EditorInspectorCategory::_handle_menu_option(int p_option) {
 		} break;
 
 		case MENU_OPEN_DOCS: {
-			ScriptEditor::get_singleton()->goto_help("class:" + doc_class_name);
-			ScriptEditor::get_singleton()->focus_editor();
+			ScriptEditorDock::get_singleton()->goto_help("class:" + doc_class_name);
+			ScriptEditorDock::get_singleton()->focus_editor();
 		} break;
 
 		case MENU_UNFAVORITE_ALL: {
@@ -2782,7 +2782,7 @@ void EditorInspectorSection::_update_popup() {
 		menu->add_separator();
 		menu->add_icon_item(theme_cache.icon_gui_revert, TTRC("Revert Value"), MENU_REVERT_VALUE);
 	}
-	if (!doc_path.is_empty() && ScriptEditor::get_singleton() && EditorNode::get_singleton()) {
+	if (!doc_path.is_empty() && ScriptEditorDock::get_singleton() && EditorNode::get_singleton()) {
 		menu->add_separator();
 		menu->add_icon_item(theme_cache.help_icon, TTRC("Open Documentation"), MENU_OPEN_DOCUMENTATION);
 	}
@@ -2855,8 +2855,8 @@ void EditorInspectorSection::menu_option(int p_option) {
 		} break;
 
 		case MENU_OPEN_DOCUMENTATION: {
-			ScriptEditor::get_singleton()->goto_help(doc_path);
-			ScriptEditor::get_singleton()->focus_editor();
+			ScriptEditorDock::get_singleton()->goto_help(doc_path);
+			ScriptEditorDock::get_singleton()->focus_editor();
 		} break;
 	}
 }

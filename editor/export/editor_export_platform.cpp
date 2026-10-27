@@ -48,7 +48,7 @@
 #include "core/os/shared_object.h"
 #include "core/string/translation.h"
 #include "core/version.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/export/editor_export.h"
@@ -2470,7 +2470,7 @@ Vector<String> EditorExportPlatform::gen_export_flags(BitField<EditorExportPlatf
 		ret.push_back(get_debug_protocol() + host + ":" + String::num_int64(remote_port));
 
 		List<String> breakpoints;
-		ScriptEditor::get_singleton()->get_breakpoints(&breakpoints);
+		ScriptEditorDock::get_singleton()->get_breakpoints(&breakpoints);
 
 		if (breakpoints.size()) {
 			ret.push_back("--breakpoints");

@@ -36,7 +36,7 @@
 #include "core/os/os.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/debugger/script_editor_debugger.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/gui/containers/editor_header_container.h"
 #include "editor/run/editor_run_bar.h"
@@ -107,8 +107,8 @@ JNIEXPORT void JNICALL Java_org_godotengine_godot_editor_utils_EditorUtils_orien
 			EditorRunBar::get_singleton()->set_visible(!p_portrait);
 		}
 
-		if (ScriptEditor::get_singleton() != nullptr && EDITOR_GET("text_editor/appearance/minimap/show_minimap")) {
-			if (TextEditorBase *editor = Object::cast_to<TextEditorBase>(ScriptEditor::get_singleton()->get_current_editor())) {
+		if (ScriptEditorDock::get_singleton() != nullptr && EDITOR_GET("text_editor/appearance/minimap/show_minimap")) {
+			if (TextEditorBase *editor = Object::cast_to<TextEditorBase>(ScriptEditorDock::get_singleton()->get_current_editor())) {
 				if (CodeTextEditor *code_editor = editor->get_code_editor()) {
 					if (CodeEdit *text_editor = code_editor->get_text_editor()) {
 						text_editor->set_draw_minimap(!p_portrait);

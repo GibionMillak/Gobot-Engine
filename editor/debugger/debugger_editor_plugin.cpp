@@ -37,7 +37,7 @@
 #include "editor/debugger/editor_file_server.h"
 #include "editor/debugger/script_editor_debugger.h"
 #include "editor/docks/editor_dock_manager.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/run/run_instances_dialog.h"
 #include "editor/settings/editor_settings.h"
@@ -192,7 +192,7 @@ void DebuggerEditorPlugin::_menu_option(int p_option) {
 			bool ischecked = debug_menu->is_item_checked(debug_menu->get_item_index(RUN_RELOAD_SCRIPTS));
 			debug_menu->set_item_checked(debug_menu->get_item_index(RUN_RELOAD_SCRIPTS), !ischecked);
 
-			ScriptEditor::get_singleton()->set_live_auto_reload_running_scripts(!ischecked);
+			ScriptEditorDock::get_singleton()->set_live_auto_reload_running_scripts(!ischecked);
 			if (!initializing) {
 				EditorSettings::get_singleton()->set_project_metadata("debug_options", "run_reload_scripts", !ischecked);
 			}

@@ -51,7 +51,7 @@
 #include "editor/docks/inspector_dock.h"
 #include "editor/docks/script_editor/components/document_list.h"
 #include "editor/docks/script_editor/components/document_outline.h"
-#include "editor/docks/script_editor/script_editor.h"
+#include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_file_system.h"
@@ -684,7 +684,7 @@ bool DocumentEditorContainer::edit(const Ref<Resource> &p_resource, int p_line, 
 	Ref<Script> scr = p_resource;
 
 	// Don't open dominant script if using an external editor.
-	bool use_external_editor = ScriptEditor::get_singleton()->should_use_external_editor(p_resource);
+	bool use_external_editor = ScriptEditorDock::get_singleton()->should_use_external_editor(p_resource);
 	const bool open_dominant = EDITOR_GET("text_editor/behavior/files/open_dominant_script_on_scene_change");
 
 	const bool should_open = (open_dominant && !use_external_editor) || !EditorNode::get_singleton()->is_changing_scene();
@@ -692,7 +692,7 @@ bool DocumentEditorContainer::edit(const Ref<Resource> &p_resource, int p_line, 
 	if (use_external_editor &&
 			(EditorDebuggerNode::get_singleton()->get_dump_stack_script() != p_resource || (EditorDebuggerNode::get_singleton()->get_debug_with_external_editor() && scr.is_valid())) &&
 			p_resource->get_path().is_resource_file()) {
-		if (ScriptEditor::open_in_external_editor(ProjectSettings::get_singleton()->globalize_path(p_resource->get_path()), p_line, p_col)) {
+		if (ScriptEditorDock::open_in_external_editor(ProjectSettings::get_singleton()->globalize_path(p_resource->get_path()), p_line, p_col)) {
 			return false;
 		} else {
 			ERR_PRINT("Couldn't open external text editor, falling back to the internal editor. Review your `text_editor/external/` editor settings.");
@@ -875,7 +875,7 @@ bool DocumentEditorContainer::edit(const Ref<Resource> &p_resource, int p_line, 
 		ScriptEditorNavigationMarker::get_singleton()->locate_end();
 	}
 
-	ScriptEditor::get_singleton()->notify_script_changed(p_resource);
+	ScriptEditorDock::get_singleton()->notify_script_changed(p_resource);
 	return true;
 }
 
@@ -1444,7 +1444,7 @@ void DocumentEditorContainer::_notification(int p_what) {
 		}
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
-			_tab_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("ScriptEditor"), EditorStringName(EditorStyles)));
+			_tab_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("ScriptEditorDock"), EditorStringName(EditorStyles)));
 
 			_calculate_script_name_button_size();
 
@@ -2080,7 +2080,7 @@ void DocumentEditorContainer::_close_tab(int p_idx, bool p_save) {
 
 			Ref<Script> scr = file;
 			if (scr.is_valid()) {
-				ScriptEditor::get_singleton()->notify_script_close(scr);
+				ScriptEditorDock::get_singleton()->notify_script_close(scr);
 			}
 		}
 	}
@@ -2957,7 +2957,7 @@ void DocumentEditorContainer::_update_document_name_button() {
 }
 
 void DocumentEditorContainer::_help_search(const String &p_text) {
-	ScriptEditor::get_singleton()->open_help_search_dialog(p_text);
+	ScriptEditorDock::get_singleton()->open_help_search_dialog(p_text);
 }
 
 void DocumentEditorContainer::_history_forward() {
@@ -3218,7 +3218,7 @@ void DocumentEditorContainer::_go_to_tab(int p_idx, bool p_save_history) {
 
 		Ref<Script> scr = seb->get_edited_resource();
 		if (scr.is_valid()) {
-			ScriptEditor::get_singleton()->notify_script_changed(scr);
+			ScriptEditorDock::get_singleton()->notify_script_changed(scr);
 		}
 
 		seb->validate_script();
@@ -3255,7 +3255,7 @@ void DocumentEditorContainer::_update_history_pos(int p_new_pos) {
 
 		Ref<Script> scr = seb->get_edited_resource();
 		if (scr.is_valid()) {
-			ScriptEditor::get_singleton()->notify_script_changed(scr);
+			ScriptEditorDock::get_singleton()->notify_script_changed(scr);
 		}
 
 		seb->validate_script();
