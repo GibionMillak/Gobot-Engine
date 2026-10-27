@@ -38,6 +38,7 @@
 #include "core/os/os.h"
 #include "editor/animation/animation_tree_editor_plugin.h"
 #include "editor/audio/audio_stream_randomizer_editor_plugin.h"
+#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/debug_adapter/debug_adapter_server.h"
 #include "editor/debugger/editor_debugger_plugin.h"
 #include "editor/docks/filesystem_dock.h"
@@ -154,6 +155,7 @@ void register_editor_types() {
 	ResourceSaver::set_timestamp_on_save(true);
 
 	EditorStringNames::create();
+	editor_initialize_type_icons();
 
 	GDREGISTER_CLASS(EditorPaths);
 	GDREGISTER_ABSTRACT_CLASS(ScenePaint2DEditor);
@@ -349,6 +351,7 @@ void unregister_editor_types() {
 	if (EditorPaths::get_singleton()) {
 		EditorPaths::free();
 	}
+	editor_finalize_type_icons();
 	EditorStringNames::free();
 
 	OS::get_singleton()->benchmark_end_measure("Editor", "Unregister Types");

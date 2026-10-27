@@ -33,6 +33,9 @@
 #include "core/string/string_name.h"
 #include "scene/resources/theme.h"
 
+void editor_initialize_type_icons();
+void editor_finalize_type_icons();
+
 // Resolves an engine class or Variant type to its bundled asset identifier.
 // Returns an empty name when the type has no bundled icon.
 StringName editor_get_type_icon_name(const StringName &p_type);

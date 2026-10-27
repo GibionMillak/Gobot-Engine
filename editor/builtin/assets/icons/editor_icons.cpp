@@ -41,15 +41,24 @@
 
 #include <cstring>
 
+static HashMap<StringName, StringName> &get_type_icon_cache() {
+	static HashMap<StringName, StringName> type_icons;
+	return type_icons;
+}
+
+void editor_initialize_type_icons() {
+	HashMap<StringName, StringName> &type_icons = get_type_icon_cache();
+	for (const EditorTypeIcon &entry : EDITOR_TYPE_ICONS) {
+		type_icons.insert(entry.type_name, entry.icon_name);
+	}
+}
+
+void editor_finalize_type_icons() {
+	get_type_icon_cache().clear();
+}
+
 StringName editor_get_type_icon_name(const StringName &p_type) {
-	static const HashMap<StringName, StringName> type_icons = []() {
-		HashMap<StringName, StringName> icons;
-		for (const EditorTypeIcon &entry : EDITOR_TYPE_ICONS) {
-			icons.insert(entry.type_name, entry.icon_name);
-		}
-		return icons;
-	}();
-	const StringName *icon_name = type_icons.getptr(p_type);
+	const StringName *icon_name = get_type_icon_cache().getptr(p_type);
 	return icon_name ? *icon_name : StringName();
 }
 
