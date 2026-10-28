@@ -3288,6 +3288,7 @@ Dictionary EditorHelp::get_state() {
 
 void EditorHelp::cleanup_doc() {
 	_wait_for_thread();
+	EditorHelpBit::clear_cache();
 	memdelete(doc);
 	doc = nullptr;
 }
