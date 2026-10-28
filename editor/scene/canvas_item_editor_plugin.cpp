@@ -908,17 +908,14 @@ void CanvasItemEditor::_prepare_grid_menu() {
 }
 
 void CanvasItemEditor::_on_grid_menu_id_pressed(int p_id) {
-	switch (p_id) {
-		case GRID_VISIBILITY_SHOW:
-		case GRID_VISIBILITY_SHOW_WHEN_SNAPPING:
-		case GRID_VISIBILITY_HIDE:
-			grid_visibility = (GridVisibility)p_id;
-			viewport->queue_redraw();
-			view_menu->get_popup()->hide();
-			emit_signal("grid_visibility_changed", is_grid_visible());
-			return;
-	}
+	ERR_FAIL_COND(p_id < GRID_VISIBILITY_SHOW || p_id > GRID_VISIBILITY_HIDE);
+	grid_visibility = static_cast<GridVisibility>(p_id);
+	viewport->queue_redraw();
+	view_menu->get_popup()->hide();
+	emit_signal("grid_visibility_changed", is_grid_visible());
+}
 
+void CanvasItemEditor::_toggle_grid() {
 	// Toggle grid: go to the least restrictive option possible.
 	if (ci_manipulator->is_grid_snap_enabled()) {
 		switch (grid_visibility) {
@@ -1204,6 +1201,57 @@ void CanvasItemEditor::_update_lock_and_group_button() {
 	_group_btn->set_disabled(!has_canvas_item);
 	_ungroup_btn->set_visible(all_group);
 	_ungroup_btn->set_disabled(!has_canvas_item);
+}
+
+List<Bone2D *> CanvasItemEditor::_get_selected_bones() const {
+	List<Bone2D *> bones;
+	List<Node *> nodes = editor_selection->get_top_selected_node_list();
+	for (Node *node : nodes) {
+		for (int i = 0; i < node->get_child_count(); i++) {
+			nodes.push_back(node->get_child(i));
+		}
+		Bone2D *bone = Object::cast_to<Bone2D>(node);
+		if (bone && bone->is_inside_tree()) {
+			bones.push_back(bone);
+		}
+	}
+	return bones;
+}
+
+bool CanvasItemEditor::_can_create_bone(const Node *p_node) const {
+	if (!p_node || !p_node->is_inside_tree() || !Object::cast_to<Node2D>(p_node) || Object::cast_to<Bone2D>(p_node) || Object::cast_to<Skeleton2D>(p_node)) {
+		return false;
+	}
+	Node *scene_root = get_tree()->get_edited_scene_root();
+	// Wrapping requires a reparentable node belonging directly to the edited scene.
+	return scene_root && p_node != scene_root && p_node->get_owner() == scene_root && p_node->get_parent();
+}
+
+void CanvasItemEditor::_queue_skeleton_menu_update() {
+	if (_skeleton_menu_update_pending || !is_inside_tree()) {
+		return;
+	}
+	_skeleton_menu_update_pending = true;
+	callable_mp(this, &CanvasItemEditor::_update_skeleton_menu).call_deferred();
+}
+
+void CanvasItemEditor::_update_skeleton_menu() {
+	_skeleton_menu_update_pending = false;
+	if (!is_inside_tree()) {
+		return;
+	}
+	const bool has_bones = !_get_selected_bones().is_empty();
+	bool can_create_bones = false;
+	for (const KeyValue<ObjectID, Object *> &entry : editor_selection->get_selection()) {
+		if (_can_create_bone(ObjectDB::get_instance<Node>(entry.key))) {
+			can_create_bones = true;
+			break;
+		}
+	}
+	PopupMenu *popup = _skeleton_menu->get_popup();
+	popup->set_item_disabled(popup->get_item_index(SKELETON_SHOW_BONES), !has_bones);
+	popup->set_item_disabled(popup->get_item_index(SKELETON_MAKE_BONES), !can_create_bones);
+	_skeleton_menu->set_visible(has_bones || can_create_bones);
 }
 
 void CanvasItemEditor::set_cursor_shape_override(CursorShape p_shape) {
@@ -2488,7 +2536,7 @@ void CanvasItemEditor::set_current_tool(CanvasItemManipulator::Tool p_tool) {
 }
 
 void CanvasItemEditor::_update_editor_settings() {
-	_center_view_btn->set_button_icon(get_editor_theme_icon(SNAME("navigation_center_view")));
+	_center_selection_btn->set_button_icon(get_editor_theme_icon(SNAME("action_selection_center")));
 	_select_btn->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_select")));
 	_scene_paint_btn->set_button_icon(get_editor_theme_icon(SNAME("action_paint")));
 	_list_select_btn->set_button_icon(get_editor_theme_icon(SNAME("action_list_select")));
@@ -2496,10 +2544,12 @@ void CanvasItemEditor::_update_editor_settings() {
 	_scale_btn->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_scale")));
 	_rotate_btn->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_rotate")));
 	_local_space_btn->set_button_icon(get_editor_theme_icon(SNAME("variant_object")));
-	_smart_snap_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap")));
+	_toggle_grid_btn->set_button_icon(get_editor_theme_icon(SNAME("action_toggle_grid")));
+	_smart_snap_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap_smart")));
 	_grid_snap_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
-	snap_config_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_dropdown")));
-	skeleton_menu->set_button_icon(get_editor_theme_icon(SNAME("viewport_bone")));
+	snap_config_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_snap_options")));
+	_skeleton_menu->set_button_icon(get_editor_theme_icon(SNAME("viewport_bone")));
+	_frame_selection_btn->set_button_icon(get_editor_theme_icon(SNAME("action_selection_frame")));
 	view_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_eye_open")));
 	_pan_btn->set_button_icon(get_editor_theme_icon(SNAME("viewport_tool_pan")));
 	_ruler_btn->set_button_icon(get_editor_theme_icon(SNAME("action_ruler")));
@@ -2582,8 +2632,12 @@ void CanvasItemEditor::_notification(int p_what) {
 
 			connect("item_lock_status_changed", callable_mp(this, &CanvasItemEditor::_update_lock_and_group_button));
 			connect("item_group_status_changed", callable_mp(this, &CanvasItemEditor::_update_lock_and_group_button));
+			connect("grid_visibility_changed", callable_mp(static_cast<BaseButton *>(_toggle_grid_btn), &BaseButton::set_pressed_no_signal));
+			_toggle_grid_btn->set_pressed_no_signal(is_grid_visible());
 
 			_update_lock_and_group_button();
+			get_tree()->connect("tree_changed", callable_mp(this, &CanvasItemEditor::_queue_skeleton_menu_update));
+			_queue_skeleton_menu_update();
 
 			ProjectSettings::get_singleton()->connect("settings_changed", callable_mp(this, &CanvasItemEditor::_project_settings_changed));
 		} break;
@@ -2694,6 +2748,7 @@ void CanvasItemEditor::_notification(int p_what) {
 }
 
 void CanvasItemEditor::_selection_changed() {
+	_queue_skeleton_menu_update();
 	_update_lock_and_group_button();
 	if (!selected_from_canvas) {
 		ci_manipulator->reset_drag();
@@ -3131,18 +3186,8 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 			snap_dialog->popup_centered(Size2(320, 160) * EDSCALE);
 		} break;
 		case SKELETON_SHOW_BONES: {
-			List<Node *> selection = editor_selection->get_top_selected_node_list();
-			for (Node *E : selection) {
-				// Add children nodes so they are processed
-				for (int child = 0; child < E->get_child_count(); child++) {
-					selection.push_back(E->get_child(child));
-				}
-
-				Bone2D *bone_2d = Object::cast_to<Bone2D>(E);
-				if (!bone_2d || !bone_2d->is_inside_tree()) {
-					continue;
-				}
-				bone_2d->_editor_set_show_bone_gizmo(!bone_2d->_editor_get_show_bone_gizmo());
+			for (Bone2D *bone : _get_selected_bones()) {
+				bone->_editor_set_show_bone_gizmo(!bone->_editor_get_show_bone_gizmo());
 			}
 		} break;
 		case SHOW_HELPERS: {
@@ -3369,20 +3414,22 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 
 		} break;
 		case SKELETON_MAKE_BONES: {
-			HashMap<ObjectID, Object *> &selection = editor_selection->get_selection();
+			const HashMap<ObjectID, Object *> &selection = editor_selection->get_selection();
 			Node *editor_root = get_tree()->get_edited_scene_root();
 
-			if (!editor_root || selection.is_empty()) {
+			List<Node2D *> nodes;
+			for (const KeyValue<ObjectID, Object *> &entry : selection) {
+				Node *node = ObjectDB::get_instance<Node>(entry.key);
+				if (_can_create_bone(node)) {
+					nodes.push_back(Object::cast_to<Node2D>(node));
+				}
+			}
+			if (nodes.is_empty()) {
 				return;
 			}
 
 			undo_redo->create_action(TTR("Create Custom Bone2D(s) from Node(s)"));
-			for (const KeyValue<ObjectID, Object *> &E : selection) {
-				Node2D *n2d = ObjectDB::get_instance<Node2D>(E.key);
-				if (!n2d) {
-					continue;
-				}
-
+			for (Node2D *n2d : nodes) {
 				Bone2D *new_bone = memnew(Bone2D);
 				String new_bone_name = n2d->get_name();
 				new_bone_name += "Bone2D";
@@ -3390,9 +3437,6 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				new_bone->set_transform(n2d->get_transform());
 
 				Node *n2d_parent = n2d->get_parent();
-				if (!n2d_parent) {
-					continue;
-				}
 
 				undo_redo->add_do_method(n2d_parent, "add_child", new_bone);
 				undo_redo->add_do_method(n2d_parent, "remove_child", n2d);
@@ -3750,6 +3794,7 @@ void CanvasItemEditor::set_state(const Dictionary &p_state) {
 		_update_scrollbars();
 	}
 	viewport->queue_redraw();
+	_toggle_grid_btn->set_pressed_no_signal(is_grid_visible());
 }
 
 void CanvasItemEditor::clear() {
@@ -3944,11 +3989,6 @@ CanvasItemEditor::CanvasItemEditor() {
 	HBoxContainer *controls_hb = memnew(HBoxContainer);
 	controls_vb->add_child(controls_hb);
 
-	_center_view_btn = memnew(Button);
-	_center_view_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(VIEW_CENTER_TO_SELECTION));
-	_center_view_btn->set_tooltip_text(TTR("Center View"));
-	controls_hb->add_child(_center_view_btn);
-
 	zoom_widget = memnew(EditorZoomContainer);
 	zoom_widget->set_anchors_and_offsets_preset(Control::PRESET_TOP_LEFT, Control::PRESET_MODE_MINSIZE, 2 * EDSCALE);
 	zoom_widget->set_shortcut_context(this);
@@ -4021,6 +4061,23 @@ CanvasItemEditor::CanvasItemEditor() {
 	ci_manipulator->connect("warning_emitted", callable_mp(EditorToasterContainer::get_singleton(), &EditorToasterContainer::popup_str).bind(EditorToasterContainer::WARNING, ""));
 
 	PopupMenu *p = nullptr;
+	EditorToolbarFlowContainer *focus_vflow = _viewport_toolbar->create_group();
+	{
+		_center_selection_btn = memnew(Button);
+		_center_selection_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(VIEW_CENTER_TO_SELECTION));
+		_center_selection_btn->set_shortcut(ED_SHORTCUT("canvas_item_editor/center_selection", TTRC("Center Selection"), Key::F));
+		_center_selection_btn->set_shortcut_context(this);
+		_center_selection_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		focus_vflow->add_child(_center_selection_btn);
+
+		_frame_selection_btn = memnew(Button);
+		_frame_selection_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(VIEW_FRAME_TO_SELECTION));
+		_frame_selection_btn->set_shortcut(ED_SHORTCUT("canvas_item_editor/frame_selection", TTRC("Frame Selection"), KeyModifierMask::SHIFT | Key::F));
+		_frame_selection_btn->set_shortcut_context(this);
+		_frame_selection_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		focus_vflow->add_child(_frame_selection_btn);
+	}
+
 	EditorToolbarFlowContainer *input_vflow = _viewport_toolbar->create_group();
 	{
 		_select_btn = memnew(Button);
@@ -4150,13 +4207,13 @@ CanvasItemEditor::CanvasItemEditor() {
 
 	EditorToolbarFlowContainer *snap_vflow = _viewport_toolbar->create_group();
 	{
-		_smart_snap_btn = memnew(Button);
-		_smart_snap_btn->connect(SceneStringName(toggled), callable_mp(this, &CanvasItemEditor::_button_toggle_smart_snap));
-		_smart_snap_btn->set_shortcut(ED_SHORTCUT("canvas_item_editor/use_smart_snap", TTRC("Use Smart Snap"), KeyModifierMask::SHIFT | Key::S));
-		_smart_snap_btn->set_shortcut_context(this);
-		_smart_snap_btn->set_theme_type_variation(SceneStringName(FlatButton));
-		_smart_snap_btn->set_toggle_mode(true);
-		snap_vflow->add_child(_smart_snap_btn);
+		_toggle_grid_btn = memnew(Button);
+		_toggle_grid_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_toggle_grid));
+		_toggle_grid_btn->set_shortcut(ED_SHORTCUT("canvas_item_editor/toggle_grid", TTRC("Toggle Grid"), KeyModifierMask::CMD_OR_CTRL | Key::APOSTROPHE));
+		_toggle_grid_btn->set_shortcut_context(this);
+		_toggle_grid_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_toggle_grid_btn->set_toggle_mode(true);
+		snap_vflow->add_child(_toggle_grid_btn);
 
 		_grid_snap_btn = memnew(Button);
 		_grid_snap_btn->connect(SceneStringName(toggled), callable_mp(this, &CanvasItemEditor::_button_toggle_grid_snap));
@@ -4165,6 +4222,14 @@ CanvasItemEditor::CanvasItemEditor() {
 		_grid_snap_btn->set_theme_type_variation(SceneStringName(FlatButton));
 		_grid_snap_btn->set_toggle_mode(true);
 		snap_vflow->add_child(_grid_snap_btn);
+
+		_smart_snap_btn = memnew(Button);
+		_smart_snap_btn->connect(SceneStringName(toggled), callable_mp(this, &CanvasItemEditor::_button_toggle_smart_snap));
+		_smart_snap_btn->set_shortcut(ED_SHORTCUT("canvas_item_editor/use_smart_snap", TTRC("Use Smart Snap"), KeyModifierMask::SHIFT | Key::S));
+		_smart_snap_btn->set_shortcut_context(this);
+		_smart_snap_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_smart_snap_btn->set_toggle_mode(true);
+		snap_vflow->add_child(_smart_snap_btn);
 
 		snap_config_menu = memnew(MenuButton);
 		snap_config_menu->set_flat(false);
@@ -4198,24 +4263,6 @@ CanvasItemEditor::CanvasItemEditor() {
 		p->add_shortcut(ED_SHORTCUT("canvas_item_editor/configure_snap", TTRC("Configure Snap...")), SNAP_CONFIGURE);
 	}
 
-	EditorToolbarFlowContainer *skeleton_menu_vflow = _viewport_toolbar->create_group();
-	{
-		skeleton_menu = memnew(MenuButton);
-		skeleton_menu->set_flat(false);
-		skeleton_menu->set_shortcut_context(this);
-		skeleton_menu->set_switch_on_hover(true);
-		skeleton_menu->set_theme_type_variation("FlatMenuButton");
-		skeleton_menu->set_tooltip_text(TTRC("Skeleton Options"));
-		skeleton_menu_vflow->add_child(skeleton_menu);
-
-		p = skeleton_menu->get_popup();
-		p->set_hide_on_checkable_item_selection(false);
-		p->add_shortcut(ED_SHORTCUT("canvas_item_editor/skeleton_show_bones", TTRC("Show Bones")), SKELETON_SHOW_BONES);
-		p->add_separator();
-		p->add_shortcut(ED_SHORTCUT("canvas_item_editor/skeleton_make_bones", TTRC("Make Bone2D Node(s) from Node(s)"), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::SHIFT | Key::B), SKELETON_MAKE_BONES);
-		p->connect(SceneStringName(id_pressed), callable_mp(this, &CanvasItemEditor::_popup_callback));
-	}
-
 	EditorToolbarFlowContainer *view_menu_vflow = _viewport_toolbar->create_group();
 	{
 		view_menu = memnew(MenuButton);
@@ -4237,8 +4284,6 @@ CanvasItemEditor::CanvasItemEditor() {
 		grid_menu->add_radio_check_item(TTRC("Show"), GRID_VISIBILITY_SHOW);
 		grid_menu->add_radio_check_item(TTRC("Show When Snapping"), GRID_VISIBILITY_SHOW_WHEN_SNAPPING);
 		grid_menu->add_radio_check_item(TTRC("Hide"), GRID_VISIBILITY_HIDE);
-		grid_menu->add_separator();
-		grid_menu->add_shortcut(ED_SHORTCUT("canvas_item_editor/toggle_grid", TTRC("Toggle Grid"), KeyModifierMask::CMD_OR_CTRL | Key::APOSTROPHE));
 		p->add_submenu_node_item(TTRC("Grid"), grid_menu);
 
 		p->add_check_shortcut(ED_SHORTCUT("canvas_item_editor/show_helpers", TTRC("Show Helpers"), KeyModifierMask::SHIFT | Key::H), SHOW_HELPERS);
@@ -4262,8 +4307,6 @@ CanvasItemEditor::CanvasItemEditor() {
 		p->add_submenu_item(TTRC("Gizmos"), "GizmosMenu");
 
 		p->add_separator();
-		p->add_shortcut(ED_SHORTCUT("canvas_item_editor/center_selection", TTRC("Center Selection"), Key::F), VIEW_CENTER_TO_SELECTION);
-		p->add_shortcut(ED_SHORTCUT("canvas_item_editor/frame_selection", TTRC("Frame Selection"), KeyModifierMask::SHIFT | Key::F), VIEW_FRAME_TO_SELECTION);
 		p->add_shortcut(ED_SHORTCUT("canvas_item_editor/clear_guides", TTRC("Clear Guides")), CLEAR_GUIDES);
 
 		p->add_separator();
@@ -4290,6 +4333,22 @@ CanvasItemEditor::CanvasItemEditor() {
 	// Contextual toolbars.
 	_context_toolbar_vflow = memnew(EditorToolbarFlowContainer);
 	_viewport_toolbar->set_context_control(_context_toolbar_vflow);
+
+	_skeleton_menu = memnew(MenuButton);
+	_skeleton_menu->hide();
+	_skeleton_menu->set_flat(false);
+	_skeleton_menu->set_shortcut_context(this);
+	_skeleton_menu->set_switch_on_hover(true);
+	_skeleton_menu->set_theme_type_variation("FlatMenuButton");
+	_skeleton_menu->set_tooltip_text(TTRC("Skeleton Options"));
+	add_control_to_menu_panel(_skeleton_menu);
+	{
+		PopupMenu *skeleton_popup = _skeleton_menu->get_popup();
+		skeleton_popup->add_shortcut(ED_SHORTCUT("canvas_item_editor/skeleton_show_bones", TTRC("Show Bones")), SKELETON_SHOW_BONES);
+		skeleton_popup->add_separator();
+		skeleton_popup->add_shortcut(ED_SHORTCUT("canvas_item_editor/skeleton_make_bones", TTRC("Make Bone2D Node(s) from Node(s)"), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::SHIFT | Key::B), SKELETON_MAKE_BONES);
+		skeleton_popup->connect(SceneStringName(id_pressed), callable_mp(this, &CanvasItemEditor::_popup_callback));
+	}
 
 	// Animation controls.
 	_animation_vflow = memnew(EditorToolbarFlowContainer);
@@ -4390,8 +4449,6 @@ CanvasItemEditor::CanvasItemEditor() {
 	reset_transform_position_shortcut = ED_SHORTCUT("canvas_item_editor/reset_transform_position", TTRC("Reset Position"), KeyModifierMask::ALT + Key::W);
 	reset_transform_rotation_shortcut = ED_SHORTCUT("canvas_item_editor/reset_transform_rotation", TTRC("Reset Rotation"), KeyModifierMask::ALT + Key::E);
 	reset_transform_scale_shortcut = ED_SHORTCUT("canvas_item_editor/reset_transform_scale", TTRC("Reset Scale"), KeyModifierMask::ALT + Key::R);
-
-	skeleton_menu->get_popup()->set_item_checked(skeleton_menu->get_popup()->get_item_index(SKELETON_SHOW_BONES), true);
 
 	// Store the singleton instance.
 	singleton = this;

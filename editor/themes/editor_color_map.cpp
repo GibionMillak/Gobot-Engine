@@ -222,7 +222,7 @@ void EditorColorMap::create() {
 	add_conversion_exception("gui_resizer");
 	add_conversion_exception("gui_mini_checkerboard");
 	add_conversion_exception("gui_picker_cursor_bg");
-	add_conversion_exception("navigation_center_view");
+	add_conversion_exception("action_selection_center");
 
 	/// Code Editor.
 	add_conversion_exception("gui_tab");

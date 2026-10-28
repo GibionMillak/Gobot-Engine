@@ -36,6 +36,7 @@
 #include "scene/gui/margin_container.h"
 
 class EditorToolbarFlowContainer;
+class Bone2D;
 class Dialog;
 class Button;
 class ButtonGroup;
@@ -232,7 +233,8 @@ private:
 	};
 
 	HashMap<BoneKey, BoneList> bone_list;
-	MenuButton *skeleton_menu = nullptr;
+	MenuButton *_skeleton_menu = nullptr;
+	bool _skeleton_menu_update_pending = false;
 
 	struct PoseClipboard {
 		Vector2 pos;
@@ -256,6 +258,7 @@ private:
 	Button *_ruler_btn = nullptr;
 
 	Button *_local_space_btn = nullptr;
+	Button *_toggle_grid_btn = nullptr;
 	Button *_smart_snap_btn = nullptr;
 	Button *_grid_snap_btn = nullptr;
 	MenuButton *snap_config_menu = nullptr;
@@ -267,6 +270,8 @@ private:
 	Button *_group_btn = nullptr;
 	Button *_ungroup_btn = nullptr;
 
+	Button *_center_selection_btn = nullptr;
+	Button *_frame_selection_btn = nullptr;
 	MenuButton *view_menu = nullptr;
 	PopupMenu *grid_menu = nullptr;
 	PopupMenu *theme_menu = nullptr;
@@ -348,6 +353,7 @@ private:
 	void _update_editor_settings();
 	void _prepare_grid_menu();
 	void _on_grid_menu_id_pressed(int p_id);
+	void _toggle_grid();
 	void _reset_transform(TransformType p_type);
 	void _update_oversampling();
 
@@ -405,6 +411,10 @@ private:
 	void _gui_input_viewport(const Ref<InputEvent> &p_event);
 	void _update_cursor();
 	void _update_lock_and_group_button();
+	List<Bone2D *> _get_selected_bones() const;
+	bool _can_create_bone(const Node *p_node) const;
+	void _queue_skeleton_menu_update();
+	void _update_skeleton_menu();
 
 	void _selection_changed();
 	void _focus_selection(int p_op);
@@ -414,7 +424,6 @@ private:
 	VBoxContainer *controls_vb = nullptr;
 	Control *info_panel_container = nullptr;
 	Control *frame_time_panel_container = nullptr;
-	Button *_center_view_btn = nullptr;
 	EditorZoomContainer *zoom_widget = nullptr;
 	void _update_zoom(real_t p_zoom);
 	void _shortcut_zoom_set(real_t p_zoom);

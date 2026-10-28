@@ -888,10 +888,10 @@ void GenericTilePolygonEditor::_notification(int p_what) {
 			button_create->set_button_icon(get_editor_theme_icon(SNAME("action_curve_create")));
 			button_edit->set_button_icon(get_editor_theme_icon(SNAME("node_control_curve_edit")));
 			button_delete->set_button_icon(get_editor_theme_icon(SNAME("action_curve_delete")));
-			button_center_view->set_button_icon(get_editor_theme_icon(SNAME("navigation_center_view")));
+			button_center_view->set_button_icon(get_editor_theme_icon(SNAME("action_selection_center")));
 			button_advanced_menu->set_button_icon(get_editor_theme_icon(SNAME("gui_gui_tab_menu_hl")));
 			button_pixel_snap->get_popup()->set_item_icon(0, get_editor_theme_icon(SNAME("action_snap_disable")));
-			button_pixel_snap->get_popup()->set_item_icon(1, get_editor_theme_icon(SNAME("action_snap")));
+			button_pixel_snap->get_popup()->set_item_icon(1, get_editor_theme_icon(SNAME("action_snap_smart")));
 			button_pixel_snap->get_popup()->set_item_icon(2, get_editor_theme_icon(SNAME("action_snap_grid")));
 			button_pixel_snap->set_button_icon(button_pixel_snap->get_popup()->get_item_icon(current_snap_option));
 

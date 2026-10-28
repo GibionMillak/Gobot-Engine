@@ -742,7 +742,7 @@ void ScenePaint2DEditor::_update_paint_mode() {
 			_advanced_settings_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap_grid")));
 			break;
 		case PAINT_MODE_SNAP_GRID_CELL_CENTER:
-			_advanced_settings_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap")));
+			_advanced_settings_btn->set_button_icon(get_editor_theme_icon(SNAME("action_snap_smart")));
 			break;
 	}
 	advanced_settings_popup->set_item_disabled(MENU_ITEM_ALLOW_OVERLAPPING, paint_mode == PAINT_MODE_FREE);
@@ -794,7 +794,7 @@ void ScenePaint2DEditor::_notification(int p_what) {
 			advanced_settings_popup->set_item_icon(MENU_ITEM_SNAP_TO_GRID_PAINT_MODE,
 					get_editor_theme_icon(SNAME("action_snap_grid")));
 			advanced_settings_popup->set_item_icon(MENU_ITEM_SNAP_TO_GRID_CELL_CENTER_PAINT_MODE,
-					get_editor_theme_icon(SNAME("action_snap")));
+					get_editor_theme_icon(SNAME("action_snap_smart")));
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {

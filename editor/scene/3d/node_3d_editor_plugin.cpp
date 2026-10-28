@@ -3539,7 +3539,7 @@ Node3DEditor::Node3DEditor() {
 	{
 		_tool_option_btn[TOOL_OPT_USE_SNAP] = memnew(Button);
 		_tool_option_btn[TOOL_OPT_USE_SNAP]->connect(SceneStringName(toggled), callable_mp(this, &Node3DEditor::_menu_item_toggled).bind(MENU_TOOL_USE_SNAP));
-		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_button_icon(EditorIconManager::get_icon(SNAME("action_snap")));
+		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_button_icon(EditorIconManager::get_icon(SNAME("action_snap_smart")));
 		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_shortcut(ED_SHORTCUT("spatial_editor/snap", TTRC("Use Snap"), Key::Y));
 		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_shortcut_context(this);
 		_tool_option_btn[TOOL_OPT_USE_SNAP]->set_theme_type_variation(SceneStringName(FlatButton));
@@ -3547,7 +3547,7 @@ Node3DEditor::Node3DEditor() {
 		snap_vflow->add_child(_tool_option_btn[TOOL_OPT_USE_SNAP]);
 
 		snap_menu = memnew(MenuButton);
-		snap_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_dropdown")));
+		snap_menu->set_button_icon(EditorIconManager::get_icon(SNAME("gui_snap_options")));
 		snap_menu->set_flat(false);
 		snap_menu->set_h_size_flags(SIZE_SHRINK_END);
 		snap_menu->set_theme_type_variation("FlatMenuButtonNoIconTint");

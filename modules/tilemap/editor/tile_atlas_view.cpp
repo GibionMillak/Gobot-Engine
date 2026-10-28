@@ -637,7 +637,7 @@ void TileAtlasView::queue_redraw() {
 void TileAtlasView::_update_theme_item_cache() {
 	Control::_update_theme_item_cache();
 
-	theme_cache.center_view_icon = get_editor_theme_icon(SNAME("navigation_center_view"));
+	theme_cache.center_view_icon = get_editor_theme_icon(SNAME("action_selection_center"));
 	theme_cache.checkerboard = get_editor_theme_icon(SNAME("gui_checkerboard"));
 }
 
