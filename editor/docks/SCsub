@@ -5,4 +5,5 @@ Import("env")
 
 env.add_source_files(env.editor_sources, "*.cpp")
 
+SConscript("scene_editor/SCsub")
 SConscript("script_editor/SCsub")

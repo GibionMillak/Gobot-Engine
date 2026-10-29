@@ -42,7 +42,7 @@
 #include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/docks/hierarchy_dock.h"
-#include "editor/docks/scene_editor_dock.h"
+#include "editor/docks/scene_editor/scene_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/editor_undo_redo_manager.h"
