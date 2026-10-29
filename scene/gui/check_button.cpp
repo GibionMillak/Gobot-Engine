@@ -128,9 +128,9 @@ void CheckButton::_notification(int p_what) {
 			Size2 tex_size = get_icon_size();
 
 			if (rtl) {
-				ofs.x = theme_cache.normal_style->get_margin(SIDE_LEFT);
+				ofs.x = theme_cache.normal_style->get_content_inset(SIDE_LEFT);
 			} else {
-				ofs.x = get_size().width - (tex_size.width + theme_cache.normal_style->get_margin(SIDE_RIGHT));
+				ofs.x = get_size().width - (tex_size.width + theme_cache.normal_style->get_content_inset(SIDE_RIGHT));
 			}
 			ofs.y = (get_size().height - tex_size.height) / 2 + theme_cache.check_v_offset;
 

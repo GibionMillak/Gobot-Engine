@@ -1028,7 +1028,7 @@ EditorFeatureProfileManager::EditorFeatureProfileManager() {
 	no_profile_selected_help = memnew(Label(TTRC("Create or import a profile to edit available classes and properties.")));
 	// Add some spacing above the help label.
 	Ref<StyleBoxEmpty> sb = memnew(StyleBoxEmpty);
-	sb->set_content_margin(SIDE_TOP, 20 * EDSCALE);
+	sb->set_padding(SIDE_TOP, 20 * EDSCALE);
 	no_profile_selected_help->add_theme_style_override(CoreStringName(normal), sb);
 	no_profile_selected_help->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	no_profile_selected_help->set_v_size_flags(Control::SIZE_EXPAND_FILL);

@@ -34,7 +34,7 @@
 #include "scene/main/canvas_item.h"
 
 Size2 StyleBox::get_minimum_size() const {
-	Size2 min_size = Size2(get_margin(SIDE_LEFT) + get_margin(SIDE_RIGHT), get_margin(SIDE_TOP) + get_margin(SIDE_BOTTOM));
+	Size2 min_size = Size2(get_content_inset(SIDE_LEFT) + get_content_inset(SIDE_RIGHT), get_content_inset(SIDE_TOP) + get_content_inset(SIDE_BOTTOM));
 	Size2 custom_size;
 	GDVIRTUAL_CALL(_get_minimum_size, custom_size);
 
@@ -48,42 +48,39 @@ Size2 StyleBox::get_minimum_size() const {
 	return min_size;
 }
 
-void StyleBox::set_content_margin(Side p_side, float p_value) {
+void StyleBox::set_padding(Side p_side, float p_padding) {
 	ERR_FAIL_INDEX((int)p_side, 4);
 
-	content_margin[p_side] = MAX(0.0f, p_value);
+	_padding[p_side] = MAX(0.0f, p_padding);
 	emit_changed();
 }
 
-void StyleBox::set_content_margin_all(float p_value) {
-	for (int i = 0; i < 4; i++) {
-		content_margin[i] = MAX(0.0f, p_value);
-	}
+void StyleBox::set_padding_all(float p_padding) {
+	set_padding_individual(p_padding, p_padding, p_padding, p_padding);
+}
+
+void StyleBox::set_padding_individual(float p_left, float p_top, float p_right, float p_bottom) {
+	_padding[SIDE_LEFT] = MAX(0.0f, p_left);
+	_padding[SIDE_TOP] = MAX(0.0f, p_top);
+	_padding[SIDE_RIGHT] = MAX(0.0f, p_right);
+	_padding[SIDE_BOTTOM] = MAX(0.0f, p_bottom);
 	emit_changed();
 }
 
-void StyleBox::set_content_margin_individual(float p_left, float p_top, float p_right, float p_bottom) {
-	content_margin[SIDE_LEFT] = MAX(0.0f, p_left);
-	content_margin[SIDE_TOP] = MAX(0.0f, p_top);
-	content_margin[SIDE_RIGHT] = MAX(0.0f, p_right);
-	content_margin[SIDE_BOTTOM] = MAX(0.0f, p_bottom);
-	emit_changed();
-}
-
-float StyleBox::get_content_margin(Side p_side) const {
+float StyleBox::get_padding(Side p_side) const {
 	ERR_FAIL_INDEX_V((int)p_side, 4, 0.0);
 
-	return content_margin[p_side];
+	return _padding[p_side];
 }
 
-float StyleBox::get_margin(Side p_side) const {
+float StyleBox::get_content_inset(Side p_side) const {
 	ERR_FAIL_INDEX_V((int)p_side, 4, 0.0);
 
-	return get_style_margin(p_side) + content_margin[p_side];
+	return _get_style_inset(p_side) + _padding[p_side];
 }
 
-Point2 StyleBox::get_offset() const {
-	return Point2(get_margin(SIDE_LEFT), get_margin(SIDE_TOP));
+Point2 StyleBox::get_content_offset() const {
+	return Point2(get_content_inset(SIDE_LEFT), get_content_inset(SIDE_TOP));
 }
 
 void StyleBox::draw(RID p_canvas_item, const Rect2 &p_rect) const {
@@ -111,32 +108,26 @@ bool StyleBox::test_mask(const Point2 &p_point, const Rect2 &p_rect) const {
 void StyleBox::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_minimum_size"), &StyleBox::get_minimum_size);
 
-	ClassDB::bind_method(D_METHOD("set_content_margin", "margin", "offset"), &StyleBox::set_content_margin);
-	ClassDB::bind_method(D_METHOD("set_content_margin_all", "offset"), &StyleBox::set_content_margin_all);
-	ClassDB::bind_method(D_METHOD("get_content_margin", "margin"), &StyleBox::get_content_margin);
+	ClassDB::bind_method(D_METHOD("set_padding", "side", "padding"), &StyleBox::set_padding);
+	ClassDB::bind_method(D_METHOD("get_padding", "side"), &StyleBox::get_padding);
+	ClassDB::bind_method(D_METHOD("set_padding_all", "padding"), &StyleBox::set_padding_all);
 
-	ClassDB::bind_method(D_METHOD("get_margin", "margin"), &StyleBox::get_margin);
-	ClassDB::bind_method(D_METHOD("get_offset"), &StyleBox::get_offset);
+	ClassDB::bind_method(D_METHOD("get_content_inset", "side"), &StyleBox::get_content_inset);
+	ClassDB::bind_method(D_METHOD("get_content_offset"), &StyleBox::get_content_offset);
 
 	ClassDB::bind_method(D_METHOD("draw", "canvas_item", "rect"), &StyleBox::draw);
 	ClassDB::bind_method(D_METHOD("get_current_item_drawn"), &StyleBox::get_current_item_drawn);
 
 	ClassDB::bind_method(D_METHOD("test_mask", "point", "rect"), &StyleBox::test_mask);
 
-	ADD_GROUP("Content Margins", "content_margin_");
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "content_margin_left", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_content_margin", "get_content_margin", SIDE_LEFT);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "content_margin_top", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_content_margin", "get_content_margin", SIDE_TOP);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "content_margin_right", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_content_margin", "get_content_margin", SIDE_RIGHT);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "content_margin_bottom", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_content_margin", "get_content_margin", SIDE_BOTTOM);
+	ADD_GROUP("Padding", "padding_");
+	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "padding_left", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_padding", "get_padding", SIDE_LEFT);
+	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "padding_top", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_padding", "get_padding", SIDE_TOP);
+	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "padding_right", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_padding", "get_padding", SIDE_RIGHT);
+	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "padding_bottom", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_padding", "get_padding", SIDE_BOTTOM);
 
 	GDVIRTUAL_BIND(_draw, "to_canvas_item", "rect")
 	GDVIRTUAL_BIND(_get_draw_rect, "rect")
 	GDVIRTUAL_BIND(_get_minimum_size)
 	GDVIRTUAL_BIND(_test_mask, "point", "rect")
-}
-
-StyleBox::StyleBox() {
-	for (int i = 0; i < 4; i++) {
-		content_margin[i] = 0;
-	}
 }

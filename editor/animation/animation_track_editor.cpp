@@ -3294,7 +3294,7 @@ void AnimationTrackEdit::gui_input(const Ref<InputEvent> &p_event) {
 		}
 
 		path->set_text(String(animation->track_get_path(track)));
-		const Vector2 theme_ofs = path->get_theme_stylebox(CoreStringName(normal), SNAME("LineEdit"))->get_offset();
+		const Vector2 theme_ofs = path->get_theme_stylebox(CoreStringName(normal), SNAME("LineEdit"))->get_content_offset();
 
 		moving_selection_attempt = false;
 		moving_selection = false;
@@ -3844,7 +3844,7 @@ void AnimationTrackEditGroup::_notification(int p_what) {
 			Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
 
 			const Ref<StyleBox> &stylebox_header = get_theme_stylebox(SNAME("header"), SNAME("AnimationTrackEditGroup"));
-			float v_margin_offset = stylebox_header->get_margin(SIDE_TOP) - stylebox_header->get_margin(SIDE_BOTTOM);
+			float v_margin_offset = stylebox_header->get_content_inset(SIDE_TOP) - stylebox_header->get_content_inset(SIDE_BOTTOM);
 
 			const Color h_line_color = get_theme_color(SNAME("h_line_color"), SNAME("AnimationTrackEditGroup"));
 			const Color v_line_color = get_theme_color(SNAME("v_line_color"), SNAME("AnimationTrackEditGroup"));
@@ -3943,7 +3943,7 @@ void AnimationTrackEditGroup::_notification(int p_what) {
 			draw_line(Point2(timeline->get_name_limit(), 0), Point2(timeline->get_name_limit(), get_size().height), v_line_color, Math::round(EDSCALE));
 			draw_line(Point2(get_size().width - timeline->get_buttons_width(), 0), Point2(get_size().width - timeline->get_buttons_width(), get_size().height), v_line_color, Math::round(EDSCALE));
 
-			int ofs = stylebox_header->get_margin(SIDE_LEFT);
+			int ofs = stylebox_header->get_content_inset(SIDE_LEFT);
 			bool is_group_folded = editor->get_current_animation()->editor_is_group_folded(node_name);
 			Ref<Texture2D> fold_icon = get_theme_icon(is_group_folded ? SNAME("arrow_collapsed") : SNAME("arrow"), SNAME("Tree"));
 			Size2 fold_icon_size = fold_icon->get_size();
@@ -3998,7 +3998,7 @@ void AnimationTrackEditGroup::gui_input(const Ref<InputEvent> &p_event) {
 	if (mb.is_valid() && mb->is_pressed() && mb->get_button_index() == MouseButton::LEFT) {
 		Point2 pos = mb->get_position();
 
-		int left_ofs = get_theme_stylebox(SNAME("header"), SNAME("AnimationTrackEditGroup"))->get_margin(SIDE_LEFT);
+		int left_ofs = get_theme_stylebox(SNAME("header"), SNAME("AnimationTrackEditGroup"))->get_content_inset(SIDE_LEFT);
 		bool is_group_folded = editor->get_current_animation()->editor_is_group_folded(node_name);
 		Ref<Texture2D> fold_icon = get_theme_icon(is_group_folded ? SNAME("arrow_collapsed") : SNAME("arrow"), SNAME("Tree"));
 		int fold_icon_width = fold_icon->get_size().width;
@@ -4053,9 +4053,9 @@ Size2 AnimationTrackEditGroup::get_minimum_size() const {
 	const int separation = get_theme_constant(SNAME("v_separation"), SNAME("ItemList"));
 
 	const Ref<StyleBox> &header_style = get_theme_stylebox(SNAME("header"), SNAME("AnimationTrackEditGroup"));
-	const int content_margin = header_style->get_margin(SIDE_TOP) + header_style->get_margin(SIDE_BOTTOM);
+	const int content_inset = header_style->get_content_inset(SIDE_TOP) + header_style->get_content_inset(SIDE_BOTTOM);
 
-	return Vector2(0, MAX(font->get_height(font_size), icon_size.y) + separation + content_margin);
+	return Vector2(0, MAX(font->get_height(font_size), icon_size.y) + separation + content_inset);
 }
 
 String AnimationTrackEditGroup::get_node_name() const {

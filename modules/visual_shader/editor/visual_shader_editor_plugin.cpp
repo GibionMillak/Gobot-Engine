@@ -3281,7 +3281,7 @@ void VisualShaderEditor::_draw_color_over_button(Object *p_obj, Color p_color) {
 	}
 
 	Ref<StyleBox> normal = get_theme_stylebox(CoreStringName(normal), SNAME("Button"));
-	button->draw_rect(Rect2(normal->get_offset(), button->get_size() - normal->get_minimum_size()), p_color);
+	button->draw_rect(Rect2(normal->get_content_offset(), button->get_size() - normal->get_minimum_size()), p_color);
 }
 
 void VisualShaderEditor::_update_parameters(bool p_update_refs) {

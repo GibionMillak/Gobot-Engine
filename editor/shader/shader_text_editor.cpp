@@ -318,7 +318,7 @@ void TextShaderPreview::_notification(int p_what) {
 
 			Ref<StyleBoxEmpty> no_margins;
 			no_margins.instantiate();
-			no_margins->set_content_margin_all(0);
+			no_margins->set_padding_all(0);
 			error_label->add_theme_style_override(CoreStringName(normal), no_margins);
 			error_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 

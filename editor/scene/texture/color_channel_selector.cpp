@@ -73,11 +73,11 @@ void ColorChannelSelector::_notification(int p_what) {
 		Ref<StyleBox> bg_style = get_theme_stylebox(SceneStringName(panel), "TabContainer");
 		ERR_FAIL_COND(bg_style.is_null());
 		bg_style = bg_style->duplicate();
-		// The default content margin makes the widget become a bit too large. It should be like mini-toolbar.
-		bg_style->set_content_margin(SIDE_LEFT, 1.0f * EDSCALE);
-		bg_style->set_content_margin(SIDE_RIGHT, 1.0f * EDSCALE);
-		bg_style->set_content_margin(SIDE_TOP, 1.0f * EDSCALE);
-		bg_style->set_content_margin(SIDE_BOTTOM, 1.0f * EDSCALE);
+		// The default padding makes the widget become a bit too large. It should be like mini-toolbar.
+		bg_style->set_padding(SIDE_LEFT, 1.0f * EDSCALE);
+		bg_style->set_padding(SIDE_RIGHT, 1.0f * EDSCALE);
+		bg_style->set_padding(SIDE_TOP, 1.0f * EDSCALE);
+		bg_style->set_padding(SIDE_BOTTOM, 1.0f * EDSCALE);
 		panel->add_theme_style_override(SceneStringName(panel), bg_style);
 
 		Ref<Texture2D> icon = get_editor_theme_icon(SNAME("gui_texture_preview_channels"));

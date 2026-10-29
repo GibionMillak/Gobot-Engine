@@ -91,7 +91,7 @@ BitMapEditor::BitMapEditor() {
 	// Reduce extra padding on top and bottom of size label.
 	Ref<StyleBoxEmpty> stylebox;
 	stylebox.instantiate();
-	stylebox->set_content_margin(SIDE_RIGHT, 4 * EDSCALE);
+	stylebox->set_padding(SIDE_RIGHT, 4 * EDSCALE);
 	size_label->add_theme_style_override(CoreStringName(normal), stylebox);
 }
 

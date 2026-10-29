@@ -968,13 +968,13 @@ void Table::_update_layout() {
 	const int horizontal_padding = MAX(0, _theme_cache.horizontal_cell_padding);
 	const int vertical_padding = MAX(0, _theme_cache.vertical_cell_padding);
 	const int gap = MAX(0, _theme_cache.gap);
-	Rect2 inner(_theme_cache.background->get_offset(), (get_size() - _theme_cache.background->get_minimum_size()).max(Size2()));
+	Rect2 inner(_theme_cache.background->get_content_offset(), (get_size() - _theme_cache.background->get_minimum_size()).max(Size2()));
 	const float footer_height = _get_footer_minimum_size().y;
 	_footer_background->set_position(inner.position + Point2(0, MAX(0.0f, inner.size.y - footer_height)));
 	_footer_background->set_size(Size2(inner.size.x, footer_height));
 	if (_has_footer_content()) {
 		HBoxContainer *footer_hbox = _footer_hbox;
-		const Vector2 footer_offset = _theme_cache.footer.is_valid() ? _theme_cache.footer->get_offset() : Vector2();
+		const Vector2 footer_offset = _theme_cache.footer.is_valid() ? _theme_cache.footer->get_content_offset() : Vector2();
 		const Size2 footer_margins = _theme_cache.footer.is_valid() ? _theme_cache.footer->get_minimum_size() : Size2();
 		const float count_width = _show_row_count ? _theme_cache.font->get_string_size(vformat(atr("Rows: %d"), _rows.size()), HORIZONTAL_ALIGNMENT_LEFT, -1, _theme_cache.font_size).x : 0;
 		const float count_gap = _show_row_count ? gap : 0;
@@ -1267,7 +1267,7 @@ void Table::_draw_footer() {
 	Rect2 content(Point2(), _footer_background->get_size());
 	if (_theme_cache.footer.is_valid()) {
 		_footer_background->draw_style_box(_theme_cache.footer, content);
-		content.position += _theme_cache.footer->get_offset();
+		content.position += _theme_cache.footer->get_content_offset();
 		content.size = (content.size - _theme_cache.footer->get_minimum_size()).max(Size2());
 	}
 	if (_show_row_count && _theme_cache.font.is_valid()) {

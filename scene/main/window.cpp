@@ -484,10 +484,10 @@ Point2i Window::get_position_with_decorations() const {
 	if (visible && is_embedded() && !get_flag(Window::FLAG_BORDERLESS)) {
 		Size2 border_offset;
 		if (theme_cache.embedded_border.is_valid()) {
-			border_offset = theme_cache.embedded_border->get_offset();
+			border_offset = theme_cache.embedded_border->get_content_offset();
 		}
 		if (theme_cache.embedded_unfocused_border.is_valid()) {
-			border_offset = border_offset.max(theme_cache.embedded_unfocused_border->get_offset());
+			border_offset = border_offset.max(theme_cache.embedded_unfocused_border->get_content_offset());
 		}
 		return position - border_offset;
 	}

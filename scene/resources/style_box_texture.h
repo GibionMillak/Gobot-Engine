@@ -54,7 +54,7 @@ private:
 	AxisStretchMode axis_v = AXIS_STRETCH_MODE_STRETCH;
 
 protected:
-	virtual float get_style_margin(Side p_side) const override;
+	virtual float _get_style_inset(Side p_side) const override;
 	static void _bind_methods();
 
 public:

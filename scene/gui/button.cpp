@@ -212,10 +212,10 @@ void Button::_notification(int p_what) {
 				break;
 			}
 
-			const float style_margin_left = (theme_cache.align_to_largest_stylebox) ? theme_cache.style_margin_left : style->get_margin(SIDE_LEFT);
-			const float style_margin_right = (theme_cache.align_to_largest_stylebox) ? theme_cache.style_margin_right : style->get_margin(SIDE_RIGHT);
-			const float style_margin_top = (theme_cache.align_to_largest_stylebox) ? theme_cache.style_margin_top : style->get_margin(SIDE_TOP);
-			const float style_margin_bottom = (theme_cache.align_to_largest_stylebox) ? theme_cache.style_margin_bottom : style->get_margin(SIDE_BOTTOM);
+			const float style_margin_left = (theme_cache.align_to_largest_stylebox) ? theme_cache.style_margin_left : style->get_content_inset(SIDE_LEFT);
+			const float style_margin_right = (theme_cache.align_to_largest_stylebox) ? theme_cache.style_margin_right : style->get_content_inset(SIDE_RIGHT);
+			const float style_margin_top = (theme_cache.align_to_largest_stylebox) ? theme_cache.style_margin_top : style->get_content_inset(SIDE_TOP);
+			const float style_margin_bottom = (theme_cache.align_to_largest_stylebox) ? theme_cache.style_margin_bottom : style->get_content_inset(SIDE_BOTTOM);
 
 			Size2 drawable_size_remained = size;
 
@@ -666,10 +666,10 @@ void Button::_texture_changed() {
 
 void Button::_update_style_margins(const Ref<StyleBox> &p_stylebox) {
 	theme_cache.max_style_size = theme_cache.max_style_size.max(p_stylebox->get_minimum_size());
-	theme_cache.style_margin_left = MAX(theme_cache.style_margin_left, p_stylebox->get_margin(SIDE_LEFT));
-	theme_cache.style_margin_right = MAX(theme_cache.style_margin_right, p_stylebox->get_margin(SIDE_RIGHT));
-	theme_cache.style_margin_top = MAX(theme_cache.style_margin_top, p_stylebox->get_margin(SIDE_TOP));
-	theme_cache.style_margin_bottom = MAX(theme_cache.style_margin_bottom, p_stylebox->get_margin(SIDE_BOTTOM));
+	theme_cache.style_margin_left = MAX(theme_cache.style_margin_left, p_stylebox->get_content_inset(SIDE_LEFT));
+	theme_cache.style_margin_right = MAX(theme_cache.style_margin_right, p_stylebox->get_content_inset(SIDE_RIGHT));
+	theme_cache.style_margin_top = MAX(theme_cache.style_margin_top, p_stylebox->get_content_inset(SIDE_TOP));
+	theme_cache.style_margin_bottom = MAX(theme_cache.style_margin_bottom, p_stylebox->get_content_inset(SIDE_BOTTOM));
 }
 
 Ref<Texture2D> Button::get_button_icon() const {

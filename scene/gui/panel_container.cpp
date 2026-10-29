@@ -101,7 +101,7 @@ void PanelContainer::_notification(int p_what) {
 			Point2 ofs;
 			if (theme_cache.panel_style.is_valid()) {
 				size -= theme_cache.panel_style->get_minimum_size();
-				ofs += theme_cache.panel_style->get_offset();
+				ofs += theme_cache.panel_style->get_content_offset();
 			}
 
 			for (int i = 0; i < get_child_count(); i++) {

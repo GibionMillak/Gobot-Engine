@@ -628,7 +628,7 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 	set_horizontal_scroll_mode(SCROLL_MODE_DISABLED);
 
 	Ref<StyleBoxEmpty> sb = memnew(StyleBoxEmpty);
-	sb->set_content_margin_all(6 * EDSCALE);
+	sb->set_padding_all(6 * EDSCALE);
 	add_theme_style_override("panel", sb);
 
 	default_view = memnew(VBoxContainer);
@@ -1534,10 +1534,10 @@ void FindInFilesContainer::_on_theme_changed() {
 	const Ref<StyleBox> dock_content_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("DockContent"), EditorStringName(EditorStyles));
 	if (dock_content_style.is_valid()) {
 		begin_bulk_theme_override();
-		add_theme_constant_override("margin_top", -dock_content_style->get_margin(SIDE_TOP));
-		add_theme_constant_override("margin_left", -dock_content_style->get_margin(SIDE_LEFT));
-		add_theme_constant_override("margin_right", -dock_content_style->get_margin(SIDE_RIGHT));
-		add_theme_constant_override("margin_bottom", -dock_content_style->get_margin(SIDE_BOTTOM));
+		add_theme_constant_override("margin_top", -dock_content_style->get_content_inset(SIDE_TOP));
+		add_theme_constant_override("margin_left", -dock_content_style->get_content_inset(SIDE_LEFT));
+		add_theme_constant_override("margin_right", -dock_content_style->get_content_inset(SIDE_RIGHT));
+		add_theme_constant_override("margin_bottom", -dock_content_style->get_content_inset(SIDE_BOTTOM));
 		end_bulk_theme_override();
 	}
 	hsplit->add_theme_style_override("split_bar_background", get_theme_stylebox(SceneStringName(panel), "ItemListSecondary"));

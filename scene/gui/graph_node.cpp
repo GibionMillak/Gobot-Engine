@@ -159,7 +159,7 @@ void GraphNode::_resort() {
 	// Resort titlebar first.
 	Size2 titlebar_size = Size2(new_size.width, titlebar_hbox->get_size().height);
 	titlebar_size -= sb_titlebar->get_minimum_size();
-	Rect2 titlebar_rect = Rect2(sb_titlebar->get_offset(), titlebar_size);
+	Rect2 titlebar_rect = Rect2(sb_titlebar->get_content_offset(), titlebar_size);
 	fit_child_in_rect(titlebar_hbox, titlebar_rect);
 
 	// After resort, the children of the titlebar container may have changed their height (e.g. Label autowrap).
@@ -215,7 +215,7 @@ void GraphNode::_resort() {
 	// Avoid negative stretch space.
 	stretch_diff = MAX(stretch_diff, 0);
 
-	available_stretch_space += stretch_diff - sb_panel->get_margin(SIDE_BOTTOM) - sb_panel->get_margin(SIDE_TOP) - titlebar_min_size.height - sb_titlebar->get_minimum_size().height;
+	available_stretch_space += stretch_diff - sb_panel->get_content_inset(SIDE_BOTTOM) - sb_panel->get_content_inset(SIDE_TOP) - titlebar_min_size.height - sb_titlebar->get_minimum_size().height;
 
 	// Second pass, discard elements that can't be stretched, this will run while stretchable elements exist.
 
@@ -265,7 +265,7 @@ void GraphNode::_resort() {
 
 	// Final pass, draw and stretch elements.
 
-	int ofs_y = sb_panel->get_margin(SIDE_TOP) + titlebar_min_size.height + sb_titlebar->get_minimum_size().height;
+	int ofs_y = sb_panel->get_content_inset(SIDE_TOP) + titlebar_min_size.height + sb_titlebar->get_minimum_size().height;
 
 	slot_y_cache.clear();
 	int width = new_size.width - sb_panel->get_minimum_size().width;
@@ -287,14 +287,14 @@ void GraphNode::_resort() {
 
 		// Adjust so the last valid child always fits perfect, compensating for numerical imprecision.
 		if (msc.will_stretch && valid_children_idx == children_count - 1) {
-			to_y_pos = new_size.height - sb_panel->get_margin(SIDE_BOTTOM);
+			to_y_pos = new_size.height - sb_panel->get_content_inset(SIDE_BOTTOM);
 		}
 
 		int height = to_y_pos - from_y_pos;
-		float margin = sb_panel->get_margin(SIDE_LEFT) + (slot_table[i].draw_stylebox ? sb_slot->get_margin(SIDE_LEFT) : 0);
+		float margin = sb_panel->get_content_inset(SIDE_LEFT) + (slot_table[i].draw_stylebox ? sb_slot->get_content_inset(SIDE_LEFT) : 0);
 		float final_width = width - (slot_table[i].draw_stylebox ? sb_slot->get_minimum_size().x : 0);
 		float final_height = height - (slot_table[i].draw_stylebox ? sb_slot->get_minimum_size().y : 0);
-		float final_y_pos = from_y_pos + (slot_table[i].draw_stylebox ? sb_slot->get_margin(SIDE_TOP) : 0);
+		float final_y_pos = from_y_pos + (slot_table[i].draw_stylebox ? sb_slot->get_content_inset(SIDE_TOP) : 0);
 		Rect2 rect(margin, final_y_pos, final_width, final_height);
 		fit_child_in_rect(child, rect);
 
@@ -540,10 +540,10 @@ void GraphNode::_notification(int p_what) {
 						Control *child = Object::cast_to<Control>(get_child(slot_index, false));
 						if (child && child->is_visible_in_tree()) {
 							Rect2 child_rect = child->get_rect();
-							child_rect.position.x = sb_panel->get_margin(SIDE_LEFT);
+							child_rect.position.x = sb_panel->get_content_inset(SIDE_LEFT);
 							child_rect.size.width = width;
-							child_rect.position.y -= sb_slot->get_margin(SIDE_TOP);
-							child_rect.size.height += sb_slot->get_margin(SIDE_TOP) + sb_slot->get_margin(SIDE_BOTTOM);
+							child_rect.position.y -= sb_slot->get_content_inset(SIDE_TOP);
+							child_rect.size.height += sb_slot->get_content_inset(SIDE_TOP) + sb_slot->get_content_inset(SIDE_BOTTOM);
 							draw_style_box(sb_slot, child_rect);
 						}
 					}
@@ -874,7 +874,7 @@ void GraphNode::_port_pos_update() {
 	int separation = theme_cache.separation;
 
 	// This helps to immediately achieve the initial y "original point" of the slots, which the sum of the titlebar height and the top margin of the panel.
-	int vertical_ofs = titlebar_hbox->get_size().height + theme_cache.titlebar->get_minimum_size().height + theme_cache.panel->get_margin(SIDE_TOP);
+	int vertical_ofs = titlebar_hbox->get_size().height + theme_cache.titlebar->get_minimum_size().height + theme_cache.panel->get_content_inset(SIDE_TOP);
 
 	left_port_cache.clear();
 	right_port_cache.clear();

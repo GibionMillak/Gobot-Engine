@@ -1889,7 +1889,7 @@ void EditorInspectorCategory::_notification(int p_what) {
 
 			int ofs = (get_size().width - w) / 2;
 
-			float v_margin_offset = sb->get_margin(SIDE_TOP) - sb->get_margin(SIDE_BOTTOM);
+			float v_margin_offset = sb->get_content_inset(SIDE_TOP) - sb->get_content_inset(SIDE_BOTTOM);
 
 			if (icon.is_valid()) {
 				Size2 rect_size = Size2(icon_size, icon_size);
@@ -1983,7 +1983,7 @@ Size2 EditorInspectorCategory::get_minimum_size() const {
 	}
 
 	if (bg.is_valid()) {
-		ms.height += bg->get_margin(SIDE_TOP) + bg->get_margin(SIDE_BOTTOM);
+		ms.height += bg->get_content_inset(SIDE_TOP) + bg->get_content_inset(SIDE_BOTTOM);
 	}
 
 	return ms;
@@ -2178,7 +2178,7 @@ void EditorInspectorSection::_notification(int p_what) {
 				inspector_margin += indent_depth * theme_cache.indent_size;
 			}
 			if (indent_depth > 0 && theme_cache.indent_box.is_valid()) {
-				inspector_margin += theme_cache.indent_box->get_margin(SIDE_LEFT) + theme_cache.indent_box->get_margin(SIDE_RIGHT);
+				inspector_margin += theme_cache.indent_box->get_content_inset(SIDE_LEFT) + theme_cache.indent_box->get_content_inset(SIDE_RIGHT);
 			}
 
 			Size2 size = get_size() - Vector2(inspector_margin, 0);
@@ -2201,7 +2201,7 @@ void EditorInspectorSection::_notification(int p_what) {
 			}
 			Ref<StyleBoxFlat> section_indent_style = theme_cache.indent_box;
 			if (indent_depth > 0 && section_indent_style.is_valid()) {
-				section_indent += section_indent_style->get_margin(SIDE_LEFT) + section_indent_style->get_margin(SIDE_RIGHT);
+				section_indent += section_indent_style->get_content_inset(SIDE_LEFT) + section_indent_style->get_content_inset(SIDE_RIGHT);
 			}
 
 			int header_width = get_size().width - section_indent;
@@ -2384,9 +2384,9 @@ void EditorInspectorSection::_notification(int p_what) {
 			if (section_indent_style.is_valid() && section_indent > 0) {
 				Rect2 indent_rect = Rect2(Vector2(), Vector2(indent_depth * section_indent_size, get_size().height));
 				if (rtl) {
-					indent_rect.position.x = get_size().width - section_indent + section_indent_style->get_margin(SIDE_RIGHT);
+					indent_rect.position.x = get_size().width - section_indent + section_indent_style->get_content_inset(SIDE_RIGHT);
 				} else {
-					indent_rect.position.x = section_indent_style->get_margin(SIDE_LEFT);
+					indent_rect.position.x = section_indent_style->get_content_inset(SIDE_LEFT);
 				}
 				draw_style_box(section_indent_style, indent_rect);
 			}
@@ -2450,7 +2450,7 @@ Size2 EditorInspectorSection::get_minimum_size() const {
 		ms.width += indent_depth * theme_cache.indent_size;
 	}
 	if (indent_depth > 0 && theme_cache.indent_box.is_valid()) {
-		ms.width += theme_cache.indent_box->get_margin(SIDE_LEFT) + theme_cache.indent_box->get_margin(SIDE_RIGHT);
+		ms.width += theme_cache.indent_box->get_content_inset(SIDE_LEFT) + theme_cache.indent_box->get_content_inset(SIDE_RIGHT);
 	}
 
 	return ms;

@@ -305,8 +305,8 @@ void AnimationNodeBlendTreeEditor::update_graph_immediately() {
 
 		Ref<StyleBox> sb_panel = node->get_theme_stylebox(SceneStringName(panel), SNAME("GraphNode"))->duplicate();
 		if (sb_panel.is_valid()) {
-			sb_panel->set_content_margin(SIDE_TOP, 12 * EDSCALE);
-			sb_panel->set_content_margin(SIDE_BOTTOM, 12 * EDSCALE);
+			sb_panel->set_padding(SIDE_TOP, 12 * EDSCALE);
+			sb_panel->set_padding(SIDE_BOTTOM, 12 * EDSCALE);
 			node->add_theme_style_override(SceneStringName(panel), sb_panel);
 		}
 

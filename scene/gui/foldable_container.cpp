@@ -324,8 +324,8 @@ void FoldableContainer::_notification(int p_what) {
 			Size2 title_ms = title_style->get_minimum_size();
 			int title_text_width = size.width - title_ms.width;
 
-			int title_style_ofs = (title_position == POSITION_TOP) ? title_style->get_margin(SIDE_TOP) : title_style->get_margin(SIDE_BOTTOM);
-			Point2 title_text_pos(title_style->get_margin(SIDE_LEFT), title_style_ofs);
+			int title_style_ofs = (title_position == POSITION_TOP) ? title_style->get_content_inset(SIDE_TOP) : title_style->get_content_inset(SIDE_BOTTOM);
+			Point2 title_text_pos(title_style->get_content_inset(SIDE_LEFT), title_style_ofs);
 			title_text_pos.y += MAX((title_minimum_size.height - title_ms.height - text_buf->get_size().height) * 0.5, 0);
 
 			title_text_width -= icon_size.width + h_separation + title_controls_width;
@@ -333,10 +333,10 @@ void FoldableContainer::_notification(int p_what) {
 
 			bool rtl = is_layout_rtl();
 			if (rtl) {
-				icon_pos.x = size.width - title_style->get_margin(SIDE_RIGHT) - icon_size.width;
+				icon_pos.x = size.width - title_style->get_content_inset(SIDE_RIGHT) - icon_size.width;
 				title_text_pos.x += title_controls_width;
 			} else {
-				icon_pos.x = title_style->get_margin(SIDE_LEFT);
+				icon_pos.x = title_style->get_content_inset(SIDE_LEFT);
 				title_text_pos.x += icon_size.width + h_separation;
 			}
 			icon->draw_rect(ci, Rect2(title_rect.position + icon_pos, icon_size));
@@ -377,17 +377,17 @@ void FoldableContainer::_notification(int p_what) {
 				int h_separation = MAX(theme_cache.h_separation, 0);
 				real_t offset = 0.0;
 				if (rtl) {
-					offset = title_style->get_margin(SIDE_LEFT);
+					offset = title_style->get_content_inset(SIDE_LEFT);
 				} else {
 					offset = _get_title_controls_width();
-					offset = size.x - title_style->get_margin(SIDE_RIGHT) - offset;
+					offset = size.x - title_style->get_content_inset(SIDE_RIGHT) - offset;
 				}
 
 				real_t v_center = title_minimum_size.y * 0.5;
 				if (title_position == POSITION_BOTTOM) {
-					v_center = size.y - v_center + (title_style->get_margin(SIDE_BOTTOM) - title_style->get_margin(SIDE_TOP)) * 0.5;
+					v_center = size.y - v_center + (title_style->get_content_inset(SIDE_BOTTOM) - title_style->get_content_inset(SIDE_TOP)) * 0.5;
 				} else {
-					v_center += (title_style->get_margin(SIDE_TOP) - title_style->get_margin(SIDE_BOTTOM)) * 0.5;
+					v_center += (title_style->get_content_inset(SIDE_TOP) - title_style->get_content_inset(SIDE_BOTTOM)) * 0.5;
 				}
 
 				for (uint32_t i = 0; i < title_count; i++) {
@@ -405,11 +405,11 @@ void FoldableContainer::_notification(int p_what) {
 			}
 
 			Rect2 inner_rect;
-			inner_rect.position.x = rtl ? theme_cache.panel_style->get_margin(SIDE_RIGHT) : theme_cache.panel_style->get_margin(SIDE_LEFT);
-			inner_rect.size.x = size.x - theme_cache.panel_style->get_margin(SIDE_LEFT) - theme_cache.panel_style->get_margin(SIDE_RIGHT);
-			inner_rect.position.y = theme_cache.panel_style->get_margin(SIDE_TOP);
+			inner_rect.position.x = rtl ? theme_cache.panel_style->get_content_inset(SIDE_RIGHT) : theme_cache.panel_style->get_content_inset(SIDE_LEFT);
+			inner_rect.size.x = size.x - theme_cache.panel_style->get_content_inset(SIDE_LEFT) - theme_cache.panel_style->get_content_inset(SIDE_RIGHT);
+			inner_rect.position.y = theme_cache.panel_style->get_content_inset(SIDE_TOP);
 
-			inner_rect.size.y = size.y - theme_cache.panel_style->get_margin(SIDE_TOP) - theme_cache.panel_style->get_margin(SIDE_BOTTOM) - title_minimum_size.y;
+			inner_rect.size.y = size.y - theme_cache.panel_style->get_content_inset(SIDE_TOP) - theme_cache.panel_style->get_content_inset(SIDE_BOTTOM) - title_minimum_size.y;
 			if (title_position == POSITION_TOP) {
 				inner_rect.position.y += title_minimum_size.y;
 			}

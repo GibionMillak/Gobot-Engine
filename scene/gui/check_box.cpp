@@ -121,9 +121,9 @@ void CheckBox::_notification(int p_what) {
 
 			Vector2 ofs;
 			if (is_layout_rtl()) {
-				ofs.x = get_size().x - theme_cache.normal_style->get_margin(SIDE_RIGHT) - get_icon_size().width;
+				ofs.x = get_size().x - theme_cache.normal_style->get_content_inset(SIDE_RIGHT) - get_icon_size().width;
 			} else {
-				ofs.x = theme_cache.normal_style->get_margin(SIDE_LEFT);
+				ofs.x = theme_cache.normal_style->get_content_inset(SIDE_LEFT);
 			}
 			ofs.y = int((get_size().height - get_icon_size().height) / 2) + theme_cache.check_v_offset;
 

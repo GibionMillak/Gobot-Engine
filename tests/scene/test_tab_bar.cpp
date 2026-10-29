@@ -1221,7 +1221,7 @@ TEST_CASE("[SceneTree][TabBar] Mouse interaction") {
 	SUBCASE("[TabBar] Click on close button") {
 		const Size2 close_button_size = tab_bar->get_theme_icon("close_icon")->get_size();
 		int h_separation = tab_bar->get_theme_constant("h_separation");
-		float margin = tab_bar->get_theme_stylebox("tab_hovered_style")->get_margin(SIDE_RIGHT);
+		float margin = tab_bar->get_theme_stylebox("tab_hovered_style")->get_content_inset(SIDE_RIGHT);
 
 		tab_bar->set_tab_close_display_policy(TabBar::CLOSE_BUTTON_SHOW_ALWAYS);
 		MessageQueue::get_singleton()->flush();

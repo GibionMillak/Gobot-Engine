@@ -419,7 +419,7 @@ void PopupMenu::_activate_submenu(int p_over, bool p_by_keyboard) {
 		}
 	}
 
-	submenu_pos.y = this_pos.y + item_top_y - submenu_popup->theme_cache.panel_style->get_margin(SIDE_TOP) * win_scale;
+	submenu_pos.y = this_pos.y + item_top_y - submenu_popup->theme_cache.panel_style->get_content_inset(SIDE_TOP) * win_scale;
 	if (submenu_popup->search_bar->is_visible()) {
 		submenu_pos.y -= (submenu_popup->search_bar->get_minimum_size().y + submenu_popup->theme_cache.search_bar_separation) * win_scale;
 	}
@@ -626,11 +626,11 @@ void PopupMenu::_input_from_window_internal(const Ref<InputEvent> &p_event) {
 	}
 
 	float win_scale = get_content_scale_factor();
-	item_clickable_area.position.x += theme_cache.panel_style->get_margin(SIDE_LEFT);
-	item_clickable_area.position.y += theme_cache.panel_style->get_margin(SIDE_TOP);
+	item_clickable_area.position.x += theme_cache.panel_style->get_content_inset(SIDE_LEFT);
+	item_clickable_area.position.y += theme_cache.panel_style->get_content_inset(SIDE_TOP);
 	item_clickable_area.position *= win_scale;
-	item_clickable_area.size.width -= theme_cache.panel_style->get_margin(SIDE_LEFT) + theme_cache.panel_style->get_margin(SIDE_RIGHT);
-	item_clickable_area.size.y -= theme_cache.panel_style->get_margin(SIDE_TOP) + theme_cache.panel_style->get_margin(SIDE_BOTTOM);
+	item_clickable_area.size.width -= theme_cache.panel_style->get_content_inset(SIDE_LEFT) + theme_cache.panel_style->get_content_inset(SIDE_RIGHT);
+	item_clickable_area.size.y -= theme_cache.panel_style->get_content_inset(SIDE_TOP) + theme_cache.panel_style->get_content_inset(SIDE_BOTTOM);
 	item_clickable_area.size *= win_scale;
 
 	int event_device_id = p_event->get_device();

@@ -961,7 +961,7 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 		child->add_theme_style_override("focus_mirrored", sbempty);
 
 		Ref<StyleBoxFlat> sbflat = memnew(StyleBoxFlat);
-		sbflat->set_content_margin_all(0);
+		sbflat->set_padding_all(0);
 		sbflat->set_bg_color(Color(1, 1, 1, 0));
 		sbflat->set_border_width(Side::SIDE_BOTTOM, Math::round(3 * EDSCALE));
 		child->add_theme_style_override(SceneStringName(pressed), sbflat);

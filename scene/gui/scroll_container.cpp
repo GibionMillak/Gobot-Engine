@@ -148,25 +148,25 @@ bool ScrollContainer::_is_v_scroll_visible() const {
 }
 
 Rect2 ScrollContainer::_get_margins() const {
-	float right_margin = theme_cache.panel_style->get_margin(SIDE_RIGHT);
-	float left_margin = theme_cache.panel_style->get_margin(SIDE_LEFT);
-	float top_margin = theme_cache.panel_style->get_margin(SIDE_TOP);
-	float bottom_margin = theme_cache.panel_style->get_margin(SIDE_BOTTOM);
+	float right_margin = theme_cache.panel_style->get_content_inset(SIDE_RIGHT);
+	float left_margin = theme_cache.panel_style->get_content_inset(SIDE_LEFT);
+	float top_margin = theme_cache.panel_style->get_content_inset(SIDE_TOP);
+	float bottom_margin = theme_cache.panel_style->get_content_inset(SIDE_BOTTOM);
 	if (draw_focus_border) {
 		// Only update margins if the focus style's margins don't fit into the panel style's margins.
-		float focus_margin = theme_cache.focus_style->get_margin(SIDE_RIGHT);
+		float focus_margin = theme_cache.focus_style->get_content_inset(SIDE_RIGHT);
 		if (focus_margin > right_margin) {
 			right_margin = focus_margin;
 		}
-		focus_margin = theme_cache.focus_style->get_margin(SIDE_LEFT);
+		focus_margin = theme_cache.focus_style->get_content_inset(SIDE_LEFT);
 		if (focus_margin > left_margin) {
 			left_margin = focus_margin;
 		}
-		focus_margin = theme_cache.focus_style->get_margin(SIDE_TOP);
+		focus_margin = theme_cache.focus_style->get_content_inset(SIDE_TOP);
 		if (focus_margin > top_margin) {
 			top_margin = focus_margin;
 		}
-		focus_margin = theme_cache.focus_style->get_margin(SIDE_BOTTOM);
+		focus_margin = theme_cache.focus_style->get_content_inset(SIDE_BOTTOM);
 		if (focus_margin > bottom_margin) {
 			bottom_margin = focus_margin;
 		}
@@ -360,7 +360,7 @@ void ScrollContainer::_update_scrollbar_position() {
 	}
 
 	int top_margin = theme_cache.scrollbar_margin_top < 0 ? margins.position.y : theme_cache.scrollbar_margin_top;
-	int bottom_margin = theme_cache.scrollbar_margin_bottom < 0 ? theme_cache.panel_style->get_margin(SIDE_BOTTOM) : theme_cache.scrollbar_margin_bottom;
+	int bottom_margin = theme_cache.scrollbar_margin_bottom < 0 ? theme_cache.panel_style->get_content_inset(SIDE_BOTTOM) : theme_cache.scrollbar_margin_bottom;
 
 	h_scroll->set_anchor_and_offset(SIDE_LEFT, ANCHOR_BEGIN, left_margin);
 	h_scroll->set_anchor_and_offset(SIDE_RIGHT, ANCHOR_END, -right_margin - vmin.width);

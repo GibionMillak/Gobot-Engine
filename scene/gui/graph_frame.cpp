@@ -151,7 +151,7 @@ void GraphFrame::_resort() {
 	// Resort titlebar first.
 	Size2 titlebar_size = Size2(get_size().width, titlebar_hbox->get_size().height);
 	titlebar_size -= sb_titlebar->get_minimum_size();
-	Rect2 titlebar_rect = Rect2(sb_titlebar->get_offset(), titlebar_size);
+	Rect2 titlebar_rect = Rect2(sb_titlebar->get_content_offset(), titlebar_size);
 
 	fit_child_in_rect(titlebar_hbox, titlebar_rect);
 
@@ -159,7 +159,7 @@ void GraphFrame::_resort() {
 	Size2i titlebar_min_size = titlebar_hbox->get_bound_minimum_size();
 
 	Size2 size = get_size() - sb_panel->get_minimum_size() - Size2(0, titlebar_min_size.height + sb_titlebar->get_minimum_size().height);
-	Point2 offset = Point2(sb_panel->get_margin(SIDE_LEFT), sb_panel->get_margin(SIDE_TOP) + titlebar_min_size.height + sb_titlebar->get_minimum_size().height);
+	Point2 offset = Point2(sb_panel->get_content_inset(SIDE_LEFT), sb_panel->get_content_inset(SIDE_TOP) + titlebar_min_size.height + sb_titlebar->get_minimum_size().height);
 
 	for (int i = 0; i < get_child_count(false); i++) {
 		Control *child = as_sortable_control(get_child(i, false));

@@ -63,7 +63,7 @@ EditorToasterContainer::EditorToasterContainer() {
 
 	const Ref<StyleBoxFlat> backgrounds[] = { _info_panel_style_background, _warning_panel_style_background, _error_panel_style_background };
 	for (const Ref<StyleBoxFlat> &background : backgrounds) {
-		background->set_content_margin_individual(int(STYLEBOX_RADIUS * 2.5), 3, int(STYLEBOX_RADIUS * 2.5), 3);
+		background->set_padding_individual(int(STYLEBOX_RADIUS * 2.5), 3, int(STYLEBOX_RADIUS * 2.5), 3);
 	}
 
 	_info_panel_style_progress.instantiate();

@@ -812,10 +812,10 @@ void TextEdit::_notification(int p_what) {
 			RS::get_singleton()->canvas_item_set_visibility_layer(text_ci, get_visibility_layer());
 			RS::get_singleton()->canvas_item_set_default_texture_filter(text_ci, RSE::CanvasItemTextureFilter(get_texture_filter_in_tree()));
 
-			int left_margin = Math::ceil(style->get_margin(SIDE_LEFT));
+			int left_margin = Math::ceil(style->get_content_inset(SIDE_LEFT));
 			int xmargin_beg = left_margin + gutters_width + gutter_padding;
 
-			int xmargin_end = size.width - Math::floor(style->get_margin(SIDE_RIGHT));
+			int xmargin_end = size.width - Math::floor(style->get_content_inset(SIDE_RIGHT));
 			if (draw_minimap) {
 				xmargin_end -= minimap_width;
 			}
@@ -1186,8 +1186,8 @@ void TextEdit::_notification(int p_what) {
 				}
 			}
 
-			int top_limit_y = style->get_margin(SIDE_TOP);
-			int bottom_limit_y = get_size().height - style->get_margin(SIDE_BOTTOM);
+			int top_limit_y = style->get_content_inset(SIDE_TOP);
+			int bottom_limit_y = get_size().height - style->get_content_inset(SIDE_BOTTOM);
 
 			// Draw guidelines.
 			_draw_guidelines();
@@ -1246,7 +1246,7 @@ void TextEdit::_notification(int p_what) {
 					const String &str = wrap_rows[line_wrap_index];
 					int char_margin = xmargin_beg - first_visible_col;
 
-					int ofs_y = style->get_margin(SIDE_TOP);
+					int ofs_y = style->get_content_inset(SIDE_TOP);
 
 					ofs_y += i * row_height;
 					ofs_y -= first_visible_line_wrap_ofs * row_height;
@@ -4005,12 +4005,12 @@ Control::CursorShape TextEdit::get_cursor_shape(const Point2 &p_pos) const {
 		}
 	}
 	Ref<StyleBox> style = _get_current_stylebox();
-	int left_margin = Math::ceil(style->get_margin(SIDE_LEFT));
+	int left_margin = Math::ceil(style->get_content_inset(SIDE_LEFT));
 	if (p_pos.x < left_margin + gutters_width + gutter_padding) {
 		return CURSOR_ARROW;
 	}
 
-	int xmargin_end = get_size().width - Math::floor(style->get_margin(SIDE_RIGHT));
+	int xmargin_end = get_size().width - Math::floor(style->get_content_inset(SIDE_RIGHT));
 	if (draw_minimap && p_pos.x > xmargin_end - minimap_width && p_pos.x <= xmargin_end) {
 		return CURSOR_ARROW;
 	}
@@ -5476,7 +5476,7 @@ String TextEdit::get_word(int p_line, int p_column) const {
 
 Point2i TextEdit::get_line_column_at_pos(const Point2i &p_pos, bool p_clamp_line, bool p_clamp_column) const {
 	Ref<StyleBox> style = _get_current_stylebox();
-	float rows = p_pos.y - style->get_margin(SIDE_TOP);
+	float rows = p_pos.y - style->get_content_inset(SIDE_TOP);
 	rows /= get_line_height();
 	rows += _get_v_scroll_offset();
 	int first_vis_line = get_first_visible_line();
@@ -5503,7 +5503,7 @@ Point2i TextEdit::get_line_column_at_pos(const Point2i &p_pos, bool p_clamp_line
 		}
 		return Point2i(-1, -1);
 	}
-	int colx = p_pos.x - (Math::ceil(style->get_margin(SIDE_LEFT)) + gutters_width + gutter_padding);
+	int colx = p_pos.x - (Math::ceil(style->get_content_inset(SIDE_LEFT)) + gutters_width + gutter_padding);
 	colx += first_visible_col;
 
 	RID text_rid = text.get_line_data(row)->get_line_rid(wrap_index);
@@ -5583,11 +5583,11 @@ Rect2i TextEdit::get_rect_at_line_column(int p_line, int p_column) const {
 }
 
 int TextEdit::get_line_start_margin() const {
-	return Math::ceil(_get_current_stylebox()->get_margin(SIDE_LEFT));
+	return Math::ceil(_get_current_stylebox()->get_content_inset(SIDE_LEFT));
 }
 
 int TextEdit::get_minimap_line_at_pos(const Point2i &p_pos) const {
-	float rows = p_pos.y - _get_current_stylebox()->get_margin(SIDE_TOP);
+	float rows = p_pos.y - _get_current_stylebox()->get_content_inset(SIDE_TOP);
 	rows /= (minimap_char_size.y + minimap_line_spacing);
 	rows += _get_v_scroll_offset();
 
@@ -9161,8 +9161,8 @@ void TextEdit::_update_scrollbars() {
 	Size2 vmin = v_scroll->get_bound_minimum_size();
 
 	Ref<StyleBox> style = _get_current_stylebox();
-	v_scroll->set_begin(Point2(size.width - vmin.width, style->get_margin(SIDE_TOP)));
-	v_scroll->set_end(Point2(size.width, size.height - style->get_margin(SIDE_TOP) - style->get_margin(SIDE_BOTTOM)));
+	v_scroll->set_begin(Point2(size.width - vmin.width, style->get_content_inset(SIDE_TOP)));
+	v_scroll->set_end(Point2(size.width, size.height - style->get_content_inset(SIDE_TOP) - style->get_content_inset(SIDE_BOTTOM)));
 
 	h_scroll->set_begin(Point2(0, size.height - hmin.height));
 	h_scroll->set_end(Point2(size.width - vmin.width, size.height));
@@ -9462,7 +9462,7 @@ void TextEdit::_adjust_viewport_to_caret_horizontally(int p_caret, bool p_maximi
 
 void TextEdit::_update_minimap_hover() {
 	const Point2 mp = get_local_mouse_pos();
-	const int xmargin_end = get_size().width - Math::floor(_get_current_stylebox()->get_margin(SIDE_RIGHT));
+	const int xmargin_end = get_size().width - Math::floor(_get_current_stylebox()->get_content_inset(SIDE_RIGHT));
 
 	bool hovering_sidebar = mp.x > xmargin_end - minimap_width && mp.x < xmargin_end;
 	if (!hovering_sidebar) {
@@ -9489,7 +9489,7 @@ void TextEdit::_update_minimap_hover() {
 void TextEdit::_update_minimap_click() {
 	Point2 mp = get_local_mouse_pos();
 
-	int xmargin_end = get_size().width - Math::floor(_get_current_stylebox()->get_margin(SIDE_RIGHT));
+	int xmargin_end = get_size().width - Math::floor(_get_current_stylebox()->get_content_inset(SIDE_RIGHT));
 	if (!dragging_minimap && (mp.x < xmargin_end - minimap_width || mp.x > xmargin_end)) {
 		minimap_clicked = false;
 		return;

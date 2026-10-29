@@ -129,14 +129,14 @@ Ref<StyleBoxTexture> EditorThemeManager::make_stylebox(Ref<Texture2D> p_texture,
 	Ref<StyleBoxTexture> style(memnew(StyleBoxTexture));
 	style->set_texture(p_texture);
 	style->set_texture_margin_individual(p_left * EDSCALE, p_top * EDSCALE, p_right * EDSCALE, p_bottom * EDSCALE);
-	style->set_content_margin_individual(p_margin_left * EDSCALE, p_margin_top * EDSCALE, p_margin_right * EDSCALE, p_margin_bottom * EDSCALE);
+	style->set_padding_individual(p_margin_left * EDSCALE, p_margin_top * EDSCALE, p_margin_right * EDSCALE, p_margin_bottom * EDSCALE);
 	style->set_draw_center(p_draw_center);
 	return style;
 }
 
 Ref<StyleBoxEmpty> EditorThemeManager::make_empty_stylebox(float p_margin_left, float p_margin_top, float p_margin_right, float p_margin_bottom) {
 	Ref<StyleBoxEmpty> style(memnew(StyleBoxEmpty));
-	style->set_content_margin_individual(p_margin_left * EDSCALE, p_margin_top * EDSCALE, p_margin_right * EDSCALE, p_margin_bottom * EDSCALE);
+	style->set_padding_individual(p_margin_left * EDSCALE, p_margin_top * EDSCALE, p_margin_right * EDSCALE, p_margin_bottom * EDSCALE);
 	return style;
 }
 
@@ -146,7 +146,7 @@ Ref<StyleBoxFlat> EditorThemeManager::make_flat_stylebox(Color p_color, float p_
 	// Adjust level of detail based on the corners' effective sizes.
 	style->set_corner_detail(Math::ceil(0.8 * p_corner_width * EDSCALE));
 	style->set_corner_radius_all(p_corner_width * EDSCALE);
-	style->set_content_margin_individual(p_margin_left * EDSCALE, p_margin_top * EDSCALE, p_margin_right * EDSCALE, p_margin_bottom * EDSCALE);
+	style->set_padding_individual(p_margin_left * EDSCALE, p_margin_top * EDSCALE, p_margin_right * EDSCALE, p_margin_bottom * EDSCALE);
 	return style;
 }
 

@@ -149,7 +149,7 @@ RichTextLabel::Item *RichTextLabel::_get_next_item(Item *p_item, bool p_free) co
 }
 
 Rect2 RichTextLabel::_get_text_rect() {
-	return Rect2(theme_cache.normal_style->get_offset(), get_size() - theme_cache.normal_style->get_minimum_size());
+	return Rect2(theme_cache.normal_style->get_content_offset(), get_size() - theme_cache.normal_style->get_minimum_size());
 }
 
 int RichTextLabel::_get_wrap_width(const Rect2 &p_text_rect) const {
@@ -1095,7 +1095,7 @@ int RichTextLabel::_draw_line(ItemFrame *p_frame, int p_line, const Vector2 &p_o
 	int line_count = 0;
 	bool has_visible_chars = false;
 	// Bottom margin for text clipping.
-	float v_limit = theme_cache.normal_style->get_margin(SIDE_BOTTOM);
+	float v_limit = theme_cache.normal_style->get_content_inset(SIDE_BOTTOM);
 	Size2 ctrl_size = get_size();
 	// Draw text.
 	for (int line = 0; line < text_buf->get_line_count(); line++) {
@@ -2319,8 +2319,8 @@ void RichTextLabel::_notification(int p_what) {
 			} else {
 				// Draw loading progress bar.
 				if ((progress_delay > 0) && (OS::get_singleton()->get_ticks_msec() - loading_started >= (uint64_t)progress_delay)) {
-					Vector2 p_size = Vector2(size.width - (theme_cache.normal_style->get_offset().x + vscroll->get_bound_minimum_size().width) * 2, vscroll->get_bound_minimum_size().width);
-					Vector2 p_pos = Vector2(theme_cache.normal_style->get_offset().x, size.height - theme_cache.normal_style->get_offset().y - vscroll->get_bound_minimum_size().width);
+					Vector2 p_size = Vector2(size.width - (theme_cache.normal_style->get_content_offset().x + vscroll->get_bound_minimum_size().width) * 2, vscroll->get_bound_minimum_size().width);
+					Vector2 p_pos = Vector2(theme_cache.normal_style->get_content_offset().x, size.height - theme_cache.normal_style->get_content_offset().y - vscroll->get_bound_minimum_size().width);
 
 					draw_style_box(theme_cache.progress_bg_style, Rect2(p_pos, p_size));
 
@@ -2347,7 +2347,7 @@ void RichTextLabel::_notification(int p_what) {
 			int from_line = first_line;
 
 			// Bottom margin for text clipping.
-			float v_limit = theme_cache.normal_style->get_margin(SIDE_BOTTOM);
+			float v_limit = theme_cache.normal_style->get_content_inset(SIDE_BOTTOM);
 
 			int total_height = INT32_MAX;
 			if (to_line && vertical_alignment != VERTICAL_ALIGNMENT_TOP) {

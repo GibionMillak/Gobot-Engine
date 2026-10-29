@@ -454,8 +454,8 @@ void Dialog::_button_visibility_changed(Button *p_button) {
 
 void Dialog::_update_child_rects() {
 	Size2 dlg_size = Vector2(get_size()) / get_content_scale_factor();
-	float h_margins = theme_cache.panel_style->get_margin(SIDE_LEFT) + theme_cache.panel_style->get_margin(SIDE_RIGHT);
-	float v_margins = theme_cache.panel_style->get_margin(SIDE_TOP) + theme_cache.panel_style->get_margin(SIDE_BOTTOM);
+	float h_margins = theme_cache.panel_style->get_content_inset(SIDE_LEFT) + theme_cache.panel_style->get_content_inset(SIDE_RIGHT);
+	float v_margins = theme_cache.panel_style->get_content_inset(SIDE_TOP) + theme_cache.panel_style->get_content_inset(SIDE_BOTTOM);
 
 	// Fill the entire size of the window with the background.
 	_bg_panel->set_position(Point2());
@@ -473,12 +473,12 @@ void Dialog::_update_child_rects() {
 	// Place the buttons from the bottom edge to their minimum required size.
 	Size2 buttons_minsize = _buttons_hbox->get_bound_minimum_size();
 	Size2 buttons_size = Size2(dlg_size.x - h_margins, buttons_minsize.y);
-	Point2 buttons_position = Point2(theme_cache.panel_style->get_margin(SIDE_LEFT), dlg_size.y - theme_cache.panel_style->get_margin(SIDE_BOTTOM) - buttons_size.y);
+	Point2 buttons_position = Point2(theme_cache.panel_style->get_content_inset(SIDE_LEFT), dlg_size.y - theme_cache.panel_style->get_content_inset(SIDE_BOTTOM) - buttons_size.y);
 	_buttons_hbox->set_position(buttons_position);
 	_buttons_hbox->set_size(buttons_size);
 
 	// Place the content from the top to fill the rest of the space (minus the separation).
-	Point2 content_position = Point2(theme_cache.panel_style->get_margin(SIDE_LEFT), theme_cache.panel_style->get_margin(SIDE_TOP));
+	Point2 content_position = Point2(theme_cache.panel_style->get_content_inset(SIDE_LEFT), theme_cache.panel_style->get_content_inset(SIDE_TOP));
 	Size2 content_size = Size2(dlg_size.x - h_margins, dlg_size.y - v_margins - buttons_size.y - theme_cache.buttons_separation);
 
 	for (int i = 0; i < get_child_count(); i++) {

@@ -168,10 +168,10 @@ void ThemeEditorPreview::_draw_picker_overlay() {
 		Rect2 highlight_label_rect = highlight_rect;
 		highlight_label_rect.size = theme_cache.preview_picker_font->get_string_size(highlight_name, HORIZONTAL_ALIGNMENT_LEFT, -1, theme_cache.font_size);
 
-		int margin_top = theme_cache.preview_picker_label->get_margin(SIDE_TOP);
-		int margin_left = theme_cache.preview_picker_label->get_margin(SIDE_LEFT);
-		int margin_bottom = theme_cache.preview_picker_label->get_margin(SIDE_BOTTOM);
-		int margin_right = theme_cache.preview_picker_label->get_margin(SIDE_RIGHT);
+		int margin_top = theme_cache.preview_picker_label->get_content_inset(SIDE_TOP);
+		int margin_left = theme_cache.preview_picker_label->get_content_inset(SIDE_LEFT);
+		int margin_bottom = theme_cache.preview_picker_label->get_content_inset(SIDE_BOTTOM);
+		int margin_right = theme_cache.preview_picker_label->get_content_inset(SIDE_RIGHT);
 		highlight_label_rect.size.x += margin_left + margin_right;
 		highlight_label_rect.size.y += margin_top + margin_bottom;
 

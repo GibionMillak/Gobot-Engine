@@ -348,7 +348,7 @@ void PopupPanel::_update_shadow_offsets() const {
 }
 
 void PopupPanel::_update_child_rects() const {
-	Vector2 cpos(theme_cache.panel_style->get_offset());
+	Vector2 cpos(theme_cache.panel_style->get_content_offset());
 	cpos += Vector2(is_layout_rtl() ? -panel->get_offset(SIDE_RIGHT) : panel->get_offset(SIDE_LEFT), panel->get_offset(SIDE_TOP));
 
 	Vector2 csize = Vector2(get_size()) / get_content_scale_factor() - theme_cache.panel_style->get_minimum_size();

@@ -123,12 +123,12 @@ void CodeEdit::_notification(int p_what) {
 							end = theme_cache.font->get_string_size(line.substr(0, line.rfind(String::chr(0xFFFF))), HORIZONTAL_ALIGNMENT_LEFT, -1, theme_cache.font_size).x;
 						}
 
-						Point2 round_ofs = hint_ofs + theme_cache.code_hint_style->get_offset() + Vector2(0, theme_cache.font->get_ascent(theme_cache.font_size) + font_height * i + yofs);
+						Point2 round_ofs = hint_ofs + theme_cache.code_hint_style->get_content_offset() + Vector2(0, theme_cache.font->get_ascent(theme_cache.font_size) + font_height * i + yofs);
 						round_ofs = round_ofs.round();
 						theme_cache.font->draw_string(ci, round_ofs, line.remove_char(0xFFFF), HORIZONTAL_ALIGNMENT_LEFT, -1, theme_cache.font_size, theme_cache.code_hint_color);
 						if (end > 0) {
 							// Draw an underline for the currently edited function parameter.
-							const Vector2 b = hint_ofs + theme_cache.code_hint_style->get_offset() + Vector2(begin, font_height + font_height * i + yofs);
+							const Vector2 b = hint_ofs + theme_cache.code_hint_style->get_content_offset() + Vector2(begin, font_height + font_height * i + yofs);
 							RS::get_singleton()->canvas_item_add_line(ci, b, b + Vector2(end - begin, 0), theme_cache.code_hint_color, 2);
 
 							// Draw a translucent text highlight as well.
@@ -208,7 +208,7 @@ void CodeEdit::_notification(int p_what) {
 
 					code_completion_rect.position.x = MAX(0, code_completion_rect.position.x);
 
-					theme_cache.code_completion_style->draw(ci, Rect2(code_completion_rect.position - theme_cache.code_completion_style->get_offset(), code_completion_rect.size + theme_cache.code_completion_style->get_minimum_size() + Size2(scroll_width, 0)));
+					theme_cache.code_completion_style->draw(ci, Rect2(code_completion_rect.position - theme_cache.code_completion_style->get_content_offset(), code_completion_rect.size + theme_cache.code_completion_style->get_minimum_size() + Size2(scroll_width, 0)));
 					if (theme_cache.code_completion_background_color.a > 0.01) {
 						RenderingServer::get_singleton()->canvas_item_add_rect(ci, Rect2(code_completion_rect.position, code_completion_rect.size + Size2(scroll_width, 0)), theme_cache.code_completion_background_color);
 					}
@@ -303,8 +303,8 @@ void CodeEdit::_draw_guidelines() {
 	const bool rtl = is_layout_rtl();
 
 	Ref<StyleBox> style = is_editable() ? theme_cache.style_normal : theme_cache.style_readonly;
-	const int xmargin_beg = style->get_margin(SIDE_LEFT) + get_total_gutter_width();
-	const int xmargin_end = size.width - style->get_margin(SIDE_RIGHT) - (is_drawing_minimap() ? get_minimap_width() : 0);
+	const int xmargin_beg = style->get_content_inset(SIDE_LEFT) + get_total_gutter_width();
+	const int xmargin_end = size.width - style->get_content_inset(SIDE_RIGHT) - (is_drawing_minimap() ? get_minimap_width() : 0);
 
 	for (int i = 0; i < line_length_guideline_columns.size(); i++) {
 		const int column_pos = theme_cache.font->get_string_size(String("0").repeat((int)line_length_guideline_columns[i]), HORIZONTAL_ALIGNMENT_LEFT, -1, theme_cache.font_size).x;

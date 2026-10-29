@@ -41,7 +41,7 @@ class StyleBoxLine : public StyleBox {
 	float grow_end = 1.0;
 
 protected:
-	virtual float get_style_margin(Side p_side) const override;
+	virtual float _get_style_inset(Side p_side) const override;
 	static void _bind_methods();
 
 public:

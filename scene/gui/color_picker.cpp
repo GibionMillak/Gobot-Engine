@@ -630,7 +630,7 @@ bool ColorPicker::_select_from_recent_preset_hbc(const Color &p_color) {
 
 void ColorPicker::_reset_sliders_theme() {
 	Ref<StyleBoxFlat> style_box_flat(memnew(StyleBoxFlat));
-	style_box_flat->set_content_margin(SIDE_TOP, 16 * theme_cache.base_scale);
+	style_box_flat->set_padding(SIDE_TOP, 16 * theme_cache.base_scale);
 	style_box_flat->set_bg_color(Color(0.2, 0.23, 0.31).lerp(Color(0, 0, 0, 1), 0.3).clamp());
 
 	for (int i = 0; i < MODE_SLIDER_COUNT; i++) {
@@ -1297,7 +1297,7 @@ void ColorPicker::set_colorize_sliders(bool p_colorize_sliders) {
 		alpha_slider->add_theme_style_override("slider", style_box_empty);
 	} else {
 		Ref<StyleBoxFlat> style_box_flat(memnew(StyleBoxFlat));
-		style_box_flat->set_content_margin(SIDE_TOP, 16 * theme_cache.base_scale);
+		style_box_flat->set_padding(SIDE_TOP, 16 * theme_cache.base_scale);
 		style_box_flat->set_bg_color(Color(0.2, 0.23, 0.31).lerp(Color(0, 0, 0, 1), 0.3).clamp());
 
 		for (int i = 0; i < MODE_SLIDER_COUNT; i++) {
@@ -2431,13 +2431,13 @@ void ColorPickerButton::_notification(int p_what) {
 
 
 		case NOTIFICATION_DRAW: {
-			const Rect2 r = Rect2(theme_cache.normal_style->get_offset(), get_size() - theme_cache.normal_style->get_minimum_size());
+			const Rect2 r = Rect2(theme_cache.normal_style->get_content_offset(), get_size() - theme_cache.normal_style->get_minimum_size());
 			draw_texture_rect(theme_cache.background_icon, r, true);
 			draw_rect(r, color);
 
 			if (color.r > 1 || color.g > 1 || color.b > 1) {
 				// Draw an indicator to denote that the color is "overbright" and can't be displayed accurately in the preview
-				draw_texture(theme_cache.overbright_indicator, theme_cache.normal_style->get_offset());
+				draw_texture(theme_cache.overbright_indicator, theme_cache.normal_style->get_content_offset());
 			}
 		} break;
 
@@ -2582,10 +2582,10 @@ void ColorPresetButton::_notification(int p_what) {
 					sb_flat->set_bg_color(Color(1, 1, 1));
 					sb_flat->draw(get_canvas_item(), r);
 
-					Rect2 bg_texture_rect = r.grow_side(SIDE_LEFT, -sb_flat->get_margin(SIDE_LEFT));
-					bg_texture_rect = bg_texture_rect.grow_side(SIDE_RIGHT, -sb_flat->get_margin(SIDE_RIGHT));
-					bg_texture_rect = bg_texture_rect.grow_side(SIDE_TOP, -sb_flat->get_margin(SIDE_TOP));
-					bg_texture_rect = bg_texture_rect.grow_side(SIDE_BOTTOM, -sb_flat->get_margin(SIDE_BOTTOM));
+					Rect2 bg_texture_rect = r.grow_side(SIDE_LEFT, -sb_flat->get_content_inset(SIDE_LEFT));
+					bg_texture_rect = bg_texture_rect.grow_side(SIDE_RIGHT, -sb_flat->get_content_inset(SIDE_RIGHT));
+					bg_texture_rect = bg_texture_rect.grow_side(SIDE_TOP, -sb_flat->get_content_inset(SIDE_TOP));
+					bg_texture_rect = bg_texture_rect.grow_side(SIDE_BOTTOM, -sb_flat->get_content_inset(SIDE_BOTTOM));
 
 					draw_texture_rect(theme_cache.background_icon, bg_texture_rect, true);
 					sb_flat->set_bg_color(preset_color);

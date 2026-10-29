@@ -37,7 +37,7 @@
 
 #include <cfloat> // FLT_EPSILON
 
-float StyleBoxFlat::get_style_margin(Side p_side) const {
+float StyleBoxFlat::_get_style_inset(Side p_side) const {
 	ERR_FAIL_INDEX_V((int)p_side, 4, 0.0);
 	return border_width[p_side];
 }

@@ -342,7 +342,7 @@
 	</constants>
 	<theme_items>
 		<theme_item name="background" data_type="style" type="StyleBox">
-			Background, outer border, and content margins for the whole table. The default style rounds all four corners.
+			Background, outer border, and padding for the whole table. The default style rounds all four corners.
 		</theme_item>
 		<theme_item name="cell" data_type="style" type="StyleBox">
 			Optional data-cell style above the row background. Content insets are defined by the cell padding constants.
@@ -357,7 +357,7 @@
 			Font size for all cells.
 		</theme_item>
 		<theme_item name="footer" data_type="style" type="StyleBox">
-			Always-visible footer panel with rounded bottom corners. Its content margins inset the controls and row count.
+			Always-visible footer panel with rounded bottom corners. Its padding insets the controls and row count.
 		</theme_item>
 		<theme_item name="gap" data_type="constant" type="int" default="4">
 			Space between rows and columns. Internal gaps are absorbed into merged cells.

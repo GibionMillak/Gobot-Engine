@@ -521,7 +521,7 @@ void MenuBar::_draw_menu_item(int p_index) {
 		}
 	}
 
-	Point2 text_ofs = item_rect.position + Point2(style->get_margin(SIDE_LEFT), style->get_margin(SIDE_TOP));
+	Point2 text_ofs = item_rect.position + Point2(style->get_content_inset(SIDE_LEFT), style->get_content_inset(SIDE_TOP));
 
 	Color font_outline_color = theme_cache.font_outline_color;
 	int outline_size = theme_cache.outline_size;

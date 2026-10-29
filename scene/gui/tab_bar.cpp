@@ -99,14 +99,14 @@ Size2 TabBar::get_minimum_size() const {
 			if (close_visible) {
 				ms.width += theme_cache.button_hl_style->get_minimum_size().width + rb->get_width();
 			} else {
-				ms.width += theme_cache.button_hl_style->get_margin(SIDE_LEFT) + rb->get_width() + theme_cache.h_separation;
+				ms.width += theme_cache.button_hl_style->get_content_inset(SIDE_LEFT) + rb->get_width() + theme_cache.h_separation;
 			}
 
 			ms.height = MAX(ms.height, rb->get_height() + y_margin);
 		}
 
 		if (close_visible) {
-			ms.width += theme_cache.button_hl_style->get_margin(SIDE_LEFT) + theme_cache.close_icon->get_width() + theme_cache.h_separation;
+			ms.width += theme_cache.button_hl_style->get_content_inset(SIDE_LEFT) + theme_cache.close_icon->get_width() + theme_cache.h_separation;
 
 			ms.height = MAX(ms.height, theme_cache.close_icon->get_height() + y_margin);
 		}
@@ -849,7 +849,7 @@ void TabBar::_draw_tab(Ref<StyleBox> &p_tab_style, const Color &p_font_color, co
 		focus_style->draw(ci, sb_rect);
 	}
 
-	p_x += rtl ? tabs[p_index].size_cache - p_tab_style->get_margin(SIDE_LEFT) : p_tab_style->get_margin(SIDE_LEFT);
+	p_x += rtl ? tabs[p_index].size_cache - p_tab_style->get_content_inset(SIDE_LEFT) : p_tab_style->get_content_inset(SIDE_LEFT);
 
 	Size2i sb_ms = p_tab_style->get_minimum_size();
 
@@ -857,7 +857,7 @@ void TabBar::_draw_tab(Ref<StyleBox> &p_tab_style, const Color &p_font_color, co
 	Ref<Texture2D> icon = tabs[p_index].icon;
 	if (icon.is_valid()) {
 		const Size2 icon_size = _get_tab_icon_size(p_index);
-		const Point2 icon_pos = Point2i(rtl ? p_x - icon_size.width : p_x, p_tab_style->get_margin(SIDE_TOP) + ((sb_rect.size.y - sb_ms.y) - icon_size.height) / 2);
+		const Point2 icon_pos = Point2i(rtl ? p_x - icon_size.width : p_x, p_tab_style->get_content_inset(SIDE_TOP) + ((sb_rect.size.y - sb_ms.y) - icon_size.height) / 2);
 		icon->draw_rect(ci, Rect2(icon_pos, icon_size), false, p_icon_color);
 
 		p_x = rtl ? p_x - icon_size.width - theme_cache.h_separation : p_x + icon_size.width + theme_cache.h_separation;
@@ -866,7 +866,7 @@ void TabBar::_draw_tab(Ref<StyleBox> &p_tab_style, const Color &p_font_color, co
 	// Draw the text.
 	if (!tabs[p_index].text.is_empty()) {
 		Point2i text_pos = Point2i(rtl ? p_x - tabs[p_index].size_text : p_x,
-				p_tab_style->get_margin(SIDE_TOP) + ((sb_rect.size.y - sb_ms.y) - tabs[p_index].text_buf->get_size().y) / 2);
+				p_tab_style->get_content_inset(SIDE_TOP) + ((sb_rect.size.y - sb_ms.y) - tabs[p_index].text_buf->get_size().y) / 2);
 
 		if (theme_cache.outline_size > 0 && theme_cache.font_outline_color.a > 0) {
 			tabs[p_index].text_buf->draw_outline(ci, text_pos, theme_cache.outline_size, theme_cache.font_outline_color);
@@ -884,7 +884,7 @@ void TabBar::_draw_tab(Ref<StyleBox> &p_tab_style, const Color &p_font_color, co
 		Rect2 rb_rect;
 		rb_rect.size = style->get_minimum_size() + rb->get_size();
 		rb_rect.position.x = rtl ? p_x - rb_rect.size.width : p_x;
-		rb_rect.position.y = p_tab_style->get_margin(SIDE_TOP) + ((sb_rect.size.y - sb_ms.y) - (rb_rect.size.y)) / 2;
+		rb_rect.position.y = p_tab_style->get_content_inset(SIDE_TOP) + ((sb_rect.size.y - sb_ms.y) - (rb_rect.size.y)) / 2;
 
 		tabs.write[p_index].rb_rect = rb_rect;
 
@@ -896,7 +896,7 @@ void TabBar::_draw_tab(Ref<StyleBox> &p_tab_style, const Color &p_font_color, co
 			}
 		}
 
-		rb->draw(ci, Point2i(rb_rect.position.x + style->get_margin(SIDE_LEFT), rb_rect.position.y + style->get_margin(SIDE_TOP)));
+		rb->draw(ci, Point2i(rb_rect.position.x + style->get_content_inset(SIDE_LEFT), rb_rect.position.y + style->get_content_inset(SIDE_TOP)));
 
 		p_x = rtl ? rb_rect.position.x : rb_rect.position.x + rb_rect.size.width;
 	} else {
@@ -911,7 +911,7 @@ void TabBar::_draw_tab(Ref<StyleBox> &p_tab_style, const Color &p_font_color, co
 		Rect2 cb_rect;
 		cb_rect.size = style->get_minimum_size() + cb->get_size();
 		cb_rect.position.x = rtl ? p_x - cb_rect.size.width : p_x;
-		cb_rect.position.y = p_tab_style->get_margin(SIDE_TOP) + ((sb_rect.size.y - sb_ms.y) - (cb_rect.size.y)) / 2;
+		cb_rect.position.y = p_tab_style->get_content_inset(SIDE_TOP) + ((sb_rect.size.y - sb_ms.y) - (cb_rect.size.y)) / 2;
 
 		tabs.write[p_index].cb_rect = cb_rect;
 
@@ -923,7 +923,7 @@ void TabBar::_draw_tab(Ref<StyleBox> &p_tab_style, const Color &p_font_color, co
 			}
 		}
 
-		cb->draw(ci, Point2i(cb_rect.position.x + style->get_margin(SIDE_LEFT), cb_rect.position.y + style->get_margin(SIDE_TOP)));
+		cb->draw(ci, Point2i(cb_rect.position.x + style->get_content_inset(SIDE_LEFT), cb_rect.position.y + style->get_content_inset(SIDE_TOP)));
 	} else {
 		tabs.write[p_index].cb_rect = Rect2();
 	}
@@ -2171,14 +2171,14 @@ int TabBar::get_tab_width(int p_idx) const {
 		if (close_visible) {
 			x += btn_style->get_minimum_size().width + rb->get_width();
 		} else {
-			x += btn_style->get_margin(SIDE_LEFT) + rb->get_width() + theme_cache.h_separation;
+			x += btn_style->get_content_inset(SIDE_LEFT) + rb->get_width() + theme_cache.h_separation;
 		}
 	}
 
 	if (close_visible) {
 		Ref<StyleBox> btn_style = theme_cache.button_hl_style;
 		Ref<Texture2D> cb = theme_cache.close_icon;
-		x += btn_style->get_margin(SIDE_LEFT) + cb->get_width() + theme_cache.h_separation;
+		x += btn_style->get_content_inset(SIDE_LEFT) + cb->get_width() + theme_cache.h_separation;
 	}
 
 	if (x > style->get_minimum_size().width) {

@@ -2273,7 +2273,7 @@ void Tree::update_item_cache(TreeItem *p_item) const {
 }
 
 int Tree::draw_item(const Point2i &p_pos, const Point2 &p_draw_ofs, const Size2 &p_draw_size, TreeItem *p_item, int &r_self_height, const RID &p_ci) {
-	const real_t bottom_margin = theme_cache.panel_style->get_margin(SIDE_BOTTOM); // Extra stylebox space below the content
+	const real_t bottom_margin = theme_cache.panel_style->get_content_inset(SIDE_BOTTOM); // Extra stylebox space below the content
 	const real_t draw_height = p_draw_size.height + bottom_margin; // Visible height including bottom margin
 
 	// Cull item if it's beyond the bottom of the visible area.
@@ -2664,7 +2664,7 @@ int Tree::draw_item(const Point2i &p_pos, const Point2 &p_draw_ofs, const Size2 
 							theme_cache.custom_button->draw(ci, ir);
 						}
 						ir.size -= theme_cache.custom_button->get_minimum_size();
-						ir.position += theme_cache.custom_button->get_offset();
+						ir.position += theme_cache.custom_button->get_content_offset();
 					}
 
 					draw_item_rect(p_item->cells[i], ir, cell_color, icon_col, outline_size, font_outline_color, ci);
@@ -2698,7 +2698,7 @@ int Tree::draw_item(const Point2i &p_pos, const Point2 &p_draw_ofs, const Size2 
 				}
 
 				button_ofs.y += (label_h - button_size.height) / 2;
-				button_ofs += theme_cache.button_pressed->get_offset();
+				button_ofs += theme_cache.button_pressed->get_content_offset();
 
 				button_ofs = convert_rtl_position(button_ofs, button_texture->get_width());
 				button_texture->draw(ci, button_ofs, p_item->cells[i].buttons[j].disabled ? Color(1, 1, 1, 0.5) : p_item->cells[i].buttons[j].color);
@@ -3067,7 +3067,7 @@ Rect2 Tree::search_item_rect(TreeItem *p_from, TreeItem *p_item) {
 
 void Tree::_range_click_timeout() {
 	if (range_item_last && !range_drag_enabled && Input::get_singleton()->is_mouse_button_pressed(MouseButton::LEFT)) {
-		Point2 pos = get_local_mouse_position() - theme_cache.panel_style->get_offset();
+		Point2 pos = get_local_mouse_position() - theme_cache.panel_style->get_content_offset();
 		if (show_column_titles) {
 			pos.y -= _get_title_button_height();
 
@@ -3305,7 +3305,7 @@ int Tree::propagate_mouse_event(const Point2i &p_pos, int x_ofs, int y_ofs, int 
 					popup_menu->set_size(Size2(col_width, 0));
 
 					int pos_x = 0;
-					Point2 panel_ofs = theme_cache.panel_style->get_offset();
+					Point2 panel_ofs = theme_cache.panel_style->get_content_offset();
 					if (is_layout_rtl()) {
 						pos_x = get_size().width - col_ofs - panel_ofs.x - popup_menu->get_size().width;
 					} else {
@@ -3817,9 +3817,9 @@ Rect2 Tree::_get_scrollbar_layout_rect() const {
 	const Ref<StyleBox> background = theme_cache.panel_style;
 
 	// This is the background stylebox's content rect.
-	const real_t width = control_size.x - background->get_margin(SIDE_LEFT) - background->get_margin(SIDE_RIGHT);
-	const real_t height = control_size.y - background->get_margin(SIDE_TOP) - background->get_margin(SIDE_BOTTOM);
-	const Rect2 content_rect = Rect2(background->get_offset(), Size2(width, height));
+	const real_t width = control_size.x - background->get_content_inset(SIDE_LEFT) - background->get_content_inset(SIDE_RIGHT);
+	const real_t height = control_size.y - background->get_content_inset(SIDE_TOP) - background->get_content_inset(SIDE_BOTTOM);
+	const Rect2 content_rect = Rect2(background->get_content_offset(), Size2(width, height));
 
 	// Use the stylebox's margins by default. Can be overridden by `scrollbar_margin_*`.
 	const real_t top = theme_cache.scrollbar_margin_top < 0 ? content_rect.get_position().y : theme_cache.scrollbar_margin_top;
@@ -3835,9 +3835,9 @@ Rect2 Tree::_get_content_rect() const {
 	const Ref<StyleBox> background = theme_cache.panel_style;
 
 	// This is the background stylebox's content rect.
-	const real_t width = control_size.x - background->get_margin(SIDE_LEFT) - background->get_margin(SIDE_RIGHT);
-	const real_t height = control_size.y - background->get_margin(SIDE_TOP) - background->get_margin(SIDE_BOTTOM);
-	const Rect2 content_rect = Rect2(background->get_offset(), Size2(width, height));
+	const real_t width = control_size.x - background->get_content_inset(SIDE_LEFT) - background->get_content_inset(SIDE_RIGHT);
+	const real_t height = control_size.y - background->get_content_inset(SIDE_TOP) - background->get_content_inset(SIDE_BOTTOM);
+	const Rect2 content_rect = Rect2(background->get_content_offset(), Size2(width, height));
 
 	// Scrollbars won't affect Tree's content rect if they're not visible or placed inside the stylebox margin area.
 	const real_t v_size = v_scroll->is_visible() ? (v_scroll->get_bound_minimum_size().x + theme_cache.scrollbar_h_separation) : 0;
@@ -4187,7 +4187,7 @@ void Tree::gui_input(const Ref<InputEvent> &p_event) {
 				if (rtl) {
 					pos.x = get_size().width - pos.x - 1;
 				}
-				pos -= theme_cache.panel_style->get_offset();
+				pos -= theme_cache.panel_style->get_content_offset();
 				if (show_column_titles) {
 					pos.y -= _get_title_button_height();
 
@@ -4289,7 +4289,7 @@ void Tree::gui_input(const Ref<InputEvent> &p_event) {
 				if (rtl) {
 					pos.x = get_size().width - pos.x - 1;
 				}
-				pos -= bg->get_offset();
+				pos -= bg->get_content_offset();
 				cache.click_type = Cache::CLICK_NONE;
 				if (show_column_titles) {
 					pos.y -= _get_title_button_height();
@@ -4434,7 +4434,7 @@ void Tree::_determine_hovered_item() {
 	if (rtl) {
 		pos.x = get_size().width - pos.x - 1;
 	}
-	pos -= theme_cache.panel_style->get_offset();
+	pos -= theme_cache.panel_style->get_content_offset();
 
 	bool old_header_row = cache.hover_header_row;
 	int old_header_column = cache.hover_header_column;
@@ -4741,9 +4741,9 @@ void Tree::update_scrollbars() {
 	const Ref<StyleBox> background = theme_cache.panel_style;
 
 	// This is the background stylebox's content rect.
-	const real_t width = control_size.x - background->get_margin(SIDE_LEFT) - background->get_margin(SIDE_RIGHT);
-	const real_t height = control_size.y - background->get_margin(SIDE_TOP) - background->get_margin(SIDE_BOTTOM);
-	const Rect2 content_rect = Rect2(background->get_offset(), Size2(width, height));
+	const real_t width = control_size.x - background->get_content_inset(SIDE_LEFT) - background->get_content_inset(SIDE_RIGHT);
+	const real_t height = control_size.y - background->get_content_inset(SIDE_TOP) - background->get_content_inset(SIDE_BOTTOM);
+	const Rect2 content_rect = Rect2(background->get_content_offset(), Size2(width, height));
 
 	const Size2 hmin = h_scroll->get_bound_minimum_size();
 	const Size2 vmin = v_scroll->get_bound_minimum_size();
@@ -4946,7 +4946,7 @@ void Tree::_notification(int p_what) {
 			draw_size.y -= tbh;
 
 			const real_t clip_top = show_column_titles ? draw_ofs.y : 0.0f; // Start clipping below headers when they are visible
-			const real_t bottom_margin = theme_cache.panel_style->get_margin(SIDE_BOTTOM);
+			const real_t bottom_margin = theme_cache.panel_style->get_content_inset(SIDE_BOTTOM);
 			const real_t clip_bottom = draw_ofs.y + draw_size.y + bottom_margin; // End clip after the bottom margin
 			const Rect2 main_clip_rect = Rect2(0.0f, clip_top, get_size().x, clip_bottom - clip_top);
 			RenderingServer *rendering_server = RenderingServer::get_singleton();
@@ -5209,10 +5209,10 @@ void Tree::_notification(int p_what) {
 
 			if (show_column_titles) {
 				// Title buttons.
-				int ofs2 = theme_cache.panel_style->get_margin(SIDE_LEFT);
+				int ofs2 = theme_cache.panel_style->get_content_inset(SIDE_LEFT);
 				for (int i = 0; i < columns.size(); i++) {
 					Ref<StyleBox> sb = (cache.click_type == Cache::CLICK_TITLE && cache.click_index == i) ? theme_cache.title_button_pressed : ((cache.hover_header_row && cache.hover_header_column == i) ? theme_cache.title_button_hover : theme_cache.title_button);
-					Rect2 tbrect = Rect2(ofs2 - theme_cache.offset.x, bg->get_margin(SIDE_TOP), get_column_width(i), tbh);
+					Rect2 tbrect = Rect2(ofs2 - theme_cache.offset.x, bg->get_content_inset(SIDE_TOP), get_column_width(i), tbh);
 					if (cache.rtl) {
 						tbrect.position.x = get_size().width - tbrect.size.x - tbrect.position.x;
 					}
@@ -5226,12 +5226,12 @@ void Tree::_notification(int p_what) {
 					Vector2 text_pos = Point2i(tbrect.position.x, tbrect.position.y + (tbrect.size.height - columns[i].text_buf->get_size().y) / 2);
 					switch (columns[i].title_alignment) {
 						case HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT: {
-							text_pos.x += cache.rtl ? tbrect.size.width - (sb->get_offset().x + columns[i].text_buf->get_size().x) : sb->get_offset().x;
+							text_pos.x += cache.rtl ? tbrect.size.width - (sb->get_content_offset().x + columns[i].text_buf->get_size().x) : sb->get_content_offset().x;
 							break;
 						}
 
 						case HorizontalAlignment::HORIZONTAL_ALIGNMENT_RIGHT: {
-							text_pos.x += cache.rtl ? sb->get_offset().x : tbrect.size.width - (sb->get_offset().x + columns[i].text_buf->get_size().x);
+							text_pos.x += cache.rtl ? sb->get_content_offset().x : tbrect.size.width - (sb->get_content_offset().x + columns[i].text_buf->get_size().x);
 							break;
 						}
 
@@ -5725,7 +5725,7 @@ int Tree::get_column_minimum_width(int p_column) const {
 
 		// Check if the visible title of the column is wider.
 		if (show_column_titles) {
-			const float padding = theme_cache.title_button->get_margin(SIDE_LEFT) + theme_cache.title_button->get_margin(SIDE_RIGHT);
+			const float padding = theme_cache.title_button->get_content_inset(SIDE_LEFT) + theme_cache.title_button->get_content_inset(SIDE_RIGHT);
 			min_width = MAX(theme_cache.font->get_string_size(columns[p_column].xl_title, HORIZONTAL_ALIGNMENT_LEFT, -1, theme_cache.font_size).width + padding, min_width);
 		}
 
@@ -5980,7 +5980,7 @@ Rect2 Tree::get_item_rect(TreeItem *p_item, int p_column, int p_button) const {
 	int ofs = get_item_offset(p_item);
 	int height = compute_item_height(p_item) + theme_cache.v_separation;
 	Rect2 r;
-	r.position.y = ofs - theme_cache.offset.y + theme_cache.panel_style->get_offset().y;
+	r.position.y = ofs - theme_cache.offset.y + theme_cache.panel_style->get_content_offset().y;
 	r.size.height = height;
 	bool rtl = is_layout_rtl();
 	const Rect2 content_rect = _get_content_rect();
@@ -5993,7 +5993,7 @@ Rect2 Tree::get_item_rect(TreeItem *p_item, int p_column, int p_button) const {
 		for (int i = 0; i < p_column; i++) {
 			accum += get_column_width(i);
 		}
-		r.position.x = (rtl) ? get_size().x - (accum - theme_cache.offset.x) - get_column_width(p_column) - theme_cache.panel_style->get_margin(SIDE_LEFT) : accum - theme_cache.offset.x + theme_cache.panel_style->get_margin(SIDE_LEFT);
+		r.position.x = (rtl) ? get_size().x - (accum - theme_cache.offset.x) - get_column_width(p_column) - theme_cache.panel_style->get_content_inset(SIDE_LEFT) : accum - theme_cache.offset.x + theme_cache.panel_style->get_content_inset(SIDE_LEFT);
 		r.size.x = get_column_width(p_column);
 		if (p_button != -1) {
 			// RTL direction support for button rect is different due to buttons not
@@ -6533,7 +6533,7 @@ void Tree::_find_button_at_pos(const Point2 &p_pos, TreeItem *&r_item, int &r_co
 	if (cache.rtl) {
 		pos.x = get_size().width - pos.x - 1;
 	}
-	Point2 margin_offset = theme_cache.panel_style->get_offset();
+	Point2 margin_offset = theme_cache.panel_style->get_content_offset();
 	pos -= margin_offset;
 	pos.y -= _get_title_button_height();
 	if (pos.y + margin_offset.y < 0) {
@@ -6659,7 +6659,7 @@ int Tree::get_column_at_position(const Point2 &p_pos) const {
 	if (is_layout_rtl()) {
 		pos.x = get_size().width - pos.x - 1;
 	}
-	Point2 margin_offset = theme_cache.panel_style->get_offset();
+	Point2 margin_offset = theme_cache.panel_style->get_content_offset();
 	pos -= margin_offset;
 	pos.y -= _get_title_button_height();
 	if (pos.y + margin_offset.y < 0) {
@@ -6691,7 +6691,7 @@ int Tree::get_drop_section_at_position(const Point2 &p_pos) const {
 	if (is_layout_rtl()) {
 		pos.x = get_size().width - pos.x - 1;
 	}
-	Point2 margin_offset = theme_cache.panel_style->get_offset();
+	Point2 margin_offset = theme_cache.panel_style->get_content_offset();
 	pos -= margin_offset;
 	pos.y -= _get_title_button_height();
 	if (pos.y + margin_offset.y < 0) {
@@ -6750,7 +6750,7 @@ TreeItem *Tree::get_item_at_position(const Point2 &p_pos) const {
 	if (is_layout_rtl()) {
 		pos.x = get_size().width - pos.x - 1;
 	}
-	Point2 margin_offset = theme_cache.panel_style->get_offset();
+	Point2 margin_offset = theme_cache.panel_style->get_content_offset();
 	pos -= margin_offset;
 	pos.y -= _get_title_button_height();
 	if (pos.y + margin_offset.y < 0) {
@@ -6788,7 +6788,7 @@ int Tree::get_button_id_at_position(const Point2 &p_pos) const {
 }
 
 String Tree::get_tooltip(const Point2 &p_pos) const {
-	Point2 pos = p_pos - theme_cache.panel_style->get_offset();
+	Point2 pos = p_pos - theme_cache.panel_style->get_content_offset();
 	pos.y -= _get_title_button_height();
 
 	// `pos.y` less than 0 indicates we're in the header.
@@ -6798,7 +6798,7 @@ String Tree::get_tooltip(const Point2 &p_pos) const {
 		if (is_layout_rtl()) {
 			pos_x = get_size().width - pos_x;
 		}
-		pos_x -= theme_cache.panel_style->get_offset().x;
+		pos_x -= theme_cache.panel_style->get_content_offset().x;
 		if (h_scroll->is_visible_in_tree()) {
 			pos_x += h_scroll->get_value();
 		}
@@ -6844,7 +6844,7 @@ String Tree::get_tooltip(const Point2 &p_pos) const {
 }
 
 Node::AutoTranslateMode Tree::get_tooltip_auto_translate_mode_at(const Point2 &p_at) const {
-	Point2 pos = p_at - theme_cache.panel_style->get_offset();
+	Point2 pos = p_at - theme_cache.panel_style->get_content_offset();
 	pos.y -= _get_title_button_height();
 
 	// `pos.y` less than 0 indicates we're in the header.

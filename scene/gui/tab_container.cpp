@@ -53,7 +53,7 @@ TabContainer::CachedTab *TabContainer::get_pending_tab(int p_idx) const {
 int TabContainer::_get_internal_container_height() const {
 	int height = 0;
 	if (tabs_visible && (get_tab_count() > 0 || internal_container->get_child_count() != 1)) {
-		height = internal_container->get_bound_minimum_size().height + theme_cache.tabbar_style->get_margin(SIDE_TOP) + theme_cache.tabbar_style->get_margin(SIDE_BOTTOM);
+		height = internal_container->get_bound_minimum_size().height + theme_cache.tabbar_style->get_content_inset(SIDE_TOP) + theme_cache.tabbar_style->get_content_inset(SIDE_BOTTOM);
 	}
 
 	return height;
@@ -263,8 +263,8 @@ void TabContainer::_repaint() {
 }
 
 void TabContainer::_repaint_internal() {
-	float top_margin = theme_cache.tabbar_style->get_margin(SIDE_TOP);
-	float bottom_margin = theme_cache.tabbar_style->get_margin(SIDE_BOTTOM);
+	float top_margin = theme_cache.tabbar_style->get_content_inset(SIDE_TOP);
+	float bottom_margin = theme_cache.tabbar_style->get_content_inset(SIDE_BOTTOM);
 
 	// Move the TabBar to the top or bottom.
 	// Don't change the left and right offsets since the TabBar will resize and may change tab offset.
@@ -299,10 +299,10 @@ void TabContainer::_repaint_internal() {
 			}
 		}
 
-		current_control->set_offset(SIDE_TOP, current_control->get_offset(SIDE_TOP) + theme_cache.panel_style->get_margin(SIDE_TOP));
-		current_control->set_offset(SIDE_LEFT, current_control->get_offset(SIDE_LEFT) + theme_cache.panel_style->get_margin(SIDE_LEFT));
-		current_control->set_offset(SIDE_RIGHT, current_control->get_offset(SIDE_RIGHT) - theme_cache.panel_style->get_margin(SIDE_RIGHT));
-		current_control->set_offset(SIDE_BOTTOM, current_control->get_offset(SIDE_BOTTOM) - theme_cache.panel_style->get_margin(SIDE_BOTTOM));
+		current_control->set_offset(SIDE_TOP, current_control->get_offset(SIDE_TOP) + theme_cache.panel_style->get_content_inset(SIDE_TOP));
+		current_control->set_offset(SIDE_LEFT, current_control->get_offset(SIDE_LEFT) + theme_cache.panel_style->get_content_inset(SIDE_LEFT));
+		current_control->set_offset(SIDE_RIGHT, current_control->get_offset(SIDE_RIGHT) - theme_cache.panel_style->get_content_inset(SIDE_RIGHT));
+		current_control->set_offset(SIDE_BOTTOM, current_control->get_offset(SIDE_BOTTOM) - theme_cache.panel_style->get_content_inset(SIDE_BOTTOM));
 	}
 	updating_visibility = false;
 
@@ -317,8 +317,8 @@ void TabContainer::_update_margins() {
 	// Directly check for validity, to avoid errors when quitting.
 	bool has_popup = popup_obj_id.is_valid();
 
-	int left_margin = theme_cache.tabbar_style->get_margin(SIDE_LEFT);
-	int right_margin = theme_cache.tabbar_style->get_margin(SIDE_RIGHT);
+	int left_margin = theme_cache.tabbar_style->get_content_inset(SIDE_LEFT);
+	int right_margin = theme_cache.tabbar_style->get_content_inset(SIDE_RIGHT);
 
 	if (is_layout_rtl()) {
 		SWAP(left_margin, right_margin);
@@ -994,8 +994,8 @@ Size2 TabContainer::_get_minimum_size(bool p_use_desired_sizes) const {
 
 	if (tabs_visible && _is_tab_bar_owned()) {
 		ms = p_use_desired_sizes ? internal_container->get_bound_desired_size() : internal_container->get_minimum_size();
-		ms.width += theme_cache.tabbar_style->get_margin(SIDE_LEFT) + theme_cache.tabbar_style->get_margin(SIDE_RIGHT);
-		ms.height += theme_cache.tabbar_style->get_margin(SIDE_TOP) + theme_cache.tabbar_style->get_margin(SIDE_BOTTOM);
+		ms.width += theme_cache.tabbar_style->get_content_inset(SIDE_LEFT) + theme_cache.tabbar_style->get_content_inset(SIDE_RIGHT);
+		ms.height += theme_cache.tabbar_style->get_content_inset(SIDE_TOP) + theme_cache.tabbar_style->get_content_inset(SIDE_BOTTOM);
 
 		if (get_popup()) {
 			ms.width += p_use_desired_sizes ? popup_button->get_bound_desired_size().x : popup_button->get_minimum_size().x;
@@ -1050,7 +1050,7 @@ Size2 TabContainer::get_inner_combined_maximum_size() const {
 		ms.height -= tab_bar_ms.height;
 
 		if (theme_cache.tabbar_style.is_valid()) {
-			ms.height -= theme_cache.tabbar_style->get_margin(SIDE_TOP) + theme_cache.tabbar_style->get_margin(SIDE_BOTTOM);
+			ms.height -= theme_cache.tabbar_style->get_content_inset(SIDE_TOP) + theme_cache.tabbar_style->get_content_inset(SIDE_BOTTOM);
 		}
 	}
 
@@ -1069,7 +1069,7 @@ void TabContainer::_maximum_size_changed() {
 	Size2 ms = get_combined_maximum_size();
 	if (theme_cache.tabbar_style.is_valid()) {
 		if (ms.width >= 0) {
-			ms.width -= theme_cache.tabbar_style->get_margin(SIDE_LEFT) + theme_cache.tabbar_style->get_margin(SIDE_RIGHT);
+			ms.width -= theme_cache.tabbar_style->get_content_inset(SIDE_LEFT) + theme_cache.tabbar_style->get_content_inset(SIDE_RIGHT);
 			if (get_popup() && popup_button) {
 				ms.width -= popup_button->get_minimum_size().x;
 			}
@@ -1080,7 +1080,7 @@ void TabContainer::_maximum_size_changed() {
 			ms.width = MAX(ms.width, 0);
 		}
 		if (ms.height >= 0) {
-			ms.height -= theme_cache.tabbar_style->get_margin(SIDE_TOP) + theme_cache.tabbar_style->get_margin(SIDE_BOTTOM);
+			ms.height -= theme_cache.tabbar_style->get_content_inset(SIDE_TOP) + theme_cache.tabbar_style->get_content_inset(SIDE_BOTTOM);
 			ms.height = MAX(ms.height, 0);
 		}
 	}

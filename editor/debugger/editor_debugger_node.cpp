@@ -517,11 +517,11 @@ void EditorDebuggerNode::_update_errors(bool p_force) {
 }
 
 void EditorDebuggerNode::_update_margins() {
-	Ref<StyleBox> dock_content_margins = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("DockContent"), EditorStringName(EditorStyles));
-	add_theme_constant_override("margin_top", -dock_content_margins->get_margin(SIDE_TOP));
-	add_theme_constant_override("margin_left", -dock_content_margins->get_margin(SIDE_LEFT));
-	add_theme_constant_override("margin_right", -dock_content_margins->get_margin(SIDE_RIGHT));
-	add_theme_constant_override("margin_bottom", -dock_content_margins->get_margin(SIDE_BOTTOM));
+	Ref<StyleBox> dock_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("DockContent"), EditorStringName(EditorStyles));
+	add_theme_constant_override("margin_top", -dock_style->get_content_inset(SIDE_TOP));
+	add_theme_constant_override("margin_left", -dock_style->get_content_inset(SIDE_LEFT));
+	add_theme_constant_override("margin_right", -dock_style->get_content_inset(SIDE_RIGHT));
+	add_theme_constant_override("margin_bottom", -dock_style->get_content_inset(SIDE_BOTTOM));
 }
 
 void EditorDebuggerNode::_debugger_stopped(int p_id) {

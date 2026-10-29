@@ -137,7 +137,7 @@ void ScrollBar::gui_input(const Ref<InputEvent> &p_event) {
 				return;
 			}
 
-			ofs -= decr_len + theme_cache.scroll_style->get_margin(orientation == VERTICAL ? SIDE_TOP : SIDE_LEFT);
+			ofs -= decr_len + theme_cache.scroll_style->get_content_inset(orientation == VERTICAL ? SIDE_TOP : SIDE_LEFT);
 
 			if (ofs < grabber_ofs) {
 				if (scrolling) {
@@ -207,7 +207,7 @@ void ScrollBar::gui_input(const Ref<InputEvent> &p_event) {
 			Size2 decr_size = _fit_icon_size(decr->get_size()).round();
 
 			double decr_len = orientation == VERTICAL ? decr_size.height : decr_size.width;
-			ofs -= decr_len + theme_cache.scroll_style->get_margin(orientation == VERTICAL ? SIDE_TOP : SIDE_LEFT);
+			ofs -= decr_len + theme_cache.scroll_style->get_content_inset(orientation == VERTICAL ? SIDE_TOP : SIDE_LEFT);
 
 			double diff = (ofs - drag.pos_at_click) / get_area_size();
 
@@ -366,13 +366,13 @@ void ScrollBar::_notification(int p_what) {
 				grabber_rect.size.width = get_grabber_size();
 				grabber_rect.size.height = get_size().height - padding_top - padding_bottom;
 				grabber_rect.position.y = padding_top;
-				grabber_rect.position.x = get_grabber_offset() + decr_size.width + theme_cache.scroll_style->get_margin(SIDE_LEFT);
+				grabber_rect.position.x = get_grabber_offset() + decr_size.width + theme_cache.scroll_style->get_content_inset(SIDE_LEFT);
 			} else {
 				int padding_left = MAX(theme_cache.padding_left, 0);
 				int padding_right = MAX(theme_cache.padding_right, 0);
 				grabber_rect.size.width = get_size().width - padding_left - padding_right;
 				grabber_rect.size.height = get_grabber_size();
-				grabber_rect.position.y = get_grabber_offset() + decr_size.height + theme_cache.scroll_style->get_margin(SIDE_TOP);
+				grabber_rect.position.y = get_grabber_offset() + decr_size.height + theme_cache.scroll_style->get_content_inset(SIDE_TOP);
 				grabber_rect.position.x = padding_left;
 			}
 

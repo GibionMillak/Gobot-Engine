@@ -237,7 +237,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_config.widget_margin = Vector2(EDSCALE_RND(p_config.increased_margin + 2), EDSCALE_RND(p_config.increased_margin + 1));
 
 			p_config.button_style = p_config.base_style->duplicate();
-			p_config.button_style->set_content_margin_individual(p_config.widget_margin.x, p_config.widget_margin.y, p_config.widget_margin.x, p_config.widget_margin.y);
+			p_config.button_style->set_padding_individual(p_config.widget_margin.x, p_config.widget_margin.y, p_config.widget_margin.x, p_config.widget_margin.y);
 			p_config.button_style->set_bg_color(p_config.dark_color_1);
 			p_config.button_style->set_border_color(p_config.dark_color_2);
 
@@ -261,7 +261,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 		// Windows and popups.
 		{
 			p_config.popup_style = p_config.base_style->duplicate();
-			p_config.popup_style->set_content_margin_all(p_config.popup_margin);
+			p_config.popup_style->set_padding_all(p_config.popup_margin);
 			p_config.popup_style->set_border_color(p_config.contrast_color_1);
 			p_config.popup_style->set_shadow_color(p_config.shadow_color);
 			p_config.popup_style->set_shadow_size(EDSCALE_RND(4));
@@ -270,7 +270,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_config.popup_style->set_corner_radius_all(0);
 
 			p_config.popup_border_style = p_config.popup_style->duplicate();
-			p_config.popup_border_style->set_content_margin_all(2 + EDSCALE_RND(p_config.base_margin * 1.5));
+			p_config.popup_border_style->set_padding_all(2 + EDSCALE_RND(p_config.base_margin * 1.5));
 			// Always display a border for popups like PopupMenus so they can be distinguished from their background.
 			p_config.popup_border_style->set_border_width_all(MAX(EDSCALE_RND(1), p_config.border_width));
 			p_config.popup_border_style->set_border_color(p_config.dark_color_2);
@@ -284,7 +284,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_config.dialog_style = p_config.base_style->duplicate();
 			p_config.dialog_style->set_corner_radius(CORNER_TOP_LEFT, 0);
 			p_config.dialog_style->set_corner_radius(CORNER_TOP_RIGHT, 0);
-			p_config.dialog_style->set_content_margin_all(p_config.popup_margin);
+			p_config.dialog_style->set_padding_all(p_config.popup_margin);
 			// Prevent visible line between window title and body.
 			p_config.dialog_style->set_expand_margin(SIDE_BOTTOM, EDSCALE_RND(2));
 		}
@@ -305,7 +305,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_config.content_panel_style->set_border_width(Side::SIDE_TOP, 0);
 			p_config.content_panel_style->set_corner_radius(CORNER_TOP_LEFT, 0);
 			p_config.content_panel_style->set_corner_radius(CORNER_TOP_RIGHT, 0);
-			p_config.content_panel_style->set_content_margin_individual(content_panel_margin, EDSCALE_RND(2) + content_panel_margin, content_panel_margin, content_panel_margin);
+			p_config.content_panel_style->set_padding_individual(content_panel_margin, EDSCALE_RND(2) + content_panel_margin, content_panel_margin, content_panel_margin);
 
 			p_config.tab_container_style = p_config.content_panel_style;
 
@@ -474,11 +474,11 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			Ref<StyleBoxFlat> option_button_pressed_style = p_config.button_style_pressed->duplicate();
 			Ref<StyleBoxFlat> option_button_disabled_style = p_config.button_style_disabled->duplicate();
 
-			option_button_focus_style->set_content_margin(SIDE_RIGHT, EDSCALE_RND(4));
-			option_button_normal_style->set_content_margin(SIDE_RIGHT, EDSCALE_RND(4));
-			option_button_hover_style->set_content_margin(SIDE_RIGHT, EDSCALE_RND(4));
-			option_button_pressed_style->set_content_margin(SIDE_RIGHT, EDSCALE_RND(4));
-			option_button_disabled_style->set_content_margin(SIDE_RIGHT, EDSCALE_RND(4));
+			option_button_focus_style->set_padding(SIDE_RIGHT, EDSCALE_RND(4));
+			option_button_normal_style->set_padding(SIDE_RIGHT, EDSCALE_RND(4));
+			option_button_hover_style->set_padding(SIDE_RIGHT, EDSCALE_RND(4));
+			option_button_pressed_style->set_padding(SIDE_RIGHT, EDSCALE_RND(4));
+			option_button_disabled_style->set_padding(SIDE_RIGHT, EDSCALE_RND(4));
 
 			p_theme->set_stylebox("focus", "OptionButton", option_button_focus_style);
 			p_theme->set_stylebox(CoreStringName(normal), "OptionButton", p_config.button_style);
@@ -756,7 +756,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		// ItemList.
 		{
 			Ref<StyleBoxFlat> style_itemlist_bg = p_config.base_style->duplicate();
-			style_itemlist_bg->set_content_margin_all(p_config.separation_margin);
+			style_itemlist_bg->set_padding_all(p_config.separation_margin);
 			style_itemlist_bg->set_bg_color(p_config.dark_color_1);
 
 			style_itemlist_bg->set_border_width_all(p_config.border_width);
@@ -848,10 +848,10 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		// When using a border width greater than 0, visually line up the left of the selected tab with the underlying panel.
 		style_tab_base->set_expand_margin(SIDE_LEFT, -p_config.border_width);
 
-		style_tab_base->set_content_margin(SIDE_LEFT, p_config.widget_margin.x + EDSCALE_RND(5));
-		style_tab_base->set_content_margin(SIDE_RIGHT, p_config.widget_margin.x + EDSCALE_RND(5));
-		style_tab_base->set_content_margin(SIDE_BOTTOM, p_config.widget_margin.y);
-		style_tab_base->set_content_margin(SIDE_TOP, p_config.widget_margin.y);
+		style_tab_base->set_padding(SIDE_LEFT, p_config.widget_margin.x + EDSCALE_RND(5));
+		style_tab_base->set_padding(SIDE_RIGHT, p_config.widget_margin.x + EDSCALE_RND(5));
+		style_tab_base->set_padding(SIDE_BOTTOM, p_config.widget_margin.y);
+		style_tab_base->set_padding(SIDE_TOP, p_config.widget_margin.y);
 
 		Ref<StyleBoxFlat> style_tab_selected = style_tab_base->duplicate();
 
@@ -1141,7 +1141,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			// Use 1 pixel for the sides, since if 0 is used, the highlight of hovered items is drawn
 			// on top of the popup border. This causes a 'gap' in the panel border when an item is highlighted,
 			// and it looks weird. 1px solves this.
-			style_popup_menu->set_content_margin_individual(EDSCALE_RND(1), EDSCALE_RND(2), EDSCALE_RND(1), EDSCALE_RND(2));
+			style_popup_menu->set_padding_individual(EDSCALE_RND(1), EDSCALE_RND(2), EDSCALE_RND(1), EDSCALE_RND(2));
 			p_theme->set_stylebox(SceneStringName(panel), "PopupMenu", style_popup_menu);
 
 			Ref<StyleBoxFlat> style_menu_hover = p_config.button_style_hover->duplicate();
@@ -1303,8 +1303,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 
 		p_theme->set_type_variation("LabelNoMarginVertical", "Label");
 		Ref<StyleBoxEmpty> no_v_margin_style = p_config.base_empty_style->duplicate();
-		no_v_margin_style->set_content_margin(SIDE_TOP, 0);
-		no_v_margin_style->set_content_margin(SIDE_BOTTOM, 0);
+		no_v_margin_style->set_padding(SIDE_TOP, 0);
+		no_v_margin_style->set_padding(SIDE_BOTTOM, 0);
 		p_theme->set_stylebox(CoreStringName(normal), "LabelNoMarginVertical", no_v_margin_style);
 	}
 
@@ -1556,7 +1556,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		{
 			Ref<StyleBox> vs_reroute_panel_style = EditorThemeManager::make_empty_stylebox();
 			Ref<StyleBox> vs_reroute_titlebar_style = vs_reroute_panel_style->duplicate();
-			vs_reroute_titlebar_style->set_content_margin_all(EDSCALE_RND(16));
+			vs_reroute_titlebar_style->set_padding_all(EDSCALE_RND(16));
 			p_theme->set_stylebox(SceneStringName(panel), "VSRerouteNode", vs_reroute_panel_style);
 			p_theme->set_stylebox("panel_selected", "VSRerouteNode", vs_reroute_panel_style);
 			p_theme->set_stylebox("titlebar", "VSRerouteNode", vs_reroute_titlebar_style);
@@ -1693,7 +1693,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 
 		// This stylebox is used in 3d and 2d viewports (no borders).
 		Ref<StyleBoxFlat> style_content_panel_vp = p_config.content_panel_style->duplicate();
-		style_content_panel_vp->set_content_margin_individual(p_config.border_width * 2, EDSCALE_RND(p_config.base_margin), p_config.border_width * 2, p_config.border_width * 2);
+		style_content_panel_vp->set_padding_individual(p_config.border_width * 2, EDSCALE_RND(p_config.base_margin), p_config.border_width * 2, p_config.border_width * 2);
 		p_theme->set_stylebox("Content", EditorStringName(EditorStyles), style_content_panel_vp);
 
 		// 3D/Spatial editor.
@@ -1740,8 +1740,8 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		menu_transparent_style->set_border_width_all(0);
 		Ref<StyleBoxFlat> menu_button_hover = p_config.button_style_hover->duplicate();
 		for (int i = 0; i < 4; i++) {
-			menu_transparent_style->set_content_margin((Side)i, p_config.button_style->get_margin((Side)i));
-			menu_button_hover->set_content_margin((Side)i, p_config.button_style_hover->get_content_margin((Side)i));
+			menu_transparent_style->set_padding((Side)i, p_config.button_style->get_content_inset((Side)i));
+			menu_button_hover->set_padding((Side)i, p_config.button_style_hover->get_padding((Side)i));
 		}
 
 		p_theme->set_type_variation("MainMenuBar", "FlatMenuButton");
@@ -1779,8 +1779,8 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		dock_content_style->set_corner_radius(CORNER_BOTTOM_RIGHT, 0);
 
 		Ref<StyleBoxFlat> dock_toolbar_button_style = menu_transparent_style->duplicate();
-		dock_toolbar_button_style->set_content_margin(SIDE_TOP, EDSCALE_RND(p_config.increased_margin + 2));
-		dock_toolbar_button_style->set_content_margin(SIDE_BOTTOM, EDSCALE_RND(p_config.increased_margin + 2));
+		dock_toolbar_button_style->set_padding(SIDE_TOP, EDSCALE_RND(p_config.increased_margin + 2));
+		dock_toolbar_button_style->set_padding(SIDE_BOTTOM, EDSCALE_RND(p_config.increased_margin + 2));
 
 		Ref<StyleBoxFlat> dock_toolbar_button_selected = dock_toolbar_button_style->duplicate();
 		dock_toolbar_button_selected->set_bg_color(p_config.dark_color_1);
@@ -1850,10 +1850,10 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		Ref<StyleBoxFlat> style_write_movie_button = p_config.button_style_pressed->duplicate();
 		style_write_movie_button->set_bg_color(p_config.accent_color);
 		style_write_movie_button->set_corner_radius_all(EDSCALE_RND(p_config.border_radius));
-		style_write_movie_button->set_content_margin(SIDE_TOP, 0);
-		style_write_movie_button->set_content_margin(SIDE_BOTTOM, 0);
-		style_write_movie_button->set_content_margin(SIDE_LEFT, 0);
-		style_write_movie_button->set_content_margin(SIDE_RIGHT, 0);
+		style_write_movie_button->set_padding(SIDE_TOP, 0);
+		style_write_movie_button->set_padding(SIDE_BOTTOM, 0);
+		style_write_movie_button->set_padding(SIDE_LEFT, 0);
+		style_write_movie_button->set_padding(SIDE_RIGHT, 0);
 		style_write_movie_button->set_expand_margin(SIDE_RIGHT, EDSCALE_RND(2));
 		p_theme->set_stylebox("MovieWriterButtonPressed", EditorStringName(EditorStyles), style_write_movie_button);
 
@@ -1869,7 +1869,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		Ref<StyleBoxFlat> style_recovery_mode_button = p_config.button_style_pressed->duplicate();
 		style_recovery_mode_button->set_bg_color(p_config.warning_color);
 		style_recovery_mode_button->set_corner_radius_all(EDSCALE_RND(p_config.border_radius));
-		style_recovery_mode_button->set_content_margin_all(0);
+		style_recovery_mode_button->set_padding_all(0);
 		// Recovery mode button is implicitly styled from the panel's background.
 		// So, remove any existing borders.
 		style_recovery_mode_button->set_border_width_all(0);
@@ -1900,9 +1900,9 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			Ref<StyleBoxFlat> style_flat_button_pressed = p_config.button_style_pressed->duplicate();
 
 			for (int i = 0; i < 4; i++) {
-				style_flat_button->set_content_margin((Side)i, p_config.button_style->get_margin((Side)i));
-				style_flat_button_hover->set_content_margin((Side)i, p_config.button_style->get_content_margin((Side)i));
-				style_flat_button_pressed->set_content_margin((Side)i, p_config.button_style->get_content_margin((Side)i));
+				style_flat_button->set_padding((Side)i, p_config.button_style->get_content_inset((Side)i));
+				style_flat_button_hover->set_padding((Side)i, p_config.button_style->get_padding((Side)i));
+				style_flat_button_pressed->set_padding((Side)i, p_config.button_style->get_padding((Side)i));
 			}
 			Color flat_pressed_color = p_config.dark_color_1.lightened(0.24).lerp(p_config.accent_color, 0.2) * Color(0.8, 0.8, 0.8, 0.85);
 			if (p_config.dark_theme) {
@@ -2016,36 +2016,36 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			color_inspector_action.a = 0.5;
 			Ref<StyleBoxFlat> style_inspector_action = p_config.button_style->duplicate();
 			style_inspector_action->set_bg_color(color_inspector_action);
-			style_inspector_action->set_content_margin(SIDE_RIGHT, action_extra_margin);
+			style_inspector_action->set_padding(SIDE_RIGHT, action_extra_margin);
 			p_theme->set_stylebox(CoreStringName(normal), "InspectorActionButton", style_inspector_action);
 
 			style_inspector_action = p_config.button_style->duplicate();
 			style_inspector_action->set_bg_color(color_inspector_action);
-			style_inspector_action->set_content_margin(SIDE_LEFT, action_extra_margin);
+			style_inspector_action->set_padding(SIDE_LEFT, action_extra_margin);
 			p_theme->set_stylebox("normal_mirrored", "InspectorActionButton", style_inspector_action);
 
 			style_inspector_action = p_config.button_style_hover->duplicate();
-			style_inspector_action->set_content_margin(SIDE_RIGHT, action_extra_margin);
+			style_inspector_action->set_padding(SIDE_RIGHT, action_extra_margin);
 			p_theme->set_stylebox(SceneStringName(hover), "InspectorActionButton", style_inspector_action);
 
 			style_inspector_action = p_config.button_style_hover->duplicate();
-			style_inspector_action->set_content_margin(SIDE_LEFT, action_extra_margin);
+			style_inspector_action->set_padding(SIDE_LEFT, action_extra_margin);
 			p_theme->set_stylebox("hover_mirrored", "InspectorActionButton", style_inspector_action);
 
 			style_inspector_action = p_config.button_style_pressed->duplicate();
-			style_inspector_action->set_content_margin(SIDE_RIGHT, action_extra_margin);
+			style_inspector_action->set_padding(SIDE_RIGHT, action_extra_margin);
 			p_theme->set_stylebox(SceneStringName(pressed), "InspectorActionButton", style_inspector_action);
 
 			style_inspector_action = p_config.button_style_pressed->duplicate();
-			style_inspector_action->set_content_margin(SIDE_LEFT, action_extra_margin);
+			style_inspector_action->set_padding(SIDE_LEFT, action_extra_margin);
 			p_theme->set_stylebox("pressed_mirrored", "InspectorActionButton", style_inspector_action);
 
 			style_inspector_action = p_config.button_style_disabled->duplicate();
-			style_inspector_action->set_content_margin(SIDE_RIGHT, action_extra_margin);
+			style_inspector_action->set_padding(SIDE_RIGHT, action_extra_margin);
 			p_theme->set_stylebox("disabled", "InspectorActionButton", style_inspector_action);
 
 			style_inspector_action = p_config.button_style_disabled->duplicate();
-			style_inspector_action->set_content_margin(SIDE_LEFT, action_extra_margin);
+			style_inspector_action->set_padding(SIDE_LEFT, action_extra_margin);
 			p_theme->set_stylebox("disabled_mirrored", "InspectorActionButton", style_inspector_action);
 		}
 
@@ -2095,7 +2095,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_theme->set_type_variation("PanelContainerButtonGroup", "PanelContainer");
 
 			Ref<StyleBoxFlat> style_button_group = p_theme->get_stylebox(SNAME("tabbar_background"), SNAME("TabContainer"))->duplicate();
-			style_button_group->set_content_margin_all(p_config.base_margin * EDSCALE);
+			style_button_group->set_padding_all(p_config.base_margin * EDSCALE);
 			style_button_group->set_corner_radius_all(p_config.border_radius);
 			style_button_group->set_bg_color(p_config.dark_color_1.lerp(p_config.mono_color, 0.15));
 
@@ -2146,7 +2146,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		// Panel.
 		Ref<StyleBoxFlat> editor_inspector_panel = p_config.tree_panel_style->duplicate();
 		editor_inspector_panel->set_border_width_all(0);
-		editor_inspector_panel->set_content_margin_all(0);
+		editor_inspector_panel->set_padding_all(0);
 		p_theme->set_stylebox(SceneStringName(panel), "EditorInspector", editor_inspector_panel);
 
 		// Vertical separation between inspector areas.
@@ -2228,7 +2228,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		Ref<StyleBoxFlat> category_bg = p_config.base_style->duplicate();
 		category_bg->set_bg_color(prop_category_color);
 		category_bg->set_border_color(prop_category_color);
-		category_bg->set_content_margin_all(0);
+		category_bg->set_padding_all(0);
 		p_theme->set_stylebox("bg", "EditorInspectorCategory", category_bg);
 
 		// EditorInspectorArray.
@@ -2249,7 +2249,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			sub_inspector_bg->set_bg_color(p_config.dark_color_1.lerp(si_base_color, 0.08));
 			sub_inspector_bg->set_border_width_all(EDSCALE_RND(2));
 			sub_inspector_bg->set_border_color(si_base_color * Color(0.7, 0.7, 0.7, 0.8));
-			sub_inspector_bg->set_content_margin_all(EDSCALE_RND(4));
+			sub_inspector_bg->set_padding_all(EDSCALE_RND(4));
 			sub_inspector_bg->set_corner_radius(CORNER_TOP_LEFT, 0);
 			sub_inspector_bg->set_corner_radius(CORNER_TOP_RIGHT, 0);
 
@@ -2292,7 +2292,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		sub_inspector_bg->set_bg_color(Color(1, 1, 1, 0));
 		sub_inspector_bg->set_border_width_all(EDSCALE_RND(2));
 		sub_inspector_bg->set_border_color(p_config.dark_color_1.lerp(si_base_color, 0.15));
-		sub_inspector_bg->set_content_margin_all(EDSCALE_RND(4));
+		sub_inspector_bg->set_padding_all(EDSCALE_RND(4));
 		sub_inspector_bg->set_corner_radius(CORNER_TOP_LEFT, 0);
 		sub_inspector_bg->set_corner_radius(CORNER_TOP_RIGHT, 0);
 
@@ -2301,7 +2301,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		// Sub-inspector background no border.
 
 		Ref<StyleBoxFlat> sub_inspector_bg_no_border = p_config.base_style->duplicate();
-		sub_inspector_bg_no_border->set_content_margin_all(EDSCALE_RND(2));
+		sub_inspector_bg_no_border->set_padding_all(EDSCALE_RND(2));
 		sub_inspector_bg_no_border->set_bg_color(p_config.dark_color_2.lerp(p_config.dark_color_3, 0.15));
 		p_theme->set_stylebox("sub_inspector_bg_no_border", EditorStringName(EditorStyles), sub_inspector_bg_no_border);
 
@@ -2485,7 +2485,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 	{
 		// TextureRegion editor.
 		Ref<StyleBoxFlat> style_texture_region_bg = p_config.tree_panel_style->duplicate();
-		style_texture_region_bg->set_content_margin_all(0);
+		style_texture_region_bg->set_padding_all(0);
 		p_theme->set_stylebox("TextureRegionPreviewBG", EditorStringName(EditorStyles), style_texture_region_bg);
 		p_theme->set_stylebox("TextureRegionPreviewFG", EditorStringName(EditorStyles), EditorThemeManager::make_empty_stylebox(0, 0, 0, 0));
 
@@ -2576,7 +2576,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		// BlendSpace graph.
 		{
 			Ref<StyleBox> bs_panel_style = p_config.tree_panel_style->duplicate();
-			bs_panel_style->set_content_margin_all(0);
+			bs_panel_style->set_padding_all(0);
 			p_theme->set_stylebox(SceneStringName(panel), "GraphBlendSpace", bs_panel_style);
 		}
 	}

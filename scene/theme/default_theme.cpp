@@ -57,7 +57,7 @@ static const int default_corner_radius = 3;
 static Ref<StyleBoxFlat> make_flat_stylebox(Color p_color, float p_margin_left = default_margin, float p_margin_top = default_margin, float p_margin_right = default_margin, float p_margin_bottom = default_margin, int p_corner_radius = default_corner_radius, bool p_draw_center = true, int p_border_width = 0) {
 	Ref<StyleBoxFlat> style(memnew(StyleBoxFlat));
 	style->set_bg_color(p_color);
-	style->set_content_margin_individual(Math::round(p_margin_left * scale), Math::round(p_margin_top * scale), Math::round(p_margin_right * scale), Math::round(p_margin_bottom * scale));
+	style->set_padding_individual(Math::round(p_margin_left * scale), Math::round(p_margin_top * scale), Math::round(p_margin_right * scale), Math::round(p_margin_bottom * scale));
 
 	style->set_corner_radius_all(Math::round(p_corner_radius * scale));
 	style->set_anti_aliased(true);
@@ -85,7 +85,7 @@ static Ref<DPITexture> generate_icon(int p_index) {
 
 static Ref<StyleBox> make_empty_stylebox(float p_margin_left = 0, float p_margin_top = 0, float p_margin_right = 0, float p_margin_bottom = 0) {
 	Ref<StyleBox> style(memnew(StyleBoxEmpty));
-	style->set_content_margin_individual(Math::round(p_margin_left * scale), Math::round(p_margin_top * scale), Math::round(p_margin_right * scale), Math::round(p_margin_bottom * scale));
+	style->set_padding_individual(Math::round(p_margin_left * scale), Math::round(p_margin_top * scale), Math::round(p_margin_right * scale), Math::round(p_margin_bottom * scale));
 	return style;
 }
 
@@ -274,9 +274,9 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	// CheckBox
 
 	Ref<StyleBox> cbx_empty = memnew(StyleBoxEmpty);
-	cbx_empty->set_content_margin_all(Math::round(4 * scale));
+	cbx_empty->set_padding_all(Math::round(4 * scale));
 	Ref<StyleBox> cbx_focus = focus;
-	cbx_focus->set_content_margin_all(Math::round(4 * scale));
+	cbx_focus->set_padding_all(Math::round(4 * scale));
 
 	theme->set_stylebox(CoreStringName(normal), "CheckBox", cbx_empty);
 	theme->set_stylebox(SceneStringName(pressed), "CheckBox", cbx_empty);
@@ -315,7 +315,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	// CheckButton
 
 	Ref<StyleBox> cb_empty = memnew(StyleBoxEmpty);
-	cb_empty->set_content_margin_individual(Math::round(6 * scale), Math::round(4 * scale), Math::round(6 * scale), Math::round(4 * scale));
+	cb_empty->set_padding_individual(Math::round(6 * scale), Math::round(4 * scale), Math::round(6 * scale), Math::round(4 * scale));
 
 	theme->set_stylebox(CoreStringName(normal), "CheckButton", cb_empty);
 	theme->set_stylebox(SceneStringName(pressed), "CheckButton", cb_empty);
@@ -359,7 +359,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 
 	Ref<StyleBoxEmpty> flat_button_normal = make_empty_stylebox();
 	for (int i = 0; i < 4; i++) {
-		flat_button_normal->set_content_margin((Side)i, button_normal->get_margin((Side)i));
+		flat_button_normal->set_padding((Side)i, button_normal->get_content_inset((Side)i));
 	}
 	Ref<StyleBoxFlat> flat_button_pressed = button_pressed->duplicate();
 	flat_button_pressed->set_bg_color(style_pressed_color * Color(1, 1, 1, 0.85));
@@ -747,10 +747,10 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	Ref<StyleBoxLine> separator_horizontal = memnew(StyleBoxLine);
 	separator_horizontal->set_thickness(Math::round(scale));
 	separator_horizontal->set_color(style_separator_color);
-	separator_horizontal->set_content_margin_individual(default_margin, 0, default_margin, 0);
+	separator_horizontal->set_padding_individual(default_margin, 0, default_margin, 0);
 	Ref<StyleBoxLine> separator_vertical = separator_horizontal->duplicate();
 	separator_vertical->set_vertical(true);
-	separator_vertical->set_content_margin_individual(0, default_margin, 0, default_margin);
+	separator_vertical->set_padding_individual(0, default_margin, 0, default_margin);
 
 	// Always display a border for PopupMenus so they can be distinguished from their background.
 	Ref<StyleBoxFlat> style_popup_panel = make_flat_stylebox(style_popup_color);
@@ -1368,7 +1368,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_stylebox("title_collapsed_panel", "FoldableContainer", make_flat_stylebox(style_pressed_color));
 	theme->set_stylebox("title_collapsed_hover_panel", "FoldableContainer", make_flat_stylebox(style_hover_color));
 	Ref<StyleBoxFlat> foldable_container_panel = make_flat_stylebox(style_normal_color);
-	foldable_container_panel->set_content_margin_all(default_margin);
+	foldable_container_panel->set_padding_all(default_margin);
 	foldable_container_panel->set_corner_radius(CORNER_TOP_LEFT, 0);
 	foldable_container_panel->set_corner_radius(CORNER_TOP_RIGHT, 0);
 	theme->set_stylebox(SceneStringName(panel), "FoldableContainer", foldable_container_panel);

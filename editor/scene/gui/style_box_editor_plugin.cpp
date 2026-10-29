@@ -85,10 +85,10 @@ void StyleBoxPreview::_redraw() {
 		if (sbt.is_valid() && grid_preview->is_pressed()) {
 			const Color dark_color = Color(0, 0, 0, 0.4);
 			const Color bright_color = Color(1, 1, 1, 0.8);
-			int x_left = drawing_rect.position.x + sbt->get_margin(SIDE_LEFT);
-			int x_right = drawing_rect.position.x + drawing_rect.size.width - sbt->get_margin(SIDE_RIGHT);
-			int y_top = drawing_rect.position.y + sbt->get_margin(SIDE_TOP);
-			int y_bottom = drawing_rect.position.y + drawing_rect.size.height - sbt->get_margin(SIDE_BOTTOM);
+			int x_left = drawing_rect.position.x + sbt->get_content_inset(SIDE_LEFT);
+			int x_right = drawing_rect.position.x + drawing_rect.size.width - sbt->get_content_inset(SIDE_RIGHT);
+			int y_top = drawing_rect.position.y + sbt->get_content_inset(SIDE_TOP);
+			int y_bottom = drawing_rect.position.y + drawing_rect.size.height - sbt->get_content_inset(SIDE_BOTTOM);
 
 			draw_line(Point2(x_left + 2, 0), Point2(x_left + 2, get_size().height), dark_color);
 			draw_line(Point2(x_right + 1, 0), Point2(x_right + 1, get_size().height), dark_color);

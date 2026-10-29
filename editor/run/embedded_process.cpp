@@ -62,8 +62,8 @@ void EmbeddedProcessBase::_notification(int p_what) {
 				margin_top_left = Point2i(focus_style_box_flat->get_border_width(SIDE_LEFT), focus_style_box_flat->get_border_width(SIDE_TOP));
 				margin_bottom_right = Point2i(focus_style_box_flat->get_border_width(SIDE_RIGHT), focus_style_box_flat->get_border_width(SIDE_BOTTOM));
 			} else if (focus_style_box.is_valid()) {
-				margin_top_left = Point2i(focus_style_box->get_margin(SIDE_LEFT), focus_style_box->get_margin(SIDE_TOP));
-				margin_bottom_right = Point2i(focus_style_box->get_margin(SIDE_RIGHT), focus_style_box->get_margin(SIDE_BOTTOM));
+				margin_top_left = Point2i(focus_style_box->get_content_inset(SIDE_LEFT), focus_style_box->get_content_inset(SIDE_TOP));
+				margin_bottom_right = Point2i(focus_style_box->get_content_inset(SIDE_RIGHT), focus_style_box->get_content_inset(SIDE_BOTTOM));
 			} else {
 				margin_top_left = Point2i();
 				margin_bottom_right = Point2i();

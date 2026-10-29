@@ -331,7 +331,7 @@ void EditorSpinSlider::_update_value_input_stylebox() {
 	Ref<StyleBox> stylebox = theme_cache.normal->duplicate();
 	// TODO: Handle this internally instead of relying on the theme.
 	int margin = get_label().is_empty() ? theme_cache.line_edit_margin_empty : theme_cache.line_edit_margin;
-	stylebox->set_content_margin(is_layout_rtl() ? SIDE_RIGHT : SIDE_LEFT, margin);
+	stylebox->set_padding(is_layout_rtl() ? SIDE_RIGHT : SIDE_LEFT, margin);
 
 	value_input->add_theme_style_override(CoreStringName(normal), stylebox);
 }
@@ -350,7 +350,7 @@ void EditorSpinSlider::_draw_spin_slider() {
 	Ref<Font> font = theme_cache.font;
 	int font_size = theme_cache.font_size;
 	int sep_base = 4 * EDSCALE;
-	int sep = sep_base + sb->get_offset().x; //make it have the same margin on both sides, looks better
+	int sep = sep_base + sb->get_content_offset().x; //make it have the same margin on both sides, looks better
 
 	int label_width = font->get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).width;
 	int number_width = size.width - sb->get_minimum_size().width - label_width - sep;
@@ -364,9 +364,9 @@ void EditorSpinSlider::_draw_spin_slider() {
 
 	if (flat && !label.is_empty()) {
 		if (rtl) {
-			draw_style_box(theme_cache.label_bg, Rect2(Vector2(size.width - (sb->get_offset().x * 2 + label_width), 0), Vector2(sb->get_offset().x * 2 + label_width, size.height)));
+			draw_style_box(theme_cache.label_bg, Rect2(Vector2(size.width - (sb->get_content_offset().x * 2 + label_width), 0), Vector2(sb->get_content_offset().x * 2 + label_width, size.height)));
 		} else {
-			draw_style_box(theme_cache.label_bg, Rect2(Vector2(), Vector2(sb->get_offset().x * 2 + label_width, size.height)));
+			draw_style_box(theme_cache.label_bg, Rect2(Vector2(), Vector2(sb->get_content_offset().x * 2 + label_width, size.height)));
 		}
 	}
 
@@ -375,16 +375,16 @@ void EditorSpinSlider::_draw_spin_slider() {
 	}
 
 	if (rtl) {
-		draw_string(font, Vector2(Math::round(size.width - sb->get_offset().x - label_width), vofs), label, HORIZONTAL_ALIGNMENT_RIGHT, -1, font_size, lc * Color(1, 1, 1, 0.5));
+		draw_string(font, Vector2(Math::round(size.width - sb->get_content_offset().x - label_width), vofs), label, HORIZONTAL_ALIGNMENT_RIGHT, -1, font_size, lc * Color(1, 1, 1, 0.5));
 	} else {
-		draw_string(font, Vector2(Math::round(sb->get_offset().x), vofs), label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, lc * Color(1, 1, 1, 0.5));
+		draw_string(font, Vector2(Math::round(sb->get_content_offset().x), vofs), label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, lc * Color(1, 1, 1, 0.5));
 	}
 
 	int suffix_start = numstr.length();
 	RID num_rid = TS->create_shaped_text();
 	TS->shaped_text_add_string(num_rid, numstr + U"\u2009" + suffix, font->get_rids(), font_size, font->get_opentype_features());
 
-	float text_start = rtl ? Math::round(sb->get_offset().x) : Math::round(sb->get_offset().x + label_width + sep);
+	float text_start = rtl ? Math::round(sb->get_content_offset().x) : Math::round(sb->get_content_offset().x + label_width + sep);
 	Vector2 text_ofs = rtl ? Vector2(text_start + (number_width - TS->shaped_text_get_width(num_rid)), vofs) : Vector2(text_start, vofs);
 	int v_size = TS->shaped_text_get_glyph_count(num_rid);
 	const Glyph *glyphs = TS->shaped_text_get_glyphs(num_rid);
@@ -411,9 +411,9 @@ void EditorSpinSlider::_draw_spin_slider() {
 			Ref<Texture2D> updown2 = read_only ? theme_cache.updown_disabled_icon : theme_cache.updown_icon;
 			int updown_vofs = (size.height - updown2->get_height()) / 2;
 			if (rtl) {
-				updown_offset = sb->get_margin(SIDE_LEFT);
+				updown_offset = sb->get_content_inset(SIDE_LEFT);
 			} else {
-				updown_offset = size.width - sb->get_margin(SIDE_RIGHT) - updown2->get_width();
+				updown_offset = size.width - sb->get_content_inset(SIDE_RIGHT) - updown2->get_width();
 			}
 			Color c(1, 1, 1);
 			if (hover_updown) {
@@ -429,7 +429,7 @@ void EditorSpinSlider::_draw_spin_slider() {
 		} else {
 			const int grabber_w = 4 * EDSCALE;
 			const int width = size.width - sb->get_minimum_size().width - grabber_w;
-			const int ofs = sb->get_offset().x;
+			const int ofs = sb->get_content_offset().x;
 			const int svofs = (size.height + vofs) / 2 - 1;
 			Color c = fc;
 

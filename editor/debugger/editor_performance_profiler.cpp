@@ -140,7 +140,7 @@ void EditorPerformanceProfiler::_monitor_draw() {
 		Rect2i rect(Point2i(i % columns, i / columns) * cell_size + Point2i(MARGIN, MARGIN), cell_size - Point2i(MARGIN, MARGIN) * 2);
 		monitor_draw->draw_style_box(graph_style_box, rect);
 
-		rect.position += graph_style_box->get_offset();
+		rect.position += graph_style_box->get_content_offset();
 		rect.size -= graph_style_box->get_minimum_size();
 		Color draw_color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 		draw_color.set_hsv(Math::fmod(hue_shift * float(current.frame_index), 0.9f), draw_color.get_s() * 0.9f, draw_color.get_v() * value_multiplier, 0.6f);
@@ -288,7 +288,7 @@ void EditorPerformanceProfiler::_marker_input(const Ref<InputEvent> &p_event) {
 					marker_key = "";
 				}
 				Ref<StyleBox> graph_style_box = get_theme_stylebox(CoreStringName(normal), SNAME("TextEdit"));
-				rect.position += graph_style_box->get_offset();
+				rect.position += graph_style_box->get_content_offset();
 				rect.size -= graph_style_box->get_minimum_size();
 				Vector2 point = mb->get_position() - rect.position;
 				if (point.x >= rect.size.x) {

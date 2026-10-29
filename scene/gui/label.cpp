@@ -574,16 +574,16 @@ Rect2 Label::_get_line_rect(int p_para, int p_line) const {
 	switch (horizontal_alignment) {
 		case HORIZONTAL_ALIGNMENT_FILL:
 			if (rtl && autowrap_mode != TextServer::AUTOWRAP_OFF) {
-				offset.x = int(size.width - style->get_margin(SIDE_RIGHT) - line_size.width);
+				offset.x = int(size.width - style->get_content_inset(SIDE_RIGHT) - line_size.width);
 			} else {
-				offset.x = style->get_offset().x;
+				offset.x = style->get_content_offset().x;
 			}
 			break;
 		case HORIZONTAL_ALIGNMENT_LEFT: {
 			if (rtl_layout) {
-				offset.x = int(size.width - style->get_margin(SIDE_RIGHT) - line_size.width);
+				offset.x = int(size.width - style->get_content_inset(SIDE_RIGHT) - line_size.width);
 			} else {
-				offset.x = style->get_offset().x;
+				offset.x = style->get_content_offset().x;
 			}
 		} break;
 		case HORIZONTAL_ALIGNMENT_CENTER: {
@@ -591,9 +591,9 @@ Rect2 Label::_get_line_rect(int p_para, int p_line) const {
 		} break;
 		case HORIZONTAL_ALIGNMENT_RIGHT: {
 			if (rtl_layout) {
-				offset.x = style->get_offset().x;
+				offset.x = style->get_content_offset().x;
 			} else {
-				offset.x = int(size.width - style->get_margin(SIDE_RIGHT) - line_size.width);
+				offset.x = int(size.width - style->get_content_inset(SIDE_RIGHT) - line_size.width);
 			}
 		} break;
 	}
@@ -674,7 +674,7 @@ int Label::get_layout_data(Vector2 &r_offset, int &r_last_line, int &r_line_spac
 			line_index += para.lines_rid.size();
 		}
 	}
-	total_h += style->get_margin(SIDE_TOP) + style->get_margin(SIDE_BOTTOM);
+	total_h += style->get_content_inset(SIDE_TOP) + style->get_content_inset(SIDE_BOTTOM);
 	int vbegin = 0, vsep = 0;
 	if (lines_visible > 0) {
 		switch (vertical_alignment) {
@@ -699,7 +699,7 @@ int Label::get_layout_data(Vector2 &r_offset, int &r_last_line, int &r_line_spac
 			} break;
 		}
 	}
-	r_offset = { 0, style->get_offset().y + vbegin };
+	r_offset = { 0, style->get_content_offset().y + vbegin };
 	r_line_spacing = line_spacing + vsep;
 
 	return total_glyphs;

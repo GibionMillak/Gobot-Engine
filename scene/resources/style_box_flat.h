@@ -54,7 +54,7 @@ class StyleBoxFlat : public StyleBox {
 	real_t aa_size = 1;
 
 protected:
-	virtual float get_style_margin(Side p_side) const override;
+	virtual float _get_style_inset(Side p_side) const override;
 	static void _bind_methods();
 	void _validate_property(PropertyInfo &p_property) const;
 

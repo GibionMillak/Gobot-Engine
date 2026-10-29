@@ -39,61 +39,61 @@ namespace TestStyleBoxEmpty {
 TEST_CASE("[StyleBoxEmpty] Constructor") {
 	Ref<StyleBoxEmpty> style_box_empty = memnew(StyleBoxEmpty);
 
-	CHECK(style_box_empty->get_offset() == Point2(0, 0));
+	CHECK(style_box_empty->get_content_offset() == Point2(0, 0));
 	CHECK(style_box_empty->get_current_item_drawn() == nullptr);
 }
 
-TEST_CASE("[StyleBoxEmpty] set_content_margin, set_content_margin_all, set_content_margin_individual, get_content_margin, get_margin") {
+TEST_CASE("[StyleBoxEmpty] set_padding, set_padding_all, set_padding_individual, get_padding, get_content_inset") {
 	Ref<StyleBoxEmpty> style_box_empty = memnew(StyleBoxEmpty);
 
-	SUBCASE("set_content_margin, get_content_margin") {
-		style_box_empty->set_content_margin(SIDE_LEFT, 2);
-		style_box_empty->set_content_margin(SIDE_TOP, 3);
-		style_box_empty->set_content_margin(SIDE_RIGHT, 4);
-		style_box_empty->set_content_margin(SIDE_BOTTOM, 5);
+	SUBCASE("set_padding, get_padding") {
+		style_box_empty->set_padding(SIDE_LEFT, 2);
+		style_box_empty->set_padding(SIDE_TOP, 3);
+		style_box_empty->set_padding(SIDE_RIGHT, 4);
+		style_box_empty->set_padding(SIDE_BOTTOM, 5);
 
-		CHECK(style_box_empty->get_content_margin(SIDE_LEFT) == 2);
-		CHECK(style_box_empty->get_content_margin(SIDE_TOP) == 3);
-		CHECK(style_box_empty->get_content_margin(SIDE_RIGHT) == 4);
-		CHECK(style_box_empty->get_content_margin(SIDE_BOTTOM) == 5);
+		CHECK(style_box_empty->get_padding(SIDE_LEFT) == 2);
+		CHECK(style_box_empty->get_padding(SIDE_TOP) == 3);
+		CHECK(style_box_empty->get_padding(SIDE_RIGHT) == 4);
+		CHECK(style_box_empty->get_padding(SIDE_BOTTOM) == 5);
 	}
 
-	SUBCASE("set_content_margin_all, get_content_margin") {
-		style_box_empty->set_content_margin_all(10);
+	SUBCASE("set_padding_all, get_padding") {
+		style_box_empty->set_padding_all(10);
 
-		CHECK(style_box_empty->get_content_margin(SIDE_LEFT) == 10);
-		CHECK(style_box_empty->get_content_margin(SIDE_TOP) == 10);
-		CHECK(style_box_empty->get_content_margin(SIDE_RIGHT) == 10);
-		CHECK(style_box_empty->get_content_margin(SIDE_BOTTOM) == 10);
+		CHECK(style_box_empty->get_padding(SIDE_LEFT) == 10);
+		CHECK(style_box_empty->get_padding(SIDE_TOP) == 10);
+		CHECK(style_box_empty->get_padding(SIDE_RIGHT) == 10);
+		CHECK(style_box_empty->get_padding(SIDE_BOTTOM) == 10);
 	}
 
-	SUBCASE("set_content_margin, get_margin") {
-		style_box_empty->set_content_margin(SIDE_LEFT, -1);
-		style_box_empty->set_content_margin(SIDE_RIGHT, -2);
-		style_box_empty->set_content_margin(SIDE_TOP, 3);
-		style_box_empty->set_content_margin(SIDE_BOTTOM, 4);
+	SUBCASE("set_padding, get_content_inset") {
+		style_box_empty->set_padding(SIDE_LEFT, -1);
+		style_box_empty->set_padding(SIDE_RIGHT, -2);
+		style_box_empty->set_padding(SIDE_TOP, 3);
+		style_box_empty->set_padding(SIDE_BOTTOM, 4);
 
-		CHECK_MESSAGE(style_box_empty->get_margin(SIDE_LEFT) == 0,
+		CHECK_MESSAGE(style_box_empty->get_content_inset(SIDE_LEFT) == 0,
 				"Value is lesser than zero, so it returns 0");
-		CHECK_MESSAGE(style_box_empty->get_margin(SIDE_RIGHT) == 0,
+		CHECK_MESSAGE(style_box_empty->get_content_inset(SIDE_RIGHT) == 0,
 				"Value is lesser than zero, so it returns 0");
-		CHECK_MESSAGE(style_box_empty->get_margin(SIDE_TOP) == 3,
+		CHECK_MESSAGE(style_box_empty->get_content_inset(SIDE_TOP) == 3,
 				"Value is higher than zero, so it returns value");
-		CHECK_MESSAGE(style_box_empty->get_margin(SIDE_BOTTOM) == 4,
+		CHECK_MESSAGE(style_box_empty->get_content_inset(SIDE_BOTTOM) == 4,
 				"Value is higher than zero, so it returns value");
 	}
 
-	SUBCASE("set_content_margin_individual, get_minimum_size") {
-		style_box_empty->set_content_margin_individual(-1, 2, 5, 15);
+	SUBCASE("set_padding_individual, get_minimum_size") {
+		style_box_empty->set_padding_individual(-1, 2, 5, 15);
 
 		CHECK(style_box_empty->get_minimum_size() == Size2(5, 17));
 	}
 
-	SUBCASE("set_content_margin_individual, get_offset") {
-		style_box_empty->set_content_margin_individual(-3, 5, 1, 2);
+	SUBCASE("set_padding_individual, get_content_offset") {
+		style_box_empty->set_padding_individual(-3, 5, 1, 2);
 
-		CHECK_MESSAGE(style_box_empty->get_offset() == Point2(0, 5),
-				"Returns Point2 with get_margin of SIDE_LEFT and SIDE_TOP");
+		CHECK_MESSAGE(style_box_empty->get_content_offset() == Point2(0, 5),
+				"Returns Point2 with get_content_inset of SIDE_LEFT and SIDE_TOP");
 	}
 }
 
