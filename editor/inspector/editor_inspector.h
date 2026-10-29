@@ -45,7 +45,7 @@ class MarginContainer;
 class OptionButton;
 class PopupMenu;
 class SpinBox;
-class StyleBoxFlat;
+class StyleBox;
 class TextureRect;
 class Timer;
 
@@ -545,8 +545,8 @@ class EditorInspectorSection : public Container {
 		Ref<Texture2D> icon_copy_path;
 		Ref<Texture2D> help_icon;
 
-		Ref<StyleBoxFlat> indent_box;
-		Ref<StyleBoxFlat> icon_hover;
+		Ref<StyleBox> indent_box;
+		Ref<StyleBox> icon_hover;
 	} theme_cache;
 
 protected:
@@ -652,8 +652,8 @@ class EditorInspectorArray : public EditorInspectorSection {
 	};
 	LocalVector<ArrayElement> array_elements;
 
-	Ref<StyleBoxFlat> odd_style;
-	Ref<StyleBoxFlat> even_style;
+	Ref<StyleBox> odd_style;
+	Ref<StyleBox> even_style;
 
 	int _get_array_count();
 	void _add_button_pressed();

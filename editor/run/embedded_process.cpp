@@ -37,7 +37,7 @@
 #include "editor/editor_string_names.h"
 #include "scene/main/timer.h"
 #include "scene/main/window.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "scene/theme/theme_db.h"
 #include "servers/display/display_server.h"
 
@@ -57,13 +57,9 @@ void EmbeddedProcessBase::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			checkerboard = get_editor_theme_icon(SNAME("gui_checkerboard"));
 			focus_style_box = get_theme_stylebox(SNAME("FocusViewport"), EditorStringName(EditorStyles));
-			Ref<StyleBoxFlat> focus_style_box_flat = focus_style_box;
-			if (focus_style_box_flat.is_valid()) {
-				margin_top_left = Point2i(focus_style_box_flat->get_border_width(SIDE_LEFT), focus_style_box_flat->get_border_width(SIDE_TOP));
-				margin_bottom_right = Point2i(focus_style_box_flat->get_border_width(SIDE_RIGHT), focus_style_box_flat->get_border_width(SIDE_BOTTOM));
-			} else if (focus_style_box.is_valid()) {
-				margin_top_left = Point2i(focus_style_box->get_content_inset(SIDE_LEFT), focus_style_box->get_content_inset(SIDE_TOP));
-				margin_bottom_right = Point2i(focus_style_box->get_content_inset(SIDE_RIGHT), focus_style_box->get_content_inset(SIDE_BOTTOM));
+			if (focus_style_box.is_valid()) {
+				margin_top_left = Point2i(focus_style_box->get_border_width(SIDE_LEFT), focus_style_box->get_border_width(SIDE_TOP));
+				margin_bottom_right = Point2i(focus_style_box->get_border_width(SIDE_RIGHT), focus_style_box->get_border_width(SIDE_BOTTOM));
 			} else {
 				margin_top_left = Point2i();
 				margin_bottom_right = Point2i();

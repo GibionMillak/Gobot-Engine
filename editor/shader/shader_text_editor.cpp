@@ -51,7 +51,7 @@
 #include "scene/gui/texture_rect.h"
 #include "scene/resources/shader.h"
 #include "scene/resources/sky.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "servers/display/display_server.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/rendering/shader_preprocessor.h"
@@ -316,7 +316,7 @@ void TextShaderPreview::_notification(int p_what) {
 
 			error_icon->set_texture(get_editor_theme_icon(SNAME("status_error")));
 
-			Ref<StyleBoxEmpty> no_margins;
+			Ref<StyleBox> no_margins;
 			no_margins.instantiate();
 			no_margins->set_padding_all(0);
 			error_label->add_theme_style_override(CoreStringName(normal), no_margins);
@@ -327,11 +327,11 @@ void TextShaderPreview::_notification(int p_what) {
 			goto_button->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
 			goto_button->add_theme_font_size_override(SceneStringName(font_size), Math::round(12 * EDSCALE));
 
-			Ref<StyleBoxFlat> sq_hover = get_theme_stylebox(SceneStringName(hover), "FlatMenuButton")->duplicate();
+			Ref<StyleBox> sq_hover = get_theme_stylebox(SceneStringName(hover), "FlatMenuButton")->duplicate();
 			sq_hover->set_corner_radius_all(0);
-			Ref<StyleBoxFlat> sq_pressed = get_theme_stylebox(SceneStringName(pressed), "FlatMenuButton")->duplicate();
+			Ref<StyleBox> sq_pressed = get_theme_stylebox(SceneStringName(pressed), "FlatMenuButton")->duplicate();
 			sq_pressed->set_corner_radius_all(0);
-			Ref<StyleBoxFlat> sq_hover_pressed = get_theme_stylebox("hover_pressed", "FlatMenuButton")->duplicate();
+			Ref<StyleBox> sq_hover_pressed = get_theme_stylebox("hover_pressed", "FlatMenuButton")->duplicate();
 			sq_hover_pressed->set_corner_radius_all(0);
 
 			for (Button *btn : { delete_button, goto_button }) {
@@ -640,7 +640,7 @@ void TextShaderPreview::sync_shader_parameters() {
 }
 
 void TextShaderPreview::update_panel_color(const Color &p_color) {
-	panel_style->set_bg_color(p_color);
+	panel_style->set_background_color(p_color);
 }
 
 PanelContainer *TextShaderPreview::get_panel_container() const {
@@ -762,9 +762,9 @@ void ShaderTextEditor::_notification(int p_what) {
 				}
 			}
 
-			Ref<StyleBoxFlat> tab_style = get_theme_stylebox(SNAME("tab_selected"), "TabBar");
-			Ref<StyleBoxFlat> preview_style = memnew(StyleBoxFlat);
-			preview_style->set_bg_color(get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor)));
+			Ref<StyleBox> tab_style = get_theme_stylebox(SNAME("tab_selected"), "TabBar");
+			Ref<StyleBox> preview_style = memnew(StyleBox);
+			preview_style->set_background_color(get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor)));
 			if (tab_style.is_valid()) {
 				preview_style->set_corner_radius_all(tab_style->get_corner_radius(CORNER_TOP_LEFT));
 			}

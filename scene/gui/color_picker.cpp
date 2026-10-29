@@ -56,8 +56,7 @@
 #include "scene/resources/atlas_texture.h"
 #include "scene/resources/color_palette.h"
 #include "scene/resources/image_texture.h"
-#include "scene/resources/style_box_flat.h"
-#include "scene/resources/style_box_texture.h"
+#include "scene/resources/style_box.h"
 #include "scene/theme/theme_db.h"
 #include "servers/display/display_server.h"
 
@@ -236,8 +235,8 @@ void ColorPicker::_notification(int p_what) {
 
 			Color c = DisplayServer::get_singleton()->screen_get_pixel(ofs);
 
-			picker_preview_style_box_color->set_bg_color(c);
-			picker_preview_style_box->set_bg_color(c.get_luminance() < 0.5 ? Color(1.0f, 1.0f, 1.0f) : Color(0.0f, 0.0f, 0.0f));
+			picker_preview_style_box_color->set_background_color(c);
+			picker_preview_style_box->set_background_color(c.get_luminance() < 0.5 ? Color(1.0f, 1.0f, 1.0f) : Color(0.0f, 0.0f, 0.0f));
 
 			if (ds->has_feature(DisplayServerEnums::FEATURE_SCREEN_EXCLUDE_FROM_CAPTURE)) {
 				Ref<Image> zoom_preview_img = ds->screen_get_image_rect(Rect2i(ofs.x - 8, ofs.y - 8, 17, 17));
@@ -629,9 +628,9 @@ bool ColorPicker::_select_from_recent_preset_hbc(const Color &p_color) {
 }
 
 void ColorPicker::_reset_sliders_theme() {
-	Ref<StyleBoxFlat> style_box_flat(memnew(StyleBoxFlat));
-	style_box_flat->set_padding(SIDE_TOP, 16 * theme_cache.base_scale);
-	style_box_flat->set_bg_color(Color(0.2, 0.23, 0.31).lerp(Color(0, 0, 0, 1), 0.3).clamp());
+	Ref<StyleBox> slider_style(memnew(StyleBox));
+	slider_style->set_padding(SIDE_TOP, 16 * theme_cache.base_scale);
+	slider_style->set_background_color(Color(0.2, 0.23, 0.31).lerp(Color(0, 0, 0, 1), 0.3).clamp());
 
 	for (int i = 0; i < MODE_SLIDER_COUNT; i++) {
 		sliders[i]->begin_bulk_theme_override();
@@ -639,7 +638,7 @@ void ColorPicker::_reset_sliders_theme() {
 		sliders[i]->add_theme_icon_override(SNAME("grabber_highlight"), theme_cache.bar_arrow);
 		sliders[i]->add_theme_constant_override(SNAME("grabber_offset"), 8 * theme_cache.base_scale);
 		if (!colorize_sliders) {
-			sliders[i]->add_theme_style_override(SNAME("slider"), style_box_flat);
+			sliders[i]->add_theme_style_override(SNAME("slider"), slider_style);
 		}
 		sliders[i]->end_bulk_theme_override();
 	}
@@ -649,7 +648,7 @@ void ColorPicker::_reset_sliders_theme() {
 	alpha_slider->add_theme_icon_override(SNAME("grabber_highlight"), theme_cache.bar_arrow);
 	alpha_slider->add_theme_constant_override(SNAME("grabber_offset"), 8 * theme_cache.base_scale);
 	if (!colorize_sliders) {
-		alpha_slider->add_theme_style_override(SNAME("slider"), style_box_flat);
+		alpha_slider->add_theme_style_override(SNAME("slider"), slider_style);
 	}
 	alpha_slider->end_bulk_theme_override();
 }
@@ -1288,23 +1287,23 @@ void ColorPicker::set_colorize_sliders(bool p_colorize_sliders) {
 	mode_popup->set_item_checked(MODE_MAX + 1, colorize_sliders);
 
 	if (colorize_sliders) {
-		Ref<StyleBoxEmpty> style_box_empty(memnew(StyleBoxEmpty));
+		Ref<StyleBox> empty_slider_style(memnew(StyleBox));
 
 		for (int i = 0; i < MODE_SLIDER_COUNT; i++) {
-			sliders[i]->add_theme_style_override("slider", style_box_empty);
+			sliders[i]->add_theme_style_override("slider", empty_slider_style);
 		}
 
-		alpha_slider->add_theme_style_override("slider", style_box_empty);
+		alpha_slider->add_theme_style_override("slider", empty_slider_style);
 	} else {
-		Ref<StyleBoxFlat> style_box_flat(memnew(StyleBoxFlat));
-		style_box_flat->set_padding(SIDE_TOP, 16 * theme_cache.base_scale);
-		style_box_flat->set_bg_color(Color(0.2, 0.23, 0.31).lerp(Color(0, 0, 0, 1), 0.3).clamp());
+		Ref<StyleBox> slider_style(memnew(StyleBox));
+		slider_style->set_padding(SIDE_TOP, 16 * theme_cache.base_scale);
+		slider_style->set_background_color(Color(0.2, 0.23, 0.31).lerp(Color(0, 0, 0, 1), 0.3).clamp());
 
 		for (int i = 0; i < MODE_SLIDER_COUNT; i++) {
-			sliders[i]->add_theme_style_override("slider", style_box_flat);
+			sliders[i]->add_theme_style_override("slider", slider_style);
 		}
 
-		alpha_slider->add_theme_style_override("slider", style_box_flat);
+		alpha_slider->add_theme_style_override("slider", slider_style);
 	}
 }
 
@@ -1866,8 +1865,8 @@ void ColorPicker::_picker_texture_input(const Ref<InputEvent> &p_event) {
 			Vector2 scale = picker_texture_rect->get_size() / img->get_size();
 			ofs /= scale;
 			picker_color = img->get_pixel(ofs.x, ofs.y);
-			picker_preview_style_box_color->set_bg_color(picker_color);
-			picker_preview_style_box->set_bg_color(picker_color.get_luminance() < 0.5 ? Color(1.0f, 1.0f, 1.0f) : Color(0.0f, 0.0f, 0.0f));
+			picker_preview_style_box_color->set_background_color(picker_color);
+			picker_preview_style_box->set_background_color(picker_color.get_luminance() < 0.5 ? Color(1.0f, 1.0f, 1.0f) : Color(0.0f, 0.0f, 0.0f));
 
 			Ref<AtlasTexture> atlas = picker_texture_zoom->get_texture();
 			if (atlas.is_valid()) {
@@ -2565,44 +2564,29 @@ void ColorPresetButton::_notification(int p_what) {
 
 		case NOTIFICATION_DRAW: {
 			const Rect2 r = Rect2(Point2(0, 0), get_size());
-			Ref<StyleBox> sb_raw = theme_cache.foreground_style->duplicate();
-			Ref<StyleBoxFlat> sb_flat = sb_raw;
-			Ref<StyleBoxTexture> sb_texture = sb_raw;
+			Ref<StyleBox> style = theme_cache.foreground_style->duplicate();
+			style->set_border_width(SIDE_BOTTOM, 2);
+			style->set_border_color(get_draw_mode() == DRAW_PRESSED || get_draw_mode() == DRAW_HOVER_PRESSED ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1));
 
-			if (sb_flat.is_valid()) {
-				sb_flat->set_border_width(SIDE_BOTTOM, 2);
-				if (get_draw_mode() == DRAW_PRESSED || get_draw_mode() == DRAW_HOVER_PRESSED) {
-					sb_flat->set_border_color(Color(1, 1, 1, 1));
-				} else {
-					sb_flat->set_border_color(Color(0, 0, 0, 1));
-				}
-
-				if (preset_color.a < 1) {
-					// Draw a background pattern when the color is transparent.
-					sb_flat->set_bg_color(Color(1, 1, 1));
-					sb_flat->draw(get_canvas_item(), r);
-
-					Rect2 bg_texture_rect = r.grow_side(SIDE_LEFT, -sb_flat->get_content_inset(SIDE_LEFT));
-					bg_texture_rect = bg_texture_rect.grow_side(SIDE_RIGHT, -sb_flat->get_content_inset(SIDE_RIGHT));
-					bg_texture_rect = bg_texture_rect.grow_side(SIDE_TOP, -sb_flat->get_content_inset(SIDE_TOP));
-					bg_texture_rect = bg_texture_rect.grow_side(SIDE_BOTTOM, -sb_flat->get_content_inset(SIDE_BOTTOM));
-
-					draw_texture_rect(theme_cache.background_icon, bg_texture_rect, true);
-					sb_flat->set_bg_color(preset_color);
-				}
-				sb_flat->set_bg_color(preset_color);
-				sb_flat->draw(get_canvas_item(), r);
-			} else if (sb_texture.is_valid()) {
-				if (preset_color.a < 1) {
-					// Draw a background pattern when the color is transparent.
-					bool use_tile_texture = (sb_texture->get_h_axis_stretch_mode() == StyleBoxTexture::AxisStretchMode::AXIS_STRETCH_MODE_TILE) || (sb_texture->get_h_axis_stretch_mode() == StyleBoxTexture::AxisStretchMode::AXIS_STRETCH_MODE_TILE_FIT);
-					draw_texture_rect(theme_cache.background_icon, r, use_tile_texture);
-				}
-				sb_texture->set_modulate(preset_color);
-				sb_texture->draw(get_canvas_item(), r);
-			} else {
-				WARN_PRINT("Unsupported StyleBox used for ColorPresetButton. Use StyleBoxFlat or StyleBoxTexture instead.");
+			if (preset_color.a < 1) {
+				Ref<StyleBox> checker = style->duplicate();
+				checker->set_background_color(Color(1, 1, 1, 1));
+				checker->set_border_color(Color(0, 0, 0, 0));
+				checker->set_texture(theme_cache.background_icon);
+				checker->set_texture_slice_all(0);
+				checker->set_region_rect(Rect2());
+				checker->set_h_axis_stretch_mode(StyleBox::TILE);
+				checker->set_v_axis_stretch_mode(StyleBox::TILE);
+				checker->set_texture_modulate(Color(1, 1, 1, 1));
+				checker->draw(get_canvas_item(), r);
 			}
+			if (style->get_texture().is_valid()) {
+				style->set_background_color(style->get_background_color() * preset_color);
+				style->set_texture_modulate(style->get_texture_modulate() * preset_color);
+			} else {
+				style->set_background_color(preset_color);
+			}
+			style->draw(get_canvas_item(), r);
 
 			if (has_focus(true)) {
 				RID ci = get_canvas_item();

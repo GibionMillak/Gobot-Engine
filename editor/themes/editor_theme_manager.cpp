@@ -44,9 +44,7 @@
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme.h"
 #include "editor/themes/theme_classic.h"
-#include "scene/resources/style_box_flat.h"
-#include "scene/resources/style_box_line.h"
-#include "scene/resources/style_box_texture.h"
+#include "scene/resources/style_box.h"
 #include "scene/resources/texture.h"
 #include "scene/scene_string_names.h"
 #include "servers/display/display_server.h"
@@ -125,24 +123,23 @@ String EditorThemeManager::get_benchmark_key() {
 
 // Generation helper methods.
 
-Ref<StyleBoxTexture> EditorThemeManager::make_stylebox(Ref<Texture2D> p_texture, float p_left, float p_top, float p_right, float p_bottom, float p_margin_left, float p_margin_top, float p_margin_right, float p_margin_bottom, bool p_draw_center) {
-	Ref<StyleBoxTexture> style(memnew(StyleBoxTexture));
+Ref<StyleBox> EditorThemeManager::make_stylebox(Ref<Texture2D> p_texture, float p_left, float p_top, float p_right, float p_bottom, float p_margin_left, float p_margin_top, float p_margin_right, float p_margin_bottom) {
+	Ref<StyleBox> style(memnew(StyleBox));
 	style->set_texture(p_texture);
-	style->set_texture_margin_individual(p_left * EDSCALE, p_top * EDSCALE, p_right * EDSCALE, p_bottom * EDSCALE);
-	style->set_padding_individual(p_margin_left * EDSCALE, p_margin_top * EDSCALE, p_margin_right * EDSCALE, p_margin_bottom * EDSCALE);
-	style->set_draw_center(p_draw_center);
+	style->set_texture_slice_individual(p_left * EDSCALE, p_top * EDSCALE, p_right * EDSCALE, p_bottom * EDSCALE);
+	style->set_padding_individual((p_left + p_margin_left) * EDSCALE, (p_top + p_margin_top) * EDSCALE, (p_right + p_margin_right) * EDSCALE, (p_bottom + p_margin_bottom) * EDSCALE);
 	return style;
 }
 
-Ref<StyleBoxEmpty> EditorThemeManager::make_empty_stylebox(float p_margin_left, float p_margin_top, float p_margin_right, float p_margin_bottom) {
-	Ref<StyleBoxEmpty> style(memnew(StyleBoxEmpty));
+Ref<StyleBox> EditorThemeManager::make_empty_stylebox(float p_margin_left, float p_margin_top, float p_margin_right, float p_margin_bottom) {
+	Ref<StyleBox> style(memnew(StyleBox));
 	style->set_padding_individual(p_margin_left * EDSCALE, p_margin_top * EDSCALE, p_margin_right * EDSCALE, p_margin_bottom * EDSCALE);
 	return style;
 }
 
-Ref<StyleBoxFlat> EditorThemeManager::make_flat_stylebox(Color p_color, float p_margin_left, float p_margin_top, float p_margin_right, float p_margin_bottom, int p_corner_width) {
-	Ref<StyleBoxFlat> style(memnew(StyleBoxFlat));
-	style->set_bg_color(p_color);
+Ref<StyleBox> EditorThemeManager::make_color_stylebox(Color p_color, float p_margin_left, float p_margin_top, float p_margin_right, float p_margin_bottom, int p_corner_width) {
+	Ref<StyleBox> style(memnew(StyleBox));
+	style->set_background_color(p_color);
 	// Adjust level of detail based on the corners' effective sizes.
 	style->set_corner_detail(Math::ceil(0.8 * p_corner_width * EDSCALE));
 	style->set_corner_radius_all(p_corner_width * EDSCALE);
@@ -150,13 +147,12 @@ Ref<StyleBoxFlat> EditorThemeManager::make_flat_stylebox(Color p_color, float p_
 	return style;
 }
 
-Ref<StyleBoxLine> EditorThemeManager::make_line_stylebox(Color p_color, int p_thickness, float p_grow_begin, float p_grow_end, bool p_vertical) {
-	Ref<StyleBoxLine> style(memnew(StyleBoxLine));
-	style->set_color(p_color);
-	style->set_grow_begin(p_grow_begin);
-	style->set_grow_end(p_grow_end);
-	style->set_thickness(p_thickness);
-	style->set_vertical(p_vertical);
+Ref<StyleBox> EditorThemeManager::make_line_stylebox(Color p_color, int p_thickness, float p_grow_begin, float p_grow_end, bool p_vertical) {
+	Ref<StyleBox> style(memnew(StyleBox));
+	style->set_background_color(p_color);
+	style->set_expand_margin(p_vertical ? SIDE_TOP : SIDE_LEFT, p_grow_begin);
+	style->set_expand_margin(p_vertical ? SIDE_BOTTOM : SIDE_RIGHT, p_grow_end);
+	style->set_minimum_size(p_vertical ? Size2(p_thickness, 0) : Size2(0, p_thickness));
 	return style;
 }
 
@@ -536,10 +532,10 @@ void EditorThemeManager::_populate_text_editor_styles(const Ref<EditorTheme> &p_
 	p_theme->set_constant("line_spacing", "CodeEdit", EDITOR_GET("text_editor/appearance/whitespace/line_spacing"));
 
 	const Color background_color = EDITOR_GET("text_editor/theme/highlighting/background_color");
-	Ref<StyleBoxFlat> code_edit_stylebox = make_flat_stylebox(background_color, 0, p_config.widget_margin.y, p_config.widget_margin.x, p_config.widget_margin.y, p_config.border_radius);
+	Ref<StyleBox> code_edit_stylebox = make_color_stylebox(background_color, 0, p_config.widget_margin.y, p_config.widget_margin.x, p_config.widget_margin.y, p_config.border_radius);
 	p_theme->set_stylebox(CoreStringName(normal), "CodeEdit", code_edit_stylebox);
 	p_theme->set_stylebox("read_only", "CodeEdit", code_edit_stylebox);
-	p_theme->set_stylebox("focus", "CodeEdit", memnew(StyleBoxEmpty));
+	p_theme->set_stylebox("focus", "CodeEdit", memnew(StyleBox));
 
 	/* clang-format off */
 	p_theme->set_color("completion_background_color",     "CodeEdit", EDITOR_GET("text_editor/theme/highlighting/completion_background_color"));
@@ -603,8 +599,8 @@ void EditorThemeManager::_populate_visual_shader_styles(const Ref<EditorTheme> &
 		ed_settings->set_initial_value("editors/visual_editors/connection_colors/sampler_color", Color(1.0, 1.0, 0.0), true);
 
 		// Node category colors (used for the node headers)
-		Ref<StyleBoxFlat> gn_panel_style = p_theme->get_stylebox(SceneStringName(panel), "GraphNode");
-		Color gn_bg_color = gn_panel_style->get_bg_color();
+		Ref<StyleBox> gn_panel_style = p_theme->get_stylebox(SceneStringName(panel), "GraphNode");
+		Color gn_bg_color = gn_panel_style->get_background_color();
 		ed_settings->set_initial_value("editors/visual_editors/category_colors/output_color", gn_bg_color, true);
 		ed_settings->set_initial_value("editors/visual_editors/category_colors/color_color", gn_bg_color, true);
 		ed_settings->set_initial_value("editors/visual_editors/category_colors/conditional_color", gn_bg_color, true);

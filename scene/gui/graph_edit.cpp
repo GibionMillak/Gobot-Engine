@@ -47,7 +47,7 @@
 #include "scene/gui/spin_box.h"
 #include "scene/gui/view_panner.h"
 #include "scene/resources/material.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "scene/theme/theme_db.h"
 
 constexpr int MINIMAP_OFFSET = 12;
@@ -284,8 +284,8 @@ Error GraphEdit::connect_node(const StringName &p_from, int p_from_port, const S
 	line_material->set_shader_parameter("from_type", c->from_port);
 	line_material->set_shader_parameter("to_type", c->to_port);
 
-	Ref<StyleBoxFlat> bg_panel = theme_cache.panel;
-	Color connection_line_rim_color = bg_panel.is_valid() ? bg_panel->get_bg_color() : Color(0.0, 0.0, 0.0, 0.0);
+	Ref<StyleBox> bg_panel = theme_cache.panel;
+	Color connection_line_rim_color = bg_panel.is_valid() ? bg_panel->get_background_color() : Color(0.0, 0.0, 0.0, 0.0);
 	line_material->set_shader_parameter("rim_color", connection_line_rim_color);
 	line->set_material(line_material);
 
@@ -1791,17 +1791,17 @@ void GraphEdit::_minimap_draw() {
 		Vector2 node_size = minimap->_convert_from_graph_position(graph_frame->get_size() * zoom);
 		Rect2 node_rect = Rect2(node_position, node_size);
 
-		Ref<StyleBoxFlat> sb_minimap = minimap->theme_cache.node_style;
+		Ref<StyleBox> sb_minimap = minimap->theme_cache.node_style;
 
 		// Override default values with colors provided by the GraphNode's stylebox, if possible.
-		Ref<StyleBoxFlat> sb_frame = graph_frame->get_theme_stylebox(graph_frame->is_selected() ? SNAME("panel_selected") : SceneStringName(panel));
+		Ref<StyleBox> sb_frame = graph_frame->get_theme_stylebox(graph_frame->is_selected() ? SNAME("panel_selected") : SceneStringName(panel));
 		if (sb_frame.is_valid()) {
-			Color node_color = sb_frame->get_bg_color();
+			Color node_color = sb_frame->get_background_color();
 			if (graph_frame->is_tint_color_enabled()) {
 				node_color = graph_frame->get_tint_color();
 			}
 			sb_minimap = sb_minimap->duplicate();
-			sb_minimap->set_bg_color(node_color);
+			sb_minimap->set_background_color(node_color);
 		}
 
 		minimap->draw_style_box(sb_minimap, node_rect);
@@ -1818,14 +1818,14 @@ void GraphEdit::_minimap_draw() {
 		Vector2 node_size = minimap->_convert_from_graph_position(graph_node->get_size() * zoom);
 		Rect2 node_rect = Rect2(node_position, node_size);
 
-		Ref<StyleBoxFlat> sb_minimap = minimap->theme_cache.node_style;
+		Ref<StyleBox> sb_minimap = minimap->theme_cache.node_style;
 
 		// Override default values with colors provided by the GraphNode's stylebox, if possible.
-		Ref<StyleBoxFlat> sb_frame = graph_node->is_selected() ? graph_node->theme_cache.panel_selected : graph_node->theme_cache.panel;
+		Ref<StyleBox> sb_frame = graph_node->is_selected() ? graph_node->theme_cache.panel_selected : graph_node->theme_cache.panel;
 		if (sb_frame.is_valid()) {
-			Color node_color = sb_frame->get_bg_color();
+			Color node_color = sb_frame->get_background_color();
 			sb_minimap = sb_minimap->duplicate();
-			sb_minimap->set_bg_color(node_color);
+			sb_minimap->set_background_color(node_color);
 		}
 
 		minimap->draw_style_box(sb_minimap, node_rect);

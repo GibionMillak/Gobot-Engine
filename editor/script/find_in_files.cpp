@@ -627,7 +627,7 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 	set_anchors_preset(LayoutPreset::PRESET_FULL_RECT);
 	set_horizontal_scroll_mode(SCROLL_MODE_DISABLED);
 
-	Ref<StyleBoxEmpty> sb = memnew(StyleBoxEmpty);
+	Ref<StyleBox> sb = memnew(StyleBox);
 	sb->set_padding_all(6 * EDSCALE);
 	add_theme_style_override("panel", sb);
 

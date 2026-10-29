@@ -43,7 +43,7 @@
 #include "scene/gui/menu_bar.h"
 #include "scene/gui/panel_container.h"
 #include "scene/main/timer.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "scene/theme/theme_db.h"
 #include "servers/display/display_server.h"
 
@@ -1355,7 +1355,7 @@ void PopupMenu::_update_shadow_offsets() const {
 		return;
 	}
 
-	Ref<StyleBoxFlat> sb = theme_cache.panel_style;
+	Ref<StyleBox> sb = theme_cache.panel_style;
 	if (sb.is_null()) {
 		panel->set_offsets_preset(Control::PRESET_FULL_RECT, Control::PRESET_MODE_MINSIZE, 0);
 		return;
@@ -3257,7 +3257,7 @@ PackedStringArray PopupMenu::get_configuration_warnings() const {
 	PackedStringArray warnings = Popup::get_configuration_warnings();
 
 	if (!DisplayServer::get_singleton()->is_window_transparency_available() && !GLOBAL_GET_CACHED(bool, "display/window/subwindows/embed_subwindows")) {
-		Ref<StyleBoxFlat> sb = theme_cache.panel_style;
+		Ref<StyleBox> sb = theme_cache.panel_style;
 		if (sb.is_valid() && (sb->get_shadow_size() > 0 || sb->get_corner_radius(CORNER_TOP_LEFT) > 0 || sb->get_corner_radius(CORNER_TOP_RIGHT) > 0 || sb->get_corner_radius(CORNER_BOTTOM_LEFT) > 0 || sb->get_corner_radius(CORNER_BOTTOM_RIGHT) > 0)) {
 			warnings.push_back(RTR("The current theme style has shadows and/or rounded corners for popups, but those won't display correctly if \"display/window/per_pixel_transparency/allowed\" isn't enabled in the Project Settings, nor if it isn't supported."));
 		}
@@ -3699,7 +3699,7 @@ PopupMenu::PopupMenu() {
 	scroll_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	scroll_container->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	vbox_container->add_child(scroll_container, false, INTERNAL_MODE_FRONT);
-	scroll_container->add_theme_style_override(SceneStringName(panel), memnew(StyleBoxEmpty));
+	scroll_container->add_theme_style_override(SceneStringName(panel), memnew(StyleBox));
 
 	// The control which will display the items
 	control = memnew(PopupMenuItems(this));

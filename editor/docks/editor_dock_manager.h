@@ -43,7 +43,7 @@ class TabBar;
 class TabContainer;
 class VBoxContainer;
 class WindowWrapper;
-class StyleBoxFlat;
+class StyleBox;
 
 class DockSplitContainer : public SplitContainer {
 	GDCLASS(DockSplitContainer, SplitContainer);

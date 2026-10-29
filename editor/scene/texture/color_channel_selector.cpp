@@ -130,7 +130,7 @@ void ColorChannelSelector::create_button(unsigned int p_channel_index, const Str
 	button->set_pressed(true);
 
 	// Don't show focus, it stands out too much and remains visible which can be confusing.
-	button->add_theme_style_override("focus", memnew(StyleBoxEmpty));
+	button->add_theme_style_override("focus", memnew(StyleBox));
 
 	// Make it look similar to toolbar buttons.
 	button->set_theme_type_variation(SceneStringName(FlatButton));

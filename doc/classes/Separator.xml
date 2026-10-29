@@ -4,7 +4,7 @@
 		Abstract base class for separators.
 	</brief_description>
 	<description>
-		Abstract base class for separators, used for separating other controls. [Separator]s are purely visual and normally drawn as a [StyleBoxLine].
+		Abstract base class for separators, used for separating other controls. [Separator]s are purely visual and normally drawn as a [StyleBox].
 	</description>
 	<tutorials>
 	</tutorials>
@@ -13,7 +13,7 @@
 			The size of the area covered by the separator. Effectively works like a minimum width/height.
 		</theme_item>
 		<theme_item name="separator" data_type="style" type="StyleBox">
-			The style for the separator line. Works best with [StyleBoxLine] (remember to enable [member StyleBoxLine.vertical] for [VSeparator]).
+			The style for the separator line. Set [member StyleBox.background_color] for its color and [member StyleBox.minimum_size] for its thickness: [code]Vector2(0, thickness)[/code] for [HSeparator], or [code]Vector2(thickness, 0)[/code] for [VSeparator].
 		</theme_item>
 	</theme_items>
 </class>

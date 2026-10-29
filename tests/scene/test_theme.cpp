@@ -33,7 +33,7 @@
 TEST_FORCE_LINK(test_theme)
 
 #include "scene/resources/image_texture.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "scene/resources/theme.h"
 #include "tests/test_tools.h"
 
@@ -50,7 +50,7 @@ public:
 		{ Theme::DATA_TYPE_FONT, Ref<FontFile>(memnew(FontFile)) },
 		{ Theme::DATA_TYPE_FONT_SIZE, 42 },
 		{ Theme::DATA_TYPE_ICON, Ref<Texture>(memnew(ImageTexture)) },
-		{ Theme::DATA_TYPE_STYLEBOX, Ref<StyleBox>(memnew(StyleBoxFlat)) },
+		{ Theme::DATA_TYPE_STYLEBOX, Ref<StyleBox>(memnew(StyleBox)) },
 		{ Theme::DATA_TYPE_SOUND, Ref<AudioStream>(memnew(AudioStream)) },
 	};
 

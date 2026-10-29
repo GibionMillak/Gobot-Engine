@@ -37,7 +37,7 @@ class ConfigFile;
 class DockContextPopup;
 class DockTabContainer;
 class EditorDockManager;
-class StyleBoxFlat;
+class StyleBox;
 
 class EditorDockDragHint : public Control {
 	GDCLASS(EditorDockDragHint, Control);
@@ -48,7 +48,7 @@ class EditorDockDragHint : public Control {
 	Control *drop_tabbar_parent = nullptr;
 	TabBar *drop_tabbar = nullptr;
 
-	Ref<StyleBoxFlat> dock_drop_highlight;
+	Ref<StyleBox> dock_drop_highlight;
 	bool can_drop_dock = false;
 	bool mouse_inside = false;
 	bool mouse_inside_tabbar = false;

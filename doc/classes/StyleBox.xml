@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="StyleBox" inherits="Resource" api_type="core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+<class xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="StyleBox" inherits="Resource" api_type="core" xsi:noNamespaceSchemaLocation="../class.xsd">
 	<brief_description>
-		Abstract base class for defining stylized boxes for UI elements.
+		Configurable background, texture, border, and effects for GUI controls.
 	</brief_description>
 	<description>
-		[StyleBox] is an abstract base class for drawing stylized boxes for UI elements. It is used for panels, buttons, [LineEdit] backgrounds, [Tree] backgrounds, etc. and also for testing a transparency mask for pointer signals. If mask test fails on a [StyleBox] assigned as mask to a control, clicks and motion signals will go through it to the one below.
-		[b]Note:[/b] For control nodes that have [i]Theme Properties[/i], the [code]focus[/code] [StyleBox] is displayed over the [code]normal[/code], [code]hover[/code] or [code]pressed[/code] [StyleBox]. This makes the [code]focus[/code] [StyleBox] more reusable across different nodes.
+		A configurable box used to draw panels, buttons, text-field backgrounds, separators, and other GUI elements. It combines a background color, an optional nine-patch texture, borders, rounded corners, shadows, and padding in one resource.
+		A new [StyleBox] is transparent and draws nothing. Set [member background_color], [member texture], border widths, or shadow size to make it visible. Padding and [member minimum_size] can reserve space even when nothing is drawn.
+		Drawing order is shadow, background color, texture, then border. Rounded corners and skew apply to all layers. Texture slices control image resizing independently of layout: content insets are border widths plus padding.
+		For a horizontal separator, set a background color and [member minimum_size] to [code]Vector2(0, thickness)[/code]. For a vertical separator, use [code]Vector2(thickness, 0)[/code]. The drawing control positions the resulting thin rectangle.
 	</description>
 	<tutorials>
 	</tutorials>
 	<methods>
-		<method name="_draw" qualifiers="virtual required const">
+		<method name="_draw" qualifiers="virtual const">
 			<return type="void" />
 			<param index="0" name="to_canvas_item" type="RID" />
 			<param index="1" name="rect" type="Rect2" />
 			<description>
+				Override this method to provide custom drawing instead of the built-in box renderer.
 			</description>
 		</method>
 		<method name="_get_draw_rect" qualifiers="virtual const">
@@ -45,11 +48,24 @@
 				The [RID] value can either be the result of [method CanvasItem.get_canvas_item] called on an existing [CanvasItem]-derived node, or directly from creating a canvas item in the [RenderingServer] with [method RenderingServer.canvas_item_create].
 			</description>
 		</method>
+		<method name="get_border_width" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="side" type="int" enum="Side" />
+			<description>
+				Returns the specified [enum Side]'s border width.
+			</description>
+		</method>
+		<method name="get_border_width_min" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the smallest border width out of all four borders.
+			</description>
+		</method>
 		<method name="get_content_inset" qualifiers="const">
 			<return type="float" />
 			<param index="0" name="side" type="int" enum="Side" />
 			<description>
-				Returns the total content inset for the specified [enum Side], measured inward from the style's outer border edge to its content edge. For [StyleBoxFlat], this is the border width plus the padding. For [StyleBoxTexture], this is the texture margin plus the padding.
+				Returns the border width plus padding for the specified side. Texture slices, minimum drawing size, visual expansion, and shadows do not affect this value.
 			</description>
 		</method>
 		<method name="get_content_offset" qualifiers="const">
@@ -58,16 +74,36 @@
 				Returns the top-left content inset as a vector. This is equivalent to [code]Vector2(style.get_content_inset(SIDE_LEFT), style.get_content_inset(SIDE_TOP))[/code].
 			</description>
 		</method>
+		<method name="get_corner_radius" qualifiers="const">
+			<return type="int" />
+			<param index="0" name="corner" type="int" enum="Corner" />
+			<description>
+				Returns the given [param corner]'s radius.
+			</description>
+		</method>
 		<method name="get_current_item_drawn" qualifiers="const">
 			<return type="CanvasItem" />
 			<description>
 				Returns the [CanvasItem] that handles its [constant CanvasItem.NOTIFICATION_DRAW] or [method CanvasItem._draw] callback at this moment.
 			</description>
 		</method>
+		<method name="get_expand_margin" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="side" type="int" enum="Side" />
+			<description>
+				Returns the size of the specified [enum Side]'s expand margin.
+			</description>
+		</method>
+		<method name="get_intrinsic_minimum_size" qualifiers="const">
+			<return type="Vector2" />
+			<description>
+				Returns [member minimum_size], excluding minimum space required by borders and padding.
+			</description>
+		</method>
 		<method name="get_minimum_size" qualifiers="const">
 			<return type="Vector2" />
 			<description>
-				Returns the minimum size that this stylebox can be shrunk to, including its border and content padding.
+				Returns the componentwise maximum of [member minimum_size], border-plus-padding totals, and the value supplied by [method _get_minimum_size].
 			</description>
 		</method>
 		<method name="get_padding" qualifiers="const">
@@ -75,6 +111,85 @@
 			<param index="0" name="side" type="int" enum="Side" />
 			<description>
 				Returns the padding of the specified [enum Side], excluding the style's border. Use [method get_content_inset] to retrieve the total inset used for layout.
+			</description>
+		</method>
+		<method name="get_texture_slice" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="side" type="int" enum="Side" />
+			<description>
+				Returns the source-image slice width in pixels.
+			</description>
+		</method>
+		<method name="set_border_width">
+			<return type="void" />
+			<param index="0" name="side" type="int" enum="Side" />
+			<param index="1" name="border_width" type="int" />
+			<description>
+				Sets the specified [enum Side]'s border width to [param border_width] pixels.
+			</description>
+		</method>
+		<method name="set_border_width_all">
+			<return type="void" />
+			<param index="0" name="border_width" type="int" />
+			<description>
+				Sets the border width to [param border_width] pixels for all sides.
+			</description>
+		</method>
+		<method name="set_corner_radius">
+			<return type="void" />
+			<param index="0" name="corner" type="int" enum="Corner" />
+			<param index="1" name="corner_radius" type="int" />
+			<description>
+				Sets the corner radius to [param corner_radius] pixels for the given [param corner].
+			</description>
+		</method>
+		<method name="set_corner_radius_all">
+			<return type="void" />
+			<param index="0" name="corner_radius" type="int" />
+			<description>
+				Sets the corner radius to [param corner_radius] pixels for all corners.
+			</description>
+		</method>
+		<method name="set_corner_radius_individual">
+			<return type="void" />
+			<param index="0" name="top_left" type="int" />
+			<param index="1" name="top_right" type="int" />
+			<param index="2" name="bottom_right" type="int" />
+			<param index="3" name="bottom_left" type="int" />
+			<description>
+				Sets each corner radius in pixels.
+			</description>
+		</method>
+		<method name="set_expand_margin">
+			<return type="void" />
+			<param index="0" name="side" type="int" enum="Side" />
+			<param index="1" name="expand_margin" type="float" />
+			<description>
+				Sets the expand margin to [param expand_margin] pixels for the specified [enum Side].
+			</description>
+		</method>
+		<method name="set_expand_margin_all">
+			<return type="void" />
+			<param index="0" name="expand_margin" type="float" />
+			<description>
+				Sets the expand margin to [param expand_margin] pixels for all sides.
+			</description>
+		</method>
+		<method name="set_expand_margin_individual">
+			<return type="void" />
+			<param index="0" name="left" type="float" />
+			<param index="1" name="top" type="float" />
+			<param index="2" name="right" type="float" />
+			<param index="3" name="bottom" type="float" />
+			<description>
+				Sets visual drawing expansion for all four sides. Negative values shrink the drawing rectangle. Expansion does not change content insets.
+			</description>
+		</method>
+		<method name="set_minimum_size">
+			<return type="void" />
+			<param index="0" name="minimum_size" type="Vector2" />
+			<description>
+				Sets the intrinsic minimum drawing size. Negative components are clamped to zero.
 			</description>
 		</method>
 		<method name="set_padding">
@@ -92,6 +207,41 @@
 				Sets the padding to [param padding] pixels for all sides. This padding is added inside the style's border. Negative values are clamped to [code]0[/code].
 			</description>
 		</method>
+		<method name="set_padding_individual">
+			<return type="void" />
+			<param index="0" name="left" type="float" />
+			<param index="1" name="top" type="float" />
+			<param index="2" name="right" type="float" />
+			<param index="3" name="bottom" type="float" />
+			<description>
+				Sets all four padding values in pixels. Negative values are clamped to zero.
+			</description>
+		</method>
+		<method name="set_texture_slice">
+			<return type="void" />
+			<param index="0" name="side" type="int" enum="Side" />
+			<param index="1" name="texture_slice" type="float" />
+			<description>
+				Sets the source-image slice width in pixels.
+			</description>
+		</method>
+		<method name="set_texture_slice_all">
+			<return type="void" />
+			<param index="0" name="texture_slice" type="float" />
+			<description>
+				Sets the source-image slice width in pixels.
+			</description>
+		</method>
+		<method name="set_texture_slice_individual">
+			<return type="void" />
+			<param index="0" name="left" type="float" />
+			<param index="1" name="top" type="float" />
+			<param index="2" name="right" type="float" />
+			<param index="3" name="bottom" type="float" />
+			<description>
+				Sets the source-image slice widths in pixels for all four sides. Slices affect image resizing, not content insets.
+			</description>
+		</method>
 		<method name="test_mask" qualifiers="const">
 			<return type="bool" />
 			<param index="0" name="point" type="Vector2" />
@@ -102,9 +252,80 @@
 		</method>
 	</methods>
 	<members>
+		<member name="anti_aliasing" type="bool" setter="set_anti_aliased" getter="is_anti_aliased" default="true">
+			Antialiasing draws a small ring around the edges, which fades to transparency. As a result, edges look much smoother. This is only noticeable when using rounded corners or [member skew].
+			[b]Note:[/b] When using beveled corners with 45-degree angles ([member corner_detail] = 1), it is recommended to set [member anti_aliasing] to [code]false[/code] to ensure crisp visuals and avoid possible visual glitches.
+		</member>
+		<member name="anti_aliasing_size" type="float" setter="set_aa_size" getter="get_aa_size" default="1.0">
+			This changes the size of the antialiasing effect. [code]1.0[/code] is recommended for an optimal result at 100% scale, identical to how rounded rectangles are rendered in web browsers and most vector drawing software.
+			[b]Note:[/b] Higher values may produce a blur effect but can also create undesired artifacts on small boxes with large-radius corners.
+		</member>
+		<member name="axis_stretch_horizontal" type="int" setter="set_h_axis_stretch_mode" getter="get_h_axis_stretch_mode" enum="StyleBox.AxisStretchMode" default="0">
+			Controls how the stylebox's texture will be stretched or tiled horizontally.
+		</member>
+		<member name="axis_stretch_vertical" type="int" setter="set_v_axis_stretch_mode" getter="get_v_axis_stretch_mode" enum="StyleBox.AxisStretchMode" default="0">
+			Controls how the stylebox's texture will be stretched or tiled vertically.
+		</member>
+		<member name="background_color" type="Color" setter="set_background_color" getter="get_background_color" default="Color(0, 0, 0, 0)">
+			The background color of the stylebox. Set its alpha to [code]0[/code] for a transparent background, such as a border-only style.
+		</member>
+		<member name="border_blend" type="bool" setter="set_border_blend" getter="get_border_blend" default="false">
+			If [code]true[/code], the border will fade into the background color.
+		</member>
+		<member name="border_color" type="Color" setter="set_border_color" getter="get_border_color" default="Color(0.8, 0.8, 0.8, 1)">
+			Sets the color of the border.
+		</member>
+		<member name="border_width_bottom" type="int" setter="set_border_width" getter="get_border_width" default="0">
+			Border width for the bottom border.
+		</member>
+		<member name="border_width_left" type="int" setter="set_border_width" getter="get_border_width" default="0">
+			Border width for the left border.
+		</member>
+		<member name="border_width_right" type="int" setter="set_border_width" getter="get_border_width" default="0">
+			Border width for the right border.
+		</member>
+		<member name="border_width_top" type="int" setter="set_border_width" getter="get_border_width" default="0">
+			Border width for the top border.
+		</member>
+		<member name="corner_detail" type="int" setter="set_corner_detail" getter="get_corner_detail" default="8">
+			This sets the number of vertices used for each corner. Higher values result in rounder corners but take more processing power to compute. When choosing a value, you should take the corner radius ([method set_corner_radius_all]) into account.
+			For corner radii less than 10, [code]4[/code] or [code]5[/code] should be enough. For corner radii less than 30, values between [code]8[/code] and [code]12[/code] should be enough.
+			A corner detail of [code]1[/code] will result in chamfered corners instead of rounded corners, which is useful for some artistic effects.
+		</member>
+		<member name="corner_radius_bottom_left" type="int" setter="set_corner_radius" getter="get_corner_radius" default="0">
+			The bottom-left corner's radius. If [code]0[/code], the corner is not rounded.
+		</member>
+		<member name="corner_radius_bottom_right" type="int" setter="set_corner_radius" getter="get_corner_radius" default="0">
+			The bottom-right corner's radius. If [code]0[/code], the corner is not rounded.
+		</member>
+		<member name="corner_radius_top_left" type="int" setter="set_corner_radius" getter="get_corner_radius" default="0">
+			The top-left corner's radius. If [code]0[/code], the corner is not rounded.
+		</member>
+		<member name="corner_radius_top_right" type="int" setter="set_corner_radius" getter="get_corner_radius" default="0">
+			The top-right corner's radius. If [code]0[/code], the corner is not rounded.
+		</member>
+		<member name="expand_margin_bottom" type="float" setter="set_expand_margin" getter="get_expand_margin" default="0.0">
+			Expands the stylebox outside of the control rect on the bottom edge. Useful in combination with [member border_width_bottom] to draw a border outside the control rect.
+			[b]Note:[/b] Unlike [member StyleBox.padding_bottom], [member expand_margin_bottom] does [i]not[/i] affect the size of the clickable area for [Control]s. This can negatively impact usability if used wrong, as the user may try to click an area of the StyleBox that cannot actually receive clicks.
+		</member>
+		<member name="expand_margin_left" type="float" setter="set_expand_margin" getter="get_expand_margin" default="0.0">
+			Expands the stylebox outside of the control rect on the left edge. Useful in combination with [member border_width_left] to draw a border outside the control rect.
+			[b]Note:[/b] Unlike [member StyleBox.padding_left], [member expand_margin_left] does [i]not[/i] affect the size of the clickable area for [Control]s. This can negatively impact usability if used wrong, as the user may try to click an area of the StyleBox that cannot actually receive clicks.
+		</member>
+		<member name="expand_margin_right" type="float" setter="set_expand_margin" getter="get_expand_margin" default="0.0">
+			Expands the stylebox outside of the control rect on the right edge. Useful in combination with [member border_width_right] to draw a border outside the control rect.
+			[b]Note:[/b] Unlike [member StyleBox.padding_right], [member expand_margin_right] does [i]not[/i] affect the size of the clickable area for [Control]s. This can negatively impact usability if used wrong, as the user may try to click an area of the StyleBox that cannot actually receive clicks.
+		</member>
+		<member name="expand_margin_top" type="float" setter="set_expand_margin" getter="get_expand_margin" default="0.0">
+			Expands the stylebox outside of the control rect on the top edge. Useful in combination with [member border_width_top] to draw a border outside the control rect.
+			[b]Note:[/b] Unlike [member StyleBox.padding_top], [member expand_margin_top] does [i]not[/i] affect the size of the clickable area for [Control]s. This can negatively impact usability if used wrong, as the user may try to click an area of the StyleBox that cannot actually receive clicks.
+		</member>
+		<member name="minimum_size" type="Vector2" setter="set_minimum_size" getter="get_intrinsic_minimum_size" default="Vector2(0, 0)">
+			Intrinsic minimum drawing size, combined componentwise with the space required by borders and padding. This does not change content insets. Use its height or width to configure separator thickness.
+		</member>
 		<member name="padding_bottom" type="float" setter="set_padding" getter="get_padding" default="0.0">
 			The bottom padding for the contents of this style box, added inside the style's border. Increasing this value reduces the space available to the contents from the bottom. Negative values are clamped to [code]0[/code].
-			For example, a [StyleBoxFlat] with a [code]1[/code]-pixel bottom border and [code]4[/code] pixels of bottom content padding has a total bottom inset of [code]5[/code] pixels.
+			For example, a [StyleBox] with a [code]1[/code]-pixel bottom border and [code]4[/code] pixels of bottom content padding has a total bottom inset of [code]5[/code] pixels.
 			It is up to the code using this style box to decide what these contents are: for example, a [Button] respects this padding for the textual contents of the button.
 			Code laying out contents should use [method get_content_inset] to include both the style's border and content padding.
 		</member>
@@ -120,5 +341,52 @@
 			The top padding for the contents of this style box, added inside the style's border. Increasing this value reduces the space available to the contents from the top.
 			Refer to [member padding_bottom] for extra considerations.
 		</member>
+		<member name="region_rect" type="Rect2" setter="set_region_rect" getter="get_region_rect" default="Rect2(0, 0, 0, 0)">
+			The region to use from the [member texture].
+			This is equivalent to first wrapping the [member texture] in an [AtlasTexture] with the same region.
+			If empty ([code]Rect2(0, 0, 0, 0)[/code]), the whole [member texture] is used.
+		</member>
+		<member name="shadow_color" type="Color" setter="set_shadow_color" getter="get_shadow_color" default="Color(0, 0, 0, 0.6)">
+			The color of the shadow. This has no effect if [member shadow_size] is lower than 1.
+		</member>
+		<member name="shadow_offset" type="Vector2" setter="set_shadow_offset" getter="get_shadow_offset" default="Vector2(0, 0)">
+			The shadow offset in pixels. Adjusts the position of the shadow relatively to the stylebox.
+		</member>
+		<member name="shadow_size" type="int" setter="set_shadow_size" getter="get_shadow_size" default="0">
+			The shadow size in pixels.
+		</member>
+		<member name="skew" type="Vector2" setter="set_skew" getter="get_skew" default="Vector2(0, 0)">
+			If set to a non-zero value on either axis, [member skew] distorts the StyleBox horizontally and/or vertically. This can be used for "futuristic"-style UIs. Positive values skew the StyleBox towards the right (X axis) and upwards (Y axis), while negative values skew the StyleBox towards the left (X axis) and downwards (Y axis).
+			[b]Note:[/b] To ensure text does not touch the StyleBox's edges, consider increasing the [StyleBox]'s padding (see [member StyleBox.padding_bottom]). It is preferable to increase the padding instead of the expand margin (see [member expand_margin_bottom]), as increasing the expand margin does not increase the size of the clickable area for [Control]s.
+		</member>
+		<member name="texture" type="Texture2D" setter="set_texture" getter="get_texture">
+			The texture to use when drawing this style box.
+		</member>
+		<member name="texture_modulate" type="Color" setter="set_texture_modulate" getter="get_texture_modulate" default="Color(1, 1, 1, 1)">
+			Modulates the color of the texture when this style box is drawn.
+		</member>
+		<member name="texture_slice_bottom" type="float" setter="set_texture_slice" getter="get_texture_slice" default="0.0">
+			Source-image slice width at the bottom edge, in pixels. Slices preserve image edges during nine-patch resizing. They do not add layout padding; use [member padding_bottom] to keep contents away from that edge.
+		</member>
+		<member name="texture_slice_left" type="float" setter="set_texture_slice" getter="get_texture_slice" default="0.0">
+			Source-image slice width at the left edge, in pixels. Slices preserve image edges during nine-patch resizing. They do not add layout padding; use [member padding_left] to keep contents away from that edge.
+		</member>
+		<member name="texture_slice_right" type="float" setter="set_texture_slice" getter="get_texture_slice" default="0.0">
+			Source-image slice width at the right edge, in pixels. Slices preserve image edges during nine-patch resizing. They do not add layout padding; use [member padding_right] to keep contents away from that edge.
+		</member>
+		<member name="texture_slice_top" type="float" setter="set_texture_slice" getter="get_texture_slice" default="0.0">
+			Source-image slice width at the top edge, in pixels. Slices preserve image edges during nine-patch resizing. They do not add layout padding; use [member padding_top] to keep contents away from that edge.
+		</member>
 	</members>
+	<constants>
+		<constant name="STRETCH" value="0" enum="AxisStretchMode">
+			Stretch the stylebox's texture. This results in visible distortion unless the texture size matches the stylebox's size perfectly.
+		</constant>
+		<constant name="TILE" value="1" enum="AxisStretchMode">
+			Repeats the stylebox's texture to match the stylebox's size according to the nine-patch system.
+		</constant>
+		<constant name="TILE_FIT" value="2" enum="AxisStretchMode">
+			Repeats the stylebox's texture to match the stylebox's size according to the nine-patch system. Unlike [constant TILE], the texture may be slightly stretched to make the nine-patch texture tile seamlessly.
+		</constant>
+	</constants>
 </class>

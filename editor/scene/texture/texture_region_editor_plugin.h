@@ -40,7 +40,7 @@ class OptionButton;
 class PanelContainer;
 class Sprite2D;
 class Sprite3D;
-class StyleBoxTexture;
+class StyleBox;
 class ViewPanner;
 
 class TextureRegionEditor : public Dialog {
@@ -87,7 +87,7 @@ class TextureRegionEditor : public Dialog {
 	Sprite2D *node_sprite_2d = nullptr;
 	Sprite3D *node_sprite_3d = nullptr;
 	NinePatchRect *node_ninepatch = nullptr;
-	Ref<StyleBoxTexture> res_stylebox;
+	Ref<StyleBox> res_stylebox;
 	Ref<AtlasTexture> res_atlas_texture;
 
 	Rect2 rect;

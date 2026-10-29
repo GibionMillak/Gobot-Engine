@@ -62,7 +62,7 @@
 #include "scene/main/timer.h"
 #include "scene/property_utils.h"
 #include "scene/resources/packed_scene.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "scene/scene_string_names.h"
 #include "servers/display/display_server.h"
 #include "servers/rendering/rendering_server.h"
@@ -2199,7 +2199,7 @@ void EditorInspectorSection::_notification(int p_what) {
 			if (indent_depth > 0 && section_indent_size > 0) {
 				section_indent = indent_depth * section_indent_size;
 			}
-			Ref<StyleBoxFlat> section_indent_style = theme_cache.indent_box;
+			Ref<StyleBox> section_indent_style = theme_cache.indent_box;
 			if (indent_depth > 0 && section_indent_style.is_valid()) {
 				section_indent += section_indent_style->get_content_inset(SIDE_LEFT) + section_indent_style->get_content_inset(SIDE_RIGHT);
 			}
@@ -3562,8 +3562,8 @@ void EditorInspectorArray::_notification(int p_what) {
 
 		case NOTIFICATION_THEME_CHANGED: {
 			Color color = get_theme_color(SNAME("bg"), SNAME("EditorInspectorArray"));
-			odd_style->set_bg_color(color.darkened(-0.1));
-			even_style->set_bg_color(color.darkened(0.1));
+			odd_style->set_background_color(color.darkened(-0.1));
+			even_style->set_background_color(color.darkened(0.1));
 
 			for (ArrayElement &ae : array_elements) {
 				if (ae.move_texture_rect) {

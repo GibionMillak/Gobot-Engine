@@ -256,7 +256,7 @@
 				See also [method get_theme_stylebox].
 				[b]Example:[/b] Modify a property in a [StyleBox] by duplicating it:
 				[codeblock]
-				# The snippet below assumes the child node "MyButton" has a StyleBoxFlat assigned.
+				# The snippet below assumes the child node "MyButton" has a StyleBox assigned.
 				# Resources are shared across instances, so we need to duplicate it
 				# to avoid modifying the appearance of all other buttons.
 				var new_stylebox_normal = $MyButton.get_theme_stylebox("normal").duplicate()
@@ -1137,8 +1137,8 @@
 			This string is the default return value of [method get_tooltip]. Override [method _get_tooltip] to generate tooltip text dynamically. Override [method _make_custom_tooltip] to customize the tooltip interface and behavior.
 			The tooltip popup will use either a default implementation, or a custom one that you can provide by overriding [method _make_custom_tooltip]. The default tooltip includes a [PopupPanel] and [Label] whose theme properties can be customized using [Theme] methods with the [code]"TooltipPanel"[/code] and [code]"TooltipLabel"[/code] respectively. For example:
 			[codeblock]
-			var style_box = StyleBoxFlat.new()
-			style_box.set_bg_color(Color(1, 1, 0))
+			var style_box = StyleBox.new()
+			style_box.set_background_color(Color(1, 1, 0))
 			style_box.set_border_width_all(2)
 			# We assume here that the `theme` property has been assigned a custom Theme beforehand.
 			theme.set_stylebox("panel", "TooltipPanel", style_box)

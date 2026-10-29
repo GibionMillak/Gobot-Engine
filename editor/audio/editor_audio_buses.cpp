@@ -54,7 +54,7 @@
 #include "scene/main/timer.h"
 #include "scene/resources/font.h"
 #include "scene/resources/gradient_texture.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "servers/audio/audio_server.h"
 
 void EditorAudioBus::_update_visible_channels() {
@@ -102,12 +102,12 @@ void EditorAudioBus::_notification(int p_what) {
 			Color mute_color_darkened = mute_color.darkened(darkening_factor);
 			Color bypass_color_darkened = bypass_color.darkened(darkening_factor);
 
-			Ref<StyleBoxFlat>(solo->get_theme_stylebox(SceneStringName(pressed)))->set_border_color(solo_color_darkened);
-			Ref<StyleBoxFlat>(mute->get_theme_stylebox(SceneStringName(pressed)))->set_border_color(mute_color_darkened);
-			Ref<StyleBoxFlat>(bypass->get_theme_stylebox(SceneStringName(pressed)))->set_border_color(bypass_color_darkened);
-			Ref<StyleBoxFlat>(solo->get_theme_stylebox("hover_pressed"))->set_border_color(solo_color_darkened);
-			Ref<StyleBoxFlat>(mute->get_theme_stylebox("hover_pressed"))->set_border_color(mute_color_darkened);
-			Ref<StyleBoxFlat>(bypass->get_theme_stylebox("hover_pressed"))->set_border_color(bypass_color_darkened);
+			Ref<StyleBox>(solo->get_theme_stylebox(SceneStringName(pressed)))->set_border_color(solo_color_darkened);
+			Ref<StyleBox>(mute->get_theme_stylebox(SceneStringName(pressed)))->set_border_color(mute_color_darkened);
+			Ref<StyleBox>(bypass->get_theme_stylebox(SceneStringName(pressed)))->set_border_color(bypass_color_darkened);
+			Ref<StyleBox>(solo->get_theme_stylebox("hover_pressed"))->set_border_color(solo_color_darkened);
+			Ref<StyleBox>(mute->get_theme_stylebox("hover_pressed"))->set_border_color(mute_color_darkened);
+			Ref<StyleBox>(bypass->get_theme_stylebox("hover_pressed"))->set_border_color(bypass_color_darkened);
 
 			solo->set_button_icon(get_editor_theme_icon(SNAME("audio_bus_solo")));
 			solo->add_theme_color_override("icon_pressed_color", solo_color);
@@ -207,7 +207,7 @@ void EditorAudioBus::_notification(int p_what) {
 					channel[i].peak_timer_l->start();
 				}
 
-				peak_indicator_stylebox_l->set_bg_color(active_gradient->get_color_at_offset(normalized_peak_indicator));
+				peak_indicator_stylebox_l->set_background_color(active_gradient->get_color_at_offset(normalized_peak_indicator));
 
 				normalized_peak_indicator = (channel[i].peak_indicator_r->get_position().height - peak_indicator_range) / -peak_indicator_range;
 
@@ -221,7 +221,7 @@ void EditorAudioBus::_notification(int p_what) {
 					channel[i].peak_timer_r->start();
 				}
 
-				peak_indicator_stylebox_r->set_bg_color(active_gradient->get_color_at_offset(normalized_peak_indicator));
+				peak_indicator_stylebox_r->set_background_color(active_gradient->get_color_at_offset(normalized_peak_indicator));
 
 				if (activity_found != channel[i].prev_active) {
 					if (activity_found) {
@@ -950,7 +950,7 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	hbc->add_child(bypass);
 	hbc->add_spacer();
 
-	Ref<StyleBoxEmpty> sbempty = memnew(StyleBoxEmpty);
+	Ref<StyleBox> sbempty = memnew(StyleBox);
 	for (int i = 0; i < hbc->get_child_count(); i++) {
 		Control *child = Object::cast_to<Control>(hbc->get_child(i));
 		child->begin_bulk_theme_override();
@@ -960,14 +960,14 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 		child->add_theme_style_override("focus", sbempty);
 		child->add_theme_style_override("focus_mirrored", sbempty);
 
-		Ref<StyleBoxFlat> sbflat = memnew(StyleBoxFlat);
-		sbflat->set_padding_all(0);
-		sbflat->set_bg_color(Color(1, 1, 1, 0));
-		sbflat->set_border_width(Side::SIDE_BOTTOM, Math::round(3 * EDSCALE));
-		child->add_theme_style_override(SceneStringName(pressed), sbflat);
-		child->add_theme_style_override("pressed_mirrored", sbflat);
-		child->add_theme_style_override("hover_pressed", sbflat);
-		child->add_theme_style_override("hover_pressed_mirrored", sbflat);
+		Ref<StyleBox> peak_style = memnew(StyleBox);
+		peak_style->set_padding_all(0);
+		peak_style->set_background_color(Color(1, 1, 1, 0));
+		peak_style->set_border_width(Side::SIDE_BOTTOM, Math::round(3 * EDSCALE));
+		child->add_theme_style_override(SceneStringName(pressed), peak_style);
+		child->add_theme_style_override("pressed_mirrored", peak_style);
+		child->add_theme_style_override("hover_pressed", peak_style);
+		child->add_theme_style_override("hover_pressed_mirrored", peak_style);
 
 		child->end_bulk_theme_override();
 	}
@@ -1041,10 +1041,10 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	inactive_bus_texture->set_fill_from(Vector2(0.0, 1.0));
 	inactive_bus_texture->set_fill_to(Vector2(0.0, 0.0));
 
-	peak_indicator_stylebox_l = memnew(StyleBoxFlat);
-	peak_indicator_stylebox_l->set_bg_color(Color(1.0, 1.0, 1.0, 0.75));
-	peak_indicator_stylebox_r = memnew(StyleBoxFlat);
-	peak_indicator_stylebox_r->set_bg_color(Color(1.0, 1.0, 1.0, 0.75));
+	peak_indicator_stylebox_l = memnew(StyleBox);
+	peak_indicator_stylebox_l->set_background_color(Color(1.0, 1.0, 1.0, 0.75));
+	peak_indicator_stylebox_r = memnew(StyleBox);
+	peak_indicator_stylebox_r->set_background_color(Color(1.0, 1.0, 1.0, 0.75));
 
 	peak_indicator_range = vu_height * EDSCALE - 2.0;
 

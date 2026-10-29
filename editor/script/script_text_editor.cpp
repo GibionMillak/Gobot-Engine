@@ -65,7 +65,7 @@
 #include "scene/gui/rich_text_label.h"
 #include "scene/gui/split_container.h"
 #include "scene/main/scene_tree.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "servers/rendering/rendering_server.h"
 
 void ConnectionInfoDialog::_on_confirmed() {
@@ -296,8 +296,8 @@ void ScriptTextEditor::_load_theme_settings() {
 		error_underline_color = updated_error_underline_color;
 	}
 
-	Ref<StyleBoxFlat> drag_info_sb = drag_info_label->get_theme_stylebox(CoreStringName(normal));
-	drag_info_sb->set_bg_color(EDITOR_GET("text_editor/theme/highlighting/completion_background_color"));
+	Ref<StyleBox> drag_info_sb = drag_info_label->get_theme_stylebox(CoreStringName(normal));
+	drag_info_sb->set_background_color(EDITOR_GET("text_editor/theme/highlighting/completion_background_color"));
 	Color info_color = EDITOR_GET("text_editor/theme/highlighting/text_color");
 	info_color.a = 0.5f;
 	drag_info_sb->set_border_color(info_color);
@@ -2706,7 +2706,7 @@ ScriptTextEditor::ScriptTextEditor() {
 	drag_info_label->set_anchors_preset(Control::PRESET_BOTTOM_RIGHT);
 	drag_info_label->add_theme_constant_override("line_spacing", 0);
 
-	Ref<StyleBoxFlat> drag_info_sb;
+	Ref<StyleBox> drag_info_sb;
 	drag_info_sb.instantiate();
 	drag_info_sb->set_border_width_all(2 * EDSCALE);
 	drag_info_sb->set_corner_radius_all(5 * EDSCALE);

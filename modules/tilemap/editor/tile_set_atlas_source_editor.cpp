@@ -1041,10 +1041,10 @@ void TileSetAtlasSourceEditor::_update_atlas_view() {
 				Button *button = memnew(Button);
 				button->set_flat(true);
 				button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
-				button->add_theme_style_override(CoreStringName(normal), memnew(StyleBoxEmpty));
-				button->add_theme_style_override(SceneStringName(hover), memnew(StyleBoxEmpty));
-				button->add_theme_style_override("focus", memnew(StyleBoxEmpty));
-				button->add_theme_style_override(SceneStringName(pressed), memnew(StyleBoxEmpty));
+				button->add_theme_style_override(CoreStringName(normal), memnew(StyleBox));
+				button->add_theme_style_override(SceneStringName(hover), memnew(StyleBox));
+				button->add_theme_style_override("focus", memnew(StyleBox));
+				button->add_theme_style_override(SceneStringName(pressed), memnew(StyleBox));
 				button->add_theme_constant_override("align_to_largest_stylebox", false);
 				button->set_mouse_filter(Control::MOUSE_FILTER_PASS);
 				button->connect(SceneStringName(pressed), callable_mp(this, &TileSetAtlasSourceEditor::_tile_alternatives_create_button_pressed).bind(tile_id));

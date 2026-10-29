@@ -37,7 +37,7 @@
 #include "editor/editor_string_names.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 
 bool EditorDockDragHint::can_drop_data(const Point2 &p_point, const Variant &p_data) const {
 	return can_drop_dock;
@@ -143,7 +143,7 @@ void EditorDockDragHint::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color valid_drop_color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 			dock_drop_highlight->set_border_color(valid_drop_color);
-			dock_drop_highlight->set_bg_color(valid_drop_color * Color(1, 1, 1, 0.1));
+			dock_drop_highlight->set_background_color(valid_drop_color * Color(1, 1, 1, 0.1));
 		} break;
 
 		case NOTIFICATION_MOUSE_ENTER:

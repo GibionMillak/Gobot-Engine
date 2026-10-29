@@ -33,7 +33,7 @@
 #include "core/object/callable_mp.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/button.h"
-#include "scene/resources/style_box_texture.h"
+#include "scene/resources/style_box.h"
 
 bool StyleBoxPreview::grid_preview_enabled = true;
 
@@ -50,8 +50,7 @@ void StyleBoxPreview::edit(const Ref<StyleBox> &p_stylebox) {
 	if (stylebox.is_valid()) {
 		stylebox->connect_changed(callable_mp((CanvasItem *)this, &CanvasItem::queue_redraw));
 	}
-	Ref<StyleBoxTexture> sbt = stylebox;
-	grid_preview->set_visible(sbt.is_valid());
+	grid_preview->set_visible(stylebox.is_valid());
 	queue_redraw();
 }
 
@@ -80,15 +79,14 @@ void StyleBoxPreview::_redraw() {
 
 		draw_style_box(stylebox, preview_rect);
 
-		Ref<StyleBoxTexture> sbt = stylebox;
 		// Draw the "grid". Use white lines, as well as subtle black lines to ensure contrast.
-		if (sbt.is_valid() && grid_preview->is_pressed()) {
+		if (grid_preview->is_pressed()) {
 			const Color dark_color = Color(0, 0, 0, 0.4);
 			const Color bright_color = Color(1, 1, 1, 0.8);
-			int x_left = drawing_rect.position.x + sbt->get_content_inset(SIDE_LEFT);
-			int x_right = drawing_rect.position.x + drawing_rect.size.width - sbt->get_content_inset(SIDE_RIGHT);
-			int y_top = drawing_rect.position.y + sbt->get_content_inset(SIDE_TOP);
-			int y_bottom = drawing_rect.position.y + drawing_rect.size.height - sbt->get_content_inset(SIDE_BOTTOM);
+			int x_left = preview_rect.position.x + stylebox->get_content_inset(SIDE_LEFT);
+			int x_right = preview_rect.position.x + preview_rect.size.width - stylebox->get_content_inset(SIDE_RIGHT);
+			int y_top = preview_rect.position.y + stylebox->get_content_inset(SIDE_TOP);
+			int y_bottom = preview_rect.position.y + preview_rect.size.height - stylebox->get_content_inset(SIDE_BOTTOM);
 
 			draw_line(Point2(x_left + 2, 0), Point2(x_left + 2, get_size().height), dark_color);
 			draw_line(Point2(x_right + 1, 0), Point2(x_right + 1, get_size().height), dark_color);
@@ -113,7 +111,7 @@ StyleBoxPreview::StyleBoxPreview() {
 	grid_preview = memnew(Button);
 	// This theme variation works better than the normal theme because there's no focus highlight.
 	grid_preview->set_theme_type_variation("PreviewLightButton");
-	grid_preview->set_tooltip_text(TTRC("Toggle margins preview grid."));
+	grid_preview->set_tooltip_text(TTRC("Toggle content inset preview grid."));
 	grid_preview->set_toggle_mode(true);
 	grid_preview->connect(SceneStringName(toggled), callable_mp(this, &StyleBoxPreview::_grid_preview_toggled));
 	grid_preview->set_pressed(grid_preview_enabled);

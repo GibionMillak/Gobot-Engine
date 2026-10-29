@@ -49,7 +49,7 @@ class EditorFileDialog;
 class Gradient;
 class GradientTexture2D;
 class HBoxContainer;
-class StyleBoxFlat;
+class StyleBox;
 class Timer;
 
 class EditorAudioBus : public PanelContainer {
@@ -92,8 +92,8 @@ class EditorAudioBus : public PanelContainer {
 	Ref<GradientTexture2D> inactive_bus_texture;
 	Ref<Gradient> inactive_gradient;
 
-	Ref<StyleBoxFlat> peak_indicator_stylebox_l;
-	Ref<StyleBoxFlat> peak_indicator_stylebox_r;
+	Ref<StyleBox> peak_indicator_stylebox_l;
+	Ref<StyleBox> peak_indicator_stylebox_r;
 
 	const float vu_width = 16;
 	const float vu_height = 128;

@@ -88,7 +88,7 @@
 #include "scene/resources/environment.h"
 #include "scene/resources/material.h"
 #include "scene/resources/sky.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "scene/resources/syntax_highlighter.h"
 #include "servers/display/display_server.h"
 #include "servers/rendering/rendering_server.h"
@@ -1102,12 +1102,12 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 
 	// Set the node's titlebar color based on its category.
 	if (vsnode->get_category() != VisualShaderNode::CATEGORY_NONE && !is_frame && !is_reroute) {
-		Ref<StyleBoxFlat> sb_colored = editor->get_theme_stylebox("titlebar", "GraphNode")->duplicate();
-		sb_colored->set_bg_color(category_color[vsnode->get_category()]);
+		Ref<StyleBox> sb_colored = editor->get_theme_stylebox("titlebar", "GraphNode")->duplicate();
+		sb_colored->set_background_color(category_color[vsnode->get_category()]);
 		node->add_theme_style_override("titlebar", sb_colored);
 
-		Ref<StyleBoxFlat> sb_colored_selected = editor->get_theme_stylebox("titlebar_selected", "GraphNode")->duplicate();
-		sb_colored_selected->set_bg_color(category_color[vsnode->get_category()].lightened(0.2));
+		Ref<StyleBox> sb_colored_selected = editor->get_theme_stylebox("titlebar_selected", "GraphNode")->duplicate();
+		sb_colored_selected->set_background_color(category_color[vsnode->get_category()].lightened(0.2));
 		node->add_theme_style_override("titlebar_selected", sb_colored_selected);
 	}
 
@@ -1197,7 +1197,7 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 	}
 
 	// Set the minimum width of a node based on the preview size to avoid a resize when toggling the preview.
-	Ref<StyleBoxFlat> graph_node_stylebox = graph->get_theme_stylebox(SceneStringName(panel), "GraphNode");
+	Ref<StyleBox> graph_node_stylebox = graph->get_theme_stylebox(SceneStringName(panel), "GraphNode");
 	int port_preview_size = EDITOR_GET("editors/visual_editors/visual_shader/port_preview_size");
 	if (!is_frame && !is_reroute) {
 		node->set_custom_minimum_size(Size2((Math::ceil(graph_node_stylebox->get_minimum_size().width) + port_preview_size) * EDSCALE, 0));

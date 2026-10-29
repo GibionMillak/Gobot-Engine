@@ -239,7 +239,7 @@ void ThemeItemImportTree::_update_items_tree() {
 					break;
 
 				case Theme::DATA_TYPE_STYLEBOX:
-					data_type_node->set_icon(0, get_editor_theme_icon(SNAME("resource_style_box_flat")));
+					data_type_node->set_icon(0, get_editor_theme_icon(SNAME("resource_style_box")));
 					data_type_node->set_text(0, TTRC("Styleboxes"));
 
 					item_list = &tree_stylebox_items;
@@ -970,7 +970,7 @@ void ThemeItemImportTree::_notification(int p_what) {
 			select_all_icons_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
 			select_full_icons_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
 
-			select_styleboxes_icon->set_texture(get_editor_theme_icon(SNAME("resource_style_box_flat")));
+			select_styleboxes_icon->set_texture(get_editor_theme_icon(SNAME("resource_style_box")));
 			deselect_all_styleboxes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_deselect_all")));
 			select_all_styleboxes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_all")));
 			select_full_styleboxes_button->set_button_icon(get_editor_theme_icon(SNAME("theme_select_full")));
@@ -1601,7 +1601,7 @@ void ThemeItemEditorDialog::_update_edit_item_tree(String p_item_type) {
 		if (names.size() > 0) {
 			TreeItem *stylebox_root = edit_items_tree->create_item(root);
 			stylebox_root->set_metadata(0, Theme::DATA_TYPE_STYLEBOX);
-			stylebox_root->set_icon(0, get_editor_theme_icon(SNAME("resource_style_box_flat")));
+			stylebox_root->set_icon(0, get_editor_theme_icon(SNAME("resource_style_box")));
 			stylebox_root->set_text(0, TTRC("Styleboxes"));
 			stylebox_root->add_button(0, get_editor_theme_icon(SNAME("action_clear")), ITEMS_TREE_REMOVE_DATA_TYPE, false, TTRC("Remove All StyleBox Items"));
 
@@ -2055,7 +2055,7 @@ void ThemeItemEditorDialog::_notification(int p_what) {
 			edit_items_add_font->set_button_icon(get_editor_theme_icon(SNAME("theme_font_item")));
 			edit_items_add_font_size->set_button_icon(get_editor_theme_icon(SNAME("theme_font_size")));
 			edit_items_add_icon->set_button_icon(get_editor_theme_icon(SNAME("resource_image_texture")));
-			edit_items_add_stylebox->set_button_icon(get_editor_theme_icon(SNAME("resource_style_box_flat")));
+			edit_items_add_stylebox->set_button_icon(get_editor_theme_icon(SNAME("resource_style_box")));
 			edit_items_add_sound->set_button_icon(get_editor_theme_icon(SNAME("resource_audio_stream")));
 
 			edit_items_remove_class->set_button_icon(get_editor_theme_icon(SNAME("node_control")));
@@ -3714,7 +3714,7 @@ void ThemeTypeEditor::_notification(int p_what) {
 			data_type_tabs->set_tab_icon(2, get_editor_theme_icon(SNAME("theme_font_item")));
 			data_type_tabs->set_tab_icon(3, get_editor_theme_icon(SNAME("theme_font_size")));
 			data_type_tabs->set_tab_icon(4, get_editor_theme_icon(SNAME("resource_image_texture")));
-			data_type_tabs->set_tab_icon(5, get_editor_theme_icon(SNAME("resource_style_box_flat")));
+			data_type_tabs->set_tab_icon(5, get_editor_theme_icon(SNAME("resource_style_box")));
 			data_type_tabs->set_tab_icon(6, get_editor_theme_icon(SNAME("resource_audio_stream")));
 			data_type_tabs->set_tab_icon(7, get_editor_theme_icon(SNAME("viewport_tools")));
 

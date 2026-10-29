@@ -48,7 +48,7 @@
 #include "scene/gui/separator.h"
 #include "scene/main/viewport.h"
 #include "scene/main/window.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "scene/theme/theme_db.h"
 
 bool AnimationNodeStateMachineEditor::can_edit(const Ref<AnimationNode> &p_node) {
@@ -1181,20 +1181,20 @@ void AnimationNodeStateMachineEditor::_clip_dst_line_to_rect(const Vector2 &p_fr
 
 Ref<StyleBox> AnimationNodeStateMachineEditor::_adjust_stylebox_opacity(Ref<StyleBox> p_style, float p_opacity) {
 	Ref<StyleBox> style = p_style->duplicate();
-	if (style->is_class("StyleBoxFlat")) {
-		Ref<StyleBoxFlat> flat_style = style;
-		Color bg_color = flat_style->get_bg_color();
-		Color border_color = flat_style->get_border_color();
-		Color shadow_color = flat_style->get_shadow_color();
+	Color bg_color = style->get_background_color();
+	Color border_color = style->get_border_color();
+	Color shadow_color = style->get_shadow_color();
+	Color texture_modulate = style->get_texture_modulate();
 
-		bg_color.a *= p_opacity;
-		border_color.a *= p_opacity;
-		shadow_color.a *= p_opacity;
+	bg_color.a *= p_opacity;
+	border_color.a *= p_opacity;
+	shadow_color.a *= p_opacity;
+	texture_modulate.a *= p_opacity;
 
-		flat_style->set_bg_color(bg_color);
-		flat_style->set_border_color(border_color);
-		flat_style->set_shadow_color(shadow_color);
-	}
+	style->set_background_color(bg_color);
+	style->set_border_color(border_color);
+	style->set_shadow_color(shadow_color);
+	style->set_texture_modulate(texture_modulate);
 	return style;
 }
 

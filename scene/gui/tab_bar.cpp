@@ -1846,7 +1846,7 @@ Variant TabBar::_handle_get_drag_data(const String &p_type, const Point2 &p_poin
 		label->add_theme_constant_override(SNAME("outline_size"), theme_cache.outline_size);
 		label->add_theme_color_override(SceneStringName(font_color), theme_cache.font_selected_color);
 		label->add_theme_color_override(SNAME("font_outline_color"), theme_cache.font_outline_color);
-		label->add_theme_style_override(CoreStringName(normal), memnew(StyleBoxEmpty())); // Ensure that the label has no margins inherited from the theme.
+		label->add_theme_style_override(CoreStringName(normal), memnew(StyleBox())); // Ensure that the label has no margins inherited from the theme.
 		drag_preview->add_child(label);
 	}
 

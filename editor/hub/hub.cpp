@@ -1346,7 +1346,7 @@ Hub::Hub() {
 				empty_list_message->set_use_bbcode(true);
 				empty_list_message->set_fit_content(true);
 				empty_list_message->set_h_size_flags(SIZE_EXPAND_FILL);
-				empty_list_message->add_theme_style_override(CoreStringName(normal), memnew(StyleBoxEmpty));
+				empty_list_message->add_theme_style_override(CoreStringName(normal), memnew(StyleBox));
 
 				empty_list_placeholder->add_child(empty_list_message);
 

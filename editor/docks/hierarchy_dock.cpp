@@ -74,7 +74,7 @@
 #include "scene/main/scene_tree.h"
 #include "scene/property_utils.h"
 #include "scene/resources/packed_scene.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "servers/display/display_server.h"
 
 void HierarchyDock::_nodes_drag_begin() {
@@ -1825,7 +1825,7 @@ void HierarchyDock::_notification(int p_what) {
 
 			if (theme_cache.item_highlight.is_null()) {
 				theme_cache.item_highlight.instantiate();
-				theme_cache.item_highlight->set_draw_center(false);
+				theme_cache.item_highlight->set_background_color(Color(0, 0, 0, 0));
 				theme_cache.item_highlight->set_border_width_all(EDSCALE_RND(2));
 				theme_cache.item_highlight->set_corner_radius_all(8);
 			}

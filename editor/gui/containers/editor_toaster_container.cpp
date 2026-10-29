@@ -40,7 +40,7 @@
 #include "scene/gui/button.h"
 #include "scene/gui/label.h"
 #include "scene/gui/panel_container.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 #include "scene/scene_string_names.h"
 #include "servers/display/display_server.h"
 #include "servers/text/text_server.h"
@@ -61,8 +61,8 @@ EditorToasterContainer::EditorToasterContainer() {
 	_error_panel_style_background->set_border_width(border_side, STYLEBOX_RADIUS * EDSCALE);
 	_error_panel_style_background->set_corner_radius_all(STYLEBOX_RADIUS * EDSCALE);
 
-	const Ref<StyleBoxFlat> backgrounds[] = { _info_panel_style_background, _warning_panel_style_background, _error_panel_style_background };
-	for (const Ref<StyleBoxFlat> &background : backgrounds) {
+	const Ref<StyleBox> backgrounds[] = { _info_panel_style_background, _warning_panel_style_background, _error_panel_style_background };
+	for (const Ref<StyleBox> &background : backgrounds) {
 		background->set_padding_individual(int(STYLEBOX_RADIUS * 2.5), 3, int(STYLEBOX_RADIUS * 2.5), 3);
 	}
 
@@ -289,23 +289,23 @@ void EditorToasterContainer::_notification(int p_what) {
 			const Color base_color = get_theme_color(SNAME("base_color"), EditorStringName(Editor));
 			const Color bg_color = base_color.lerp(get_theme_color(SNAME("mono_color"), EditorStringName(Editor)), 0.08);
 
-			_info_panel_style_background->set_bg_color(bg_color);
+			_info_panel_style_background->set_background_color(bg_color);
 
-			_warning_panel_style_background->set_bg_color(bg_color);
+			_warning_panel_style_background->set_background_color(bg_color);
 			_warning_panel_style_background->set_border_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 
-			_error_panel_style_background->set_bg_color(bg_color);
+			_error_panel_style_background->set_background_color(bg_color);
 			_error_panel_style_background->set_border_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 
 			// Styleboxes progress.
 			const Color bg_progress_color = base_color.lerp(get_theme_color(SNAME("mono_color"), EditorStringName(Editor)), 0.135);
 
-			_info_panel_style_progress->set_bg_color(bg_progress_color);
+			_info_panel_style_progress->set_background_color(bg_progress_color);
 
-			_warning_panel_style_progress->set_bg_color(bg_progress_color);
+			_warning_panel_style_progress->set_background_color(bg_progress_color);
 			_warning_panel_style_progress->set_border_color(get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 
-			_error_panel_style_progress->set_bg_color(bg_progress_color);
+			_error_panel_style_progress->set_background_color(bg_progress_color);
 			_error_panel_style_progress->set_border_color(get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 		} break;
 
@@ -476,7 +476,7 @@ void EditorToasterContainer::_draw_button() {
 
 void EditorToasterContainer::_draw_progress(Control *p_panel) {
 	if (_toasts.has(p_panel) && _toasts[p_panel].remaining_time > 0 && _toasts[p_panel].duration > 0) {
-		Ref<StyleBoxFlat> stylebox;
+		Ref<StyleBox> stylebox;
 		switch (_toasts[p_panel].severity) {
 			case INFO:
 				stylebox = _info_panel_style_progress;

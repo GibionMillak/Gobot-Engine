@@ -38,7 +38,7 @@ class Environment;
 class ShaderMaterial;
 class Timer;
 class TextureRect;
-class StyleBoxFlat;
+class StyleBox;
 class Shader;
 class ShaderInclude;
 
@@ -49,7 +49,7 @@ class TextShaderPreview : public VBoxContainer {
 
 private:
 	PanelContainer *panel = nullptr;
-	Ref<StyleBoxFlat> panel_style;
+	Ref<StyleBox> panel_style;
 	Control *surface_hover = nullptr;
 	Button *goto_button = nullptr;
 	Button *delete_button = nullptr;

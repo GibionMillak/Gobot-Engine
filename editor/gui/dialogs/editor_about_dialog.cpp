@@ -189,7 +189,7 @@ Label *EditorAboutDialog::_create_section(Control *p_parent, const String &p_nam
 	}
 
 	if ((has_website && p_flags.has_flag(FLAG_ALLOW_WEBSITE)) || p_flags.has_flag(FLAG_EASTER_EGG)) {
-		Ref<StyleBoxEmpty> empty_stylebox = memnew(StyleBoxEmpty);
+		Ref<StyleBox> empty_stylebox = memnew(StyleBox);
 		il->add_theme_style_override("focus", empty_stylebox);
 		il->add_theme_style_override("selected", empty_stylebox);
 

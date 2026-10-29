@@ -34,8 +34,7 @@
 #include "core/object/class_db.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/label.h"
-#include "scene/resources/style_box_flat.h"
-#include "scene/resources/style_box_texture.h"
+#include "scene/resources/style_box.h"
 #include "scene/theme/theme_db.h"
 
 void GraphFrame::gui_input(const Ref<InputEvent> &p_ev) {
@@ -102,8 +101,6 @@ void GraphFrame::_notification(int p_what) {
 			// Used for drawing.
 			Ref<StyleBox> sb_to_draw_panel = selected ? theme_cache.panel_selected : sb_panel;
 			Ref<StyleBox> sb_to_draw_titlebar = selected ? theme_cache.titlebar_selected : sb_titlebar;
-			Ref<StyleBoxFlat> sb_panel_flat = sb_to_draw_panel;
-			Ref<StyleBoxTexture> sb_panel_texture = sb_to_draw_panel;
 
 			Rect2 titlebar_rect(Point2(), titlebar_hbox->get_bound_minimum_size() + sb_titlebar->get_minimum_size());
 			Size2 body_size = get_size();
@@ -113,20 +110,17 @@ void GraphFrame::_notification(int p_what) {
 
 			// Draw body stylebox.
 			if (tint_color_enabled) {
-				if (sb_panel_flat.is_valid()) {
-					Color original_border_color = sb_panel_flat->get_border_color();
-					sb_panel_flat = sb_panel_flat->duplicate();
-					sb_panel_flat->set_bg_color(tint_color);
-					sb_panel_flat->set_border_color(selected ? original_border_color : tint_color.lightened(0.3));
-					draw_style_box(sb_panel_flat, body_rect);
-				} else if (sb_panel_texture.is_valid()) {
-					sb_panel_texture = sb_panel_texture->duplicate();
-					sb_panel_texture->set_modulate(tint_color);
-					draw_style_box(sb_panel_texture, body_rect);
+				sb_to_draw_panel = sb_to_draw_panel->duplicate();
+				const Color original_border_color = sb_to_draw_panel->get_border_color();
+				if (sb_to_draw_panel->get_texture().is_valid()) {
+					sb_to_draw_panel->set_background_color(sb_to_draw_panel->get_background_color() * tint_color);
+					sb_to_draw_panel->set_texture_modulate(sb_to_draw_panel->get_texture_modulate() * tint_color);
+				} else {
+					sb_to_draw_panel->set_background_color(tint_color);
 				}
-			} else {
-				draw_style_box(sb_panel_flat, body_rect);
+				sb_to_draw_panel->set_border_color(selected ? original_border_color : tint_color.lightened(0.3));
 			}
+			draw_style_box(sb_to_draw_panel, body_rect);
 
 			// Draw title bar stylebox above.
 			draw_style_box(sb_to_draw_titlebar, titlebar_rect);

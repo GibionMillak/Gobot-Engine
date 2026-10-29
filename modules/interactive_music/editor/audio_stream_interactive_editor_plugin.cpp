@@ -44,7 +44,7 @@
 #include "scene/gui/spin_box.h"
 #include "scene/gui/split_container.h"
 #include "scene/gui/tree.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 
 void AudioStreamInteractiveTransitionEditor::_notification(int p_what) {
 	if (p_what == NOTIFICATION_READY || p_what == NOTIFICATION_THEME_CHANGED) {
@@ -275,8 +275,8 @@ void AudioStreamInteractiveTransitionEditor::edit(Object *p_obj) {
 	filler_clip->clear();
 	filler_clip->add_item(TTR("Disabled"), -1);
 
-	const Ref<StyleBoxFlat> &sb_title = tree->get_theme_stylebox(SNAME("title_button_normal"), SNAME("Tree"));
-	const Color header_color = sb_title.is_valid() ? sb_title->get_bg_color() : Color(0, 0, 0, 0);
+	const Ref<StyleBox> &sb_title = tree->get_theme_stylebox(SNAME("title_button_normal"), SNAME("Tree"));
+	const Color header_color = sb_title.is_valid() ? sb_title->get_background_color() : Color(0, 0, 0, 0);
 
 	int max_w = 0;
 

@@ -500,7 +500,7 @@
 			The style of disabled tabs.
 		</theme_item>
 		<theme_item name="tab_focus" data_type="style" type="StyleBox">
-			[StyleBox] used when the [TabBar] is focused. The [theme_item tab_focus] [StyleBox] is displayed [i]over[/i] the base [StyleBox] of the selected tab, so a partially transparent [StyleBox] should be used to ensure the base [StyleBox] remains visible. A [StyleBox] that represents an outline or an underline works well for this purpose. To disable the focus visual effect, assign a [StyleBoxEmpty] resource. Note that disabling the focus visual effect will harm keyboard/controller navigation usability, so this is not recommended for accessibility reasons.
+			[StyleBox] used when the [TabBar] is focused. The [theme_item tab_focus] [StyleBox] is displayed [i]over[/i] the base [StyleBox] of the selected tab, so a partially transparent [StyleBox] should be used to ensure the base [StyleBox] remains visible. A [StyleBox] that represents an outline or an underline works well for this purpose. To disable the focus visual effect, assign a default, transparent [StyleBox] resource. Note that disabling the focus visual effect will harm keyboard/controller navigation usability, so this is not recommended for accessibility reasons.
 		</theme_item>
 		<theme_item name="tab_hovered" data_type="style" type="StyleBox">
 			The style of the currently hovered tab. Does not apply to the selected tab.

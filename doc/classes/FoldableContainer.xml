@@ -148,7 +148,7 @@
 			[b]Note:[/b] This does not play if the container is folded as a result of being part of a [FoldableGroup] and another container in the same group was expanded.
 		</theme_item>
 		<theme_item name="focus" data_type="style" type="StyleBox">
-			Background used when [FoldableContainer] has GUI focus. The [theme_item focus] [StyleBox] is displayed [i]over[/i] the base [StyleBox], so a partially transparent [StyleBox] should be used to ensure the base [StyleBox] remains visible. A [StyleBox] that represents an outline or an underline works well for this purpose. To disable the focus visual effect, assign a [StyleBoxEmpty] resource. Note that disabling the focus visual effect will harm keyboard/controller navigation usability, so this is not recommended for accessibility reasons.
+			Background used when [FoldableContainer] has GUI focus. The [theme_item focus] [StyleBox] is displayed [i]over[/i] the base [StyleBox], so a partially transparent [StyleBox] should be used to ensure the base [StyleBox] remains visible. A [StyleBox] that represents an outline or an underline works well for this purpose. To disable the focus visual effect, assign a default, transparent [StyleBox] resource. Note that disabling the focus visual effect will harm keyboard/controller navigation usability, so this is not recommended for accessibility reasons.
 		</theme_item>
 		<theme_item name="panel" data_type="style" type="StyleBox">
 			Default background for the [FoldableContainer].

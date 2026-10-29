@@ -37,7 +37,7 @@
 class Button;
 class Label;
 class PanelContainer;
-class StyleBoxFlat;
+class StyleBox;
 
 class EditorToasterContainer : public HBoxContainer {
 	GDCLASS(EditorToasterContainer, HBoxContainer);
@@ -98,12 +98,12 @@ private:
 
 	inline static EditorToasterContainer *_singleton = nullptr;
 	ErrorHandlerList _error_handler_list;
-	Ref<StyleBoxFlat> _info_panel_style_background;
-	Ref<StyleBoxFlat> _warning_panel_style_background;
-	Ref<StyleBoxFlat> _error_panel_style_background;
-	Ref<StyleBoxFlat> _info_panel_style_progress;
-	Ref<StyleBoxFlat> _warning_panel_style_progress;
-	Ref<StyleBoxFlat> _error_panel_style_progress;
+	Ref<StyleBox> _info_panel_style_background;
+	Ref<StyleBox> _warning_panel_style_background;
+	Ref<StyleBox> _error_panel_style_background;
+	Ref<StyleBox> _info_panel_style_progress;
+	Ref<StyleBox> _warning_panel_style_progress;
+	Ref<StyleBox> _error_panel_style_progress;
 	Button *_main_btn = nullptr;
 	PanelContainer *_disable_notifications_pc = nullptr;
 	Button *_disable_notifications_btn = nullptr;

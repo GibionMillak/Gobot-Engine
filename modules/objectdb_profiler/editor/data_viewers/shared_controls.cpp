@@ -37,12 +37,12 @@
 #include "scene/gui/label.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/menu_button.h"
-#include "scene/resources/style_box_flat.h"
+#include "scene/resources/style_box.h"
 
 SpanningHeader::SpanningHeader(const String &p_text) {
-	Ref<StyleBoxFlat> title_sbf;
+	Ref<StyleBox> title_sbf;
 	title_sbf.instantiate();
-	title_sbf->set_bg_color(EditorNode::get_singleton()->get_editor_theme()->get_color("dark_color_3", "Editor"));
+	title_sbf->set_background_color(EditorNode::get_singleton()->get_editor_theme()->get_color("dark_color_3", "Editor"));
 	add_theme_style_override(SceneStringName(panel), title_sbf);
 	set_h_size_flags(SizeFlags::SIZE_EXPAND_FILL);
 	Label *title = memnew(Label(p_text));
@@ -54,9 +54,9 @@ SpanningHeader::SpanningHeader(const String &p_text) {
 DarkPanelContainer::DarkPanelContainer() {
 	set_h_size_flags(SizeFlags::SIZE_EXPAND_FILL);
 	set_v_size_flags(SizeFlags::SIZE_EXPAND_FILL);
-	Ref<StyleBoxFlat> content_wrapper_sbf;
+	Ref<StyleBox> content_wrapper_sbf;
 	content_wrapper_sbf.instantiate();
-	content_wrapper_sbf->set_bg_color(EditorNode::get_singleton()->get_editor_theme()->get_color("dark_color_2", "Editor"));
+	content_wrapper_sbf->set_background_color(EditorNode::get_singleton()->get_editor_theme()->get_color("dark_color_2", "Editor"));
 	add_theme_style_override(SceneStringName(panel), content_wrapper_sbf);
 }
 

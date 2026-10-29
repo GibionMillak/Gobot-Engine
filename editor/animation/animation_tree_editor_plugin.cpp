@@ -417,7 +417,7 @@ void AnimationTreeEditor::enter_editor(const String &p_path) {
 void AnimationTreeEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			Ref<StyleBoxEmpty> empty_style;
+			Ref<StyleBox> empty_style;
 			empty_style.instantiate();
 			error_scroll->add_theme_style_override(SceneStringName(panel), empty_style);
 			error_label->add_theme_color_override(SNAME("default_color"), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));

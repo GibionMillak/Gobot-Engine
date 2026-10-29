@@ -45,7 +45,7 @@ class ReparentDialog;
 class Shader;
 class ShaderCreateDialog;
 class ShaderMaterial;
-class StyleBoxFlat;
+class StyleBox;
 class TextureRect;
 class VBoxContainer;
 class MultiNodeEdit;
@@ -102,7 +102,7 @@ class HierarchyDock : public EditorDock {
 	};
 
 	struct ThemeCache {
-		Ref<StyleBoxFlat> item_highlight;
+		Ref<StyleBox> item_highlight;
 	} theme_cache;
 
 	Vector<ObjectID> subresources;

@@ -48,7 +48,7 @@ class MenuButton;
 class OptionButton;
 class PopupMenu;
 class SpinBox;
-class StyleBoxFlat;
+class StyleBox;
 class TextureRect;
 
 class ColorPresetButton : public BaseButton {
@@ -189,8 +189,8 @@ private:
 	TextureRect *picker_texture_zoom = nullptr;
 	Panel *picker_preview = nullptr;
 	Panel *picker_preview_color = nullptr;
-	Ref<StyleBoxFlat> picker_preview_style_box;
-	Ref<StyleBoxFlat> picker_preview_style_box_color;
+	Ref<StyleBox> picker_preview_style_box;
+	Ref<StyleBox> picker_preview_style_box_color;
 
 	// Legacy color picking.
 	TextureRect *picker_texture_rect = nullptr;
