@@ -265,8 +265,6 @@ opts.Add(
 opts.Add(BoolVariable("werror", "Treat compiler warnings as errors", False))
 opts.Add("extra_suffix", "Custom extra suffix added to the base filename of all generated binary files", "")
 opts.Add("object_prefix", "Custom prefix added to the base filename of all generated object files", "")
-opts.Add(BoolVariable("vsproj", "Generate a Visual Studio solution", False))
-opts.Add("vsproj_name", "Name of the Visual Studio solution", "godot")
 opts.Add("import_env_vars", "A comma-separated list of environment variables to copy from the outer environment.", "")
 opts.Add(BoolVariable("disable_exceptions", "Force disabling exception handling code", True))
 opts.Add(BoolVariable("disable_2d", "Disable 2D nodes for a smaller executable", False))
@@ -1215,12 +1213,6 @@ if env["tests"]:
 SConscript("main/SCsub")
 
 SConscript("platform/" + env["platform"] + "/SCsub")  # Build selected platform.
-
-# Microsoft Visual Studio Project Generation
-if env["vsproj"]:
-    methods.generate_cpp_hint_file("cpp.hint")
-    env["CPPPATH"] = [Dir(path) for path in env["CPPPATH"]]
-    methods.generate_vs_project(env, ARGUMENTS, env["vsproj_name"])
 
 # Miscellaneous & post-build methods.
 if not env.GetOption("clean") and not env.GetOption("help"):

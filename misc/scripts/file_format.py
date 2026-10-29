@@ -22,16 +22,13 @@ for file in sys.argv[1:]:
     if original == "":
         continue
 
-    EOL = "\r\n" if file.endswith((".sln", ".bat")) or file.startswith("misc/msvs") else "\n"
-    WANTS_BOM = file.endswith(".sln")
+    EOL = "\r\n" if file.endswith(".bat") else "\n"
 
     revamp = EOL.join([line.rstrip("\n\r\t ") for line in original.splitlines(True)]).rstrip(EOL) + EOL
 
     new_raw = revamp.encode(encoding="utf-8")
-    if not WANTS_BOM and new_raw.startswith(BOM):
+    if new_raw.startswith(BOM):
         new_raw = new_raw[len(BOM) :]
-    elif WANTS_BOM and not new_raw.startswith(BOM):
-        new_raw = BOM + new_raw
 
     with open(file, "rb") as f:
         old_raw = f.read()

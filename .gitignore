@@ -347,9 +347,6 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
-# Hint file for IntelliSense
-cpp.hint
-
 ###################
 ### OS specific ###
 ###################
@@ -378,4 +375,3 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.lnk
-*.generated.props
