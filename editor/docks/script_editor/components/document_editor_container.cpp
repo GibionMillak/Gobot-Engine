@@ -1463,7 +1463,7 @@ void DocumentEditorContainer::_notification(int p_what) {
 
 			_recent_scripts->reset_size();
 
-			_toggle_files_btn->set_button_icon(get_editor_theme_icon(SNAME("view_sidebar_left")));
+			_toggle_files_btn->set_button_icon(get_editor_theme_icon(SNAME("gui_sidebar_left")));
 		} break;
 
 		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {

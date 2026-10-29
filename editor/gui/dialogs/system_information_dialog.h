@@ -57,5 +57,6 @@ private:
 	ScrollContainer *_scroll = nullptr;
 	VBoxContainer *_content_vbox = nullptr;
 	Table *_table = nullptr;
+	Table *_hardware_table = nullptr;
 	String _report;
 };

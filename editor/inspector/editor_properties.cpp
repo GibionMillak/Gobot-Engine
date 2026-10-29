@@ -360,7 +360,7 @@ void EditorPropertyMultilineText::update_property() {
 }
 
 void EditorPropertyMultilineText::_update_theme() {
-	Ref<Texture2D> df = get_editor_theme_icon(SNAME("view_expand"));
+	Ref<Texture2D> df = get_editor_theme_icon(SNAME("action_expand"));
 	open_big_text->set_button_icon(df);
 
 	Ref<Font> font;

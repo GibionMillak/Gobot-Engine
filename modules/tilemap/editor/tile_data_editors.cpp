@@ -884,7 +884,7 @@ void GenericTilePolygonEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			button_expand->set_button_icon(get_editor_theme_icon(SNAME("view_expand")));
+			button_expand->set_button_icon(get_editor_theme_icon(SNAME("action_expand")));
 			button_create->set_button_icon(get_editor_theme_icon(SNAME("action_curve_create")));
 			button_edit->set_button_icon(get_editor_theme_icon(SNAME("node_control_curve_edit")));
 			button_delete->set_button_icon(get_editor_theme_icon(SNAME("action_curve_delete")));

@@ -103,6 +103,6 @@ void EditorFullscreenButton::_sync_state() {
 
 void EditorFullscreenButton::_update_appearance() {
 	const bool fullscreen = _mode == DisplayServerEnums::WINDOW_MODE_FULLSCREEN || _mode == DisplayServerEnums::WINDOW_MODE_EXCLUSIVE_FULLSCREEN;
-	set_button_icon(get_editor_theme_icon(fullscreen ? SNAME("editor_window_restore") : SNAME("view_expand")));
+	set_button_icon(get_editor_theme_icon(fullscreen ? SNAME("action_fullscreen_quit") : SNAME("action_fullscreen")));
 	set_tooltip_text(fullscreen ? TTRC("Exit Fullscreen") : TTRC("Enter Fullscreen"));
 }

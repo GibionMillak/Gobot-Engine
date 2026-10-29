@@ -67,7 +67,10 @@ SystemInformationDialog::SystemInformationDialog() {
 void SystemInformationDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			_copy_btn->set_button_icon(get_editor_theme_icon(SNAME("action_copy")));
+			_copy_btn->set_button_icon(get_editor_theme_icon(SNAME("gui_clipboard")));
+			if (_hardware_table) {
+				_hardware_table->set_cell_icon(0, 0, get_editor_theme_icon(SNAME("gui_cpu")));
+			}
 			for (int i = 0; i < _content_vbox->get_child_count(); i++) {
 				Table *table = Object::cast_to<Table>(_content_vbox->get_child(i));
 				if (table) {
@@ -86,6 +89,7 @@ void SystemInformationDialog::_notification(int p_what) {
 void SystemInformationDialog::_pre_popup(const Size2i &p_size) {
 	Dialog::_pre_popup(p_size);
 
+	_hardware_table = nullptr;
 	while (_content_vbox->get_child_count() > 0) {
 		Node *child = _content_vbox->get_child(0);
 		_content_vbox->remove_child(child);
@@ -137,6 +141,8 @@ void SystemInformationDialog::_pre_popup(const Size2i &p_size) {
 	}
 
 	_add_section(TTR("Hardware"));
+	_hardware_table = _table;
+	_hardware_table->set_cell_icon(0, 0, get_editor_theme_icon(SNAME("gui_cpu")));
 	_add_row(TTR("CPU"), os->get_processor_name());
 	_add_row(TTR("CPU Threads"), itos(os->get_processor_count()));
 	const Dictionary memory = os->get_memory_info();
