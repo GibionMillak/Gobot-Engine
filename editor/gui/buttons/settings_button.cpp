@@ -39,6 +39,7 @@
 #include "scene/scene_string_names.h"
 
 SettingsButton::SettingsButton() {
+	set_flat(true);
 	set_focus_mode(FOCUS_NONE);
 	set_switch_on_hover(true);
 	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);

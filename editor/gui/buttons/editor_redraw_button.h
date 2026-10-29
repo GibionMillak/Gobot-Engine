@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  redraw_mode_button.h                                                  */
+/*  editor_redraw_button.h                                              */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -32,8 +32,8 @@
 
 #include "scene/gui/menu_button.h"
 
-class RedrawModeButton : public MenuButton {
-	GDCLASS(RedrawModeButton, MenuButton);
+class EditorRedrawButton : public MenuButton {
+	GDCLASS(EditorRedrawButton, MenuButton);
 
 public:
 	enum RedrawMode {
@@ -41,7 +41,7 @@ public:
 		CONTINUOUSLY,
 	};
 
-	RedrawModeButton();
+	EditorRedrawButton();
 
 protected:
 	void _notification(int p_what);

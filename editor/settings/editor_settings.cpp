@@ -52,7 +52,7 @@
 #include "editor/docks/dock_tab_container.h"
 #include "editor/editor_node.h"
 #include "editor/file_system/editor_paths.h"
-#include "editor/gui/buttons/redraw_mode_button.h"
+#include "editor/gui/buttons/editor_redraw_button.h"
 #include "editor/inspector/editor_property_name_processor.h"
 #include "editor/hub/engine_update_label.h"
 #include "editor/themes/editor_theme_manager.h"
@@ -520,7 +520,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING_BASIC(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/behavior/import_resources_when_unfocused", false, "")
 
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/display/vsync_mode", 1, "Disabled,Enabled,Adaptive,Mailbox")
-	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/display/redraw_mode", (int32_t)RedrawModeButton::REACTIVE, "Reactive,Continuously")
+	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/display/redraw_mode", (int32_t)EditorRedrawButton::REACTIVE, "Reactive,Continuously")
 
 	EDITOR_SETTING(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/appearance/collapse_main_menu", is_android_editor, "")
 

@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  renderer_method_button.cpp                                            */
+/*  project_renderer_button.cpp                                         */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,7 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include "renderer_method_button.h"
+#include "project_renderer_button.h"
 
 #include "core/config/project_settings.h"
 #include "core/error/error_macros.h"
@@ -39,8 +39,9 @@
 #include "scene/gui/label.h"
 #include "scene/scene_string_names.h"
 
-RendererMethodButton::RendererMethodButton() {
+ProjectRendererButton::ProjectRendererButton() {
 	set_fit_to_longest_item(false);
+	set_flat(true);
 	set_focus_mode(FOCUS_NONE);
 	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
 	set_tooltip_text(TTRC("Choose a renderer.\n\nOn mobile platforms, the Mobile renderer is used if Forward+ is selected here."));
@@ -72,14 +73,14 @@ RendererMethodButton::RendererMethodButton() {
 	_update_labels();
 }
 
-void RendererMethodButton::_notification(int p_what) {
+void ProjectRendererButton::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_POSTINITIALIZE: {
 			// OptionButton reads its cached arrow icon when translation mode changes.
 			set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 			// The inherited signal is available after the engine initializes this object's class.
 			if (!_rendering_method_overridden) {
-				connect(SceneStringName(item_selected), callable_mp(this, &RendererMethodButton::_renderer_selected));
+				connect(SceneStringName(item_selected), callable_mp(this, &ProjectRendererButton::_renderer_selected));
 			}
 		} break;
 		case NOTIFICATION_READY:
@@ -94,7 +95,7 @@ void RendererMethodButton::_notification(int p_what) {
 	}
 }
 
-void RendererMethodButton::_renderer_selected(int p_index) {
+void ProjectRendererButton::_renderer_selected(int p_index) {
 	const String rendering_method = get_item_metadata(p_index);
 	const String current_renderer = GLOBAL_GET("rendering/renderer/rendering_method");
 	if (rendering_method == current_renderer) {
@@ -112,7 +113,7 @@ void RendererMethodButton::_renderer_selected(int p_index) {
 	_pending_rendering_method = rendering_method;
 	if (_restart_dialog == nullptr) {
 		_restart_dialog = memnew(Dialog(true));
-		_restart_dialog->connect(SceneStringName(confirmed), callable_mp(this, &RendererMethodButton::_save_and_restart));
+		_restart_dialog->connect(SceneStringName(confirmed), callable_mp(this, &ProjectRendererButton::_save_and_restart));
 		_restart_dialog->get_label()->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 		_restart_dialog->set_ok_button_text(TTRC("Save & Restart"));
 		add_child(_restart_dialog);
@@ -125,7 +126,7 @@ void RendererMethodButton::_renderer_selected(int p_index) {
 	_restart_dialog->popup_centered();
 }
 
-void RendererMethodButton::_update_labels() {
+void ProjectRendererButton::_update_labels() {
 	for (int i = 0; i < get_item_count(); i++) {
 		const String display_name = _to_rendering_method_display_name(get_item_metadata(i));
 		if (_rendering_method_overridden) {
@@ -137,7 +138,7 @@ void RendererMethodButton::_update_labels() {
 	}
 }
 
-void RendererMethodButton::_update_icons() {
+void ProjectRendererButton::_update_icons() {
 	for (int i = 0; i < get_item_count(); i++) {
 		const String rendering_method = get_item_metadata(i);
 		StringName icon_name;
@@ -155,7 +156,7 @@ void RendererMethodButton::_update_icons() {
 	}
 }
 
-String RendererMethodButton::_to_rendering_method_display_name(const String &p_rendering_method) {
+String ProjectRendererButton::_to_rendering_method_display_name(const String &p_rendering_method) {
 	if (p_rendering_method == "forward_plus") {
 		return TTR("Forward+");
 	}
@@ -168,7 +169,7 @@ String RendererMethodButton::_to_rendering_method_display_name(const String &p_r
 	return p_rendering_method;
 }
 
-void RendererMethodButton::_save_and_restart() {
+void ProjectRendererButton::_save_and_restart() {
 	ProjectSettings *const project_settings = ProjectSettings::get_singleton();
 	project_settings->set("rendering/renderer/rendering_method", _pending_rendering_method);
 

@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  redraw_mode_button.cpp                                                */
+/*  editor_redraw_button.cpp                                            */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,7 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include "redraw_mode_button.h"
+#include "editor_redraw_button.h"
 
 #include "core/config/engine.h"
 #include "core/error/error_macros.h"
@@ -40,17 +40,18 @@
 #include "scene/gui/popup_menu.h"
 #include "scene/scene_string_names.h"
 
-RedrawModeButton::RedrawModeButton() {
+EditorRedrawButton::EditorRedrawButton() {
+	set_flat(true);
 	set_focus_mode(FOCUS_NONE);
 	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
 
 	PopupMenu *const mode_popup = get_popup();
 	mode_popup->add_radio_check_item(TTRC("Reactive"), REACTIVE);
 	mode_popup->add_radio_check_item(TTRC("Continuously"), CONTINUOUSLY);
-	mode_popup->connect(SceneStringName(id_pressed), callable_mp(this, &RedrawModeButton::_mode_selected));
+	mode_popup->connect(SceneStringName(id_pressed), callable_mp(this, &EditorRedrawButton::_mode_selected));
 }
 
-void RedrawModeButton::_notification(int p_what) {
+void EditorRedrawButton::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_READY: {
 			_last_step_msec = OS::get_singleton()->get_ticks_msec();
@@ -84,13 +85,13 @@ void RedrawModeButton::_notification(int p_what) {
 	}
 }
 
-void RedrawModeButton::_mode_selected(int p_id) {
+void EditorRedrawButton::_mode_selected(int p_id) {
 	ERR_FAIL_COND(p_id != REACTIVE && p_id != CONTINUOUSLY);
 	EditorSettings::get_singleton()->set("interface/editor/display/redraw_mode", p_id);
 	_update_mode();
 }
 
-void RedrawModeButton::_update_mode() {
+void EditorRedrawButton::_update_mode() {
 	const int redraw_mode = EDITOR_GET("interface/editor/display/redraw_mode");
 	ERR_FAIL_COND_MSG(redraw_mode != REACTIVE && redraw_mode != CONTINUOUSLY, vformat("Invalid editor redraw mode: %d.", redraw_mode));
 	_redraw_mode = static_cast<RedrawMode>(redraw_mode);
@@ -102,7 +103,7 @@ void RedrawModeButton::_update_mode() {
 	_update_appearance();
 }
 
-void RedrawModeButton::_update_appearance() {
+void EditorRedrawButton::_update_appearance() {
 	if (_redraw_mode == CONTINUOUSLY) {
 		set_tooltip_text(TTRC("Spins when the editor window redraws.\nRedraw mode: Continuously (every frame)."));
 		// Compensate for the icon's base color when tinting it in dark and light themes.
@@ -114,6 +115,6 @@ void RedrawModeButton::_update_appearance() {
 	}
 }
 
-void RedrawModeButton::_update_icon() {
+void EditorRedrawButton::_update_icon() {
 	set_button_icon(get_editor_theme_icon("status_progress" + itos(_animation_frame + 1)));
 }

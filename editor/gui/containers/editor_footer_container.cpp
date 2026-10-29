@@ -30,9 +30,9 @@
 
 #include "editor_footer_container.h"
 
+#include "editor/gui/buttons/editor_redraw_button.h"
 #include "editor/gui/buttons/editor_version_button.h"
-#include "editor/gui/buttons/redraw_mode_button.h"
-#include "editor/gui/buttons/renderer_method_button.h"
+#include "editor/gui/buttons/project_renderer_button.h"
 #include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/run/editor_run_bar.h"
 #include "scene/gui/box_container.h"
@@ -45,8 +45,8 @@ EditorFooterContainer::EditorFooterContainer() {
 	add_child(_left_hbox);
 
 	{
-		RedrawModeButton *redraw_mode_btn = memnew(RedrawModeButton);
-		_left_hbox->add_child(redraw_mode_btn);
+		EditorRedrawButton *editor_redraw_btn = memnew(EditorRedrawButton);
+		_left_hbox->add_child(editor_redraw_btn);
 	}
 
 	HBoxContainer *center_hbox = memnew(HBoxContainer);
@@ -68,8 +68,8 @@ EditorFooterContainer::EditorFooterContainer() {
 	add_child(_right_hbox);
 
 	{
-		RendererMethodButton *renderer_method_btn = memnew(RendererMethodButton);
-		_right_hbox->add_child(renderer_method_btn);
+		ProjectRendererButton *project_renderer_btn = memnew(ProjectRendererButton);
+		_right_hbox->add_child(project_renderer_btn);
 
 		EditorVersionButton *version_btn = memnew(EditorVersionButton(EditorVersionButton::BASIC));
 		_right_hbox->add_child(version_btn);

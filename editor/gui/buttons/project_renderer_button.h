@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  renderer_method_button.h                                              */
+/*  project_renderer_button.h                                           */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -34,11 +34,11 @@
 
 class Dialog;
 
-class RendererMethodButton : public OptionButton {
-	GDCLASS(RendererMethodButton, OptionButton);
+class ProjectRendererButton : public OptionButton {
+	GDCLASS(ProjectRendererButton, OptionButton);
 
 public:
-	RendererMethodButton();
+	ProjectRendererButton();
 
 protected:
 	void _notification(int p_what);

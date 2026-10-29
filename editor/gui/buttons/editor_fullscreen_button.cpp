@@ -35,6 +35,7 @@
 #include "servers/display/display_server.h"
 
 EditorFullscreenButton::EditorFullscreenButton() {
+	set_flat(true);
 	set_focus_mode(FOCUS_NONE);
 	set_shortcut(ED_SHORTCUT_AND_COMMAND("editor/fullscreen_mode", TTRC("Toggle Fullscreen"), KeyModifierMask::SHIFT | Key::F11));
 	ED_SHORTCUT_OVERRIDE("editor/fullscreen_mode", "macos", KeyModifierMask::META | KeyModifierMask::CTRL | Key::F);
