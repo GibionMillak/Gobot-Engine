@@ -1889,7 +1889,7 @@ void EditorInspectorCategory::_notification(int p_what) {
 
 			int ofs = (get_size().width - w) / 2;
 
-			float v_margin_offset = sb->get_content_margin(SIDE_TOP) - sb->get_content_margin(SIDE_BOTTOM);
+			float v_margin_offset = sb->get_margin(SIDE_TOP) - sb->get_margin(SIDE_BOTTOM);
 
 			if (icon.is_valid()) {
 				Size2 rect_size = Size2(icon_size, icon_size);
@@ -1983,7 +1983,7 @@ Size2 EditorInspectorCategory::get_minimum_size() const {
 	}
 
 	if (bg.is_valid()) {
-		ms.height += bg->get_content_margin(SIDE_TOP) + bg->get_content_margin(SIDE_BOTTOM);
+		ms.height += bg->get_margin(SIDE_TOP) + bg->get_margin(SIDE_BOTTOM);
 	}
 
 	return ms;

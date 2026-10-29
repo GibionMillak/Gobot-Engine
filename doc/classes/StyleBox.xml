@@ -26,7 +26,7 @@
 		<method name="_get_minimum_size" qualifiers="virtual const">
 			<return type="Vector2" />
 			<description>
-				Virtual method to be implemented by the user. Returns a custom minimum size that the stylebox must respect when drawing. By default [method get_minimum_size] only takes content margins into account. This method can be overridden to add another size restriction. A combination of the default behavior and the output of this method will be used, to account for both sizes.
+				Virtual method to be implemented by the user. Returns a custom minimum size that the stylebox must respect when drawing. By default [method get_minimum_size] takes the style's border and content padding into account. This method can be overridden to add another size restriction. A combination of the default behavior and the output of this method will be used, to account for both sizes.
 			</description>
 		</method>
 		<method name="_test_mask" qualifiers="virtual const">
@@ -49,7 +49,7 @@
 			<return type="float" />
 			<param index="0" name="margin" type="int" enum="Side" />
 			<description>
-				Returns the default margin of the specified [enum Side].
+				Returns the content padding of the specified [enum Side], excluding the style's border. Use [method get_margin] to retrieve the total inset used for layout.
 			</description>
 		</method>
 		<method name="get_current_item_drawn" qualifiers="const">
@@ -62,14 +62,14 @@
 			<return type="float" />
 			<param index="0" name="margin" type="int" enum="Side" />
 			<description>
-				Returns the content margin offset for the specified [enum Side].
+				Returns the total content inset for the specified [enum Side], including the style's border and content padding. For [StyleBoxFlat], this is the border width plus the content margin. For [StyleBoxTexture], this is the texture margin plus the content margin.
 				Positive values reduce size inwards, unlike [Control]'s margin values.
 			</description>
 		</method>
 		<method name="get_minimum_size" qualifiers="const">
 			<return type="Vector2" />
 			<description>
-				Returns the minimum size that this stylebox can be shrunk to.
+				Returns the minimum size that this stylebox can be shrunk to, including its border and content padding.
 			</description>
 		</method>
 		<method name="get_offset" qualifiers="const">
@@ -83,14 +83,14 @@
 			<param index="0" name="margin" type="int" enum="Side" />
 			<param index="1" name="offset" type="float" />
 			<description>
-				Sets the default value of the specified [enum Side] to [param offset] pixels.
+				Sets the content padding of the specified [enum Side] to [param offset] pixels. This padding is added inside the style's border. Negative values are clamped to [code]0[/code].
 			</description>
 		</method>
 		<method name="set_content_margin_all">
 			<return type="void" />
 			<param index="0" name="offset" type="float" />
 			<description>
-				Sets the default margin to [param offset] pixels for all sides.
+				Sets the content padding to [param offset] pixels for all sides. This padding is added inside the style's border. Negative values are clamped to [code]0[/code].
 			</description>
 		</method>
 		<method name="test_mask" qualifiers="const">
@@ -103,22 +103,22 @@
 		</method>
 	</methods>
 	<members>
-		<member name="content_margin_bottom" type="float" setter="set_content_margin" getter="get_content_margin" default="-1.0">
-			The bottom margin for the contents of this style box. Increasing this value reduces the space available to the contents from the bottom.
-			If this value is negative, it is ignored and a child-specific margin is used instead. For example, for [StyleBoxFlat], the border thickness (if any) is used instead.
+		<member name="content_margin_bottom" type="float" setter="set_content_margin" getter="get_content_margin" default="0.0">
+			The bottom padding for the contents of this style box, added inside the style's border. Increasing this value reduces the space available to the contents from the bottom. Negative values are clamped to [code]0[/code].
+			For example, a [StyleBoxFlat] with a [code]1[/code]-pixel bottom border and [code]4[/code] pixels of bottom content padding has a total bottom inset of [code]5[/code] pixels.
 			It is up to the code using this style box to decide what these contents are: for example, a [Button] respects this content margin for the textual contents of the button.
-			[method get_margin] should be used to fetch this value as consumer instead of reading these properties directly. This is because it correctly respects negative values and the fallback mentioned above.
+			Code laying out contents should use [method get_margin] to include both the style's border and content padding.
 		</member>
-		<member name="content_margin_left" type="float" setter="set_content_margin" getter="get_content_margin" default="-1.0">
-			The left margin for the contents of this style box. Increasing this value reduces the space available to the contents from the left.
+		<member name="content_margin_left" type="float" setter="set_content_margin" getter="get_content_margin" default="0.0">
+			The left padding for the contents of this style box, added inside the style's border. Increasing this value reduces the space available to the contents from the left.
 			Refer to [member content_margin_bottom] for extra considerations.
 		</member>
-		<member name="content_margin_right" type="float" setter="set_content_margin" getter="get_content_margin" default="-1.0">
-			The right margin for the contents of this style box. Increasing this value reduces the space available to the contents from the right.
+		<member name="content_margin_right" type="float" setter="set_content_margin" getter="get_content_margin" default="0.0">
+			The right padding for the contents of this style box, added inside the style's border. Increasing this value reduces the space available to the contents from the right.
 			Refer to [member content_margin_bottom] for extra considerations.
 		</member>
-		<member name="content_margin_top" type="float" setter="set_content_margin" getter="get_content_margin" default="-1.0">
-			The top margin for the contents of this style box. Increasing this value reduces the space available to the contents from the top.
+		<member name="content_margin_top" type="float" setter="set_content_margin" getter="get_content_margin" default="0.0">
+			The top padding for the contents of this style box, added inside the style's border. Increasing this value reduces the space available to the contents from the top.
 			Refer to [member content_margin_bottom] for extra considerations.
 		</member>
 	</members>

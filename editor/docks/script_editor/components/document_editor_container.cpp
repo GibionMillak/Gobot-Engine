@@ -2923,7 +2923,7 @@ void DocumentEditorContainer::_calculate_script_name_button_size() {
 	TextServer::Direction direction = TextServer::Direction(_script_name_btn->get_text_direction());
 	Vector2 text_size = font->get_string_size(text, alignment, -1, font_size, jst_flags, direction, TextServer::ORIENTATION_HORIZONTAL);
 
-	_script_name_width = text_size.x + _script_name_btn->get_theme_stylebox(CoreStringName(normal))->get_content_margin(SIDE_LEFT) + _script_name_btn->get_theme_stylebox(CoreStringName(normal))->get_content_margin(SIDE_RIGHT);
+	_script_name_width = text_size.x + _script_name_btn->get_theme_stylebox(CoreStringName(normal))->get_margin(SIDE_LEFT) + _script_name_btn->get_theme_stylebox(CoreStringName(normal))->get_margin(SIDE_RIGHT);
 	_calculate_script_name_button_ratio();
 }
 

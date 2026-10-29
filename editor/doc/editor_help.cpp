@@ -4519,7 +4519,7 @@ void EditorHelpBit::update_content_height() {
 	float content_height = content->get_content_height();
 	const Ref<StyleBox> style = content->get_theme_stylebox(CoreStringName(normal));
 	if (style.is_valid()) {
-		content_height += style->get_content_margin(SIDE_TOP) + style->get_content_margin(SIDE_BOTTOM);
+		content_height += style->get_margin(SIDE_TOP) + style->get_margin(SIDE_BOTTOM);
 	}
 	content->set_custom_minimum_size(Size2(content->get_custom_minimum_size().x, CLAMP(content_height, content_min_height, content_max_height)));
 }

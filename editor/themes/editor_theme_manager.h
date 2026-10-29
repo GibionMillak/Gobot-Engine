@@ -179,9 +179,9 @@ private:
 	static void _reset_dirty_flag();
 
 public:
-	static Ref<StyleBoxFlat> make_flat_stylebox(Color p_color, float p_margin_left = -1, float p_margin_top = -1, float p_margin_right = -1, float p_margin_bottom = -1, int p_corner_width = 0);
-	static Ref<StyleBoxEmpty> make_empty_stylebox(float p_margin_left = -1, float p_margin_top = -1, float p_margin_right = -1, float p_margin_bottom = -1);
-	static Ref<StyleBoxTexture> make_stylebox(Ref<Texture2D> p_texture, float p_left, float p_top, float p_right, float p_bottom, float p_margin_left = -1, float p_margin_top = -1, float p_margin_right = -1, float p_margin_bottom = -1, bool p_draw_center = true);
+	static Ref<StyleBoxFlat> make_flat_stylebox(Color p_color, float p_margin_left = 0, float p_margin_top = 0, float p_margin_right = 0, float p_margin_bottom = 0, int p_corner_width = 0);
+	static Ref<StyleBoxEmpty> make_empty_stylebox(float p_margin_left = 0, float p_margin_top = 0, float p_margin_right = 0, float p_margin_bottom = 0);
+	static Ref<StyleBoxTexture> make_stylebox(Ref<Texture2D> p_texture, float p_left, float p_top, float p_right, float p_bottom, float p_margin_left = 0, float p_margin_top = 0, float p_margin_right = 0, float p_margin_bottom = 0, bool p_draw_center = true);
 	static Ref<StyleBoxLine> make_line_stylebox(Color p_color, int p_thickness = 1, float p_grow_begin = 1, float p_grow_end = 1, bool p_vertical = false);
 
 	static Ref<EditorTheme> generate_theme(const Ref<EditorTheme> &p_old_theme = nullptr);

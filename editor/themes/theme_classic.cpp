@@ -270,7 +270,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_config.popup_style->set_corner_radius_all(0);
 
 			p_config.popup_border_style = p_config.popup_style->duplicate();
-			p_config.popup_border_style->set_content_margin_all(MAX(EDSCALE_RND(1), p_config.border_width) + 2 + EDSCALE_RND(p_config.base_margin * 1.5));
+			p_config.popup_border_style->set_content_margin_all(2 + EDSCALE_RND(p_config.base_margin * 1.5));
 			// Always display a border for popups like PopupMenus so they can be distinguished from their background.
 			p_config.popup_border_style->set_border_width_all(MAX(EDSCALE_RND(1), p_config.border_width));
 			p_config.popup_border_style->set_border_color(p_config.dark_color_2);
@@ -297,8 +297,7 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 
 			// Content panel for tabs and similar containers.
 
-			// Compensate for the border.
-			const int content_panel_margin = EDSCALE_RND(p_config.base_margin) + p_config.border_width;
+			const int content_panel_margin = EDSCALE_RND(p_config.base_margin);
 
 			p_config.content_panel_style = p_config.base_style->duplicate();
 			p_config.content_panel_style->set_border_color(p_config.dark_color_3);
@@ -1210,7 +1209,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		if (p_config.enable_touch_optimizations) {
 			p_theme->set_stylebox("scroll", "HScrollBar", EditorThemeManager::make_line_stylebox(p_config.separator_color, 50));
 		} else {
-			p_theme->set_stylebox("scroll", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, -5, 1, -5, 1));
+			p_theme->set_stylebox("scroll", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 0, 1, 0, 1));
 		}
 		p_theme->set_stylebox("scroll_focus", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
 		p_theme->set_stylebox("grabber", "HScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_grabber"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
@@ -1229,7 +1228,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		if (p_config.enable_touch_optimizations) {
 			p_theme->set_stylebox("scroll", "VScrollBar", EditorThemeManager::make_line_stylebox(p_config.separator_color, 50, 1, 1, true));
 		} else {
-			p_theme->set_stylebox("scroll", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, -5, 1, -5));
+			p_theme->set_stylebox("scroll", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 0, 1, 0));
 		}
 		p_theme->set_stylebox("scroll_focus", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_bg"), EditorStringName(EditorIcons)), 5, 5, 5, 5, 1, 1, 1, 1));
 		p_theme->set_stylebox("grabber", "VScrollBar", EditorThemeManager::make_stylebox(p_theme->get_icon(SNAME("gui_scroll_grabber"), EditorStringName(EditorIcons)), 6, 6, 6, 6, 1, 1, 1, 1));
@@ -1741,7 +1740,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		menu_transparent_style->set_border_width_all(0);
 		Ref<StyleBoxFlat> menu_button_hover = p_config.button_style_hover->duplicate();
 		for (int i = 0; i < 4; i++) {
-			menu_transparent_style->set_content_margin((Side)i, p_config.button_style->get_content_margin((Side)i));
+			menu_transparent_style->set_content_margin((Side)i, p_config.button_style->get_margin((Side)i));
 			menu_button_hover->set_content_margin((Side)i, p_config.button_style_hover->get_content_margin((Side)i));
 		}
 
@@ -1901,7 +1900,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			Ref<StyleBoxFlat> style_flat_button_pressed = p_config.button_style_pressed->duplicate();
 
 			for (int i = 0; i < 4; i++) {
-				style_flat_button->set_content_margin((Side)i, p_config.button_style->get_content_margin((Side)i));
+				style_flat_button->set_content_margin((Side)i, p_config.button_style->get_margin((Side)i));
 				style_flat_button_hover->set_content_margin((Side)i, p_config.button_style->get_content_margin((Side)i));
 				style_flat_button_pressed->set_content_margin((Side)i, p_config.button_style->get_content_margin((Side)i));
 			}

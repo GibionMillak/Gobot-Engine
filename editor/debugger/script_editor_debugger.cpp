@@ -1075,7 +1075,7 @@ void ScriptEditorDebugger::_update_reason_content_height() {
 	float margin_height = 0;
 	const Ref<StyleBox> style = reason->get_theme_stylebox(CoreStringName(normal));
 	if (style.is_valid()) {
-		margin_height += style->get_content_margin(SIDE_TOP) + style->get_content_margin(SIDE_BOTTOM);
+		margin_height += style->get_margin(SIDE_TOP) + style->get_margin(SIDE_BOTTOM);
 	}
 
 	const float content_height = margin_height + reason->get_content_height();

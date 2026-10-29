@@ -3844,7 +3844,7 @@ void AnimationTrackEditGroup::_notification(int p_what) {
 			Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
 
 			const Ref<StyleBox> &stylebox_header = get_theme_stylebox(SNAME("header"), SNAME("AnimationTrackEditGroup"));
-			float v_margin_offset = stylebox_header->get_content_margin(SIDE_TOP) - stylebox_header->get_content_margin(SIDE_BOTTOM);
+			float v_margin_offset = stylebox_header->get_margin(SIDE_TOP) - stylebox_header->get_margin(SIDE_BOTTOM);
 
 			const Color h_line_color = get_theme_color(SNAME("h_line_color"), SNAME("AnimationTrackEditGroup"));
 			const Color v_line_color = get_theme_color(SNAME("v_line_color"), SNAME("AnimationTrackEditGroup"));
@@ -4053,7 +4053,7 @@ Size2 AnimationTrackEditGroup::get_minimum_size() const {
 	const int separation = get_theme_constant(SNAME("v_separation"), SNAME("ItemList"));
 
 	const Ref<StyleBox> &header_style = get_theme_stylebox(SNAME("header"), SNAME("AnimationTrackEditGroup"));
-	const int content_margin = header_style->get_content_margin(SIDE_TOP) + header_style->get_content_margin(SIDE_BOTTOM);
+	const int content_margin = header_style->get_margin(SIDE_TOP) + header_style->get_margin(SIDE_BOTTOM);
 
 	return Vector2(0, MAX(font->get_height(font_size), icon_size.y) + separation + content_margin);
 }

@@ -83,7 +83,7 @@ static Ref<DPITexture> generate_icon(int p_index) {
 	return DPITexture::create_from_string(default_theme_icons_sources[p_index], scale);
 }
 
-static Ref<StyleBox> make_empty_stylebox(float p_margin_left = -1, float p_margin_top = -1, float p_margin_right = -1, float p_margin_bottom = -1) {
+static Ref<StyleBox> make_empty_stylebox(float p_margin_left = 0, float p_margin_top = 0, float p_margin_right = 0, float p_margin_bottom = 0) {
 	Ref<StyleBox> style(memnew(StyleBoxEmpty));
 	style->set_content_margin_individual(Math::round(p_margin_left * scale), Math::round(p_margin_top * scale), Math::round(p_margin_right * scale), Math::round(p_margin_bottom * scale));
 	return style;
@@ -359,7 +359,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 
 	Ref<StyleBoxEmpty> flat_button_normal = make_empty_stylebox();
 	for (int i = 0; i < 4; i++) {
-		flat_button_normal->set_content_margin((Side)i, button_normal->get_margin((Side)i) + button_normal->get_border_width((Side)i));
+		flat_button_normal->set_content_margin((Side)i, button_normal->get_margin((Side)i));
 	}
 	Ref<StyleBoxFlat> flat_button_pressed = button_pressed->duplicate();
 	flat_button_pressed->set_bg_color(style_pressed_color * Color(1, 1, 1, 0.85));

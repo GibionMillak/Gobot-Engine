@@ -90,22 +90,22 @@
 		<member name="texture_margin_bottom" type="float" setter="set_texture_margin" getter="get_texture_margin" default="0.0">
 			Increases the bottom margin of the 3×3 texture box.
 			A higher value means more of the source texture is considered to be part of the bottom border of the 3×3 box.
-			This is also the value used as fallback for [member StyleBox.content_margin_bottom] if it is negative.
+			This value is added to [member StyleBox.content_margin_bottom] when calculating the total bottom content inset.
 		</member>
 		<member name="texture_margin_left" type="float" setter="set_texture_margin" getter="get_texture_margin" default="0.0">
 			Increases the left margin of the 3×3 texture box.
 			A higher value means more of the source texture is considered to be part of the left border of the 3×3 box.
-			This is also the value used as fallback for [member StyleBox.content_margin_left] if it is negative.
+			This value is added to [member StyleBox.content_margin_left] when calculating the total left content inset.
 		</member>
 		<member name="texture_margin_right" type="float" setter="set_texture_margin" getter="get_texture_margin" default="0.0">
 			Increases the right margin of the 3×3 texture box.
 			A higher value means more of the source texture is considered to be part of the right border of the 3×3 box.
-			This is also the value used as fallback for [member StyleBox.content_margin_right] if it is negative.
+			This value is added to [member StyleBox.content_margin_right] when calculating the total right content inset.
 		</member>
 		<member name="texture_margin_top" type="float" setter="set_texture_margin" getter="get_texture_margin" default="0.0">
 			Increases the top margin of the 3×3 texture box.
 			A higher value means more of the source texture is considered to be part of the top border of the 3×3 box.
-			This is also the value used as fallback for [member StyleBox.content_margin_top] if it is negative.
+			This value is added to [member StyleBox.content_margin_top] when calculating the total top content inset.
 		</member>
 	</members>
 	<constants>
