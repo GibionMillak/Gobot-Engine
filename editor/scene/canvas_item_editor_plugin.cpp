@@ -63,6 +63,7 @@
 #include "editor/translations/editor_translation_preview_menu.h"
 #include "scene/2d/audio_stream_player_2d.h"
 #include "scene/2d/mesh_instance_2d.h"
+#include "scene/2d/node_2d.h"
 #include "scene/2d/physics/touch_screen_button.h"
 #include "scene/2d/polygon_2d.h"
 #include "scene/2d/skeleton_2d.h"
@@ -1201,6 +1202,22 @@ void CanvasItemEditor::_update_lock_and_group_button() {
 	_group_btn->set_disabled(!has_canvas_item);
 	_ungroup_btn->set_visible(all_group);
 	_ungroup_btn->set_disabled(!has_canvas_item);
+	_selection_control_vflow->set_visible(has_canvas_item);
+}
+
+void CanvasItemEditor::_update_scene_paint_button() {
+	bool has_node_2d = false;
+	for (const KeyValue<ObjectID, Object *> &entry : editor_selection->get_selection()) {
+		if (ObjectDB::get_instance<Node2D>(entry.key)) {
+			has_node_2d = true;
+			break;
+		}
+	}
+
+	_scene_paint_btn->set_visible(has_node_2d);
+	if (!has_node_2d && ci_manipulator->get_tool() == CanvasItemManipulator::TOOL_SCENE_PAINT) {
+		_button_tool_select(CanvasItemManipulator::TOOL_SELECT);
+	}
 }
 
 List<Bone2D *> CanvasItemEditor::_get_selected_bones() const {
@@ -2636,6 +2653,7 @@ void CanvasItemEditor::_notification(int p_what) {
 			_toggle_grid_btn->set_pressed_no_signal(is_grid_visible());
 
 			_update_lock_and_group_button();
+			_update_scene_paint_button();
 			get_tree()->connect("tree_changed", callable_mp(this, &CanvasItemEditor::_queue_skeleton_menu_update));
 			_queue_skeleton_menu_update();
 
@@ -2750,6 +2768,7 @@ void CanvasItemEditor::_notification(int p_what) {
 void CanvasItemEditor::_selection_changed() {
 	_queue_skeleton_menu_update();
 	_update_lock_and_group_button();
+	_update_scene_paint_button();
 	if (!selected_from_canvas) {
 		ci_manipulator->reset_drag();
 	}
@@ -4092,6 +4111,7 @@ CanvasItemEditor::CanvasItemEditor() {
 
 		_scene_paint_btn = memnew(Button);
 		_scene_paint_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_button_tool_select).bind(CanvasItemManipulator::TOOL_SCENE_PAINT));
+		_scene_paint_btn->hide();
 		_scene_paint_btn->set_shortcut(ED_SHORTCUT("canvas_item_editor/scene_paint_mode", TTRC("Scene Paint Mode"), Key::B, true));
 		_scene_paint_btn->set_shortcut_context(this);
 		_scene_paint_btn->set_theme_type_variation(SceneStringName(FlatButton));
@@ -4156,41 +4176,6 @@ CanvasItemEditor::CanvasItemEditor() {
 		_ruler_btn->set_theme_type_variation(SceneStringName(FlatButton));
 		_ruler_btn->set_toggle_mode(true);
 		input_vflow->add_child(_ruler_btn);
-	}
-
-	EditorToolbarFlowContainer *selection_control_vflow = _viewport_toolbar->create_group();
-	{
-		_lock_btn = memnew(Button);
-		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
-		_lock_btn->set_shortcut(ED_GET_SHORTCUT("editor/lock_selected_nodes"));
-		_lock_btn->set_theme_type_variation(SceneStringName(FlatButton));
-		_lock_btn->set_tooltip_text(TTRC("Lock selected node, preventing selection and movement."));
-		selection_control_vflow->add_child(_lock_btn);
-		_lock_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(LOCK_SELECTED));
-
-		_unlock_btn = memnew(Button);
-		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
-		_unlock_btn->set_shortcut(ED_GET_SHORTCUT("editor/unlock_selected_nodes"));
-		_unlock_btn->set_theme_type_variation(SceneStringName(FlatButton));
-		_unlock_btn->set_tooltip_text(TTRC("Unlock selected node, allowing selection and movement."));
-		selection_control_vflow->add_child(_unlock_btn);
-		_unlock_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(UNLOCK_SELECTED));
-
-		_group_btn = memnew(Button);
-		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
-		_group_btn->set_shortcut(ED_GET_SHORTCUT("editor/group_selected_nodes"));
-		_group_btn->set_theme_type_variation(SceneStringName(FlatButton));
-		_group_btn->set_tooltip_text(TTRC("Groups the selected node with its children. This causes the parent to be selected when any child node is clicked in 2D and 3D view."));
-		selection_control_vflow->add_child(_group_btn);
-		_group_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(GROUP_SELECTED));
-
-		_ungroup_btn = memnew(Button);
-		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
-		_ungroup_btn->set_shortcut(ED_GET_SHORTCUT("editor/ungroup_selected_nodes"));
-		_ungroup_btn->set_theme_type_variation(SceneStringName(FlatButton));
-		_ungroup_btn->set_tooltip_text(TTRC("Ungroups the selected node from its children. Child nodes will be individual items in 2D and 3D view."));
-		selection_control_vflow->add_child(_ungroup_btn);
-		_ungroup_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(UNGROUP_SELECTED));
 	}
 
 	EditorToolbarFlowContainer *tool_button_vflow = _viewport_toolbar->create_group();
@@ -4333,6 +4318,43 @@ CanvasItemEditor::CanvasItemEditor() {
 	// Contextual toolbars.
 	_context_toolbar_vflow = memnew(EditorToolbarFlowContainer);
 	_viewport_toolbar->set_context_control(_context_toolbar_vflow);
+
+	_selection_control_vflow = memnew(EditorToolbarFlowContainer);
+	_selection_control_vflow->hide();
+	add_control_to_menu_panel(_selection_control_vflow);
+	{
+		_lock_btn = memnew(Button);
+		_lock_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(LOCK_SELECTED));
+		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
+		_lock_btn->set_shortcut(ED_GET_SHORTCUT("editor/lock_selected_nodes"));
+		_lock_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_lock_btn->set_tooltip_text(TTRC("Lock selected node, preventing selection and movement."));
+		_selection_control_vflow->add_child(_lock_btn);
+
+		_unlock_btn = memnew(Button);
+		_unlock_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(UNLOCK_SELECTED));
+		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
+		_unlock_btn->set_shortcut(ED_GET_SHORTCUT("editor/unlock_selected_nodes"));
+		_unlock_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_unlock_btn->set_tooltip_text(TTRC("Unlock selected node, allowing selection and movement."));
+		_selection_control_vflow->add_child(_unlock_btn);
+
+		_group_btn = memnew(Button);
+		_group_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(GROUP_SELECTED));
+		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
+		_group_btn->set_shortcut(ED_GET_SHORTCUT("editor/group_selected_nodes"));
+		_group_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_group_btn->set_tooltip_text(TTRC("Groups the selected node with its children. This causes the parent to be selected when any child node is clicked in 2D and 3D view."));
+		_selection_control_vflow->add_child(_group_btn);
+
+		_ungroup_btn = memnew(Button);
+		_ungroup_btn->connect(SceneStringName(pressed), callable_mp(this, &CanvasItemEditor::_popup_callback).bind(UNGROUP_SELECTED));
+		// Define the shortcut globally (without a context) so that it works if the Hierarchy dock is currently focused.
+		_ungroup_btn->set_shortcut(ED_GET_SHORTCUT("editor/ungroup_selected_nodes"));
+		_ungroup_btn->set_theme_type_variation(SceneStringName(FlatButton));
+		_ungroup_btn->set_tooltip_text(TTRC("Ungroups the selected node from its children. Child nodes will be individual items in 2D and 3D view."));
+		_selection_control_vflow->add_child(_ungroup_btn);
+	}
 
 	_skeleton_menu = memnew(MenuButton);
 	_skeleton_menu->hide();

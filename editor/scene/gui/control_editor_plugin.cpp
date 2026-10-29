@@ -532,17 +532,7 @@ bool EditorInspectorPluginControl::parse_property(Object *p_object, const Varian
 // Toolbars controls.
 
 Size2 ControlEditorPopupButton::get_minimum_size() const {
-	Vector2 base_size = Vector2(26, 26) * EDSCALE;
-
-	if (arrow_icon.is_null()) {
-		return base_size;
-	}
-
-	Vector2 final_size;
-	final_size.x = base_size.x + arrow_icon->get_width();
-	final_size.y = MAX(base_size.y, arrow_icon->get_height());
-
-	return final_size;
+	return Vector2(26, 26) * EDSCALE;
 }
 
 void ControlEditorPopupButton::toggled(bool p_pressed) {
@@ -569,21 +559,6 @@ void ControlEditorPopupButton::_popup_visibility_changed(bool p_visible) {
 
 void ControlEditorPopupButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_THEME_CHANGED: {
-			arrow_icon = get_theme_icon("select_arrow", "Tree");
-		} break;
-
-		case NOTIFICATION_DRAW: {
-			if (arrow_icon.is_valid()) {
-				Vector2 arrow_pos = Point2(26, 0) * EDSCALE;
-				if (is_layout_rtl()) {
-					arrow_pos.x = get_size().x - arrow_pos.x - arrow_icon->get_width();
-				}
-				arrow_pos.y = get_size().y / 2 - arrow_icon->get_height() / 2;
-				draw_texture(arrow_icon, arrow_pos);
-			}
-		} break;
-
 		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
 			popup_panel->set_layout_direction((Window::LayoutDirection)get_layout_direction());
 		} break;

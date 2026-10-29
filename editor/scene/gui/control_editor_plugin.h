@@ -142,8 +142,6 @@ public:
 class ControlEditorPopupButton : public Button {
 	GDCLASS(ControlEditorPopupButton, Button);
 
-	Ref<Texture2D> arrow_icon;
-
 	PopupPanel *popup_panel = nullptr;
 	VBoxContainer *popup_vbox = nullptr;
 

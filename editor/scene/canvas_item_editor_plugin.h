@@ -159,6 +159,7 @@ private:
 	// (such as MeshInstance's "Mesh" menu).
 	EditorViewportToolbar *_viewport_toolbar = nullptr;
 	EditorToolbarFlowContainer *_context_toolbar_vflow = nullptr;
+	EditorToolbarFlowContainer *_selection_control_vflow = nullptr;
 
 	void _update_context_toolbar();
 
@@ -411,6 +412,7 @@ private:
 	void _gui_input_viewport(const Ref<InputEvent> &p_event);
 	void _update_cursor();
 	void _update_lock_and_group_button();
+	void _update_scene_paint_button();
 	List<Bone2D *> _get_selected_bones() const;
 	bool _can_create_bone(const Node *p_node) const;
 	void _queue_skeleton_menu_update();
