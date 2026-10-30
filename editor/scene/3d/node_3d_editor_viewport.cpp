@@ -3212,17 +3212,11 @@ static void override_label_colors(Control *p_control) {
 static void override_control_stylebox(Control *p_control, const Ref<StyleBox> p_stylebox) {
 	p_control->begin_bulk_theme_override();
 	p_control->add_theme_style_override(CoreStringName(normal), p_stylebox);
-	p_control->add_theme_style_override("normal_mirrored", p_stylebox);
 	p_control->add_theme_style_override(SceneStringName(hover), p_stylebox);
-	p_control->add_theme_style_override("hover_mirrored", p_stylebox);
 	p_control->add_theme_style_override("hover_pressed", p_stylebox);
-	p_control->add_theme_style_override("hover_pressed_mirrored", p_stylebox);
 	p_control->add_theme_style_override(SceneStringName(pressed), p_stylebox);
-	p_control->add_theme_style_override("pressed_mirrored", p_stylebox);
 	p_control->add_theme_style_override("focus", p_stylebox);
-	p_control->add_theme_style_override("focus_mirrored", p_stylebox);
 	p_control->add_theme_style_override("disabled", p_stylebox);
-	p_control->add_theme_style_override("disabled_mirrored", p_stylebox);
 	p_control->end_bulk_theme_override();
 }
 

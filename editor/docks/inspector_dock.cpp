@@ -456,8 +456,7 @@ void InspectorDock::_notification(int p_what) {
 			update(current);
 			[[fallthrough]];
 		}
-		case NOTIFICATION_THEME_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
+		case NOTIFICATION_THEME_CHANGED: {
 			resource_save_button->set_button_icon(get_editor_theme_icon(SNAME("action_save")));
 			resource_extra_button->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
 
@@ -470,13 +469,8 @@ void InspectorDock::_notification(int p_what) {
 			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(RESOURCE_SHOW_IN_FILESYSTEM), get_editor_theme_icon(SNAME("gui_show_in_file_system")));
 			resource_extra_popup->set_item_icon(resource_extra_popup->get_item_index(OBJECT_REQUEST_HELP), get_editor_theme_icon(SNAME("gui_help")));
 
-			if (is_layout_rtl()) {
-				backward_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
-				forward_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
-			} else {
-				backward_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
-				forward_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
-			}
+			backward_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
+			forward_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
 
 			const int icon_width = get_theme_constant(SNAME("class_icon_size"), EditorStringName(Editor));
 			backward_popup->add_theme_constant_override("icon_max_width", icon_width);

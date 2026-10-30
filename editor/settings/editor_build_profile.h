@@ -123,7 +123,6 @@ public:
 	static String get_build_option_name(BuildOption p_build_option);
 	static String get_build_option_description(BuildOption p_build_option);
 	static String get_build_option_identifier(BuildOption p_build_option);
-	static bool get_build_option_disable_value(BuildOption p_build_option);
 	static bool get_build_option_explicit_use(BuildOption p_build_option);
 	static BuildOptionCategory get_build_option_category(BuildOption p_build_option);
 	static LocalVector<BuildOption> get_build_option_dependencies(BuildOption p_build_option);

@@ -366,16 +366,12 @@ void EditorSettings::_set_initialized() {
 }
 
 static LocalVector<String> _get_skipped_locales() {
-	// Skip locales if Text server lack required features.
+	// Skip right-to-left locales and locales requiring unavailable text shaping.
 	LocalVector<String> locales_to_skip;
-	if (!TS->has_feature(TextServer::FEATURE_BIDI_LAYOUT) || !TS->has_feature(TextServer::FEATURE_SHAPING)) {
-		locales_to_skip.push_back("ar"); // Arabic.
-		locales_to_skip.push_back("fa"); // Persian.
-		locales_to_skip.push_back("ur"); // Urdu.
-	}
-	if (!TS->has_feature(TextServer::FEATURE_BIDI_LAYOUT)) {
-		locales_to_skip.push_back("he"); // Hebrew.
-	}
+	locales_to_skip.push_back("ar"); // Arabic.
+	locales_to_skip.push_back("fa"); // Persian.
+	locales_to_skip.push_back("ur"); // Urdu.
+	locales_to_skip.push_back("he"); // Hebrew.
 	if (!TS->has_feature(TextServer::FEATURE_SHAPING)) {
 		locales_to_skip.push_back("bn"); // Bengali.
 		locales_to_skip.push_back("hi"); // Hindi.
@@ -407,7 +403,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	{
 		// Skip locales which we can't render properly.
 		const LocalVector<String> locales_to_skip = _get_skipped_locales();
-		if (!locales_to_skip.is_empty()) {
+		if (!TS->has_feature(TextServer::FEATURE_SHAPING)) {
 			WARN_PRINT("Some locales are not properly supported by selected Text Server and are disabled.");
 		}
 
@@ -435,7 +431,6 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/localization/localize_settings", true, "")
 	const String dock_tab_style_hint = "Text Only,Icon Only,Text and Icon";
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/docks/dock_tab_style", DockTabContainer::TabStyle::TEXT_ONLY, dock_tab_style_hint)
-	EDITOR_SETTING_USAGE(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/localization/ui_layout_direction", 0, "Based on Application Locale,Left-to-Right,Right-to-Left,Based on System Locale", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED)
 
 	// Display what the Auto display scale setting effectively corresponds to.
 	const String display_scale_hint_string = vformat("Auto (%d%%),75%%,100%%,125%%,150%%,175%%,200%%,Custom", Math::round(get_auto_display_scale() * 100));

@@ -26,7 +26,6 @@
 		</member>
 		<member name="reverse_fill" type="bool" setter="set_reverse_fill" getter="is_reverse_fill" default="false">
 			If [code]true[/code], reverses fill direction. Horizontal [FlowContainer]s will fill rows bottom to top, vertical [FlowContainer]s will fill columns right to left.
-			When using a vertical [FlowContainer] with a right to left [member Control.layout_direction], columns will fill left to right instead.
 		</member>
 		<member name="vertical" type="bool" setter="set_vertical" getter="is_vertical" default="false">
 			If [code]true[/code], the [FlowContainer] will arrange its children vertically, rather than horizontally.
@@ -35,13 +34,13 @@
 	</members>
 	<constants>
 		<constant name="ALIGNMENT_BEGIN" value="0" enum="AlignmentMode">
-			The child controls will be arranged at the beginning of the container, i.e. top if orientation is vertical, left if orientation is horizontal (right for RTL layout).
+			The child controls will be arranged at the beginning of the container, i.e. top if orientation is vertical, left if orientation is horizontal.
 		</constant>
 		<constant name="ALIGNMENT_CENTER" value="1" enum="AlignmentMode">
 			The child controls will be centered in the container.
 		</constant>
 		<constant name="ALIGNMENT_END" value="2" enum="AlignmentMode">
-			The child controls will be arranged at the end of the container, i.e. bottom if orientation is vertical, right if orientation is horizontal (left for RTL layout).
+			The child controls will be arranged at the end of the container, i.e. bottom if orientation is vertical, right if orientation is horizontal.
 		</constant>
 		<constant name="LAST_WRAP_ALIGNMENT_INHERIT" value="0" enum="LastWrapAlignmentMode">
 			The last partially filled row or column will wrap aligned to the previous row or column in accordance with [member alignment].

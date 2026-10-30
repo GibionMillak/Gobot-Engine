@@ -63,12 +63,6 @@ public:
 	void clear();
 	Ref<TextLine> duplicate() const;
 
-	void set_direction(TextServer::Direction p_direction);
-	TextServer::Direction get_direction() const;
-	TextServer::Direction get_inferred_direction() const;
-
-	void set_bidi_override(const Array &p_override);
-
 	void set_orientation(TextServer::Orientation p_orientation);
 	TextServer::Orientation get_orientation() const;
 
@@ -116,7 +110,7 @@ public:
 
 	int hit_test(float p_coords) const;
 
-	TextLine(const String &p_text, const Ref<Font> &p_font, int p_font_size, const String &p_language = "", TextServer::Direction p_direction = TextServer::DIRECTION_AUTO, TextServer::Orientation p_orientation = TextServer::ORIENTATION_HORIZONTAL);
+	TextLine(const String &p_text, const Ref<Font> &p_font, int p_font_size, const String &p_language = "", TextServer::Orientation p_orientation = TextServer::ORIENTATION_HORIZONTAL);
 	TextLine();
 	~TextLine();
 };

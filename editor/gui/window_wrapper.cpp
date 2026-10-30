@@ -247,33 +247,6 @@ void WindowWrapper::restore_window_from_saved_position(const Rect2 p_window_rect
 	}
 }
 
-void WindowWrapper::enable_window_on_screen(int p_screen, bool p_auto_scale) {
-	int current_screen = Object::cast_to<Window>(get_viewport())->get_current_screen();
-	int screen = p_screen < 0 ? current_screen : p_screen;
-
-	bool auto_scale = p_auto_scale && !EDITOR_GET("interface/multi_window/maximize_window");
-
-	if (auto_scale && current_screen != screen) {
-		Rect2 control_rect = _get_default_window_rect();
-
-		Rect2i source_screen_rect = DisplayServer::get_singleton()->screen_get_usable_rect(current_screen);
-		Rect2i dest_screen_rect = DisplayServer::get_singleton()->screen_get_usable_rect(screen);
-
-		// Adjust the window rect size in case the resolution changes.
-		Vector2 screen_ratio = Vector2(source_screen_rect.size) / Vector2(dest_screen_rect.size);
-
-		// The screen positioning may change, so remove the original screen position.
-		control_rect.position -= source_screen_rect.position;
-		control_rect = Rect2i(control_rect.position * screen_ratio, control_rect.size * screen_ratio);
-		control_rect.position += dest_screen_rect.position;
-
-		restore_window(control_rect, p_screen);
-	} else {
-		window->set_current_screen(p_screen);
-		set_window_enabled(true);
-	}
-}
-
 void WindowWrapper::set_window_title(const String &p_title) {
 	if (!is_window_available()) {
 		return;
@@ -440,9 +413,6 @@ void ScreenSelect::_show_popup() {
 	popup->set_size(Size2(size.width, 0));
 	Point2 gp = get_screen_position();
 	gp.y += size.y;
-	if (is_layout_rtl()) {
-		gp.x += size.width - popup->get_size().width;
-	}
 	popup->set_position(gp);
 	popup->popup();
 }

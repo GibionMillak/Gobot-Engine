@@ -160,10 +160,6 @@ void FindReplaceBar::_notification(int p_what) {
 			}
 			[[fallthrough]];
 		}
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-			_update_toggle_replace_button(replace_text->is_visible_in_tree());
-		} break;
-
 		case NOTIFICATION_VISIBILITY_CHANGED: {
 			set_process_input(is_visible_in_tree());
 		} break;
@@ -588,8 +584,8 @@ void FindReplaceBar::_update_toggle_replace_button(bool p_replace_visible) {
 	String tooltip = p_replace_visible ? TTRC("Hide Replace") : TTRC("Show Replace");
 	String shortcut = ED_GET_SHORTCUT(p_replace_visible ? "script_text_editor/find" : "script_text_editor/replace")->get_as_text();
 	toggle_replace_button->set_tooltip_text(vformat("%s (%s)", tooltip, shortcut));
-	StringName rtl_compliant_arrow = is_layout_rtl() ? SNAME("gui_tree_arrow_left") : SNAME("gui_tree_arrow_right");
-	toggle_replace_button->set_button_icon(get_editor_theme_icon(p_replace_visible ? SNAME("gui_tree_arrow_down") : rtl_compliant_arrow));
+	StringName arrow_icon = (SNAME("gui_tree_arrow_right"));
+	toggle_replace_button->set_button_icon(get_editor_theme_icon(p_replace_visible ? SNAME("gui_tree_arrow_down") : arrow_icon));
 }
 
 void FindReplaceBar::_show_search(bool p_with_replace, bool p_show_only) {
@@ -1790,9 +1786,6 @@ void CodeTextEditor::_notification(int p_what) {
 
 			[[fallthrough]];
 		}
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-		} break;
-
 		case NOTIFICATION_VISIBILITY_CHANGED: {
 			set_process_input(is_visible_in_tree());
 		} break;
@@ -1965,7 +1958,6 @@ CodeTextEditor::CodeTextEditor() {
 	text_editor = memnew(CodeEdit);
 	add_child(text_editor);
 	text_editor->set_v_size_flags(SIZE_EXPAND_FILL);
-	text_editor->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_GDSCRIPT);
 	text_editor->set_draw_bookmarks_gutter(true);
 
 	text_editor->set_virtual_keyboard_show_on_focus(false);

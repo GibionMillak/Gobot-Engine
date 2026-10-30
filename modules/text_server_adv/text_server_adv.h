@@ -31,8 +31,8 @@
 #pragma once
 
 /*************************************************************************/
-/* ICU/HarfBuzz/Graphite backed Text Server implementation with BiDi,    */
-/* shaping and advanced font features support.                           */
+/* ICU/HarfBuzz/Graphite backed Text Server implementation with shaping  */
+/* and advanced font features support.                                   */
 /*************************************************************************/
 
 #include "script_iterator.h"
@@ -53,7 +53,6 @@ GODOT_GCC_WARNING_PUSH_AND_IGNORE("-Wshadow")
 GODOT_CLANG_WARNING_PUSH_AND_IGNORE("-Wunnecessary-virtual-specifier")
 #endif
 
-#include <unicode/ubidi.h>
 #include <unicode/ubrk.h>
 #include <unicode/uchar.h>
 #include <unicode/uclean.h>
@@ -473,7 +472,6 @@ class TextServerAdvanced : public TextServerExtension {
 		Vector2i gl_range;
 		RID font_rid;
 		int font_size = 0;
-		bool rtl = false;
 		int64_t span_index = -1;
 	};
 
@@ -488,7 +486,6 @@ class TextServerAdvanced : public TextServerExtension {
 
 		String text;
 		String custom_punct;
-		TextServer::Direction direction = DIRECTION_LTR; // Desired text direction.
 		TextServer::Orientation orientation = ORIENTATION_HORIZONTAL;
 
 		struct Span {
@@ -521,8 +518,6 @@ class TextServerAdvanced : public TextServerExtension {
 		HashMap<Variant, EmbeddedObject> objects;
 
 		/* Shaped data */
-		TextServer::Direction para_direction = DIRECTION_LTR; // Detected text direction.
-		int base_para_direction = UBIDI_DEFAULT_LTR;
 		SafeFlag valid{ false }; // String is shaped.
 		bool line_breaks_valid = false; // Line and word break flags are populated (and virtual zero width spaces inserted).
 		bool justification_ops_valid = false; // Virtual elongation glyphs are added to the string.
@@ -550,8 +545,6 @@ class TextServerAdvanced : public TextServerExtension {
 
 		/* Intermediate data */
 		Char16String utf16;
-		Vector<UBiDi *> bidi_iter;
-		Vector<Vector3i> bidi_override;
 		ScriptIterator *script_iter = nullptr;
 		hb_buffer_t *hb_buffer = nullptr;
 
@@ -564,11 +557,6 @@ class TextServerAdvanced : public TextServerExtension {
 		bool chars_valid = false;
 
 		~ShapedTextDataAdvanced() {
-			for (int i = 0; i < bidi_iter.size(); i++) {
-				if (bidi_iter[i]) {
-					ubidi_close(bidi_iter[i]);
-				}
-			}
 			memdelete(script_iter);
 			if (hb_buffer) {
 				hb_buffer_destroy(hb_buffer);
@@ -831,8 +819,6 @@ public:
 	MODBIND0RC(PackedByteArray, get_support_data);
 	MODBIND1RC(bool, is_locale_using_support_data, const String &);
 
-	MODBIND1RC(bool, is_locale_right_to_left, const String &);
-
 	MODBIND1RC(int64_t, name_to_tag, const String &);
 	MODBIND1RC(String, tag_to_name, int64_t);
 
@@ -1031,16 +1017,10 @@ public:
 
 	/* Shaped text buffer interface */
 
-	MODBIND2R(RID, create_shaped_text, Direction, Orientation);
+	MODBIND1R(RID, create_shaped_text, Orientation);
 
 	MODBIND1(shaped_text_clear, const RID &);
 	MODBIND1R(RID, shaped_text_duplicate, const RID &);
-
-	MODBIND2(shaped_text_set_direction, const RID &, Direction);
-	MODBIND1RC(Direction, shaped_text_get_direction, const RID &);
-	MODBIND1RC(Direction, shaped_text_get_inferred_direction, const RID &);
-
-	MODBIND2(shaped_text_set_bidi_override, const RID &, const Array &);
 
 	MODBIND2(shaped_text_set_custom_punctuation, const RID &, const String &);
 	MODBIND1RC(String, shaped_text_get_custom_punctuation, const RID &);
@@ -1080,7 +1060,6 @@ public:
 	MODBIND2RC(RID, shaped_get_run_font_rid, const RID &, int64_t);
 	MODBIND2RC(int, shaped_get_run_font_size, const RID &, int64_t);
 	MODBIND2RC(String, shaped_get_run_language, const RID &, int64_t);
-	MODBIND2RC(Direction, shaped_get_run_direction, const RID &, int64_t);
 	MODBIND2RC(Variant, shaped_get_run_object, const RID &, int64_t);
 
 	MODBIND3RC(RID, shaped_text_substr, const RID &, int64_t, int64_t);

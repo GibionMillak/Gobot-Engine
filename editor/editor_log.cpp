@@ -132,6 +132,7 @@ void EditorLog::_update_theme() {
 	theme_cache.warning_color = get_theme_color(SNAME("warning_color"), EditorStringName(Editor));
 	theme_cache.warning_icon = get_editor_theme_icon(SNAME("status_warning"));
 	theme_cache.message_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor)) * Color(1, 1, 1, 0.6);
+	_theme_cache_ready = true;
 }
 
 void EditorLog::_editor_settings_changed() {
@@ -156,6 +157,7 @@ void EditorLog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
+			_theme_cache_ready = false;
 			callable_mp(this, &EditorLog::_update_theme).call_deferred();
 			callable_mp(this, &EditorLog::_rebuild_log).call_deferred();
 		} break;
@@ -390,13 +392,13 @@ bool EditorLog::_check_display_message(LogMessage &p_message) {
 }
 
 void EditorLog::_add_log_line(LogMessage &p_message, bool p_replace_previous) {
-	if (!is_inside_tree()) {
-		// The log will be built all at once when it enters the tree and has its theme items.
+	if (!is_inside_tree() || !_theme_cache_ready) {
+		// Keep messages buffered until the deferred theme update and log rebuild.
 		return;
 	}
 
 	if (unlikely(log->is_updating())) {
-		// The new message arrived during log RTL text processing/redraw (invalid BiDi control characters / font error), ignore it to avoid RTL data corruption.
+		// Ignore messages raised during text rendering to avoid recursive logging.
 		return;
 	}
 
@@ -420,7 +422,9 @@ void EditorLog::_add_log_line(LogMessage &p_message, bool p_replace_previous) {
 		case MSG_TYPE_ERROR: {
 			log->push_color(theme_cache.error_color);
 			Ref<Texture2D> icon = theme_cache.error_icon;
-			log->add_image(icon);
+			if (icon.is_valid()) {
+				log->add_image(icon);
+			}
 			log->push_bold();
 			log->add_text(U" ERROR: ");
 			log->pop(); // bold
@@ -429,7 +433,9 @@ void EditorLog::_add_log_line(LogMessage &p_message, bool p_replace_previous) {
 		case MSG_TYPE_WARNING: {
 			log->push_color(theme_cache.warning_color);
 			Ref<Texture2D> icon = theme_cache.warning_icon;
-			log->add_image(icon);
+			if (icon.is_valid()) {
+				log->add_image(icon);
+			}
 			log->push_bold();
 			log->add_text(U" WARNING: ");
 			log->pop(); // bold

@@ -48,8 +48,6 @@ void TextServerExtension::_bind_methods() {
 	GDVIRTUAL_BIND(_get_support_data);
 	GDVIRTUAL_BIND(_is_locale_using_support_data, "locale");
 
-	GDVIRTUAL_BIND(_is_locale_right_to_left, "locale");
-
 	GDVIRTUAL_BIND(_name_to_tag, "name");
 	GDVIRTUAL_BIND(_tag_to_name, "tag");
 
@@ -248,16 +246,10 @@ void TextServerExtension::_bind_methods() {
 
 	/* Shaped text buffer interface */
 
-	GDVIRTUAL_BIND(_create_shaped_text, "direction", "orientation");
+	GDVIRTUAL_BIND(_create_shaped_text, "orientation");
 
 	GDVIRTUAL_BIND(_shaped_text_clear, "shaped");
 	GDVIRTUAL_BIND(_shaped_text_duplicate, "shaped");
-
-	GDVIRTUAL_BIND(_shaped_text_set_direction, "shaped", "direction");
-	GDVIRTUAL_BIND(_shaped_text_get_direction, "shaped");
-	GDVIRTUAL_BIND(_shaped_text_get_inferred_direction, "shaped");
-
-	GDVIRTUAL_BIND(_shaped_text_set_bidi_override, "shaped", "override");
 
 	GDVIRTUAL_BIND(_shaped_text_set_custom_punctuation, "shaped", "punct");
 	GDVIRTUAL_BIND(_shaped_text_get_custom_punctuation, "shaped");
@@ -297,7 +289,6 @@ void TextServerExtension::_bind_methods() {
 	GDVIRTUAL_BIND(_shaped_get_run_font_rid, "shaped", "index");
 	GDVIRTUAL_BIND(_shaped_get_run_font_size, "shaped", "index");
 	GDVIRTUAL_BIND(_shaped_get_run_language, "shaped", "index");
-	GDVIRTUAL_BIND(_shaped_get_run_direction, "shaped", "index");
 	GDVIRTUAL_BIND(_shaped_get_run_object, "shaped", "index");
 
 	GDVIRTUAL_BIND(_shaped_text_substr, "shaped", "start", "length");
@@ -341,8 +332,6 @@ void TextServerExtension::_bind_methods() {
 	GDVIRTUAL_BIND(_shaped_text_get_underline_position, "shaped");
 	GDVIRTUAL_BIND(_shaped_text_get_underline_thickness, "shaped");
 
-	GDVIRTUAL_BIND(_shaped_text_get_dominant_direction_in_range, "shaped", "start", "end");
-
 	GDVIRTUAL_BIND(_shaped_text_get_carets, "shaped", "position", "r_caret");
 	GDVIRTUAL_BIND(_shaped_text_get_selection, "shaped", "start", "end");
 
@@ -374,8 +363,6 @@ void TextServerExtension::_bind_methods() {
 	GDVIRTUAL_BIND(_string_to_upper, "string", "language");
 	GDVIRTUAL_BIND(_string_to_lower, "string", "language");
 	GDVIRTUAL_BIND(_string_to_title, "string", "language");
-
-	GDVIRTUAL_BIND(_parse_structured_text, "parser_type", "args", "text");
 
 	GDVIRTUAL_BIND(_cleanup);
 }
@@ -451,12 +438,6 @@ PackedByteArray TextServerExtension::get_support_data() const {
 bool TextServerExtension::is_locale_using_support_data(const String &p_locale) const {
 	bool ret = false;
 	GDVIRTUAL_CALL(_is_locale_using_support_data, p_locale, ret);
-	return ret;
-}
-
-bool TextServerExtension::is_locale_right_to_left(const String &p_locale) const {
-	bool ret = false;
-	GDVIRTUAL_CALL(_is_locale_right_to_left, p_locale, ret);
 	return ret;
 }
 
@@ -1169,9 +1150,9 @@ void TextServerExtension::draw_hex_code_box(const RID &p_canvas, int64_t p_size,
 /* Shaped text buffer interface                                          */
 /*************************************************************************/
 
-RID TextServerExtension::create_shaped_text(TextServer::Direction p_direction, TextServer::Orientation p_orientation) {
+RID TextServerExtension::create_shaped_text(TextServer::Orientation p_orientation) {
 	RID ret;
-	GDVIRTUAL_CALL(_create_shaped_text, p_direction, p_orientation, ret);
+	GDVIRTUAL_CALL(_create_shaped_text, p_orientation, ret);
 	return ret;
 }
 
@@ -1185,22 +1166,6 @@ RID TextServerExtension::shaped_text_duplicate(const RID &p_shaped) {
 	return ret;
 }
 
-void TextServerExtension::shaped_text_set_direction(const RID &p_shaped, TextServer::Direction p_direction) {
-	GDVIRTUAL_CALL(_shaped_text_set_direction, p_shaped, p_direction);
-}
-
-TextServer::Direction TextServerExtension::shaped_text_get_direction(const RID &p_shaped) const {
-	TextServer::Direction ret = TextServer::DIRECTION_AUTO;
-	GDVIRTUAL_CALL(_shaped_text_get_direction, p_shaped, ret);
-	return ret;
-}
-
-TextServer::Direction TextServerExtension::shaped_text_get_inferred_direction(const RID &p_shaped) const {
-	TextServer::Direction ret = TextServer::DIRECTION_LTR;
-	GDVIRTUAL_CALL(_shaped_text_get_inferred_direction, p_shaped, ret);
-	return ret;
-}
-
 void TextServerExtension::shaped_text_set_orientation(const RID &p_shaped, TextServer::Orientation p_orientation) {
 	GDVIRTUAL_CALL(_shaped_text_set_orientation, p_shaped, p_orientation);
 }
@@ -1209,10 +1174,6 @@ TextServer::Orientation TextServerExtension::shaped_text_get_orientation(const R
 	TextServer::Orientation ret = TextServer::ORIENTATION_HORIZONTAL;
 	GDVIRTUAL_CALL(_shaped_text_get_orientation, p_shaped, ret);
 	return ret;
-}
-
-void TextServerExtension::shaped_text_set_bidi_override(const RID &p_shaped, const Array &p_override) {
-	GDVIRTUAL_CALL(_shaped_text_set_bidi_override, p_shaped, p_override);
 }
 
 void TextServerExtension::shaped_text_set_custom_punctuation(const RID &p_shaped, const String &p_punct) {
@@ -1368,12 +1329,6 @@ int TextServerExtension::shaped_get_run_font_size(const RID &p_shaped, int64_t p
 String TextServerExtension::shaped_get_run_language(const RID &p_shaped, int64_t p_index) const {
 	String ret;
 	GDVIRTUAL_CALL(_shaped_get_run_language, p_shaped, p_index, ret);
-	return ret;
-}
-
-TextServer::Direction TextServerExtension::shaped_get_run_direction(const RID &p_shaped, int64_t p_index) const {
-	TextServer::Direction ret = TextServer::DIRECTION_LTR;
-	GDVIRTUAL_CALL(_shaped_get_run_direction, p_shaped, p_index, ret);
 	return ret;
 }
 
@@ -1567,14 +1522,6 @@ double TextServerExtension::shaped_text_get_underline_thickness(const RID &p_sha
 	return ret;
 }
 
-TextServer::Direction TextServerExtension::shaped_text_get_dominant_direction_in_range(const RID &p_shaped, int64_t p_start, int64_t p_end) const {
-	int64_t ret;
-	if (GDVIRTUAL_CALL(_shaped_text_get_dominant_direction_in_range, p_shaped, p_start, p_end, ret)) {
-		return (TextServer::Direction)ret;
-	}
-	return TextServer::shaped_text_get_dominant_direction_in_range(p_shaped, p_start, p_end);
-}
-
 CaretInfo TextServerExtension::shaped_text_get_carets(const RID &p_shaped, int64_t p_position) const {
 	CaretInfo ret;
 	if (GDVIRTUAL_CALL(_shaped_text_get_carets, p_shaped, p_position, &ret)) {
@@ -1723,14 +1670,6 @@ String TextServerExtension::string_to_lower(const String &p_string, const String
 		return ret;
 	}
 	return p_string;
-}
-
-TypedArray<Vector3i> TextServerExtension::parse_structured_text(StructuredTextParser p_parser_type, const Array &p_args, const String &p_text) const {
-	TypedArray<Vector3i> ret;
-	if (GDVIRTUAL_CALL(_parse_structured_text, p_parser_type, p_args, p_text, ret)) {
-		return ret;
-	}
-	return TextServer::parse_structured_text(p_parser_type, p_args, p_text);
 }
 
 PackedInt32Array TextServerExtension::string_get_word_breaks(const String &p_string, const String &p_language, int64_t p_chars_per_line) const {

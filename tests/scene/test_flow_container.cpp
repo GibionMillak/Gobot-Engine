@@ -155,7 +155,7 @@ TEST_CASE("[SceneTree][FlowContainer] HFlowContainer") {
 		memdelete(child_control_1);
 	}
 
-	SUBCASE("Alignment and RTL") {
+	SUBCASE("Alignment") {
 		Control *child_control_1 = memnew(Control);
 		Control *child_control_2 = memnew(Control);
 		child_control_1->set_custom_minimum_size(Size2(20, 10));
@@ -186,18 +186,6 @@ TEST_CASE("[SceneTree][FlowContainer] HFlowContainer") {
 		CHECK_MESSAGE(
 				child_control_2->get_position().is_equal_approx(Point2(80, 0)),
 				"Second child control is aligned to the end when ALIGNMENT_END is used.");
-
-		hflow_container->set_alignment(FlowContainer::ALIGNMENT_BEGIN);
-		hflow_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control_1->get_position().is_equal_approx(Point2(80, 0)),
-				"First child control starts at the right edge in RTL mode with ALIGNMENT_BEGIN.");
-
-		CHECK_MESSAGE(
-				child_control_2->get_position().is_equal_approx(Point2(60, 0)),
-				"Second child control follows right-to-left ordering in RTL mode with ALIGNMENT_BEGIN.");
 
 		memdelete(child_control_2);
 		memdelete(child_control_1);
@@ -312,21 +300,6 @@ TEST_CASE("[SceneTree][FlowContainer] HFlowContainer") {
 		CHECK_MESSAGE(
 				child_control_3->get_position().is_equal_approx(Point2(0, 80)),
 				"Wrapped row order is inverted from bottom to top when reverse fill is enabled.");
-
-		hflow_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control_1->get_position().is_equal_approx(Point2(30, 90)),
-				"RTL mirrors horizontal placement while reverse fill keeps rows bottom to top.");
-
-		CHECK_MESSAGE(
-				child_control_2->get_position().is_equal_approx(Point2(10, 90)),
-				"Second child control follows mirrored RTL order while reverse fill remains enabled.");
-
-		CHECK_MESSAGE(
-				child_control_3->get_position().is_equal_approx(Point2(30, 80)),
-				"Wrapped child control is mirrored in RTL while keeping reverse-filled row order.");
 
 		memdelete(child_control_3);
 		memdelete(child_control_2);
@@ -451,7 +424,7 @@ TEST_CASE("[SceneTree][FlowContainer] VFlowContainer") {
 		memdelete(child_control_1);
 	}
 
-	SUBCASE("Alignment and RTL") {
+	SUBCASE("Alignment") {
 		Control *child_control_1 = memnew(Control);
 		Control *child_control_2 = memnew(Control);
 		child_control_1->set_custom_minimum_size(Size2(20, 20));
@@ -482,18 +455,6 @@ TEST_CASE("[SceneTree][FlowContainer] VFlowContainer") {
 		CHECK_MESSAGE(
 				child_control_2->get_position().is_equal_approx(Point2(0, 80)),
 				"Second child control is aligned to the bottom when ALIGNMENT_END is used.");
-
-		vflow_container->set_alignment(FlowContainer::ALIGNMENT_BEGIN);
-		vflow_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control_1->get_position().is_equal_approx(Point2(80, 0)),
-				"First child control moves to the right edge in RTL mode with vertical flow.");
-
-		CHECK_MESSAGE(
-				child_control_2->get_position().is_equal_approx(Point2(80, 20)),
-				"Second child control follows RTL horizontal mirroring in vertical flow.");
 
 		memdelete(child_control_2);
 		memdelete(child_control_1);
@@ -612,21 +573,6 @@ TEST_CASE("[SceneTree][FlowContainer] VFlowContainer") {
 		CHECK_MESSAGE(
 				child_control_3->get_position().is_equal_approx(Point2(40, 0)),
 				"Third child control continues right-to-left column filling when reverse fill is enabled.");
-
-		vflow_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control_1->get_position().is_equal_approx(Point2(0, 0)),
-				"Vertical flow with RTL and reverse fill fills columns from left to right.");
-
-		CHECK_MESSAGE(
-				child_control_2->get_position().is_equal_approx(Point2(20, 0)),
-				"Second child control follows left-to-right order in vertical mode with RTL and reverse fill.");
-
-		CHECK_MESSAGE(
-				child_control_3->get_position().is_equal_approx(Point2(40, 0)),
-				"Third child control follows left-to-right order in vertical mode with RTL and reverse fill.");
 
 		memdelete(child_control_3);
 		memdelete(child_control_2);

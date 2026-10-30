@@ -2441,9 +2441,6 @@ void ScriptTextEditor::_text_edit_gui_input(const Ref<InputEvent> &p_ev) {
 		create_menu = true;
 	} else if (mm.is_valid() && p_ev->get_device() != InputEvent::DEVICE_ID_EMULATION) {
 		Vector2i mpos = mm->get_position();
-		if (tx->is_layout_rtl()) {
-			mpos.x = tx->get_size().x - mpos.x;
-		}
 
 		Point2i last_hover_tooltip_pos = hover_tooltip_pos;
 		hover_tooltip_pos = tx->get_line_column_at_pos(mpos, false, false);

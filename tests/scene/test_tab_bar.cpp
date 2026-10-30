@@ -82,19 +82,16 @@ TEST_CASE("[SceneTree][TabBar] tab operations") {
 
 		CHECK(tab_bar->get_tab_title(0) == "tab0");
 		CHECK(tab_bar->get_tab_tooltip(0) == "");
-		CHECK(tab_bar->get_tab_text_direction(0) == Control::TEXT_DIRECTION_INHERITED);
 		CHECK_FALSE(tab_bar->is_tab_disabled(0));
 		CHECK_FALSE(tab_bar->is_tab_hidden(0));
 
 		CHECK(tab_bar->get_tab_title(1) == "tab1");
 		CHECK(tab_bar->get_tab_tooltip(1) == "");
-		CHECK(tab_bar->get_tab_text_direction(1) == Control::TEXT_DIRECTION_INHERITED);
 		CHECK_FALSE(tab_bar->is_tab_disabled(1));
 		CHECK_FALSE(tab_bar->is_tab_hidden(1));
 
 		CHECK(tab_bar->get_tab_title(2) == "tab2");
 		CHECK(tab_bar->get_tab_tooltip(2) == "");
-		CHECK(tab_bar->get_tab_text_direction(2) == Control::TEXT_DIRECTION_INHERITED);
 		CHECK_FALSE(tab_bar->is_tab_disabled(2));
 		CHECK_FALSE(tab_bar->is_tab_hidden(2));
 	}
@@ -127,19 +124,16 @@ TEST_CASE("[SceneTree][TabBar] tab operations") {
 
 		CHECK(tab_bar->get_tab_title(0) == "");
 		CHECK(tab_bar->get_tab_tooltip(0) == "");
-		CHECK(tab_bar->get_tab_text_direction(0) == Control::TEXT_DIRECTION_INHERITED);
 		CHECK_FALSE(tab_bar->is_tab_disabled(0));
 		CHECK_FALSE(tab_bar->is_tab_hidden(0));
 
 		CHECK(tab_bar->get_tab_title(1) == "");
 		CHECK(tab_bar->get_tab_tooltip(1) == "");
-		CHECK(tab_bar->get_tab_text_direction(1) == Control::TEXT_DIRECTION_INHERITED);
 		CHECK_FALSE(tab_bar->is_tab_disabled(1));
 		CHECK_FALSE(tab_bar->is_tab_hidden(1));
 
 		CHECK(tab_bar->get_tab_title(2) == "");
 		CHECK(tab_bar->get_tab_tooltip(2) == "");
-		CHECK(tab_bar->get_tab_text_direction(2) == Control::TEXT_DIRECTION_INHERITED);
 		CHECK_FALSE(tab_bar->is_tab_disabled(2));
 		CHECK_FALSE(tab_bar->is_tab_hidden(2));
 

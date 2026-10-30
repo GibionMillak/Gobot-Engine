@@ -139,7 +139,6 @@ SummaryBlurb::SummaryBlurb(const String &p_title, const String &p_rtl_content) {
 
 	label = memnew(RichTextLabel);
 	label->add_theme_constant_override(SceneStringName(line_separation), 6);
-	label->set_text_direction(Control::TEXT_DIRECTION_INHERITED);
 	label->set_fit_content(true);
 	label->set_use_bbcode(true);
 	label->add_newline();

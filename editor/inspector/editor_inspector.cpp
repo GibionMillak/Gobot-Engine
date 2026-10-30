@@ -383,17 +383,10 @@ void EditorProperty::_notification(int p_what) {
 					rect = Rect2(1, 0, size.width - 1, height);
 				} else {
 					text_size = MAX(0, size.width - (child_room + separation));
-					if (is_layout_rtl()) {
-						rect = Rect2(1, 0, child_room, height);
-					} else {
-						rect = Rect2(size.width - child_room, 0, child_room, height);
-					}
+					rect = Rect2(size.width - child_room, 0, child_room, height);
 				}
 
 				rect.size.width -= right_container_ms.width;
-				if (is_layout_rtl()) {
-					rect.position.x += right_container_ms.width;
-				}
 
 				if (bottom_editor) {
 					int v_offset = label.is_empty() ? 0 : _get_v_separation();
@@ -415,9 +408,6 @@ void EditorProperty::_notification(int p_what) {
 					}
 
 					rect.size.x -= key->get_width() + half_padding + theme_cache.horizontal_separation;
-					if (is_layout_rtl()) {
-						rect.position.x += key->get_width() + half_padding + theme_cache.horizontal_separation;
-					}
 
 					if (no_children) {
 						// Use full padding to avoid overlapping with the revert button.
@@ -428,10 +418,6 @@ void EditorProperty::_notification(int p_what) {
 				if (deletable) {
 					rect.size.x -= theme_cache.delete_icon->get_width() + half_padding + theme_cache.horizontal_separation;
 
-					if (is_layout_rtl()) {
-						rect.position.x += theme_cache.delete_icon->get_width() + half_padding + theme_cache.horizontal_separation;
-					}
-
 					if (no_children) {
 						text_size -= theme_cache.delete_icon->get_width() + half_padding + separation;
 					}
@@ -441,10 +427,6 @@ void EditorProperty::_notification(int p_what) {
 				// when any of the icons are visible.
 				if (keying || deletable) {
 					rect.size.x -= separation;
-
-					if (is_layout_rtl()) {
-						rect.position.x += separation;
-					}
 				}
 
 				// Guarantee that the minimum width
@@ -454,18 +436,11 @@ void EditorProperty::_notification(int p_what) {
 					text_size += diff;
 
 					rect.size.x = minw;
-					if (!is_layout_rtl()) {
-						rect.position.x += diff;
-					}
+					rect.position.x += diff;
 				}
 
 				// Respect the left container's minimum width.
-				if (is_layout_rtl()) {
-					real_t current_left_container_size = size.x - (rect.position.x + rect.size.x);
-					if (current_left_container_size < left_container_ms.width) {
-						rect.size.x -= left_container_ms.width - current_left_container_size;
-					}
-				} else if (rect.position.x < left_container_ms.width) {
+				if (rect.position.x < left_container_ms.width) {
 					diff = left_container_ms.width - rect.position.x;
 					rect.position.x += diff;
 					rect.size.width -= diff;
@@ -499,20 +474,12 @@ void EditorProperty::_notification(int p_what) {
 
 			Size2 rs = right_container_ms;
 			rs.y = MAX(rs.y, rect.size.y);
-			if (is_layout_rtl()) {
-				fit_child_in_rect(right_container, Rect2(0, 0, rs.width, rs.y));
-			} else {
-				fit_child_in_rect(right_container, Rect2(size.width - rs.width, 0, rs.width, rs.y));
-			}
+			fit_child_in_rect(right_container, Rect2(size.width - rs.width, 0, rs.width, rs.y));
 
 			Size2 ls = left_container_ms;
 			real_t right_size = rect.size.x + rs.x;
 			ls.y = MAX(ls.y, rect.size.y);
-			if (is_layout_rtl()) {
-				fit_child_in_rect(left_container, Rect2(right_size, 0, size.x - right_size, ls.y));
-			} else {
-				fit_child_in_rect(left_container, Rect2(0, 0, size.x - right_size, ls.y));
-			}
+			fit_child_in_rect(left_container, Rect2(0, 0, size.x - right_size, ls.y));
 
 			queue_redraw(); // Need to redraw the text.
 		} break;
@@ -520,7 +487,6 @@ void EditorProperty::_notification(int p_what) {
 		case NOTIFICATION_DRAW: {
 			Ref<Font> font = theme_cache.font;
 			int font_size = theme_cache.font_size;
-			bool rtl = is_layout_rtl();
 
 			Size2 size = get_size();
 			if (bottom_editor) {
@@ -579,30 +545,17 @@ void EditorProperty::_notification(int p_what) {
 
 				check_rect = Rect2(ofs, 0, checkbox->get_width() + padding, size.height);
 
-				Point2 rtl_pos;
-				if (rtl) {
-					rtl_pos = Point2(size.width - check_rect.position.x - (checkbox->get_width() + padding + EDSCALE), check_rect.position.y);
-				}
-
 				Color color2(1, 1, 1);
 				if (check_hover) {
 					color2.r *= 1.2;
 					color2.g *= 1.2;
 					color2.b *= 1.2;
 
-					if (rtl) {
-						draw_style_box(theme_cache.hover, Rect2(rtl_pos, check_rect.size));
-					} else {
-						draw_style_box(theme_cache.hover, check_rect);
-					}
+					draw_style_box(theme_cache.hover, check_rect);
 				}
 
 				Point2 icon_ofs = (Point2(padding, size.height - checkbox->get_height()) / 2).round();
-				if (rtl) {
-					draw_texture(checkbox, rtl_pos + icon_ofs, color2);
-				} else {
-					draw_texture(checkbox, check_rect.position + icon_ofs, color2);
-				}
+				draw_texture(checkbox, check_rect.position + icon_ofs, color2);
 
 				int check_ofs = checkbox->get_width() + padding + theme_cache.horizontal_separation;
 				ofs += check_ofs;
@@ -617,30 +570,17 @@ void EditorProperty::_notification(int p_what) {
 				text_limit -= rectw;
 				revert_rect = Rect2(ofs + text_limit, 0, rectw, size.height);
 
-				Point2 rtl_pos;
-				if (rtl) {
-					rtl_pos = Point2(size.width - revert_rect.position.x - rectw, revert_rect.position.y);
-				}
-
 				Color color2(1, 1, 1);
 				if (revert_hover) {
 					color2.r *= 1.2;
 					color2.g *= 1.2;
 					color2.b *= 1.2;
 
-					if (rtl) {
-						draw_style_box(theme_cache.hover, Rect2(rtl_pos, revert_rect.size));
-					} else {
-						draw_style_box(theme_cache.hover, revert_rect);
-					}
+					draw_style_box(theme_cache.hover, revert_rect);
 				}
 
 				Point2 icon_ofs = (Point2(padding, size.height - reload_icon->get_height()) / 2).round();
-				if (rtl) {
-					draw_texture(reload_icon, rtl_pos + icon_ofs, color2);
-				} else {
-					draw_texture(reload_icon, revert_rect.position + icon_ofs, color2);
-				}
+				draw_texture(reload_icon, revert_rect.position + icon_ofs, color2);
 
 				text_limit -= half_padding;
 			} else {
@@ -651,22 +591,14 @@ void EditorProperty::_notification(int p_what) {
 				const Ref<Texture2D> &pinned_icon = theme_cache.pin_icon;
 				int margin_w = theme_cache.horizontal_separation;
 				int total_icon_w = margin_w + pinned_icon->get_width();
-				int text_w = font->get_string_size(label, rtl ? HORIZONTAL_ALIGNMENT_RIGHT : HORIZONTAL_ALIGNMENT_LEFT, text_limit - total_icon_w, font_size).x;
+				int text_w = font->get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, text_limit - total_icon_w, font_size).x;
 				int y = (size.height - pinned_icon->get_height()) / 2;
-				if (rtl) {
-					draw_texture(pinned_icon, Vector2(size.width - ofs - text_w - total_icon_w, y), color);
-				} else {
-					draw_texture(pinned_icon, Vector2(ofs + text_w + margin_w, y), color);
-				}
+				draw_texture(pinned_icon, Vector2(ofs + text_w + margin_w, y), color);
 				text_limit -= total_icon_w;
 			}
 
 			int v_ofs = (size.height - font->get_height(font_size)) / 2;
-			if (rtl) {
-				draw_string(font, Point2(size.width - ofs - text_limit, v_ofs + font->get_ascent(font_size)), label, HORIZONTAL_ALIGNMENT_RIGHT, text_limit, font_size, color);
-			} else {
-				draw_string(font, Point2(ofs, v_ofs + font->get_ascent(font_size)), label, HORIZONTAL_ALIGNMENT_LEFT, text_limit, font_size, color);
-			}
+			draw_string(font, Point2(ofs, v_ofs + font->get_ascent(font_size)), label, HORIZONTAL_ALIGNMENT_LEFT, text_limit, font_size, color);
 
 			ofs = size.width;
 			ofs -= right_container->get_minimum_size().x;
@@ -683,30 +615,17 @@ void EditorProperty::_notification(int p_what) {
 				ofs -= key->get_width() + half_padding + theme_cache.horizontal_separation;
 				keying_rect = Rect2(ofs, 0, key->get_width() + padding, size.height);
 
-				Point2 rtl_pos;
-				if (rtl) {
-					rtl_pos = Point2(size.width - keying_rect.position.x - (key->get_width() + padding), keying_rect.position.y);
-				}
-
 				Color color2(1, 1, 1);
 				if (keying_hover) {
 					color2.r *= 1.2;
 					color2.g *= 1.2;
 					color2.b *= 1.2;
 
-					if (rtl) {
-						draw_style_box(theme_cache.hover, Rect2(rtl_pos, keying_rect.size));
-					} else {
-						draw_style_box(theme_cache.hover, keying_rect);
-					}
+					draw_style_box(theme_cache.hover, keying_rect);
 				}
 
 				Point2 icon_ofs = (Point2(padding, size.height - key->get_height()) / 2).round();
-				if (rtl) {
-					draw_texture(key, rtl_pos + icon_ofs, color2);
-				} else {
-					draw_texture(key, keying_rect.position + icon_ofs, color2);
-				}
+				draw_texture(key, keying_rect.position + icon_ofs, color2);
 
 			} else {
 				keying_rect = Rect2();
@@ -718,30 +637,17 @@ void EditorProperty::_notification(int p_what) {
 				ofs -= close->get_width() + half_padding + theme_cache.horizontal_separation;
 				delete_rect = Rect2(ofs, 0, close->get_width() + padding, size.height);
 
-				Point2 rtl_pos;
-				if (rtl) {
-					rtl_pos = Point2(size.width - delete_rect.position.x - (close->get_width() + padding), delete_rect.position.y);
-				}
-
 				Color color2(1, 1, 1);
 				if (delete_hover) {
 					color2.r *= 1.2;
 					color2.g *= 1.2;
 					color2.b *= 1.2;
 
-					if (rtl) {
-						draw_style_box(theme_cache.hover, Rect2(rtl_pos, delete_rect.size));
-					} else {
-						draw_style_box(theme_cache.hover, delete_rect);
-					}
+					draw_style_box(theme_cache.hover, delete_rect);
 				}
 
 				Point2 icon_ofs = (Point2(padding, size.height - close->get_height()) / 2).round();
-				if (rtl) {
-					draw_texture(close, rtl_pos + icon_ofs, color2);
-				} else {
-					draw_texture(close, delete_rect.position + icon_ofs, color2);
-				}
+				draw_texture(close, delete_rect.position + icon_ofs, color2);
 			} else {
 				delete_rect = Rect2();
 			}
@@ -1182,9 +1088,6 @@ void EditorProperty::gui_input(const Ref<InputEvent> &p_event) {
 		if (bottom_child_rect.has_point(mpos)) {
 			return; // Makes child EditorProperties behave like sibling nodes when handling mouse events.
 		}
-		if (is_layout_rtl()) {
-			mpos.x = get_size().x - mpos.x;
-		}
 		bool button_left = me->get_button_mask().has_flag(MouseButtonMask::LEFT);
 
 		bool new_keying_hover = keying_rect.has_point(mpos) && !button_left;
@@ -1216,9 +1119,6 @@ void EditorProperty::gui_input(const Ref<InputEvent> &p_event) {
 
 	if (mb.is_valid() && mb->is_pressed() && mb->get_button_index() == MouseButton::LEFT) {
 		Vector2 mpos = mb->get_position();
-		if (is_layout_rtl()) {
-			mpos.x = get_size().x - mpos.x;
-		}
 
 		select();
 
@@ -1894,17 +1794,10 @@ void EditorInspectorCategory::_notification(int p_what) {
 			if (icon.is_valid()) {
 				Size2 rect_size = Size2(icon_size, icon_size);
 				Point2 rect_pos = Point2(ofs, (get_size().height - icon_size) / 2 + v_margin_offset).round();
-				if (is_layout_rtl()) {
-					rect_pos.x = get_size().width - rect_pos.x - icon_size;
-				}
 				draw_texture_rect(icon, Rect2(rect_pos, rect_size));
 
 				ofs += hs + icon_size;
 				w -= hs + icon_size;
-			}
-
-			if (is_layout_rtl()) {
-				ofs = get_size().width - ofs - w;
 			}
 
 			// Use TextLine so we have access to accurate font metrics. This way,
@@ -2122,11 +2015,7 @@ Ref<Texture2D> EditorInspectorSection::_get_arrow() {
 		if (object->editor_is_section_unfolded(section)) {
 			arrow = theme_cache.arrow;
 		} else {
-			if (is_layout_rtl()) {
-				arrow = theme_cache.arrow_collapsed_mirrored;
-			} else {
-				arrow = theme_cache.arrow_collapsed;
-			}
+			arrow = theme_cache.arrow_collapsed;
 		}
 	}
 	return arrow;
@@ -2183,7 +2072,7 @@ void EditorInspectorSection::_notification(int p_what) {
 
 			Size2 size = get_size() - Vector2(inspector_margin, 0);
 			int header_height = _get_header_height();
-			Vector2 offset = Vector2(is_layout_rtl() ? 0 : inspector_margin, header_height);
+			Vector2 offset = Vector2(inspector_margin, header_height);
 			for (int i = 0; i < get_child_count(); i++) {
 				Control *c = as_sortable_control(get_child(i));
 				if (!c) {
@@ -2206,10 +2095,7 @@ void EditorInspectorSection::_notification(int p_what) {
 
 			int header_width = get_size().width - section_indent;
 			int header_offset_x = 0.0;
-			bool rtl = is_layout_rtl();
-			if (!rtl) {
-				header_offset_x += section_indent;
-			}
+			header_offset_x += section_indent;
 
 			bool can_click_unfold = vbox->get_child_count(false) != 0 && !(checkable && !checked && !checkbox_only);
 
@@ -2234,11 +2120,7 @@ void EditorInspectorSection::_notification(int p_what) {
 				Ref<Texture2D> arrow = _get_arrow();
 				if (arrow.is_valid()) {
 					Point2 arrow_position;
-					if (rtl) {
-						arrow_position.x = get_size().width - (margin_start + arrow->get_width());
-					} else {
-						arrow_position.x = margin_start;
-					}
+					arrow_position.x = margin_start;
 					arrow_position.y = (header_height - arrow->get_height()) / 2;
 					if (can_click_unfold) {
 						draw_texture(arrow, arrow_position, Color(1, 1, 1, header_hover ? 1.0 : 0.85));
@@ -2257,7 +2139,7 @@ void EditorInspectorSection::_notification(int p_what) {
 				Ref<Texture2D> key = theme_cache.icon_gui_animation_key;
 				if (keying && key.is_valid()) {
 					Point2 key_position;
-					key_position.x = rtl ? margin_end + theme_cache.padding_size / 2 : (get_size().width - key->get_width() - margin_end - theme_cache.padding_size / 2);
+					key_position.x = (get_size().width - key->get_width() - margin_end - theme_cache.padding_size / 2);
 					keying_rect = Rect2(key_position.x - theme_cache.padding_size / 2, 0, key->get_width() + theme_cache.padding_size, header_height);
 
 					Color key_color(1, 1, 1);
@@ -2283,13 +2165,8 @@ void EditorInspectorSection::_notification(int p_what) {
 					Size2 label_size = light_font->get_string_size(checkbox_text, HORIZONTAL_ALIGNMENT_LEFT, -1.0f, light_font_size);
 					Point2 checkbox_position;
 					Point2 label_position;
-					if (rtl) {
-						label_position.x = margin_end;
-						checkbox_position.x = margin_end + label_size.width + 2 * EDSCALE;
-					} else {
-						label_position.x = get_size().width - (margin_end + label_size.width);
-						checkbox_position.x = label_position.x - checkbox->get_width() - 2 * EDSCALE;
-					}
+					label_position.x = get_size().width - (margin_end + label_size.width);
+					checkbox_position.x = label_position.x - checkbox->get_width() - 2 * EDSCALE;
 					checkbox_position.y = (header_height - checkbox->get_height()) / 2;
 					label_position.y = light_font->get_ascent(light_font_size) + (header_height - light_font->get_height(light_font_size)) / 2;
 
@@ -2317,7 +2194,7 @@ void EditorInspectorSection::_notification(int p_what) {
 				const Ref<Texture2D> &revert = theme_cache.icon_gui_revert;
 				if (can_revert && revert.is_valid()) {
 					Point2 revert_position;
-					revert_position.x = rtl ? margin_end + theme_cache.padding_size / 2 : (get_size().width - revert->get_width() - margin_end - theme_cache.padding_size / 2);
+					revert_position.x = (get_size().width - revert->get_width() - margin_end - theme_cache.padding_size / 2);
 					revert_rect = Rect2(revert_position.x - theme_cache.padding_size / 2, 0, revert->get_width() + theme_cache.padding_size, header_height);
 
 					Color revert_color(1, 1, 1);
@@ -2358,9 +2235,7 @@ void EditorInspectorSection::_notification(int p_what) {
 
 					float text_offset_y = light_font->get_ascent(light_font_size) + (header_height - light_font->get_height(light_font_size)) / 2;
 					Point2 text_offset = Point2(margin_end, text_offset_y).round();
-					if (!rtl) {
-						text_offset.x = get_size().width - (text_offset.x + num_revertable_width);
-					}
+					text_offset.x = get_size().width - (text_offset.x + num_revertable_width);
 					draw_string(light_font, text_offset, num_revertable_str, HORIZONTAL_ALIGNMENT_LEFT, -1.0f, light_font_size, theme_cache.font_disabled_color, TextServer::JUSTIFICATION_NONE);
 					margin_end += num_revertable_width + outer_margin;
 					available -= num_revertable_width + outer_margin;
@@ -2369,25 +2244,18 @@ void EditorInspectorSection::_notification(int p_what) {
 				// - Label.
 				float text_offset_y = font->get_ascent(font_size) + (header_height - font->get_height(font_size)) / 2;
 				Point2 text_offset = Point2(margin_start, text_offset_y).round();
-				if (rtl) {
-					text_offset.x = margin_end;
-				}
 				if (!EditorProperty::get_property_warning(object, related_enable_property).is_empty()) {
 					font_color = theme_cache.warning_color;
 				}
 				const Color string_color = header_hover ? theme_cache.font_hover_mono_color : font_color;
-				HorizontalAlignment text_align = rtl ? HORIZONTAL_ALIGNMENT_RIGHT : HORIZONTAL_ALIGNMENT_LEFT;
+				HorizontalAlignment text_align = HORIZONTAL_ALIGNMENT_LEFT;
 				draw_string(font, text_offset, label, text_align, available, font_size, string_color, TextServer::JUSTIFICATION_KASHIDA | TextServer::JUSTIFICATION_CONSTRAIN_ELLIPSIS);
 			}
 
 			// Draw section indentation.
 			if (section_indent_style.is_valid() && section_indent > 0) {
 				Rect2 indent_rect = Rect2(Vector2(), Vector2(indent_depth * section_indent_size, get_size().height));
-				if (rtl) {
-					indent_rect.position.x = get_size().width - section_indent + section_indent_style->get_content_inset(SIDE_RIGHT);
-				} else {
-					indent_rect.position.x = section_indent_style->get_content_inset(SIDE_LEFT);
-				}
+				indent_rect.position.x = section_indent_style->get_content_inset(SIDE_LEFT);
 				draw_style_box(section_indent_style, indent_rect);
 			}
 		} break;
@@ -3860,7 +3728,6 @@ void EditorInspector::initialize_section_theme(EditorInspectorSection::ThemeCach
 
 	p_cache.arrow = p_control->get_theme_icon(SNAME("arrow"), SNAME("Tree"));
 	p_cache.arrow_collapsed = p_control->get_theme_icon(SNAME("arrow_collapsed"), SNAME("Tree"));
-	p_cache.arrow_collapsed_mirrored = p_control->get_theme_icon(SNAME("arrow_collapsed_mirrored"), SNAME("Tree"));
 	p_cache.icon_gui_revert = p_control->get_editor_theme_icon(SNAME("action_revert"));
 	p_cache.icon_gui_checked = p_control->get_editor_theme_icon(SNAME("gui_checked"));
 	p_cache.icon_gui_unchecked = p_control->get_editor_theme_icon(SNAME("gui_unchecked"));
@@ -5267,10 +5134,6 @@ Object *EditorInspector::get_edited_object() {
 	return object;
 }
 
-Object *EditorInspector::get_next_edited_object() {
-	return next_object;
-}
-
 void EditorInspector::edit(Object *p_object) {
 	Object *object = ObjectDB::get_instance(edited_object_id);
 	if (object == p_object) {
@@ -6177,10 +6040,6 @@ void EditorInspector::set_property_prefix(const String &p_prefix) {
 	property_prefix = p_prefix;
 }
 
-String EditorInspector::get_property_prefix() const {
-	return property_prefix;
-}
-
 void EditorInspector::add_custom_property_description(const String &p_class, const String &p_property, const String &p_description) {
 	const String key = vformat("property|%s|%s", p_class, p_property);
 	custom_property_descriptions[key] = p_description;
@@ -6200,10 +6059,6 @@ void EditorInspector::remap_doc_property_class(const String &p_property_prefix, 
 
 void EditorInspector::set_object_class(const String &p_class) {
 	object_class = p_class;
-}
-
-String EditorInspector::get_object_class() const {
-	return object_class;
 }
 
 void EditorInspector::_feature_profile_changed() {

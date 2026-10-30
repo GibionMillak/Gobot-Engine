@@ -526,15 +526,6 @@
 				[b]Note:[/b] This method is implemented on macOS and Windows.
 			</description>
 		</method>
-		<method name="set_interface_direction">
-			<return type="void" />
-			<param index="0" name="rid" type="RID" />
-			<param index="1" name="is_rtl" type="bool" />
-			<description>
-				Sets the menu text layout direction from right-to-left if [param is_rtl] is [code]true[/code].
-				[b]Note:[/b] This method is implemented on macOS and Windows.
-			</description>
-		</method>
 		<method name="set_item_accelerator">
 			<return type="void" />
 			<param index="0" name="rid" type="RID" />

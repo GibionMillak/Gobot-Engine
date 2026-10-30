@@ -179,7 +179,7 @@ Rect2 ScrollContainer::_get_local_visible_rect() const {
 	const float side_margin = v_scroll->is_visible() ? v_scroll->get_size().x : 0.0f;
 	const float bottom_margin = h_scroll->is_visible() ? h_scroll->get_size().y : 0.0f;
 
-	Point2 origin = Point2(is_layout_rtl() ? side_margin : 0.0f, 0.0f);
+	Point2 origin = Point2(0.0f, 0.0f);
 	Size2 size = Size2(get_size().x - side_margin, get_size().y - bottom_margin);
 
 	return Rect2(origin, size);
@@ -347,14 +347,14 @@ void ScrollContainer::_update_scrollbar_position() {
 
 	int left_margin = 0;
 	if (theme_cache.scrollbar_margin_left < 0) {
-		left_margin = is_layout_rtl() ? margins.size.x : margins.position.x;
+		left_margin = (margins.position.x);
 	} else {
 		left_margin = theme_cache.scrollbar_margin_left;
 	}
 
 	int right_margin = 0;
 	if (theme_cache.scrollbar_margin_right < 0) {
-		right_margin = is_layout_rtl() ? margins.position.x : margins.size.x;
+		right_margin = (margins.size.x);
 	} else {
 		right_margin = theme_cache.scrollbar_margin_right;
 	}
@@ -511,9 +511,6 @@ void ScrollContainer::_reposition_children() {
 		}
 
 		size.width -= width;
-		if (is_layout_rtl()) {
-			ofs.x += width;
-		}
 	}
 
 	for (int i = 0; i < get_child_count(); i++) {
@@ -561,7 +558,6 @@ void ScrollContainer::_notification(int p_what) {
 			_update_scroll_hints();
 			[[fallthrough]];
 		}
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_TRANSLATION_CHANGED: {
 			_updating_scrollbars = true;
 			callable_mp(this, is_ready() ? &ScrollContainer::_reposition_children : &ScrollContainer::_update_scrollbar_position).call_deferred();
@@ -737,8 +733,6 @@ void ScrollContainer::_update_scroll_hints() {
 	bool show_top_left = false;
 	bool show_bottom_right = false;
 
-	bool rtl = is_layout_rtl();
-
 	if (is_v_scrolled && scroll_hint_mode != SCROLL_HINT_MODE_RIGHT && scroll_hint_mode != SCROLL_HINT_MODE_LEFT && scroll_hint_mode != SCROLL_HINT_MODE_LEFT_AND_RIGHT) {
 		if (v_scroll_value > 1) {
 			show_top_left = (!h_scroll->is_visible() && (scroll_hint_mode == SCROLL_HINT_MODE_ALL || scroll_hint_mode == SCROLL_HINT_MODE_TOP_AND_LEFT)) ||
@@ -747,8 +741,8 @@ void ScrollContainer::_update_scroll_hints() {
 		if (show_top_left) {
 			scroll_hint_top_left->set_texture(theme_cache.scroll_hint_vertical);
 			scroll_hint_top_left->set_modulate(theme_cache.scroll_hint_vertical_color);
-			scroll_hint_top_left->set_anchor_and_offset(SIDE_LEFT, ANCHOR_BEGIN, rtl ? -size.x : 0);
-			scroll_hint_top_left->set_anchor_and_offset(SIDE_RIGHT, ANCHOR_END, rtl ? 0 : size.x);
+			scroll_hint_top_left->set_anchor_and_offset(SIDE_LEFT, ANCHOR_BEGIN, 0);
+			scroll_hint_top_left->set_anchor_and_offset(SIDE_RIGHT, ANCHOR_END, (size.x));
 			scroll_hint_top_left->set_anchor_and_offset(SIDE_TOP, ANCHOR_BEGIN, 0);
 			scroll_hint_top_left->set_anchor_and_offset(SIDE_BOTTOM, ANCHOR_BEGIN, theme_cache.scroll_hint_vertical->get_height());
 		}
@@ -762,36 +756,36 @@ void ScrollContainer::_update_scroll_hints() {
 			scroll_hint_bottom_right->set_flip_v(true);
 			scroll_hint_bottom_right->set_texture(theme_cache.scroll_hint_vertical);
 			scroll_hint_bottom_right->set_modulate(theme_cache.scroll_hint_vertical_color);
-			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_LEFT, ANCHOR_BEGIN, rtl ? -size.x : 0);
-			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_RIGHT, ANCHOR_END, rtl ? 0 : size.x);
+			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_LEFT, ANCHOR_BEGIN, 0);
+			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_RIGHT, ANCHOR_END, (size.x));
 			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_TOP, ANCHOR_END, -theme_cache.scroll_hint_vertical->get_height());
 			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_BOTTOM, ANCHOR_END, 0);
 		}
 	} else if (is_h_scrolled) {
 		if (h_scroll_value > 1) {
-			show_top_left = (!v_scroll->is_visible() && (scroll_hint_mode == SCROLL_HINT_MODE_ALL || (rtl ? scroll_hint_mode == SCROLL_HINT_MODE_BOTTOM_AND_RIGHT : scroll_hint_mode == SCROLL_HINT_MODE_TOP_AND_LEFT))) ||
-					scroll_hint_mode == SCROLL_HINT_MODE_LEFT_AND_RIGHT || (rtl ? scroll_hint_mode == SCROLL_HINT_MODE_RIGHT : scroll_hint_mode == SCROLL_HINT_MODE_LEFT);
+			show_top_left = (!v_scroll->is_visible() && (scroll_hint_mode == SCROLL_HINT_MODE_ALL || ((scroll_hint_mode == SCROLL_HINT_MODE_TOP_AND_LEFT)))) ||
+					scroll_hint_mode == SCROLL_HINT_MODE_LEFT_AND_RIGHT || ((scroll_hint_mode == SCROLL_HINT_MODE_LEFT));
 		}
 		if (show_top_left) {
 			scroll_hint_top_left->set_texture(theme_cache.scroll_hint_horizontal);
 			scroll_hint_top_left->set_modulate(theme_cache.scroll_hint_horizontal_color);
-			scroll_hint_top_left->set_anchor_and_offset(SIDE_LEFT, ANCHOR_BEGIN, rtl ? (size.x - theme_cache.scroll_hint_horizontal->get_width()) : 0);
-			scroll_hint_top_left->set_anchor_and_offset(SIDE_RIGHT, ANCHOR_BEGIN, rtl ? size.x : theme_cache.scroll_hint_horizontal->get_width());
+			scroll_hint_top_left->set_anchor_and_offset(SIDE_LEFT, ANCHOR_BEGIN, 0);
+			scroll_hint_top_left->set_anchor_and_offset(SIDE_RIGHT, ANCHOR_BEGIN, (theme_cache.scroll_hint_horizontal->get_width()));
 			scroll_hint_top_left->set_anchor_and_offset(SIDE_TOP, ANCHOR_BEGIN, 0);
 			scroll_hint_top_left->set_anchor_and_offset(SIDE_BOTTOM, ANCHOR_END, 0);
 		}
 
 		if (h_scroll_below_max) {
-			show_bottom_right = (!v_scroll->is_visible() && (scroll_hint_mode == SCROLL_HINT_MODE_ALL || (rtl ? scroll_hint_mode == SCROLL_HINT_MODE_TOP_AND_LEFT : scroll_hint_mode == SCROLL_HINT_MODE_BOTTOM_AND_RIGHT))) ||
-					scroll_hint_mode == SCROLL_HINT_MODE_LEFT_AND_RIGHT || (rtl ? scroll_hint_mode == SCROLL_HINT_MODE_LEFT : scroll_hint_mode == SCROLL_HINT_MODE_RIGHT);
+			show_bottom_right = (!v_scroll->is_visible() && (scroll_hint_mode == SCROLL_HINT_MODE_ALL || ((scroll_hint_mode == SCROLL_HINT_MODE_BOTTOM_AND_RIGHT)))) ||
+					scroll_hint_mode == SCROLL_HINT_MODE_LEFT_AND_RIGHT || ((scroll_hint_mode == SCROLL_HINT_MODE_RIGHT));
 		}
 		if (show_bottom_right) {
 			scroll_hint_bottom_right->set_flip_h(true);
 			scroll_hint_bottom_right->set_flip_v(false);
 			scroll_hint_bottom_right->set_texture(theme_cache.scroll_hint_horizontal);
 			scroll_hint_bottom_right->set_modulate(theme_cache.scroll_hint_horizontal_color);
-			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_LEFT, ANCHOR_END, rtl ? -size.x : -theme_cache.scroll_hint_horizontal->get_width());
-			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_RIGHT, ANCHOR_END, rtl ? (-size.x + theme_cache.scroll_hint_horizontal->get_width()) : 0);
+			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_LEFT, ANCHOR_END, (-theme_cache.scroll_hint_horizontal->get_width()));
+			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_RIGHT, ANCHOR_END, 0);
 			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_TOP, ANCHOR_BEGIN, 0);
 			scroll_hint_bottom_right->set_anchor_and_offset(SIDE_BOTTOM, ANCHOR_END, 0);
 		}

@@ -36,16 +36,6 @@ void TextLine::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("clear"), &TextLine::clear);
 	ClassDB::bind_method(D_METHOD("duplicate"), &TextLine::duplicate);
 
-	ClassDB::bind_method(D_METHOD("set_direction", "direction"), &TextLine::set_direction);
-	ClassDB::bind_method(D_METHOD("get_direction"), &TextLine::get_direction);
-	ClassDB::bind_method(D_METHOD("get_inferred_direction"), &TextLine::get_inferred_direction);
-
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "direction", PROPERTY_HINT_ENUM, "Auto,Left-to-right,Right-to-left"), "set_direction", "get_direction");
-	// If compiling the editor with TextServerFallback only,
-	// `--doctool` would change the default value to `TextServer::DIRECTION_LTR`.
-	// Force it so that it's consistent regardless of the backend.
-	ADD_PROPERTY_DEFAULT("direction", TextServer::DIRECTION_AUTO);
-
 	ClassDB::bind_method(D_METHOD("set_orientation", "orientation"), &TextLine::set_orientation);
 	ClassDB::bind_method(D_METHOD("get_orientation"), &TextLine::get_orientation);
 
@@ -60,8 +50,6 @@ void TextLine::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_preserve_control"), &TextLine::get_preserve_control);
 
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preserve_control"), "set_preserve_control", "get_preserve_control");
-
-	ClassDB::bind_method(D_METHOD("set_bidi_override", "override"), &TextLine::set_bidi_override);
 
 	ClassDB::bind_method(D_METHOD("add_string", "text", "font", "font_size", "language", "meta"), &TextLine::add_string, DEFVAL(""), DEFVAL(Variant()));
 	ClassDB::bind_method(D_METHOD("add_object", "key", "size", "inline_align", "length", "baseline"), &TextLine::add_object, DEFVAL(INLINE_ALIGNMENT_CENTER), DEFVAL(1), DEFVAL(0.0));
@@ -188,19 +176,6 @@ bool TextLine::get_preserve_control() const {
 	return TS->shaped_text_get_preserve_control(rid);
 }
 
-void TextLine::set_direction(TextServer::Direction p_direction) {
-	TS->shaped_text_set_direction(rid, p_direction);
-	dirty = true;
-}
-
-TextServer::Direction TextLine::get_direction() const {
-	return TS->shaped_text_get_direction(rid);
-}
-
-TextServer::Direction TextLine::get_inferred_direction() const {
-	return TS->shaped_text_get_inferred_direction(rid);
-}
-
 void TextLine::set_orientation(TextServer::Orientation p_orientation) {
 	TS->shaped_text_set_orientation(rid, p_orientation);
 	dirty = true;
@@ -208,11 +183,6 @@ void TextLine::set_orientation(TextServer::Orientation p_orientation) {
 
 TextServer::Orientation TextLine::get_orientation() const {
 	return TS->shaped_text_get_orientation(rid);
-}
-
-void TextLine::set_bidi_override(const Array &p_override) {
-	TS->shaped_text_set_bidi_override(rid, p_override);
-	dirty = true;
 }
 
 bool TextLine::add_string(const String &p_text, const Ref<Font> &p_font, int p_font_size, const String &p_language, const Variant &p_meta) {
@@ -257,12 +227,6 @@ Rect2 TextLine::get_object_rect(Variant p_key) const {
 						ofs.x += Math::floor((width - length) / 2.0);
 					} else {
 						ofs.y += Math::floor((width - length) / 2.0);
-					}
-				} else if (TS->shaped_text_get_inferred_direction(rid) == TextServer::DIRECTION_RTL) {
-					if (TS->shaped_text_get_orientation(rid) == TextServer::ORIENTATION_HORIZONTAL) {
-						ofs.x += width - length;
-					} else {
-						ofs.y += width - length;
 					}
 				}
 			} break;
@@ -408,12 +372,6 @@ void TextLine::draw(RID p_canvas, const Vector2 &p_pos, const Color &p_color, fl
 					} else {
 						ofs.y += Math::floor((width - length) / 2.0);
 					}
-				} else if (TS->shaped_text_get_inferred_direction(rid) == TextServer::DIRECTION_RTL) {
-					if (TS->shaped_text_get_orientation(rid) == TextServer::ORIENTATION_HORIZONTAL) {
-						ofs.x += width - length;
-					} else {
-						ofs.y += width - length;
-					}
 				}
 			} break;
 			case HORIZONTAL_ALIGNMENT_RIGHT: {
@@ -455,12 +413,6 @@ void TextLine::draw_outline(RID p_canvas, const Vector2 &p_pos, int p_outline_si
 					} else {
 						ofs.y += Math::floor((width - length) / 2.0);
 					}
-				} else if (TS->shaped_text_get_inferred_direction(rid) == TextServer::DIRECTION_RTL) {
-					if (TS->shaped_text_get_orientation(rid) == TextServer::ORIENTATION_HORIZONTAL) {
-						ofs.x += width - length;
-					} else {
-						ofs.y += width - length;
-					}
 				}
 			} break;
 			case HORIZONTAL_ALIGNMENT_RIGHT: {
@@ -490,8 +442,8 @@ int TextLine::hit_test(float p_coords) const {
 	return TS->shaped_text_hit_test_position(rid, p_coords);
 }
 
-TextLine::TextLine(const String &p_text, const Ref<Font> &p_font, int p_font_size, const String &p_language, TextServer::Direction p_direction, TextServer::Orientation p_orientation) {
-	rid = TS->create_shaped_text(p_direction, p_orientation);
+TextLine::TextLine(const String &p_text, const Ref<Font> &p_font, int p_font_size, const String &p_language, TextServer::Orientation p_orientation) {
+	rid = TS->create_shaped_text(p_orientation);
 	if (p_font.is_valid()) {
 		TS->shaped_text_add_string(rid, p_text, p_font->get_rids(), p_font_size, p_font->get_opentype_features(), p_language);
 	}

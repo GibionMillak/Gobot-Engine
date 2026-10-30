@@ -146,31 +146,6 @@ String TranslationDomain::_replace_with_accented_string(const String &p_message)
 	return res;
 }
 
-String TranslationDomain::_wrap_with_fakebidi_characters(const String &p_message) const {
-	String res;
-	char32_t fakebidiprefix = U'\u202e';
-	char32_t fakebidisuffix = U'\u202c';
-	res += fakebidiprefix;
-	// The fake bidi unicode gets popped at every newline so pushing it back at every newline.
-	for (int i = 0; i < p_message.length(); i++) {
-		if (p_message[i] == '\n') {
-			res += fakebidisuffix;
-			res += p_message[i];
-			res += fakebidiprefix;
-		} else if (pseudolocalization.skip_placeholders_enabled && _is_placeholder(p_message, i)) {
-			res += fakebidisuffix;
-			res += p_message[i];
-			res += p_message[i + 1];
-			res += fakebidiprefix;
-			i++;
-		} else {
-			res += p_message[i];
-		}
-	}
-	res += fakebidisuffix;
-	return res;
-}
-
 String TranslationDomain::_add_padding(const String &p_message, int p_length) const {
 	String underscores = String("_").repeat(p_length * pseudolocalization.expansion_ratio / 2);
 	String prefix = pseudolocalization.prefix + underscores;
@@ -401,14 +376,6 @@ void TranslationDomain::set_pseudolocalization_double_vowels_enabled(bool p_enab
 	pseudolocalization.double_vowels_enabled = p_enabled;
 }
 
-bool TranslationDomain::is_pseudolocalization_fake_bidi_enabled() const {
-	return pseudolocalization.fake_bidi_enabled;
-}
-
-void TranslationDomain::set_pseudolocalization_fake_bidi_enabled(bool p_enabled) {
-	pseudolocalization.fake_bidi_enabled = p_enabled;
-}
-
 bool TranslationDomain::is_pseudolocalization_override_enabled() const {
 	return pseudolocalization.override_enabled;
 }
@@ -468,10 +435,6 @@ StringName TranslationDomain::pseudolocalize(const StringName &p_message) const 
 		message = _replace_with_accented_string(message);
 	}
 
-	if (pseudolocalization.fake_bidi_enabled) {
-		message = _wrap_with_fakebidi_characters(message);
-	}
-
 	return _add_padding(message, length);
 }
 
@@ -497,8 +460,6 @@ void TranslationDomain::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_pseudolocalization_accents_enabled", "enabled"), &TranslationDomain::set_pseudolocalization_accents_enabled);
 	ClassDB::bind_method(D_METHOD("is_pseudolocalization_double_vowels_enabled"), &TranslationDomain::is_pseudolocalization_double_vowels_enabled);
 	ClassDB::bind_method(D_METHOD("set_pseudolocalization_double_vowels_enabled", "enabled"), &TranslationDomain::set_pseudolocalization_double_vowels_enabled);
-	ClassDB::bind_method(D_METHOD("is_pseudolocalization_fake_bidi_enabled"), &TranslationDomain::is_pseudolocalization_fake_bidi_enabled);
-	ClassDB::bind_method(D_METHOD("set_pseudolocalization_fake_bidi_enabled", "enabled"), &TranslationDomain::set_pseudolocalization_fake_bidi_enabled);
 	ClassDB::bind_method(D_METHOD("is_pseudolocalization_override_enabled"), &TranslationDomain::is_pseudolocalization_override_enabled);
 	ClassDB::bind_method(D_METHOD("set_pseudolocalization_override_enabled", "enabled"), &TranslationDomain::set_pseudolocalization_override_enabled);
 	ClassDB::bind_method(D_METHOD("is_pseudolocalization_skip_placeholders_enabled"), &TranslationDomain::is_pseudolocalization_skip_placeholders_enabled);
@@ -515,7 +476,6 @@ void TranslationDomain::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::Type::BOOL, "pseudolocalization_enabled"), "set_pseudolocalization_enabled", "is_pseudolocalization_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::Type::BOOL, "pseudolocalization_accents_enabled"), "set_pseudolocalization_accents_enabled", "is_pseudolocalization_accents_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::Type::BOOL, "pseudolocalization_double_vowels_enabled"), "set_pseudolocalization_double_vowels_enabled", "is_pseudolocalization_double_vowels_enabled");
-	ADD_PROPERTY(PropertyInfo(Variant::Type::BOOL, "pseudolocalization_fake_bidi_enabled"), "set_pseudolocalization_fake_bidi_enabled", "is_pseudolocalization_fake_bidi_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::Type::BOOL, "pseudolocalization_override_enabled"), "set_pseudolocalization_override_enabled", "is_pseudolocalization_override_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::Type::BOOL, "pseudolocalization_skip_placeholders_enabled"), "set_pseudolocalization_skip_placeholders_enabled", "is_pseudolocalization_skip_placeholders_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::Type::FLOAT, "pseudolocalization_expansion_ratio"), "set_pseudolocalization_expansion_ratio", "get_pseudolocalization_expansion_ratio");

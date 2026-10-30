@@ -1442,7 +1442,6 @@ void DocumentEditorContainer::_notification(int p_what) {
 			_update_online_doc();
 			[[fallthrough]];
 		}
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			_tab_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("ScriptEditorDock"), EditorStringName(EditorStyles)));
 
@@ -1453,13 +1452,8 @@ void DocumentEditorContainer::_notification(int p_what) {
 			}
 			_site_search_btn->set_button_icon(get_editor_theme_icon(SNAME("navigation_external_link")));
 
-			if (is_layout_rtl()) {
-				_script_forward_btn->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
-				_script_back_btn->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
-			} else {
-				_script_forward_btn->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
-				_script_back_btn->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
-			}
+			_script_forward_btn->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
+			_script_back_btn->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
 
 			_recent_scripts->reset_size();
 
@@ -2920,8 +2914,7 @@ void DocumentEditorContainer::_calculate_script_name_button_size() {
 	int font_size = _script_name_btn->get_theme_font_size(SceneStringName(font_size), SNAME("Button"));
 	String text = _script_name_btn->get_text();
 	int jst_flags = TextServer::JUSTIFICATION_WORD_BOUND | TextServer::JUSTIFICATION_KASHIDA | TextServer::JUSTIFICATION_SKIP_LAST_LINE | TextServer::JUSTIFICATION_DO_NOT_SKIP_SINGLE_LINE;
-	TextServer::Direction direction = TextServer::Direction(_script_name_btn->get_text_direction());
-	Vector2 text_size = font->get_string_size(text, alignment, -1, font_size, jst_flags, direction, TextServer::ORIENTATION_HORIZONTAL);
+	Vector2 text_size = font->get_string_size(text, alignment, -1, font_size, jst_flags, TextServer::ORIENTATION_HORIZONTAL);
 
 	_script_name_width = text_size.x + _script_name_btn->get_theme_stylebox(CoreStringName(normal))->get_content_inset(SIDE_LEFT) + _script_name_btn->get_theme_stylebox(CoreStringName(normal))->get_content_inset(SIDE_RIGHT);
 	_calculate_script_name_button_ratio();

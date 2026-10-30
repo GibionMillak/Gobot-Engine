@@ -484,11 +484,6 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_stylebox(SceneStringName(pressed), "OptionButton", p_config.button_style_pressed);
 			p_theme->set_stylebox("disabled", "OptionButton", p_config.button_style_disabled);
 
-			p_theme->set_stylebox("normal_mirrored", "OptionButton", option_button_normal_style);
-			p_theme->set_stylebox("hover_mirrored", "OptionButton", option_button_hover_style);
-			p_theme->set_stylebox("pressed_mirrored", "OptionButton", option_button_pressed_style);
-			p_theme->set_stylebox("disabled_mirrored", "OptionButton", option_button_disabled_style);
-
 			p_theme->set_color(SceneStringName(font_color), "OptionButton", p_config.font_color);
 			p_theme->set_color("font_hover_color", "OptionButton", p_config.font_hover_color);
 			p_theme->set_color("font_hover_pressed_color", "OptionButton", p_config.font_hover_pressed_color);
@@ -522,11 +517,6 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_icon("checked_disabled", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_on_disabled"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("unchecked", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_off"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("unchecked_disabled", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_off_disabled"), EditorStringName(EditorIcons)));
-
-		p_theme->set_icon("checked_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_on_mirrored"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("checked_disabled_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_on_disabled_mirrored"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("unchecked_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_off_mirrored"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("unchecked_disabled_mirrored", "CheckButton", p_theme->get_icon(SNAME("gui_toggle_off_disabled_mirrored"), EditorStringName(EditorIcons)));
 
 		p_theme->set_color(SceneStringName(font_color), "CheckButton", p_config.font_color);
 		p_theme->set_color("font_hover_color", "CheckButton", p_config.font_hover_color);
@@ -619,7 +609,6 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_icon("unchecked_disabled", "Tree", p_theme->get_icon(SNAME("gui_unchecked_disabled"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("arrow", "Tree", p_theme->get_icon(SNAME("gui_tree_arrow_down"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("arrow_collapsed", "Tree", p_theme->get_icon(SNAME("gui_tree_arrow_right"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("arrow_collapsed_mirrored", "Tree", p_theme->get_icon(SNAME("gui_tree_arrow_left"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("updown", "Tree", p_theme->get_icon(SNAME("gui_tree_updown"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("select_arrow", "Tree", p_theme->get_icon(SNAME("gui_dropdown"), EditorStringName(EditorIcons)));
 
@@ -1066,9 +1055,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_color("font_outline_color", "FoldableContainer", p_config.font_outline_color);
 
 		p_theme->set_icon("expanded_arrow", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_down"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("expanded_arrow_mirrored", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_up"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("expanded_arrow_bottom", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_up"), EditorStringName(EditorIcons)));
 		p_theme->set_icon("folded_arrow", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_right"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("folded_arrow_mirrored", "FoldableContainer", p_theme->get_icon(SNAME("gui_tree_arrow_left"), EditorStringName(EditorIcons)));
 
 		p_theme->set_constant("outline_size", "FoldableContainer", 0);
 		p_theme->set_constant("h_separation", "FoldableContainer", p_config.separation_margin);
@@ -1187,7 +1175,6 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_icon("radio_checked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_radio_checked_disabled"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("radio_unchecked_disabled", "PopupMenu", p_theme->get_icon(SNAME("gui_radio_unchecked_disabled"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("submenu", "PopupMenu", p_theme->get_icon(SNAME("navigation_arrow_right"), EditorStringName(EditorIcons)));
-			p_theme->set_icon("submenu_mirrored", "PopupMenu", p_theme->get_icon(SNAME("gui_arrow_left"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("search", "PopupMenu", p_theme->get_icon(SNAME("action_search"), EditorStringName(EditorIcons)));
 
 			p_theme->set_constant("h_separation", "PopupMenu", EDSCALE_RND(4));
@@ -2019,34 +2006,17 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			style_inspector_action->set_padding(SIDE_RIGHT, action_extra_margin);
 			p_theme->set_stylebox(CoreStringName(normal), "InspectorActionButton", style_inspector_action);
 
-			style_inspector_action = p_config.button_style->duplicate();
-			style_inspector_action->set_background_color(color_inspector_action);
-			style_inspector_action->set_padding(SIDE_LEFT, action_extra_margin);
-			p_theme->set_stylebox("normal_mirrored", "InspectorActionButton", style_inspector_action);
-
 			style_inspector_action = p_config.button_style_hover->duplicate();
 			style_inspector_action->set_padding(SIDE_RIGHT, action_extra_margin);
 			p_theme->set_stylebox(SceneStringName(hover), "InspectorActionButton", style_inspector_action);
-
-			style_inspector_action = p_config.button_style_hover->duplicate();
-			style_inspector_action->set_padding(SIDE_LEFT, action_extra_margin);
-			p_theme->set_stylebox("hover_mirrored", "InspectorActionButton", style_inspector_action);
 
 			style_inspector_action = p_config.button_style_pressed->duplicate();
 			style_inspector_action->set_padding(SIDE_RIGHT, action_extra_margin);
 			p_theme->set_stylebox(SceneStringName(pressed), "InspectorActionButton", style_inspector_action);
 
-			style_inspector_action = p_config.button_style_pressed->duplicate();
-			style_inspector_action->set_padding(SIDE_LEFT, action_extra_margin);
-			p_theme->set_stylebox("pressed_mirrored", "InspectorActionButton", style_inspector_action);
-
 			style_inspector_action = p_config.button_style_disabled->duplicate();
 			style_inspector_action->set_padding(SIDE_RIGHT, action_extra_margin);
 			p_theme->set_stylebox("disabled", "InspectorActionButton", style_inspector_action);
-
-			style_inspector_action = p_config.button_style_disabled->duplicate();
-			style_inspector_action->set_padding(SIDE_LEFT, action_extra_margin);
-			p_theme->set_stylebox("disabled_mirrored", "InspectorActionButton", style_inspector_action);
 		}
 
 		// Buttons in material previews.

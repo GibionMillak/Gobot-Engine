@@ -118,7 +118,6 @@ void EditorViewportToolbar::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_RESIZED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {
 			_queue_layout();
 		} break;
@@ -227,7 +226,7 @@ void EditorViewportToolbar::_configure_flow(Control *p_control, int p_height, bo
 	EditorToolbarFlowContainer *flow = Object::cast_to<EditorToolbarFlowContainer>(p_control);
 	if (flow) {
 		flow->set_height_limit(p_height);
-		flow->set_reverse_fill(flow->is_layout_rtl() != p_right_side);
+		flow->set_reverse_fill(p_right_side);
 	}
 }
 

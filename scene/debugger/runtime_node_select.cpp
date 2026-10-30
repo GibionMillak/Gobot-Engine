@@ -351,10 +351,6 @@ void RuntimeNodeSelect::_set_ci_local_space(bool p_enabled) {
 	_queue_selection_update();
 }
 
-void RuntimeNodeSelect::_set_ci_smart_snap(bool p_enabled) {
-	ci_manipulator->set_smart_snap_enabled(p_enabled);
-}
-
 void RuntimeNodeSelect::_set_n3d_tool(SelectMode p_tool) {
 	node_select_mode = p_tool;
 }
@@ -1006,17 +1002,10 @@ void RuntimeNodeSelect::_update_selection() {
 					// Draw the anchors handles.
 					Size2 handle_size = CanvasItemManipulator::ANCHOR_HANDLE_SIZE * scale;
 					Rect2 anchor_rects[4];
-					if (control->is_layout_rtl()) {
-						anchor_rects[0] = Rect2(anchors_pos[0] - Vector2(0.0, handle_size.y), Point2(-handle_size.x, handle_size.y));
-						anchor_rects[1] = Rect2(anchors_pos[1] - handle_size, handle_size);
-						anchor_rects[2] = Rect2(anchors_pos[2] - Vector2(handle_size.x, 0.0), Point2(handle_size.x, -handle_size.y));
-						anchor_rects[3] = Rect2(anchors_pos[3], -handle_size);
-					} else {
-						anchor_rects[0] = Rect2(anchors_pos[0] - handle_size, handle_size);
-						anchor_rects[1] = Rect2(anchors_pos[1] - Vector2(0.0, handle_size.y), Point2(-handle_size.x, handle_size.y));
-						anchor_rects[2] = Rect2(anchors_pos[2], -handle_size);
-						anchor_rects[3] = Rect2(anchors_pos[3] - Vector2(handle_size.x, 0.0), Point2(handle_size.x, -handle_size.y));
-					}
+					anchor_rects[0] = Rect2(anchors_pos[0] - handle_size, handle_size);
+					anchor_rects[1] = Rect2(anchors_pos[1] - Vector2(0.0, handle_size.y), Point2(-handle_size.x, handle_size.y));
+					anchor_rects[2] = Rect2(anchors_pos[2], -handle_size);
+					anchor_rects[3] = Rect2(anchors_pos[3] - Vector2(handle_size.x, 0.0), Point2(handle_size.x, -handle_size.y));
 
 					for (int i = 0; i < 4; i++) {
 						RS::get_singleton()->canvas_item_add_texture_rect(srect_ci, anchor_rects[i], anchor_icon->get_rid());

@@ -129,9 +129,6 @@ private:
 	float line_spacing = 0.f;
 
 	String language;
-	TextServer::Direction text_direction = TextServer::DIRECTION_AUTO;
-	TextServer::StructuredTextParser st_parser = TextServer::STRUCTURED_TEXT_DEFAULT;
-	Array st_args;
 
 	RID text_rid;
 	Vector<RID> lines_rid;
@@ -148,8 +145,6 @@ private:
 	void _generate_glyph_surfaces(const Glyph &p_glyph, Vector2 &r_offset, const Color &p_modulate, int p_priority = 0, int p_outline_size = 0);
 
 protected:
-	GDVIRTUAL2RC(TypedArray<Vector3i>, _structured_text_parser, Array, String)
-
 	void _notification(int p_what);
 
 	static void _bind_methods();
@@ -178,17 +173,8 @@ public:
 	void set_text(const String &p_string);
 	String get_text() const;
 
-	void set_text_direction(TextServer::Direction p_text_direction);
-	TextServer::Direction get_text_direction() const;
-
 	void set_language(const String &p_language);
 	String get_language() const;
-
-	void set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser);
-	TextServer::StructuredTextParser get_structured_text_bidi_override() const;
-
-	void set_structured_text_bidi_override_options(const Array &p_args);
-	Array get_structured_text_bidi_override_options() const;
 
 	void set_uppercase(bool p_uppercase);
 	bool is_uppercase() const;

@@ -499,11 +499,7 @@ Vector2 CanvasItemEditor::_anchor_to_position(const Control *p_control, Vector2 
 	Transform2D parent_transform = p_control->get_transform().affine_inverse();
 	Rect2 parent_rect = p_control->get_parent_anchorable_rect();
 
-	if (p_control->is_layout_rtl()) {
-		return parent_transform.xform(parent_rect.position + Vector2(parent_rect.size.x - parent_rect.size.x * anchor.x, parent_rect.size.y * anchor.y));
-	} else {
-		return parent_transform.xform(parent_rect.position + Vector2(parent_rect.size.x * anchor.x, parent_rect.size.y * anchor.y));
-	}
+	return parent_transform.xform(parent_rect.position + Vector2(parent_rect.size.x * anchor.x, parent_rect.size.y * anchor.y));
 }
 
 bool CanvasItemEditor::_get_selection_callback(Array r_selection) {
@@ -1797,17 +1793,10 @@ void CanvasItemEditor::_draw_control_anchors(Control *control) {
 
 		// Draw the anchors handles.
 		Rect2 anchor_rects[4];
-		if (control->is_layout_rtl()) {
-			anchor_rects[0] = Rect2(anchors_pos[0] - Vector2(0.0, anchor_handle->get_size().y), Point2(-anchor_handle->get_size().x, anchor_handle->get_size().y));
-			anchor_rects[1] = Rect2(anchors_pos[1] - anchor_handle->get_size(), anchor_handle->get_size());
-			anchor_rects[2] = Rect2(anchors_pos[2] - Vector2(anchor_handle->get_size().x, 0.0), Point2(anchor_handle->get_size().x, -anchor_handle->get_size().y));
-			anchor_rects[3] = Rect2(anchors_pos[3], -anchor_handle->get_size());
-		} else {
-			anchor_rects[0] = Rect2(anchors_pos[0] - anchor_handle->get_size(), anchor_handle->get_size());
-			anchor_rects[1] = Rect2(anchors_pos[1] - Vector2(0.0, anchor_handle->get_size().y), Point2(-anchor_handle->get_size().x, anchor_handle->get_size().y));
-			anchor_rects[2] = Rect2(anchors_pos[2], -anchor_handle->get_size());
-			anchor_rects[3] = Rect2(anchors_pos[3] - Vector2(anchor_handle->get_size().x, 0.0), Point2(anchor_handle->get_size().x, -anchor_handle->get_size().y));
-		}
+		anchor_rects[0] = Rect2(anchors_pos[0] - anchor_handle->get_size(), anchor_handle->get_size());
+		anchor_rects[1] = Rect2(anchors_pos[1] - Vector2(0.0, anchor_handle->get_size().y), Point2(-anchor_handle->get_size().x, anchor_handle->get_size().y));
+		anchor_rects[2] = Rect2(anchors_pos[2], -anchor_handle->get_size());
+		anchor_rects[3] = Rect2(anchors_pos[3] - Vector2(anchor_handle->get_size().x, 0.0), Point2(anchor_handle->get_size().x, -anchor_handle->get_size().y));
 
 		for (int i = 0; i < 4; i++) {
 			anchor_handle->draw_rect(ci, anchor_rects[i]);
@@ -2836,8 +2825,8 @@ void CanvasItemEditor::_update_viewport_overlays() {
 	const real_t overlay_ruler_width = ci_manipulator->is_showing_rulers() ? ci_manipulator->get_ruler_width() : 0;
 	const real_t vertical_scroll_inset = v_scroll->is_visible() ? vmin.width + margin : 0;
 	const real_t horizontal_scroll_inset = h_scroll->is_visible() ? hmin.height + margin : 0;
-	const real_t left_inset = overlay_ruler_width + (is_layout_rtl() ? vertical_scroll_inset : 0);
-	const real_t right_inset = is_layout_rtl() ? 0 : vertical_scroll_inset;
+	const real_t left_inset = overlay_ruler_width;
+	const real_t right_inset = vertical_scroll_inset;
 	const real_t bottom_inset = margin + horizontal_scroll_inset;
 
 	// Reserve the rulers and edge scrollbars before placing the floating toolbars.
@@ -2846,7 +2835,7 @@ void CanvasItemEditor::_update_viewport_overlays() {
 	_viewport_toolbar->set_offset(SIDE_RIGHT, -right_inset);
 	_viewport_toolbar->set_offset(SIDE_BOTTOM, -horizontal_scroll_inset);
 
-	const real_t scroll_x = is_layout_rtl() ? overlay_ruler_width + margin : viewport_size.x - margin - vmin.width;
+	const real_t scroll_x = (viewport_size.x - margin - vmin.width);
 	const real_t scroll_bottom = viewport_size.y - bottom_inset;
 	v_scroll->set_begin(Point2(scroll_x, overlay_ruler_width + margin));
 	v_scroll->set_end(Point2(scroll_x + vmin.width, scroll_bottom));

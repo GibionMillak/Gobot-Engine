@@ -31,10 +31,9 @@
 		</method>
 		<method name="_create_shaped_text" qualifiers="virtual required">
 			<return type="RID" />
-			<param index="0" name="direction" type="int" enum="TextServer.Direction" />
-			<param index="1" name="orientation" type="int" enum="TextServer.Orientation" />
+			<param index="0" name="orientation" type="int" enum="TextServer.Orientation" />
 			<description>
-				Creates a new buffer for complex text layout, with the given [param direction] and [param orientation].
+				Creates a new buffer for complex text layout, with the given [param orientation].
 			</description>
 		</method>
 		<method name="_draw_hex_code_box" qualifiers="virtual const">
@@ -1180,13 +1179,6 @@
 				Returns index of the first string in [param dict] which is visually confusable with the [param string], or [code]-1[/code] if none is found.
 			</description>
 		</method>
-		<method name="_is_locale_right_to_left" qualifiers="virtual const">
-			<return type="bool" />
-			<param index="0" name="locale" type="String" />
-			<description>
-				Returns [code]true[/code] if locale is right-to-left.
-			</description>
-		</method>
 		<method name="_is_locale_using_support_data" qualifiers="virtual const">
 			<return type="bool" />
 			<param index="0" name="locale" type="String" />
@@ -1221,15 +1213,6 @@
 				Converts the given readable name of a feature, variation, script, or language to an OpenType tag.
 			</description>
 		</method>
-		<method name="_parse_structured_text" qualifiers="virtual const">
-			<return type="Vector3i[]" />
-			<param index="0" name="parser_type" type="int" enum="TextServer.StructuredTextParser" />
-			<param index="1" name="args" type="Array" />
-			<param index="2" name="text" type="String" />
-			<description>
-				Default implementation of the BiDi algorithm override function.
-			</description>
-		</method>
 		<method name="_reference_oversampling_level" qualifiers="virtual">
 			<return type="void" />
 			<param index="0" name="oversampling" type="float" />
@@ -1249,14 +1232,6 @@
 			<param index="0" name="shaped" type="RID" />
 			<description>
 				Returns the number of uniform text runs in the buffer.
-			</description>
-		</method>
-		<method name="_shaped_get_run_direction" qualifiers="virtual const">
-			<return type="int" enum="TextServer.Direction" />
-			<param index="0" name="shaped" type="RID" />
-			<param index="1" name="index" type="int" />
-			<description>
-				Returns the direction of the [param index] text run (in visual order).
 			</description>
 		</method>
 		<method name="_shaped_get_run_font_rid" qualifiers="virtual const">
@@ -1499,22 +1474,6 @@
 				Returns the text descent (number of pixels below the baseline for horizontal layout or to the right of baseline for vertical).
 			</description>
 		</method>
-		<method name="_shaped_text_get_direction" qualifiers="virtual const">
-			<return type="int" enum="TextServer.Direction" />
-			<param index="0" name="shaped" type="RID" />
-			<description>
-				Returns direction of the text.
-			</description>
-		</method>
-		<method name="_shaped_text_get_dominant_direction_in_range" qualifiers="virtual const">
-			<return type="int" />
-			<param index="0" name="shaped" type="RID" />
-			<param index="1" name="start" type="int" />
-			<param index="2" name="end" type="int" />
-			<description>
-				Returns dominant direction of in the range of text.
-			</description>
-		</method>
 		<method name="_shaped_text_get_ellipsis_glyph_count" qualifiers="virtual required const">
 			<return type="int" />
 			<param index="0" name="shaped" type="RID" />
@@ -1556,13 +1515,6 @@
 			<param index="1" name="pos" type="int" />
 			<description>
 				Returns composite character's bounds as offsets from the start of the line.
-			</description>
-		</method>
-		<method name="_shaped_text_get_inferred_direction" qualifiers="virtual const">
-			<return type="int" enum="TextServer.Direction" />
-			<param index="0" name="shaped" type="RID" />
-			<description>
-				Returns direction of the text, inferred by the BiDi algorithm.
 			</description>
 		</method>
 		<method name="_shaped_text_get_line_breaks" qualifiers="virtual const">
@@ -1796,14 +1748,6 @@
 				Sets new size and alignment of embedded object.
 			</description>
 		</method>
-		<method name="_shaped_text_set_bidi_override" qualifiers="virtual">
-			<return type="void" />
-			<param index="0" name="shaped" type="RID" />
-			<param index="1" name="override" type="Array" />
-			<description>
-				Overrides BiDi for the structured text.
-			</description>
-		</method>
 		<method name="_shaped_text_set_custom_ellipsis" qualifiers="virtual">
 			<return type="void" />
 			<param index="0" name="shaped" type="RID" />
@@ -1818,14 +1762,6 @@
 			<param index="1" name="punct" type="String" />
 			<description>
 				Sets custom punctuation character list, used for word breaking. If set to empty string, server defaults are used.
-			</description>
-		</method>
-		<method name="_shaped_text_set_direction" qualifiers="virtual">
-			<return type="void" />
-			<param index="0" name="shaped" type="RID" />
-			<param index="1" name="direction" type="int" enum="TextServer.Direction" />
-			<description>
-				Sets desired text direction. If set to [constant TextServer.DIRECTION_AUTO], direction will be detected based on the buffer contents and current locale.
 			</description>
 		</method>
 		<method name="_shaped_text_set_orientation" qualifiers="virtual">

@@ -355,36 +355,4 @@ TEST_CASE("[SceneTree][GridContainer] Desired size children") {
 	memdelete(grid_container);
 }
 
-TEST_CASE("[SceneTree][GridContainer] RTL placement") {
-	GridContainer *grid_container = memnew(GridContainer);
-	Window *root = SceneTree::get_singleton()->get_root();
-	root->add_child(grid_container);
-
-	Control *child_control_1 = memnew(Control);
-	Control *child_control_2 = memnew(Control);
-	child_control_1->set_custom_minimum_size(Size2(20, 20));
-	child_control_2->set_custom_minimum_size(Size2(20, 20));
-
-	grid_container->set_columns(2);
-	grid_container->add_theme_constant_override("h_separation", 0);
-	grid_container->add_theme_constant_override("v_separation", 0);
-	grid_container->set_size(Size2(40, 20));
-	grid_container->add_child(child_control_1);
-	grid_container->add_child(child_control_2);
-	grid_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-	SceneTree::get_singleton()->process(0);
-
-	CHECK_MESSAGE(
-			child_control_1->get_position().is_equal_approx(Point2(20, 0)),
-			"First child control starts in the right column in RTL mode.");
-
-	CHECK_MESSAGE(
-			child_control_2->get_position().is_equal_approx(Point2(0, 0)),
-			"Second child control is placed in the left column in RTL mode.");
-
-	memdelete(child_control_2);
-	memdelete(child_control_1);
-	memdelete(grid_container);
-}
-
 } // namespace TestGridContainer

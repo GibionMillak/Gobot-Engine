@@ -61,7 +61,6 @@ class PopupMenu : public Popup {
 		Ref<TextLine> accel_text_buf;
 
 		String language;
-		Control::TextDirection text_direction = Control::TEXT_DIRECTION_AUTO;
 		AutoTranslateMode auto_translate_mode = AUTO_TRANSLATE_MODE_INHERIT;
 
 		bool checked = false;
@@ -229,7 +228,6 @@ class PopupMenu : public Popup {
 
 		Ref<Texture2D> search;
 		Ref<Texture2D> submenu;
-		Ref<Texture2D> submenu_mirrored;
 
 		Ref<Font> font;
 		int font_size = 0;
@@ -327,7 +325,6 @@ public:
 
 	void set_item_text(int p_idx, const String &p_text);
 
-	void set_item_text_direction(int p_idx, Control::TextDirection p_text_direction);
 	void set_item_language(int p_idx, const String &p_language);
 	void set_item_auto_translate_mode(int p_idx, AutoTranslateMode p_mode);
 	void set_item_icon(int p_idx, const Ref<Texture2D> &p_icon);
@@ -357,10 +354,8 @@ public:
 
 	String get_item_text(int p_idx) const;
 	String get_item_xl_text(int p_idx) const;
-	Control::TextDirection get_item_text_direction(int p_idx) const;
 	String get_item_language(int p_idx) const;
 	AutoTranslateMode get_item_auto_translate_mode(int p_idx) const;
-	int get_item_idx_from_text(const String &text) const;
 	Ref<Texture2D> get_item_icon(int p_idx) const;
 	int get_item_icon_max_width(int p_idx) const;
 	Color get_item_icon_modulate(int p_idx) const;
@@ -377,7 +372,6 @@ public:
 	bool is_item_checkable(int p_idx) const;
 	bool is_item_radio_checkable(int p_idx) const;
 	bool is_item_shortcut_disabled(int p_idx) const;
-	bool is_item_shortcut_global(int p_idx) const;
 	String get_item_tooltip(int p_idx) const;
 	Ref<Shortcut> get_item_shortcut(int p_idx) const;
 	int get_item_indent(int p_idx) const;

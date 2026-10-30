@@ -959,7 +959,6 @@ public:
 	};
 
 	void add_track_edit_plugin(const Ref<AnimationTrackEditPlugin> &p_plugin);
-	void remove_track_edit_plugin(const Ref<AnimationTrackEditPlugin> &p_plugin);
 
 	void set_animation(const Ref<Animation> &p_anim, bool p_read_only);
 	Ref<Animation> get_current_animation() const;

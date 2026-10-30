@@ -5,7 +5,7 @@
 	</brief_description>
 	<description>
 		A control for displaying text that can contain custom fonts, images, and basic formatting. [RichTextLabel] manages these as an internal tag stack. It also adapts itself to given width/heights.
-		[b]Note:[/b] [method newline], [method push_paragraph], [code]"\n"[/code], [code]"\r\n"[/code], the [code]p[/code] tag, and alignment tags start a new paragraph. Each paragraph is processed independently, in its own BiDi context. If you want to force line wrapping within a paragraph, any other line breaking character can be used, for example, Form Feed (U+000C), Next Line (U+0085), Line Separator (U+2028).
+		[b]Note:[/b] [method newline], [method push_paragraph], [code]"\n"[/code], [code]"\r\n"[/code], the [code]p[/code] tag, and alignment tags start a new paragraph. Each paragraph is processed independently. If you want to force line wrapping within a paragraph, any other line breaking character can be used, for example, Form Feed (U+000C), Next Line (U+0085), Line Separator (U+2028).
 		[b]Note:[/b] Assignments to [member text] clear the tag stack and reconstruct it from the property's contents. Any edits made to [member text] will erase previous edits made from other manual sources such as [method append_text] and the [code]push_*[/code] / [method pop] methods.
 		[b]Note:[/b] RichTextLabel doesn't support entangled BBCode tags. For example, instead of using [code skip-lint][b]bold[i]bold italic[/b]italic[/i][/code], use [code skip-lint][b]bold[i]bold italic[/i][/b][i]italic[/i][/code].
 		[b]Note:[/b] [code]push_*/pop_*[/code] functions won't affect BBCode.
@@ -527,11 +527,9 @@
 		<method name="push_paragraph">
 			<return type="void" />
 			<param index="0" name="alignment" type="int" enum="HorizontalAlignment" />
-			<param index="1" name="base_direction" type="int" enum="Control.TextDirection" default="0" />
-			<param index="2" name="language" type="String" default="&quot;&quot;" />
-			<param index="3" name="st_parser" type="int" enum="TextServer.StructuredTextParser" default="0" />
-			<param index="4" name="justification_flags" type="int" enum="TextServer.JustificationFlag" is_bitfield="true" default="163" />
-			<param index="5" name="tab_stops" type="PackedFloat32Array" default="PackedFloat32Array()" />
+			<param index="1" name="language" type="String" default="&quot;&quot;" />
+			<param index="2" name="justification_flags" type="int" enum="TextServer.JustificationFlag" is_bitfield="true" default="163" />
+			<param index="3" name="tab_stops" type="PackedFloat32Array" default="PackedFloat32Array()" />
 			<description>
 				Adds a [code skip-lint][p][/code] tag to the tag stack.
 			</description>
@@ -750,12 +748,6 @@
 		<member name="shortcut_keys_enabled" type="bool" setter="set_shortcut_keys_enabled" getter="is_shortcut_keys_enabled" default="true">
 			If [code]true[/code], shortcut keys for context menu items are enabled, even if the context menu is disabled.
 		</member>
-		<member name="structured_text_bidi_override" type="int" setter="set_structured_text_bidi_override" getter="get_structured_text_bidi_override" enum="TextServer.StructuredTextParser" default="0">
-			Set BiDi algorithm override for the structured text.
-		</member>
-		<member name="structured_text_bidi_override_options" type="Array" setter="set_structured_text_bidi_override_options" getter="get_structured_text_bidi_override_options" default="[]">
-			Set additional options for BiDi override.
-		</member>
 		<member name="tab_size" type="int" setter="set_tab_size" getter="get_tab_size" default="4">
 			The number of spaces associated with a single tab length. Does not affect [code]\t[/code] in text tags, only indent tags.
 		</member>
@@ -765,9 +757,6 @@
 		<member name="text" type="String" setter="set_text" getter="get_text" default="&quot;&quot;">
 			The label's text in BBCode format. Is not representative of manual modifications to the internal tag stack. Erases changes made by other methods when edited.
 			[b]Note:[/b] If [member bbcode_enabled] is [code]true[/code], it is recommended not to use the [code]+=[/code] operator with [member text] (e.g., [code]text += "some string"[/code]) as it replaces the whole text and can cause slowdowns. It will also erase all BBCode that was added to the stack using the [code]push_*[/code] methods. Use [method append_text] for adding text instead, unless you absolutely need to close a tag that was opened in an earlier method call.
-		</member>
-		<member name="text_direction" type="int" setter="set_text_direction" getter="get_text_direction" enum="Control.TextDirection" default="0">
-			Base text writing direction.
 		</member>
 		<member name="threaded" type="bool" setter="set_threaded" getter="is_threaded" default="false">
 			If [code]true[/code], text processing is done in a background thread.

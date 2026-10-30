@@ -41,11 +41,6 @@ void ItemList::_shape_text(int p_idx) {
 	Item &item = items.write[p_idx];
 
 	item.text_buf->clear();
-	if (item.text_direction == Control::TEXT_DIRECTION_INHERITED) {
-		item.text_buf->set_direction(is_layout_rtl() ? TextServer::DIRECTION_RTL : TextServer::DIRECTION_LTR);
-	} else {
-		item.text_buf->set_direction((TextServer::Direction)item.text_direction);
-	}
 	const String &lang = item.language.is_empty() ? _get_locale() : item.language;
 	item.text_buf->add_string(item.xl_text, theme_cache.font, theme_cache.font_size, lang);
 	if (icon_mode == ICON_MODE_TOP && max_text_lines > 0) {
@@ -107,24 +102,6 @@ void ItemList::set_item_text(int p_idx, const String &p_text) {
 String ItemList::get_item_text(int p_idx) const {
 	ERR_FAIL_INDEX_V(p_idx, items.size(), String());
 	return items[p_idx].text;
-}
-
-void ItemList::set_item_text_direction(int p_idx, Control::TextDirection p_text_direction) {
-	if (p_idx < 0) {
-		p_idx += get_item_count();
-	}
-	ERR_FAIL_INDEX(p_idx, items.size());
-	ERR_FAIL_COND((int)p_text_direction < -1 || (int)p_text_direction > 3);
-	if (items[p_idx].text_direction != p_text_direction) {
-		items.write[p_idx].text_direction = p_text_direction;
-		_shape_text(p_idx);
-		queue_redraw();
-	}
-}
-
-Control::TextDirection ItemList::get_item_text_direction(int p_idx) const {
-	ERR_FAIL_INDEX_V(p_idx, items.size(), TEXT_DIRECTION_INHERITED);
-	return items[p_idx].text_direction;
 }
 
 void ItemList::set_item_language(int p_idx, const String &p_language) {
@@ -1226,7 +1203,6 @@ void ItemList::_notification(int p_what) {
 			queue_redraw();
 		} break;
 
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			for (int i = 0; i < items.size(); i++) {
 				_shape_text(i);
@@ -1300,15 +1276,9 @@ void ItemList::_notification(int p_what) {
 
 			ensure_selected_visible = false;
 
-			bool rtl = is_layout_rtl();
-
 			Vector2 base_ofs = theme_cache.panel_style->get_content_offset();
 			base_ofs.y -= int(scroll_bar_v->get_value());
-			if (rtl) {
-				base_ofs.x += int(scroll_bar_h->get_value());
-			} else {
-				base_ofs.x -= int(scroll_bar_h->get_value());
-			}
+			base_ofs.x -= int(scroll_bar_h->get_value());
 
 			// Define a visible frame to check against and optimize drawing.
 			if (!wraparound_items) {
@@ -1329,11 +1299,7 @@ void ItemList::_notification(int p_what) {
 					}
 
 					const int y = base_ofs.y + separators[i];
-					if (rtl) {
-						draw_line(Vector2(size.width - theme_cache.panel_style->get_content_inset(SIDE_LEFT) - width, y), Vector2(size.width - theme_cache.panel_style->get_content_inset(SIDE_LEFT), y), theme_cache.guide_color);
-					} else {
-						draw_line(Vector2(theme_cache.panel_style->get_content_inset(SIDE_LEFT), y), Vector2(width + theme_cache.panel_style->get_content_inset(SIDE_LEFT), y), theme_cache.guide_color);
-					}
+					draw_line(Vector2(theme_cache.panel_style->get_content_inset(SIDE_LEFT), y), Vector2(width + theme_cache.panel_style->get_content_inset(SIDE_LEFT), y), theme_cache.guide_color);
 				}
 			}
 
@@ -1381,10 +1347,6 @@ void ItemList::_notification(int p_what) {
 
 				Rect2 r = rcache;
 				r.position += base_ofs;
-
-				if (rtl) {
-					r.position.x = size.width - rcache.position.x - r.size.x - theme_cache.panel_style->get_content_inset(SIDE_LEFT) - int(scroll_bar_h->get_value());
-				}
 
 				if (items[i].custom_bg.a > 0.001f) {
 					draw_rect(r, items[i].custom_bg);
@@ -1467,9 +1429,6 @@ void ItemList::_notification(int p_what) {
 
 					Rect2 region = (items[i].icon_region.size.x == 0 || items[i].icon_region.size.y == 0) ? Rect2(Vector2(), items[i].icon->get_size()) : Rect2(items[i].icon_region);
 
-					if (rtl) {
-						draw_rect.position.x = size.width - draw_rect.position.x - draw_rect.size.x;
-					}
 					draw_texture_rect_region(items[i].icon, draw_rect, region, icon_modulate, items[i].icon_transposed);
 				}
 
@@ -1484,9 +1443,6 @@ void ItemList::_notification(int p_what) {
 					Point2 draw_pos = items[i].rect_cache.position + base_ofs;
 					draw_pos.x += MAX(theme_cache.h_separation, 0) / 2;
 					draw_pos.y += MAX(theme_cache.v_separation, 0) / 2;
-					if (rtl) {
-						draw_pos.x = size.width - draw_pos.x - tag_icon_size.x;
-					}
 
 					draw_texture_rect(items[i].tag_icon, Rect2(draw_pos, tag_icon_size));
 				}
@@ -1529,10 +1485,6 @@ void ItemList::_notification(int p_what) {
 						text_ofs += base_ofs;
 						text_ofs += items[i].rect_cache.position;
 
-						if (rtl) {
-							text_ofs.x = size.width - text_ofs.x - text_w;
-						}
-
 						if (theme_cache.font_outline_size > 0 && theme_cache.font_outline_color.a > 0) {
 							items[i].text_buf->draw_outline(get_canvas_item(), text_ofs, theme_cache.font_outline_size, theme_cache.font_outline_color);
 						}
@@ -1554,18 +1506,7 @@ void ItemList::_notification(int p_what) {
 						}
 						items.write[i].text_buf->set_width(text_w);
 
-						if (rtl) {
-							text_ofs.x = size.width - items[i].rect_cache.size.width + icon_size.x - text_ofs.x + (MAX(theme_cache.h_separation, 0) / 2);
-							if (items[i].icon.is_valid()) {
-								text_ofs.x += theme_cache.icon_margin;
-							}
-							if (wraparound_items) {
-								text_ofs.x += MAX(items[i].rect_cache.size.width - width, 0);
-							}
-							items.write[i].text_buf->set_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
-						} else {
-							items.write[i].text_buf->set_alignment(HORIZONTAL_ALIGNMENT_LEFT);
-						}
+						items.write[i].text_buf->set_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 
 						if (theme_cache.font_outline_size > 0 && theme_cache.font_outline_color.a > 0) {
 							items[i].text_buf->draw_outline(get_canvas_item(), text_ofs, theme_cache.font_outline_size, theme_cache.font_outline_color);
@@ -1594,10 +1535,6 @@ void ItemList::_notification(int p_what) {
 
 			if (cursor_rcache.size != Size2()) { // Draw cursor last, so border isn't cut off.
 				cursor_rcache.position += base_ofs;
-
-				if (rtl) {
-					cursor_rcache.position.x = size.width - cursor_rcache.position.x - cursor_rcache.size.x;
-				}
 
 				draw_style_box(cursor, cursor_rcache);
 			}
@@ -1755,7 +1692,7 @@ void ItemList::force_update_list_size() {
 			scroll_bar_h_max = MAX(scroll_bar_h_page, max_w);
 		}
 
-		if (scroll_bar_v_page >= scroll_bar_v_max || is_layout_rtl()) {
+		if (scroll_bar_v_page >= scroll_bar_v_max) {
 			fit_size -= scroll_bar_v_minwidth;
 		}
 
@@ -1778,19 +1715,10 @@ void ItemList::force_update_list_size() {
 			} else {
 				auto_width_value += scroll_bar_v_minwidth;
 				scroll_bar_v->show();
-
-				if (do_autoscroll_to_bottom) {
-					scroll_bar_v->set_value(scroll_bar_v_max);
-				}
 			}
 
-			if (is_layout_rtl() && !wraparound_items) {
-				scroll_bar_h->set_max(scroll_bar_h_page);
-				scroll_bar_h->set_min(-(scroll_bar_h_max - scroll_bar_h_page));
-			} else {
-				scroll_bar_h->set_max(scroll_bar_h_max);
-				scroll_bar_h->set_min(0);
-			}
+			scroll_bar_h->set_max(scroll_bar_h_max);
+			scroll_bar_h->set_min(0);
 			scroll_bar_h->set_page(scroll_bar_h_page);
 			if (scroll_bar_h_max <= scroll_bar_h_page) {
 				scroll_bar_h->set_value(0);
@@ -1887,10 +1815,6 @@ int ItemList::get_item_at_position(const Point2 &p_pos, bool p_exact) const {
 	pos.y += scroll_bar_v->get_value();
 	pos.x += scroll_bar_h->get_value();
 
-	if (is_layout_rtl()) {
-		pos.x = get_size().width - p_pos.x - scroll_bar_h->get_value() - theme_cache.panel_style->get_content_inset(SIDE_LEFT);
-	}
-
 	int closest = -1;
 	int closest_dist = 0x7FFFFFFF;
 
@@ -1898,11 +1822,7 @@ int ItemList::get_item_at_position(const Point2 &p_pos, bool p_exact) const {
 		Rect2 rc = items[i].rect_cache;
 
 		if (i % current_columns == current_columns - 1) { // Make sure you can still select the last item when clicking past the column.
-			if (is_layout_rtl()) {
-				rc.size.width = get_size().width - scroll_bar_h->get_value() + rc.position.x;
-			} else {
-				rc.size.width = get_size().width + scroll_bar_h->get_value() - rc.position.x;
-			}
+			rc.size.width = get_size().width + scroll_bar_h->get_value() - rc.position.x;
 		}
 
 		if (rc.size.width < 0) {
@@ -2063,10 +1983,6 @@ Size2 ItemList::get_minimum_size() const {
 	return min_size;
 }
 
-void ItemList::set_autoscroll_to_bottom(const bool p_enable) {
-	do_autoscroll_to_bottom = p_enable;
-}
-
 void ItemList::set_auto_width(bool p_enable) {
 	if (auto_width == p_enable) {
 		return;
@@ -2167,9 +2083,6 @@ void ItemList::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_item_icon", "idx", "icon"), &ItemList::set_item_icon);
 	ClassDB::bind_method(D_METHOD("get_item_icon", "idx"), &ItemList::get_item_icon);
-
-	ClassDB::bind_method(D_METHOD("set_item_text_direction", "idx", "direction"), &ItemList::set_item_text_direction);
-	ClassDB::bind_method(D_METHOD("get_item_text_direction", "idx"), &ItemList::get_item_text_direction);
 
 	ClassDB::bind_method(D_METHOD("set_item_language", "idx", "language"), &ItemList::set_item_language);
 	ClassDB::bind_method(D_METHOD("get_item_language", "idx"), &ItemList::get_item_language);

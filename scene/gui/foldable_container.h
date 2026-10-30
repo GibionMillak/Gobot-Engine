@@ -50,7 +50,6 @@ private:
 	String title;
 	Ref<FoldableGroup> foldable_group;
 	String language;
-	TextDirection title_text_direction = TEXT_DIRECTION_AUTO;
 	HorizontalAlignment title_alignment = HORIZONTAL_ALIGNMENT_LEFT;
 	TextServer::OverrunBehavior overrun_behavior = TextServer::OVERRUN_NO_TRIMMING;
 	TitlePosition title_position = POSITION_TOP;
@@ -80,9 +79,8 @@ private:
 		int title_font_outline_size = 0;
 
 		Ref<Texture2D> expanded_arrow;
-		Ref<Texture2D> expanded_arrow_mirrored;
+		Ref<Texture2D> expanded_arrow_bottom;
 		Ref<Texture2D> folded_arrow;
-		Ref<Texture2D> folded_arrow_mirrored;
 
 		int h_separation = 0;
 		int icon_max_width = 0;
@@ -100,7 +98,6 @@ private:
 
 	void _update_title_min_size() const;
 	void _shape();
-	HorizontalAlignment _get_actual_alignment() const;
 	void _update_group();
 	void _draw_flippable_stylebox(const Ref<StyleBox> p_stylebox, const Rect2 &p_rect);
 
@@ -127,9 +124,6 @@ public:
 
 	void set_title_alignment(HorizontalAlignment p_alignment);
 	HorizontalAlignment get_title_alignment() const;
-
-	void set_title_text_direction(TextDirection p_text_direction);
-	TextDirection get_title_text_direction() const;
 
 	void set_title_text_overrun_behavior(TextServer::OverrunBehavior p_overrun_behavior);
 	TextServer::OverrunBehavior get_title_text_overrun_behavior() const;

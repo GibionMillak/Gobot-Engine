@@ -39,7 +39,6 @@
 #include "servers/display/display_server_enums.h"
 
 typedef void (*EditorNodeInitCallback)();
-typedef void (*EditorPluginInitializeCallback)();
 
 #ifndef ANDROID_ENABLED
 class AndroidSDKManager;
@@ -288,7 +287,6 @@ public:
 	static void add_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
 	static void remove_editor_plugin(EditorPlugin *p_editor, bool p_config_changed = false);
 
-	static void add_plugin_init_callback(EditorPluginInitializeCallback p_callback);
 	static void add_init_callback(EditorNodeInitCallback p_callback) { _init_callbacks.push_back(p_callback); }
 
 	static bool immediate_confirmation_dialog(const String &p_text, const String &p_ok_text = TTRC("OK"), const String &p_cancel_text = TTRC("Cancel"), uint32_t p_wrap_width = 0);
@@ -397,7 +395,6 @@ public:
 	void setup_color_picker(ColorPicker *p_picker);
 	void register_hdr_viewport(Viewport *p_viewport);
 
-	void request_instantiate_scene(const String &p_path);
 	void request_instantiate_scenes(const Vector<String> &p_files);
 	void _dropped_files(const Vector<String> &p_files);
 
@@ -421,7 +418,6 @@ public:
 	void show_warning(const String &p_text, const String &p_title = TTRC("Warning!"));
 
 	Error export_preset(const String &p_preset, const String &p_path, bool p_debug, bool p_pack_only, bool p_android_build_template, bool p_patch, const Vector<String> &p_patches);
-	bool is_project_exporting() const;
 
 	Control *get_gui_base() { return gui_base; }
 
@@ -434,8 +430,6 @@ public:
 	}
 
 	bool close_scene();
-
-	bool is_scene_in_use(const String &p_path);
 
 	void save_editor_layout_delayed();
 	void save_default_environment();
@@ -472,7 +466,6 @@ public:
 	void notify_settings_overrides_changed();
 
 	void dim_editor(bool p_dimming);
-	bool is_editor_dimmed() const;
 
 	void edit_current() { _edit_current(); }
 
@@ -505,10 +498,6 @@ protected:
 
 private:
 	friend class EditorSceneTabs;
-
-	enum {
-		MAX_INIT_CALLBACKS = 128,
-	};
 
 	struct ExportDefer {
 		String preset;
@@ -661,8 +650,6 @@ private:
 	void _find_node_types(Node *p_node, int &r_count_2d, int &r_count_3d);
 	void _save_scene_with_preview(String p_file, int p_idx = -1);
 	void _close_save_scene_progress();
-
-	bool _find_scene_in_use(Node *p_node, const String &p_path) const;
 
 	void _proceed_closing_scene_tabs();
 	void _proceed_save_asing_scene_tabs();
@@ -933,8 +920,6 @@ private:
 	AndroidSDKManager *android_sdk_manager = nullptr;
 #endif
 
-	static EditorPluginInitializeCallback plugin_init_callbacks[MAX_INIT_CALLBACKS];
-	static int plugin_init_callback_count;
 	static Vector<EditorNodeInitCallback> _init_callbacks;
 	Ref<ImageTexture> default_thumbnail;
 	MenuType menu_type = MENU_TYPE_NONE;

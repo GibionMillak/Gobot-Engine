@@ -550,11 +550,7 @@ void SpriteFramesEditor::_toggle_show_settings() {
 }
 
 void SpriteFramesEditor::_update_show_settings() {
-	if (is_layout_rtl()) {
-		toggle_settings_button->set_button_icon(get_editor_theme_icon(split_sheet_settings_vb->is_visible() ? SNAME("navigation_back") : SNAME("navigation_forward")));
-	} else {
-		toggle_settings_button->set_button_icon(get_editor_theme_icon(split_sheet_settings_vb->is_visible() ? SNAME("navigation_forward") : SNAME("navigation_back")));
-	}
+	toggle_settings_button->set_button_icon(get_editor_theme_icon(split_sheet_settings_vb->is_visible() ? SNAME("navigation_forward") : SNAME("navigation_back")));
 }
 
 void SpriteFramesEditor::_auto_slice_sprite_sheet() {
@@ -733,10 +729,6 @@ void SpriteFramesEditor::_notification(int p_what) {
 			split_sheet_zoom_fit->set_button_icon(get_editor_theme_icon(SNAME("action_expand")));
 			split_sheet_scroll->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("Tree")));
 
-			_update_show_settings();
-		} break;
-
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
 			_update_show_settings();
 		} break;
 
@@ -2295,7 +2287,6 @@ SpriteFramesEditor::SpriteFramesEditor() {
 	sub_vb->add_child(hfc);
 
 	playback_container = memnew(HBoxContainer);
-	playback_container->set_layout_direction(LAYOUT_DIRECTION_LTR);
 	hfc->add_child(playback_container);
 
 	play_bw_from = memnew(Button);

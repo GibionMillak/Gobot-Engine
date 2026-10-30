@@ -151,7 +151,7 @@ void FoldableContainer::set_title_alignment(HorizontalAlignment p_alignment) {
 	ERR_FAIL_INDEX((int)p_alignment, 3);
 	title_alignment = p_alignment;
 
-	if (_get_actual_alignment() != text_buf->get_horizontal_alignment()) {
+	if (title_alignment != text_buf->get_horizontal_alignment()) {
 		_shape();
 		queue_redraw();
 	}
@@ -173,20 +173,6 @@ void FoldableContainer::set_language(const String &p_language) {
 
 String FoldableContainer::get_language() const {
 	return language;
-}
-
-void FoldableContainer::set_title_text_direction(TextDirection p_text_direction) {
-	ERR_FAIL_INDEX(int(p_text_direction), 4);
-	if (title_text_direction == p_text_direction) {
-		return;
-	}
-	title_text_direction = p_text_direction;
-	_shape();
-	queue_redraw();
-}
-
-Control::TextDirection FoldableContainer::get_title_text_direction() const {
-	return title_text_direction;
 }
 
 void FoldableContainer::set_title_text_overrun_behavior(TextServer::OverrunBehavior p_overrun_behavior) {
@@ -331,14 +317,8 @@ void FoldableContainer::_notification(int p_what) {
 			title_text_width -= icon_size.width + h_separation + title_controls_width;
 			Point2 icon_pos(0, MAX((title_minimum_size.height - title_ms.height - icon_size.height) * 0.5, 0) + title_style_ofs);
 
-			bool rtl = is_layout_rtl();
-			if (rtl) {
-				icon_pos.x = size.width - title_style->get_content_inset(SIDE_RIGHT) - icon_size.width;
-				title_text_pos.x += title_controls_width;
-			} else {
-				icon_pos.x = title_style->get_content_inset(SIDE_LEFT);
-				title_text_pos.x += icon_size.width + h_separation;
-			}
+			icon_pos.x = title_style->get_content_inset(SIDE_LEFT);
+			title_text_pos.x += icon_size.width + h_separation;
 			icon->draw_rect(ci, Rect2(title_rect.position + icon_pos, icon_size));
 
 			Color font_color = folded ? theme_cache.title_collapsed_font_color : theme_cache.title_font_color;
@@ -368,7 +348,6 @@ void FoldableContainer::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_SORT_CHILDREN: {
-			bool rtl = is_layout_rtl();
 			const Vector2 size = get_size();
 			const Ref<StyleBox> title_style = _get_title_style();
 
@@ -376,12 +355,8 @@ void FoldableContainer::_notification(int p_what) {
 			if (title_count > 0) {
 				int h_separation = MAX(theme_cache.h_separation, 0);
 				real_t offset = 0.0;
-				if (rtl) {
-					offset = title_style->get_content_inset(SIDE_LEFT);
-				} else {
-					offset = _get_title_controls_width();
-					offset = size.x - title_style->get_content_inset(SIDE_RIGHT) - offset;
-				}
+				offset = _get_title_controls_width();
+				offset = size.x - title_style->get_content_inset(SIDE_RIGHT) - offset;
 
 				real_t v_center = title_minimum_size.y * 0.5;
 				if (title_position == POSITION_BOTTOM) {
@@ -391,7 +366,7 @@ void FoldableContainer::_notification(int p_what) {
 				}
 
 				for (uint32_t i = 0; i < title_count; i++) {
-					Control *control = title_controls[rtl ? title_count - i - 1 : i];
+					Control *control = title_controls[i];
 					if (!control->is_visible()) {
 						continue;
 					}
@@ -405,7 +380,7 @@ void FoldableContainer::_notification(int p_what) {
 			}
 
 			Rect2 inner_rect;
-			inner_rect.position.x = rtl ? theme_cache.panel_style->get_content_inset(SIDE_RIGHT) : theme_cache.panel_style->get_content_inset(SIDE_LEFT);
+			inner_rect.position.x = (theme_cache.panel_style->get_content_inset(SIDE_LEFT));
 			inner_rect.size.x = size.x - theme_cache.panel_style->get_content_inset(SIDE_LEFT) - theme_cache.panel_style->get_content_inset(SIDE_RIGHT);
 			inner_rect.position.y = theme_cache.panel_style->get_content_inset(SIDE_TOP);
 
@@ -434,7 +409,6 @@ void FoldableContainer::_notification(int p_what) {
 			}
 		} break;
 
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_TRANSLATION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			_shape();
@@ -480,9 +454,7 @@ Ref<StyleBox> FoldableContainer::_get_title_style() const {
 
 Ref<Texture2D> FoldableContainer::_get_title_icon() const {
 	if (!folded) {
-		return (title_position == POSITION_TOP) ? theme_cache.expanded_arrow : theme_cache.expanded_arrow_mirrored;
-	} else if (is_layout_rtl()) {
-		return theme_cache.folded_arrow_mirrored;
+		return (title_position == POSITION_TOP) ? theme_cache.expanded_arrow : theme_cache.expanded_arrow_bottom;
 	}
 	return theme_cache.folded_arrow;
 }
@@ -542,26 +514,10 @@ void FoldableContainer::_shape() {
 	text_buf->clear();
 	text_buf->set_width(-1);
 
-	if (title_text_direction == TEXT_DIRECTION_INHERITED) {
-		text_buf->set_direction(is_layout_rtl() ? TextServer::DIRECTION_RTL : TextServer::DIRECTION_LTR);
-	} else {
-		text_buf->set_direction((TextServer::Direction)title_text_direction);
-	}
-	text_buf->set_horizontal_alignment(_get_actual_alignment());
+	text_buf->set_horizontal_alignment(title_alignment);
 	text_buf->set_text_overrun_behavior(overrun_behavior);
 	const String &lang = language.is_empty() ? _get_locale() : language;
 	text_buf->add_string(atr(title), font, font_size, lang);
-}
-
-HorizontalAlignment FoldableContainer::_get_actual_alignment() const {
-	if (is_layout_rtl()) {
-		if (title_alignment == HORIZONTAL_ALIGNMENT_RIGHT) {
-			return HORIZONTAL_ALIGNMENT_LEFT;
-		} else if (title_alignment == HORIZONTAL_ALIGNMENT_LEFT) {
-			return HORIZONTAL_ALIGNMENT_RIGHT;
-		}
-	}
-	return title_alignment;
 }
 
 void FoldableContainer::_update_group() {
@@ -598,8 +554,6 @@ void FoldableContainer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_title_alignment"), &FoldableContainer::get_title_alignment);
 	ClassDB::bind_method(D_METHOD("set_language", "language"), &FoldableContainer::set_language);
 	ClassDB::bind_method(D_METHOD("get_language"), &FoldableContainer::get_language);
-	ClassDB::bind_method(D_METHOD("set_title_text_direction", "text_direction"), &FoldableContainer::set_title_text_direction);
-	ClassDB::bind_method(D_METHOD("get_title_text_direction"), &FoldableContainer::get_title_text_direction);
 	ClassDB::bind_method(D_METHOD("set_title_text_overrun_behavior", "overrun_behavior"), &FoldableContainer::set_title_text_overrun_behavior);
 	ClassDB::bind_method(D_METHOD("get_title_text_overrun_behavior"), &FoldableContainer::get_title_text_overrun_behavior);
 	ClassDB::bind_method(D_METHOD("set_title_position", "title_position"), &FoldableContainer::set_title_position);
@@ -618,8 +572,7 @@ void FoldableContainer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "title_text_overrun_behavior", PROPERTY_HINT_ENUM, "Trim Nothing,Trim Characters,Trim Words,Ellipsis,Word Ellipsis"), "set_title_text_overrun_behavior", "get_title_text_overrun_behavior");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "foldable_group", PROPERTY_HINT_RESOURCE_TYPE, FoldableGroup::get_class_static()), "set_foldable_group", "get_foldable_group");
 
-	ADD_GROUP("BiDi", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "title_text_direction", PROPERTY_HINT_ENUM, "Auto,Left-to-Right,Right-to-Left,Inherited"), "set_title_text_direction", "get_title_text_direction");
+	ADD_GROUP("Localization", "");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "language", PROPERTY_HINT_LOCALE_ID), "set_language", "get_language");
 
 	BIND_ENUM_CONSTANT(POSITION_TOP);
@@ -642,9 +595,8 @@ void FoldableContainer::_bind_methods() {
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_COLOR, FoldableContainer, title_font_outline_color, "font_outline_color");
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_ICON, FoldableContainer, expanded_arrow);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_ICON, FoldableContainer, expanded_arrow_mirrored);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_ICON, FoldableContainer, expanded_arrow_bottom);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_ICON, FoldableContainer, folded_arrow);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_ICON, FoldableContainer, folded_arrow_mirrored);
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, FoldableContainer, icon_max_width);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, FoldableContainer, h_separation);

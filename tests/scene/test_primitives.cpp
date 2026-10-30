@@ -744,17 +744,6 @@ TEST_CASE("[SceneTree][Primitive][Text] Text Primitive") {
 				text->get_autowrap_mode() == TextServer::AUTOWRAP_ARBITRARY ||
 				text->get_autowrap_mode() == TextServer::AUTOWRAP_WORD ||
 				text->get_autowrap_mode() == TextServer::AUTOWRAP_WORD_SMART));
-		CHECK((text->get_text_direction() == TextServer::DIRECTION_AUTO ||
-				text->get_text_direction() == TextServer::DIRECTION_LTR ||
-				text->get_text_direction() == TextServer::DIRECTION_RTL));
-		CHECK((text->get_structured_text_bidi_override() == TextServer::STRUCTURED_TEXT_DEFAULT ||
-				text->get_structured_text_bidi_override() == TextServer::STRUCTURED_TEXT_URI ||
-				text->get_structured_text_bidi_override() == TextServer::STRUCTURED_TEXT_FILE ||
-				text->get_structured_text_bidi_override() == TextServer::STRUCTURED_TEXT_EMAIL ||
-				text->get_structured_text_bidi_override() == TextServer::STRUCTURED_TEXT_LIST ||
-				text->get_structured_text_bidi_override() == TextServer::STRUCTURED_TEXT_GDSCRIPT ||
-				text->get_structured_text_bidi_override() == TextServer::STRUCTURED_TEXT_CUSTOM));
-		CHECK(text->get_structured_text_bidi_override_options().size() >= 0);
 		CHECK(text->get_width() > 0);
 		CHECK(text->get_depth() > 0);
 		CHECK(text->get_curve_step() > 0);
@@ -763,7 +752,6 @@ TEST_CASE("[SceneTree][Primitive][Text] Text Primitive") {
 
 	SUBCASE("[Primitive][Text] Change the properties of the mesh.") {
 		Ref<Font> font = memnew(Font);
-		Array options{};
 		Point2 offset{ 30.8, 104.23 };
 		text->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 		text->set_vertical_alignment(VERTICAL_ALIGNMENT_BOTTOM);
@@ -772,10 +760,7 @@ TEST_CASE("[SceneTree][Primitive][Text] Text Primitive") {
 		text->set_font_size(12);
 		text->set_line_spacing(1.7f);
 		text->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
-		text->set_text_direction(TextServer::DIRECTION_RTL);
 		text->set_language("French");
-		text->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_EMAIL);
-		text->set_structured_text_bidi_override_options(options);
 		text->set_uppercase(true);
 		real_t width{ 0.6 };
 		real_t depth{ 1.7 };
@@ -789,15 +774,12 @@ TEST_CASE("[SceneTree][Primitive][Text] Text Primitive") {
 
 		CHECK(text->get_horizontal_alignment() == HORIZONTAL_ALIGNMENT_RIGHT);
 		CHECK(text->get_vertical_alignment() == VERTICAL_ALIGNMENT_BOTTOM);
-		CHECK(text->get_text_direction() == TextServer::DIRECTION_RTL);
 		CHECK(text->get_text() == "Hello");
 		CHECK(text->get_font() == font);
 		CHECK(text->get_font_size() == 12);
 		CHECK(text->get_autowrap_mode() == TextServer::AUTOWRAP_WORD_SMART);
 		CHECK(text->get_language() == "French");
-		CHECK(text->get_structured_text_bidi_override() == TextServer::STRUCTURED_TEXT_EMAIL);
-		CHECK(text->get_structured_text_bidi_override_options() == options);
-		CHECK(text->is_uppercase() == true);
+		CHECK(text->is_uppercase());
 		CHECK(text->get_offset() == offset);
 		CHECK(text->get_line_spacing() == doctest::Approx(1.7f));
 		CHECK(text->get_width() == doctest::Approx(width));
@@ -808,46 +790,35 @@ TEST_CASE("[SceneTree][Primitive][Text] Text Primitive") {
 
 	SUBCASE("[Primitive][Text] Set objects multiple times.") {
 		Ref<Font> font = memnew(Font);
-		Array options{};
 		Point2 offset{ 30.8, 104.23 };
 
 		text->set_font(font);
 		text->set_font(font);
 		text->set_font(font);
-		text->set_structured_text_bidi_override_options(options);
-		text->set_structured_text_bidi_override_options(options);
-		text->set_structured_text_bidi_override_options(options);
 		text->set_offset(offset);
 		text->set_offset(offset);
 		text->set_offset(offset);
 
 		CHECK(text->get_font() == font);
-		CHECK(text->get_structured_text_bidi_override_options() == options);
 		CHECK(text->get_offset() == offset);
 	}
 
 	SUBCASE("[Primitive][Text] Set then change objects.") {
 		Ref<Font> font1 = memnew(Font);
 		Ref<Font> font2 = memnew(Font);
-		Array options1{};
-		Array options2{};
 		Point2 offset1{ 30.8, 104.23 };
 		Point2 offset2{ -30.8, -104.23 };
 
 		text->set_font(font1);
-		text->set_structured_text_bidi_override_options(options1);
 		text->set_offset(offset1);
 
 		CHECK(text->get_font() == font1);
-		CHECK(text->get_structured_text_bidi_override_options() == options1);
 		CHECK(text->get_offset() == offset1);
 
 		text->set_font(font2);
-		text->set_structured_text_bidi_override_options(options2);
 		text->set_offset(offset2);
 
 		CHECK(text->get_font() == font2);
-		CHECK(text->get_structured_text_bidi_override_options() == options2);
 		CHECK(text->get_offset() == offset2);
 	}
 

@@ -79,11 +79,7 @@ void ControlPositioningWarning::_update_toggler() {
 		arrow = get_theme_icon(SNAME("arrow"), SNAME("Tree"));
 		set_tooltip_text(TTRC("Collapse positioning hint."));
 	} else {
-		if (is_layout_rtl()) {
-			arrow = get_theme_icon(SNAME("arrow_collapsed"), SNAME("Tree"));
-		} else {
-			arrow = get_theme_icon(SNAME("arrow_collapsed_mirrored"), SNAME("Tree"));
-		}
+		arrow = get_editor_theme_icon(SNAME("gui_tree_arrow_left"));
 		set_tooltip_text(TTRC("Expand positioning hint."));
 	}
 
@@ -110,7 +106,6 @@ void ControlPositioningWarning::gui_input(const Ref<InputEvent> &p_event) {
 
 void ControlPositioningWarning::_notification(int p_notification) {
 	switch (p_notification) {
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_TRANSLATION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED:
 			_update_warning();
@@ -545,9 +540,6 @@ void ControlEditorPopupButton::toggled(bool p_pressed) {
 	popup_panel->set_size(Size2(size.width, 0));
 	Point2 gp = get_screen_position();
 	gp.y += size.y;
-	if (is_layout_rtl()) {
-		gp.x += size.width - popup_panel->get_size().width;
-	}
 	popup_panel->set_position(gp);
 
 	popup_panel->popup();
@@ -559,10 +551,6 @@ void ControlEditorPopupButton::_popup_visibility_changed(bool p_visible) {
 
 void ControlEditorPopupButton::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-			popup_panel->set_layout_direction((Window::LayoutDirection)get_layout_direction());
-		} break;
-
 		case NOTIFICATION_VISIBILITY_CHANGED: {
 			if (!is_visible_in_tree()) {
 				popup_panel->hide();
@@ -675,7 +663,6 @@ AnchorPresetPicker::AnchorPresetPicker() {
 	add_child(main_vb);
 
 	HBoxContainer *top_row = memnew(HBoxContainer);
-	top_row->set_layout_direction(LayoutDirection::LAYOUT_DIRECTION_LTR);
 	top_row->set_alignment(BoxContainer::ALIGNMENT_CENTER);
 	top_row->add_theme_constant_override("separation", grid_separation);
 	main_vb->add_child(top_row);
@@ -687,7 +674,6 @@ AnchorPresetPicker::AnchorPresetPicker() {
 	_add_row_button(top_row, PRESET_TOP_WIDE, TTRC("Top Wide"));
 
 	HBoxContainer *mid_row = memnew(HBoxContainer);
-	mid_row->set_layout_direction(LayoutDirection::LAYOUT_DIRECTION_LTR);
 	mid_row->set_alignment(BoxContainer::ALIGNMENT_CENTER);
 	mid_row->add_theme_constant_override("separation", grid_separation);
 	main_vb->add_child(mid_row);
@@ -699,7 +685,6 @@ AnchorPresetPicker::AnchorPresetPicker() {
 	_add_row_button(mid_row, PRESET_HCENTER_WIDE, TTRC("HCenter Wide"));
 
 	HBoxContainer *bot_row = memnew(HBoxContainer);
-	bot_row->set_layout_direction(LayoutDirection::LAYOUT_DIRECTION_LTR);
 	bot_row->set_alignment(BoxContainer::ALIGNMENT_CENTER);
 	bot_row->add_theme_constant_override("separation", grid_separation);
 	main_vb->add_child(bot_row);
@@ -713,7 +698,6 @@ AnchorPresetPicker::AnchorPresetPicker() {
 	_add_separator(main_vb, memnew(HSeparator));
 
 	HBoxContainer *extra_row = memnew(HBoxContainer);
-	extra_row->set_layout_direction(LayoutDirection::LAYOUT_DIRECTION_LTR);
 	extra_row->set_alignment(BoxContainer::ALIGNMENT_CENTER);
 	extra_row->add_theme_constant_override("separation", grid_separation);
 	main_vb->add_child(extra_row);

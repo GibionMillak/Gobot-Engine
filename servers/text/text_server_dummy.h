@@ -93,7 +93,7 @@ public:
 	virtual void font_draw_glyph(const RID &p_font_rid, const RID &p_canvas, int64_t p_size, const Vector2 &p_pos, int64_t p_index, const Color &p_color, float p_oversampling) const override {}
 	virtual void font_draw_glyph_outline(const RID &p_font_rid, const RID &p_canvas, int64_t p_size, int64_t p_outline_size, const Vector2 &p_pos, int64_t p_index, const Color &p_color, float p_oversampling) const override {}
 
-	virtual RID create_shaped_text(TextServer::Direction p_direction, TextServer::Orientation p_orientation) override { return RID(); }
+	virtual RID create_shaped_text(TextServer::Orientation p_orientation) override { return RID(); }
 	virtual void shaped_text_clear(const RID &p_shaped) override {}
 	virtual RID shaped_text_duplicate(const RID &p_shaped) override { return RID(); }
 	virtual bool shaped_text_add_string(const RID &p_shaped, const String &p_text, const TypedArray<RID> &p_fonts, int64_t p_size, const Dictionary &p_opentype_features, const String &p_language, const Variant &p_meta) override { return false; }

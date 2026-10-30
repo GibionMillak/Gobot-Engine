@@ -169,10 +169,6 @@ bool TextServerFallback::_is_locale_using_support_data(const String &p_locale) c
 	return false; // No data support.
 }
 
-bool TextServerFallback::_is_locale_right_to_left(const String &p_locale) const {
-	return false; // No RTL support.
-}
-
 _FORCE_INLINE_ void TextServerFallback::_insert_feature(const StringName &p_name, int32_t p_tag) {
 	feature_sets.insert(p_name, p_tag);
 	feature_sets_inv.insert(p_tag, p_name);
@@ -3328,7 +3324,6 @@ Dictionary TextServerFallback::_font_supported_variation_list(const RID &p_font_
 
 void TextServerFallback::invalidate(ShapedTextDataFallback *p_shaped) {
 	p_shaped->valid.clear();
-	p_shaped->sort_valid = false;
 	p_shaped->line_breaks_valid = false;
 	p_shaped->justification_ops_valid = false;
 	p_shaped->ascent = 0.0;
@@ -3337,7 +3332,6 @@ void TextServerFallback::invalidate(ShapedTextDataFallback *p_shaped) {
 	p_shaped->upos = 0.0;
 	p_shaped->uthk = 0.0;
 	p_shaped->glyphs.clear();
-	p_shaped->glyphs_logical.clear();
 	p_shaped->runs.clear();
 	p_shaped->runs_dirty = true;
 }
@@ -3363,12 +3357,10 @@ void TextServerFallback::full_copy(ShapedTextDataFallback *p_shaped) {
 	p_shaped->parent = RID();
 }
 
-RID TextServerFallback::_create_shaped_text(TextServer::Direction p_direction, TextServer::Orientation p_orientation) {
+RID TextServerFallback::_create_shaped_text(TextServer::Orientation p_orientation) {
 	_THREAD_SAFE_METHOD_
-	ERR_FAIL_COND_V_MSG(p_direction == DIRECTION_INHERITED, RID(), "Invalid text direction.");
 
 	ShapedTextDataFallback *sd = memnew(ShapedTextDataFallback);
-	sd->direction = p_direction;
 	sd->orientation = p_orientation;
 
 	return shaped_owner.make_rid(sd);
@@ -3406,12 +3398,9 @@ RID TextServerFallback::_shaped_text_duplicate(const RID &p_shaped) {
 	new_sd->last_span = sd->last_span;
 	new_sd->text = sd->text;
 	new_sd->orientation = sd->orientation;
-	new_sd->direction = sd->direction;
 	new_sd->custom_punct = sd->custom_punct;
-	new_sd->para_direction = sd->para_direction;
 	new_sd->line_breaks_valid = sd->line_breaks_valid;
 	new_sd->justification_ops_valid = sd->justification_ops_valid;
-	new_sd->sort_valid = false;
 	new_sd->upos = sd->upos;
 	new_sd->uthk = sd->uthk;
 	new_sd->runs.clear();
@@ -3428,21 +3417,6 @@ RID TextServerFallback::_shaped_text_duplicate(const RID &p_shaped) {
 	new_sd->valid.clear();
 
 	return shaped_owner.make_rid(new_sd);
-}
-
-void TextServerFallback::_shaped_text_set_direction(const RID &p_shaped, TextServer::Direction p_direction) {
-	ERR_FAIL_COND_MSG(p_direction == DIRECTION_INHERITED, "Invalid text direction.");
-	if (p_direction == DIRECTION_RTL) {
-		ERR_PRINT_ONCE("Right-to-left layout is not supported by this text server.");
-	}
-}
-
-TextServer::Direction TextServerFallback::_shaped_text_get_direction(const RID &p_shaped) const {
-	return TextServer::DIRECTION_LTR;
-}
-
-TextServer::Direction TextServerFallback::_shaped_text_get_inferred_direction(const RID &p_shaped) const {
-	return TextServer::DIRECTION_LTR;
 }
 
 void TextServerFallback::_shaped_text_set_custom_punctuation(const RID &p_shaped, const String &p_punct) {
@@ -3492,10 +3466,6 @@ void TextServerFallback::_shaped_text_set_orientation(const RID &p_shaped, TextS
 		sd->orientation = p_orientation;
 		invalidate(sd);
 	}
-}
-
-void TextServerFallback::_shaped_text_set_bidi_override(const RID &p_shaped, const Array &p_override) {
-	// No BiDi support, ignore.
 }
 
 TextServer::Orientation TextServerFallback::_shaped_text_get_orientation(const RID &p_shaped) const {
@@ -3799,20 +3769,6 @@ String TextServerFallback::_shaped_get_run_language(const RID &p_shaped, int64_t
 	}
 	ERR_FAIL_INDEX_V(span_idx, span_sd->spans.size(), String());
 	return span_sd->spans[span_idx].language;
-}
-
-TextServer::Direction TextServerFallback::_shaped_get_run_direction(const RID &p_shaped, int64_t p_index) const {
-	ShapedTextDataFallback *sd = shaped_owner.get_or_null(p_shaped);
-	ERR_FAIL_NULL_V(sd, TextServer::DIRECTION_LTR);
-	MutexLock lock(sd->mutex);
-	if (!sd->valid.is_set()) {
-		const_cast<TextServerFallback *>(this)->_shaped_text_shape(p_shaped);
-	}
-	if (sd->runs_dirty) {
-		_generate_runs(sd);
-	}
-	ERR_FAIL_INDEX_V(p_index, sd->runs.size(), TextServer::DIRECTION_LTR);
-	return TextServer::DIRECTION_LTR;
 }
 
 Variant TextServerFallback::_shaped_get_run_object(const RID &p_shaped, int64_t p_index) const {
@@ -4133,12 +4089,9 @@ RID TextServerFallback::_shaped_text_substr(const RID &p_shaped, int64_t p_start
 	new_sd->end = p_start + p_length;
 
 	new_sd->orientation = sd->orientation;
-	new_sd->direction = sd->direction;
 	new_sd->custom_punct = sd->custom_punct;
-	new_sd->para_direction = sd->para_direction;
 	new_sd->line_breaks_valid = sd->line_breaks_valid;
 	new_sd->justification_ops_valid = sd->justification_ops_valid;
-	new_sd->sort_valid = false;
 	new_sd->upos = sd->upos;
 	new_sd->uthk = sd->uthk;
 	for (int i = 0; i < TextServer::SPACING_MAX; i++) {
@@ -4249,25 +4202,14 @@ double TextServerFallback::_shaped_text_fit_to_width(const RID &p_shaped, double
 
 	if (p_jst_flags.has_flag(JUSTIFICATION_AFTER_LAST_TAB)) {
 		int start, end, delta;
-		if (sd->para_direction == DIRECTION_LTR) {
-			start = sd->glyphs.size() - 1;
-			end = -1;
-			delta = -1;
-		} else {
-			start = 0;
-			end = sd->glyphs.size();
-			delta = +1;
-		}
+		start = sd->glyphs.size() - 1;
+		end = -1;
+		delta = -1;
 
 		for (int i = start; i != end; i += delta) {
 			if ((sd->glyphs[i].flags & GRAPHEME_IS_TAB) == GRAPHEME_IS_TAB) {
-				if (sd->para_direction == DIRECTION_LTR) {
-					start_pos = i;
-					break;
-				} else {
-					end_pos = i;
-					break;
-				}
+				start_pos = i;
+				break;
 			}
 		}
 	}
@@ -4363,15 +4305,9 @@ double TextServerFallback::_shaped_text_tab_align(const RID &p_shaped, const Pac
 	double off = 0.0;
 
 	int start, end, delta;
-	if (sd->para_direction == DIRECTION_LTR) {
-		start = 0;
-		end = sd->glyphs.size();
-		delta = +1;
-	} else {
-		start = sd->glyphs.size() - 1;
-		end = -1;
-		delta = -1;
-	}
+	start = 0;
+	end = sd->glyphs.size();
+	delta = +1;
 
 	Glyph *gl = sd->glyphs.ptrw();
 

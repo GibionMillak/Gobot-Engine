@@ -76,7 +76,6 @@ protected:
 	GDVIRTUAL0RC(Array, _create_mesh_array)
 
 	Vector2 get_uv2_scale(Vector2 p_margin_scale = Vector2(1.0, 1.0)) const;
-	float get_lightmap_texel_size() const;
 	virtual void _update_lightmap_size() {}
 
 	void _on_settings_changed();
@@ -592,9 +591,6 @@ private:
 	VerticalAlignment vertical_alignment = VERTICAL_ALIGNMENT_CENTER;
 	bool uppercase = false;
 	String language;
-	TextServer::Direction text_direction = TextServer::DIRECTION_AUTO;
-	TextServer::StructuredTextParser st_parser = TextServer::STRUCTURED_TEXT_DEFAULT;
-	Array st_args;
 
 	real_t depth = 0.05;
 	real_t pixel_size = 0.01;
@@ -615,8 +611,6 @@ protected:
 	virtual void _create_mesh_array(Array &p_arr) const override;
 
 public:
-	GDVIRTUAL2RC(TypedArray<Vector3i>, _structured_text_parser, Array, String)
-
 	TextMesh();
 	~TextMesh();
 
@@ -645,17 +639,8 @@ public:
 	void set_justification_flags(BitField<TextServer::JustificationFlag> p_flags);
 	BitField<TextServer::JustificationFlag> get_justification_flags() const;
 
-	void set_text_direction(TextServer::Direction p_text_direction);
-	TextServer::Direction get_text_direction() const;
-
 	void set_language(const String &p_language);
 	String get_language() const;
-
-	void set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser);
-	TextServer::StructuredTextParser get_structured_text_bidi_override() const;
-
-	void set_structured_text_bidi_override_options(const Array &p_args);
-	Array get_structured_text_bidi_override_options() const;
 
 	void set_uppercase(bool p_uppercase);
 	bool is_uppercase() const;

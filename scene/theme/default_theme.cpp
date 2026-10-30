@@ -221,16 +221,6 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_stylebox(SceneStringName(pressed), "OptionButton", sb_optbutton_pressed);
 	theme->set_stylebox("disabled", "OptionButton", sb_optbutton_disabled);
 
-	Ref<StyleBox> sb_optbutton_normal_mirrored = make_color_stylebox(style_normal_color, 2 * default_margin, default_margin, 2 * default_margin, default_margin);
-	Ref<StyleBox> sb_optbutton_hover_mirrored = make_color_stylebox(style_hover_color, 2 * default_margin, default_margin, 2 * default_margin, default_margin);
-	Ref<StyleBox> sb_optbutton_pressed_mirrored = make_color_stylebox(style_pressed_color, 2 * default_margin, default_margin, 2 * default_margin, default_margin);
-	Ref<StyleBox> sb_optbutton_disabled_mirrored = make_color_stylebox(style_disabled_color, 2 * default_margin, default_margin, 2 * default_margin, default_margin);
-
-	theme->set_stylebox("normal_mirrored", "OptionButton", sb_optbutton_normal_mirrored);
-	theme->set_stylebox("hover_mirrored", "OptionButton", sb_optbutton_hover_mirrored);
-	theme->set_stylebox("pressed_mirrored", "OptionButton", sb_optbutton_pressed_mirrored);
-	theme->set_stylebox("disabled_mirrored", "OptionButton", sb_optbutton_disabled_mirrored);
-
 	theme->set_icon("arrow", "OptionButton", icons["option_button_arrow"]);
 
 	theme->set_font(SceneStringName(font), "OptionButton", Ref<Font>());
@@ -327,11 +317,6 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_icon("checked_disabled", "CheckButton", icons["toggle_on_disabled"]);
 	theme->set_icon("unchecked", "CheckButton", icons["toggle_off"]);
 	theme->set_icon("unchecked_disabled", "CheckButton", icons["toggle_off_disabled"]);
-
-	theme->set_icon("checked_mirrored", "CheckButton", icons["toggle_on_mirrored"]);
-	theme->set_icon("checked_disabled_mirrored", "CheckButton", icons["toggle_on_disabled_mirrored"]);
-	theme->set_icon("unchecked_mirrored", "CheckButton", icons["toggle_off_mirrored"]);
-	theme->set_icon("unchecked_disabled_mirrored", "CheckButton", icons["toggle_off_disabled_mirrored"]);
 
 	theme->set_font(SceneStringName(font), "CheckButton", Ref<Font>());
 	theme->set_font_size(SceneStringName(font_size), "CheckButton", -1);
@@ -774,7 +759,6 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_icon("radio_unchecked", "PopupMenu", icons["radio_unchecked"]);
 	theme->set_icon("radio_unchecked_disabled", "PopupMenu", icons["radio_unchecked_disabled"]);
 	theme->set_icon("submenu", "PopupMenu", icons["popup_menu_arrow_right"]);
-	theme->set_icon("submenu_mirrored", "PopupMenu", icons["popup_menu_arrow_left"]);
 	theme->set_icon("search", "PopupMenu", icons["search"]);
 
 	theme->set_font(SceneStringName(font), "PopupMenu", Ref<Font>());
@@ -904,7 +888,6 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_icon("select_arrow", "Tree", icons["option_button_arrow"]);
 	theme->set_icon("arrow", "Tree", icons["arrow_down"]);
 	theme->set_icon("arrow_collapsed", "Tree", icons["arrow_right"]);
-	theme->set_icon("arrow_collapsed_mirrored", "Tree", icons["arrow_left"]);
 	theme->set_icon("scroll_hint", "Tree", icons["scroll_hint_vertical"]);
 
 	theme->set_font("title_button_font", "Tree", Ref<Font>());
@@ -1386,9 +1369,8 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_color("font_outline_color", "FoldableContainer", Color(1, 1, 1));
 
 	theme->set_icon("expanded_arrow", "FoldableContainer", icons["arrow_down"]);
-	theme->set_icon("expanded_arrow_mirrored", "FoldableContainer", icons["arrow_up"]);
+	theme->set_icon("expanded_arrow_bottom", "FoldableContainer", icons["arrow_up"]);
 	theme->set_icon("folded_arrow", "FoldableContainer", icons["arrow_right"]);
-	theme->set_icon("folded_arrow_mirrored", "FoldableContainer", icons["arrow_left"]);
 
 	theme->set_constant("outline_size", "FoldableContainer", 0);
 	theme->set_constant("h_separation", "FoldableContainer", Math::round(2 * scale));

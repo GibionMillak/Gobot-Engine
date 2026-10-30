@@ -289,8 +289,6 @@ void GridContainer::_resort() {
 		row_remaining_pixel = remaining_space.height - row_expanded.size() * row_expand;
 	}
 
-	bool rtl = is_layout_rtl();
-
 	int col_ofs = 0;
 	int row_ofs = 0;
 
@@ -327,11 +325,7 @@ void GridContainer::_resort() {
 		valid_controls_index++;
 
 		if (col == 0) {
-			if (rtl) {
-				col_ofs = get_size().width;
-			} else {
-				col_ofs = 0;
-			}
+			col_ofs = 0;
 			if (row > 0) {
 				row_ofs += (row_expanded.has(row - 1) ? row_expand : row_minh[row - 1]) + theme_cache.v_separation;
 
@@ -354,11 +348,7 @@ void GridContainer::_resort() {
 			s.y++;
 		}
 
-		if (rtl) {
-			Point2 p(col_ofs - s.width, row_ofs);
-			fit_child_in_rect(c, Rect2(p, s));
-			col_ofs -= s.width + theme_cache.h_separation;
-		} else {
+		{
 			Point2 p(col_ofs, row_ofs);
 			fit_child_in_rect(c, Rect2(p, s));
 			col_ofs += s.width + theme_cache.h_separation;
@@ -377,8 +367,7 @@ void GridContainer::_notification(int p_what) {
 			update_minimum_size();
 		} break;
 
-		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
+		case NOTIFICATION_TRANSLATION_CHANGED: {
 			queue_sort();
 		} break;
 	}

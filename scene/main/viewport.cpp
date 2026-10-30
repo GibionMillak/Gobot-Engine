@@ -387,7 +387,6 @@ void Viewport::_sub_window_update(Window *p_window) {
 		if (title_space > 0) {
 			TextLine title_text = TextLine(p_window->get_displayed_title(), title_font, font_size);
 			title_text.set_width(title_space);
-			title_text.set_direction(p_window->is_layout_rtl() ? TextServer::DIRECTION_RTL : TextServer::DIRECTION_LTR);
 			int x = (r.size.width - title_text.get_size().x) / 2;
 			int y = (-title_height - title_text.get_size().y) / 2;
 
@@ -1742,35 +1741,6 @@ void Viewport::_gui_call_input(Control *p_control, const Ref<InputEvent> &p_inpu
 	}
 }
 
-void Viewport::_gui_call_notification(Control *p_control, int p_what) {
-	CanvasItem *ci = p_control;
-	while (ci) {
-		Control *control = Object::cast_to<Control>(ci);
-		if (control) {
-			if (control->get_mouse_filter_with_override() != Control::MOUSE_FILTER_IGNORE) {
-				control->notification(p_what);
-			}
-
-			if (!control->is_inside_tree()) {
-				break;
-			}
-
-			if (!control->is_inside_tree() || control->is_set_as_top_level()) {
-				break;
-			}
-			if (control->get_mouse_filter_with_override() == Control::MOUSE_FILTER_STOP) {
-				break;
-			}
-		}
-
-		if (ci->is_set_as_top_level()) {
-			break;
-		}
-
-		ci = ci->get_parent_item();
-	}
-}
-
 // `gui_find_control` doesn't take embedded windows into account. So the caller of this function
 // needs to make sure, that there is no embedded window at the specified position.
 Control *Viewport::gui_find_control(const Point2 &p_global) {
@@ -2480,12 +2450,6 @@ Control *Viewport::_gui_get_drag_preview() {
 
 void Viewport::_gui_remove_root_control(List<Control *>::Element *RI) {
 	gui.roots.erase(RI);
-}
-
-void Viewport::_gui_unfocus_control(Control *p_control) {
-	if (gui.key_focus == p_control) {
-		gui.key_focus->release_focus();
-	}
 }
 
 void Viewport::_gui_hide_control(Control *p_control) {
@@ -5228,8 +5192,8 @@ void Viewport::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_2d_transforms_to_pixel"), "set_snap_2d_transforms_to_pixel", "is_snap_2d_transforms_to_pixel_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "snap_2d_vertices_to_pixel"), "set_snap_2d_vertices_to_pixel", "is_snap_2d_vertices_to_pixel_enabled");
 	ADD_GROUP("Rendering", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_2d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2Ã— (Average),4Ã— (Slow),8Ã— (Slowest)")), "set_msaa_2d", "get_msaa_2d");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_3d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2Ã— (Average),4Ã— (Slow),8Ã— (Slowest)")), "set_msaa_3d", "get_msaa_3d");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_2d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2× (Average),4× (Slow),8× (Slowest)")), "set_msaa_2d", "get_msaa_2d");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "msaa_3d", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2× (Average),4× (Slow),8× (Slowest)")), "set_msaa_3d", "get_msaa_3d");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "screen_space_aa", PROPERTY_HINT_ENUM, "Disabled (Fastest),FXAA (Fast),SMAA (Average)"), "set_screen_space_aa", "get_screen_space_aa");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_taa"), "set_use_taa", "is_using_taa");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_debanding"), "set_use_debanding", "is_using_debanding");
@@ -5243,7 +5207,7 @@ void Viewport::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "scaling_3d_mode", PROPERTY_HINT_ENUM, "Nearest (Fastest):5,Bilinear (Fastest):0,FSR 1.0 (Fast):1,FSR 2.2 (Slow):2,MetalFX (Spatial - Fast):3,MetalFX (Temporal - Slow):4"), "set_scaling_3d_mode", "get_scaling_3d_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "scaling_3d_scale", PROPERTY_HINT_RANGE, "0.1,2.0,0.0001"), "set_scaling_3d_scale", "get_scaling_3d_scale");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "texture_mipmap_bias", PROPERTY_HINT_RANGE, "-2,2,0.001"), "set_texture_mipmap_bias", "get_texture_mipmap_bias");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "anisotropic_filtering_level", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2Ã— (Faster),4Ã— (Fast),8Ã— (Average),16x (Slow)")), "set_anisotropic_filtering_level", "get_anisotropic_filtering_level");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "anisotropic_filtering_level", PROPERTY_HINT_ENUM, String::utf8("Disabled (Fastest),2× (Faster),4× (Fast),8× (Average),16x (Slow)")), "set_anisotropic_filtering_level", "get_anisotropic_filtering_level");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "fsr_sharpness", PROPERTY_HINT_RANGE, "0,2,0.01"), "set_fsr_sharpness", "get_fsr_sharpness");
 	ADD_GROUP("Variable Rate Shading", "vrs_");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "vrs_mode", PROPERTY_HINT_ENUM, "Disabled,Texture"), "set_vrs_mode", "get_vrs_mode");

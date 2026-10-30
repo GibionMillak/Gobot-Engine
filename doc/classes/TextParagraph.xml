@@ -134,12 +134,6 @@
 				Returns drop cap bounding box size.
 			</description>
 		</method>
-		<method name="get_inferred_direction" qualifiers="const">
-			<return type="int" enum="TextServer.Direction" />
-			<description>
-				Returns the text writing direction inferred by the BiDi algorithm.
-			</description>
-		</method>
 		<method name="get_line_ascent" qualifiers="const">
 			<return type="float" />
 			<param index="0" name="line" type="int" />
@@ -265,14 +259,6 @@
 				Sets new size and alignment of embedded object.
 			</description>
 		</method>
-		<method name="set_bidi_override">
-			<return type="void" />
-			<param index="0" name="override" type="Array" />
-			<description>
-				Overrides BiDi for the structured text.
-				Override ranges should cover full source text without overlaps. BiDi algorithm will be used on each range separately.
-			</description>
-		</method>
 		<method name="set_dropcap">
 			<return type="bool" />
 			<param index="0" name="text" type="String" />
@@ -301,9 +287,6 @@
 		</member>
 		<member name="custom_punctuation" type="String" setter="set_custom_punctuation" getter="get_custom_punctuation" default="&quot;&quot;">
 			Custom punctuation character list, used for word breaking. If set to empty string, server defaults are used.
-		</member>
-		<member name="direction" type="int" setter="set_direction" getter="get_direction" enum="TextServer.Direction" default="0">
-			Text writing direction.
 		</member>
 		<member name="ellipsis_char" type="String" setter="set_ellipsis_char" getter="get_ellipsis_char" default="&quot;…&quot;">
 			Ellipsis character used for text clipping.

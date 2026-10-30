@@ -345,10 +345,6 @@ Vector2 PrimitiveMesh::get_uv2_scale(Vector2 p_margin_scale) const {
 	return uv2_scale;
 }
 
-float PrimitiveMesh::get_lightmap_texel_size() const {
-	return texel_size;
-}
-
 void PrimitiveMesh::_on_settings_changed() {
 	float new_texel_size = float(GLOBAL_GET("rendering/lightmapping/primitive_meshes/texel_size"));
 	if (new_texel_size <= 0.0) {
@@ -3230,19 +3226,10 @@ void TextMesh::_create_mesh_array(Array &p_arr) const {
 	// Update text buffer.
 	if (dirty_text) {
 		TS->shaped_text_clear(text_rid);
-		TS->shaped_text_set_direction(text_rid, text_direction);
 
 		const String &lang = language.is_empty() ? _get_locale() : language;
 		String txt = (uppercase) ? TS->string_to_upper(xl_text, lang) : xl_text;
 		TS->shaped_text_add_string(text_rid, txt, font->get_rids(), font_size, font->get_opentype_features(), lang);
-
-		TypedArray<Vector3i> stt;
-		if (st_parser == TextServer::STRUCTURED_TEXT_CUSTOM) {
-			GDVIRTUAL_CALL(_structured_text_parser, st_args, txt, stt);
-		} else {
-			stt = TS->parse_structured_text(st_parser, st_args, txt);
-		}
-		TS->shaped_text_set_bidi_override(text_rid, stt);
 
 		dirty_text = false;
 		dirty_font = false;
@@ -3649,17 +3636,8 @@ void TextMesh::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_curve_step", "curve_step"), &TextMesh::set_curve_step);
 	ClassDB::bind_method(D_METHOD("get_curve_step"), &TextMesh::get_curve_step);
 
-	ClassDB::bind_method(D_METHOD("set_text_direction", "direction"), &TextMesh::set_text_direction);
-	ClassDB::bind_method(D_METHOD("get_text_direction"), &TextMesh::get_text_direction);
-
 	ClassDB::bind_method(D_METHOD("set_language", "language"), &TextMesh::set_language);
 	ClassDB::bind_method(D_METHOD("get_language"), &TextMesh::get_language);
-
-	ClassDB::bind_method(D_METHOD("set_structured_text_bidi_override", "parser"), &TextMesh::set_structured_text_bidi_override);
-	ClassDB::bind_method(D_METHOD("get_structured_text_bidi_override"), &TextMesh::get_structured_text_bidi_override);
-
-	ClassDB::bind_method(D_METHOD("set_structured_text_bidi_override_options", "args"), &TextMesh::set_structured_text_bidi_override_options);
-	ClassDB::bind_method(D_METHOD("get_structured_text_bidi_override_options"), &TextMesh::get_structured_text_bidi_override_options);
 
 	ClassDB::bind_method(D_METHOD("set_uppercase", "enable"), &TextMesh::set_uppercase);
 	ClassDB::bind_method(D_METHOD("is_uppercase"), &TextMesh::is_uppercase);
@@ -3682,11 +3660,8 @@ void TextMesh::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "width", PROPERTY_HINT_NONE, "suffix:px"), "set_width", "get_width");
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "offset", PROPERTY_HINT_NONE, "suffix:px"), "set_offset", "get_offset");
 
-	ADD_GROUP("BiDi", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_direction", PROPERTY_HINT_ENUM, "Auto,Left-to-Right,Right-to-Left"), "set_text_direction", "get_text_direction");
+	ADD_GROUP("Localization", "");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "language", PROPERTY_HINT_LOCALE_ID, ""), "set_language", "get_language");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "structured_text_bidi_override", PROPERTY_HINT_ENUM, "Default,URI,File,Email,List,None,Custom"), "set_structured_text_bidi_override", "get_structured_text_bidi_override");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "structured_text_bidi_override_options"), "set_structured_text_bidi_override_options", "get_structured_text_bidi_override_options");
 }
 
 void TextMesh::_notification(int p_what) {
@@ -3919,19 +3894,6 @@ real_t TextMesh::get_curve_step() const {
 	return curve_step;
 }
 
-void TextMesh::set_text_direction(TextServer::Direction p_text_direction) {
-	ERR_FAIL_COND((int)p_text_direction < -1 || (int)p_text_direction > 3);
-	if (text_direction != p_text_direction) {
-		text_direction = p_text_direction;
-		dirty_text = true;
-		request_update();
-	}
-}
-
-TextServer::Direction TextMesh::get_text_direction() const {
-	return text_direction;
-}
-
 void TextMesh::set_language(const String &p_language) {
 	if (language != p_language) {
 		language = p_language;
@@ -3942,30 +3904,6 @@ void TextMesh::set_language(const String &p_language) {
 
 String TextMesh::get_language() const {
 	return language;
-}
-
-void TextMesh::set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser) {
-	if (st_parser != p_parser) {
-		st_parser = p_parser;
-		dirty_text = true;
-		request_update();
-	}
-}
-
-TextServer::StructuredTextParser TextMesh::get_structured_text_bidi_override() const {
-	return st_parser;
-}
-
-void TextMesh::set_structured_text_bidi_override_options(const Array &p_args) {
-	if (st_args != p_args) {
-		st_args = Array(p_args);
-		dirty_text = true;
-		request_update();
-	}
-}
-
-Array TextMesh::get_structured_text_bidi_override_options() const {
-	return Array(st_args);
 }
 
 void TextMesh::set_uppercase(bool p_uppercase) {

@@ -535,7 +535,6 @@ class EditorInspectorSection : public Container {
 
 		Ref<Texture2D> arrow;
 		Ref<Texture2D> arrow_collapsed;
-		Ref<Texture2D> arrow_collapsed_mirrored;
 		Ref<Texture2D> icon_gui_revert;
 		Ref<Texture2D> icon_gui_checked;
 		Ref<Texture2D> icon_gui_unchecked;
@@ -924,7 +923,6 @@ public:
 	void update_properties_recursive();
 	void edit(Object *p_object);
 	Object *get_edited_object();
-	Object *get_next_edited_object();
 
 	void set_keying(bool p_active);
 	void set_read_only(bool p_read_only);
@@ -958,7 +956,6 @@ public:
 	int get_scroll_offset() const;
 
 	void set_property_prefix(const String &p_prefix);
-	String get_property_prefix() const;
 
 	void add_custom_property_description(const String &p_class, const String &p_property, const String &p_description);
 	String get_custom_property_description(const String &p_property) const;
@@ -966,7 +963,6 @@ public:
 	void remap_doc_property_class(const String &p_property_prefix, const String &p_class);
 
 	void set_object_class(const String &p_class);
-	String get_object_class() const;
 
 	void set_use_wide_editors(bool p_enable);
 	void set_root_inspector(EditorInspector *p_root_inspector);

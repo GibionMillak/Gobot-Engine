@@ -468,7 +468,6 @@ public:
 	void set_show_hidden_files(bool p_show);
 	bool is_showing_hidden_files() const;
 	void set_show_filename_filter(bool p_show);
-	bool get_show_filename_filter() const;
 
 	static void set_default_show_hidden_files(bool p_show);
 	static void set_default_display_mode(DisplayMode p_mode);

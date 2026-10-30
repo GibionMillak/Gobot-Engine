@@ -73,9 +73,6 @@ private:
 		String suffix;
 		Ref<TextParagraph> text_buf;
 		String language;
-		TextServer::StructuredTextParser st_parser = TextServer::STRUCTURED_TEXT_DEFAULT;
-		Array st_args;
-		Control::TextDirection text_direction = Control::TEXT_DIRECTION_INHERITED;
 		TextServer::AutowrapMode autowrap_mode = TextServer::AUTOWRAP_OFF;
 		BitField<TextServer::LineBreakFlag> autowrap_trim_flags = TextServer::BREAK_TRIM_START_EDGE_SPACES | TextServer::BREAK_TRIM_END_EDGE_SPACES;
 		bool dirty = true;
@@ -262,9 +259,6 @@ public:
 	void set_description(int p_column, String p_text);
 	String get_description(int p_column) const;
 
-	void set_text_direction(int p_column, Control::TextDirection p_text_direction);
-	Control::TextDirection get_text_direction(int p_column) const;
-
 	void set_autowrap_mode(int p_column, TextServer::AutowrapMode p_mode);
 	TextServer::AutowrapMode get_autowrap_mode(int p_column) const;
 
@@ -273,12 +267,6 @@ public:
 
 	void set_text_overrun_behavior(int p_column, TextServer::OverrunBehavior p_behavior);
 	TextServer::OverrunBehavior get_text_overrun_behavior(int p_column) const;
-
-	void set_structured_text_bidi_override(int p_column, TextServer::StructuredTextParser p_parser);
-	TextServer::StructuredTextParser get_structured_text_bidi_override(int p_column) const;
-
-	void set_structured_text_bidi_override_options(int p_column, const Array &p_args);
-	Array get_structured_text_bidi_override_options(int p_column) const;
 
 	void set_language(int p_column, const String &p_language);
 	String get_language(int p_column) const;
@@ -323,7 +311,6 @@ public:
 
 	void set_range_config(int p_column, double p_min, double p_max, double p_step, bool p_exp = false);
 	void get_range_config(int p_column, double &r_min, double &r_max, double &r_step) const;
-	bool is_range_exponential(int p_column) const;
 
 	void set_metadata(int p_column, const Variant &p_meta);
 	Variant get_metadata(int p_column) const;
@@ -523,7 +510,6 @@ private:
 		HorizontalAlignment title_alignment = HORIZONTAL_ALIGNMENT_CENTER;
 		Ref<TextParagraph> text_buf;
 		String language;
-		Control::TextDirection text_direction = Control::TEXT_DIRECTION_INHERITED;
 
 		mutable int cached_minimum_width = 0;
 		mutable bool cached_minimum_width_dirty = true;
@@ -562,9 +548,6 @@ private:
 
 	int compute_item_height(TreeItem *p_item) const;
 	int get_item_height(TreeItem *p_item) const;
-	Point2i convert_rtl_position(const Point2i &p_pos, int p_width = 0) const;
-	Point2 convert_rtl_position(const Point2 &p_pos, int p_width = 0) const;
-	Rect2i convert_rtl_rect(const Rect2i &p_rect) const;
 	void _update_all();
 	void update_column(int p_col);
 	void update_item_cell(TreeItem *p_item, int p_col) const;
@@ -628,7 +611,6 @@ private:
 		Ref<Texture2D> indeterminate_disabled;
 		Ref<Texture2D> arrow;
 		Ref<Texture2D> arrow_collapsed;
-		Ref<Texture2D> arrow_collapsed_mirrored;
 		Ref<Texture2D> select_arrow;
 		Ref<Texture2D> updown;
 		Ref<Texture2D> scroll_hint;
@@ -710,7 +692,6 @@ private:
 		int hover_column = -1;
 		int hover_button_index_in_column = -1;
 
-		bool rtl = false;
 		int font_height = -1;
 	} cache;
 
@@ -727,7 +708,6 @@ private:
 	Size2 get_internal_min_size() const;
 	void update_scrollbars();
 
-	Rect2 search_item_rect(TreeItem *p_from, TreeItem *p_item);
 	uint64_t last_keypress = 0;
 	String incr_search;
 	bool cursor_can_exit_tree = true;
@@ -864,9 +844,6 @@ public:
 	void set_column_title_alignment(int p_column, HorizontalAlignment p_alignment);
 	HorizontalAlignment get_column_title_alignment(int p_column) const;
 
-	void set_column_title_direction(int p_column, Control::TextDirection p_text_direction);
-	Control::TextDirection get_column_title_direction(int p_column) const;
-
 	void set_column_title_language(int p_column, const String &p_language);
 	String get_column_title_language(int p_column) const;
 
@@ -924,7 +901,6 @@ public:
 	int get_drop_mode_flags() const;
 
 	void set_edit_checkbox_cell_only_when_checkbox_is_pressed(bool p_enable);
-	bool get_edit_checkbox_cell_only_when_checkbox_is_pressed() const;
 
 	void set_allow_rmb_select(bool p_allow);
 	bool get_allow_rmb_select() const;

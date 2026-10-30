@@ -165,7 +165,6 @@ private:
 
 	void _set_ci_tool(CanvasItemManipulator::Tool p_tool);
 	void _set_ci_local_space(bool p_enabled);
-	void _set_ci_smart_snap(bool p_enabled);
 
 	void _set_n3d_tool(SelectMode p_tool);
 

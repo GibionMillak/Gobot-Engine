@@ -1525,8 +1525,6 @@ void ProjectExportDialog::_export_project_to_path(const String &p_path) {
 	ERR_FAIL_COND_MSG(platform.is_null(), "Failed to start the export: current preset has no valid platform.");
 	current->set_export_path(p_path);
 
-	exporting = true;
-
 	platform->clear_messages();
 	current->update_value_overrides();
 	Dictionary fd_option = export_project->get_selected_options();
@@ -1541,8 +1539,6 @@ void ProjectExportDialog::_export_project_to_path(const String &p_path) {
 			result_dialog->popup_centered_ratio(0.5);
 		}
 	}
-
-	exporting = false;
 }
 
 void ProjectExportDialog::_export_all_dialog() {
@@ -1557,7 +1553,6 @@ void ProjectExportDialog::_export_all_dialog_action(const String &p_str) {
 }
 
 void ProjectExportDialog::_export_all(bool p_debug) {
-	exporting = true;
 	bool show_dialog = false;
 
 	{ // Scope for the editor progress, we must free it before showing the dialog at the end.
@@ -1568,13 +1563,11 @@ void ProjectExportDialog::_export_all(bool p_debug) {
 		for (int i = 0; i < EditorExport::get_singleton()->get_export_preset_count(); i++) {
 			Ref<EditorExportPreset> preset = EditorExport::get_singleton()->get_export_preset(i);
 			if (preset.is_null()) {
-				exporting = false;
 				ERR_FAIL_MSG("Failed to start the export: one of the presets is invalid.");
 			}
 
 			Ref<EditorExportPlatform> platform = preset->get_platform();
 			if (platform.is_null()) {
-				exporting = false;
 				ERR_FAIL_MSG("Failed to start the export: one of the presets has no valid platform.");
 			}
 
@@ -1584,7 +1577,6 @@ void ProjectExportDialog::_export_all(bool p_debug) {
 			preset->update_value_overrides();
 			Error err = platform->export_project(preset, p_debug, preset->get_export_path(), 0);
 			if (err == ERR_SKIP) {
-				exporting = false;
 				return;
 			}
 			bool has_messages = platform->fill_log_messages(result_dialog_log, err);
@@ -1595,8 +1587,6 @@ void ProjectExportDialog::_export_all(bool p_debug) {
 	if (show_dialog) {
 		result_dialog->popup_centered_ratio(0.5);
 	}
-
-	exporting = false;
 }
 
 void ProjectExportDialog::_bind_methods() {

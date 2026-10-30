@@ -1673,7 +1673,6 @@ GODOT_GCC_WARNING_PUSH_AND_IGNORE("-Wnon-virtual-dtor") // Silence warning due t
 class FallbackTextAnalysisSource : public IDWriteTextAnalysisSource {
 	LONG _cRef = 1;
 
-	bool rtl = false;
 	Char16String string;
 	Char16String locale;
 	IDWriteNumberSubstitution *n_sub = nullptr;
@@ -1728,7 +1727,7 @@ public:
 	}
 
 	DWRITE_READING_DIRECTION STDMETHODCALLTYPE GetParagraphReadingDirection() override {
-		return (rtl) ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
+		return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
 	}
 
 	HRESULT STDMETHODCALLTYPE GetLocaleName(UINT32 p_text_position, UINT32 *r_text_length, WCHAR const **r_locale_name) override {
@@ -1741,12 +1740,11 @@ public:
 		return S_OK;
 	}
 
-	FallbackTextAnalysisSource(const Char16String &p_text, const Char16String &p_locale, bool p_rtl, IDWriteNumberSubstitution *p_nsub) {
+	FallbackTextAnalysisSource(const Char16String &p_text, const Char16String &p_locale, IDWriteNumberSubstitution *p_nsub) {
 		_cRef = 1;
 		string = p_text;
 		locale = p_locale;
 		n_sub = p_nsub;
-		rtl = p_rtl;
 	}
 
 	virtual ~FallbackTextAnalysisSource() {}
@@ -1826,7 +1824,6 @@ Vector<String> OS_Windows::get_system_font_path_for_text(const String &p_font_na
 
 	String font_name = _get_default_fontname(p_font_name);
 
-	bool rtl = TS->is_locale_right_to_left(p_locale);
 	Char16String text = p_text.utf16();
 	Char16String locale = p_locale.utf16();
 
@@ -1834,7 +1831,7 @@ Vector<String> OS_Windows::get_system_font_path_for_text(const String &p_font_na
 	HRESULT hr = dwrite_factory->CreateNumberSubstitution(DWRITE_NUMBER_SUBSTITUTION_METHOD_NONE, reinterpret_cast<const wchar_t *>(locale.get_data()), true, &number_substitution.reference);
 	ERR_FAIL_COND_V(FAILED(hr) || number_substitution.is_null(), Vector<String>());
 
-	FallbackTextAnalysisSource fs = FallbackTextAnalysisSource(text, locale, rtl, number_substitution.reference);
+	FallbackTextAnalysisSource fs = FallbackTextAnalysisSource(text, locale, number_substitution.reference);
 	UINT32 mapped_length = 0;
 	FLOAT scale = 0.0;
 	ComAutoreleaseRef<IDWriteFont> dwrite_font;

@@ -88,15 +88,6 @@ public:
 		CONTENT_SCALE_STRETCH_INTEGER,
 	};
 
-	enum LayoutDirection {
-		LAYOUT_DIRECTION_INHERITED,
-		LAYOUT_DIRECTION_APPLICATION_LOCALE,
-		LAYOUT_DIRECTION_LTR,
-		LAYOUT_DIRECTION_RTL,
-		LAYOUT_DIRECTION_SYSTEM_LOCALE,
-		LAYOUT_DIRECTION_MAX,
-	};
-
 	enum {
 		DEFAULT_WINDOW_SIZE = 100,
 	};
@@ -147,8 +138,6 @@ private:
 	bool clamp_to_embedder = false;
 	bool unparent_when_invisible = false;
 	bool keep_title_visible = false;
-
-	LayoutDirection layout_dir = LAYOUT_DIRECTION_INHERITED;
 
 	void _update_child_controls();
 	void _update_embedded_window();
@@ -257,8 +246,6 @@ private:
 
 	void _update_displayed_title();
 
-	static int root_layout_direction;
-
 protected:
 	virtual void _popup_base(const Rect2i &p_screen_rect = Rect2i());
 	virtual void _pre_popup(const Size2i &p_size) {} // Called after "about_to_popup", but before window is shown.
@@ -289,8 +276,6 @@ public:
 		NOTIFICATION_THEME_CHANGED = 32
 	};
 
-
-	static void set_root_layout_direction(int p_root_dir);
 	static Window *get_from_id(DisplayServerEnums::WindowID p_window_id);
 
 
@@ -444,10 +429,6 @@ public:
 
 	// Internationalization.
 
-	void set_layout_direction(LayoutDirection p_direction);
-	LayoutDirection get_layout_direction() const;
-	bool is_layout_rtl() const;
-
 	// Theming.
 
 	void set_theme_owner_node(Node *p_node);
@@ -535,5 +516,4 @@ VARIANT_ENUM_CAST(Window::Flags);
 VARIANT_ENUM_CAST(Window::ContentScaleMode);
 VARIANT_ENUM_CAST(Window::ContentScaleAspect);
 VARIANT_ENUM_CAST(Window::ContentScaleStretch);
-VARIANT_ENUM_CAST(Window::LayoutDirection);
 VARIANT_ENUM_CAST(Window::WindowInitialPosition);

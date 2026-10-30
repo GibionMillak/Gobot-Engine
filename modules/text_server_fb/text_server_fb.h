@@ -32,7 +32,7 @@
 
 /*************************************************************************/
 /* Fallback Text Server provides simplified TS functionality, without    */
-/* BiDi, shaping and advanced font features support.                     */
+/* shaping and advanced font features support.                           */
 /*************************************************************************/
 
 #include "core/object/virtual_wrappers.gen.h"
@@ -392,7 +392,6 @@ class TextServerFallback : public TextServerExtension {
 
 		String text;
 		String custom_punct;
-		TextServer::Direction direction = DIRECTION_LTR; // Desired text direction.
 		TextServer::Orientation orientation = ORIENTATION_HORIZONTAL;
 
 		struct Span {
@@ -425,11 +424,9 @@ class TextServerFallback : public TextServerExtension {
 		HashMap<Variant, EmbeddedObject> objects;
 
 		/* Shaped data */
-		TextServer::Direction para_direction = DIRECTION_LTR; // Detected text direction.
 		SafeFlag valid{ false }; // String is shaped.
 		bool line_breaks_valid = false; // Line and word break flags are populated (and virtual zero width spaces inserted).
 		bool justification_ops_valid = false; // Virtual elongation glyphs are added to the string.
-		bool sort_valid = false;
 		bool text_trimmed = false;
 
 		bool preserve_invalid = true; // Draw hex code box instead of missing characters.
@@ -449,7 +446,6 @@ class TextServerFallback : public TextServerExtension {
 		bool fit_width_minimum_reached = false;
 
 		Vector<Glyph> glyphs;
-		Vector<Glyph> glyphs_logical;
 	};
 
 	// Common data.
@@ -582,8 +578,6 @@ public:
 	MODBIND1RC(bool, save_support_data, const String &);
 	MODBIND0RC(PackedByteArray, get_support_data);
 	MODBIND1RC(bool, is_locale_using_support_data, const String &);
-
-	MODBIND1RC(bool, is_locale_right_to_left, const String &);
 
 	MODBIND1RC(int64_t, name_to_tag, const String &);
 	MODBIND1RC(String, tag_to_name, int64_t);
@@ -782,16 +776,10 @@ public:
 
 	/* Shaped text buffer interface */
 
-	MODBIND2R(RID, create_shaped_text, Direction, Orientation);
+	MODBIND1R(RID, create_shaped_text, Orientation);
 
 	MODBIND1(shaped_text_clear, const RID &);
 	MODBIND1R(RID, shaped_text_duplicate, const RID &);
-
-	MODBIND2(shaped_text_set_direction, const RID &, Direction);
-	MODBIND1RC(Direction, shaped_text_get_direction, const RID &);
-	MODBIND1RC(Direction, shaped_text_get_inferred_direction, const RID &);
-
-	MODBIND2(shaped_text_set_bidi_override, const RID &, const Array &);
 
 	MODBIND2(shaped_text_set_custom_punctuation, const RID &, const String &);
 	MODBIND1RC(String, shaped_text_get_custom_punctuation, const RID &);
@@ -831,7 +819,6 @@ public:
 	MODBIND2RC(RID, shaped_get_run_font_rid, const RID &, int64_t);
 	MODBIND2RC(int, shaped_get_run_font_size, const RID &, int64_t);
 	MODBIND2RC(String, shaped_get_run_language, const RID &, int64_t);
-	MODBIND2RC(Direction, shaped_get_run_direction, const RID &, int64_t);
 	MODBIND2RC(Variant, shaped_get_run_object, const RID &, int64_t);
 
 	MODBIND3RC(RID, shaped_text_substr, const RID &, int64_t, int64_t);

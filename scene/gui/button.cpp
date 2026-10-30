@@ -63,34 +63,13 @@ void Button::_update_theme_item_cache() {
 	theme_cache.style_margin_top = 0;
 	theme_cache.style_margin_bottom = 0;
 
-	const bool rtl = is_layout_rtl();
-	if (rtl && has_theme_stylebox(SNAME("normal_mirrored"))) {
-		_update_style_margins(theme_cache.normal_mirrored);
-	} else {
-		_update_style_margins(theme_cache.normal);
-	}
+	_update_style_margins(theme_cache.normal);
 	if (has_theme_stylebox("hover_pressed")) {
-		if (rtl && has_theme_stylebox(SNAME("hover_pressed_mirrored"))) {
-			_update_style_margins(theme_cache.hover_pressed_mirrored);
-		} else {
-			_update_style_margins(theme_cache.hover_pressed);
-		}
+		_update_style_margins(theme_cache.hover_pressed);
 	}
-	if (rtl && has_theme_stylebox(SNAME("pressed_mirrored"))) {
-		_update_style_margins(theme_cache.pressed_mirrored);
-	} else {
-		_update_style_margins(theme_cache.pressed);
-	}
-	if (rtl && has_theme_stylebox(SNAME("hover_mirrored"))) {
-		_update_style_margins(theme_cache.hover_mirrored);
-	} else {
-		_update_style_margins(theme_cache.hover);
-	}
-	if (rtl && has_theme_stylebox(SNAME("disabled_mirrored"))) {
-		_update_style_margins(theme_cache.disabled_mirrored);
-	} else {
-		_update_style_margins(theme_cache.disabled);
-	}
+	_update_style_margins(theme_cache.pressed);
+	_update_style_margins(theme_cache.hover);
+	_update_style_margins(theme_cache.disabled);
 	theme_cache.max_style_size = theme_cache.max_style_size.max(Vector2(theme_cache.style_margin_left + theme_cache.style_margin_right, theme_cache.style_margin_top + theme_cache.style_margin_bottom));
 }
 
@@ -100,51 +79,30 @@ Size2 Button::_get_largest_stylebox_size() const {
 
 Ref<StyleBox> Button::_get_current_stylebox() const {
 	Ref<StyleBox> stylebox = theme_cache.normal;
-	const bool rtl = is_layout_rtl();
 
 	switch (get_draw_mode()) {
 		case DRAW_NORMAL: {
-			if (rtl && has_theme_stylebox(SNAME("normal_mirrored"))) {
-				stylebox = theme_cache.normal_mirrored;
-			} else {
-				stylebox = theme_cache.normal;
-			}
+			stylebox = theme_cache.normal;
 		} break;
 
 		case DRAW_HOVER_PRESSED: {
 			// Edge case for CheckButton and CheckBox.
 			if (has_theme_stylebox("hover_pressed")) {
-				if (rtl && has_theme_stylebox(SNAME("hover_pressed_mirrored"))) {
-					stylebox = theme_cache.hover_pressed_mirrored;
-				} else {
-					stylebox = theme_cache.hover_pressed;
-				}
+				stylebox = theme_cache.hover_pressed;
 				break;
 			}
 		}
 			[[fallthrough]];
 		case DRAW_PRESSED: {
-			if (rtl && has_theme_stylebox(SNAME("pressed_mirrored"))) {
-				stylebox = theme_cache.pressed_mirrored;
-			} else {
-				stylebox = theme_cache.pressed;
-			}
+			stylebox = theme_cache.pressed;
 		} break;
 
 		case DRAW_HOVER: {
-			if (rtl && has_theme_stylebox(SNAME("hover_mirrored"))) {
-				stylebox = theme_cache.hover_mirrored;
-			} else {
-				stylebox = theme_cache.hover;
-			}
+			stylebox = theme_cache.hover;
 		} break;
 
 		case DRAW_DISABLED: {
-			if (rtl && has_theme_stylebox(SNAME("disabled_mirrored"))) {
-				stylebox = theme_cache.disabled_mirrored;
-			} else {
-				stylebox = theme_cache.disabled;
-			}
+			stylebox = theme_cache.disabled;
 		} break;
 	}
 
@@ -153,10 +111,6 @@ Ref<StyleBox> Button::_get_current_stylebox() const {
 
 void Button::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-			queue_redraw();
-		} break;
-
 		case NOTIFICATION_TRANSLATION_CHANGED: {
 			xl_text = _get_translated_text(text);
 			_shape();
@@ -241,21 +195,8 @@ void Button::_notification(int p_what) {
 				drawable_size_remained.width -= left_internal_margin_with_h_separation + right_internal_margin_with_h_separation; // The size after the internal element is stripped.
 			}
 
-			HorizontalAlignment icon_align_rtl_checked = horizontal_icon_alignment;
-			HorizontalAlignment align_rtl_checked = _alignment;
-			// Swap icon and text alignment sides if right-to-left layout is set.
-			if (is_layout_rtl()) {
-				if (horizontal_icon_alignment == HORIZONTAL_ALIGNMENT_RIGHT) {
-					icon_align_rtl_checked = HORIZONTAL_ALIGNMENT_LEFT;
-				} else if (horizontal_icon_alignment == HORIZONTAL_ALIGNMENT_LEFT) {
-					icon_align_rtl_checked = HORIZONTAL_ALIGNMENT_RIGHT;
-				}
-				if (_alignment == HORIZONTAL_ALIGNMENT_RIGHT) {
-					align_rtl_checked = HORIZONTAL_ALIGNMENT_LEFT;
-				} else if (_alignment == HORIZONTAL_ALIGNMENT_LEFT) {
-					align_rtl_checked = HORIZONTAL_ALIGNMENT_RIGHT;
-				}
-			}
+			HorizontalAlignment icon_alignment = horizontal_icon_alignment;
+			HorizontalAlignment text_alignment = _alignment;
 
 			Color font_color;
 			Color icon_modulate_color(1, 1, 1, 1);
@@ -324,7 +265,7 @@ void Button::_notification(int p_what) {
 					if (expand_icon) {
 						const Size2 text_buf_size = text_buf->get_size();
 						Size2 _size = custom_element_size;
-						if (!is_clipped && icon_align_rtl_checked != HORIZONTAL_ALIGNMENT_CENTER && text_buf_size.width > 0.0f) {
+						if (!is_clipped && icon_alignment != HORIZONTAL_ALIGNMENT_CENTER && text_buf_size.width > 0.0f) {
 							// If there is not enough space for icon and h_separation, h_separation will occupy the space first,
 							// so the icon's width may be negative. Keep it negative to make it easier to calculate the space
 							// reserved for text later.
@@ -352,7 +293,7 @@ void Button::_notification(int p_what) {
 					// Calculate the drawing position of the icon.
 					Point2 icon_ofs;
 
-					switch (icon_align_rtl_checked) {
+					switch (icon_alignment) {
 						case HORIZONTAL_ALIGNMENT_CENTER: {
 							icon_ofs.x = (custom_element_size.width - icon_size.width) / 2.0f;
 						}
@@ -392,7 +333,7 @@ void Button::_notification(int p_what) {
 
 				if (!xl_text.is_empty()) {
 					// Update the size after the icon is stripped. Stripping only when the icon alignments are not center.
-					if (icon_align_rtl_checked != HORIZONTAL_ALIGNMENT_CENTER) {
+					if (icon_alignment != HORIZONTAL_ALIGNMENT_CENTER) {
 						// Subtract the space's width occupied by icon and h_separation together.
 						drawable_size_remained.width -= icon_size.width + h_separation;
 					}
@@ -405,7 +346,7 @@ void Button::_notification(int p_what) {
 
 			// Draw the text.
 			if (!xl_text.is_empty()) {
-				text_buf->set_alignment(align_rtl_checked);
+				text_buf->set_alignment(text_alignment);
 
 				float text_buf_width = Math::ceil(MAX(1.0f, drawable_size_remained.width)); // The space's width filled by the text_buf.
 				if (autowrap_mode != TextServer::AUTOWRAP_OFF && !Math::is_equal_approx(text_buf_width, text_buf->get_width())) {
@@ -415,7 +356,7 @@ void Button::_notification(int p_what) {
 
 				Point2 text_ofs;
 
-				switch (align_rtl_checked) {
+				switch (text_alignment) {
 					case HORIZONTAL_ALIGNMENT_CENTER: {
 						text_ofs.x = (drawable_size_remained.width - text_buf_width) / 2.0f;
 					}
@@ -425,7 +366,7 @@ void Button::_notification(int p_what) {
 					case HORIZONTAL_ALIGNMENT_RIGHT: {
 						text_ofs.x += style_margin_left;
 						text_ofs.x += left_internal_margin_with_h_separation;
-						if (icon_align_rtl_checked == HORIZONTAL_ALIGNMENT_LEFT) {
+						if (icon_alignment == HORIZONTAL_ALIGNMENT_LEFT) {
 							// Offset by the space's width that occupied by icon and h_separation together.
 							text_ofs.x += custom_element_size.width - drawable_size_remained.width;
 						}
@@ -543,11 +484,6 @@ void Button::_shape(Ref<TextParagraph> p_paragraph, String p_text) const {
 	p_paragraph->set_break_flags(autowrap_flags);
 	p_paragraph->set_line_spacing(theme_cache.line_spacing);
 
-	if (text_direction == Control::TEXT_DIRECTION_INHERITED) {
-		p_paragraph->set_direction(is_layout_rtl() ? TextServer::DIRECTION_RTL : TextServer::DIRECTION_LTR);
-	} else {
-		p_paragraph->set_direction((TextServer::Direction)text_direction);
-	}
 	const String &lang = language.is_empty() ? _get_locale() : language;
 	p_paragraph->add_string(p_text, font, font_size, lang);
 	p_paragraph->set_text_overrun_behavior(overrun_behavior);
@@ -613,19 +549,6 @@ void Button::set_autowrap_trim_flags(BitField<TextServer::LineBreakFlag> p_flags
 
 BitField<TextServer::LineBreakFlag> Button::get_autowrap_trim_flags() const {
 	return autowrap_flags_trim;
-}
-
-void Button::set_text_direction(Control::TextDirection p_text_direction) {
-	ERR_FAIL_COND((int)p_text_direction < -1 || (int)p_text_direction > 3);
-	if (text_direction != p_text_direction) {
-		text_direction = p_text_direction;
-		_shape();
-		queue_redraw();
-	}
-}
-
-Control::TextDirection Button::get_text_direction() const {
-	return text_direction;
 }
 
 void Button::set_language(const String &p_language) {
@@ -766,8 +689,6 @@ void Button::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_autowrap_mode"), &Button::get_autowrap_mode);
 	ClassDB::bind_method(D_METHOD("set_autowrap_trim_flags", "autowrap_trim_flags"), &Button::set_autowrap_trim_flags);
 	ClassDB::bind_method(D_METHOD("get_autowrap_trim_flags"), &Button::get_autowrap_trim_flags);
-	ClassDB::bind_method(D_METHOD("set_text_direction", "direction"), &Button::set_text_direction);
-	ClassDB::bind_method(D_METHOD("get_text_direction"), &Button::get_text_direction);
 	ClassDB::bind_method(D_METHOD("set_language", "language"), &Button::set_language);
 	ClassDB::bind_method(D_METHOD("get_language"), &Button::get_language);
 	ClassDB::bind_method(D_METHOD("set_button_icon", "texture"), &Button::set_button_icon);
@@ -801,20 +722,14 @@ void Button::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "vertical_icon_alignment", PROPERTY_HINT_ENUM, "Top,Center,Bottom"), "set_vertical_icon_alignment", "get_vertical_icon_alignment");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "expand_icon"), "set_expand_icon", "is_expand_icon");
 
-	ADD_GROUP("BiDi", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_direction", PROPERTY_HINT_ENUM, "Auto,Left-to-Right,Right-to-Left,Inherited"), "set_text_direction", "get_text_direction");
+	ADD_GROUP("Localization", "");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "language", PROPERTY_HINT_LOCALE_ID, ""), "set_language", "get_language");
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, normal);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, normal_mirrored);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, pressed);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, pressed_mirrored);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, hover);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, hover_mirrored);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, hover_pressed);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, hover_pressed_mirrored);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, disabled);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, disabled_mirrored);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, focus);
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Button, font_color);

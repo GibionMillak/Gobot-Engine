@@ -64,10 +64,6 @@ TEST_CASE("[SceneTree][FoldableContainer] Default properties") {
 			"FoldableContainer title position is set to top by default.");
 
 	CHECK_MESSAGE(
-			foldable_container->get_title_text_direction() == Control::TEXT_DIRECTION_AUTO,
-			"FoldableContainer title text direction is set to auto by default.");
-
-	CHECK_MESSAGE(
 			foldable_container->get_title_text_overrun_behavior() == TextServer::OVERRUN_NO_TRIMMING,
 			"FoldableContainer title overrun behavior is set to no trimming by default.");
 

@@ -436,12 +436,6 @@
 				Returns an array of [String]s representing each wrapped index.
 			</description>
 		</method>
-		<method name="get_local_mouse_pos" qualifiers="const">
-			<return type="Vector2" />
-			<description>
-				Returns the local mouse position adjusted for the text direction.
-			</description>
-		</method>
 		<method name="get_menu" qualifiers="const">
 			<return type="PopupMenu" />
 			<description>
@@ -1341,12 +1335,6 @@
 		<member name="shortcut_keys_enabled" type="bool" setter="set_shortcut_keys_enabled" getter="is_shortcut_keys_enabled" default="true">
 			If [code]true[/code], shortcut keys for context menu items are enabled, even if the context menu is disabled.
 		</member>
-		<member name="structured_text_bidi_override" type="int" setter="set_structured_text_bidi_override" getter="get_structured_text_bidi_override" enum="TextServer.StructuredTextParser" default="0">
-			Set BiDi algorithm override for the structured text.
-		</member>
-		<member name="structured_text_bidi_override_options" type="Array" setter="set_structured_text_bidi_override_options" getter="get_structured_text_bidi_override_options" default="[]">
-			Set additional options for BiDi override.
-		</member>
 		<member name="syntax_highlighter" type="SyntaxHighlighter" setter="set_syntax_highlighter" getter="get_syntax_highlighter">
 			The syntax highlighter to use.
 			[b]Note:[/b] A [SyntaxHighlighter] instance should not be used across multiple [TextEdit] nodes.
@@ -1356,9 +1344,6 @@
 		</member>
 		<member name="text" type="String" setter="set_text" getter="get_text" default="&quot;&quot;">
 			String value of the [TextEdit].
-		</member>
-		<member name="text_direction" type="int" setter="set_text_direction" getter="get_text_direction" enum="Control.TextDirection" default="0">
-			Base text writing direction.
 		</member>
 		<member name="use_custom_word_separators" type="bool" setter="set_use_custom_word_separators" getter="is_custom_word_separators_enabled" default="false">
 			If [code]false[/code], using [kbd]Ctrl + Left[/kbd] or [kbd]Ctrl + Right[/kbd] ([kbd]Cmd + Left[/kbd] or [kbd]Cmd + Right[/kbd] on macOS) bindings will use the behavior of [member use_default_word_separators]. If [code]true[/code], it will also stop the caret if a character within [member custom_word_separators] is detected. Useful for subword moving. This behavior also will be applied to the behavior of text selection.
@@ -1440,79 +1425,28 @@
 		<constant name="MENU_REDO" value="6" enum="MenuItems">
 			Redoes the previous action.
 		</constant>
-		<constant name="MENU_SUBMENU_TEXT_DIR" value="7" enum="MenuItems">
-			ID of "Text Writing Direction" submenu.
-		</constant>
-		<constant name="MENU_DIR_INHERITED" value="8" enum="MenuItems">
-			Sets text direction to inherited.
-		</constant>
-		<constant name="MENU_DIR_AUTO" value="9" enum="MenuItems">
-			Sets text direction to automatic.
-		</constant>
-		<constant name="MENU_DIR_LTR" value="10" enum="MenuItems">
-			Sets text direction to left-to-right.
-		</constant>
-		<constant name="MENU_DIR_RTL" value="11" enum="MenuItems">
-			Sets text direction to right-to-left.
-		</constant>
-		<constant name="MENU_DISPLAY_UCC" value="12" enum="MenuItems">
+		<constant name="MENU_DISPLAY_UCC" value="7" enum="MenuItems">
 			Toggles control character display.
 		</constant>
-		<constant name="MENU_SUBMENU_INSERT_UCC" value="13" enum="MenuItems">
+		<constant name="MENU_SUBMENU_INSERT_UCC" value="8" enum="MenuItems">
 			ID of "Insert Control Character" submenu.
 		</constant>
-		<constant name="MENU_INSERT_LRM" value="14" enum="MenuItems">
-			Inserts left-to-right mark (LRM) character.
-		</constant>
-		<constant name="MENU_INSERT_RLM" value="15" enum="MenuItems">
-			Inserts right-to-left mark (RLM) character.
-		</constant>
-		<constant name="MENU_INSERT_LRE" value="16" enum="MenuItems">
-			Inserts start of left-to-right embedding (LRE) character.
-		</constant>
-		<constant name="MENU_INSERT_RLE" value="17" enum="MenuItems">
-			Inserts start of right-to-left embedding (RLE) character.
-		</constant>
-		<constant name="MENU_INSERT_LRO" value="18" enum="MenuItems">
-			Inserts start of left-to-right override (LRO) character.
-		</constant>
-		<constant name="MENU_INSERT_RLO" value="19" enum="MenuItems">
-			Inserts start of right-to-left override (RLO) character.
-		</constant>
-		<constant name="MENU_INSERT_PDF" value="20" enum="MenuItems">
-			Inserts pop direction formatting (PDF) character.
-		</constant>
-		<constant name="MENU_INSERT_ALM" value="21" enum="MenuItems">
-			Inserts Arabic letter mark (ALM) character.
-		</constant>
-		<constant name="MENU_INSERT_LRI" value="22" enum="MenuItems">
-			Inserts left-to-right isolate (LRI) character.
-		</constant>
-		<constant name="MENU_INSERT_RLI" value="23" enum="MenuItems">
-			Inserts right-to-left isolate (RLI) character.
-		</constant>
-		<constant name="MENU_INSERT_FSI" value="24" enum="MenuItems">
-			Inserts first strong isolate (FSI) character.
-		</constant>
-		<constant name="MENU_INSERT_PDI" value="25" enum="MenuItems">
-			Inserts pop direction isolate (PDI) character.
-		</constant>
-		<constant name="MENU_INSERT_ZWJ" value="26" enum="MenuItems">
+		<constant name="MENU_INSERT_ZWJ" value="9" enum="MenuItems">
 			Inserts zero width joiner (ZWJ) character.
 		</constant>
-		<constant name="MENU_INSERT_ZWNJ" value="27" enum="MenuItems">
+		<constant name="MENU_INSERT_ZWNJ" value="10" enum="MenuItems">
 			Inserts zero width non-joiner (ZWNJ) character.
 		</constant>
-		<constant name="MENU_INSERT_WJ" value="28" enum="MenuItems">
+		<constant name="MENU_INSERT_WJ" value="11" enum="MenuItems">
 			Inserts word joiner (WJ) character.
 		</constant>
-		<constant name="MENU_INSERT_SHY" value="29" enum="MenuItems">
+		<constant name="MENU_INSERT_SHY" value="12" enum="MenuItems">
 			Inserts soft hyphen (SHY) character.
 		</constant>
-		<constant name="MENU_EMOJI_AND_SYMBOL" value="30" enum="MenuItems">
+		<constant name="MENU_EMOJI_AND_SYMBOL" value="13" enum="MenuItems">
 			Opens system emoji and symbol picker.
 		</constant>
-		<constant name="MENU_MAX" value="31" enum="MenuItems">
+		<constant name="MENU_MAX" value="14" enum="MenuItems">
 			Represents the size of the [enum MenuItems] enum.
 		</constant>
 		<constant name="ACTION_NONE" value="0" enum="EditAction">

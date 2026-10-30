@@ -125,12 +125,6 @@
 				Returns the focused window.
 			</description>
 		</method>
-		<method name="get_layout_direction" qualifiers="const">
-			<return type="int" enum="Window.LayoutDirection" />
-			<description>
-				Returns layout direction and text writing direction.
-			</description>
-		</method>
 		<method name="get_output_max_linear_value" qualifiers="const">
 			<return type="float" />
 			<description>
@@ -409,12 +403,6 @@
 				Returns [code]true[/code] if the window is currently embedded in another window.
 			</description>
 		</method>
-		<method name="is_layout_rtl" qualifiers="const">
-			<return type="bool" />
-			<description>
-				Returns [code]true[/code] if the layout is right-to-left.
-			</description>
-		</method>
 		<method name="is_maximize_allowed" qualifiers="const">
 			<return type="bool" />
 			<description>
@@ -610,13 +598,6 @@
 			<description>
 				Sets a rectangle which should not be obstructed by the [url=https://en.wikipedia.org/wiki/Input_method]Input Method Editor[/url] popup.
 				[b]Note:[/b] This method is implemented only on Windows.
-			</description>
-		</method>
-		<method name="set_layout_direction">
-			<return type="void" />
-			<param index="0" name="direction" type="int" enum="Window.LayoutDirection" />
-			<description>
-				Sets layout direction and text writing direction. Right-to-left layouts are necessary for certain languages (e.g. Arabic and Hebrew).
 			</description>
 		</method>
 		<method name="set_taskbar_progress_state">
@@ -1059,24 +1040,6 @@
 		</constant>
 		<constant name="CONTENT_SCALE_STRETCH_INTEGER" value="1" enum="ContentScaleStretch">
 			The content will be stretched only according to an integer factor, preserving sharp pixels. This may leave a black background visible on the window's edges depending on the window size.
-		</constant>
-		<constant name="LAYOUT_DIRECTION_INHERITED" value="0" enum="LayoutDirection">
-			Automatic layout direction, determined from the parent window layout direction.
-		</constant>
-		<constant name="LAYOUT_DIRECTION_APPLICATION_LOCALE" value="1" enum="LayoutDirection">
-			Automatic layout direction, determined from the current locale.
-		</constant>
-		<constant name="LAYOUT_DIRECTION_LTR" value="2" enum="LayoutDirection">
-			Left-to-right layout direction.
-		</constant>
-		<constant name="LAYOUT_DIRECTION_RTL" value="3" enum="LayoutDirection">
-			Right-to-left layout direction.
-		</constant>
-		<constant name="LAYOUT_DIRECTION_SYSTEM_LOCALE" value="4" enum="LayoutDirection">
-			Automatic layout direction, determined from the system locale.
-		</constant>
-		<constant name="LAYOUT_DIRECTION_MAX" value="5" enum="LayoutDirection">
-			Represents the size of the [enum LayoutDirection] enum.
 		</constant>
 		<constant name="WINDOW_INITIAL_POSITION_ABSOLUTE" value="0" enum="WindowInitialPosition">
 			Initial window position is determined by [member position].

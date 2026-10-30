@@ -826,23 +826,15 @@ EditorDockManager::EditorDockManager() {
 
 void DockContextPopup::_notification(int p_what) {
 	switch (p_what) {
-		case Control::NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_TRANSLATION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			if (make_float_button) {
 				make_float_button->set_button_icon(get_editor_theme_icon(SNAME("action_make_floating")));
 			}
-			if (is_layout_rtl()) {
-				tab_move_left_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
-				tab_move_right_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
-				tab_move_left_button->set_tooltip_text(TTR("Move this dock right one tab."));
-				tab_move_right_button->set_tooltip_text(TTR("Move this dock left one tab."));
-			} else {
-				tab_move_left_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
-				tab_move_right_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
-				tab_move_left_button->set_tooltip_text(TTR("Move this dock left one tab."));
-				tab_move_right_button->set_tooltip_text(TTR("Move this dock right one tab."));
-			}
+			tab_move_left_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
+			tab_move_right_button->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
+			tab_move_left_button->set_tooltip_text(TTR("Move this dock left one tab."));
+			tab_move_right_button->set_tooltip_text(TTR("Move this dock right one tab."));
 			close_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 		} break;
 	}
@@ -1006,9 +998,6 @@ void DockShortcutHandler::shortcut_input(const Ref<InputEvent> &p_event) {
 void DockSlotGrid::_update_rect_cache() {
 	for (int i = 0; i < EditorDock::DOCK_SLOT_MAX; i++) {
 		Rect2 rect = EditorDockManager::get_singleton()->dock_slots[i]->grid_rect;
-		if (is_layout_rtl()) {
-			rect.position.x = GRID_SIZE.x - rect.position.x - rect.size.x;
-		}
 		rect.position = rect.position * CELL_SIZE * EDSCALE + (rect.position + Vector2i(0, 1)) * MARGINS * EDSCALE;
 		rect.size = rect.size * CELL_SIZE * EDSCALE + (rect.size - Vector2i(1, 1)) * MARGINS * EDSCALE;
 		rect_cache[i] = rect;
@@ -1021,7 +1010,6 @@ void DockSlotGrid::_bind_methods() {
 
 void DockSlotGrid::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_TRANSLATION_CHANGED: {
 			rect_cache_dirty = true;
 		} break;
@@ -1072,9 +1060,7 @@ void DockSlotGrid::_notification(int p_what) {
 				real_t initial_offset = (slot_rect.size.x - (max_tabs * tab_width + (max_tabs - 1) * TAB_MARGIN * EDSCALE)) * 0.5;
 
 				for (int j = 0; j < tabs_to_draw; j++) {
-					real_t pos_x = is_layout_rtl()
-							? slot_rect.size.x - (initial_offset + (j + 1) * tab_width + j * TAB_MARGIN * EDSCALE)
-							: initial_offset + j * (tab_width + TAB_MARGIN * EDSCALE);
+					const real_t pos_x = initial_offset + j * (tab_width + TAB_MARGIN * EDSCALE);
 					const Rect2 tab_rect = Rect2(slot_rect.position + Vector2(pos_x, -MARGINS.y * EDSCALE + MARGINS.y * EDSCALE / 4), Vector2(tab_width, MARGINS.y * EDSCALE / 2));
 					if (is_context_slot && context_tab_index == j) {
 						draw_rect(tab_rect, tab_selected_color);

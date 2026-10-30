@@ -155,7 +155,6 @@ void editor_register_icons(const Ref<Theme> &p_theme, bool p_dark_theme, float p
 	accent_color_icons.insert("gui_radio_checked");
 	accent_color_icons.insert("gui_indeterminate");
 	accent_color_icons.insert("gui_toggle_on");
-	accent_color_icons.insert("gui_toggle_on_mirrored");
 	accent_color_icons.insert("status_verified");
 
 	// Generate icons.

@@ -44,12 +44,6 @@ void LinkButton::_shape() {
 
 	text_buf->clear();
 	text_buf->set_width(-1);
-	if (text_direction == Control::TEXT_DIRECTION_INHERITED) {
-		text_buf->set_direction(is_layout_rtl() ? TextServer::DIRECTION_RTL : TextServer::DIRECTION_LTR);
-	} else {
-		text_buf->set_direction((TextServer::Direction)text_direction);
-	}
-	TS->shaped_text_set_bidi_override(text_buf->get_rid(), structured_text_parser(st_parser, st_args, xl_text));
 	const String &lang = language.is_empty() ? _get_locale() : language;
 	text_buf->add_string(xl_text, font, font_size, lang);
 	text_buf->set_text_overrun_behavior(overrun_behavior);
@@ -86,14 +80,6 @@ TextServer::OverrunBehavior LinkButton::get_text_overrun_behavior() const {
 	return overrun_behavior;
 }
 
-void LinkButton::set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser) {
-	if (st_parser != p_parser) {
-		st_parser = p_parser;
-		_shape();
-		queue_redraw();
-	}
-}
-
 void LinkButton::set_ellipsis_char(const String &p_char) {
 	String c = p_char;
 	if (c.length() > 1) {
@@ -115,33 +101,6 @@ void LinkButton::set_ellipsis_char(const String &p_char) {
 
 String LinkButton::get_ellipsis_char() const {
 	return el_char;
-}
-
-TextServer::StructuredTextParser LinkButton::get_structured_text_bidi_override() const {
-	return st_parser;
-}
-
-void LinkButton::set_structured_text_bidi_override_options(const Array &p_args) {
-	st_args = Array(p_args);
-	_shape();
-	queue_redraw();
-}
-
-Array LinkButton::get_structured_text_bidi_override_options() const {
-	return Array(st_args);
-}
-
-void LinkButton::set_text_direction(Control::TextDirection p_text_direction) {
-	ERR_FAIL_COND((int)p_text_direction < -1 || (int)p_text_direction > 3);
-	if (text_direction != p_text_direction) {
-		text_direction = p_text_direction;
-		_shape();
-		queue_redraw();
-	}
-}
-
-Control::TextDirection LinkButton::get_text_direction() const {
-	return text_direction;
 }
 
 void LinkButton::set_language(const String &p_language) {
@@ -179,14 +138,6 @@ LinkButton::UnderlineMode LinkButton::get_underline_mode() const {
 	return underline_mode;
 }
 
-Ref<Font> LinkButton::get_button_font() const {
-	return theme_cache.font;
-}
-
-int LinkButton::get_button_font_size() const {
-	return theme_cache.font_size;
-}
-
 void LinkButton::pressed() {
 	if (uri.is_empty()) {
 		return;
@@ -213,10 +164,6 @@ void LinkButton::_notification(int p_what) {
 			_shape();
 			update_configuration_warnings();
 			update_minimum_size();
-			queue_redraw();
-		} break;
-
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
 			queue_redraw();
 		} break;
 
@@ -278,28 +225,17 @@ void LinkButton::_notification(int p_what) {
 
 			Color font_outline_color = theme_cache.font_outline_color;
 			int outline_size = theme_cache.outline_size;
-			if (is_layout_rtl()) {
-				if (outline_size > 0 && font_outline_color.a > 0) {
-					text_buf->draw_outline(get_canvas_item(), Vector2(size.width - width, 0), outline_size, font_outline_color);
-				}
-				text_buf->draw(get_canvas_item(), Vector2(size.width - width, 0), color);
-			} else {
-				if (outline_size > 0 && font_outline_color.a > 0) {
-					text_buf->draw_outline(get_canvas_item(), Vector2(0, 0), outline_size, font_outline_color);
-				}
-				text_buf->draw(get_canvas_item(), Vector2(0, 0), color);
+			if (outline_size > 0 && font_outline_color.a > 0) {
+				text_buf->draw_outline(get_canvas_item(), Vector2(0, 0), outline_size, font_outline_color);
 			}
+			text_buf->draw(get_canvas_item(), Vector2(0, 0), color);
 
 			if (do_underline) {
 				int underline_spacing = theme_cache.underline_spacing + text_buf->get_line_underline_position();
 				int y = text_buf->get_line_ascent() + underline_spacing;
 				int underline_thickness = MAX(1, text_buf->get_line_underline_thickness());
 
-				if (is_layout_rtl()) {
-					draw_line(Vector2(size.width - width, y), Vector2(size.width, y), color, underline_thickness);
-				} else {
-					draw_line(Vector2(0, y), Vector2(width, y), color, underline_thickness);
-				}
+				draw_line(Vector2(0, y), Vector2(width, y), color, underline_thickness);
 			}
 		} break;
 	}
@@ -312,18 +248,12 @@ void LinkButton::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_text_overrun_behavior"), &LinkButton::get_text_overrun_behavior);
 	ClassDB::bind_method(D_METHOD("set_ellipsis_char", "char"), &LinkButton::set_ellipsis_char);
 	ClassDB::bind_method(D_METHOD("get_ellipsis_char"), &LinkButton::get_ellipsis_char);
-	ClassDB::bind_method(D_METHOD("set_text_direction", "direction"), &LinkButton::set_text_direction);
-	ClassDB::bind_method(D_METHOD("get_text_direction"), &LinkButton::get_text_direction);
 	ClassDB::bind_method(D_METHOD("set_language", "language"), &LinkButton::set_language);
 	ClassDB::bind_method(D_METHOD("get_language"), &LinkButton::get_language);
 	ClassDB::bind_method(D_METHOD("set_uri", "uri"), &LinkButton::set_uri);
 	ClassDB::bind_method(D_METHOD("get_uri"), &LinkButton::get_uri);
 	ClassDB::bind_method(D_METHOD("set_underline_mode", "underline_mode"), &LinkButton::set_underline_mode);
 	ClassDB::bind_method(D_METHOD("get_underline_mode"), &LinkButton::get_underline_mode);
-	ClassDB::bind_method(D_METHOD("set_structured_text_bidi_override", "parser"), &LinkButton::set_structured_text_bidi_override);
-	ClassDB::bind_method(D_METHOD("get_structured_text_bidi_override"), &LinkButton::get_structured_text_bidi_override);
-	ClassDB::bind_method(D_METHOD("set_structured_text_bidi_override_options", "args"), &LinkButton::set_structured_text_bidi_override_options);
-	ClassDB::bind_method(D_METHOD("get_structured_text_bidi_override_options"), &LinkButton::get_structured_text_bidi_override_options);
 
 	BIND_ENUM_CONSTANT(UNDERLINE_MODE_ALWAYS);
 	BIND_ENUM_CONSTANT(UNDERLINE_MODE_ON_HOVER);
@@ -337,11 +267,8 @@ void LinkButton::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_overrun_behavior", PROPERTY_HINT_ENUM, "Trim Nothing,Trim Characters,Trim Words,Ellipsis (6+ Characters),Word Ellipsis (6+ Characters),Ellipsis (Always),Word Ellipsis (Always)"), "set_text_overrun_behavior", "get_text_overrun_behavior");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "ellipsis_char"), "set_ellipsis_char", "get_ellipsis_char");
 
-	ADD_GROUP("BiDi", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_direction", PROPERTY_HINT_ENUM, "Auto,Left-to-Right,Right-to-Left,Inherited"), "set_text_direction", "get_text_direction");
+	ADD_GROUP("Localization", "");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "language", PROPERTY_HINT_LOCALE_ID, ""), "set_language", "get_language");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "structured_text_bidi_override", PROPERTY_HINT_ENUM, "Default,URI,File,Email,List,None,Custom"), "set_structured_text_bidi_override", "get_structured_text_bidi_override");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "structured_text_bidi_override_options"), "set_structured_text_bidi_override_options", "get_structured_text_bidi_override_options");
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, LinkButton, focus);
 

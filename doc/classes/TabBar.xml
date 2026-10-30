@@ -97,13 +97,6 @@
 				Returns tab [Rect2] with local position and size.
 			</description>
 		</method>
-		<method name="get_tab_text_direction" qualifiers="const">
-			<return type="int" enum="Control.TextDirection" />
-			<param index="0" name="tab_idx" type="int" />
-			<description>
-				Returns tab title text base writing direction.
-			</description>
-		</method>
 		<method name="get_tab_title" qualifiers="const">
 			<return type="String" />
 			<param index="0" name="tab_idx" type="int" />
@@ -213,14 +206,6 @@
 			<param index="1" name="metadata" type="Variant" />
 			<description>
 				Sets the metadata value for the tab at index [param tab_idx], which can be retrieved later using [method get_tab_metadata].
-			</description>
-		</method>
-		<method name="set_tab_text_direction">
-			<return type="void" />
-			<param index="0" name="tab_idx" type="int" />
-			<param index="1" name="direction" type="int" enum="Control.TextDirection" />
-			<description>
-				Sets tab title base writing direction.
 			</description>
 		</method>
 		<method name="set_tab_title">

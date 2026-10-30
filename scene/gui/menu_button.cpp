@@ -98,9 +98,6 @@ void MenuButton::show_popup() {
 		}
 	}
 	popup->set_max_size(max_size);
-	if (is_layout_rtl()) {
-		rect.position.x += rect.size.width - popup->get_size().width;
-	}
 	popup->set_position(rect.position);
 
 	// If not triggered by the mouse, start the popup with its first enabled item focused.
@@ -141,13 +138,6 @@ int MenuButton::get_item_count() const {
 
 void MenuButton::_notification(int p_what) {
 	switch (p_what) {
-
-
-		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-			popup->set_layout_direction((Window::LayoutDirection)get_layout_direction());
-		} break;
-
 		case NOTIFICATION_VISIBILITY_CHANGED: {
 			if (!is_visible_in_tree()) {
 				popup->hide();

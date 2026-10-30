@@ -1085,11 +1085,7 @@ bool CanvasItemManipulator::_gui_input_anchors(const Ref<InputEvent> &p_event) {
 					for (int i = 0; i < 4; i++) {
 						anchor_pos[i] = ((Transform2D)global_transform_callback.call() * control->get_screen_transform()).xform(anchor_to_position(control, anchor_pos[i]));
 						anchor_rects[i] = Rect2(anchor_pos[i], ANCHOR_HANDLE_SIZE);
-						if (control->is_layout_rtl()) {
-							anchor_rects[i].position -= ANCHOR_HANDLE_SIZE * Vector2(real_t(i == 1 || i == 2), real_t(i <= 1));
-						} else {
-							anchor_rects[i].position -= ANCHOR_HANDLE_SIZE * Vector2(real_t(i == 0 || i == 3), real_t(i <= 1));
-						}
+						anchor_rects[i].position -= ANCHOR_HANDLE_SIZE * Vector2(real_t(i == 0 || i == 3), real_t(i <= 1));
 					}
 
 					const DragType dragger[] = {
@@ -1479,11 +1475,7 @@ Point2 CanvasItemManipulator::anchor_to_position(const Control *p_control, const
 	Transform2D parent_transform = p_control->get_transform().affine_inverse();
 	Rect2 parent_rect = p_control->get_parent_anchorable_rect();
 
-	if (p_control->is_layout_rtl()) {
-		return parent_transform.xform(parent_rect.position + Point2(parent_rect.size.x - parent_rect.size.x * p_anchor.x, parent_rect.size.y * p_anchor.y));
-	} else {
-		return parent_transform.xform(parent_rect.position + Point2(parent_rect.size.x * p_anchor.x, parent_rect.size.y * p_anchor.y));
-	}
+	return parent_transform.xform(parent_rect.position + Point2(parent_rect.size.x * p_anchor.x, parent_rect.size.y * p_anchor.y));
 }
 
 Point2 CanvasItemManipulator::position_to_anchor(const Control *p_control, const Point2 &p_position) {
@@ -1492,11 +1484,7 @@ Point2 CanvasItemManipulator::position_to_anchor(const Control *p_control, const
 	Rect2 parent_rect = p_control->get_parent_anchorable_rect();
 
 	Vector2 output;
-	if (p_control->is_layout_rtl()) {
-		output.x = (parent_rect.size.x == 0) ? 0.0 : (parent_rect.size.x - p_control->get_transform().xform(p_position).x - parent_rect.position.x) / parent_rect.size.x;
-	} else {
-		output.x = (parent_rect.size.x == 0) ? 0.0 : (p_control->get_transform().xform(p_position).x - parent_rect.position.x) / parent_rect.size.x;
-	}
+	output.x = (parent_rect.size.x == 0) ? 0.0 : (p_control->get_transform().xform(p_position).x - parent_rect.position.x) / parent_rect.size.x;
 	output.y = (parent_rect.size.y == 0) ? 0.0 : (p_control->get_transform().xform(p_position).y - parent_rect.position.y) / parent_rect.size.y;
 	return output;
 }

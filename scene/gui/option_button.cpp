@@ -85,11 +85,7 @@ void OptionButton::_notification(int p_what) {
 		case NOTIFICATION_POSTINITIALIZE: {
 			_refresh_size_cache();
 			if (has_theme_icon(SNAME("arrow"))) {
-				if (is_layout_rtl()) {
-					_set_internal_margin(SIDE_LEFT, theme_cache.arrow_icon->get_width());
-				} else {
-					_set_internal_margin(SIDE_RIGHT, theme_cache.arrow_icon->get_width());
-				}
+				_set_internal_margin(SIDE_RIGHT, theme_cache.arrow_icon->get_width());
 			}
 		} break;
 
@@ -126,28 +122,15 @@ void OptionButton::_notification(int p_what) {
 			Size2 size = get_size();
 
 			Point2 ofs;
-			if (is_layout_rtl()) {
-				ofs = Point2(theme_cache.arrow_margin, int(Math::abs((size.height - theme_cache.arrow_icon->get_height()) / 2)));
-			} else {
-				ofs = Point2(size.width - theme_cache.arrow_icon->get_width() - theme_cache.arrow_margin, int(Math::abs((size.height - theme_cache.arrow_icon->get_height()) / 2)));
-			}
+			ofs = Point2(size.width - theme_cache.arrow_icon->get_width() - theme_cache.arrow_margin, int(Math::abs((size.height - theme_cache.arrow_icon->get_height()) / 2)));
 			theme_cache.arrow_icon->draw(ci, ofs, clr);
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-			popup->set_layout_direction((Window::LayoutDirection)get_layout_direction());
-			[[fallthrough]];
-		}
 		case NOTIFICATION_THEME_CHANGED: {
 			if (has_theme_icon(SNAME("arrow"))) {
-				if (is_layout_rtl()) {
-					_set_internal_margin(SIDE_LEFT, theme_cache.arrow_icon->get_width());
-					_set_internal_margin(SIDE_RIGHT, 0.f);
-				} else {
-					_set_internal_margin(SIDE_LEFT, 0.f);
-					_set_internal_margin(SIDE_RIGHT, theme_cache.arrow_icon->get_width());
-				}
+				_set_internal_margin(SIDE_LEFT, 0.f);
+				_set_internal_margin(SIDE_RIGHT, theme_cache.arrow_icon->get_width());
 			}
 			_refresh_size_cache();
 		} break;

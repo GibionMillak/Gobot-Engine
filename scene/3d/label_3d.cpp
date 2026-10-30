@@ -55,17 +55,8 @@ void Label3D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_text", "text"), &Label3D::set_text);
 	ClassDB::bind_method(D_METHOD("get_text"), &Label3D::get_text);
 
-	ClassDB::bind_method(D_METHOD("set_text_direction", "direction"), &Label3D::set_text_direction);
-	ClassDB::bind_method(D_METHOD("get_text_direction"), &Label3D::get_text_direction);
-
 	ClassDB::bind_method(D_METHOD("set_language", "language"), &Label3D::set_language);
 	ClassDB::bind_method(D_METHOD("get_language"), &Label3D::get_language);
-
-	ClassDB::bind_method(D_METHOD("set_structured_text_bidi_override", "parser"), &Label3D::set_structured_text_bidi_override);
-	ClassDB::bind_method(D_METHOD("get_structured_text_bidi_override"), &Label3D::get_structured_text_bidi_override);
-
-	ClassDB::bind_method(D_METHOD("set_structured_text_bidi_override_options", "args"), &Label3D::set_structured_text_bidi_override_options);
-	ClassDB::bind_method(D_METHOD("get_structured_text_bidi_override_options"), &Label3D::get_structured_text_bidi_override_options);
 
 	ClassDB::bind_method(D_METHOD("set_uppercase", "enable"), &Label3D::set_uppercase);
 	ClassDB::bind_method(D_METHOD("is_uppercase"), &Label3D::is_uppercase);
@@ -166,11 +157,8 @@ void Label3D::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "justification_flags", PROPERTY_HINT_FLAGS, "Kashida Justification:1,Word Justification:2,Justify Only After Last Tab:8,Skip Last Line:32,Skip Last Line With Visible Characters:64,Do Not Skip Single Line:128"), "set_justification_flags", "get_justification_flags");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "width", PROPERTY_HINT_NONE, "suffix:px"), "set_width", "get_width");
 
-	ADD_GROUP("BiDi", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_direction", PROPERTY_HINT_ENUM, "Auto,Left-to-Right,Right-to-Left"), "set_text_direction", "get_text_direction");
+	ADD_GROUP("Localization", "");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "language", PROPERTY_HINT_LOCALE_ID, ""), "set_language", "get_language");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "structured_text_bidi_override", PROPERTY_HINT_ENUM, "Default,URI,File,Email,List,None,Custom"), "set_structured_text_bidi_override", "get_structured_text_bidi_override");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "structured_text_bidi_override_options"), "set_structured_text_bidi_override_options", "get_structured_text_bidi_override_options");
 
 	BIND_ENUM_CONSTANT(FLAG_SHADED);
 	BIND_ENUM_CONSTANT(FLAG_DOUBLE_SIDED);
@@ -480,19 +468,10 @@ void Label3D::_shape() {
 	// Update text buffer.
 	if (dirty_text) {
 		TS->shaped_text_clear(text_rid);
-		TS->shaped_text_set_direction(text_rid, text_direction);
 
 		const String &lang = language.is_empty() ? _get_locale() : language;
 		String txt = uppercase ? TS->string_to_upper(xl_text, lang) : xl_text;
 		TS->shaped_text_add_string(text_rid, txt, font->get_rids(), font_size, font->get_opentype_features(), lang);
-
-		TypedArray<Vector3i> stt;
-		if (st_parser == TextServer::STRUCTURED_TEXT_CUSTOM) {
-			GDVIRTUAL_CALL(_structured_text_parser, st_args, txt, stt);
-		} else {
-			stt = TS->parse_structured_text(st_parser, st_args, txt);
-		}
-		TS->shaped_text_set_bidi_override(text_rid, stt);
 
 		dirty_text = false;
 		dirty_font = false;
@@ -703,19 +682,6 @@ VerticalAlignment Label3D::get_vertical_alignment() const {
 	return vertical_alignment;
 }
 
-void Label3D::set_text_direction(TextServer::Direction p_text_direction) {
-	ERR_FAIL_COND((int)p_text_direction < -1 || (int)p_text_direction > 3);
-	if (text_direction != p_text_direction) {
-		text_direction = p_text_direction;
-		dirty_text = true;
-		_queue_update();
-	}
-}
-
-TextServer::Direction Label3D::get_text_direction() const {
-	return text_direction;
-}
-
 void Label3D::set_language(const String &p_language) {
 	if (language != p_language) {
 		language = p_language;
@@ -726,30 +692,6 @@ void Label3D::set_language(const String &p_language) {
 
 String Label3D::get_language() const {
 	return language;
-}
-
-void Label3D::set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser) {
-	if (st_parser != p_parser) {
-		st_parser = p_parser;
-		dirty_text = true;
-		_queue_update();
-	}
-}
-
-TextServer::StructuredTextParser Label3D::get_structured_text_bidi_override() const {
-	return st_parser;
-}
-
-void Label3D::set_structured_text_bidi_override_options(const Array &p_args) {
-	if (st_args != p_args) {
-		st_args = Array(p_args);
-		dirty_text = true;
-		_queue_update();
-	}
-}
-
-Array Label3D::get_structured_text_bidi_override_options() const {
-	return Array(st_args);
 }
 
 void Label3D::set_uppercase(bool p_uppercase) {

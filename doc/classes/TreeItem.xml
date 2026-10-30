@@ -356,20 +356,6 @@
 				Returns a dictionary containing the range parameters for a given column. The keys are "min", "max", "step", and "expr".
 			</description>
 		</method>
-		<method name="get_structured_text_bidi_override" qualifiers="const">
-			<return type="int" enum="TextServer.StructuredTextParser" />
-			<param index="0" name="column" type="int" />
-			<description>
-				Returns the BiDi algorithm override set for this cell.
-			</description>
-		</method>
-		<method name="get_structured_text_bidi_override_options" qualifiers="const">
-			<return type="Array" />
-			<param index="0" name="column" type="int" />
-			<description>
-				Returns the additional BiDi options set for this cell.
-			</description>
-		</method>
 		<method name="get_suffix" qualifiers="const">
 			<return type="String" />
 			<param index="0" name="column" type="int" />
@@ -389,13 +375,6 @@
 			<param index="0" name="column" type="int" />
 			<description>
 				Returns the given column's text alignment.
-			</description>
-		</method>
-		<method name="get_text_direction" qualifiers="const">
-			<return type="int" enum="Control.TextDirection" />
-			<param index="0" name="column" type="int" />
-			<description>
-				Returns item's text base writing direction.
 			</description>
 		</method>
 		<method name="get_text_overrun_behavior" qualifiers="const">
@@ -822,22 +801,6 @@
 				If [param selectable] is [code]true[/code], the given [param column] is selectable.
 			</description>
 		</method>
-		<method name="set_structured_text_bidi_override">
-			<return type="void" />
-			<param index="0" name="column" type="int" />
-			<param index="1" name="parser" type="int" enum="TextServer.StructuredTextParser" />
-			<description>
-				Set BiDi algorithm override for the structured text. Has effect for cells that display text.
-			</description>
-		</method>
-		<method name="set_structured_text_bidi_override_options">
-			<return type="void" />
-			<param index="0" name="column" type="int" />
-			<param index="1" name="args" type="Array" />
-			<description>
-				Set additional options for BiDi override. Has effect for cells that display text.
-			</description>
-		</method>
 		<method name="set_suffix">
 			<return type="void" />
 			<param index="0" name="column" type="int" />
@@ -860,14 +823,6 @@
 			<param index="1" name="text_alignment" type="int" enum="HorizontalAlignment" />
 			<description>
 				Sets the given column's text alignment to [param text_alignment].
-			</description>
-		</method>
-		<method name="set_text_direction">
-			<return type="void" />
-			<param index="0" name="column" type="int" />
-			<param index="1" name="direction" type="int" enum="Control.TextDirection" />
-			<description>
-				Sets item's text base writing direction.
 			</description>
 		</method>
 		<method name="set_text_overrun_behavior">

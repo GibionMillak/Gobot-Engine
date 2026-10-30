@@ -133,7 +133,6 @@ void Container::fit_child_in_rect(RequiredParam<Control> p_child, const Rect2 &p
 	EXTRACT_PARAM_OR_FAIL(child, p_child);
 	ERR_FAIL_COND(child->get_parent() != this);
 
-	bool rtl = is_layout_rtl();
 	Size2 minsize = child->get_combined_minimum_size();
 	Size2 desired_size = child->get_bound_desired_size();
 	Size2 maxsize = child->get_combined_maximum_size();
@@ -149,11 +148,9 @@ void Container::fit_child_in_rect(RequiredParam<Control> p_child, const Rect2 &p
 		}
 		r.size.x = final_width;
 		if (h_size_flags.has_flag(SIZE_SHRINK_END)) {
-			r.position.x += rtl ? 0 : (p_rect.size.width - final_width);
+			r.position.x += (p_rect.size.width - final_width);
 		} else if (h_size_flags.has_flag(SIZE_SHRINK_CENTER)) {
 			r.position.x += Math::floor((p_rect.size.x - final_width) / 2);
-		} else {
-			r.position.x += rtl ? (p_rect.size.width - final_width) : 0;
 		}
 	}
 

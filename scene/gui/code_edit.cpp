@@ -66,9 +66,6 @@ void CodeEdit::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED:
-			[[fallthrough]];
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
-			[[fallthrough]];
 		case NOTIFICATION_VISIBILITY_CHANGED: {
 			// Avoid having many hidden text editors with unused cache filling up memory.
 			_clear_line_number_text_cache();
@@ -78,7 +75,6 @@ void CodeEdit::_notification(int p_what) {
 		case NOTIFICATION_DRAW: {
 			RID ci = get_text_canvas_item();
 			const bool caret_visible = is_caret_visible();
-			const bool rtl = is_layout_rtl();
 			const int row_height = get_line_height();
 
 			if (caret_visible) {
@@ -241,12 +237,7 @@ void CodeEdit::_notification(int p_what) {
 						title_pos.x = icon_area.position.x + icon_area.size.width + theme_cache.code_completion_icon_separation;
 
 						tl->set_width(code_completion_rect.size.width - (icon_area_size.x + theme_cache.code_completion_icon_separation));
-						if (rtl) {
-							if (code_completion_options[l].default_value.get_type() == Variant::COLOR) {
-								RS::get_singleton()->canvas_item_add_rect(ci, Rect2(Point2(code_completion_rect.position.x, icon_area.position.y), icon_area_size), (Color)code_completion_options[l].default_value);
-							}
-							tl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
-						} else {
+						{
 							if (code_completion_options[l].default_value.get_type() == Variant::COLOR) {
 								const Color color = code_completion_options[l].default_value;
 								const Rect2 rect = Rect2(Point2(code_completion_rect.position.x + code_completion_rect.size.width - icon_area_size.x, icon_area.position.y), icon_area_size);
@@ -300,7 +291,6 @@ void CodeEdit::_draw_guidelines() {
 
 	RID ci = get_canvas_item();
 	const Size2 size = get_size();
-	const bool rtl = is_layout_rtl();
 
 	Ref<StyleBox> style = is_editable() ? theme_cache.style_normal : theme_cache.style_readonly;
 	const int xmargin_beg = style->get_content_inset(SIDE_LEFT) + get_total_gutter_width();
@@ -311,10 +301,6 @@ void CodeEdit::_draw_guidelines() {
 		const int xoffset = xmargin_beg + column_pos - get_h_scroll();
 		if (xoffset > xmargin_beg && xoffset < xmargin_end) {
 			Color guideline_color = (i == 0) ? theme_cache.line_length_guideline_color : theme_cache.line_length_guideline_color * Color(1, 1, 1, 0.6);
-			if (rtl) {
-				RenderingServer::get_singleton()->canvas_item_add_line(ci, Point2(size.width - xoffset, 0), Point2(size.width - xoffset, size.height), guideline_color);
-				continue;
-			}
 			RenderingServer::get_singleton()->canvas_item_add_line(ci, Point2(xoffset, 0), Point2(xoffset, size.height), guideline_color);
 		}
 	}
@@ -486,9 +472,6 @@ void CodeEdit::gui_input(const Ref<InputEvent> &p_gui_input) {
 
 		if (mb->is_pressed()) {
 			Vector2i mpos = mb->get_position();
-			if (is_layout_rtl()) {
-				mpos.x = get_size().x - mpos.x;
-			}
 
 			Point2i pos = get_line_column_at_pos(mpos, false);
 			int line = pos.y;
@@ -511,9 +494,6 @@ void CodeEdit::gui_input(const Ref<InputEvent> &p_gui_input) {
 			if (mb->get_button_index() == MouseButton::LEFT) {
 				if (mb->is_command_or_control_pressed() && !symbol_lookup_word.is_empty()) {
 					Vector2i mpos = mb->get_position();
-					if (is_layout_rtl()) {
-						mpos.x = get_size().x - mpos.x;
-					}
 
 					Point2i pos = get_line_column_at_pos(mpos, false, false);
 					int line = pos.y;
@@ -531,9 +511,6 @@ void CodeEdit::gui_input(const Ref<InputEvent> &p_gui_input) {
 	Ref<InputEventMouseMotion> mm = p_gui_input;
 	if (mm.is_valid() && event_device_id != InputEvent::DEVICE_ID_EMULATION) {
 		Vector2i mpos = mm->get_position();
-		if (is_layout_rtl()) {
-			mpos.x = get_size().x - mpos.x;
-		}
 
 		if (symbol_lookup_on_click_enabled) {
 			if (mm->is_command_or_control_pressed() && mm->get_button_mask().is_empty()) {
@@ -597,7 +574,7 @@ void CodeEdit::gui_input(const Ref<InputEvent> &p_gui_input) {
 	if ((mac_keys && k->get_keycode() == Key::META) || (!mac_keys && k->get_keycode() == Key::CTRL)) {
 		if (symbol_lookup_on_click_enabled) {
 			if (k->is_pressed() && !is_dragging_cursor()) {
-				Point2i lookup_pos = get_line_column_at_pos(get_local_mouse_pos(), false, false);
+				Point2i lookup_pos = get_line_column_at_pos(get_local_mouse_position(), false, false);
 				symbol_lookup_new_word = get_lookup_word(lookup_pos.y, lookup_pos.x);
 				if (symbol_lookup_new_word != symbol_lookup_word) {
 					emit_signal(SNAME("symbol_validate"), symbol_lookup_new_word);
@@ -1631,7 +1608,6 @@ void CodeEdit::_line_number_draw_callback(int p_line, int p_gutter, const Rect2 
 		return;
 	}
 
-	bool rtl = is_layout_rtl();
 	HashMap<int, RID>::Iterator E = line_number_text_cache.find(p_line);
 	RID text_rid;
 	if (E) {
@@ -1654,11 +1630,7 @@ void CodeEdit::_line_number_draw_callback(int p_line, int p_gutter, const Rect2 
 	Point2 ofs = p_region.get_center() - text_size / 2;
 	ofs.y += TS->shaped_text_get_ascent(text_rid);
 
-	if (rtl) {
-		ofs.x = p_region.get_end().x - text_size.width;
-	} else {
-		ofs.x = p_region.position.x;
-	}
+	ofs.x = p_region.position.x;
 
 	Color number_color = get_line_gutter_item_color(p_line, line_number_gutter);
 	if (number_color == Color(1, 1, 1)) {
@@ -2591,7 +2563,7 @@ bool CodeEdit::is_symbol_lookup_on_click_enabled() const {
 }
 
 String CodeEdit::get_text_for_symbol_lookup() const {
-	Point2i mp = get_local_mouse_pos();
+	Point2i mp = get_local_mouse_position();
 	Point2i pos = get_line_column_at_pos(mp, false, false);
 	int line = pos.y;
 	int col = pos.x;
@@ -4101,10 +4073,6 @@ CodeEdit::CodeEdit() {
 	/* Delimiter tracking */
 	add_string_delimiter("\"", "\"", false);
 	add_string_delimiter("\'", "\'", false);
-
-	/* Text Direction */
-	set_layout_direction(LAYOUT_DIRECTION_LTR);
-	set_text_direction(TEXT_DIRECTION_LTR);
 
 	/* Gutters */
 	int gutter_idx = 0;

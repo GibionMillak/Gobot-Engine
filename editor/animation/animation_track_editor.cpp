@@ -2121,8 +2121,6 @@ AnimationTimelineEdit::AnimationTimelineEdit() {
 	panner->set_scroll_zoom_factor(SCROLL_ZOOM_FACTOR_IN);
 	panner->set_callbacks(callable_mp(this, &AnimationTimelineEdit::_pan_callback), callable_mp(this, &AnimationTimelineEdit::_zoom_callback));
 	panner->set_pan_axis(ViewPanner::PAN_AXIS_HORIZONTAL);
-
-	set_layout_direction(Control::LAYOUT_DIRECTION_LTR);
 }
 
 ////////////////////////////////////
@@ -4092,10 +4090,6 @@ void AnimationTrackEditor::add_track_edit_plugin(const Ref<AnimationTrackEditPlu
 		return;
 	}
 	track_edit_plugins.push_back(p_plugin);
-}
-
-void AnimationTrackEditor::remove_track_edit_plugin(const Ref<AnimationTrackEditPlugin> &p_plugin) {
-	track_edit_plugins.erase(p_plugin);
 }
 
 void AnimationTrackEditor::set_animation(const Ref<Animation> &p_anim, bool p_read_only) {
@@ -8043,11 +8037,6 @@ float AnimationTrackEditor::get_snap_unit() {
 void AnimationTrackEditor::_update_timeline_margins() {
 	int margin_left = timeline_mc->get_theme_constant(SNAME("margin_left"), SNAME("AnimationTrackMargins"));
 	int margin_right = timeline_mc->get_theme_constant(SNAME("margin_right"), SNAME("AnimationTrackMargins"));
-
-	// Prevent the timeline cursor from misaligning with the tracks on the right-to-left layout.
-	if (scroll->get_v_scroll_bar()->is_visible() && is_layout_rtl()) {
-		margin_left += scroll->get_v_scroll_bar()->get_minimum_size().width;
-	}
 
 	timeline_mc->add_theme_constant_override(SNAME("margin_left"), margin_left);
 	timeline_mc->add_theme_constant_override(SNAME("margin_right"), margin_right);

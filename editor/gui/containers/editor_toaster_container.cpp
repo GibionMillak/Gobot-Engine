@@ -48,7 +48,7 @@
 EditorToasterContainer::EditorToasterContainer() {
 	set_notify_transform(true);
 
-	const Side border_side = is_layout_rtl() ? SIDE_RIGHT : SIDE_LEFT;
+	const Side border_side = SIDE_LEFT;
 
 	_info_panel_style_background.instantiate();
 	_info_panel_style_background->set_corner_radius_all(STYLEBOX_RADIUS * EDSCALE);
@@ -358,9 +358,7 @@ void EditorToasterContainer::_update_vbox_position() {
 	Point2 pos = get_global_position();
 	const Size2 vbox_size = _toasts_vbox->get_size();
 	pos.y -= vbox_size.y + 5 * EDSCALE;
-	if (!is_layout_rtl()) {
-		pos.x = pos.x - vbox_size.x + get_size().x;
-	}
+	pos.x = pos.x - vbox_size.x + get_size().x;
 
 	_toasts_vbox->set_position(pos);
 }
@@ -383,11 +381,7 @@ void EditorToasterContainer::_update_disable_notifications_button() {
 		const int sep = 5 * EDSCALE;
 		const Size2 disable_panel_size = _disable_notifications_pc->get_minimum_size();
 		pos.y -= disable_panel_size.y + sep;
-		if (is_layout_rtl()) {
-			pos.x = pos.x - disable_panel_size.x - sep;
-		} else {
-			pos.x += get_size().x + sep;
-		}
+		pos.x += get_size().x + sep;
 
 		_disable_notifications_pc->set_position(pos);
 	}
@@ -494,11 +488,7 @@ void EditorToasterContainer::_draw_progress(Control *p_panel) {
 		const Size2 size = p_panel->get_size();
 		Size2 progress = size;
 		progress.width *= MIN(1, Math::remap(_toasts[p_panel].remaining_time, 0, _toasts[p_panel].duration, 0, 2));
-		if (is_layout_rtl()) {
-			p_panel->draw_style_box(stylebox, Rect2(size - progress, progress));
-		} else {
-			p_panel->draw_style_box(stylebox, Rect2(Vector2(), progress));
-		}
+		p_panel->draw_style_box(stylebox, Rect2(Vector2(), progress));
 	}
 }
 

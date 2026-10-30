@@ -80,7 +80,6 @@ private:
 		String tooltip;
 
 		String language;
-		Control::TextDirection text_direction = Control::TEXT_DIRECTION_INHERITED;
 
 		Ref<TextLine> text_buf;
 		Ref<Texture2D> icon;
@@ -262,9 +261,6 @@ public:
 	void set_tab_tooltip(int p_tab, const String &p_tooltip);
 	String get_tab_tooltip(int p_tab) const;
 
-	void set_tab_text_direction(int p_tab, TextDirection p_text_direction);
-	TextDirection get_tab_text_direction(int p_tab) const;
-
 	void set_tab_language(int p_tab, const String &p_language);
 	String get_tab_language(int p_tab) const;
 
@@ -276,7 +272,6 @@ public:
 
 	void set_font_color_override_all(int p_tab, const Color &p_color);
 	void set_font_color_override(int p_tab, DrawMode p_draw_mode, const Color &p_color);
-	Color get_font_color_override(int p_tab, DrawMode p_draw_mode) const;
 
 	void set_tab_disabled(int p_tab, bool p_disabled);
 	bool is_tab_disabled(int p_tab) const;

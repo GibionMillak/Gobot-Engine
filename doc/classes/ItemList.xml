@@ -161,13 +161,6 @@
 				Returns the text associated with the specified index.
 			</description>
 		</method>
-		<method name="get_item_text_direction" qualifiers="const">
-			<return type="int" enum="Control.TextDirection" />
-			<param index="0" name="idx" type="int" />
-			<description>
-				Returns item's text base writing direction.
-			</description>
-		</method>
 		<method name="get_item_tooltip" qualifiers="const">
 			<return type="String" />
 			<param index="0" name="idx" type="int" />
@@ -349,14 +342,6 @@
 			<param index="1" name="text" type="String" />
 			<description>
 				Sets text of the item associated with the specified index.
-			</description>
-		</method>
-		<method name="set_item_text_direction">
-			<return type="void" />
-			<param index="0" name="idx" type="int" />
-			<param index="1" name="direction" type="int" enum="Control.TextDirection" />
-			<description>
-				Sets item's text base writing direction.
 			</description>
 		</method>
 		<method name="set_item_tooltip">

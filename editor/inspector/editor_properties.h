@@ -142,10 +142,8 @@ public:
 	virtual void update_property() override;
 
 	void set_monospaced(bool p_monospaced);
-	bool get_monospaced();
 
 	void set_wrap_lines(bool p_wrap_lines);
-	bool get_wrap_lines();
 
 	EditorPropertyMultilineText(bool p_expression = false);
 };

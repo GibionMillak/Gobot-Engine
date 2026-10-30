@@ -410,20 +410,12 @@ void EditorPropertyMultilineText::EditorPropertyMultilineText::set_monospaced(bo
 	_update_theme();
 }
 
-bool EditorPropertyMultilineText::EditorPropertyMultilineText::get_monospaced() {
-	return monospaced;
-}
-
 void EditorPropertyMultilineText::EditorPropertyMultilineText::set_wrap_lines(bool p_wrap_lines) {
 	if (p_wrap_lines == wrap_lines) {
 		return;
 	}
 	wrap_lines = p_wrap_lines;
 	_update_theme();
-}
-
-bool EditorPropertyMultilineText::EditorPropertyMultilineText::get_wrap_lines() {
-	return wrap_lines;
 }
 
 EditorPropertyMultilineText::EditorPropertyMultilineText(bool p_expression) :
@@ -847,7 +839,6 @@ EditorPropertyPath::EditorPropertyPath() {
 	add_child(path_hb);
 	path = memnew(LineEdit);
 	SET_DRAG_FORWARDING_CDU(path, EditorPropertyPath);
-	path->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	path_hb->add_child(path);
 	path->connect(SceneStringName(text_submitted), callable_mp(this, &EditorPropertyPath::_path_selected));
 	path->connect(SceneStringName(focus_exited), callable_mp(this, &EditorPropertyPath::_path_focus_exited));

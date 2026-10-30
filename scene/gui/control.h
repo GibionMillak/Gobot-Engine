@@ -152,22 +152,6 @@ public:
 		LAYOUT_MODE_UNCONTROLLED,
 	};
 
-	enum LayoutDirection {
-		LAYOUT_DIRECTION_INHERITED,
-		LAYOUT_DIRECTION_APPLICATION_LOCALE,
-		LAYOUT_DIRECTION_LTR,
-		LAYOUT_DIRECTION_RTL,
-		LAYOUT_DIRECTION_SYSTEM_LOCALE,
-		LAYOUT_DIRECTION_MAX,
-	};
-
-	enum TextDirection {
-		TEXT_DIRECTION_AUTO = TextServer::DIRECTION_AUTO,
-		TEXT_DIRECTION_LTR = TextServer::DIRECTION_LTR,
-		TEXT_DIRECTION_RTL = TextServer::DIRECTION_RTL,
-		TEXT_DIRECTION_INHERITED = TextServer::DIRECTION_INHERITED,
-	};
-
 private:
 	struct CComparator {
 		bool operator()(const Control *p_a, const Control *p_b) const {
@@ -243,7 +227,6 @@ private:
 
 		Size2 last_maximum_size;
 		bool updating_last_maximum_size = false;
-		bool block_maximum_size_adjust = false;
 
 		mutable Size2 minimum_size_cache;
 		mutable bool minimum_size_valid = false;
@@ -321,10 +304,6 @@ private:
 		mutable HashMap<StringName, Theme::ThemeSoundMap> theme_audio_cache;
 
 		// Internationalization.
-
-		LayoutDirection layout_dir = LAYOUT_DIRECTION_INHERITED;
-		mutable bool is_rtl_dirty = true;
-		mutable bool is_rtl = false;
 
 		bool localize_numeral_system = true;
 
@@ -410,8 +389,6 @@ private:
 
 	// Extra properties.
 
-	static int root_layout_direction;
-
 protected:
 	// Dynamic properties.
 
@@ -433,8 +410,6 @@ protected:
 
 	// Internationalization.
 
-	virtual TypedArray<Vector3i> structured_text_parser(TextServer::StructuredTextParser p_parser_type, const Array &p_args, const String &p_text) const;
-
 	// Base object overrides.
 
 	void _notification(int p_notification);
@@ -452,7 +427,6 @@ protected:
 	// Exposed virtual methods.
 
 	GDVIRTUAL1RC(bool, _has_point, Vector2)
-	GDVIRTUAL2RC(TypedArray<Vector3i>, _structured_text_parser, Array, String)
 	GDVIRTUAL0RC(Vector2, _get_maximum_size)
 	GDVIRTUAL0RC(Vector2, _get_minimum_size)
 	GDVIRTUAL1RC(String, _get_tooltip, Vector2)
@@ -478,7 +452,6 @@ public:
 		NOTIFICATION_THEME_CHANGED = 45,
 		NOTIFICATION_SCROLL_BEGIN = 47,
 		NOTIFICATION_SCROLL_END = 48,
-		NOTIFICATION_LAYOUT_DIRECTION_CHANGED = 49,
 		NOTIFICATION_MOUSE_ENTER_SELF = 60,
 		NOTIFICATION_MOUSE_EXIT_SELF = 61,
 	};
@@ -514,8 +487,6 @@ public:
 	virtual void reparent(RequiredParam<Node> p_parent, bool p_keep_global_transform = true) override;
 
 	// Editor integration.
-
-	static void set_root_layout_direction(int p_root_dir);
 
 	PackedStringArray get_configuration_warnings() const override;
 #ifdef TOOLS_ENABLED
@@ -597,7 +568,6 @@ public:
 	void grow_to_desired_size();
 	bool is_expanded_by_desired_size() const;
 
-	void set_block_maximum_size_adjust(bool p_block);
 	void set_block_minimum_size_adjust(bool p_block);
 
 	virtual Size2 get_maximum_size() const;
@@ -807,10 +777,6 @@ public:
 
 	// Internationalization.
 
-	void set_layout_direction(LayoutDirection p_direction);
-	LayoutDirection get_layout_direction() const;
-	virtual bool is_layout_rtl() const;
-
 	void set_localize_numeral_system(bool p_enable);
 	bool is_localizing_numeral_system() const;
 
@@ -843,8 +809,6 @@ VARIANT_ENUM_CAST(Control::MouseFilter);
 VARIANT_ENUM_CAST(Control::GrowDirection);
 VARIANT_ENUM_CAST(Control::Anchor);
 VARIANT_ENUM_CAST(Control::LayoutMode);
-VARIANT_ENUM_CAST(Control::LayoutDirection);
-VARIANT_ENUM_CAST(Control::TextDirection);
 
 // G = get_drag_data_fw, C = can_drop_data_fw, D = drop_data_fw, U = underscore
 #define SET_DRAG_FORWARDING_CD(from, to) from->set_drag_forwarding(Callable(), callable_mp(this, &to::can_drop_data_fw).bind(from), callable_mp(this, &to::drop_data_fw).bind(from));

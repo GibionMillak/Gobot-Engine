@@ -355,11 +355,6 @@ bool EditorBuildProfile::is_build_option_disabled(BuildOption p_build_option) co
 	return build_options_disabled[p_build_option];
 }
 
-bool EditorBuildProfile::get_build_option_disable_value(BuildOption p_build_option) {
-	ERR_FAIL_INDEX_V(p_build_option, BUILD_OPTION_MAX, false);
-	return build_option_disable_values[p_build_option];
-}
-
 bool EditorBuildProfile::get_build_option_explicit_use(BuildOption p_build_option) {
 	ERR_FAIL_INDEX_V(p_build_option, BUILD_OPTION_MAX, false);
 	return build_option_explicit_use[p_build_option];
@@ -439,7 +434,7 @@ String EditorBuildProfile::get_build_option_description(BuildOption p_build_opti
 		TTRC("Godot Physics backend (3D)."),
 		TTRC("Jolt Physics backend (3D only)."),
 		TTRC("Fallback implementation of Text Server\nSupports basic text layouts."),
-		TTRC("Text Server implementation powered by ICU and HarfBuzz libraries.\nSupports complex text layouts, BiDi, and contextual OpenType font features."),
+		TTRC("Text Server implementation powered by ICU and HarfBuzz libraries.\nSupports complex text layouts and contextual OpenType font features."),
 		TTRC("TrueType, OpenType, Type 1, and WOFF1 font format support using FreeType library (if disabled, WOFF2 support is also disabled)."),
 		TTRC("WOFF2 font format support using FreeType and Brotli libraries."),
 		TTRC("SIL Graphite smart font technology support (supported by Advanced Text Server only)."),

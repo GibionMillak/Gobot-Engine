@@ -433,13 +433,11 @@ public:
 	String get_folder_path_at_mouse_position() const;
 
 	void navigate_to_path(const String &p_path);
-	void focus_on_path();
 	void focus_on_filter();
 	void create_directory(const String &p_path, const String &p_base_dir);
 
 	ScriptCreateDialog *get_script_create_dialog() const;
 
-	void fix_dependencies(const String &p_for_file);
 	void update_all();
 
 	int get_h_split_offset() const { return split_box_offset_h; }

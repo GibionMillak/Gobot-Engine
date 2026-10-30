@@ -81,18 +81,10 @@ Size2 CheckBox::get_minimum_size() const {
 
 void CheckBox::_notification(int p_what) {
 	switch (p_what) {
-
-
 		case NOTIFICATION_THEME_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_TRANSLATION_CHANGED: {
-			if (is_layout_rtl()) {
-				_set_internal_margin(SIDE_LEFT, 0.f);
-				_set_internal_margin(SIDE_RIGHT, get_icon_size().width);
-			} else {
-				_set_internal_margin(SIDE_LEFT, get_icon_size().width);
-				_set_internal_margin(SIDE_RIGHT, 0.f);
-			}
+			_set_internal_margin(SIDE_LEFT, get_icon_size().width);
+			_set_internal_margin(SIDE_RIGHT, 0.f);
 		} break;
 
 		case NOTIFICATION_DRAW: {
@@ -120,11 +112,7 @@ void CheckBox::_notification(int p_what) {
 			}
 
 			Vector2 ofs;
-			if (is_layout_rtl()) {
-				ofs.x = get_size().x - theme_cache.normal_style->get_content_inset(SIDE_RIGHT) - get_icon_size().width;
-			} else {
-				ofs.x = theme_cache.normal_style->get_content_inset(SIDE_LEFT);
-			}
+			ofs.x = theme_cache.normal_style->get_content_inset(SIDE_LEFT);
 			ofs.y = int((get_size().height - get_icon_size().height) / 2) + theme_cache.check_v_offset;
 
 			if (is_pressed()) {
@@ -162,11 +150,7 @@ CheckBox::CheckBox(const String &p_text) :
 		Button(p_text) {
 	set_toggle_mode(true);
 
-	if (is_layout_rtl()) {
-		_set_internal_margin(SIDE_RIGHT, get_icon_size().width);
-	} else {
-		_set_internal_margin(SIDE_LEFT, get_icon_size().width);
-	}
+	_set_internal_margin(SIDE_LEFT, get_icon_size().width);
 }
 
 CheckBox::~CheckBox() {

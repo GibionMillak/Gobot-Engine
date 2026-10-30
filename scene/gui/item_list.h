@@ -69,7 +69,6 @@ private:
 		String xl_text;
 		Ref<TextParagraph> text_buf;
 		String language;
-		TextDirection text_direction = TEXT_DIRECTION_AUTO;
 		AutoTranslateMode auto_translate_mode = AUTO_TRANSLATE_MODE_INHERIT;
 
 		bool selectable = true;
@@ -147,8 +146,6 @@ private:
 
 	real_t icon_scale = 1.0;
 
-	bool do_autoscroll_to_bottom = false;
-
 	void _scroll_changed(double);
 	void _shape_text(int p_idx);
 	void _mouse_exited();
@@ -222,9 +219,6 @@ public:
 
 	void set_item_text(int p_idx, const String &p_text);
 	String get_item_text(int p_idx) const;
-
-	void set_item_text_direction(int p_idx, TextDirection p_text_direction);
-	TextDirection get_item_text_direction(int p_idx) const;
 
 	void set_item_language(int p_idx, const String &p_language);
 	String get_item_language(int p_idx) const;
@@ -346,8 +340,6 @@ public:
 	bool has_wraparound_items() const;
 
 	Size2 get_minimum_size() const override;
-
-	void set_autoscroll_to_bottom(const bool p_enable);
 
 	void force_update_list_size();
 

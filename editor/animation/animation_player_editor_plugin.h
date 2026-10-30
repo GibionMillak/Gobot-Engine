@@ -195,7 +195,6 @@ class AnimationPlayerEditor : public EditorDock {
 	void _animation_edit();
 	void _animation_duplicate();
 	Ref<Animation> _animation_clone(const Ref<Animation> p_anim);
-	void _animation_resource_edit();
 	void _scale_changed(const String &p_scale);
 	void _seek_value_changed(float p_value, bool p_timeline_only = false);
 	void _blend_editor_next_changed(const int p_idx);
@@ -203,7 +202,6 @@ class AnimationPlayerEditor : public EditorDock {
 	void _edit_animation_blend();
 	void _update_animation_blend();
 
-	void _list_changed();
 	void _animation_finished(const String &p_name);
 	void _current_animation_changed(const StringName &p_name);
 	void _update_animation();

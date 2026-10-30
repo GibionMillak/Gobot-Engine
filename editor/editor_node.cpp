@@ -324,10 +324,6 @@ static double last_progress_time = 0;
 
 Vector<EditorNodeInitCallback> EditorNode::_init_callbacks;
 
-int EditorNode::plugin_init_callback_count = 0;
-
-EditorPluginInitializeCallback EditorNode::plugin_init_callbacks[EditorNode::MAX_INIT_CALLBACKS];
-
 static Node *_resource_get_edited_scene() {
 	return EditorNode::get_singleton()->get_edited_scene();
 }
@@ -481,10 +477,6 @@ EditorNode::EditorNode() {
 
 	FileDialog::set_default_show_hidden_files(EDITOR_GET("filesystem/file_dialog/show_hidden_files"));
 	FileDialog::set_default_display_mode(EDITOR_GET("filesystem/file_dialog/display_mode"));
-
-	int ed_root_dir = EDITOR_GET("interface/editor/localization/ui_layout_direction");
-	Control::set_root_layout_direction(ed_root_dir);
-	Window::set_root_layout_direction(ed_root_dir);
 
 	ResourceLoader::set_abort_on_missing_resources(false);
 	ResourceLoader::set_error_notify_func(&EditorNode::add_io_error);
@@ -1140,10 +1132,6 @@ EditorNode::EditorNode() {
 		add_editor_plugin(EditorPlugins::create(i));
 	}
 
-	for (int i = 0; i < plugin_init_callback_count; i++) {
-		plugin_init_callbacks[i]();
-	}
-
 	resource_preview->add_preview_generator(Ref<EditorTexturePreviewPlugin>(memnew(EditorTexturePreviewPlugin)));
 	resource_preview->add_preview_generator(Ref<EditorImagePreviewPlugin>(memnew(EditorImagePreviewPlugin)));
 	resource_preview->add_preview_generator(Ref<EditorPackedScenePreviewPlugin>(memnew(EditorPackedScenePreviewPlugin)));
@@ -1748,12 +1736,6 @@ void EditorNode::remove_editor_plugin(EditorPlugin *p_editor, bool p_config_chan
 	for (KeyValue<ObjectID, HashSet<EditorPlugin *>> &kv : singleton->active_plugins) {
 		kv.value.erase(p_editor);
 	}
-}
-
-void EditorNode::add_plugin_init_callback(EditorPluginInitializeCallback p_callback) {
-	ERR_FAIL_COND(plugin_init_callback_count == MAX_INIT_CALLBACKS);
-
-	plugin_init_callbacks[plugin_init_callback_count++] = p_callback;
 }
 
 bool EditorNode::immediate_confirmation_dialog(const String &p_text, const String &p_ok_text, const String &p_cancel_text, uint32_t p_wrap_width) {
@@ -3184,10 +3166,6 @@ void EditorNode::register_hdr_viewport(Viewport *p_viewport) {
 	hdr_viewports.push_back(p_viewport->get_instance_id());
 }
 
-void EditorNode::request_instantiate_scene(const String &p_path) {
-	HierarchyDock::get_singleton()->instantiate(p_path);
-}
-
 void EditorNode::request_instantiate_scenes(const Vector<String> &p_files) {
 	HierarchyDock::get_singleton()->instantiate_scenes(p_files);
 }
@@ -3419,10 +3397,6 @@ Error EditorNode::export_preset(const String &p_preset, const String &p_path, bo
 	return OK;
 }
 
-bool EditorNode::is_project_exporting() const {
-	return project_export && project_export->is_exporting();
-}
-
 bool EditorNode::close_scene() {
 	int tab_index = editor_data.get_edited_scene();
 	if (tab_index == 0 && get_edited_scene() == nullptr && editor_data.get_scene_path(tab_index).is_empty()) {
@@ -3434,14 +3408,6 @@ bool EditorNode::close_scene() {
 	_discard_changes();
 	changing_scene = false;
 	return true;
-}
-
-bool EditorNode::is_scene_in_use(const String &p_path) {
-	Node *es = get_edited_scene();
-	if (es) {
-		return _find_scene_in_use(es, p_path);
-	}
-	return false;
 }
 
 void EditorNode::save_editor_layout_delayed() {
@@ -4157,10 +4123,6 @@ void EditorNode::notify_settings_overrides_changed() {
 void EditorNode::dim_editor(bool p_dimming) {
 	dimmed = p_dimming;
 	gui_base->set_modulate(p_dimming ? Color(0.5, 0.5, 0.5) : Color(1, 1, 1));
-}
-
-bool EditorNode::is_editor_dimmed() const {
-	return dimmed;
 }
 
 bool EditorNode::has_scenes_in_session() {
@@ -6373,7 +6335,7 @@ void EditorNode::_titlebar_resized() {
 	DisplayServer::get_singleton()->window_set_window_buttons_offset(Vector2i(title_bar->get_global_position().y + title_bar->get_size().y / 2, title_bar->get_global_position().y + title_bar->get_size().y / 2), DisplayServerEnums::MAIN_WINDOW_ID);
 	const Vector3i &margin = DisplayServer::get_singleton()->window_get_safe_title_margins(DisplayServerEnums::MAIN_WINDOW_ID);
 	if (left_menu_spacer) {
-		int w = (gui_base->is_layout_rtl()) ? margin.y : margin.x;
+		int w = (margin.x);
 		left_menu_spacer->set_custom_minimum_size(Size2(w, 0));
 		left_menu_spacer->set_visible(w > 0);
 	}
@@ -7002,7 +6964,6 @@ void EditorNode::_update_from_settings() {
 		if (!domain->is_enabled()) {
 			domain->set_locale_override(TranslationServer::get_singleton()->get_default_context());
 		}
-		scene_root->propagate_notification(Control::NOTIFICATION_LAYOUT_DIRECTION_CHANGED);
 	}
 
 	RSE::DOFBokehShape dof_shape = RSE::DOFBokehShape(int(GLOBAL_GET("rendering/camera/depth_of_field/depth_of_field_bokeh_shape")));
@@ -7531,20 +7492,6 @@ void EditorNode::_save_scene_with_preview(String p_file, int p_idx) {
 void EditorNode::_close_save_scene_progress() {
 	memdelete(save_scene_progress);
 	save_scene_progress = nullptr;
-}
-
-bool EditorNode::_find_scene_in_use(Node *p_node, const String &p_path) const {
-	if (p_node->get_scene_file_path() == p_path) {
-		return true;
-	}
-
-	for (int i = 0; i < p_node->get_child_count(); i++) {
-		if (_find_scene_in_use(p_node->get_child(i), p_path)) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 void EditorNode::_proceed_closing_scene_tabs() {

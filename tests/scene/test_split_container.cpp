@@ -74,25 +74,6 @@ static inline Vector<Rect2> get_rects(SplitContainer *p_sc, int p_position, int 
 	return get_rects_multi(p_sc, Vector<int>({ p_position }), p_sep, p_horizontal);
 }
 
-static inline Vector<Rect2> get_rects_multi_rtl(SplitContainer *p_sc, const Vector<int> &p_positions, int p_sep) {
-	Vector<Rect2> rects;
-	int last_pos = p_sc->get_size().x;
-	for (int i = 0; i < (int)p_positions.size() + 1; i++) {
-		const int pos = i >= (int)p_positions.size() ? 0 : p_sc->get_size().x - p_positions[i];
-		Rect2 rect;
-		rect.size.y = p_sc->get_size().y;
-		rect.position.x = pos;
-		rect.size.x = last_pos - pos;
-		rects.push_back(rect);
-		last_pos = pos - p_sep;
-	}
-	return rects;
-}
-
-static inline Vector<Rect2> get_rects_rtl(SplitContainer *p_sc, int p_position, int p_sep) {
-	return get_rects_multi_rtl(p_sc, Vector<int>({ p_position }), p_sep);
-}
-
 static inline Vector<Rect2> get_child_rects(SplitContainer *p_sc) {
 	Vector<Rect2> rects;
 	for (int i = 0; i < p_sc->get_child_count(false); i++) {
@@ -486,63 +467,6 @@ TEST_CASE("[SceneTree][SplitContainer] Two children") {
 			CHECK_RECTS(get_rects(split_container, def_pos, sep.y, false), get_child_rects(split_container));
 		}
 
-		SUBCASE("[SplitContainer] Right to left") {
-			split_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-			split_container->set_position(Point2(0, 0));
-
-			// No expand flags set.
-			MessageQueue::get_singleton()->flush();
-			int def_pos = 0;
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-			split_container->clamp_split_offset();
-			MessageQueue::get_singleton()->flush();
-			CHECK(split_container->get_split_offset() == 0);
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-
-			// First expand flags set.
-			child_a->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-			child_b->set_h_size_flags(Control::SIZE_FILL);
-			MessageQueue::get_singleton()->flush();
-			def_pos = split_container->get_size().y - sep.y;
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-			split_container->clamp_split_offset();
-			MessageQueue::get_singleton()->flush();
-			CHECK(split_container->get_split_offset() == 0);
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-
-			// Second expand flags set.
-			child_a->set_h_size_flags(Control::SIZE_FILL);
-			child_b->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-			MessageQueue::get_singleton()->flush();
-			def_pos = 0;
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-			split_container->clamp_split_offset();
-			MessageQueue::get_singleton()->flush();
-			CHECK(split_container->get_split_offset() == 0);
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-
-			// Both expand flags set.
-			child_a->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-			child_b->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-			MessageQueue::get_singleton()->flush();
-			def_pos = (split_container->get_size().y - sep.y) / 2;
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-			split_container->clamp_split_offset();
-			MessageQueue::get_singleton()->flush();
-			CHECK(split_container->get_split_offset() == 0);
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-
-			// Unequal stretch ratios.
-			child_a->set_stretch_ratio(2.0);
-			MessageQueue::get_singleton()->flush();
-			def_pos = (split_container->get_size().y * 2 / 3) - sep.y / 2;
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-			split_container->clamp_split_offset();
-			MessageQueue::get_singleton()->flush();
-			CHECK(split_container->get_split_offset() == 0);
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-		}
-
 		SUBCASE("[SplitContainer] No expand flags") {
 			int def_pos = 0;
 
@@ -781,23 +705,6 @@ TEST_CASE("[SceneTree][SplitContainer] Two children") {
 	}
 
 	SUBCASE("[SplitContainer] Set split offset") {
-		SUBCASE("[SplitContainer] Right to left") {
-			split_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-			split_container->set_position(Point2(0, 0));
-			int def_pos = 0;
-			// Positive.
-			split_container->set_split_offset(10);
-			MessageQueue::get_singleton()->flush();
-			CHECK(split_container->get_split_offset() == 10);
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos + 10, sep.y), get_child_rects(split_container));
-
-			// Negative.
-			split_container->set_split_offset(-10);
-			MessageQueue::get_singleton()->flush();
-			CHECK(split_container->get_split_offset() == -10);
-			CHECK_RECTS(get_rects_rtl(split_container, def_pos, sep.y), get_child_rects(split_container));
-		}
-
 		SUBCASE("[SplitContainer] No expand flags") {
 			int def_pos = 0;
 

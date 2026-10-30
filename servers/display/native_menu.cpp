@@ -52,7 +52,6 @@ void NativeMenu::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_size", "rid"), &NativeMenu::get_size);
 	ClassDB::bind_method(D_METHOD("popup", "rid", "position"), &NativeMenu::popup);
 
-	ClassDB::bind_method(D_METHOD("set_interface_direction", "rid", "is_rtl"), &NativeMenu::set_interface_direction);
 	ClassDB::bind_method(D_METHOD("set_popup_open_callback", "rid", "callback"), &NativeMenu::set_popup_open_callback);
 	ClassDB::bind_method(D_METHOD("get_popup_open_callback", "rid"), &NativeMenu::get_popup_open_callback);
 	ClassDB::bind_method(D_METHOD("set_popup_close_callback", "rid", "callback"), &NativeMenu::set_popup_close_callback);
@@ -193,10 +192,6 @@ Size2 NativeMenu::get_size(const RID &p_rid) const {
 }
 
 void NativeMenu::popup(const RID &p_rid, const Vector2i &p_position) {
-	WARN_PRINT("Global menus are not supported on this platform.");
-}
-
-void NativeMenu::set_interface_direction(const RID &p_rid, bool p_is_rtl) {
 	WARN_PRINT("Global menus are not supported on this platform.");
 }
 

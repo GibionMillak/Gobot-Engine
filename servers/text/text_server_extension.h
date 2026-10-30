@@ -72,9 +72,6 @@ public:
 	virtual bool is_locale_using_support_data(const String &p_locale) const override;
 	GDVIRTUAL1RC(bool, _is_locale_using_support_data, const String &);
 
-	virtual bool is_locale_right_to_left(const String &p_locale) const override;
-	GDVIRTUAL1RC(bool, _is_locale_right_to_left, const String &);
-
 	virtual int64_t name_to_tag(const String &p_name) const override;
 	virtual String tag_to_name(int64_t p_tag) const override;
 	GDVIRTUAL1RC(int64_t, _name_to_tag, const String &);
@@ -416,24 +413,14 @@ public:
 
 	/* Shaped text buffer interface */
 
-	virtual RID create_shaped_text(Direction p_direction = DIRECTION_AUTO, Orientation p_orientation = ORIENTATION_HORIZONTAL) override;
-	GDVIRTUAL2R_REQUIRED(RID, _create_shaped_text, Direction, Orientation);
+	virtual RID create_shaped_text(Orientation p_orientation = ORIENTATION_HORIZONTAL) override;
+	GDVIRTUAL1R_REQUIRED(RID, _create_shaped_text, Orientation);
 
 	virtual void shaped_text_clear(const RID &p_shaped) override;
 	GDVIRTUAL1_REQUIRED(_shaped_text_clear, RID);
 
 	virtual RID shaped_text_duplicate(const RID &p_shaped) override;
 	GDVIRTUAL1R_REQUIRED(RID, _shaped_text_duplicate, RID);
-
-	virtual void shaped_text_set_direction(const RID &p_shaped, Direction p_direction = DIRECTION_AUTO) override;
-	virtual Direction shaped_text_get_direction(const RID &p_shaped) const override;
-	virtual Direction shaped_text_get_inferred_direction(const RID &p_shaped) const override;
-	GDVIRTUAL2(_shaped_text_set_direction, RID, Direction);
-	GDVIRTUAL1RC(Direction, _shaped_text_get_direction, RID);
-	GDVIRTUAL1RC(Direction, _shaped_text_get_inferred_direction, RID);
-
-	virtual void shaped_text_set_bidi_override(const RID &p_shaped, const Array &p_override) override;
-	GDVIRTUAL2(_shaped_text_set_bidi_override, RID, const Array &);
 
 	virtual void shaped_text_set_custom_punctuation(const RID &p_shaped, const String &p_punct) override;
 	virtual String shaped_text_get_custom_punctuation(const RID &p_shaped) const override;
@@ -497,7 +484,6 @@ public:
 	virtual RID shaped_get_run_font_rid(const RID &p_shaped, int64_t p_index) const override;
 	virtual int shaped_get_run_font_size(const RID &p_shaped, int64_t p_index) const override;
 	virtual String shaped_get_run_language(const RID &p_shaped, int64_t p_index) const override;
-	virtual Direction shaped_get_run_direction(const RID &p_shaped, int64_t p_index) const override;
 	virtual Variant shaped_get_run_object(const RID &p_shaped, int64_t p_index) const override;
 	GDVIRTUAL1RC(int64_t, _shaped_get_run_count, RID);
 	GDVIRTUAL2RC(String, _shaped_get_run_text, RID, int64_t);
@@ -506,7 +492,6 @@ public:
 	GDVIRTUAL2RC(RID, _shaped_get_run_font_rid, RID, int64_t);
 	GDVIRTUAL2RC(int, _shaped_get_run_font_size, RID, int64_t);
 	GDVIRTUAL2RC(String, _shaped_get_run_language, RID, int64_t);
-	GDVIRTUAL2RC(Direction, _shaped_get_run_direction, RID, int64_t);
 	GDVIRTUAL2RC(Variant, _shaped_get_run_object, RID, int64_t);
 
 	virtual RID shaped_text_substr(const RID &p_shaped, int64_t p_start, int64_t p_length) const override;
@@ -580,9 +565,6 @@ public:
 	GDVIRTUAL1RC_REQUIRED(double, _shaped_text_get_underline_position, RID);
 	GDVIRTUAL1RC_REQUIRED(double, _shaped_text_get_underline_thickness, RID);
 
-	virtual Direction shaped_text_get_dominant_direction_in_range(const RID &p_shaped, int64_t p_start, int64_t p_end) const override;
-	GDVIRTUAL3RC(int64_t, _shaped_text_get_dominant_direction_in_range, RID, int64_t, int64_t);
-
 	virtual CaretInfo shaped_text_get_carets(const RID &p_shaped, int64_t p_position) const override;
 	virtual Vector<Vector2> shaped_text_get_selection(const RID &p_shaped, int64_t p_start, int64_t p_end) const override;
 	GDVIRTUAL3C(_shaped_text_get_carets, RID, int64_t, NativePtr<CaretInfo>);
@@ -634,9 +616,6 @@ public:
 	GDVIRTUAL2RC(String, _string_to_upper, const String &, const String &);
 	GDVIRTUAL2RC(String, _string_to_lower, const String &, const String &);
 	GDVIRTUAL2RC(String, _string_to_title, const String &, const String &);
-
-	TypedArray<Vector3i> parse_structured_text(StructuredTextParser p_parser_type, const Array &p_args, const String &p_text) const;
-	GDVIRTUAL3RC(TypedArray<Vector3i>, _parse_structured_text, StructuredTextParser, const Array &, const String &);
 
 	virtual int64_t is_confusable(const String &p_string, const PackedStringArray &p_dict) const override;
 	virtual bool spoof_check(const String &p_string) const override;

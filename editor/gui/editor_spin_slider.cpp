@@ -86,7 +86,7 @@ void EditorSpinSlider::gui_input(const Ref<InputEvent> &p_event) {
 	if (mb.is_valid()) {
 		if (mb->get_button_index() == MouseButton::LEFT) {
 			if (mb->is_pressed()) {
-				if (updown_offset != -1 && ((!is_layout_rtl() && mb->get_position().x > updown_offset) || (is_layout_rtl() && mb->get_position().x < updown_offset))) {
+				if (updown_offset != -1 && ((mb->get_position().x > updown_offset))) {
 					// Updown pressed.
 					if (mb->get_position().y < get_size().height / 2) {
 						set_value(get_value() + get_step());
@@ -153,7 +153,7 @@ void EditorSpinSlider::gui_input(const Ref<InputEvent> &p_event) {
 				}
 			}
 		} else if (updown_offset != -1) {
-			bool new_hover = (!is_layout_rtl() && mm->get_position().x > updown_offset) || (is_layout_rtl() && mm->get_position().x < updown_offset);
+			bool new_hover = (mm->get_position().x > updown_offset);
 			if (new_hover != hover_updown) {
 				hover_updown = new_hover;
 				queue_redraw();
@@ -331,7 +331,7 @@ void EditorSpinSlider::_update_value_input_stylebox() {
 	Ref<StyleBox> stylebox = theme_cache.normal->duplicate();
 	// TODO: Handle this internally instead of relying on the theme.
 	int margin = get_label().is_empty() ? theme_cache.line_edit_margin_empty : theme_cache.line_edit_margin;
-	stylebox->set_padding(is_layout_rtl() ? SIDE_RIGHT : SIDE_LEFT, margin);
+	stylebox->set_padding(SIDE_LEFT, margin);
 
 	value_input->add_theme_style_override(CoreStringName(normal), stylebox);
 }
@@ -340,7 +340,6 @@ void EditorSpinSlider::_draw_spin_slider() {
 	updown_offset = -1;
 
 	RID ci = get_canvas_item();
-	bool rtl = is_layout_rtl();
 	Vector2 size = get_size();
 
 	Ref<StyleBox> sb = read_only ? theme_cache.read_only : theme_cache.normal;
@@ -363,29 +362,21 @@ void EditorSpinSlider::_draw_spin_slider() {
 	Color lc = read_only ? theme_cache.read_only_label_color : theme_cache.label_color;
 
 	if (flat && !label.is_empty()) {
-		if (rtl) {
-			draw_style_box(theme_cache.label_bg, Rect2(Vector2(size.width - (sb->get_content_offset().x * 2 + label_width), 0), Vector2(sb->get_content_offset().x * 2 + label_width, size.height)));
-		} else {
-			draw_style_box(theme_cache.label_bg, Rect2(Vector2(), Vector2(sb->get_content_offset().x * 2 + label_width, size.height)));
-		}
+		draw_style_box(theme_cache.label_bg, Rect2(Vector2(), Vector2(sb->get_content_offset().x * 2 + label_width, size.height)));
 	}
 
 	if (has_focus(true)) {
 		draw_style_box(theme_cache.focus, Rect2(Vector2(), size));
 	}
 
-	if (rtl) {
-		draw_string(font, Vector2(Math::round(size.width - sb->get_content_offset().x - label_width), vofs), label, HORIZONTAL_ALIGNMENT_RIGHT, -1, font_size, lc * Color(1, 1, 1, 0.5));
-	} else {
-		draw_string(font, Vector2(Math::round(sb->get_content_offset().x), vofs), label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, lc * Color(1, 1, 1, 0.5));
-	}
+	draw_string(font, Vector2(Math::round(sb->get_content_offset().x), vofs), label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, lc * Color(1, 1, 1, 0.5));
 
 	int suffix_start = numstr.length();
 	RID num_rid = TS->create_shaped_text();
 	TS->shaped_text_add_string(num_rid, numstr + U"\u2009" + suffix, font->get_rids(), font_size, font->get_opentype_features());
 
-	float text_start = rtl ? Math::round(sb->get_content_offset().x) : Math::round(sb->get_content_offset().x + label_width + sep);
-	Vector2 text_ofs = rtl ? Vector2(text_start + (number_width - TS->shaped_text_get_width(num_rid)), vofs) : Vector2(text_start, vofs);
+	float text_start = (Math::round(sb->get_content_offset().x + label_width + sep));
+	Vector2 text_ofs = (Vector2(text_start, vofs));
 	int v_size = TS->shaped_text_get_glyph_count(num_rid);
 	const Glyph *glyphs = TS->shaped_text_get_glyphs(num_rid);
 	for (int i = 0; i < v_size; i++) {
@@ -410,19 +401,12 @@ void EditorSpinSlider::_draw_spin_slider() {
 		if (editing_integer && control_state == CONTROL_STATE_DEFAULT) {
 			Ref<Texture2D> updown2 = read_only ? theme_cache.updown_disabled_icon : theme_cache.updown_icon;
 			int updown_vofs = (size.height - updown2->get_height()) / 2;
-			if (rtl) {
-				updown_offset = sb->get_content_inset(SIDE_LEFT);
-			} else {
-				updown_offset = size.width - sb->get_content_inset(SIDE_RIGHT) - updown2->get_width();
-			}
+			updown_offset = size.width - sb->get_content_inset(SIDE_RIGHT) - updown2->get_width();
 			Color c(1, 1, 1);
 			if (hover_updown) {
 				c *= Color(1.2, 1.2, 1.2);
 			}
 			draw_texture(updown2, Vector2(updown_offset, updown_vofs), c);
-			if (rtl) {
-				updown_offset += updown2->get_width();
-			}
 			if (grabber->is_visible()) {
 				grabber->hide();
 			}
@@ -485,7 +469,6 @@ void EditorSpinSlider::_notification(int p_what) {
 			grabbing_spinner_speed = editing_integer ? EDITOR_GET("interface/inspector/integer_drag_speed") : EDITOR_GET("interface/inspector/float_drag_speed");
 		} break;
 
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_TRANSLATION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			_update_value_input_stylebox();

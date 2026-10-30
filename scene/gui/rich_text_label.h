@@ -337,8 +337,6 @@ private:
 	struct ItemParagraph : public Item {
 		HorizontalAlignment alignment = HORIZONTAL_ALIGNMENT_LEFT;
 		String language;
-		Control::TextDirection direction = Control::TEXT_DIRECTION_AUTO;
-		TextServer::StructuredTextParser st_parser = TextServer::STRUCTURED_TEXT_DEFAULT;
 		BitField<TextServer::JustificationFlag> jst_flags = TextServer::JUSTIFICATION_WORD_BOUND | TextServer::JUSTIFICATION_KASHIDA | TextServer::JUSTIFICATION_SKIP_LAST_LINE | TextServer::JUSTIFICATION_DO_NOT_SKIP_SINGLE_LINE;
 		PackedFloat32Array tab_stops;
 		ItemParagraph() { type = ITEM_PARAGRAPH; }
@@ -582,9 +580,6 @@ private:
 	HashSet<RID> hr_list;
 
 	String language;
-	TextDirection text_direction = TEXT_DIRECTION_AUTO;
-	TextServer::StructuredTextParser st_parser = TextServer::STRUCTURED_TEXT_DEFAULT;
-	Array st_args;
 
 	struct Selection {
 		ItemFrame *click_frame = nullptr;
@@ -652,8 +647,8 @@ private:
 	void _update_table_size(ItemTable *p_table);
 
 	void _update_line_font(ItemFrame *p_frame, int p_line, const Ref<Font> &p_base_font, int p_base_font_size);
-	int _draw_line(ItemFrame *p_frame, int p_line, const Vector2 &p_ofs, int p_width, float p_vsep, const Color &p_base_color, int p_outline_size, const Color &p_outline_color, const Color &p_font_shadow_color, int p_shadow_outline_size, const Point2 &p_shadow_ofs, int &r_processed_glyphs);
-	float _find_click_in_line(ItemFrame *p_frame, int p_line, const Vector2 &p_ofs, int p_width, float p_vsep, const Point2i &p_click, ItemFrame **r_click_frame = nullptr, int *r_click_line = nullptr, Item **r_click_item = nullptr, int *r_click_char = nullptr, bool p_table = false, bool p_meta = false);
+	int _draw_line(ItemFrame *p_frame, int p_line, const Vector2 &p_ofs, float p_vsep, const Color &p_base_color, int p_outline_size, const Color &p_outline_color, const Color &p_font_shadow_color, int p_shadow_outline_size, const Point2 &p_shadow_ofs, int &r_processed_glyphs);
+	float _find_click_in_line(ItemFrame *p_frame, int p_line, const Vector2 &p_ofs, float p_vsep, const Point2i &p_click, ItemFrame **r_click_frame = nullptr, int *r_click_line = nullptr, Item **r_click_item = nullptr, int *r_click_char = nullptr, bool p_table = false, bool p_meta = false);
 
 	String _roman(int p_num, bool p_capitalize) const;
 	String _letters(int p_num, bool p_capitalize) const;
@@ -665,14 +660,11 @@ private:
 	ItemFont *_find_font(Item *p_item);
 	int _find_outline_size(Item *p_item, int p_default);
 	ItemList *_find_list_item(Item *p_item);
-	ItemDropcap *_find_dc_item(Item *p_item);
 	int _find_list(Item *p_item, Vector<int> &r_index, Vector<int> &r_count, Vector<ItemList *> &r_list);
 	int _find_margin(Item *p_item, const Ref<Font> &p_base_font, int p_base_font_size);
 	PackedFloat32Array _find_tab_stops(Item *p_item);
 	HorizontalAlignment _find_alignment(Item *p_item);
 	BitField<TextServer::JustificationFlag> _find_jst_flags(Item *p_item);
-	TextServer::Direction _find_direction(Item *p_item);
-	TextServer::StructuredTextParser _find_stt(Item *p_item);
 	String _find_language(Item *p_item);
 	Color _find_color(Item *p_item, const Color &p_default_color);
 	Color _find_outline_color(Item *p_item, const Color &p_default_color);
@@ -818,7 +810,7 @@ public:
 	void push_underline(const Color &p_color = Color(0, 0, 0, 0));
 	void push_strikethrough(const Color &p_color = Color(0, 0, 0, 0));
 	void push_language(const String &p_language);
-	void push_paragraph(HorizontalAlignment p_alignment, Control::TextDirection p_direction = Control::TEXT_DIRECTION_INHERITED, const String &p_language = "", TextServer::StructuredTextParser p_st_parser = TextServer::STRUCTURED_TEXT_DEFAULT, BitField<TextServer::JustificationFlag> p_jst_flags = TextServer::JUSTIFICATION_WORD_BOUND | TextServer::JUSTIFICATION_KASHIDA | TextServer::JUSTIFICATION_SKIP_LAST_LINE | TextServer::JUSTIFICATION_DO_NOT_SKIP_SINGLE_LINE, const PackedFloat32Array &p_tab_stops = PackedFloat32Array());
+	void push_paragraph(HorizontalAlignment p_alignment, const String &p_language = "", BitField<TextServer::JustificationFlag> p_jst_flags = TextServer::JUSTIFICATION_WORD_BOUND | TextServer::JUSTIFICATION_KASHIDA | TextServer::JUSTIFICATION_SKIP_LAST_LINE | TextServer::JUSTIFICATION_DO_NOT_SKIP_SINGLE_LINE, const PackedFloat32Array &p_tab_stops = PackedFloat32Array());
 	void push_indent(int p_level);
 	void push_list(int p_level, ListType p_list, bool p_capitalize, const String &p_bullet = String::utf8("•"));
 	void push_meta(const Variant &p_meta, MetaUnderline p_underline_mode = META_UNDERLINE_ALWAYS, const String &p_tooltip = String());
@@ -974,9 +966,6 @@ public:
 	void set_tab_stops(const PackedFloat32Array &p_tab_stops);
 	PackedFloat32Array get_tab_stops() const;
 
-	void set_text_direction(TextDirection p_text_direction);
-	TextDirection get_text_direction() const;
-
 	void set_language(const String &p_language);
 	String get_language() const;
 
@@ -985,12 +974,6 @@ public:
 
 	void set_autowrap_trim_flags(BitField<TextServer::LineBreakFlag> p_flags);
 	BitField<TextServer::LineBreakFlag> get_autowrap_trim_flags() const;
-
-	void set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser);
-	TextServer::StructuredTextParser get_structured_text_bidi_override() const;
-
-	void set_structured_text_bidi_override_options(const Array &p_args);
-	Array get_structured_text_bidi_override_options() const;
 
 	void set_visible_characters(int p_visible);
 	int get_visible_characters() const;

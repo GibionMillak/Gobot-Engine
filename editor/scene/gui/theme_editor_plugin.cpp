@@ -3940,10 +3940,6 @@ void ThemeEditor::edit(const Ref<Theme> &p_theme) {
 	}
 }
 
-Ref<Theme> ThemeEditor::get_edited_theme() {
-	return theme;
-}
-
 void ThemeEditor::_theme_save_button_cbk(bool p_save_as) {
 	ERR_FAIL_COND_MSG(theme.is_null(), "Invalid state of the Theme Editor; the Theme resource is missing.");
 
@@ -4145,11 +4141,7 @@ void ThemeEditor::_preview_tabs_resized() {
 
 		Rect2 last_tab = preview_tabs->get_tab_rect(preview_tabs->get_tab_count() - 1);
 		int hsep = preview_tabs->get_theme_constant(SNAME("h_separation"));
-		if (preview_tabs->is_layout_rtl()) {
-			add_preview_button->set_rect(Rect2(Point2(last_tab.position.x - add_button_size.x - hsep, last_tab.position.y), add_button_size));
-		} else {
-			add_preview_button->set_rect(Rect2(Point2(last_tab.position.x + last_tab.size.width + hsep, last_tab.position.y), add_button_size));
-		}
+		add_preview_button->set_rect(Rect2(Point2(last_tab.position.x + last_tab.size.width + hsep, last_tab.position.y), add_button_size));
 	}
 }
 
@@ -4177,7 +4169,6 @@ void ThemeEditor::_notification(int p_what) {
 			theme_name->set_custom_minimum_size(Size2(label_min_width, 0));
 		} break;
 
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_TRANSLATION_CHANGED: {
 			_preview_tabs_resized();
 		} break;

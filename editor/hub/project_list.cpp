@@ -436,7 +436,6 @@ ProjectListItemControl::ProjectListItemControl() {
 
 		project_path = memnew(Label);
 		project_path->set_name("ProjectPath");
-		project_path->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 		project_path->set_clip_text(true);
 		project_path->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 		project_path->set_modulate(Color(1, 1, 1, 0.5));
@@ -1306,27 +1305,6 @@ Vector<ProjectList::Item> ProjectList::get_selected_projects() const {
 const HashSet<String> &ProjectList::get_selected_project_keys() const {
 	// Faster if that's all you need
 	return _selected_project_paths;
-}
-
-int ProjectList::get_single_selected_index() const {
-	if (_selected_project_paths.is_empty()) {
-		// Default selection
-		return 0;
-	}
-	String key;
-	if (_selected_project_paths.size() == 1) {
-		// Only one selected
-		key = *_selected_project_paths.begin();
-	} else {
-		// Multiple selected, consider the last clicked one as "main"
-		key = _last_clicked;
-	}
-	for (int i = 0; i < _projects.size(); ++i) {
-		if (_projects[i].path == key) {
-			return i;
-		}
-	}
-	return 0;
 }
 
 void ProjectList::erase_selected_projects(bool p_delete_project_contents) {

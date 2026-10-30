@@ -32,13 +32,13 @@
 	</members>
 	<constants>
 		<constant name="ALIGNMENT_BEGIN" value="0" enum="AlignmentMode">
-			The child controls will be arranged at the beginning of the container, i.e. top if orientation is vertical, left if orientation is horizontal (right for RTL layout).
+			The child controls will be arranged at the beginning of the container, i.e. top if orientation is vertical, left if orientation is horizontal.
 		</constant>
 		<constant name="ALIGNMENT_CENTER" value="1" enum="AlignmentMode">
 			The child controls will be centered in the container.
 		</constant>
 		<constant name="ALIGNMENT_END" value="2" enum="AlignmentMode">
-			The child controls will be arranged at the end of the container, i.e. bottom if orientation is vertical, right if orientation is horizontal (left for RTL layout).
+			The child controls will be arranged at the end of the container, i.e. bottom if orientation is vertical, right if orientation is horizontal.
 		</constant>
 	</constants>
 	<theme_items>

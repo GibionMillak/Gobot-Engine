@@ -78,10 +78,6 @@ public:
 
 	Ref<TextParagraph> duplicate() const;
 
-	void set_direction(TextServer::Direction p_direction);
-	TextServer::Direction get_direction() const;
-	TextServer::Direction get_inferred_direction() const;
-
 	void set_orientation(TextServer::Orientation p_orientation);
 	TextServer::Orientation get_orientation() const;
 
@@ -90,8 +86,6 @@ public:
 
 	void set_preserve_control(bool p_enabled);
 	bool get_preserve_control() const;
-
-	void set_bidi_override(const Array &p_override);
 
 	void set_custom_punctuation(const String &p_punct);
 	String get_custom_punctuation() const;
@@ -166,7 +160,7 @@ public:
 
 	Mutex &get_mutex() const { return _thread_safe_; }
 
-	TextParagraph(const String &p_text, const Ref<Font> &p_font, int p_font_size, const String &p_language = "", float p_width = -1.f, TextServer::Direction p_direction = TextServer::DIRECTION_AUTO, TextServer::Orientation p_orientation = TextServer::ORIENTATION_HORIZONTAL);
+	TextParagraph(const String &p_text, const Ref<Font> &p_font, int p_font_size, const String &p_language = "", float p_width = -1.f, TextServer::Orientation p_orientation = TextServer::ORIENTATION_HORIZONTAL);
 	TextParagraph();
 	~TextParagraph();
 };

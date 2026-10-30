@@ -23,28 +23,16 @@
 			The vertical offset used when rendering the toggle icons (in pixels).
 		</theme_item>
 		<theme_item name="checked" data_type="icon" type="Texture2D">
-			The icon to display when the [CheckButton] is checked (for left-to-right layouts).
+			The icon to display when the [CheckButton] is checked.
 		</theme_item>
 		<theme_item name="checked_disabled" data_type="icon" type="Texture2D">
-			The icon to display when the [CheckButton] is checked and disabled (for left-to-right layouts).
-		</theme_item>
-		<theme_item name="checked_disabled_mirrored" data_type="icon" type="Texture2D">
-			The icon to display when the [CheckButton] is checked and disabled (for right-to-left layouts).
-		</theme_item>
-		<theme_item name="checked_mirrored" data_type="icon" type="Texture2D">
-			The icon to display when the [CheckButton] is checked (for right-to-left layouts).
+			The icon to display when the [CheckButton] is checked and disabled.
 		</theme_item>
 		<theme_item name="unchecked" data_type="icon" type="Texture2D">
-			The icon to display when the [CheckButton] is unchecked (for left-to-right layouts).
+			The icon to display when the [CheckButton] is unchecked.
 		</theme_item>
 		<theme_item name="unchecked_disabled" data_type="icon" type="Texture2D">
-			The icon to display when the [CheckButton] is unchecked and disabled (for left-to-right layouts).
-		</theme_item>
-		<theme_item name="unchecked_disabled_mirrored" data_type="icon" type="Texture2D">
-			The icon to display when the [CheckButton] is unchecked and disabled (for right-to-left layouts).
-		</theme_item>
-		<theme_item name="unchecked_mirrored" data_type="icon" type="Texture2D">
-			The icon to display when the [CheckButton] is unchecked (for right-to-left layouts).
+			The icon to display when the [CheckButton] is unchecked and disabled.
 		</theme_item>
 	</theme_items>
 </class>

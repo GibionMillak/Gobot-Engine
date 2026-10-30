@@ -243,12 +243,6 @@ void Control::reparent(RequiredParam<Node> p_parent, bool p_keep_global_transfor
 
 // Editor integration.
 
-int Control::root_layout_direction = 0;
-
-void Control::set_root_layout_direction(int p_root_dir) {
-	root_layout_direction = p_root_dir;
-}
-
 #ifdef TOOLS_ENABLED
 void Control::get_argument_options(const StringName &p_function, int p_idx, List<String> *r_options) const {
 	ERR_READ_THREAD_GUARD;
@@ -977,12 +971,8 @@ void Control::_compute_layout_rect(Rect2 p_rect, bool p_keep_offsets) {
 
 		Size2 size_diff = p_rect.size - data.size_cache;
 
-		x -= size_diff.x * (is_layout_rtl() ? (1.0f - left_grow_factor) : left_grow_factor);
+		x -= size_diff.x * (left_grow_factor);
 		y -= size_diff.y * top_grow_factor;
-	}
-
-	if (is_layout_rtl()) {
-		x = parent_rect_size.x - x - p_rect.size.x;
 	}
 
 	if (p_keep_offsets) {
@@ -1330,9 +1320,6 @@ void Control::set_offsets_preset(LayoutPreset p_preset, LayoutPresetMode p_resiz
 	Rect2 parent_rect = get_parent_anchorable_rect();
 
 	real_t x = parent_rect.size.x;
-	if (is_layout_rtl()) {
-		x = parent_rect.size.x - x - new_size.x;
-	}
 	//Left
 	switch (p_preset) {
 		case PRESET_TOP_LEFT:
@@ -1771,7 +1758,7 @@ void Control::_update_maximum_size() {
 
 void Control::update_maximum_size() {
 	ERR_MAIN_THREAD_GUARD;
-	if (!is_inside_tree() || data.block_maximum_size_adjust) {
+	if (!is_inside_tree()) {
 		return;
 	}
 
@@ -1814,11 +1801,6 @@ void Control::update_maximum_size() {
 	}
 
 	callable_mp(this, &Control::_update_maximum_size).call_deferred();
-}
-
-void Control::set_block_maximum_size_adjust(bool p_block) {
-	ERR_MAIN_THREAD_GUARD;
-	data.block_maximum_size_adjust = p_block;
 }
 
 void Control::set_custom_maximum_size(const Size2 &p_custom) {
@@ -2258,10 +2240,6 @@ void Control::_size_changed() {
 		}
 
 		new_size_cache.width = maximum_size.width;
-	}
-
-	if (is_layout_rtl()) {
-		new_pos_cache.x = parent_rect.size.x + 2 * parent_rect.position.x - new_pos_cache.x - new_size_cache.x;
 	}
 
 	if (minimum_size.height > new_size_cache.height) {
@@ -4219,112 +4197,6 @@ void Control::end_bulk_theme_override() {
 
 // Internationalization.
 
-TypedArray<Vector3i> Control::structured_text_parser(TextServer::StructuredTextParser p_parser_type, const Array &p_args, const String &p_text) const {
-	ERR_READ_THREAD_GUARD_V(TypedArray<Vector3i>());
-	if (p_parser_type == TextServer::STRUCTURED_TEXT_CUSTOM) {
-		TypedArray<Vector3i> ret;
-		GDVIRTUAL_CALL(_structured_text_parser, p_args, p_text, ret);
-		return ret;
-	} else {
-		return TS->parse_structured_text(p_parser_type, p_args, p_text);
-	}
-}
-
-void Control::set_layout_direction(Control::LayoutDirection p_direction) {
-	ERR_MAIN_THREAD_GUARD;
-	if (data.layout_dir == p_direction) {
-		return;
-	}
-	ERR_FAIL_INDEX(p_direction, LAYOUT_DIRECTION_MAX);
-
-	data.layout_dir = p_direction;
-
-	propagate_notification(NOTIFICATION_LAYOUT_DIRECTION_CHANGED);
-}
-
-Control::LayoutDirection Control::get_layout_direction() const {
-	ERR_READ_THREAD_GUARD_V(LAYOUT_DIRECTION_INHERITED);
-	return data.layout_dir;
-}
-
-bool Control::is_layout_rtl() const {
-	ERR_READ_THREAD_GUARD_V(false);
-	if (data.is_rtl_dirty) {
-		data.is_rtl_dirty = false;
-		if (data.layout_dir == LAYOUT_DIRECTION_INHERITED) {
-#ifdef TOOLS_ENABLED
-			if (is_part_of_edited_scene() && GLOBAL_GET_CACHED(bool, "internationalization/rendering/force_right_to_left_layout_direction")) {
-				data.is_rtl = true;
-				return data.is_rtl;
-			}
-			if (is_inside_tree()) {
-				Node *edited_scene_root = get_tree()->get_edited_scene_root();
-				if (edited_scene_root == this) {
-					int proj_root_layout_direction = GLOBAL_GET_CACHED(int, "internationalization/rendering/root_node_layout_direction");
-					if (proj_root_layout_direction == 1) {
-						data.is_rtl = false;
-					} else if (proj_root_layout_direction == 2) {
-						data.is_rtl = true;
-					} else if (proj_root_layout_direction == 3) {
-						data.is_rtl = TS->is_locale_right_to_left(OS::get_singleton()->get_locale());
-					} else {
-						data.is_rtl = TS->is_locale_right_to_left(_get_locale());
-					}
-					return data.is_rtl;
-				}
-			}
-#else
-			if (GLOBAL_GET_CACHED(bool, "internationalization/rendering/force_right_to_left_layout_direction")) {
-				data.is_rtl = true;
-				return data.is_rtl;
-			}
-#endif // TOOLS_ENABLED
-			const StringName domain_name = get_translation_domain();
-			Node *parent_node = get_parent();
-			while (parent_node && domain_name == parent_node->get_translation_domain()) {
-				Control *parent_control = Object::cast_to<Control>(parent_node);
-				if (parent_control) {
-					data.is_rtl = parent_control->is_layout_rtl();
-					return data.is_rtl;
-				}
-
-				Window *parent_window = Object::cast_to<Window>(parent_node);
-				if (parent_window) {
-					data.is_rtl = parent_window->is_layout_rtl();
-					return data.is_rtl;
-				}
-				parent_node = parent_node->get_parent();
-			}
-
-			if (root_layout_direction == 1) {
-				data.is_rtl = false;
-			} else if (root_layout_direction == 2) {
-				data.is_rtl = true;
-			} else if (root_layout_direction == 3) {
-				String locale = OS::get_singleton()->get_locale();
-				data.is_rtl = TS->is_locale_right_to_left(locale);
-			} else {
-				data.is_rtl = TS->is_locale_right_to_left(_get_locale());
-			}
-		} else if (data.layout_dir == LAYOUT_DIRECTION_APPLICATION_LOCALE) {
-			if (GLOBAL_GET_CACHED(bool, "internationalization/rendering/force_right_to_left_layout_direction")) {
-				data.is_rtl = true;
-			} else {
-				data.is_rtl = TS->is_locale_right_to_left(_get_locale());
-			}
-		} else if (data.layout_dir == LAYOUT_DIRECTION_SYSTEM_LOCALE) {
-			if (GLOBAL_GET_CACHED(bool, "internationalization/rendering/force_right_to_left_layout_direction")) {
-				data.is_rtl = true;
-			} else {
-				data.is_rtl = TS->is_locale_right_to_left(OS::get_singleton()->get_locale());
-			}
-		} else {
-			data.is_rtl = (data.layout_dir == LAYOUT_DIRECTION_RTL);
-		}
-	}
-	return data.is_rtl;
-}
-
 void Control::set_localize_numeral_system(bool p_enable) {
 	ERR_MAIN_THREAD_GUARD;
 	if (p_enable == data.localize_numeral_system) {
@@ -4462,7 +4334,6 @@ void Control::_notification(int p_notification) {
 		} break;
 
 		case NOTIFICATION_POST_ENTER_TREE: {
-			data.is_rtl_dirty = true;
 			update_maximum_size();
 			_size_changed();
 		} break;
@@ -4481,8 +4352,6 @@ void Control::_notification(int p_notification) {
 		} break;
 
 		case NOTIFICATION_ENTER_CANVAS: {
-			data.is_rtl_dirty = true;
-
 			CanvasItem *node = this;
 			bool has_parent_control = false;
 
@@ -4542,7 +4411,6 @@ void Control::_notification(int p_notification) {
 			}
 
 			data.parent_canvas_item = nullptr;
-			data.is_rtl_dirty = true;
 		} break;
 
 		case NOTIFICATION_CHILD_ORDER_CHANGED: {
@@ -4593,11 +4461,8 @@ void Control::_notification(int p_notification) {
 			}
 		} break;
 
-		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
+		case NOTIFICATION_TRANSLATION_CHANGED: {
 			if (is_inside_tree()) {
-				data.is_rtl_dirty = true;
-
 				_invalidate_theme_cache();
 				_update_theme_item_cache();
 				queue_redraw();
@@ -4823,10 +4688,6 @@ void Control::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("update_maximum_size"), &Control::update_maximum_size);
 	ClassDB::bind_method(D_METHOD("update_minimum_size"), &Control::update_minimum_size);
 
-	ClassDB::bind_method(D_METHOD("set_layout_direction", "direction"), &Control::set_layout_direction);
-	ClassDB::bind_method(D_METHOD("get_layout_direction"), &Control::get_layout_direction);
-	ClassDB::bind_method(D_METHOD("is_layout_rtl"), &Control::is_layout_rtl);
-
 	ClassDB::bind_method(D_METHOD("set_localize_numeral_system", "enable"), &Control::set_localize_numeral_system);
 	ClassDB::bind_method(D_METHOD("is_localizing_numeral_system"), &Control::is_localizing_numeral_system);
 
@@ -4916,7 +4777,6 @@ void Control::_bind_methods() {
 
 	ADD_GROUP("Localization", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "localize_numeral_system"), "set_localize_numeral_system", "is_localizing_numeral_system");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "layout_direction", PROPERTY_HINT_ENUM, "Inherited,Based on Application Locale,Left-to-Right,Right-to-Left,Based on System Locale"), "set_layout_direction", "get_layout_direction");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "translation_context"), "set_translation_context", "get_translation_context");
 
 	ADD_GROUP("Tooltip", "tooltip_");
@@ -4969,7 +4829,6 @@ void Control::_bind_methods() {
 	BIND_CONSTANT(NOTIFICATION_THEME_CHANGED);
 	BIND_CONSTANT(NOTIFICATION_SCROLL_BEGIN);
 	BIND_CONSTANT(NOTIFICATION_SCROLL_END);
-	BIND_CONSTANT(NOTIFICATION_LAYOUT_DIRECTION_CHANGED);
 
 	BIND_ENUM_CONSTANT(CURSOR_ARROW);
 	BIND_ENUM_CONSTANT(CURSOR_IBEAM);
@@ -5030,18 +4889,6 @@ void Control::_bind_methods() {
 	BIND_ENUM_CONSTANT(ANCHOR_BEGIN);
 	BIND_ENUM_CONSTANT(ANCHOR_END);
 
-	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_INHERITED);
-	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_APPLICATION_LOCALE);
-	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_LTR);
-	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_RTL);
-	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_SYSTEM_LOCALE);
-	BIND_ENUM_CONSTANT(LAYOUT_DIRECTION_MAX);
-
-	BIND_ENUM_CONSTANT(TEXT_DIRECTION_INHERITED);
-	BIND_ENUM_CONSTANT(TEXT_DIRECTION_AUTO);
-	BIND_ENUM_CONSTANT(TEXT_DIRECTION_LTR);
-	BIND_ENUM_CONSTANT(TEXT_DIRECTION_RTL);
-
 	ADD_SIGNAL(MethodInfo("resized"));
 	ADD_SIGNAL(MethodInfo("_layout_pending_finished"));
 	ADD_SIGNAL(MethodInfo("gui_input", PropertyInfo(Variant::OBJECT, "event", PROPERTY_HINT_RESOURCE_TYPE, InputEvent::get_class_static())));
@@ -5056,7 +4903,6 @@ void Control::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("theme_changed"));
 
 	GDVIRTUAL_BIND(_has_point, "point");
-	GDVIRTUAL_BIND(_structured_text_parser, "args", "text");
 	GDVIRTUAL_BIND(_get_maximum_size);
 	GDVIRTUAL_BIND(_get_minimum_size);
 	GDVIRTUAL_BIND(_get_tooltip, "at_position");

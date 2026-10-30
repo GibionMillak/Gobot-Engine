@@ -49,8 +49,6 @@ void BoxContainer::_resort() {
 	Size2i combined_max_size = get_combined_maximum_size();
 	bool propagating_max_size = vertical ? is_propagating_maximum_size() && combined_max_size.height >= 0 : is_propagating_maximum_size() && combined_max_size.width >= 0;
 
-	bool rtl = is_layout_rtl();
-
 	bool first = true;
 	int children_count = 0;
 	int combined_min = 0;
@@ -225,17 +223,12 @@ void BoxContainer::_resort() {
 	if (!vertical) {
 		switch (alignment) {
 			case ALIGNMENT_BEGIN:
-				if (rtl) {
-					ofs = final_stretch_diff;
-				}
 				break;
 			case ALIGNMENT_CENTER:
 				ofs = final_stretch_diff / 2;
 				break;
 			case ALIGNMENT_END:
-				if (!rtl) {
-					ofs = final_stretch_diff;
-				}
+				ofs = final_stretch_diff;
 				break;
 		}
 	} else {
@@ -258,7 +251,7 @@ void BoxContainer::_resort() {
 	int end;
 	int delta;
 
-	if ((rtl && !vertical) != reverse_sort) {
+	if (reverse_sort) {
 		start = get_child_count() - 1;
 		end = -1;
 		delta = -1;
@@ -363,8 +356,7 @@ void BoxContainer::_notification(int p_what) {
 			update_minimum_size();
 		} break;
 
-		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
+		case NOTIFICATION_TRANSLATION_CHANGED: {
 			queue_sort();
 		} break;
 	}

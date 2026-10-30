@@ -57,7 +57,6 @@ Dialog::Dialog(bool p_show_cancel) {
 	add_child(_message_lbl, false, INTERNAL_MODE_FRONT);
 
 	_buttons_hbox = memnew(HBoxContainer);
-	_buttons_hbox->set_layout_direction(Control::LAYOUT_DIRECTION_LTR);
 	add_child(_buttons_hbox, false, INTERNAL_MODE_BACK);
 	{
 		_buttons_hbox->add_spacer();

@@ -436,7 +436,6 @@ private:
 	bool disable_input_override = false;
 
 	void _gui_call_input(Control *p_control, const Ref<InputEvent> &p_input);
-	void _gui_call_notification(Control *p_control, int p_what);
 
 	void _gui_sort_roots();
 	Control *_gui_find_control_at_pos(CanvasItem *p_node, const Point2 &p_global, const Transform2D &p_xform);
@@ -471,7 +470,6 @@ private:
 	Control *_gui_get_drag_preview();
 
 	void _gui_remove_focus_for_window(Node *p_window);
-	void _gui_unfocus_control(Control *p_control);
 	bool _gui_control_has_focus(const Control *p_control, bool p_ignore_hidden_focus = false);
 	void _gui_control_grab_focus(Control *p_control, bool p_hide_focus = false);
 	void _gui_grab_click_focus(Control *p_control);

@@ -290,37 +290,6 @@ TEST_CASE("[SceneTree][AspectRatioContainer] Container Sizing Flags") {
 				"Child control is aligned to the right of its would-be area with SIZE_FILL in SIZE_SHRINK_END horizontal size flag mode.");
 	}
 
-	SUBCASE("Horizontal Flags RTL") {
-		aspect_ratio_container->set_size(Size2(200, 100));
-		aspect_ratio_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control->get_position().is_equal_approx(Point2(50, 0)),
-				"Child control is vertically centered by default with SIZE_FILL.");
-
-		child_control->set_h_size_flags(Control::SIZE_SHRINK_BEGIN);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control->get_position().is_equal_approx(Point2(150, 0)),
-				"Child control is aligned to the right of its would-be area with SIZE_FILL in RTL SIZE_SHRINK_BEGIN horizontal size flag mode.");
-
-		child_control->set_h_size_flags(Control::SIZE_SHRINK_CENTER);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control->get_position().is_equal_approx(Point2(100, 0)),
-				"Child control is centered in its would-be area with SIZE_FILL in SIZE_SHRINK_CENTER horizontal size flag mode.");
-
-		child_control->set_h_size_flags(Control::SIZE_SHRINK_END);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control->get_position().is_equal_approx(Point2(50, 0)),
-				"Child control is aligned to the left of its would-be area with SIZE_FILL in RTL SIZE_SHRINK_END horizontal size flag mode.");
-	}
-
 	SUBCASE("Vertical Flags") {
 		aspect_ratio_container->set_size(Size2(100, 200));
 		SceneTree::get_singleton()->process(0);

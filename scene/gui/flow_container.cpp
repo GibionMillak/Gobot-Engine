@@ -57,8 +57,6 @@ void FlowContainer::_resort() {
 		return;
 	}
 
-	bool rtl = is_layout_rtl();
-
 	HashMap<Control *, _ChildData> children_data;
 
 	Vector<_LineData> lines_data;
@@ -352,7 +350,7 @@ void FlowContainer::_resort() {
 		if (reverse_fill && !vertical) {
 			child_rect.position.y = get_rect().size.y - child_rect.position.y - child_rect.size.height;
 		}
-		if ((rtl && !vertical) || ((rtl != reverse_fill) && vertical)) {
+		if (((reverse_fill) && vertical)) {
 			child_rect.position.x = get_rect().size.x - child_rect.position.x - child_rect.size.width;
 		}
 
@@ -457,8 +455,7 @@ void FlowContainer::_notification(int p_what) {
 			update_minimum_size();
 		} break;
 
-		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
+		case NOTIFICATION_TRANSLATION_CHANGED: {
 			queue_sort();
 		} break;
 	}

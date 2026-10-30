@@ -44,7 +44,6 @@ class MenuBar : public Control {
 	int start_index = -1;
 
 	String language;
-	TextDirection text_direction = TEXT_DIRECTION_AUTO;
 
 	struct Menu {
 		String name;
@@ -75,15 +74,10 @@ class MenuBar : public Control {
 
 	struct ThemeCache {
 		Ref<StyleBox> normal;
-		Ref<StyleBox> normal_mirrored;
 		Ref<StyleBox> disabled;
-		Ref<StyleBox> disabled_mirrored;
 		Ref<StyleBox> pressed;
-		Ref<StyleBox> pressed_mirrored;
 		Ref<StyleBox> hover;
-		Ref<StyleBox> hover_mirrored;
 		Ref<StyleBox> hover_pressed;
-		Ref<StyleBox> hover_pressed_mirrored;
 
 		Ref<Font> font;
 		int font_size = 0;
@@ -162,9 +156,6 @@ public:
 	virtual Size2 get_minimum_size() const override;
 
 	int get_menu_count() const;
-
-	void set_text_direction(TextDirection p_text_direction);
-	TextDirection get_text_direction() const;
 
 	void set_language(const String &p_language);
 	String get_language() const;

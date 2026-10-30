@@ -374,13 +374,6 @@ void NativeMenuMacOS::popup(const RID &p_rid, const Vector2i &p_position) {
 	}
 }
 
-void NativeMenuMacOS::set_interface_direction(const RID &p_rid, bool p_is_rtl) {
-	MenuData *md = menus.get_or_null(p_rid);
-	ERR_FAIL_NULL(md);
-
-	md->menu.userInterfaceLayoutDirection = p_is_rtl ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
-}
-
 void NativeMenuMacOS::set_popup_open_callback(const RID &p_rid, const Callable &p_callback) {
 	MenuData *md = menus.get_or_null(p_rid);
 	ERR_FAIL_NULL(md);

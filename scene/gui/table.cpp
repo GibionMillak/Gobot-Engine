@@ -462,7 +462,7 @@ Vector2i Table::get_cell_at_position(const Point2 &p_position) const {
 		return Vector2i(-1, -1);
 	}
 	Point2 local = p_position - (frozen ? _frozen->get_position() : _body->get_position());
-	local.x = (is_layout_rtl() ? _body->get_size().x - local.x : local.x) + _h_scroll->get_value();
+	local.x = ((local.x)) + _h_scroll->get_value();
 	local.y += frozen ? 0 : _frozen_height + _v_scroll->get_value();
 	for (int row = 0; row < _rows.size(); row++) {
 		for (int column = 0; column < _columns.size(); column++) {
@@ -481,9 +481,6 @@ Rect2 Table::get_cell_rect(int p_row, int p_column) const {
 	}
 	Rect2 rect = _get_cell_content_rect(p_row, p_column);
 	rect.position.x -= _h_scroll->get_value();
-	if (is_layout_rtl()) {
-		rect.position.x = _body->get_size().x - rect.position.x - rect.size.x;
-	}
 	if (p_row < _frozen_rows) {
 		rect.position += _frozen->get_position();
 	} else {
@@ -659,8 +656,7 @@ void Table::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED:
 		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_RESIZED:
-		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
+		case NOTIFICATION_TRANSLATION_CHANGED: {
 			_queue_layout();
 		} break;
 		case NOTIFICATION_DRAW: {
@@ -1114,9 +1110,6 @@ void Table::_update_layout() {
 		update_minimum_size();
 	}
 	Point2 origin = inner.position;
-	if (is_layout_rtl() && vertical_scroll) {
-		origin.x += scrollbar_width;
-	}
 	_frozen->set_position(origin);
 	_frozen->set_size(Size2(viewport.x, MIN(viewport.y, _frozen_height)));
 	_frozen->set_visible(_frozen_rows > 0);
@@ -1127,7 +1120,7 @@ void Table::_update_layout() {
 	_h_scroll->set_max(content_width);
 	_h_scroll->set_page(viewport.x);
 	_h_scroll->set_visible(horizontal_scroll);
-	_v_scroll->set_position(Point2(is_layout_rtl() ? inner.position.x : inner.position.x + viewport.x, origin.y + _frozen_height));
+	_v_scroll->set_position(Point2((inner.position.x + viewport.x), origin.y + _frozen_height));
 	_v_scroll->set_size(Size2(scrollbar_width, MAX(0.0f, viewport.y - _frozen_height)));
 	_v_scroll->set_max(MAX(0.0f, content_height - _frozen_height));
 	_v_scroll->set_page(MAX(0.0f, viewport.y - _frozen_height));
@@ -1158,7 +1151,6 @@ void Table::_shape_cell(Cell &r_cell, float p_width) {
 		r_cell.text_buf.instantiate();
 	}
 	r_cell.text_buf->clear();
-	r_cell.text_buf->set_direction(is_layout_rtl() ? TextServer::DIRECTION_RTL : TextServer::DIRECTION_LTR);
 	r_cell.text_buf->set_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 	const bool wrap = _is_wrapped(r_cell);
 	if (wrap && p_width >= 0) {
@@ -1220,13 +1212,13 @@ void Table::_draw_cell(Control *p_canvas, const Cell &p_cell, const Rect2 &p_rec
 		position.y = p_rect.get_end().y - vertical_padding - height;
 	}
 	if (p_cell.icon.is_valid()) {
-		const Point2 icon_position(position.x + (is_layout_rtl() ? width - icon_size.x : 0), position.y + (height - icon_size.y) / 2);
+		const Point2 icon_position(position.x, position.y + (height - icon_size.y) / 2);
 		p_canvas->draw_texture_rect(p_cell.icon, Rect2(icon_position, icon_size), false);
 	}
 	if (available_width <= icon_size.x + icon_gap || p_cell.text.is_empty()) {
 		return;
 	}
-	const Point2 text_position(position.x + (is_layout_rtl() ? 0 : icon_size.x + icon_gap), position.y + (height - text_size.y) / 2);
+	const Point2 text_position(position.x + ((icon_size.x + icon_gap)), position.y + (height - text_size.y) / 2);
 	p_cell.text_buf->draw(p_canvas->get_canvas_item(), text_position, p_cell.role == HEADER ? _theme_cache.header_font_color : _theme_cache.font_color);
 }
 
@@ -1253,9 +1245,6 @@ void Table::_draw_region(Control *p_canvas, bool p_frozen) {
 			Rect2 rect = _get_cell_content_rect(row, column);
 			rect.position.y -= scroll;
 			rect.position.x -= _h_scroll->get_value();
-			if (is_layout_rtl()) {
-				rect.position.x = p_canvas->get_size().x - rect.position.x - rect.size.x;
-			}
 			if (rect.intersects(Rect2(Point2(), p_canvas->get_size()))) {
 				_draw_cell(p_canvas, _rows[row][column], rect, _row_stripes[row]);
 			}

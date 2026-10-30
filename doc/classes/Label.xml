@@ -92,26 +92,17 @@
 		</member>
 		<member name="mouse_filter" type="int" setter="set_mouse_filter" getter="get_mouse_filter" overrides="Control" enum="Control.MouseFilter" default="2" />
 		<member name="paragraph_separator" type="String" setter="set_paragraph_separator" getter="get_paragraph_separator" default="&quot;\\n&quot;">
-			String used as a paragraph separator. Each paragraph is processed independently, in its own BiDi context.
+			String used as a paragraph separator. Each paragraph is processed independently.
 		</member>
 		<member name="resize_font_to_fit" type="bool" setter="set_resize_font_to_fit" getter="is_resize_font_to_fit_enabled" default="false">
 			If [code]true[/code], the text size will automatically shrink or grow to fit within the node's bounding rectangle. It will pick the largest font size between [member minimum_font_size] and [member maximum_font_size] that doesn't cause the text to be truncated.
 		</member>
 		<member name="size_flags_vertical" type="int" setter="set_v_size_flags" getter="get_v_size_flags" overrides="Control" enum="Control.SizeFlags" is_bitfield="true" default="4" />
-		<member name="structured_text_bidi_override" type="int" setter="set_structured_text_bidi_override" getter="get_structured_text_bidi_override" enum="TextServer.StructuredTextParser" default="0">
-			Set BiDi algorithm override for the structured text.
-		</member>
-		<member name="structured_text_bidi_override_options" type="Array" setter="set_structured_text_bidi_override_options" getter="get_structured_text_bidi_override_options" default="[]">
-			Set additional options for BiDi override.
-		</member>
 		<member name="tab_stops" type="PackedFloat32Array" setter="set_tab_stops" getter="get_tab_stops" default="PackedFloat32Array()">
 			Aligns text to the given tab-stops.
 		</member>
 		<member name="text" type="String" setter="set_text" getter="get_text" default="&quot;&quot;">
 			The text to display on screen.
-		</member>
-		<member name="text_direction" type="int" setter="set_text_direction" getter="get_text_direction" enum="Control.TextDirection" default="0">
-			Base text writing direction.
 		</member>
 		<member name="text_overrun_behavior" type="int" setter="set_text_overrun_behavior" getter="get_text_overrun_behavior" enum="TextServer.OverrunBehavior" default="0">
 			The clipping behavior when the text exceeds the node's bounding rectangle.

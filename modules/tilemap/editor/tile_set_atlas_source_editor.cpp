@@ -957,11 +957,7 @@ void TileSetAtlasSourceEditor::_tile_data_editor_dropdown_button_draw() {
 	Size2 size = tile_data_editor_dropdown_button->get_size();
 
 	Point2 ofs;
-	if (is_layout_rtl()) {
-		ofs = Point2(get_theme_constant(SNAME("arrow_margin"), SNAME("OptionButton")), int(Math::abs((size.height - arrow->get_height()) / 2)));
-	} else {
-		ofs = Point2(size.width - arrow->get_width() - get_theme_constant(SNAME("arrow_margin"), SNAME("OptionButton")), int(Math::abs((size.height - arrow->get_height()) / 2)));
-	}
+	ofs = Point2(size.width - arrow->get_width() - get_theme_constant(SNAME("arrow_margin"), SNAME("OptionButton")), int(Math::abs((size.height - arrow->get_height()) / 2)));
 	arrow->draw(ci, ofs, clr);
 }
 

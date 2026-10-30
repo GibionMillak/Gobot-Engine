@@ -476,7 +476,6 @@ void EditorVisualProfiler::_notification(int p_what) {
 			}
 			[[fallthrough]];
 		}
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			activate->set_button_icon(get_editor_theme_icon(SNAME("playback_play")));
 			clear_button->set_button_icon(get_editor_theme_icon(SNAME("action_clear")));

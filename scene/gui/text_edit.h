@@ -86,25 +86,8 @@ public:
 		MENU_SELECT_ALL,
 		MENU_UNDO,
 		MENU_REDO,
-		MENU_SUBMENU_TEXT_DIR,
-		MENU_DIR_INHERITED,
-		MENU_DIR_AUTO,
-		MENU_DIR_LTR,
-		MENU_DIR_RTL,
 		MENU_DISPLAY_UCC,
 		MENU_SUBMENU_INSERT_UCC,
-		MENU_INSERT_LRM,
-		MENU_INSERT_RLM,
-		MENU_INSERT_LRE,
-		MENU_INSERT_RLE,
-		MENU_INSERT_LRO,
-		MENU_INSERT_RLO,
-		MENU_INSERT_PDF,
-		MENU_INSERT_ALM,
-		MENU_INSERT_LRI,
-		MENU_INSERT_RLI,
-		MENU_INSERT_FSI,
-		MENU_INSERT_PDI,
 		MENU_INSERT_ZWJ,
 		MENU_INSERT_ZWNJ,
 		MENU_INSERT_WJ,
@@ -146,11 +129,9 @@ private:
 
 		struct Line {
 			String data;
-			Array bidi_override;
 			Ref<TextParagraph> data_buf;
 
 			String ime_data;
-			Array ime_bidi_override;
 
 			LocalVector<Gutter> gutters;
 			Color background_color = Color(0, 0, 0, 0);
@@ -177,7 +158,6 @@ private:
 		int font_height = 0;
 
 		String language;
-		TextServer::Direction direction = TextServer::DIRECTION_AUTO;
 		BitField<TextServer::LineBreakFlag> brk_flags = TextServer::BREAK_MANDATORY;
 		bool draw_control_chars = false;
 		String custom_word_separators;
@@ -204,7 +184,7 @@ private:
 
 		void set_font(const Ref<Font> &p_font);
 		void set_font_size(int p_font_size);
-		void set_direction_and_language(TextServer::Direction p_direction, const String &p_language);
+		void set_language(const String &p_language);
 		void set_draw_control_chars(bool p_enabled);
 		void set_inline_object_parser(const Callable &p_parser);
 
@@ -232,13 +212,13 @@ private:
 
 		Vector<Vector2i> get_line_wrap_ranges(int p_line) const;
 		const Ref<TextParagraph> get_line_data(int p_line) const;
-		float get_indent_offset(int p_line, bool p_rtl) const;
+		float get_indent_offset(int p_line) const;
 
-		void set(int p_line, const String &p_text, const Array &p_bidi_override);
-		void set_ime(int p_line, const String &p_text, const Array &p_bidi_override);
+		void set(int p_line, const String &p_text);
+		void set_ime(int p_line, const String &p_text);
 		void set_hidden(int p_line, bool p_hidden);
 		bool is_hidden(int p_line) const;
-		void insert(int p_at, const Vector<String> &p_text, const Vector<Array> &p_bidi_override);
+		void insert(int p_at, const Vector<String> &p_text);
 		void remove_range(int p_from_line, int p_to_line);
 		int size() const { return text.size(); }
 		void clear();
@@ -316,7 +296,6 @@ private:
 
 	// Placeholder
 	String placeholder_text = "";
-	Array placeholder_bidi_override;
 	Ref<TextParagraph> placeholder_data_buf;
 	int placeholder_line_height = -1;
 	int placeholder_max_width = -1;
@@ -329,13 +308,7 @@ private:
 	/* Initialize to opposite first, so we get past the early-out in set_editable. */
 	bool editable = false;
 
-	TextDirection text_direction = TEXT_DIRECTION_AUTO;
-	TextDirection input_direction = TEXT_DIRECTION_LTR;
-
 	String language = "";
-
-	TextServer::StructuredTextParser st_parser = TextServer::STRUCTURED_TEXT_DEFAULT;
-	Array st_args;
 
 	void _clear();
 	void _update_caches(bool p_invalidate_all = false);
@@ -360,7 +333,6 @@ private:
 
 	// Context menu.
 	PopupMenu *menu = nullptr;
-	PopupMenu *menu_dir = nullptr;
 	PopupMenu *menu_ctl = nullptr;
 
 	Callable inline_object_drawer;
@@ -722,7 +694,6 @@ private:
 	void _base_remove_text(int p_from_line, int p_from_column, int p_to_line, int p_to_column);
 
 	/* Input actions. */
-	void _swap_current_input_direction();
 	void _new_line(bool p_split_current = true, bool p_above = false);
 	void _move_caret_left(bool p_select, bool p_move_by_word = false);
 	void _move_caret_right(bool p_select, bool p_move_by_word = false);
@@ -777,7 +748,7 @@ protected:
 	virtual void _unhide_carets();
 
 	int _get_wrapped_indent_level(int p_line, int &r_first_wrap) const;
-	float _get_wrap_indent_offset(int p_line, int p_wrap_index, bool p_rtl) const;
+	float _get_wrap_indent_offset(int p_line, int p_wrap_index) const;
 
 	// Symbol lookup.
 	String lookup_symbol_word;
@@ -850,16 +821,8 @@ public:
 	void set_editable(bool p_editable);
 	bool is_editable() const;
 
-	void set_text_direction(TextDirection p_text_direction);
-	TextDirection get_text_direction() const;
-
 	void set_language(const String &p_language);
 	String get_language() const;
-
-	void set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser);
-	TextServer::StructuredTextParser get_structured_text_bidi_override() const;
-	void set_structured_text_bidi_override_options(const Array &p_args);
-	Array get_structured_text_bidi_override_options() const;
 
 	void set_tab_size(const int p_size);
 	int get_tab_size() const;
@@ -979,7 +942,6 @@ public:
 	Point2i search(const String &p_key, uint32_t p_search_flags, int p_from_line, int p_from_column) const;
 
 	/* Mouse */
-	Point2 get_local_mouse_pos() const;
 
 	String get_word_at_pos(const Vector2 &p_pos) const;
 	String get_word(int p_line, int p_column) const;

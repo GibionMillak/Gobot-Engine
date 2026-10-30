@@ -41,7 +41,6 @@ class TranslationDomain : public RefCounted {
 		bool enabled = false;
 		bool accents_enabled = true;
 		bool double_vowels_enabled = false;
-		bool fake_bidi_enabled = false;
 		bool override_enabled = false;
 		bool skip_placeholders_enabled = true;
 		float expansion_ratio = 0.0;
@@ -58,7 +57,6 @@ class TranslationDomain : public RefCounted {
 	String _get_override_string(const String &p_message) const;
 	String _double_vowels(const String &p_message) const;
 	String _replace_with_accented_string(const String &p_message) const;
-	String _wrap_with_fakebidi_characters(const String &p_message) const;
 	String _add_padding(const String &p_message, int p_length) const;
 	const char32_t *_get_accented_version(char32_t p_character) const;
 	bool _is_placeholder(const String &p_message, int p_index) const;
@@ -101,8 +99,6 @@ public:
 	void set_pseudolocalization_accents_enabled(bool p_enabled);
 	bool is_pseudolocalization_double_vowels_enabled() const;
 	void set_pseudolocalization_double_vowels_enabled(bool p_enabled);
-	bool is_pseudolocalization_fake_bidi_enabled() const;
-	void set_pseudolocalization_fake_bidi_enabled(bool p_enabled);
 	bool is_pseudolocalization_override_enabled() const;
 	void set_pseudolocalization_override_enabled(bool p_enabled);
 	bool is_pseudolocalization_skip_placeholders_enabled() const;

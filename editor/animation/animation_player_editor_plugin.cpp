@@ -175,7 +175,6 @@ void AnimationPlayerEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			stop_icon = get_editor_theme_icon(SNAME("playback_stop"));
 			pause_icon = get_editor_theme_icon(SNAME("playback_pause"));
@@ -970,14 +969,6 @@ void AnimationPlayerEditor::clear() {
 	track_editor->clear();
 }
 
-void AnimationPlayerEditor::_animation_resource_edit() {
-	String current = _get_current();
-	if (current != String()) {
-		Ref<Animation> anim = player->get_animation(current);
-		EditorNode::get_singleton()->edit_resource(anim);
-	}
-}
-
 void AnimationPlayerEditor::_animation_edit() {
 	String current = _get_current();
 	if (current != String()) {
@@ -1481,12 +1472,6 @@ void AnimationPlayerEditor::_animation_player_changed(Object *p_pl) {
 
 void AnimationPlayerEditor::_animation_libraries_updated() {
 	_animation_player_changed(player);
-}
-
-void AnimationPlayerEditor::_list_changed() {
-	if (is_visible_in_tree()) {
-		_update_player();
-	}
 }
 
 void AnimationPlayerEditor::_animation_finished(const String &p_name) {
@@ -2089,7 +2074,6 @@ AnimationPlayerEditor::AnimationPlayerEditor(AnimationPlayerEditorPlugin *p_plug
 	main_vbox_container->add_child(hb);
 
 	HBoxContainer *playback_container = memnew(HBoxContainer);
-	playback_container->set_layout_direction(LAYOUT_DIRECTION_LTR);
 	hb->add_child(playback_container);
 
 	play_bw_from = memnew(Button);

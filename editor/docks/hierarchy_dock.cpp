@@ -3264,9 +3264,6 @@ void HierarchyDock::_post_do_create(Node *p_child) {
 		if (ms.height < 4) {
 			ms.height = 40;
 		}
-		if (control->is_layout_rtl()) {
-			control->set_position(control->get_position() - Vector2(ms.x, 0));
-		}
 		control->set_size(ms);
 	}
 }
@@ -3286,9 +3283,6 @@ void HierarchyDock::_post_do_create_multi(Ref<MultiNodeEdit> p_child) {
 			}
 			if (ms.height < 4) {
 				ms.height = 40;
-			}
-			if (control->is_layout_rtl()) {
-				control->set_position(control->get_position() - Vector2(ms.x, 0));
 			}
 			control->set_size(ms);
 		}

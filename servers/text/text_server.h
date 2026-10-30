@@ -63,13 +63,6 @@ public:
 		FONT_LCD_SUBPIXEL_LAYOUT_MAX,
 	};
 
-	enum Direction {
-		DIRECTION_AUTO,
-		DIRECTION_LTR,
-		DIRECTION_RTL,
-		DIRECTION_INHERITED,
-	};
-
 	enum Orientation {
 		ORIENTATION_HORIZONTAL,
 		ORIENTATION_VERTICAL
@@ -90,9 +83,7 @@ public:
 	enum VisibleCharactersBehavior {
 		VC_CHARS_BEFORE_SHAPING,
 		VC_CHARS_AFTER_SHAPING,
-		VC_GLYPHS_AUTO,
-		VC_GLYPHS_LTR,
-		VC_GLYPHS_RTL,
+		VC_GLYPHS,
 	};
 
 	enum AutowrapMode {
@@ -138,7 +129,6 @@ public:
 
 	enum GraphemeFlag {
 		GRAPHEME_IS_VALID = 1 << 0, // Grapheme is valid.
-		GRAPHEME_IS_RTL = 1 << 1, // Grapheme is right-to-left.
 		GRAPHEME_IS_VIRTUAL = 1 << 2, // Grapheme is not part of source string (added by fit_to_width function, do not affect caret movement).
 		GRAPHEME_IS_SPACE = 1 << 3, // Is whitespace (for justification and word breaks).
 		GRAPHEME_IS_BREAK_HARD = 1 << 4, // Is line break (mandatory break, e.g. "\n").
@@ -171,7 +161,6 @@ public:
 
 	enum Feature {
 		FEATURE_SIMPLE_LAYOUT = 1 << 0,
-		FEATURE_BIDI_LAYOUT = 1 << 1,
 		FEATURE_VERTICAL_LAYOUT = 1 << 2,
 		FEATURE_SHAPING = 1 << 3,
 		FEATURE_KASHIDA_JUSTIFICATION = 1 << 4,
@@ -207,16 +196,6 @@ public:
 		FONT_FIXED_WIDTH = 1 << 2,
 	};
 
-	enum StructuredTextParser {
-		STRUCTURED_TEXT_DEFAULT,
-		STRUCTURED_TEXT_URI,
-		STRUCTURED_TEXT_FILE,
-		STRUCTURED_TEXT_EMAIL,
-		STRUCTURED_TEXT_LIST,
-		STRUCTURED_TEXT_GDSCRIPT,
-		STRUCTURED_TEXT_CUSTOM
-	};
-
 	enum FixedSizeScaleMode {
 		FIXED_SIZE_SCALE_DISABLE,
 		FIXED_SIZE_SCALE_INTEGER_ONLY,
@@ -250,8 +229,6 @@ public:
 	virtual bool save_support_data(const String &p_filename) const = 0;
 	virtual PackedByteArray get_support_data() const = 0;
 	virtual bool is_locale_using_support_data(const String &p_locale) const { return false; }
-
-	virtual bool is_locale_right_to_left(const String &p_locale) const = 0;
 
 	virtual int64_t name_to_tag(const String &p_name) const;
 	virtual String tag_to_name(int64_t p_tag) const;
@@ -454,16 +431,10 @@ public:
 
 	/* Shaped text buffer interface */
 
-	virtual RID create_shaped_text(Direction p_direction = DIRECTION_AUTO, Orientation p_orientation = ORIENTATION_HORIZONTAL) = 0;
+	virtual RID create_shaped_text(Orientation p_orientation = ORIENTATION_HORIZONTAL) = 0;
 
 	virtual void shaped_text_clear(const RID &p_shaped) = 0;
 	virtual RID shaped_text_duplicate(const RID &p_shaped) = 0;
-
-	virtual void shaped_text_set_direction(const RID &p_shaped, Direction p_direction = DIRECTION_AUTO) = 0;
-	virtual Direction shaped_text_get_direction(const RID &p_shaped) const = 0;
-	virtual Direction shaped_text_get_inferred_direction(const RID &p_shaped) const = 0;
-
-	virtual void shaped_text_set_bidi_override(const RID &p_shaped, const Array &p_override) = 0;
 
 	virtual void shaped_text_set_custom_punctuation(const RID &p_shaped, const String &p_punct) = 0;
 	virtual String shaped_text_get_custom_punctuation(const RID &p_shaped) const = 0;
@@ -503,7 +474,6 @@ public:
 	virtual RID shaped_get_run_font_rid(const RID &p_shaped, int64_t p_index) const = 0;
 	virtual int shaped_get_run_font_size(const RID &p_shaped, int64_t p_index) const = 0;
 	virtual String shaped_get_run_language(const RID &p_shaped, int64_t p_index) const = 0;
-	virtual Direction shaped_get_run_direction(const RID &p_shaped, int64_t p_index) const = 0;
 	virtual Variant shaped_get_run_object(const RID &p_shaped, int64_t p_index) const = 0;
 
 	virtual RID shaped_text_substr(const RID &p_shaped, int64_t p_start, int64_t p_length) const = 0; // Copy shaped substring (e.g. line break) without reshaping, but correctly reordered, preservers range.
@@ -551,8 +521,6 @@ public:
 	virtual double shaped_text_get_underline_position(const RID &p_shaped) const = 0;
 	virtual double shaped_text_get_underline_thickness(const RID &p_shaped) const = 0;
 
-	virtual Direction shaped_text_get_dominant_direction_in_range(const RID &p_shaped, int64_t p_start, int64_t p_end) const;
-
 	virtual CaretInfo shaped_text_get_carets(const RID &p_shaped, int64_t p_position) const;
 	Dictionary _shaped_text_get_carets_wrapper(const RID &p_shaped, int64_t p_position) const;
 
@@ -574,11 +542,6 @@ public:
 	virtual void shaped_text_draw(const RID &p_shaped, const RID &p_canvas, const Vector2 &p_pos, double p_clip_l = -1.0, double p_clip_r = -1.0, const Color &p_color = Color(1, 1, 1), float p_oversampling = 0.0) const;
 	virtual void shaped_text_draw_outline(const RID &p_shaped, const RID &p_canvas, const Vector2 &p_pos, double p_clip_l = -1.0, double p_clip_r = -1.0, int64_t p_outline_size = 1, const Color &p_color = Color(1, 1, 1), float p_oversampling = 0.0) const;
 
-#ifdef DEBUG_ENABLED
-	void debug_print_glyph(int p_idx, const Glyph &p_glyph) const;
-	void shaped_text_debug_print(const RID &p_shaped) const;
-#endif
-
 	// String functions.
 	virtual PackedInt32Array string_get_word_breaks(const String &p_string, const String &p_language = "", int64_t p_chars_per_line = 0) const = 0;
 	virtual PackedInt32Array string_get_character_breaks(const String &p_string, const String &p_language = "") const;
@@ -594,8 +557,6 @@ public:
 	virtual String string_to_upper(const String &p_string, const String &p_language = "") const = 0;
 	virtual String string_to_lower(const String &p_string, const String &p_language = "") const = 0;
 	virtual String string_to_title(const String &p_string, const String &p_language = "") const = 0;
-
-	TypedArray<Vector3i> parse_structured_text(StructuredTextParser p_parser_type, const Array &p_args, const String &p_text) const;
 
 	static void set_current_drawn_item_oversampling(double p_vp_oversampling) { vp_oversampling = p_vp_oversampling; }
 	static double get_current_drawn_item_oversampling() { return vp_oversampling; }
@@ -614,7 +575,7 @@ struct Glyph {
 
 	uint8_t count = 0; // Number of glyphs in the grapheme, set in the first glyph only.
 	uint8_t repeat = 1; // Draw multiple times in the row.
-	uint16_t flags = 0; // Grapheme flags (valid, rtl, virtual), set in the first glyph only.
+	uint16_t flags = 0; // Grapheme flags (valid, virtual), set in the first glyph only.
 
 	float x_off = 0.f; // Offset from the origin of the glyph on baseline.
 	float y_off = 0.f;
@@ -636,8 +597,6 @@ struct Glyph {
 struct CaretInfo {
 	Rect2 l_caret;
 	Rect2 t_caret;
-	TextServer::Direction l_dir;
-	TextServer::Direction t_dir;
 };
 
 /*************************************************************************/
@@ -682,7 +641,6 @@ public:
 VARIANT_ENUM_CAST(TextServer::VisibleCharactersBehavior);
 VARIANT_ENUM_CAST(TextServer::AutowrapMode);
 VARIANT_ENUM_CAST(TextServer::OverrunBehavior);
-VARIANT_ENUM_CAST(TextServer::Direction);
 VARIANT_ENUM_CAST(TextServer::Orientation);
 VARIANT_BITFIELD_CAST(TextServer::JustificationFlag);
 VARIANT_BITFIELD_CAST(TextServer::LineBreakFlag);
@@ -694,7 +652,6 @@ VARIANT_ENUM_CAST(TextServer::Feature);
 VARIANT_ENUM_CAST(TextServer::ContourPointTag);
 VARIANT_ENUM_CAST(TextServer::SpacingType);
 VARIANT_BITFIELD_CAST(TextServer::FontStyle);
-VARIANT_ENUM_CAST(TextServer::StructuredTextParser);
 VARIANT_ENUM_CAST(TextServer::FontAntialiasing);
 VARIANT_ENUM_CAST(TextServer::FontLCDSubpixelLayout);
 VARIANT_ENUM_CAST(TextServer::FixedSizeScaleMode);

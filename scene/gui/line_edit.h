@@ -45,25 +45,8 @@ public:
 		MENU_SELECT_ALL,
 		MENU_UNDO,
 		MENU_REDO,
-		MENU_SUBMENU_TEXT_DIR,
-		MENU_DIR_INHERITED,
-		MENU_DIR_AUTO,
-		MENU_DIR_LTR,
-		MENU_DIR_RTL,
 		MENU_DISPLAY_UCC,
 		MENU_SUBMENU_INSERT_UCC,
-		MENU_INSERT_LRM,
-		MENU_INSERT_RLM,
-		MENU_INSERT_LRE,
-		MENU_INSERT_RLE,
-		MENU_INSERT_LRO,
-		MENU_INSERT_RLO,
-		MENU_INSERT_PDF,
-		MENU_INSERT_ALM,
-		MENU_INSERT_LRI,
-		MENU_INSERT_RLI,
-		MENU_INSERT_FSI,
-		MENU_INSERT_PDI,
 		MENU_INSERT_ZWJ,
 		MENU_INSERT_ZWNJ,
 		MENU_INSERT_WJ,
@@ -131,7 +114,6 @@ private:
 	bool emoji_menu_enabled = true;
 	bool backspace_deletes_composite_character_enabled = false;
 	PopupMenu *menu = nullptr;
-	PopupMenu *menu_dir = nullptr;
 	PopupMenu *menu_ctl = nullptr;
 
 	bool caret_mid_grapheme_enabled = false;
@@ -141,10 +123,6 @@ private:
 	int max_length = 0; // 0 for no maximum.
 
 	String language;
-	TextDirection text_direction = TEXT_DIRECTION_AUTO;
-	TextDirection input_direction = TEXT_DIRECTION_LTR;
-	TextServer::StructuredTextParser st_parser = TextServer::STRUCTURED_TEXT_DEFAULT;
-	Array st_args;
 	bool draw_control_chars = false;
 
 	bool expand_to_text_length = false;
@@ -272,7 +250,6 @@ private:
 
 	void _editor_settings_changed();
 
-	void _swap_current_input_direction();
 	void _move_caret_left(bool p_select, bool p_move_by_word = false);
 	void _move_caret_right(bool p_select, bool p_move_by_word = false);
 	void _move_caret_start(bool p_select);
@@ -350,20 +327,11 @@ public:
 	String get_text() const;
 	void set_text_with_selection(const String &p_text); // Set text, while preserving selection.
 
-	void set_text_direction(TextDirection p_text_direction);
-	TextDirection get_text_direction() const;
-
 	void set_language(const String &p_language);
 	String get_language() const;
 
 	void set_draw_control_chars(bool p_draw_control_chars);
 	bool get_draw_control_chars() const;
-
-	void set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser);
-	TextServer::StructuredTextParser get_structured_text_bidi_override() const;
-
-	void set_structured_text_bidi_override_options(const Array &p_args);
-	Array get_structured_text_bidi_override_options() const;
 
 	void set_placeholder(String p_text);
 	String get_placeholder() const;

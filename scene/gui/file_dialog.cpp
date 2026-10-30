@@ -280,27 +280,12 @@ void FileDialog::_notification(int p_what) {
 			[[fallthrough]];
 		}
 
-		case Control::NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-			if (main_vbox->is_layout_rtl()) {
-				_setup_button(dir_prev, theme_cache.forward_folder);
-				_setup_button(dir_next, theme_cache.back_folder);
-			} else {
-				_setup_button(dir_prev, theme_cache.back_folder);
-				_setup_button(dir_next, theme_cache.forward_folder);
-			}
-		} break;
-
 		case NOTIFICATION_THEME_CHANGED: {
 			favorite_list->set_custom_minimum_size(Vector2(128 * get_theme_default_base_scale(), 0));
 			recent_list->set_custom_minimum_size(Vector2(128 * get_theme_default_base_scale(), 0));
 
-			if (main_vbox->is_layout_rtl()) {
-				_setup_button(dir_prev, theme_cache.forward_folder);
-				_setup_button(dir_next, theme_cache.back_folder);
-			} else {
-				_setup_button(dir_prev, theme_cache.back_folder);
-				_setup_button(dir_next, theme_cache.forward_folder);
-			}
+			_setup_button(dir_prev, theme_cache.back_folder);
+			_setup_button(dir_next, theme_cache.forward_folder);
 			_setup_button(dir_up, theme_cache.parent_folder);
 			_setup_button(refresh_button, theme_cache.reload);
 			_setup_button(favorite_button, theme_cache.favorite);
@@ -2286,10 +2271,6 @@ void FileDialog::set_show_filename_filter(bool p_show) {
 	invalidate();
 }
 
-bool FileDialog::get_show_filename_filter() const {
-	return show_filename_filter;
-}
-
 bool FileDialog::is_showing_hidden_files() const {
 	return show_hidden_files;
 }
@@ -2392,7 +2373,6 @@ FileDialog::FileDialog() :
 	top_toolbar->add_child(drives);
 
 	directory_edit = memnew(LineEdit);
-	directory_edit->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	directory_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	top_toolbar->add_child(directory_edit);
 	directory_edit->connect(SceneStringName(text_submitted), callable_mp(this, &FileDialog::_dir_submitted));
@@ -2585,7 +2565,6 @@ FileDialog::FileDialog() :
 	}
 
 	filename_filter = memnew(LineEdit);
-	filename_filter->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	filename_filter->set_stretch_ratio(4);
 	filename_filter->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	filename_filter->set_clear_button_enabled(true);
@@ -2602,7 +2581,6 @@ FileDialog::FileDialog() :
 	}
 
 	filename_edit = memnew(LineEdit);
-	filename_edit->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	filename_edit->set_stretch_ratio(4);
 	filename_edit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	file_box->add_child(filename_edit);
@@ -2645,7 +2623,6 @@ FileDialog::FileDialog() :
 	make_dir_dialog->add_child(makevb);
 
 	new_dir_name = memnew(LineEdit);
-	new_dir_name->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	makevb->add_margin_child(ETR("Name:"), new_dir_name);
 	make_dir_dialog->register_text_enter(new_dir_name);
 

@@ -44,10 +44,6 @@ class CheckButton : public Button {
 		Ref<Texture2D> unchecked;
 		Ref<Texture2D> checked_disabled;
 		Ref<Texture2D> unchecked_disabled;
-		Ref<Texture2D> checked_mirrored;
-		Ref<Texture2D> unchecked_mirrored;
-		Ref<Texture2D> checked_disabled_mirrored;
-		Ref<Texture2D> unchecked_disabled_mirrored;
 
 		Color button_checked_color;
 		Color button_unchecked_color;

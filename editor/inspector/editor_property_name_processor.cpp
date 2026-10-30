@@ -160,7 +160,6 @@ EditorPropertyNameProcessor::EditorPropertyNameProcessor() {
 	capitalize_string_remaps["astc"] = "ASTC";
 	capitalize_string_remaps["bbcode"] = "BBCode";
 	capitalize_string_remaps["bg"] = "BG";
-	capitalize_string_remaps["bidi"] = "BiDi";
 	capitalize_string_remaps["bp"] = "BP";
 	capitalize_string_remaps["bpc"] = "BPC";
 	capitalize_string_remaps["bpm"] = "BPM";

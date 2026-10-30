@@ -146,8 +146,6 @@ class ProjectExportDialog : public Dialog {
 
 	String default_filename;
 
-	bool exporting = false;
-
 	void _advanced_options_pressed();
 	void _options_filter_changed(const String &p_filter);
 	void _runnable_pressed();
@@ -248,8 +246,6 @@ public:
 	String get_export_path();
 
 	Ref<EditorExportPreset> get_current_preset() const;
-
-	bool is_exporting() const { return exporting; }
 
 	ProjectExportDialog();
 };

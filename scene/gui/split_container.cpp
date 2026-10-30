@@ -92,11 +92,7 @@ void SplitContainerMultiDragger::gui_input(const Ref<InputEvent> &p_event) {
 
 		Vector2i in_parent_pos = get_transform().xform(mm->get_position());
 		int new_drag_offset;
-		if (!split_container->vertical && is_layout_rtl()) {
-			new_drag_offset = start_drag_split_offset - (in_parent_pos.x - drag_from);
-		} else {
-			new_drag_offset = start_drag_split_offset + ((split_container->vertical ? in_parent_pos.y : in_parent_pos.x) - drag_from);
-		}
+		new_drag_offset = start_drag_split_offset + ((split_container->vertical ? in_parent_pos.y : in_parent_pos.x) - drag_from);
 		split_container->set_split_offset(new_drag_offset, dragger_index);
 		split_container->_update_dragger_positions(dragger_index);
 		split_container->queue_sort();
@@ -153,12 +149,12 @@ void SplitContainerDragger::gui_input(const Ref<InputEvent> &p_event) {
 		return;
 	}
 
-	if ((sc->vertical && p_event->is_action_pressed("ui_up", true)) || (!sc->vertical && !is_layout_rtl() && p_event->is_action_pressed("ui_left", true)) || (!sc->vertical && is_layout_rtl() && p_event->is_action_pressed("ui_right", true))) {
+	if ((sc->vertical && p_event->is_action_pressed("ui_up", true)) || (!sc->vertical && p_event->is_action_pressed("ui_left", true))) {
 		sc->set_split_offset(sc->get_split_offset(dragger_index) - (sc->vertical ? sc->get_size().height : sc->get_size().width) * 0.1, dragger_index);
 		sc->clamp_split_offset(dragger_index);
 		accept_event();
 		return;
-	} else if ((sc->vertical && p_event->is_action_pressed("ui_down", true)) || (!sc->vertical && !is_layout_rtl() && p_event->is_action_pressed("ui_right", true)) || (!sc->vertical && is_layout_rtl() && p_event->is_action_pressed("ui_left", true))) {
+	} else if ((sc->vertical && p_event->is_action_pressed("ui_down", true)) || (!sc->vertical && p_event->is_action_pressed("ui_right", true))) {
 		sc->set_split_offset(sc->get_split_offset(dragger_index) + (sc->vertical ? sc->get_size().height : sc->get_size().width) * 0.1, dragger_index);
 		sc->clamp_split_offset(dragger_index);
 		accept_event();
@@ -196,11 +192,7 @@ void SplitContainerDragger::gui_input(const Ref<InputEvent> &p_event) {
 
 		Vector2i in_parent_pos = get_transform().xform(mm->get_position());
 		int new_drag_offset;
-		if (!sc->vertical && is_layout_rtl()) {
-			new_drag_offset = start_drag_split_offset - (in_parent_pos.x - drag_from);
-		} else {
-			new_drag_offset = start_drag_split_offset + ((sc->vertical ? in_parent_pos.y : in_parent_pos.x) - drag_from);
-		}
+		new_drag_offset = start_drag_split_offset + ((sc->vertical ? in_parent_pos.y : in_parent_pos.x) - drag_from);
 		sc->set_split_offset(new_drag_offset, dragger_index);
 		sc->_update_dragger_positions(dragger_index);
 		sc->queue_sort();
@@ -785,9 +777,6 @@ void SplitContainer::_update_dragger_positions(int p_clamp_index) {
 			if (p_clamp_index != -1) {
 				split_offsets.write[i] = dragger_positions[i] - default_dragger_positions[i];
 			}
-			if (!vertical && is_layout_rtl()) {
-				dragger_positions[i] = size - dragger_positions[i] - sep;
-			}
 		}
 		return;
 	}
@@ -858,13 +847,6 @@ void SplitContainer::_update_dragger_positions(int p_clamp_index) {
 			split_offsets.write[i] = dragger_positions[i] - default_dragger_positions[i];
 		}
 	}
-
-	// Invert if rtl.
-	if (!vertical && is_layout_rtl()) {
-		for (int i = 0; i < (int)dragger_positions.size(); i++) {
-			dragger_positions[i] = size - dragger_positions[i] - sep;
-		}
-	}
 }
 
 void SplitContainer::_resort() {
@@ -896,20 +878,14 @@ void SplitContainer::_resort() {
 	const int sep = _get_separation();
 	const int axis = vertical ? 1 : 0;
 	const Size2i new_size = get_size();
-	const bool rtl = is_layout_rtl();
 
 	// Move the children.
 	for (int i = 0; i < (int)valid_children.size(); i++) {
 		Control *child = valid_children[i];
 		int start_pos;
 		int end_pos;
-		if (!vertical && rtl) {
-			start_pos = i >= (int)dragger_positions.size() ? 0 : dragger_positions[i] + sep;
-			end_pos = i == 0 ? new_size[axis] : dragger_positions[i - 1];
-		} else {
-			start_pos = i == 0 ? 0 : dragger_positions[i - 1] + sep;
-			end_pos = i >= (int)dragger_positions.size() ? new_size[axis] : dragger_positions[i];
-		}
+		start_pos = i == 0 ? 0 : dragger_positions[i - 1] + sep;
+		end_pos = i >= (int)dragger_positions.size() ? new_size[axis] : dragger_positions[i];
 		int size = end_pos - start_pos;
 
 		if (vertical) {
@@ -929,13 +905,13 @@ void SplitContainer::_resort() {
 	for (int i = 0; i < (int)dragger_positions.size(); i++) {
 		dragging_area_controls[i]->set_mouse_filter(dragging_enabled ? MOUSE_FILTER_STOP : MOUSE_FILTER_IGNORE);
 		if (vertical) {
-			const Rect2 split_bar_rect = Rect2(rtl ? drag_area_margin_end : drag_area_margin_begin, dragger_positions[i], new_size.width - drag_area_margin_begin - drag_area_margin_end, sep);
+			const Rect2 split_bar_rect = Rect2(drag_area_margin_begin, dragger_positions[i], new_size.width - drag_area_margin_begin - drag_area_margin_end, sep);
 			dragging_area_controls[i]->set_rect(Rect2(split_bar_rect.position.x, split_bar_rect.position.y - split_bar_offset + drag_area_offset, split_bar_rect.size.x, dragger_ctrl_size));
 			dragging_area_controls[i]->split_bar_rect = Rect2(Vector2(0.0, int(split_bar_offset) - drag_area_offset), split_bar_rect.size);
 		} else {
 			const Rect2 split_bar_rect = Rect2(dragger_positions[i], drag_area_margin_begin, sep, new_size.height - drag_area_margin_begin - drag_area_margin_end);
-			dragging_area_controls[i]->set_rect(Rect2(split_bar_rect.position.x - split_bar_offset + drag_area_offset * (rtl ? -1 : 1), split_bar_rect.position.y, dragger_ctrl_size, split_bar_rect.size.y));
-			dragging_area_controls[i]->split_bar_rect = Rect2(Vector2(int(split_bar_offset) - drag_area_offset * (rtl ? -1 : 1), 0.0), split_bar_rect.size);
+			dragging_area_controls[i]->set_rect(Rect2(split_bar_rect.position.x - split_bar_offset + drag_area_offset, split_bar_rect.position.y, dragger_ctrl_size, split_bar_rect.size.y));
+			dragging_area_controls[i]->split_bar_rect = Rect2(Vector2(int(split_bar_offset) - drag_area_offset, 0.0), split_bar_rect.size);
 		}
 		dragging_area_controls[i]->queue_redraw();
 	}
@@ -1055,8 +1031,7 @@ void SplitContainer::_validate_property(PropertyInfo &p_property) const {
 
 void SplitContainer::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
+		case NOTIFICATION_TRANSLATION_CHANGED: {
 			queue_sort();
 		} break;
 		case NOTIFICATION_POSTINITIALIZE: {
@@ -1317,10 +1292,6 @@ void SplitContainer::_update_nested_descendent(SplitContainer *p_nested_sc, Cont
 	const float child_end_pos = p_nested_sc->get_global_rect().get_end()[axis];
 	bool nested_to_start = Math::abs(start_pos - child_start_pos) <= max_delta_pos;
 	bool nested_to_end = Math::abs(end_pos - child_end_pos) <= max_delta_pos;
-
-	if (is_layout_rtl() && !is_vertical()) {
-		SWAP(nested_to_start, nested_to_end);
-	}
 
 	LocalVector<SplitContainerDragger *> connected_draggers;
 	if (nested_to_start && child_index > 0) {

@@ -326,13 +326,6 @@
 				Returns the text of the item at the given [param index].
 			</description>
 		</method>
-		<method name="get_item_text_direction" qualifiers="const">
-			<return type="int" enum="Control.TextDirection" />
-			<param index="0" name="index" type="int" />
-			<description>
-				Returns item's text base writing direction.
-			</description>
-		</method>
 		<method name="get_item_tooltip" qualifiers="const">
 			<return type="String" />
 			<param index="0" name="index" type="int" />
@@ -611,14 +604,6 @@
 				Sets the text of the item at the given [param index].
 			</description>
 		</method>
-		<method name="set_item_text_direction">
-			<return type="void" />
-			<param index="0" name="index" type="int" />
-			<param index="1" name="direction" type="int" enum="Control.TextDirection" />
-			<description>
-				Sets item's text base writing direction.
-			</description>
-		</method>
 		<method name="set_item_tooltip">
 			<return type="void" />
 			<param index="0" name="index" type="int" />
@@ -787,10 +772,10 @@
 			Width of the single indentation level.
 		</theme_item>
 		<theme_item name="item_end_padding" data_type="constant" type="int" default="2">
-			Horizontal padding to the right of the items (or left, in RTL layout).
+			Horizontal padding to the right of the items.
 		</theme_item>
 		<theme_item name="item_start_padding" data_type="constant" type="int" default="2">
-			Horizontal padding to the left of the items (or right, in RTL layout).
+			Horizontal padding to the left of the items.
 		</theme_item>
 		<theme_item name="outline_size" data_type="constant" type="int" default="0">
 			The size of the item text outline.
@@ -845,10 +830,7 @@
 			[Texture2D] icon for the search bar's search icon.
 		</theme_item>
 		<theme_item name="submenu" data_type="icon" type="Texture2D">
-			[Texture2D] icon for the submenu arrow (for left-to-right layouts).
-		</theme_item>
-		<theme_item name="submenu_mirrored" data_type="icon" type="Texture2D">
-			[Texture2D] icon for the submenu arrow (for right-to-left layouts).
+			[Texture2D] icon for the submenu arrow.
 		</theme_item>
 		<theme_item name="unchecked" data_type="icon" type="Texture2D">
 			[Texture2D] icon for the unchecked checkbox items.

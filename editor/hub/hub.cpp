@@ -1075,7 +1075,7 @@ void Hub::_titlebar_resized() {
 	DisplayServer::get_singleton()->window_set_window_buttons_offset(Vector2i(title_bar->get_global_position().y + title_bar->get_size().y / 2, title_bar->get_global_position().y + title_bar->get_size().y / 2), DisplayServerEnums::MAIN_WINDOW_ID);
 	const Vector3i &margin = DisplayServer::get_singleton()->window_get_safe_title_margins(DisplayServerEnums::MAIN_WINDOW_ID);
 	if (left_menu_spacer) {
-		int w = (root_container->is_layout_rtl()) ? margin.y : margin.x;
+		int w = (margin.x);
 		left_menu_spacer->set_custom_minimum_size(Size2(w, 0));
 		left_menu_spacer->set_visible(w > 0);
 	}
@@ -1159,10 +1159,6 @@ Hub::Hub() {
 
 	// Initialize UI.
 	{
-		int pm_root_dir = EDITOR_GET("interface/editor/localization/ui_layout_direction");
-		Control::set_root_layout_direction(pm_root_dir);
-		Window::set_root_layout_direction(pm_root_dir);
-
 		EditorThemeManager::initialize();
 		theme = EditorThemeManager::generate_theme();
 		DisplayServer::set_early_window_clear_color_override(true, theme->get_color(SNAME("background"), EditorStringName(Editor)));

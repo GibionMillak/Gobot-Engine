@@ -393,13 +393,13 @@ inline void SpinBox::_compute_sizes() {
 
 	sizing_cache.buttons_width = w - theme_cache.field_and_buttons_separation;
 	sizing_cache.buttons_vertical_separation = CLAMP(theme_cache.buttons_vertical_separation, 0, size.height);
-	sizing_cache.buttons_left = is_layout_rtl() ? 0 : size.width - sizing_cache.buttons_width;
+	sizing_cache.buttons_left = (size.width - sizing_cache.buttons_width);
 	sizing_cache.button_up_height = (size.height - sizing_cache.buttons_vertical_separation) / 2;
 	sizing_cache.button_down_height = size.height - sizing_cache.button_up_height - sizing_cache.buttons_vertical_separation;
 	sizing_cache.second_button_top = size.height - sizing_cache.button_down_height;
 
 	sizing_cache.buttons_separator_top = sizing_cache.button_up_height;
-	sizing_cache.field_and_buttons_separator_left = is_layout_rtl() ? sizing_cache.buttons_width : size.width - sizing_cache.buttons_block_width;
+	sizing_cache.field_and_buttons_separator_left = (size.width - sizing_cache.buttons_block_width);
 	sizing_cache.field_and_buttons_separator_width = theme_cache.field_and_buttons_separation;
 }
 
@@ -518,10 +518,6 @@ void SpinBox::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			callable_mp((Control *)this, &Control::update_minimum_size).call_deferred();
 			callable_mp((Control *)get_line_edit(), &Control::update_minimum_size).call_deferred();
-		} break;
-
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-			queue_redraw();
 		} break;
 	}
 }

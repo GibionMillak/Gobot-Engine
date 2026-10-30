@@ -158,9 +158,6 @@ bool FileSystemList::edit_selected() {
 			popup_rect.position.y += MAX(theme_cache.v_separation, 0) / 2 + theme_cache.icon_margin + icon_size.y;
 			break;
 	}
-	if (is_layout_rtl()) {
-		popup_rect.position.x = get_size().width - popup_rect.position.x - popup_rect.size.x;
-	}
 	popup_rect.position += get_screen_position();
 
 	popup_editor->set_position(popup_rect.position);
@@ -266,7 +263,6 @@ void FileSystemDock::_create_tree(TreeItem *p_parent, EditorFileSystemDirectory 
 	}
 
 	subdirectory_item->set_text(0, dname);
-	subdirectory_item->set_structured_text_bidi_override(0, TextServer::STRUCTURED_TEXT_FILE);
 	subdirectory_item->set_icon(0, get_editor_theme_icon(SNAME("folder_folder")));
 	if (da->is_link(lpath)) {
 		subdirectory_item->set_icon_overlay(0, get_editor_theme_icon(SNAME("status_link_overlay")));
@@ -321,7 +317,6 @@ void FileSystemDock::_create_tree(TreeItem *p_parent, EditorFileSystemDirectory 
 			TreeItem *file_item = tree->create_item(subdirectory_item);
 			const String file_metadata = lpath.path_join(file_info.name);
 			file_item->set_text(0, file_info.name);
-			file_item->set_structured_text_bidi_override(0, TextServer::STRUCTURED_TEXT_FILE);
 			file_item->set_icon(0, _get_tree_item_icon(!file_info.import_broken, file_info.type, file_info.icon_path));
 			if (da->is_link(file_metadata)) {
 				file_item->set_icon_overlay(0, get_editor_theme_icon(SNAME("status_link_overlay")));
@@ -643,7 +638,6 @@ void FileSystemDock::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			_update_display_mode(true);
 
@@ -667,13 +661,8 @@ void FileSystemDock::_notification(int p_what) {
 			file_list_search_box->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 			file_list_button_sort->set_button_icon(get_editor_theme_icon(SNAME("action_sort")));
 
-			if (is_layout_rtl()) {
-				button_hist_next->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
-				button_hist_prev->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
-			} else {
-				button_hist_next->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
-				button_hist_prev->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
-			}
+			button_hist_next->set_button_icon(get_editor_theme_icon(SNAME("navigation_forward")));
+			button_hist_prev->set_button_icon(get_editor_theme_icon(SNAME("navigation_back")));
 
 			overwrite_dialog_scroll->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), "Tree"));
 		} break;
@@ -2951,10 +2940,6 @@ void FileSystemDock::_split_dragged(int p_offset) {
 	}
 }
 
-void FileSystemDock::fix_dependencies(const String &p_for_file) {
-	deps_editor->edit(p_for_file);
-}
-
 void FileSystemDock::update_all() {
 	if (tree->is_visible()) {
 		_update_tree(get_uncollapsed_paths(), false, false);
@@ -2963,11 +2948,6 @@ void FileSystemDock::update_all() {
 	if (file_list_vb->is_visible()) {
 		_update_file_list(true);
 	}
-}
-
-void FileSystemDock::focus_on_path() {
-	current_path_line_edit->grab_focus();
-	current_path_line_edit->select_all();
 }
 
 void FileSystemDock::focus_on_filter() {
@@ -4533,7 +4513,6 @@ FileSystemDock::FileSystemDock() {
 	nav_hbc->add_child(button_hist_next);
 
 	current_path_line_edit = memnew(LineEdit);
-	current_path_line_edit->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	current_path_line_edit->set_h_size_flags(SIZE_EXPAND_FILL);
 	_set_current_path_line_edit_text(current_path);
 	toolbar_hbc->add_child(current_path_line_edit);

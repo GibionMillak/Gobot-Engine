@@ -74,8 +74,7 @@ void ProgressBar::_notification(int p_what) {
 				switch (mode) {
 					case FILL_END_TO_BEGIN:
 					case FILL_BEGIN_TO_END: {
-						// Follow the RTL layout with the animation to match how the bar would fill.
-						bool right_to_left = mode == (is_layout_rtl() ? FILL_BEGIN_TO_END : FILL_END_TO_BEGIN);
+						bool right_to_left = mode == (FILL_END_TO_BEGIN);
 
 						if (_indeterminate_fill_progress > size.width + fill_size) {
 							_indeterminate_fill_progress = right_to_left ? -fill_size : 0;
@@ -112,9 +111,7 @@ void ProgressBar::_notification(int p_what) {
 				case FILL_END_TO_BEGIN: {
 					int mp = theme_cache.fill_style->get_minimum_size().width;
 					int p = std::round(r * (get_size().width - mp));
-					// We want FILL_BEGIN_TO_END to map to right to left when UI layout is RTL,
-					// and left to right otherwise. And likewise for FILL_END_TO_BEGIN.
-					bool right_to_left = mode == (is_layout_rtl() ? FILL_BEGIN_TO_END : FILL_END_TO_BEGIN);
+					bool right_to_left = mode == (FILL_END_TO_BEGIN);
 					if (p > 0) {
 						if (right_to_left) {
 							int p_remaining = std::round((1.0 - r) * (get_size().width - mp));

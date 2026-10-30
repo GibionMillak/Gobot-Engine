@@ -956,18 +956,14 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 		child->begin_bulk_theme_override();
 		child->add_theme_style_override(CoreStringName(normal), sbempty);
 		child->add_theme_style_override(SceneStringName(hover), sbempty);
-		child->add_theme_style_override("hover_mirrored", sbempty);
 		child->add_theme_style_override("focus", sbempty);
-		child->add_theme_style_override("focus_mirrored", sbempty);
 
 		Ref<StyleBox> peak_style = memnew(StyleBox);
 		peak_style->set_padding_all(0);
 		peak_style->set_background_color(Color(1, 1, 1, 0));
 		peak_style->set_border_width(Side::SIDE_BOTTOM, Math::round(3 * EDSCALE));
 		child->add_theme_style_override(SceneStringName(pressed), peak_style);
-		child->add_theme_style_override("pressed_mirrored", peak_style);
 		child->add_theme_style_override("hover_pressed", peak_style);
-		child->add_theme_style_override("hover_pressed_mirrored", peak_style);
 
 		child->end_bulk_theme_override();
 	}

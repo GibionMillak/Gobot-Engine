@@ -597,7 +597,6 @@ void TranslationServer::setup() {
 	main_domain->set_pseudolocalization_enabled(GLOBAL_DEF("internationalization/pseudolocalization/use_pseudolocalization", false));
 	main_domain->set_pseudolocalization_accents_enabled(GLOBAL_DEF("internationalization/pseudolocalization/replace_with_accents", true));
 	main_domain->set_pseudolocalization_double_vowels_enabled(GLOBAL_DEF("internationalization/pseudolocalization/double_vowels", false));
-	main_domain->set_pseudolocalization_fake_bidi_enabled(GLOBAL_DEF("internationalization/pseudolocalization/fake_bidi", false));
 	main_domain->set_pseudolocalization_override_enabled(GLOBAL_DEF("internationalization/pseudolocalization/override", false));
 	main_domain->set_pseudolocalization_expansion_ratio(GLOBAL_DEF("internationalization/pseudolocalization/expansion_ratio", 0.0));
 	main_domain->set_pseudolocalization_prefix(GLOBAL_DEF("internationalization/pseudolocalization/prefix", "["));
@@ -653,7 +652,6 @@ void TranslationServer::set_pseudolocalization_enabled(bool p_enabled) {
 void TranslationServer::reload_pseudolocalization() {
 	main_domain->set_pseudolocalization_accents_enabled(GLOBAL_GET("internationalization/pseudolocalization/replace_with_accents"));
 	main_domain->set_pseudolocalization_double_vowels_enabled(GLOBAL_GET("internationalization/pseudolocalization/double_vowels"));
-	main_domain->set_pseudolocalization_fake_bidi_enabled(GLOBAL_GET("internationalization/pseudolocalization/fake_bidi"));
 	main_domain->set_pseudolocalization_override_enabled(GLOBAL_GET("internationalization/pseudolocalization/override"));
 	main_domain->set_pseudolocalization_expansion_ratio(GLOBAL_GET("internationalization/pseudolocalization/expansion_ratio"));
 	main_domain->set_pseudolocalization_prefix(GLOBAL_GET("internationalization/pseudolocalization/prefix"));

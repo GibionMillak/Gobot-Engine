@@ -242,11 +242,6 @@ void Label::_shape_internal() const {
 			if (para.dirty) {
 				TS->shaped_text_clear(para.text_rid);
 			}
-			if (text_direction == Control::TEXT_DIRECTION_INHERITED) {
-				TS->shaped_text_set_direction(para.text_rid, is_layout_rtl() ? TextServer::DIRECTION_RTL : TextServer::DIRECTION_LTR);
-			} else {
-				TS->shaped_text_set_direction(para.text_rid, (TextServer::Direction)text_direction);
-			}
 			const Ref<Font> &font = (settings.is_valid() && settings->get_font().is_valid()) ? settings->get_font() : theme_cache.font;
 			int font_size = get_rendered_font_size();
 			ERR_FAIL_COND(font.is_null());
@@ -259,7 +254,6 @@ void Label::_shape_internal() const {
 					TS->shaped_set_span_update_font(para.text_rid, i, font->get_rids(), font_size, font->get_opentype_features());
 				}
 			}
-			TS->shaped_text_set_bidi_override(para.text_rid, structured_text_parser(st_parser, st_args, para.text));
 			if (!tab_stops.is_empty()) {
 				TS->shaped_text_tab_align(para.text_rid, tab_stops);
 			}
@@ -553,8 +547,6 @@ Rect2 Label::get_line_rect(int p_line) const {
 Rect2 Label::_get_line_rect(int p_para, int p_line) const {
 	// Returns a rect providing the line's horizontal offset and total size. To determine the vertical
 	// offset, use r_offset and r_line_spacing from get_layout_data.
-	bool rtl = TS->shaped_text_get_inferred_direction(paragraphs[p_para].text_rid) == TextServer::DIRECTION_RTL;
-	bool rtl_layout = is_layout_rtl();
 	Ref<StyleBox> style = theme_cache.normal_style;
 	Ref<Font> font = (settings.is_valid() && settings->get_font().is_valid()) ? settings->get_font() : theme_cache.font;
 	int font_size = get_rendered_font_size();
@@ -573,28 +565,16 @@ Rect2 Label::_get_line_rect(int p_para, int p_line) const {
 	Vector2 offset;
 	switch (horizontal_alignment) {
 		case HORIZONTAL_ALIGNMENT_FILL:
-			if (rtl && autowrap_mode != TextServer::AUTOWRAP_OFF) {
-				offset.x = int(size.width - style->get_content_inset(SIDE_RIGHT) - line_size.width);
-			} else {
-				offset.x = style->get_content_offset().x;
-			}
+			offset.x = style->get_content_offset().x;
 			break;
 		case HORIZONTAL_ALIGNMENT_LEFT: {
-			if (rtl_layout) {
-				offset.x = int(size.width - style->get_content_inset(SIDE_RIGHT) - line_size.width);
-			} else {
-				offset.x = style->get_content_offset().x;
-			}
+			offset.x = style->get_content_offset().x;
 		} break;
 		case HORIZONTAL_ALIGNMENT_CENTER: {
 			offset.x = int(size.width - line_size.width) / 2;
 		} break;
 		case HORIZONTAL_ALIGNMENT_RIGHT: {
-			if (rtl_layout) {
-				offset.x = style->get_content_offset().x;
-			} else {
-				offset.x = int(size.width - style->get_content_inset(SIDE_RIGHT) - line_size.width);
-			}
+			offset.x = int(size.width - style->get_content_inset(SIDE_RIGHT) - line_size.width);
 		} break;
 	}
 	return Rect2(offset, line_size);
@@ -799,10 +779,6 @@ void Label::_notification(int p_what) {
 			update_configuration_warnings();
 		} break;
 
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
-			queue_redraw();
-		} break;
-
 		case NOTIFICATION_DRAW: {
 			if (clip) {
 				RenderingServer::get_singleton()->canvas_item_set_clip(get_canvas_item(), true);
@@ -841,7 +817,6 @@ void Label::_notification(int p_what) {
 			int shadow_outline_size = has_settings ? settings->get_shadow_size() : theme_cache.font_shadow_outline_size;
 			Vector<LabelSettings::StackedOutlineData> stacked_outline_datas = has_settings ? settings->get_stacked_outline_data() : Vector<LabelSettings::StackedOutlineData>();
 			Vector<LabelSettings::StackedShadowData> stacked_shadow_datas = has_settings ? settings->get_stacked_shadow_data() : Vector<LabelSettings::StackedShadowData>();
-			bool rtl_layout = is_layout_rtl();
 
 			if (has_focus(true)) {
 				theme_cache.focus_style->draw(ci, Rect2(Point2(0, 0), get_size()));
@@ -850,8 +825,7 @@ void Label::_notification(int p_what) {
 			}
 
 			bool trim_chars = (visible_chars >= 0) && (visible_chars_behavior == TextServer::VC_CHARS_AFTER_SHAPING);
-			bool trim_glyphs_ltr = (visible_chars >= 0) && ((visible_chars_behavior == TextServer::VC_GLYPHS_LTR) || ((visible_chars_behavior == TextServer::VC_GLYPHS_AUTO) && !rtl_layout));
-			bool trim_glyphs_rtl = (visible_chars >= 0) && ((visible_chars_behavior == TextServer::VC_GLYPHS_RTL) || ((visible_chars_behavior == TextServer::VC_GLYPHS_AUTO) && rtl_layout));
+			bool trim_glyphs = (visible_chars >= 0) && (visible_chars_behavior == TextServer::VC_GLYPHS);
 
 			Vector2 ofs;
 			int line_spacing;
@@ -871,7 +845,6 @@ void Label::_notification(int p_what) {
 					if (end <= 0) {
 						break;
 					}
-					bool rtl = (TS->shaped_text_get_inferred_direction(para.text_rid) == TextServer::DIRECTION_RTL);
 					for (int i = start; i < end; i++) {
 						RID line_rid = para.lines_rid[i];
 						Vector2 line_offset = _get_line_rect(p, i).position;
@@ -901,12 +874,12 @@ void Label::_notification(int p_what) {
 
 						// Draw shadow outline.
 						if (font_shadow_color.a != 0 && shadow_outline_size > 0) {
-							draw_text(rtl, ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs_ltr, processed_glyphs_step, processed_glyphs, visible_glyphs, trim_glyphs_rtl, total_glyphs, ci, ofs, gl_size, trim_pos, glyphs, font_shadow_color, draw_glyph_shadow_outline, shadow_outline_size, shadow_ofs);
+							draw_text(ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs, processed_glyphs_step, processed_glyphs, visible_glyphs, ci, ofs, gl_size, trim_pos, glyphs, font_shadow_color, draw_glyph_shadow_outline, shadow_outline_size, shadow_ofs);
 						}
 
 						// Draw shadow.
 						if (font_shadow_color.a > 0) {
-							draw_text(rtl, ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs_ltr, processed_glyphs_step, processed_glyphs, visible_glyphs, trim_glyphs_rtl, total_glyphs, ci, ofs, gl_size, trim_pos, glyphs, font_shadow_color, draw_glyph_shadow, shadow_ofs);
+							draw_text(ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs, processed_glyphs_step, processed_glyphs, visible_glyphs, ci, ofs, gl_size, trim_pos, glyphs, font_shadow_color, draw_glyph_shadow, shadow_ofs);
 						}
 
 						// Draw stacked shadow.
@@ -916,10 +889,10 @@ void Label::_notification(int p_what) {
 							for (int draw_iteration_index = draw_iterations - 1; draw_iteration_index >= 0; --draw_iteration_index) {
 								LabelSettings::StackedShadowData stacked_shadow_data = stacked_shadow_datas[draw_iteration_index];
 								if (stacked_shadow_data.outline_size > 0) {
-									draw_text(rtl, ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs_ltr, processed_glyphs_step, processed_glyphs, visible_glyphs, trim_glyphs_rtl, total_glyphs, ci, ofs, gl_size, trim_pos, glyphs, stacked_shadow_data.color, draw_glyph_shadow_outline, stacked_shadow_data.outline_size, stacked_shadow_data.offset);
+									draw_text(ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs, processed_glyphs_step, processed_glyphs, visible_glyphs, ci, ofs, gl_size, trim_pos, glyphs, stacked_shadow_data.color, draw_glyph_shadow_outline, stacked_shadow_data.outline_size, stacked_shadow_data.offset);
 								}
 
-								draw_text(rtl, ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs_ltr, processed_glyphs_step, processed_glyphs, visible_glyphs, trim_glyphs_rtl, total_glyphs, ci, ofs, gl_size, trim_pos, glyphs, stacked_shadow_data.color, draw_glyph_shadow, stacked_shadow_data.offset);
+								draw_text(ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs, processed_glyphs_step, processed_glyphs, visible_glyphs, ci, ofs, gl_size, trim_pos, glyphs, stacked_shadow_data.color, draw_glyph_shadow, stacked_shadow_data.offset);
 							}
 						}
 
@@ -942,19 +915,19 @@ void Label::_notification(int p_what) {
 								if (stacked_outline_data.size <= 0) {
 									continue;
 								}
-								draw_text(rtl, ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs_ltr, processed_glyphs_step, processed_glyphs, visible_glyphs, trim_glyphs_rtl, total_glyphs, ci, ofs, gl_size, trim_pos, glyphs, stacked_outline_data.color, draw_glyph_outline, stacked_outline_draw_size);
+								draw_text(ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs, processed_glyphs_step, processed_glyphs, visible_glyphs, ci, ofs, gl_size, trim_pos, glyphs, stacked_outline_data.color, draw_glyph_outline, stacked_outline_draw_size);
 								stacked_outline_draw_size -= stacked_outline_data.size;
 							}
 						}
 
 						// Draw outline.
 						if (outline_size > 0 && font_outline_color.a != 0) {
-							draw_text(rtl, ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs_ltr, processed_glyphs_step, processed_glyphs, visible_glyphs, trim_glyphs_rtl, total_glyphs, ci, ofs, gl_size, trim_pos, glyphs, font_outline_color, draw_glyph_outline, outline_size);
+							draw_text(ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs, processed_glyphs_step, processed_glyphs, visible_glyphs, ci, ofs, gl_size, trim_pos, glyphs, font_outline_color, draw_glyph_outline, outline_size);
 						}
 
 						// Draw text.
 						{
-							draw_text(rtl, ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs_ltr, processed_glyphs_step, processed_glyphs, visible_glyphs, trim_glyphs_rtl, total_glyphs, ci, ofs, gl_size, trim_pos, glyphs, font_color, draw_glyph);
+							draw_text(ellipsis_pos, ellipsis_gl_size, ellipsis_glyphs, trim_chars, para.start, visible_chars, trim_glyphs, processed_glyphs_step, processed_glyphs, visible_glyphs, ci, ofs, gl_size, trim_pos, glyphs, font_color, draw_glyph);
 						}
 
 						processed_glyphs = processed_glyphs_step;
@@ -1228,51 +1201,6 @@ Ref<LabelSettings> Label::get_label_settings() const {
 	return settings;
 }
 
-void Label::set_text_direction(Control::TextDirection p_text_direction) {
-	ERR_FAIL_COND((int)p_text_direction < -1 || (int)p_text_direction > 3);
-	if (text_direction != p_text_direction) {
-		text_direction = p_text_direction;
-		for (Paragraph &para : paragraphs) {
-			para.dirty = true;
-		}
-		queue_redraw();
-	}
-}
-
-void Label::set_structured_text_bidi_override(TextServer::StructuredTextParser p_parser) {
-	if (st_parser != p_parser) {
-		st_parser = p_parser;
-		for (Paragraph &para : paragraphs) {
-			para.dirty = true;
-		}
-		queue_redraw();
-	}
-}
-
-TextServer::StructuredTextParser Label::get_structured_text_bidi_override() const {
-	return st_parser;
-}
-
-void Label::set_structured_text_bidi_override_options(const Array &p_args) {
-	if (st_args == p_args) {
-		return;
-	}
-
-	st_args = Array(p_args);
-	for (Paragraph &para : paragraphs) {
-		para.dirty = true;
-	}
-	queue_redraw();
-}
-
-Array Label::get_structured_text_bidi_override_options() const {
-	return Array(st_args);
-}
-
-Control::TextDirection Label::get_text_direction() const {
-	return text_direction;
-}
-
 void Label::set_language(const String &p_language) {
 	if (language != p_language) {
 		language = p_language;
@@ -1540,8 +1468,6 @@ void Label::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_text"), &Label::get_text);
 	ClassDB::bind_method(D_METHOD("set_label_settings", "settings"), &Label::set_label_settings);
 	ClassDB::bind_method(D_METHOD("get_label_settings"), &Label::get_label_settings);
-	ClassDB::bind_method(D_METHOD("set_text_direction", "direction"), &Label::set_text_direction);
-	ClassDB::bind_method(D_METHOD("get_text_direction"), &Label::get_text_direction);
 	ClassDB::bind_method(D_METHOD("set_language", "language"), &Label::set_language);
 	ClassDB::bind_method(D_METHOD("get_language"), &Label::get_language);
 	ClassDB::bind_method(D_METHOD("set_paragraph_separator", "paragraph_separator"), &Label::set_paragraph_separator);
@@ -1576,10 +1502,6 @@ void Label::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_lines_skipped"), &Label::get_lines_skipped);
 	ClassDB::bind_method(D_METHOD("set_max_lines_visible", "lines_visible"), &Label::set_max_lines_visible);
 	ClassDB::bind_method(D_METHOD("get_max_lines_visible"), &Label::get_max_lines_visible);
-	ClassDB::bind_method(D_METHOD("set_structured_text_bidi_override", "parser"), &Label::set_structured_text_bidi_override);
-	ClassDB::bind_method(D_METHOD("get_structured_text_bidi_override"), &Label::get_structured_text_bidi_override);
-	ClassDB::bind_method(D_METHOD("set_structured_text_bidi_override_options", "args"), &Label::set_structured_text_bidi_override_options);
-	ClassDB::bind_method(D_METHOD("get_structured_text_bidi_override_options"), &Label::get_structured_text_bidi_override_options);
 
 	ClassDB::bind_method(D_METHOD("set_resize_font_to_fit", "enabled"), &Label::set_resize_font_to_fit);
 	ClassDB::bind_method(D_METHOD("is_resize_font_to_fit_enabled"), &Label::is_resize_font_to_fit_enabled);
@@ -1616,14 +1538,11 @@ void Label::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_lines_visible", PROPERTY_HINT_RANGE, "-1,999,1"), "set_max_lines_visible", "get_max_lines_visible");
 	// Note: "visible_characters" and "visible_ratio" should be set after "text" to be correctly applied.
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "visible_characters", PROPERTY_HINT_RANGE, "-1,128000,1"), "set_visible_characters", "get_visible_characters");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "visible_characters_behavior", PROPERTY_HINT_ENUM, "Characters Before Shaping,Characters After Shaping,Glyphs (Layout Direction),Glyphs (Left-to-Right),Glyphs (Right-to-Left)"), "set_visible_characters_behavior", "get_visible_characters_behavior");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "visible_characters_behavior", PROPERTY_HINT_ENUM, "Characters Before Shaping,Characters After Shaping,Glyphs"), "set_visible_characters_behavior", "get_visible_characters_behavior");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "visible_ratio", PROPERTY_HINT_RANGE, "0,1,0.001"), "set_visible_ratio", "get_visible_ratio");
 
-	ADD_GROUP("BiDi", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_direction", PROPERTY_HINT_ENUM, "Auto,Left-to-Right,Right-to-Left,Inherited"), "set_text_direction", "get_text_direction");
+	ADD_GROUP("Localization", "");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "language", PROPERTY_HINT_LOCALE_ID, ""), "set_language", "get_language");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "structured_text_bidi_override", PROPERTY_HINT_ENUM, "Default,URI,File,Email,List,None,Custom"), "set_structured_text_bidi_override", "get_structured_text_bidi_override");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "structured_text_bidi_override_options"), "set_structured_text_bidi_override_options", "get_structured_text_bidi_override_options");
 
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_STYLEBOX, Label, normal_style, "normal");
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_STYLEBOX, Label, focus_style, "focus");

@@ -98,13 +98,6 @@
 				Returns the column title alignment.
 			</description>
 		</method>
-		<method name="get_column_title_direction" qualifiers="const">
-			<return type="int" enum="Control.TextDirection" />
-			<param index="0" name="column" type="int" />
-			<description>
-				Returns column title base writing direction.
-			</description>
-		</method>
 		<method name="get_column_title_language" qualifiers="const">
 			<return type="String" />
 			<param index="0" name="column" type="int" />
@@ -297,14 +290,6 @@
 			<param index="1" name="title_alignment" type="int" enum="HorizontalAlignment" />
 			<description>
 				Sets the column title alignment. Note that [constant @GlobalScope.HORIZONTAL_ALIGNMENT_FILL] is not supported for column titles.
-			</description>
-		</method>
-		<method name="set_column_title_direction">
-			<return type="void" />
-			<param index="0" name="column" type="int" />
-			<param index="1" name="direction" type="int" enum="Control.TextDirection" />
-			<description>
-				Sets column title base writing direction.
 			</description>
 		</method>
 		<method name="set_column_title_language">
@@ -670,10 +655,7 @@
 			The arrow icon used when a foldable item is not collapsed.
 		</theme_item>
 		<theme_item name="arrow_collapsed" data_type="icon" type="Texture2D">
-			The arrow icon used when a foldable item is collapsed (for left-to-right layouts).
-		</theme_item>
-		<theme_item name="arrow_collapsed_mirrored" data_type="icon" type="Texture2D">
-			The arrow icon used when a foldable item is collapsed (for right-to-left layouts).
+			The arrow icon used when a foldable item is collapsed.
 		</theme_item>
 		<theme_item name="checked" data_type="icon" type="Texture2D">
 			The check icon to display when the [constant TreeItem.CELL_MODE_CHECK] mode cell is checked and editable (see [method TreeItem.set_editable]).

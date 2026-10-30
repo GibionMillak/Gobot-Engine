@@ -1051,7 +1051,6 @@ ProjectDialog::ProjectDialog() :
 
 	project_path = memnew(LineEdit);
 	project_path->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	project_path->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	pphb->add_child(project_path);
 
 	install_path_container = memnew(VBoxContainer);
@@ -1066,7 +1065,6 @@ ProjectDialog::ProjectDialog() :
 
 	install_path = memnew(LineEdit);
 	install_path->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	install_path->set_structured_text_bidi_override(TextServer::STRUCTURED_TEXT_FILE);
 	iphb->add_child(install_path);
 
 	// status icon

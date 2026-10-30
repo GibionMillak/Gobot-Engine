@@ -172,9 +172,6 @@ void NativeMenuWindows::popup(const RID &p_rid, const Vector2i &p_position) {
 
 	HWND hwnd = (HWND)DisplayServer::get_singleton()->window_get_native_handle(DisplayServerEnums::WINDOW_HANDLE, DisplayServerEnums::MAIN_WINDOW_ID);
 	UINT flags = TPM_HORIZONTAL | TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_VERPOSANIMATION;
-	if (md->is_rtl) {
-		flags |= TPM_LAYOUTRTL;
-	}
 	SetForegroundWindow(hwnd);
 	TrackPopupMenuEx(md->menu, flags, p_position.x, p_position.y, hwnd, nullptr);
 
@@ -188,16 +185,6 @@ void NativeMenuWindows::popup(const RID &p_rid, const Vector2i &p_position) {
 	}
 
 	PostMessage(hwnd, WM_NULL, 0, 0);
-}
-
-void NativeMenuWindows::set_interface_direction(const RID &p_rid, bool p_is_rtl) {
-	MenuData *md = menus.get_or_null(p_rid);
-	ERR_FAIL_NULL(md);
-
-	if (md->is_rtl == p_is_rtl) {
-		return;
-	}
-	md->is_rtl = p_is_rtl;
 }
 
 void NativeMenuWindows::set_popup_open_callback(const RID &p_rid, const Callable &p_callback) {

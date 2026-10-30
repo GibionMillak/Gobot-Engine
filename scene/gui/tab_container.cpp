@@ -158,11 +158,10 @@ void TabContainer::_notification(int p_what) {
 			_maximum_size_changed();
 		} break;
 
-		case NOTIFICATION_TRANSLATION_CHANGED:
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED: {
+		case NOTIFICATION_TRANSLATION_CHANGED: {
 			if (popup_button) {
 				popup_button->set_button_icon(theme_cache.menu_icon);
-				internal_container->move_child(popup_button, is_layout_rtl() ? 0 : 1);
+				internal_container->move_child(popup_button, 1);
 			}
 
 			_update_margins();
@@ -320,10 +319,6 @@ void TabContainer::_update_margins() {
 	int left_margin = theme_cache.tabbar_style->get_content_inset(SIDE_LEFT);
 	int right_margin = theme_cache.tabbar_style->get_content_inset(SIDE_RIGHT);
 
-	if (is_layout_rtl()) {
-		SWAP(left_margin, right_margin);
-	}
-
 	if (get_tab_count() == 0) {
 		internal_container->set_offset(SIDE_LEFT, left_margin);
 		internal_container->set_offset(SIDE_RIGHT, -right_margin);
@@ -431,7 +426,7 @@ void TabContainer::_popup_button_pressed() {
 	emit_signal(SNAME("pre_popup_pressed"));
 
 	Vector2 popup_pos = popup_button->get_screen_position();
-	popup_pos.x += (is_layout_rtl() ? 0 : popup_button->get_size().x - popup->get_size().width);
+	popup_pos.x += ((popup_button->get_size().x - popup->get_size().width));
 	if (tabs_position == POSITION_BOTTOM) {
 		popup_pos.y -= popup->get_size().height;
 	} else {
@@ -1109,7 +1104,7 @@ void TabContainer::set_popup(Node *p_popup) {
 		popup_button->add_theme_color_override("icon_hover_pressed_color", Color(1, 1, 1));
 
 		internal_container->add_child(popup_button);
-		internal_container->move_child(popup_button, is_layout_rtl() ? 0 : 1);
+		internal_container->move_child(popup_button, 1);
 
 		popup_button->connect(SceneStringName(mouse_entered), callable_mp(this, &TabContainer::_popup_button_hovered).bind(true));
 		popup_button->connect(SceneStringName(mouse_exited), callable_mp(this, &TabContainer::_popup_button_hovered).bind(false));

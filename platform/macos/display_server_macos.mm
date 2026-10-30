@@ -1884,9 +1884,8 @@ Size2i DisplayServerMacOS::window_get_title_size(const String &p_title, DisplayS
 		NSButton *mb = [wd.window_object standardWindowButton:NSWindowMiniaturizeButton];
 		float cb_frame = NSMinX([cb frame]);
 		float mb_frame = NSMinX([mb frame]);
-		bool is_rtl = ([wd.window_object windowTitlebarLayoutDirection] == NSUserInterfaceLayoutDirectionRightToLeft);
 
-		float window_buttons_spacing = (is_rtl) ? (cb_frame - mb_frame) : (mb_frame - cb_frame);
+		float window_buttons_spacing = (mb_frame - cb_frame);
 		size.x = window_buttons_spacing * 4;
 		size.y = [cb frame].origin.y + [cb frame].size.height;
 	}
@@ -2456,9 +2455,7 @@ Vector3i DisplayServerMacOS::window_get_safe_title_margins(DisplayServerEnums::W
 	float max_x = [wd.window_button_view getOffset].x + [wd.window_button_view frame].size.width;
 	float max_y = [wd.window_button_view getOffset].y + [wd.window_button_view frame].size.height;
 
-	if ([wd.window_object windowTitlebarLayoutDirection] == NSUserInterfaceLayoutDirectionRightToLeft) {
-		return Vector3i(0, max_x * scale, max_y * scale);
-	} else {
+	{
 		return Vector3i(max_x * scale, 0, max_y * scale);
 	}
 }
@@ -2471,9 +2468,8 @@ void DisplayServerMacOS::window_set_custom_window_buttons(WindowData &p_wd, bool
 	if (p_enabled) {
 		float cb_frame = NSMinX([[p_wd.window_object standardWindowButton:NSWindowCloseButton] frame]);
 		float mb_frame = NSMinX([[p_wd.window_object standardWindowButton:NSWindowMiniaturizeButton] frame]);
-		bool is_rtl = ([p_wd.window_object windowTitlebarLayoutDirection] == NSUserInterfaceLayoutDirectionRightToLeft);
 
-		float window_buttons_spacing = (is_rtl) ? (cb_frame - mb_frame) : (mb_frame - cb_frame);
+		float window_buttons_spacing = (mb_frame - cb_frame);
 
 		[p_wd.window_object setTitlebarAppearsTransparent:YES];
 		[p_wd.window_object setTitleVisibility:NSWindowTitleHidden];
@@ -2482,7 +2478,7 @@ void DisplayServerMacOS::window_set_custom_window_buttons(WindowData &p_wd, bool
 		[[p_wd.window_object standardWindowButton:NSWindowCloseButton] setHidden:YES];
 
 		p_wd.window_button_view = [[GodotButtonView alloc] initWithFrame:NSZeroRect];
-		[p_wd.window_button_view initButtons:window_buttons_spacing offset:NSMakePoint(p_wd.wb_offset.x, p_wd.wb_offset.y) rtl:is_rtl];
+		[p_wd.window_button_view initButtons:window_buttons_spacing offset:NSMakePoint(p_wd.wb_offset.x, p_wd.wb_offset.y)];
 		[p_wd.window_view addSubview:p_wd.window_button_view];
 
 		[[p_wd.window_object standardWindowButton:NSWindowMiniaturizeButton] setHidden:(p_wd.no_min_btn && p_wd.no_max_btn)];

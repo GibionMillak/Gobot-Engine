@@ -194,33 +194,6 @@ TEST_CASE("[SceneTree][BoxContainer] HBoxContainer") {
 		memdelete(child_control);
 	}
 
-	SUBCASE("Child Alignment RTL") {
-		Control *child_control = memnew(Control);
-		hbox_container->add_child(child_control);
-		hbox_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control->get_position().is_equal_approx(Point2(100, 0)),
-				"Child control is aligned to the right in RTL ALIGNMENT_BEGIN mode by default.");
-
-		hbox_container->set_alignment(BoxContainer::ALIGNMENT_CENTER);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control->get_position().is_equal_approx(Point2(50, 0)),
-				"Child control is aligned to the center in RTL ALIGNMENT_CENTER mode.");
-
-		hbox_container->set_alignment(BoxContainer::ALIGNMENT_END);
-		SceneTree::get_singleton()->process(0);
-
-		CHECK_MESSAGE(
-				child_control->get_position().is_equal_approx(Point2(0, 0)),
-				"Child control is aligned to the right in RTL ALIGNMENT_END mode.");
-
-		memdelete(child_control);
-	}
-
 	SUBCASE("Child Separation") {
 		Control *child_control_1 = memnew(Control);
 		Control *child_control_2 = memnew(Control);

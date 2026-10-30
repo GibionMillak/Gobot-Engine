@@ -110,55 +110,6 @@ TEST_SUITE("[TextServer]") {
 			}
 		}
 
-		SUBCASE("[TextServer] Text layout: BiDi") {
-			for (int i = 0; i < TextServerManager::get_singleton()->get_interface_count(); i++) {
-				Ref<TextServer> ts = TextServerManager::get_singleton()->get_interface(i);
-				CHECK_FALSE_MESSAGE(ts.is_null(), "Invalid TS interface.");
-
-				if (!ts->has_feature(TextServer::FEATURE_FONT_DYNAMIC) || !ts->has_feature(TextServer::FEATURE_BIDI_LAYOUT)) {
-					continue;
-				}
-
-				RID font1 = ts->create_font();
-				ts->font_set_data_ptr(font1, _font_Inter_Regular, _font_Inter_Regular_size);
-				RID font2 = ts->create_font();
-				ts->font_set_data_ptr(font2, _font_Vazirmatn_Regular, _font_Vazirmatn_Regular_size);
-
-				Array font = { font1, font2 };
-				String test = U"Arabic (اَلْعَرَبِيَّةُ, al-ʿarabiyyah)";
-				//                    7^      26^
-
-				RID ctx = ts->create_shaped_text();
-				CHECK_FALSE_MESSAGE(ctx == RID(), "Creating text buffer failed.");
-				bool ok = ts->shaped_text_add_string(ctx, test, font, 16);
-				CHECK_FALSE_MESSAGE(!ok, "Adding text to the buffer failed.");
-
-				const Glyph *glyphs = ts->shaped_text_get_glyphs(ctx);
-				int gl_size = ts->shaped_text_get_glyph_count(ctx);
-				CHECK_FALSE_MESSAGE(gl_size == 0, "Shaping failed");
-				for (int j = 0; j < gl_size; j++) {
-					if (glyphs[j].count > 0) {
-						if (glyphs[j].start < 7) {
-							CHECK_FALSE_MESSAGE(((glyphs[j].flags & TextServer::GRAPHEME_IS_RTL) == TextServer::GRAPHEME_IS_RTL), "Incorrect direction.");
-						}
-						if ((glyphs[j].start > 8) && (glyphs[j].start < 23)) {
-							CHECK_FALSE_MESSAGE(((glyphs[j].flags & TextServer::GRAPHEME_IS_RTL) != TextServer::GRAPHEME_IS_RTL), "Incorrect direction.");
-						}
-						if (glyphs[j].start > 26) {
-							CHECK_FALSE_MESSAGE(((glyphs[j].flags & TextServer::GRAPHEME_IS_RTL) == TextServer::GRAPHEME_IS_RTL), "Incorrect direction.");
-						}
-					}
-				}
-
-				ts->free_rid(ctx);
-
-				for (int j = 0; j < font.size(); j++) {
-					ts->free_rid(font[j]);
-				}
-				font.clear();
-			}
-		}
-
 		SUBCASE("[TextServer] Text layout: Line break and align points") {
 			for (int i = 0; i < TextServerManager::get_singleton()->get_interface_count(); i++) {
 				Ref<TextServer> ts = TextServerManager::get_singleton()->get_interface(i);

@@ -89,13 +89,6 @@ TEST_CASE("[SceneTree][CenterContainer] Standard behavior") {
 			child_control->get_position().is_equal_approx(Point2(0, 0)),
 			"Child control is aligned to the top-left corner when use_top_left is enabled.");
 
-	center_container->set_layout_direction(Control::LAYOUT_DIRECTION_RTL);
-	SceneTree::get_singleton()->process(0);
-
-	CHECK_MESSAGE(
-			child_control->get_position().is_equal_approx(Point2(100, 0)),
-			"Child control is aligned to the top-right corner in RTL layout direction when use_top_left is enabled.");
-
 	memdelete(child_control);
 	memdelete(center_container);
 }

@@ -76,6 +76,7 @@ private:
 
 		Color message_color;
 	} theme_cache;
+	bool _theme_cache_ready = false;
 
 	// Encapsulates all data and functionality regarding filters.
 	struct LogFilter {

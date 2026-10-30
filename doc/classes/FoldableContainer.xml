@@ -74,9 +74,6 @@
 		<member name="title_position" type="int" setter="set_title_position" getter="get_title_position" enum="FoldableContainer.TitlePosition" default="0">
 			Title's position.
 		</member>
-		<member name="title_text_direction" type="int" setter="set_title_text_direction" getter="get_title_text_direction" enum="Control.TextDirection" default="0">
-			Title text writing direction.
-		</member>
 		<member name="title_text_overrun_behavior" type="int" setter="set_title_text_overrun_behavior" getter="get_title_text_overrun_behavior" enum="TextServer.OverrunBehavior" default="0">
 			Defines the behavior of the title when the text is longer than the available space.
 		</member>
@@ -128,14 +125,11 @@
 		<theme_item name="expanded_arrow" data_type="icon" type="Texture2D">
 			The title's icon used when expanded.
 		</theme_item>
-		<theme_item name="expanded_arrow_mirrored" data_type="icon" type="Texture2D">
+		<theme_item name="expanded_arrow_bottom" data_type="icon" type="Texture2D">
 			The title's icon used when expanded (for bottom title).
 		</theme_item>
 		<theme_item name="folded_arrow" data_type="icon" type="Texture2D">
-			The title's icon used when folded (for left-to-right layouts).
-		</theme_item>
-		<theme_item name="folded_arrow_mirrored" data_type="icon" type="Texture2D">
-			The title's icon used when collapsed (for right-to-left layouts).
+			The title's icon used when folded.
 		</theme_item>
 		<theme_item name="expanded_sound" data_type="sound" type="AudioStream">
 			Played when the container is expanded with any input method.

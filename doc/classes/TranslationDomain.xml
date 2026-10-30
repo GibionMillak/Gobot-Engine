@@ -122,10 +122,6 @@
 			The expansion ratio to use during pseudolocalization. A value of [code]0.3[/code] is sufficient for most practical purposes, and will increase the length of each string by 30%.
 			[b]Note:[/b] Updating this property does not automatically update texts in the scene tree. Please propagate the [constant MainLoop.NOTIFICATION_TRANSLATION_CHANGED] notification manually after you have finished modifying pseudolocalization related options.
 		</member>
-		<member name="pseudolocalization_fake_bidi_enabled" type="bool" setter="set_pseudolocalization_fake_bidi_enabled" getter="is_pseudolocalization_fake_bidi_enabled" default="false">
-			If [code]true[/code], emulate bidirectional (right-to-left) text when pseudolocalization is enabled. This can be used to spot issues with RTL layout and UI mirroring that will crop up if the project is localized to RTL languages such as Arabic or Hebrew.
-			[b]Note:[/b] Updating this property does not automatically update texts in the scene tree. Please propagate the [constant MainLoop.NOTIFICATION_TRANSLATION_CHANGED] notification manually after you have finished modifying pseudolocalization related options.
-		</member>
 		<member name="pseudolocalization_override_enabled" type="bool" setter="set_pseudolocalization_override_enabled" getter="is_pseudolocalization_override_enabled" default="false">
 			Replace all characters in the string with [code]*[/code]. Useful for finding non-localizable strings.
 			[b]Note:[/b] Updating this property does not automatically update texts in the scene tree. Please propagate the [constant MainLoop.NOTIFICATION_TRANSLATION_CHANGED] notification manually after you have finished modifying pseudolocalization related options.

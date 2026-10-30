@@ -156,9 +156,6 @@ void MenuBar::_open_popup(int p_index, bool p_focus_item) {
 	active_menu = p_index;
 
 	pm->set_size(Size2(item_rect.size.x, 0));
-	if (is_layout_rtl()) {
-		rect.position.x += item_rect.size.x - pm->get_size().width;
-	}
 	pm->set_position(rect.position);
 	pm->popup();
 
@@ -345,7 +342,6 @@ void MenuBar::_notification(int p_what) {
 				update_minimum_size();
 			}
 		} break;
-		case NOTIFICATION_LAYOUT_DIRECTION_CHANGED:
 		case NOTIFICATION_THEME_CHANGED: {
 			for (int i = 0; i < menu_cache.size(); i++) {
 				shape(menu_cache.write[i]);
@@ -401,9 +397,6 @@ int MenuBar::_get_index_at_point(const Point2 &p_point) const {
 	Ref<StyleBox> style = theme_cache.normal;
 	int offset = 0;
 	Point2 point = p_point;
-	if (is_layout_rtl()) {
-		point.x = get_size().x - point.x;
-	}
 
 	for (int i = 0; i < menu_cache.size(); i++) {
 		if (menu_cache[i].hidden) {
@@ -435,9 +428,7 @@ Rect2 MenuBar::_get_menu_item_rect(int p_index) const {
 	}
 
 	Size2 size = menu_cache[p_index].text_buf->get_size() + style->get_minimum_size();
-	if (is_layout_rtl()) {
-		return Rect2(Point2(get_size().x - offset - size.x, 0), size);
-	} else {
+	{
 		return Rect2(Point2(offset, 0), size);
 	}
 }
@@ -448,7 +439,6 @@ void MenuBar::_draw_menu_item(int p_index) {
 	RID ci = get_canvas_item();
 	bool hovered = (focused_menu == p_index);
 	bool pressed = (active_menu == p_index);
-	bool rtl = is_layout_rtl();
 
 	if (menu_cache[p_index].hidden) {
 		return;
@@ -459,21 +449,13 @@ void MenuBar::_draw_menu_item(int p_index) {
 	Rect2 item_rect = _get_menu_item_rect(p_index);
 
 	if (menu_cache[p_index].disabled) {
-		if (rtl && has_theme_stylebox(SNAME("disabled_mirrored"))) {
-			style = theme_cache.disabled_mirrored;
-		} else {
-			style = theme_cache.disabled;
-		}
+		style = theme_cache.disabled;
 		if (!flat) {
 			style->draw(ci, item_rect);
 		}
 		color = theme_cache.font_disabled_color;
 	} else if (hovered && pressed && has_theme_stylebox("hover_pressed")) {
-		if (rtl && has_theme_stylebox(SNAME("hover_pressed_mirrored"))) {
-			style = theme_cache.hover_pressed_mirrored;
-		} else {
-			style = theme_cache.hover_pressed;
-		}
+		style = theme_cache.hover_pressed;
 		if (!flat) {
 			style->draw(ci, item_rect);
 		}
@@ -481,11 +463,7 @@ void MenuBar::_draw_menu_item(int p_index) {
 			color = theme_cache.font_hover_pressed_color;
 		}
 	} else if (pressed) {
-		if (rtl && has_theme_stylebox(SNAME("pressed_mirrored"))) {
-			style = theme_cache.pressed_mirrored;
-		} else {
-			style = theme_cache.pressed;
-		}
+		style = theme_cache.pressed;
 		if (!flat) {
 			style->draw(ci, item_rect);
 		}
@@ -495,21 +473,13 @@ void MenuBar::_draw_menu_item(int p_index) {
 			color = theme_cache.font_color;
 		}
 	} else if (hovered) {
-		if (rtl && has_theme_stylebox(SNAME("hover_mirrored"))) {
-			style = theme_cache.hover_mirrored;
-		} else {
-			style = theme_cache.hover;
-		}
+		style = theme_cache.hover;
 		if (!flat) {
 			style->draw(ci, item_rect);
 		}
 		color = theme_cache.font_hover_color;
 	} else {
-		if (rtl && has_theme_stylebox(SNAME("normal_mirrored"))) {
-			style = theme_cache.normal_mirrored;
-		} else {
-			style = theme_cache.normal;
-		}
+		style = theme_cache.normal;
 		if (!flat) {
 			style->draw(ci, item_rect);
 		}
@@ -533,11 +503,6 @@ void MenuBar::_draw_menu_item(int p_index) {
 
 void MenuBar::shape(Menu &p_menu) {
 	p_menu.text_buf->clear();
-	if (text_direction == Control::TEXT_DIRECTION_INHERITED) {
-		p_menu.text_buf->set_direction(is_layout_rtl() ? TextServer::DIRECTION_RTL : TextServer::DIRECTION_LTR);
-	} else {
-		p_menu.text_buf->set_direction((TextServer::Direction)text_direction);
-	}
 	const String &lang = language.is_empty() ? _get_locale() : language;
 	p_menu.text_buf->add_string(atr(p_menu.name), theme_cache.font, theme_cache.font_size, lang);
 }
@@ -740,8 +705,6 @@ void MenuBar::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_menu_count"), &MenuBar::get_menu_count);
 
-	ClassDB::bind_method(D_METHOD("set_text_direction", "direction"), &MenuBar::set_text_direction);
-	ClassDB::bind_method(D_METHOD("get_text_direction"), &MenuBar::get_text_direction);
 	ClassDB::bind_method(D_METHOD("set_language", "language"), &MenuBar::set_language);
 	ClassDB::bind_method(D_METHOD("get_language"), &MenuBar::get_language);
 	ClassDB::bind_method(D_METHOD("set_flat", "enabled"), &MenuBar::set_flat);
@@ -768,20 +731,14 @@ void MenuBar::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "switch_on_hover"), "set_switch_on_hover", "is_switch_on_hover");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "prefer_global_menu"), "set_prefer_global_menu", "is_prefer_global_menu");
 
-	ADD_GROUP("BiDi", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_direction", PROPERTY_HINT_ENUM, "Auto,Left-to-Right,Right-to-Left,Inherited"), "set_text_direction", "get_text_direction");
+	ADD_GROUP("Localization", "");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "language", PROPERTY_HINT_LOCALE_ID, ""), "set_language", "get_language");
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, normal);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, normal_mirrored);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, disabled);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, disabled_mirrored);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, pressed);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, pressed_mirrored);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, hover);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, hover_mirrored);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, hover_pressed);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, MenuBar, hover_pressed_mirrored);
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT, MenuBar, font);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, MenuBar, font_size);
@@ -810,19 +767,6 @@ bool MenuBar::is_switch_on_hover() {
 
 void MenuBar::set_disable_shortcuts(bool p_disabled) {
 	disable_shortcuts = p_disabled;
-}
-
-void MenuBar::set_text_direction(Control::TextDirection p_text_direction) {
-	ERR_FAIL_COND((int)p_text_direction < -1 || (int)p_text_direction > 3);
-	if (text_direction != p_text_direction) {
-		text_direction = p_text_direction;
-		update_minimum_size();
-		queue_redraw();
-	}
-}
-
-Control::TextDirection MenuBar::get_text_direction() const {
-	return text_direction;
 }
 
 void MenuBar::set_language(const String &p_language) {
