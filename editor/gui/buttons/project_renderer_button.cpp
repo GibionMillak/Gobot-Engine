@@ -41,7 +41,6 @@
 
 ProjectRendererButton::ProjectRendererButton() {
 	set_fit_to_longest_item(false);
-	set_flat(true);
 	set_focus_mode(FOCUS_NONE);
 	set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_ALWAYS);
 	set_tooltip_text(TTRC("Choose a renderer.\n\nOn mobile platforms, the Mobile renderer is used if Forward+ is selected here."));

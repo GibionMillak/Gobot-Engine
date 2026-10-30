@@ -39,7 +39,6 @@
 EditorVersionButton::EditorVersionButton(VersionFormat p_format) :
 		_format(p_format) {
 	set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	set_flat(true);
 	set_text(_get_version_string(_format));
 }
 
