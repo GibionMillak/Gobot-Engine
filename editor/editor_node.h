@@ -299,8 +299,6 @@ public:
 
 	static void cleanup();
 
-	Ref<Texture2D> get_editor_theme_native_menu_icon(const StringName &p_name, bool p_global_menu, bool p_dark_mode) const;
-
 	EditorPluginList *get_editor_plugins_force_input_forwarding() { return editor_plugins_force_input_forwarding; }
 	EditorPluginList *get_editor_plugins_force_over() { return editor_plugins_force_over; }
 	EditorPluginList *get_editor_plugins_over() { return editor_plugins_over; }
@@ -524,7 +522,6 @@ private:
 
 	enum MenuType {
 		MENU_TYPE_NONE,
-		MENU_TYPE_GLOBAL,
 		MENU_TYPE_COMPACT,
 		MENU_TYPE_FULL,
 	};
@@ -552,7 +549,7 @@ private:
 	static void _resource_saved(Ref<Resource> p_resource, const String &p_path);
 	static void _resource_loaded(Ref<Resource> p_resource, const String &p_path);
 
-	void _update_system_menu_icons(bool p_dark_mode);
+	void _update_main_menu_icons();
 	void _update_theme(bool p_skip_creation = false);
 	void _build_icon_type_cache();
 
@@ -719,8 +716,8 @@ private:
 
 	bool _is_project_data_missing();
 
-	void _build_file_menu(bool p_dark_mode);
-	void _build_project_menu(bool p_dark_mode);
+	void _build_file_menu();
+	void _build_project_menu();
 	void _build_settings_menu();
 
 	void _update_main_menu_type();
@@ -784,7 +781,6 @@ private:
 
 	Label *project_title = nullptr;
 	Control *left_menu_spacer = nullptr;
-	Control *right_menu_spacer = nullptr;
 	EditorHeaderContainer *title_bar = nullptr;
 	EditorRunBar *project_run_bar = nullptr;
 

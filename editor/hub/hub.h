@@ -85,7 +85,6 @@ class Hub : public Control {
 
 	EditorHeaderContainer *title_bar = nullptr;
 	Control *left_menu_spacer = nullptr;
-	Control *right_menu_spacer = nullptr;
 	Button *title_bar_logo = nullptr;
 	Button *quick_settings_button = nullptr;
 	VBoxContainer *project_list_sidebar = nullptr;

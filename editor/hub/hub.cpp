@@ -61,7 +61,6 @@
 #include "scene/gui/flow_container.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/margin_container.h"
-#include "scene/gui/menu_bar.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/panel_container.h"
 #include "scene/gui/rich_text_label.h"
@@ -1078,10 +1077,7 @@ void Hub::_titlebar_resized() {
 	if (left_menu_spacer) {
 		int w = (root_container->is_layout_rtl()) ? margin.y : margin.x;
 		left_menu_spacer->set_custom_minimum_size(Size2(w, 0));
-	}
-	if (right_menu_spacer) {
-		int w = (root_container->is_layout_rtl()) ? margin.x : margin.y;
-		right_menu_spacer->set_custom_minimum_size(Size2(w, 0));
+		left_menu_spacer->set_visible(w > 0);
 	}
 	if (title_bar) {
 		title_bar->set_custom_minimum_size(Size2(0, margin.z - title_bar->get_global_position().y));
@@ -1211,26 +1207,6 @@ Hub::Hub() {
 		left_hbox->add_child(title_bar_logo);
 		title_bar_logo->connect(SceneStringName(pressed), callable_mp(this, &Hub::_show_about));
 
-		bool global_menu = !bool(EDITOR_GET("interface/editor/appearance/use_embedded_menu")) && NativeMenu::get_singleton()->has_feature(NativeMenu::FEATURE_GLOBAL_MENU);
-		if (global_menu) {
-			MenuBar *main_menu_bar = memnew(MenuBar);
-			main_menu_bar->set_start_index(0); // Main menu, add to the start of global menu.
-			main_menu_bar->set_prefer_global_menu(true);
-			left_hbox->add_child(main_menu_bar);
-
-			if (NativeMenu::get_singleton()->has_system_menu(NativeMenu::WINDOW_MENU_ID)) {
-				PopupMenu *window_menu = memnew(PopupMenu);
-				window_menu->set_system_menu(NativeMenu::WINDOW_MENU_ID);
-				window_menu->set_name(TTRC("Window"));
-				main_menu_bar->add_child(window_menu);
-			}
-			if (NativeMenu::get_singleton()->has_system_menu(NativeMenu::HELP_MENU_ID)) {
-				PopupMenu *help_menu = memnew(PopupMenu);
-				help_menu->set_system_menu(NativeMenu::HELP_MENU_ID);
-				help_menu->set_name(TTRC("Help"));
-				main_menu_bar->add_child(help_menu);
-			}
-		}
 		HBoxContainer *right_hbox = title_bar->get_right_section();
 
 		quick_settings_button = memnew(Button);
@@ -1238,13 +1214,6 @@ Hub::Hub() {
 		quick_settings_button->set_text(TTRC("Settings"));
 		right_hbox->add_child(quick_settings_button);
 		quick_settings_button->connect(SceneStringName(pressed), callable_mp(this, &Hub::_show_quick_settings));
-
-		if (can_expand) {
-			// Add spacer to avoid other controls under the window minimize/maximize/close buttons (right side).
-			right_menu_spacer = memnew(Control);
-			right_menu_spacer->set_mouse_filter(Control::MOUSE_FILTER_PASS);
-			title_bar->get_right_section()->add_child(right_menu_spacer);
-		}
 	}
 
 	_project_list_pc = memnew(PanelContainer);

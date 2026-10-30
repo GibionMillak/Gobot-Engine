@@ -205,14 +205,12 @@ void EditorDockManager::update_docks_menu() {
 	const Ref<Texture2D> default_icon = docks_menu->get_editor_theme_icon(SNAME("node_viewport_window"));
 	const Color closed_icon_color_mod = Color(1, 1, 1, 0.5);
 
-	bool global_menu = !bool(EDITOR_GET("interface/editor/appearance/use_embedded_menu")) && NativeMenu::get_singleton()->has_feature(NativeMenu::FEATURE_GLOBAL_MENU);
-	bool dark_mode = DisplayServer::get_singleton()->is_dark_mode_supported() && DisplayServer::get_singleton()->is_dark_mode();
 	int icon_max_width = EditorNode::get_singleton()->get_editor_theme()->get_constant(SNAME("class_icon_size"), EditorStringName(Editor));
 
 	// Add docks.
 	docks_menu_docks.clear();
 	int id = 0;
-	const Callable icon_fetch = callable_mp(EditorNode::get_singleton(), &EditorNode::get_editor_theme_native_menu_icon).bind(global_menu, dark_mode);
+	const Callable icon_fetch = callable_mp(static_cast<Window *>(docks_menu), &Window::get_editor_theme_icon);
 	for (EditorDock *dock : all_docks) {
 		if (!dock->enabled || !dock->global) {
 			continue;

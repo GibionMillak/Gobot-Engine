@@ -922,7 +922,6 @@
 		</member>
 		<member name="interface/editor/appearance/collapse_main_menu" type="bool" setter="" getter="">
 			If [code]true[/code], the main menu collapses into a [MenuButton].
-			[b]Note:[/b] This setting is only applicable on macOS when [member interface/editor/appearance/use_embedded_menu] is [code]true[/code].
 			[b]Note:[/b] Defaults to [code]true[/code] on the Android editor.
 		</member>
 		<member name="interface/editor/appearance/custom_display_scale" type="float" setter="" getter="">
@@ -942,10 +941,6 @@
 		</member>
 		<member name="interface/editor/appearance/hub_screen" type="int" setter="" getter="">
 			The preferred monitor to display the hub.
-		</member>
-		<member name="interface/editor/appearance/use_embedded_menu" type="bool" setter="" getter="">
-			If [code]true[/code], editor main menu is using embedded [MenuBar] instead of system global menu.
-			Specific to the macOS platform.
 		</member>
 		<member name="interface/editor/appearance/use_native_file_dialogs" type="bool" setter="" getter="">
 			If [code]true[/code], editor UI uses OS native file/directory selection dialogs.

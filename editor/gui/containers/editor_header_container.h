@@ -42,6 +42,7 @@ public:
 	EditorHeaderContainer();
 
 	HBoxContainer *get_left_section() const { return _left_hbox; }
+	HBoxContainer *get_center_section() const { return _center_hbox; }
 	HBoxContainer *get_right_section() const { return _right_hbox; }
 
 	void add_editor_controls();
@@ -69,6 +70,7 @@ private:
 	bool _moving = false;
 	bool _can_move = false;
 	HBoxContainer *_left_hbox = nullptr;
+	HBoxContainer *_center_hbox = nullptr;
 	HBoxContainer *_right_hbox = nullptr;
 	bool _editor_controls_added = false;
 	HBoxContainer *_window_buttons_hbox = nullptr;
