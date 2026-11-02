@@ -31,94 +31,22 @@
 #pragma once
 
 #include "scene/gui/control.h"
-#include "scene/resources/label_settings.h"
+#include "servers/text/text_server.h"
+
+class Font;
+class LabelSettings;
+class StyleBox;
 
 class Label : public Control {
 	GDCLASS(Label, Control);
 
-private:
-	HorizontalAlignment horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT;
-	VerticalAlignment vertical_alignment = VERTICAL_ALIGNMENT_TOP;
-	String text;
-	String xl_text;
-	TextServer::AutowrapMode autowrap_mode = TextServer::AUTOWRAP_OFF;
-	BitField<TextServer::LineBreakFlag> autowrap_flags_trim = TextServer::BREAK_TRIM_START_EDGE_SPACES | TextServer::BREAK_TRIM_END_EDGE_SPACES;
-	BitField<TextServer::JustificationFlag> jst_flags = TextServer::JUSTIFICATION_WORD_BOUND | TextServer::JUSTIFICATION_KASHIDA | TextServer::JUSTIFICATION_SKIP_LAST_LINE | TextServer::JUSTIFICATION_DO_NOT_SKIP_SINGLE_LINE;
-	bool clip = false;
-	String el_char = U"…";
-	TextServer::OverrunBehavior overrun_behavior = TextServer::OVERRUN_NO_TRIMMING;
-	mutable Size2 minsize;
-	bool uppercase = false;
-
-	struct Paragraph {
-		bool lines_dirty = true;
-		bool dirty = true;
-		int start = 0;
-
-		String text;
-		RID text_rid;
-		Vector<RID> lines_rid;
-	};
-	mutable bool dirty = true;
-	mutable bool font_dirty = true;
-	mutable bool text_dirty = true;
-	mutable Vector<Paragraph> paragraphs;
-	mutable int total_line_count = 0;
-	String paragraph_separator = "\\n";
-
-	String language;
-
-	TextServer::VisibleCharactersBehavior visible_chars_behavior = TextServer::VC_CHARS_BEFORE_SHAPING;
-	int visible_chars = -1;
-	float visible_ratio = 1.0;
-	int lines_skipped = 0;
-	int max_lines_visible = -1;
-	PackedFloat32Array tab_stops;
-
-	bool resize_font_to_fit = false;
-	int minimum_font_size = 10;
-	int maximum_font_size = 60;
-	mutable int current_fitted_font_size = -1;
-
-	Ref<LabelSettings> settings;
-
-	struct ThemeCache {
-		Ref<StyleBox> normal_style;
-		Ref<StyleBox> focus_style;
-		Ref<Font> font;
-
-		int font_size = 0;
-		int line_spacing = 0;
-		int paragraph_spacing = 0;
-		Color font_color;
-		Color font_shadow_color;
-		Point2 font_shadow_offset;
-		Color font_outline_color;
-		int font_outline_size;
-		int font_shadow_outline_size;
-	} theme_cache;
-
-	Rect2 _get_line_rect(int p_para, int p_line) const;
-	void _ensure_shaped() const;
-	void _update_visible() const;
-	void _shape() const;
-	void _shape_internal() const;
-	bool _shape_lines(int p_font_size, int p_width, int p_height) const;
-	void _invalidate();
-	void _maximum_size_changed();
-
-protected:
-	RID get_line_rid(int p_line) const;
-	Rect2 get_line_rect(int p_line) const;
-	int get_layout_data(Vector2 &r_offset, int &r_last_line, int &r_line_spacing) const;
-
-	void _notification(int p_what);
-	static void _bind_methods();
-
 public:
-	virtual Size2 get_minimum_size() const override;
-	virtual Size2 get_desired_size() const override;
-	virtual PackedStringArray get_configuration_warnings() const override;
+	explicit Label(const String &p_text = String());
+	~Label();
+
+	Size2 get_minimum_size() const override;
+	Size2 get_desired_size() const override;
+	PackedStringArray get_configuration_warnings() const override;
 
 	void set_horizontal_alignment(HorizontalAlignment p_alignment);
 	HorizontalAlignment get_horizontal_alignment() const;
@@ -195,40 +123,102 @@ public:
 
 	Rect2 get_character_bounds(int p_pos) const;
 
-	Label(const String &p_text = String());
-	~Label();
+protected:
+	static void _bind_methods();
+	void _notification(int p_what);
 
-	template <typename... VarArgsFunc, typename... VarArgs>
-	void draw_text(int p_ellipsis_pos, int p_ellipsis_gl_size, const Glyph *p_ellipsis_glyphs, bool p_trim_chars, int p_para_start, int p_visible_chars, bool p_trim_glyphs, int &r_processed_glyphs_step, int p_processed_glyphs, int p_visible_glyphs, const RID &p_ci, const Vector2 &p_ofs, int p_gl_size, int p_trim_pos, const Glyph *p_glyphs, const Color &p_color, void (*p_draw_func)(const Glyph &p_gl, const RID &p_canvas, const Color &p_font_outline_color, const Vector2 &p_ofs, VarArgsFunc... p_args), VarArgs &&...p_args) {
-		r_processed_glyphs_step = p_processed_glyphs;
-		Vector2 offset_step = p_ofs;
-		// Draw main text.
-		for (int j = 0; j < p_gl_size; j++) { /* Trim when necessary. */
-			if (p_trim_pos >= 0) {
-				if (j >= p_trim_pos) {
-					break;
-				}
-			}
-			for (int k = 0; k < p_glyphs[j].repeat; k++) {
-				bool skip = (p_trim_chars && p_glyphs[j].end + p_para_start > p_visible_chars) || (p_trim_glyphs && (r_processed_glyphs_step >= p_visible_glyphs));
-				if (!skip) {
-					p_draw_func(p_glyphs[j], p_ci, p_color, offset_step, std::forward<VarArgs>(p_args)...);
-				}
-				r_processed_glyphs_step++;
-				offset_step.x += p_glyphs[j].advance;
-			}
-		}
-		if (p_ellipsis_pos >= 0) {
-			for (int gl_idx = 0; gl_idx < p_ellipsis_gl_size; gl_idx++) {
-				for (int j = 0; j < p_ellipsis_glyphs[gl_idx].repeat; j++) {
-					bool skip = (p_trim_chars && p_ellipsis_glyphs[gl_idx].end + p_para_start > p_visible_chars) || (p_trim_glyphs && (r_processed_glyphs_step >= p_visible_glyphs));
-					if (!skip) {
-						p_draw_func(p_ellipsis_glyphs[gl_idx], p_ci, p_color, offset_step, std::forward<VarArgs>(p_args)...);
-					}
-					r_processed_glyphs_step++;
-					offset_step.x += p_ellipsis_glyphs[gl_idx].advance;
-				}
-			}
-		}
-	}
+	// These helpers read the current shaped layout without triggering reshaping.
+	RID _get_line_rid(int p_line) const;
+	Rect2 _get_line_rect(int p_line) const;
+	int _get_layout_data(Vector2 &r_offset, int &r_last_line, int &r_line_spacing) const;
+
+private:
+	struct Paragraph {
+		bool lines_dirty = true;
+		bool text_dirty = true;
+		int start = 0;
+
+		String text;
+		RID text_rid;
+		Vector<RID> lines_rid;
+	};
+
+	struct LineMetrics {
+		double ascent = 0;
+		double descent = 0;
+	};
+
+	struct ThemeCache {
+		Ref<StyleBox> normal_style;
+		Ref<StyleBox> focus_style;
+		Ref<Font> font;
+
+		int font_size = 0;
+		int line_spacing = 0;
+		int paragraph_spacing = 0;
+		Color font_color;
+		Color font_shadow_color;
+		Point2 font_shadow_offset;
+		Color font_outline_color;
+		int font_outline_size = 0;
+		int font_shadow_outline_size = 0;
+	};
+
+	Ref<Font> _get_font() const;
+	int _get_base_font_size() const;
+	int _get_line_spacing() const;
+	int _get_paragraph_spacing() const;
+	int _get_maximum_width() const;
+	int _get_shaping_width() const;
+	static LineMetrics _get_line_metrics(const RID &p_line, int p_font_height);
+	static int _get_justification_line_count(const Paragraph &p_paragraph, BitField<TextServer::JustificationFlag> p_flags);
+	static void _clear_lines(Paragraph &r_paragraph);
+	void _clear_paragraphs() const;
+	void _mark_lines_dirty() const;
+	Rect2 _get_paragraph_line_rect(int p_paragraph, int p_line) const;
+	void _ensure_shaped() const;
+	void _update_visible() const;
+	void _shape() const;
+	void _shape_internal() const;
+	bool _shape_lines(int p_font_size, int p_width, int p_height) const;
+	void _draw();
+	void _invalidate();
+	void _maximum_size_changed();
+
+	HorizontalAlignment _horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT;
+	VerticalAlignment _vertical_alignment = VERTICAL_ALIGNMENT_TOP;
+	String _text;
+	String _translated_text;
+	TextServer::AutowrapMode _autowrap_mode = TextServer::AUTOWRAP_OFF;
+	BitField<TextServer::LineBreakFlag> _autowrap_trim_flags = TextServer::BREAK_TRIM_START_EDGE_SPACES | TextServer::BREAK_TRIM_END_EDGE_SPACES;
+	BitField<TextServer::JustificationFlag> _justification_flags = TextServer::JUSTIFICATION_WORD_BOUND | TextServer::JUSTIFICATION_KASHIDA | TextServer::JUSTIFICATION_SKIP_LAST_LINE | TextServer::JUSTIFICATION_DO_NOT_SKIP_SINGLE_LINE;
+	bool _clip_text = false;
+	String _ellipsis_char = U"…";
+	TextServer::OverrunBehavior _text_overrun_behavior = TextServer::OVERRUN_NO_TRIMMING;
+	mutable Size2 _minimum_size;
+	bool _uppercase = false;
+
+	mutable bool _font_dirty = true;
+	mutable bool _text_dirty = true;
+	mutable Vector<Paragraph> _paragraphs;
+	mutable int _total_line_count = 0;
+	String _paragraph_separator = "\\n";
+
+	String _language;
+
+	TextServer::VisibleCharactersBehavior _visible_characters_behavior = TextServer::VC_CHARS_BEFORE_SHAPING;
+	int _visible_characters = -1;
+	float _visible_ratio = 1.0;
+	int _lines_skipped = 0;
+	int _max_lines_visible = -1;
+	PackedFloat32Array _tab_stops;
+
+	bool _resize_font_to_fit = false;
+	int _minimum_font_size = 10;
+	int _maximum_font_size = 60;
+	mutable int _current_fitted_font_size = -1;
+
+	Ref<LabelSettings> _label_settings;
+	// Theme binding macros require this member name.
+	ThemeCache theme_cache;
 };

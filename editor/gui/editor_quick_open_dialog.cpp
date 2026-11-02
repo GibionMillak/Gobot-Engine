@@ -57,9 +57,9 @@
 
 void HighlightedLabel::draw_substr_rects(const Vector2i &p_substr, Vector2 p_offset, int p_line_limit, int line_spacing) {
 	for (int i = get_lines_skipped(); i < p_line_limit; i++) {
-		RID line = get_line_rid(i);
+		RID line = _get_line_rid(i);
 		Vector<Vector2> ranges = TS->shaped_text_get_selection(line, p_substr.x, p_substr.x + p_substr.y);
-		Rect2 line_rect = get_line_rect(i);
+		Rect2 line_rect = _get_line_rect(i);
 		for (const Vector2 &range : ranges) {
 			Rect2 rect = Rect2(Point2(range.x, 0) + line_rect.position, Size2(range.y - range.x, line_rect.size.y));
 			rect.position = p_offset + line_rect.position;
@@ -96,7 +96,7 @@ void HighlightedLabel::_notification(int p_notification) {
 		Vector2 offset;
 		int line_limit;
 		int line_spacing;
-		get_layout_data(offset, line_limit, line_spacing);
+		_get_layout_data(offset, line_limit, line_spacing);
 
 		for (const Vector2i &substr : highlights) {
 			draw_substr_rects(substr, offset, line_limit, line_spacing);
