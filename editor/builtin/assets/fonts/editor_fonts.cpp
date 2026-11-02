@@ -509,18 +509,18 @@ void editor_register_fonts(const Ref<Theme> &p_theme) {
 
 	// Labels.
 
-	p_theme->set_font(SceneStringName(font), "Label", default_fc);
+	p_theme->set_font(SceneStringName(font_family), "Label", default_fc);
 
 	p_theme->set_type_variation("HeaderSmall", "Label");
-	p_theme->set_font(SceneStringName(font), "HeaderSmall", bold_fc);
+	p_theme->set_font(SceneStringName(font_family), "HeaderSmall", bold_fc);
 	p_theme->set_font_size(SceneStringName(font_size), "HeaderSmall", default_font_size);
 
 	p_theme->set_type_variation("HeaderMedium", "Label");
-	p_theme->set_font(SceneStringName(font), "HeaderMedium", bold_fc);
+	p_theme->set_font(SceneStringName(font_family), "HeaderMedium", bold_fc);
 	p_theme->set_font_size(SceneStringName(font_size), "HeaderMedium", default_font_size + 1 * EDSCALE);
 
 	p_theme->set_type_variation("HeaderLarge", "Label");
-	p_theme->set_font(SceneStringName(font), "HeaderLarge", bold_fc);
+	p_theme->set_font(SceneStringName(font_family), "HeaderLarge", bold_fc);
 	p_theme->set_font_size(SceneStringName(font_size), "HeaderLarge", default_font_size + 3 * EDSCALE);
 
 	p_theme->set_font("normal_font", "RichTextLabel", default_fc);

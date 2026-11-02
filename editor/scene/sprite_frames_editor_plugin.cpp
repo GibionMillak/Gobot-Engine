@@ -2270,8 +2270,8 @@ SpriteFramesEditor::SpriteFramesEditor() {
 	missing_anim_label->set_text(TTRC("This resource does not have any animations."));
 	missing_anim_label->set_h_size_flags(SIZE_EXPAND_FILL);
 	missing_anim_label->set_v_size_flags(SIZE_EXPAND_FILL);
-	missing_anim_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	missing_anim_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	missing_anim_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	missing_anim_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	missing_anim_label->hide();
 	main_split->add_child(missing_anim_label);
 

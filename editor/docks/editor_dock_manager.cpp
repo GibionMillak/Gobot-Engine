@@ -940,7 +940,7 @@ DockContextPopup::DockContextPopup() {
 	Label *position_label = memnew(Label);
 	position_label->set_text(TTRC("Dock Position"));
 	position_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	position_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	position_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	header_hb->add_child(position_label);
 
 	tab_move_right_button = memnew(Button);

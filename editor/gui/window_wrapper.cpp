@@ -354,7 +354,7 @@ void ScreenSelect::_build_advanced_menu() {
 		screen_list->add_child(button);
 
 		button->set_text(itos(i));
-		button->set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		button->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 		button->set_tooltip_text(vformat(TTR("Make this panel floating in the screen %d."), i));
 
 		if (i == current_screen) {
@@ -460,7 +460,7 @@ ScreenSelect::ScreenSelect() {
 	popup_root->add_child(vb);
 
 	Label *description = memnew(Label(TTR("Select Screen")));
-	description->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	description->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	vb->add_child(description);
 
 	screen_list = memnew(HBoxContainer);

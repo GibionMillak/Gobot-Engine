@@ -121,7 +121,7 @@ ConnectionInfoDialog::ConnectionInfoDialog() {
 
 	method = memnew(Label);
 	method->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	method->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	method->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	vbc->add_child(method);
 
 	tree = memnew(Tree);
@@ -2701,7 +2701,7 @@ ScriptTextEditor::ScriptTextEditor() {
 
 	drag_info_label = memnew(Label);
 	drag_info_label->set_anchors_preset(Control::PRESET_BOTTOM_RIGHT);
-	drag_info_label->add_theme_constant_override("line_spacing", 0);
+	drag_info_label->add_theme_constant_override("gap", 0);
 
 	Ref<StyleBox> drag_info_sb;
 	drag_info_sb.instantiate();

@@ -2910,7 +2910,7 @@ void DocumentEditorContainer::_file_menu_closed() {
 
 void DocumentEditorContainer::_calculate_script_name_button_size() {
 	Ref<Font> font = _script_name_btn->get_theme_font(SceneStringName(font), SNAME("Button"));
-	HorizontalAlignment alignment = _script_name_btn->get_text_alignment();
+	HorizontalAlignment alignment = _script_name_btn->get_text_horizontal_alignment();
 	int font_size = _script_name_btn->get_theme_font_size(SceneStringName(font_size), SNAME("Button"));
 	String text = _script_name_btn->get_text();
 	int jst_flags = TextServer::JUSTIFICATION_WORD_BOUND | TextServer::JUSTIFICATION_KASHIDA | TextServer::JUSTIFICATION_SKIP_LAST_LINE | TextServer::JUSTIFICATION_DO_NOT_SKIP_SINGLE_LINE;

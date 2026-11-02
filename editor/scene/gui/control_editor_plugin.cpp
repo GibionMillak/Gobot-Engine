@@ -132,7 +132,7 @@ ControlPositioningWarning::ControlPositioningWarning() {
 	title_label = memnew(Label);
 	title_label->set_autowrap_mode(TextServer::AutowrapMode::AUTOWRAP_WORD);
 	title_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	title_label->set_vertical_alignment(VerticalAlignment::VERTICAL_ALIGNMENT_CENTER);
+	title_label->set_text_vertical_alignment(VerticalAlignment::VERTICAL_ALIGNMENT_CENTER);
 	grid->add_child(title_label);
 
 	hint_icon = memnew(TextureRect);
@@ -147,7 +147,7 @@ ControlPositioningWarning::ControlPositioningWarning() {
 	hint_label = memnew(Label);
 	hint_label->set_autowrap_mode(TextServer::AutowrapMode::AUTOWRAP_WORD);
 	hint_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	hint_label->set_vertical_alignment(VerticalAlignment::VERTICAL_ALIGNMENT_CENTER);
+	hint_label->set_text_vertical_alignment(VerticalAlignment::VERTICAL_ALIGNMENT_CENTER);
 	hint_label->hide();
 	grid->add_child(hint_label);
 
@@ -578,7 +578,7 @@ void ControlEditorPresetPicker::_add_row_button(HBoxContainer *p_row, const int 
 
 	Button *b = memnew(Button);
 	b->set_custom_minimum_size(Size2i(36, 36) * EDSCALE);
-	b->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	b->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	b->set_tooltip_text(p_name);
 	b->set_theme_type_variation(SceneStringName(FlatButton));
 	p_row->add_child(b);
@@ -1280,7 +1280,7 @@ ControlEditorToolbar::ControlEditorToolbar() {
 	anchors_button->get_popup_hbox()->add_child(memnew(HSeparator));
 
 	Button *keep_ratio_button = memnew(Button);
-	keep_ratio_button->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
+	keep_ratio_button->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 	keep_ratio_button->set_text(TTRC("Set to Current Ratio"));
 	keep_ratio_button->set_tooltip_text(TTRC("Adjust anchors and offsets to match the current rect size."));
 	anchors_button->get_popup_hbox()->add_child(keep_ratio_button);

@@ -498,7 +498,7 @@ HashSet<String> FindInFilesSearchPanel::get_filter() const {
 void FindInFilesSearchPanel::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			filters_label->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			filters_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
 			match_case_checkbox->set_button_icon(get_editor_theme_icon(SNAME("gui_match_case")));
 			whole_words_checkbox->set_button_icon(get_editor_theme_icon(SNAME("gui_match_word")));
 			replace_all_button->set_button_icon(get_editor_theme_icon(SNAME("action_replace_text")));

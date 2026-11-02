@@ -363,7 +363,7 @@ GraphFrame::GraphFrame() {
 	title_label = memnew(Label);
 	title_label->set_theme_type_variation("GraphFrameTitleLabel");
 	title_label->set_h_size_flags(SIZE_EXPAND_FILL);
-	title_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	title_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	title_label->set_use_parent_material(true);
 	titlebar_hbox->add_child(title_label);
 

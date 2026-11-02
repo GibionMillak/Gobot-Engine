@@ -2001,8 +2001,8 @@ ProjectExportDialog::ProjectExportDialog() :
 	// Label shown when no presets are present.
 
 	empty_label = memnew(Label(TTRC("No presets found.\nCreate one so that its parameters can be edited here.")));
-	empty_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	empty_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	empty_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	empty_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	empty_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	empty_label->set_clip_text(true); // Necessary to avoid overexpanding the dialog vertically.
 	empty_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);

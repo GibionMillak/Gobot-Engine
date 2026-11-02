@@ -2529,8 +2529,8 @@ void Node3DEditor::_add_environment_to_scene(bool p_already_added_sun) {
 }
 
 void Node3DEditor::_update_theme() {
-	sun_title->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("title_font"), SNAME("Window")));
-	environ_title->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("title_font"), SNAME("Window")));
+	sun_title->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("title_font"), SNAME("Window")));
+	environ_title->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("title_font"), SNAME("Window")));
 
 	sun_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("inspector_property_height"), EditorStringName(Editor))));
 	environ_sky_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("inspector_property_height"), EditorStringName(Editor))));
@@ -2639,8 +2639,8 @@ void Node3DEditor::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			_update_theme();
 			_update_gizmos_menu_theme();
-			sun_title->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("title_font"), SNAME("Window")));
-			environ_title->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("title_font"), SNAME("Window")));
+			sun_title->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("title_font"), SNAME("Window")));
+			environ_title->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("title_font"), SNAME("Window")));
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {
@@ -3895,7 +3895,7 @@ Node3DEditor::Node3DEditor() {
 		sun_title->set_theme_type_variation("HeaderMedium");
 		sun_vb->add_child(sun_title);
 		sun_title->set_text(TTRC("Preview Sun"));
-		sun_title->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		sun_title->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 
 		CenterContainer *sun_direction_center = memnew(CenterContainer);
 		sun_direction = memnew(Control);
@@ -3991,8 +3991,8 @@ void fragment() {
 
 		sun_state = memnew(Label);
 		sun_environ_hb->add_child(sun_state);
-		sun_state->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-		sun_state->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+		sun_state->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		sun_state->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 		sun_state->set_h_size_flags(SIZE_EXPAND_FILL);
 
 		VSeparator *sc = memnew(VSeparator);
@@ -4010,7 +4010,7 @@ void fragment() {
 
 		environ_vb->add_child(environ_title);
 		environ_title->set_text(TTRC("Preview Environment"));
-		environ_title->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		environ_title->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 
 		environ_sky_color = memnew(ColorPickerButton);
 		environ_sky_color->set_edit_alpha(false);
@@ -4066,8 +4066,8 @@ void fragment() {
 
 		environ_state = memnew(Label);
 		sun_environ_hb->add_child(environ_state);
-		environ_state->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-		environ_state->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+		environ_state->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		environ_state->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 		environ_state->set_h_size_flags(SIZE_EXPAND_FILL);
 
 		preview_sun = memnew(DirectionalLight3D);

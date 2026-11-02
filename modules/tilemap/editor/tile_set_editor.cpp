@@ -943,8 +943,8 @@ TileSetEditor::TileSetEditor() {
 	no_source_selected_label->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
 	no_source_selected_label->set_h_size_flags(SIZE_EXPAND_FILL);
 	no_source_selected_label->set_v_size_flags(SIZE_EXPAND_FILL);
-	no_source_selected_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	no_source_selected_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	no_source_selected_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	no_source_selected_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	split_container_right_side->add_child(no_source_selected_label);
 
 	// Atlases editor.
@@ -986,7 +986,7 @@ TileSetEditor::TileSetEditor() {
 	patterns_help_label = memnew(Label);
 	patterns_help_label->set_text(TTRC("Add new patterns in the TileMap editing mode."));
 	patterns_help_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
-	patterns_help_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	patterns_help_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	patterns_help_label->set_anchors_and_offsets_preset(Control::PRESET_HCENTER_WIDE);
 	patterns_item_list->add_child(patterns_help_label);
 

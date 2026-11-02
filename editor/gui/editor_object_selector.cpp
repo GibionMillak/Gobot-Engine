@@ -171,7 +171,7 @@ void EditorObjectSelector::_notification(int p_what) {
 			int icon_size = get_theme_constant(SNAME("class_icon_size"), EditorStringName(Editor));
 
 			current_object_icon->set_custom_minimum_size(Size2(icon_size, icon_size));
-			current_object_label->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			current_object_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
 			sub_objects_icon->set_texture(get_theme_icon(SNAME("arrow"), SNAME("OptionButton")));
 			sub_objects_menu->add_theme_constant_override("icon_max_width", icon_size);
 		} break;
@@ -206,7 +206,7 @@ EditorObjectSelector::EditorObjectSelector(EditorSelectionHistory *p_history) {
 	current_object_label = memnew(Label);
 	current_object_label->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
 	current_object_label->set_h_size_flags(SIZE_EXPAND_FILL);
-	current_object_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	current_object_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	main_hb->add_child(current_object_label);
 
 	sub_objects_icon = memnew(TextureRect);

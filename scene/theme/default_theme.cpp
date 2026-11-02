@@ -167,7 +167,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_color("icon_focus_color", "Button", Color(1, 1, 1, 1));
 	theme->set_color("icon_disabled_color", "Button", Color(1, 1, 1, 0.4));
 
-	theme->set_constant("h_separation", "Button", Math::round(4 * scale));
+	theme->set_constant("gap", "Button", Math::round(8 * scale));
 	theme->set_constant("icon_max_width", "Button", 0);
 
 	theme->set_constant("align_to_largest_stylebox", "Button", 0); // Disabled.
@@ -234,7 +234,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_color("font_disabled_color", "OptionButton", control_font_disabled_color);
 	theme->set_color("font_outline_color", "OptionButton", Color(0, 0, 0));
 
-	theme->set_constant("h_separation", "OptionButton", Math::round(4 * scale));
+	theme->set_constant("gap", "OptionButton", Math::round(8 * scale));
 	theme->set_constant("arrow_margin", "OptionButton", Math::round(4 * scale));
 	theme->set_constant("outline_size", "OptionButton", 0);
 	theme->set_constant("modulate_arrow", "OptionButton", false);
@@ -257,7 +257,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_color("font_disabled_color", "MenuButton", Color(1, 1, 1, 0.3));
 	theme->set_color("font_outline_color", "MenuButton", Color(0, 0, 0));
 
-	theme->set_constant("h_separation", "MenuButton", Math::round(4 * scale));
+	theme->set_constant("gap", "MenuButton", Math::round(8 * scale));
 	theme->set_constant("outline_size", "MenuButton", 0);
 
 	// CheckBox
@@ -294,7 +294,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_color("font_disabled_color", "CheckBox", control_font_disabled_color);
 	theme->set_color("font_outline_color", "CheckBox", Color(0, 0, 0));
 
-	theme->set_constant("h_separation", "CheckBox", Math::round(4 * scale));
+	theme->set_constant("gap", "CheckBox", Math::round(8 * scale));
 	theme->set_constant("check_v_offset", "CheckBox", 0);
 	theme->set_constant("outline_size", "CheckBox", 0);
 
@@ -329,7 +329,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_color("font_disabled_color", "CheckButton", control_font_disabled_color);
 	theme->set_color("font_outline_color", "CheckButton", Color(0, 0, 0));
 
-	theme->set_constant("h_separation", "CheckButton", Math::round(4 * scale));
+	theme->set_constant("gap", "CheckButton", Math::round(8 * scale));
 	theme->set_constant("check_v_offset", "CheckButton", 0);
 	theme->set_constant("outline_size", "CheckButton", 0);
 
@@ -362,7 +362,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 
 	theme->set_stylebox(CoreStringName(normal), "Label", memnew(StyleBox));
 	theme->set_stylebox("focus", "Label", focus);
-	theme->set_font(SceneStringName(font), "Label", Ref<Font>());
+	theme->set_font(SceneStringName(font_family), "Label", Ref<Font>());
 	theme->set_font_size(SceneStringName(font_size), "Label", -1);
 
 	theme->set_color(SceneStringName(font_color), "Label", Color(1, 1, 1));
@@ -373,7 +373,9 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_constant("shadow_offset_y", "Label", Math::round(1 * scale));
 	theme->set_constant("outline_size", "Label", 0);
 	theme->set_constant("shadow_outline_size", "Label", Math::round(1 * scale));
-	theme->set_constant("line_spacing", "Label", Math::round(3 * scale));
+	theme->set_constant("gap", "Label", Math::round(8 * scale));
+	theme->set_constant("icon_max_width", "Label", 0);
+	theme->set_color("icon_color", "Label", Color(1, 1, 1));
 
 	theme->set_type_variation("HeaderSmall", "Label");
 	theme->set_font_size(SceneStringName(font_size), "HeaderSmall", default_font_size + 4);
@@ -815,7 +817,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_type_variation("GraphNodeTitleLabel", "Label");
 
 	theme->set_stylebox(CoreStringName(normal), "GraphNodeTitleLabel", make_empty_stylebox(0, 0, 0, 0));
-	theme->set_font(SceneStringName(font), "GraphNodeTitleLabel", Ref<Font>());
+	theme->set_font(SceneStringName(font_family), "GraphNodeTitleLabel", Ref<Font>());
 	theme->set_font_size(SceneStringName(font_size), "GraphNodeTitleLabel", -1);
 	theme->set_color(SceneStringName(font_color), "GraphNodeTitleLabel", control_font_color);
 	theme->set_color("font_shadow_color", "GraphNodeTitleLabel", Color(0, 0, 0, 0));
@@ -824,7 +826,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_constant("shadow_offset_y", "GraphNodeTitleLabel", Math::round(1 * scale));
 	theme->set_constant("outline_size", "GraphNodeTitleLabel", 0);
 	theme->set_constant("shadow_outline_size", "GraphNodeTitleLabel", Math::round(1 * scale));
-	theme->set_constant("line_spacing", "GraphNodeTitleLabel", Math::round(3 * scale));
+	theme->set_constant("gap", "GraphNodeTitleLabel", Math::round(3 * scale));
 
 	// GraphFrame
 
@@ -854,7 +856,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_constant("shadow_offset_y", "GraphFrameTitleLabel", 1 * scale);
 	theme->set_constant("outline_size", "GraphFrameTitleLabel", 0);
 	theme->set_constant("shadow_outline_size", "GraphFrameTitleLabel", 1 * scale);
-	theme->set_constant("line_spacing", "GraphFrameTitleLabel", 3 * scale);
+	theme->set_constant("gap", "GraphFrameTitleLabel", 3 * scale);
 
 	// Tree
 
@@ -1188,7 +1190,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	theme->set_color("font_disabled_color", "ColorPickerButton", Color(0.9, 0.9, 0.9, 0.3));
 	theme->set_color("font_outline_color", "ColorPickerButton", Color(0, 0, 0));
 
-	theme->set_constant("h_separation", "ColorPickerButton", Math::round(4 * scale));
+	theme->set_constant("gap", "ColorPickerButton", Math::round(8 * scale));
 	theme->set_constant("outline_size", "ColorPickerButton", 0);
 
 	// ColorPresetButton
@@ -1211,7 +1213,7 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 
 	theme->set_type_variation("TooltipLabel", "Label");
 	theme->set_font_size(SceneStringName(font_size), "TooltipLabel", -1);
-	theme->set_font(SceneStringName(font), "TooltipLabel", Ref<Font>());
+	theme->set_font(SceneStringName(font_family), "TooltipLabel", Ref<Font>());
 
 	theme->set_color(SceneStringName(font_color), "TooltipLabel", control_font_color);
 	theme->set_color("font_shadow_color", "TooltipLabel", Color(0, 0, 0, 0));

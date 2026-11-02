@@ -260,7 +260,7 @@ void EditorViewportToolbar::_configure_buttons(Control *p_control, HashSet<Objec
 	Button *button = Object::cast_to<Button>(p_control);
 	if (button) {
 		button->set_custom_minimum_size(Size2(32, 32) * EDSCALE);
-		button->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		button->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	}
 	const Callable controls_changed = callable_mp(this, &EditorViewportToolbar::_controls_changed);
 	if (!p_control->is_connected(SNAME("child_order_changed"), controls_changed)) {

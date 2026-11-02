@@ -1045,7 +1045,7 @@ void TileSetAtlasSourceEditor::_update_atlas_view() {
 				button->set_mouse_filter(Control::MOUSE_FILTER_PASS);
 				button->connect(SceneStringName(pressed), callable_mp(this, &TileSetAtlasSourceEditor::_tile_alternatives_create_button_pressed).bind(tile_id));
 				button->set_rect(Rect2(Vector2(pos.x, pos.y + (y_increment - texture_region_base_size.y) / 2.0), Vector2(texture_region_base_size_min, texture_region_base_size_min)));
-				button->set_expand_icon(true);
+				button->set_icon_expand(true);
 				alternative_tiles_control->add_child(button);
 
 				pos.y += y_increment;
@@ -2610,7 +2610,7 @@ TileSetAtlasSourceEditor::TileSetAtlasSourceEditor() {
 
 	tile_inspector_no_tile_selected_label = memnew(Label);
 	tile_inspector_no_tile_selected_label->set_v_size_flags(SIZE_EXPAND | SIZE_SHRINK_CENTER);
-	tile_inspector_no_tile_selected_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	tile_inspector_no_tile_selected_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	tile_inspector_no_tile_selected_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	tile_inspector_no_tile_selected_label->set_text(TTRC("No tiles selected.\nSelect one or more tiles from the palette to edit its properties."));
 	middle_vbox_container->add_child(tile_inspector_no_tile_selected_label);
@@ -2723,7 +2723,7 @@ TileSetAtlasSourceEditor::TileSetAtlasSourceEditor() {
 	help_label = memnew(Label);
 	help_label->set_mouse_filter(MOUSE_FILTER_IGNORE);
 	help_label->set_anchors_and_offsets_preset(PRESET_FULL_RECT);
-	help_label->set_vertical_alignment(VERTICAL_ALIGNMENT_BOTTOM);
+	help_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_BOTTOM);
 	help_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	help_label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	tile_atlas_view->add_child(help_label);

@@ -3338,10 +3338,10 @@ void EditorInspectorArray::_setup() {
 
 		if (numbered) {
 			ae.number = memnew(Label);
-			ae.number->add_theme_font_override(SceneStringName(font), numbers_font);
+			ae.number->add_theme_font_override(SceneStringName(font_family), numbers_font);
 			ae.number->set_custom_minimum_size(Size2(numbers_min_w, 0));
-			ae.number->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
-			ae.number->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+			ae.number->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+			ae.number->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 			ae.number->set_text(itos(element_position));
 			ae.hbox->add_child(ae.number);
 		}

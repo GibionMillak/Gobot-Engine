@@ -199,7 +199,7 @@ void EditorResourcePicker::_update_resource_preview(const String &p_path, const 
 		if (p_preview.is_valid()) {
 			int thumbnail_size = (int)EDITOR_GET("filesystem/file_dialog/thumbnail_size") * EDSCALE;
 			if (assign_button->get_button_icon().is_valid()) {
-				preview_rect->set_offset(SIDE_LEFT, assign_button->get_button_icon()->get_width() + assign_button->get_theme_stylebox(CoreStringName(normal))->get_content_inset(SIDE_LEFT) + get_theme_constant(SNAME("h_separation"), SNAME("Button")));
+				preview_rect->set_offset(SIDE_LEFT, assign_button->get_button_icon()->get_width() + assign_button->get_theme_stylebox(CoreStringName(normal))->get_content_inset(SIDE_LEFT) + get_theme_constant(SNAME("gap"), SNAME("Button")));
 			}
 
 			// Resource-specific stretching.
@@ -1522,7 +1522,7 @@ EditorResourcePicker::EditorResourcePicker(bool p_hide_assign_button_controls) {
 	assign_button = memnew(Button);
 	assign_button->set_flat(true);
 	assign_button->set_h_size_flags(SIZE_EXPAND_FILL);
-	assign_button->set_expand_icon(true);
+	assign_button->set_icon_expand(true);
 	assign_button->set_clip_text(true);
 	assign_button->set_theme_type_variation(SNAME("EditorInspectorButton"));
 	assign_button->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
@@ -1720,7 +1720,7 @@ void EditorAudioStreamPicker::_notification(int p_what) {
 void EditorAudioStreamPicker::_update_resource() {
 	EditorResourcePicker::_update_resource();
 
-	Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	Ref<AudioStream> audio_stream = get_edited_resource();
 	if (audio_stream.is_valid() && audio_stream->get_length() > 0.0) {
@@ -1744,7 +1744,7 @@ void EditorAudioStreamPicker::_preview_draw() {
 	get_assign_button()->set_text("");
 
 	Size2i size = stream_preview_rect->get_size();
-	Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 
 	Rect2 rect(Point2(), size);
 

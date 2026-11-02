@@ -80,7 +80,7 @@ void EditorValidationPanel::add_line(int p_id, const String &p_valid_message) {
 
 	Label *label = memnew(Label);
 	label->set_custom_minimum_size(Size2(200 * EDSCALE, 0));
-	label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	label->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	message_container->add_child(label);

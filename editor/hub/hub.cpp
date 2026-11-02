@@ -267,7 +267,7 @@ void Hub::_update_theme(bool p_skip_creation) {
 
 		// Project list.
 		{
-			loading_label->add_theme_font_override(SceneStringName(font), get_theme_font("bold", EditorStringName(EditorFonts)));
+			loading_label->add_theme_font_override(SceneStringName(font_family), get_theme_font("bold", EditorStringName(EditorFonts)));
 			project_list_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("project_list", "Hub"));
 
 			empty_list_create_project->set_button_icon(get_editor_theme_icon("action_add"));
@@ -295,17 +295,17 @@ void Hub::_update_theme(bool p_skip_creation) {
 			tag_error->add_theme_color_override(SceneStringName(font_color), get_theme_color("error_color", EditorStringName(Editor)));
 			tag_edit_error->add_theme_color_override(SceneStringName(font_color), get_theme_color("error_color", EditorStringName(Editor)));
 
-			const int h_separation = get_theme_constant("sidebar_button_icon_separation", "Hub");
-			create_btn->add_theme_constant_override("h_separation", h_separation);
-			import_btn->add_theme_constant_override("h_separation", h_separation);
-			scan_btn->add_theme_constant_override("h_separation", h_separation);
-			open_btn->add_theme_constant_override("h_separation", h_separation);
-			run_btn->add_theme_constant_override("h_separation", h_separation);
-			rename_btn->add_theme_constant_override("h_separation", h_separation);
-			duplicate_btn->add_theme_constant_override("h_separation", h_separation);
-			manage_tags_btn->add_theme_constant_override("h_separation", h_separation);
-			erase_btn->add_theme_constant_override("h_separation", h_separation);
-			erase_missing_btn->add_theme_constant_override("h_separation", h_separation);
+			const int gap = get_theme_constant("sidebar_button_icon_separation", "Hub");
+			create_btn->add_theme_constant_override("gap", gap);
+			import_btn->add_theme_constant_override("gap", gap);
+			scan_btn->add_theme_constant_override("gap", gap);
+			open_btn->add_theme_constant_override("gap", gap);
+			run_btn->add_theme_constant_override("gap", gap);
+			rename_btn->add_theme_constant_override("gap", gap);
+			duplicate_btn->add_theme_constant_override("gap", gap);
+			manage_tags_btn->add_theme_constant_override("gap", gap);
+			erase_btn->add_theme_constant_override("gap", gap);
+			erase_missing_btn->add_theme_constant_override("gap", gap);
 
 			open_btn_container->add_theme_constant_override("separation", 0);
 			open_options_popup->set_item_icon(0, get_editor_theme_icon("status_notification"));
@@ -1360,7 +1360,7 @@ Hub::Hub() {
 			open_btn_container->add_child(memnew(VSeparator));
 
 			open_options_btn = memnew(Button);
-			open_options_btn->set_icon_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
+			open_options_btn->set_icon_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
 			open_options_btn->connect(SceneStringName(pressed), callable_mp(this, &Hub::_open_options_popup));
 			open_btn_container->add_child(open_options_btn);
 
@@ -1518,11 +1518,11 @@ Hub::Hub() {
 		Label *label = memnew(Label(TTRC("Project Tags")));
 		tag_vb->add_child(label);
 		label->set_theme_type_variation("HeaderMedium");
-		label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 
 		label = memnew(Label(TTRC("Click tag to remove it from the project.")));
 		tag_vb->add_child(label);
-		label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 
 		project_tags = memnew(HFlowContainer);
 		tag_vb->add_child(project_tags);
@@ -1533,11 +1533,11 @@ Hub::Hub() {
 		label = memnew(Label(TTRC("All Tags")));
 		tag_vb->add_child(label);
 		label->set_theme_type_variation("HeaderMedium");
-		label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 
 		label = memnew(Label(TTRC("Click tag to add it to the project.")));
 		tag_vb->add_child(label);
-		label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 
 		all_tags = memnew(HFlowContainer);
 		tag_vb->add_child(all_tags);

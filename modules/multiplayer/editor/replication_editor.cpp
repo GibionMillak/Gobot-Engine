@@ -290,8 +290,8 @@ ReplicationEditor::ReplicationEditor() {
 	tree_mc->add_child(tree);
 
 	drop_label = memnew(Label(TTRC("Add properties using the options above, or\ndrag them from the inspector and drop them here.")));
-	drop_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	drop_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	drop_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	drop_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	tree->add_child(drop_label);
 	drop_label->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
 

@@ -1116,7 +1116,7 @@ EditorPropertyLayersGrid::EditorPropertyLayersGrid() {
 }
 
 Size2 EditorPropertyLayersGrid::get_grid_size() const {
-	Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	return Vector2(0, font->get_height(font_size) * 3);
 }
@@ -1299,7 +1299,7 @@ void EditorPropertyLayersGrid::_notification(int p_what) {
 						draw_rect(rect2, color);
 						flag_rects.push_back(rect2);
 
-						Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+						Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 						int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 						Vector2 offset;
 						offset.y = rect2.size.y * 0.75;
@@ -1855,7 +1855,7 @@ void EditorPropertyEasing::_draw_easing() {
 
 	const float exp = get_edited_property_value();
 
-	const Ref<Font> f = get_theme_font(SceneStringName(font), SNAME("Label"));
+	const Ref<Font> f = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	const Color font_color = get_theme_color(is_read_only() ? SNAME("font_uneditable_color") : SceneStringName(font_color), SNAME("LineEdit"));
 	Color line_color;
@@ -1961,7 +1961,7 @@ void EditorPropertyEasing::_notification(int p_what) {
 				preset->set_item_icon(preset->get_item_index(EASING_IN_OUT), get_editor_theme_icon(SNAME("animation_curve_in_out")));
 				preset->set_item_icon(preset->get_item_index(EASING_OUT_IN), get_editor_theme_icon(SNAME("animation_curve_out_in")));
 			}
-			easing_draw->set_custom_minimum_size(Size2(0, get_theme_font(SceneStringName(font), SNAME("Label"))->get_height(get_theme_font_size(SceneStringName(font_size), SNAME("Label"))) * 2));
+			easing_draw->set_custom_minimum_size(Size2(0, get_theme_font(SceneStringName(font_family), SNAME("Label"))->get_height(get_theme_font_size(SceneStringName(font_size), SNAME("Label"))) * 2));
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED: {
@@ -3355,7 +3355,7 @@ EditorPropertyNodePath::EditorPropertyNodePath() {
 	assign->set_h_size_flags(SIZE_EXPAND_FILL);
 	assign->set_clip_text(true);
 	assign->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	assign->set_expand_icon(true);
+	assign->set_icon_expand(true);
 	assign->connect(SceneStringName(pressed), callable_mp(this, &EditorPropertyNodePath::_node_assign));
 	assign->connect(SceneStringName(draw), callable_mp(this, &EditorPropertyNodePath::_assign_draw));
 	assign->connect(SceneStringName(gui_input), callable_mp(this, &EditorPropertyNodePath::_button_input));

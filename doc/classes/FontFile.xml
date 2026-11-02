@@ -16,7 +16,7 @@
 		[b]Note:[/b] If none of the font data sources contain glyphs for a character used in a string, the character in question will be replaced with a box displaying its hexadecimal code.
 		[codeblock]
 		var f = load("res://BarlowCondensed-Bold.ttf")
-		$Label.add_theme_font_override("font", f)
+		$Label.add_theme_font_override("font_family", f)
 		$Label.add_theme_font_size_override("font_size", 64)
 		[/codeblock]
 	</description>

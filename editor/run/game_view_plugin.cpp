@@ -1786,7 +1786,7 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	// and the game workspace is at its minimum size.
 	game_size_label->set_custom_minimum_size(Size2(80 * EDSCALE, 0));
 	game_size_label->set_h_size_flags(SIZE_EXPAND_FILL);
-	game_size_label->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_RIGHT);
+	game_size_label->set_text_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_RIGHT);
 	game_size_label->set_mouse_filter(MouseFilter::MOUSE_FILTER_PASS);
 
 	game_embed_group.instantiate();
@@ -1859,8 +1859,8 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 	panel->add_child(state_container);
 	state_label = memnew(Label());
 	state_container->add_child(state_label);
-	state_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	state_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	state_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	state_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	state_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 	state_label->set_anchors_and_offsets_preset(PRESET_FULL_RECT);
 
@@ -1946,8 +1946,8 @@ void GameViewPluginBase::_window_visibility_changed(bool p_visible) {
 
 void GameViewPluginBase::_create_empty_info_label(const String &p_message) {
 	empty_dock_info = memnew(Label(p_message));
-	empty_dock_info->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	empty_dock_info->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	empty_dock_info->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	empty_dock_info->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	empty_dock_info->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 	GameView::get_dock()->add_child(empty_dock_info);
 }

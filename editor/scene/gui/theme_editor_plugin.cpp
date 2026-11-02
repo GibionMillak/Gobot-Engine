@@ -1233,7 +1233,7 @@ ThemeItemImportTree::ThemeItemImportTree() {
 		button_set->add_child(deselect_all_items_button);
 		deselect_all_items_button->connect(SceneStringName(pressed), callable_mp(this, &ThemeItemImportTree::_deselect_all_data_type_pressed).bind(i));
 
-		total_selected_items_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+		total_selected_items_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 		total_selected_items_label->hide();
 		import_bulk_vb->add_child(total_selected_items_label);
 
@@ -2227,8 +2227,8 @@ ThemeItemEditorDialog::ThemeItemEditorDialog(ThemeTypeEditor *p_theme_type_edito
 	edit_items_message = memnew(Label);
 	edit_items_message->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
 	edit_items_message->set_mouse_filter(Control::MOUSE_FILTER_STOP);
-	edit_items_message->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	edit_items_message->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	edit_items_message->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	edit_items_message->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	edit_items_message->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 	edit_items_tree->add_child(edit_items_message);
 
@@ -3899,7 +3899,7 @@ ThemeTypeEditor::ThemeTypeEditor() {
 
 	type_variation_locked = memnew(Label);
 	type_variation_vb->add_child(type_variation_locked);
-	type_variation_locked->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	type_variation_locked->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	type_variation_locked->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 	type_variation_locked->set_text(TTRC("A type associated with a built-in class cannot be marked as a variation of another type."));
 	type_variation_locked->hide();

@@ -3921,22 +3921,22 @@ void Node3DEditorViewport::_notification(int p_what) {
 			ruler_label->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
 			ruler_label->add_theme_constant_override("outline_size", 4 * EDSCALE);
 			ruler_label->add_theme_font_size_override(SceneStringName(font_size), 15 * EDSCALE);
-			ruler_label->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			ruler_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
 
 			ruler_label_x->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
 			ruler_label_x->add_theme_constant_override("outline_size", 4 * EDSCALE);
 			ruler_label_x->add_theme_font_size_override(SceneStringName(font_size), 15 * EDSCALE);
-			ruler_label_x->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			ruler_label_x->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
 
 			ruler_label_y->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
 			ruler_label_y->add_theme_constant_override("outline_size", 4 * EDSCALE);
 			ruler_label_y->add_theme_font_size_override(SceneStringName(font_size), 15 * EDSCALE);
-			ruler_label_y->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			ruler_label_y->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
 
 			ruler_label_z->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
 			ruler_label_z->add_theme_constant_override("outline_size", 4 * EDSCALE);
 			ruler_label_z->add_theme_font_size_override(SceneStringName(font_size), 15 * EDSCALE);
-			ruler_label_z->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			ruler_label_z->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
 		} break;
 
 		case NOTIFICATION_DRAG_END: {
@@ -4070,7 +4070,7 @@ void Node3DEditorViewport::_draw() {
 	RID ci = surface->get_canvas_item();
 
 	if (message_time > 0) {
-		Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+		Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 		int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 		Point2 msgpos = Point2(_top_left_vbox->get_position().x, get_size().y - 14 * EDSCALE);
 		font->draw_string(ci, msgpos + Point2(1, 1), message, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.8));
@@ -7170,16 +7170,16 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	cinema_label = memnew(Label);
 	cinema_label->set_anchor_and_offset(SIDE_TOP, ANCHOR_BEGIN, 10 * EDSCALE);
 	cinema_label->set_h_grow_direction(GROW_DIRECTION_END);
-	cinema_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	cinema_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	cinema_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	cinema_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	surface->add_child(cinema_label);
 	cinema_label->set_text(TTRC("Cinematic Preview"));
 	cinema_label->hide();
 	previewing_cinema = false;
 
 	locked_label = memnew(Label);
-	locked_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	locked_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	locked_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	locked_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	locked_label->set_h_size_flags(SIZE_SHRINK_CENTER);
 	bottom_center_vbox->add_child(locked_label);
 	locked_label->set_text(TTRC("View Rotation Locked"));

@@ -1666,7 +1666,7 @@ void CodeTextEditor::_update_text_editor_theme() {
 		Control *child = Object::cast_to<Control>(status_bar->get_child(i));
 		if (child) {
 			child->begin_bulk_theme_override();
-			child->add_theme_font_override(SceneStringName(font), status_bar_font);
+			child->add_theme_font_override(Object::cast_to<Label>(child) ? SceneStringName(font_family) : SceneStringName(font), status_bar_font);
 			child->add_theme_font_size_override(SceneStringName(font_size), status_bar_font_size);
 			child->end_bulk_theme_override();
 		}

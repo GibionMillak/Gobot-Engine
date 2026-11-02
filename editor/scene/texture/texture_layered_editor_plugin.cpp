@@ -267,7 +267,7 @@ void TextureLayeredEditor::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			if (info) {
 				Ref<Font> metadata_label_font = get_theme_font(SNAME("expression"), EditorStringName(EditorFonts));
-				info->add_theme_font_override(SceneStringName(font), metadata_label_font);
+				info->add_theme_font_override(SceneStringName(font_family), metadata_label_font);
 			}
 			if (info_toggle) {
 				info_toggle->set_button_icon(get_editor_theme_icon(SNAME("status_info")));

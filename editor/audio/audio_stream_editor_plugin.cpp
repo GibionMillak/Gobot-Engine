@@ -48,8 +48,8 @@ void AudioStreamEditor::_notification(int p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			Ref<Font> font = get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts));
 
-			_current_label->add_theme_font_override(SceneStringName(font), font);
-			_duration_label->add_theme_font_override(SceneStringName(font), font);
+			_current_label->add_theme_font_override(SceneStringName(font_family), font);
+			_duration_label->add_theme_font_override(SceneStringName(font_family), font);
 
 			_play_button->set_button_icon(get_editor_theme_icon(SNAME("playback_play_scene_main")));
 			_stop_button->set_button_icon(get_editor_theme_icon(SNAME("playback_stop")));
@@ -270,7 +270,7 @@ AudioStreamEditor::AudioStreamEditor() {
 	_stop_button->connect(SceneStringName(pressed), callable_mp(this, &AudioStreamEditor::_stop));
 
 	_current_label = memnew(Label);
-	_current_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+	_current_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 	_current_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	_current_label->set_modulate(Color(1, 1, 1, 0.5));
 	hbox->add_child(_current_label);

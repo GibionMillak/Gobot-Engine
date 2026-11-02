@@ -36,7 +36,7 @@ class CheckBox : public Button {
 	GDCLASS(CheckBox, Button);
 
 	struct ThemeCache {
-		int h_separation = 0;
+		int gap = 0;
 		int check_v_offset = 0;
 		Ref<StyleBox> normal_style;
 

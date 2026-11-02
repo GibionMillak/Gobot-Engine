@@ -57,7 +57,7 @@ class OptionButton : public Button {
 		Color font_hover_pressed_color;
 		Color font_disabled_color;
 
-		int h_separation = 0;
+		int gap = 0;
 
 		Ref<Texture2D> arrow_icon;
 		int arrow_margin = 0;

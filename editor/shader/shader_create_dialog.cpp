@@ -586,8 +586,8 @@ ShaderCreateDialog::ShaderCreateDialog() :
 
 	alert = memnew(Dialog);
 	alert->get_label()->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
-	alert->get_label()->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	alert->get_label()->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	alert->get_label()->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	alert->get_label()->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	alert->get_label()->set_custom_minimum_size(Size2(325, 60) * EDSCALE);
 	add_child(alert);
 

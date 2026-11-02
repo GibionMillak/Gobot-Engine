@@ -508,7 +508,7 @@
 			<param index="1" name="clip" type="bool" />
 			<description>
 				If [param clip] is [code]true[/code], makes the canvas item specified by the [param item] RID not draw anything outside of its rect's coordinates. This clipping is fast, but works only with axis-aligned rectangles. This means that rotation is ignored by the clipping rectangle. For more advanced clipping shapes, use [method canvas_item_set_canvas_group_mode] instead.
-				[b]Note:[/b] The equivalent node functionality is found in [member Label.clip_text], [RichTextLabel] (always enabled) and more.
+				[b]Note:[/b] The equivalent node functionality is found in [member Label.text_clip], [RichTextLabel] (always enabled) and more.
 			</description>
 		</method>
 		<method name="canvas_item_set_copy_to_backbuffer">

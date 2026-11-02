@@ -4641,7 +4641,7 @@ FileSystemDock::FileSystemDock() {
 
 	Label *slabel = memnew(Label);
 	slabel->set_text(TTRC("Scanning Files,\nPlease Wait..."));
-	slabel->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	slabel->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	scanning_vb->add_child(slabel);
 
 	scanning_progress = memnew(ProgressBar);

@@ -48,11 +48,12 @@ private:
 	TextServer::OverrunBehavior overrun_behavior = TextServer::OVERRUN_NO_TRIMMING;
 
 	Ref<Texture2D> icon;
-	bool expand_icon = false;
+	bool _icon_expand = false;
 	bool clip_text = false;
-	HorizontalAlignment _alignment = HORIZONTAL_ALIGNMENT_LEFT;
-	HorizontalAlignment horizontal_icon_alignment = HORIZONTAL_ALIGNMENT_LEFT;
-	VerticalAlignment vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER;
+	HorizontalAlignment _text_horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT;
+	VerticalAlignment _text_vertical_alignment = VERTICAL_ALIGNMENT_CENTER;
+	HorizontalAlignment _icon_horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT;
+	VerticalAlignment _icon_vertical_alignment = VERTICAL_ALIGNMENT_CENTER;
 	float _internal_margin[4] = {};
 
 	struct ThemeCache {
@@ -92,9 +93,8 @@ private:
 
 		Ref<Texture2D> icon;
 
-		int h_separation = 0;
 		int icon_max_width = 0;
-		int line_spacing = 0;
+		int gap = 0;
 	} theme_cache;
 
 	void _shape(Ref<TextParagraph> p_paragraph = Ref<TextParagraph>(), String p_text = "") const;
@@ -138,8 +138,8 @@ public:
 	void set_button_icon(const Ref<Texture2D> &p_icon);
 	Ref<Texture2D> get_button_icon() const;
 
-	void set_expand_icon(bool p_enabled);
-	bool is_expand_icon() const;
+	void set_icon_expand(bool p_enabled);
+	bool is_icon_expanded() const;
 
 	void set_flat(bool p_enabled);
 	bool is_flat() const;
@@ -147,13 +147,16 @@ public:
 	void set_clip_text(bool p_enabled);
 	bool get_clip_text() const;
 
-	void set_text_alignment(HorizontalAlignment p_alignment);
-	HorizontalAlignment get_text_alignment() const;
+	void set_text_horizontal_alignment(HorizontalAlignment p_alignment);
+	HorizontalAlignment get_text_horizontal_alignment() const;
 
-	void set_icon_alignment(HorizontalAlignment p_alignment);
-	void set_vertical_icon_alignment(VerticalAlignment p_alignment);
-	HorizontalAlignment get_icon_alignment() const;
-	VerticalAlignment get_vertical_icon_alignment() const;
+	void set_text_vertical_alignment(VerticalAlignment p_alignment);
+	VerticalAlignment get_text_vertical_alignment() const;
+
+	void set_icon_horizontal_alignment(HorizontalAlignment p_alignment);
+	HorizontalAlignment get_icon_horizontal_alignment() const;
+	void set_icon_vertical_alignment(VerticalAlignment p_alignment);
+	VerticalAlignment get_icon_vertical_alignment() const;
 
 	Button(const String &p_text = String());
 	~Button();

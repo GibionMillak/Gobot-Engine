@@ -324,7 +324,7 @@ QuickSettingsDialog::QuickSettingsDialog() {
 			_add_setting_control(TTRC("Color Preset"), "interface/theme/color_preset", theme_option_button);
 
 			custom_theme_label = memnew(Label(TTRC("Custom preset can be further configured in the full settings.")));
-			custom_theme_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+			custom_theme_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 			custom_theme_label->set_custom_minimum_size(Size2(220, 0) * EDSCALE);
 			custom_theme_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 			custom_theme_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);

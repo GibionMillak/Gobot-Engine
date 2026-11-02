@@ -178,7 +178,7 @@ void DynamicFontImportSettingsDialog::_main_prop_changed(const String &p_edited_
 		}
 	}
 
-	font_preview_label->add_theme_font_override(SceneStringName(font), font_preview);
+	font_preview_label->add_theme_font_override(SceneStringName(font_family), font_preview);
 	font_preview_label->add_theme_font_size_override(SceneStringName(font_size), 200 * EDSCALE);
 	font_preview_label->queue_redraw();
 }
@@ -980,7 +980,7 @@ void DynamicFontImportSettingsDialog::open_settings(const String &p_path) {
 		font_preview->set_keep_rounding_remainders(import_settings_data->get("keep_rounding_remainders"));
 		font_preview->set_oversampling(import_settings_data->get("oversampling"));
 	}
-	font_preview_label->add_theme_font_override(SceneStringName(font), font_preview);
+	font_preview_label->add_theme_font_override(SceneStringName(font_family), font_preview);
 	font_preview_label->add_theme_font_size_override(SceneStringName(font_size), 200 * EDSCALE);
 	font_preview_label->queue_redraw();
 
@@ -1049,7 +1049,7 @@ DynamicFontImportSettingsDialog::DynamicFontImportSettingsDialog() :
 	root_vb->add_child(main_pages);
 
 	label_warn = memnew(Label);
-	label_warn->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	label_warn->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	label_warn->set_text("");
 	root_vb->add_child(label_warn);
 	label_warn->hide();
@@ -1076,14 +1076,14 @@ DynamicFontImportSettingsDialog::DynamicFontImportSettingsDialog() :
 	page1_hb->add_child(page1_lbl_vb);
 
 	font_name_label = memnew(Label);
-	font_name_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	font_name_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	font_name_label->set_clip_text(true);
 	font_name_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	page1_lbl_vb->add_child(font_name_label);
 
 	font_preview_label = memnew(Label);
-	font_preview_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	font_preview_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	font_preview_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	font_preview_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	font_preview_label->set_autowrap_mode(TextServer::AUTOWRAP_ARBITRARY);
 	font_preview_label->set_clip_text(true);
 	font_preview_label->set_v_size_flags(Control::SIZE_EXPAND_FILL);
@@ -1121,7 +1121,7 @@ DynamicFontImportSettingsDialog::DynamicFontImportSettingsDialog() :
 	page2_side_vb->add_child(page2_hb_vars);
 
 	label_vars = memnew(Label);
-	label_vars->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	label_vars->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	label_vars->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	label_vars->set_text(TTR("Configuration:"));
 	page2_hb_vars->add_child(label_vars);

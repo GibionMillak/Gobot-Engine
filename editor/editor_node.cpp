@@ -905,7 +905,7 @@ EditorNode::EditorNode() {
 	_update_main_menu_type();
 
 	project_title = memnew(Label);
-	project_title->add_theme_font_override(SceneStringName(font), theme->get_font(SNAME("bold"), EditorStringName(EditorFonts)));
+	project_title->add_theme_font_override(SceneStringName(font_family), theme->get_font(SNAME("bold"), EditorStringName(EditorFonts)));
 	project_title->add_theme_font_size_override(SceneStringName(font_size), theme->get_font_size(SNAME("bold_size"), EditorStringName(EditorFonts)));
 	project_title->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
 	title_bar->get_center_section()->add_child(project_title);

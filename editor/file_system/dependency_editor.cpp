@@ -576,8 +576,8 @@ DependencyEditorOwners::DependencyEditorOwners() {
 
 	empty = memnew(Label);
 	empty->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	empty->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	empty->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	empty->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	empty->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	empty->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	empty->set_custom_minimum_size(Size2(200 * EDSCALE, 0));
 	empty->set_v_size_flags(Control::SIZE_EXPAND_FILL);

@@ -407,11 +407,11 @@ void EditorPropertyArray::update_property() {
 
 	if (!array.is_array()) {
 		if (preview_value) {
-			edit->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
+			edit->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 			edit->set_button_icon(EditorIconManager::get_icon(SNAME("variant_nil")));
 			edit->set_text(array_type_name);
 		} else {
-			edit->set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+			edit->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 			edit->set_button_icon(Ref<Texture2D>());
 			edit->set_text(vformat(TTR("(Nil) %s"), array_type_name));
 		}
@@ -444,12 +444,12 @@ void EditorPropertyArray::update_property() {
 		}
 
 		edit->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
-		edit->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
+		edit->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 		edit->set_button_icon(EditorIconManager::get_icon(editor_get_type_icon_name(array_type_name)));
 		edit->set_text(vformat("%s%s", array_sub_type_name, ctr_str));
 		edit->set_tooltip_text(vformat(TTR("%s%s (size %d)"), array_type_name, array_sub_type_name, size));
 	} else {
-		edit->set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		edit->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 		edit->set_button_icon(Ref<Texture2D>());
 		edit->set_text(vformat(TTR("%s (size %d)"), array_type_name, size));
 	}
@@ -1292,11 +1292,11 @@ void EditorPropertyDictionary::update_property() {
 
 	if (updated_val.get_type() != Variant::DICTIONARY) {
 		if (preview_value) {
-			edit->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
+			edit->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 			edit->set_button_icon(EditorIconManager::get_icon(SNAME("variant_nil")));
 			edit->set_text(dict_type_name);
 		} else {
-			edit->set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+			edit->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 			edit->set_button_icon(Ref<Texture2D>());
 			edit->set_text(vformat(TTR("(Nil) %s"), dict_type_name));
 		}
@@ -1325,12 +1325,12 @@ void EditorPropertyDictionary::update_property() {
 		}
 
 		edit->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
-		edit->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
+		edit->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 		edit->set_button_icon(EditorIconManager::get_icon(editor_get_type_icon_name(dict_type_name)));
 		edit->set_text(vformat("%s%s", dict_sub_type_name, ctr_str));
 		edit->set_tooltip_text(vformat(TTR("%s%s (size %d)"), dict_type_name, dict_sub_type_name, dict.size()));
 	} else {
-		edit->set_text_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+		edit->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 		edit->set_button_icon(Ref<Texture2D>());
 		edit->set_text(vformat(TTR("%s (size %d)"), dict_type_name, dict.size()));
 	}

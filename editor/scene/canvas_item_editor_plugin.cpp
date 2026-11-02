@@ -1337,7 +1337,7 @@ void CanvasItemEditor::add_node_to_scene(Node *p_parent, Node *p_child, const Ve
 void CanvasItemEditor::_draw_text_at_position(Point2 p_position, const String &p_string, Side p_side) {
 	Color color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
 	color.a = 0.8;
-	Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	Size2 text_size = font->get_string_size(p_string, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size);
 	switch (p_side) {
@@ -2356,7 +2356,7 @@ void CanvasItemEditor::_draw_hover() {
 		Ref<Texture2D> node_icon = hovering_results[i].icon;
 		String node_name = hovering_results[i].name;
 
-		Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+		Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 		int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 		Size2 node_name_size = font->get_string_size(node_name, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size);
 		Size2 item_size = Size2(icon_size.x + 4 + node_name_size.x, MAX(icon_size.y, node_name_size.y - 3));
@@ -2438,7 +2438,7 @@ void CanvasItemEditor::_draw_message() {
 		return;
 	}
 
-	Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	const real_t toolbar_margin = _viewport_toolbar->get_theme_constant(SNAME("margin"), SNAME("ViewportToolbar"));
 	const real_t scroll_height = h_scroll->is_visible() ? h_scroll->get_minimum_size().y + toolbar_margin : 0;

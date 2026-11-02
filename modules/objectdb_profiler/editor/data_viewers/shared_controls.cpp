@@ -47,8 +47,8 @@ SpanningHeader::SpanningHeader(const String &p_text) {
 	set_h_size_flags(SizeFlags::SIZE_EXPAND_FILL);
 	Label *title = memnew(Label(p_text));
 	add_child(title);
-	title->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
-	title->set_vertical_alignment(VerticalAlignment::VERTICAL_ALIGNMENT_CENTER);
+	title->set_text_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
+	title->set_text_vertical_alignment(VerticalAlignment::VERTICAL_ALIGNMENT_CENTER);
 }
 
 DarkPanelContainer::DarkPanelContainer() {

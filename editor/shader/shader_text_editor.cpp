@@ -237,7 +237,7 @@ TextShaderPreview::TextShaderPreview() {
 
 	delete_button = memnew(Button);
 	delete_button->set_theme_type_variation("FlatMenuButton");
-	delete_button->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	delete_button->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	delete_button->set_custom_minimum_size(Size2(BUTTON_SIZE, BUTTON_SIZE) * EDSCALE);
 	delete_button->set_anchors_and_offsets_preset(Control::PRESET_TOP_RIGHT);
 	delete_button->set_anchor_and_offset(SIDE_LEFT, 1.0, -BUTTON_SIZE * EDSCALE);
@@ -251,7 +251,7 @@ TextShaderPreview::TextShaderPreview() {
 
 	goto_button = memnew(Button);
 	goto_button->set_theme_type_variation("FlatMenuButton");
-	goto_button->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	goto_button->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	goto_button->set_custom_minimum_size(Size2(BUTTON_SIZE, BUTTON_SIZE) * EDSCALE);
 	goto_button->set_anchors_and_offsets_preset(Control::PRESET_CENTER_RIGHT);
 	goto_button->set_anchor_and_offset(SIDE_LEFT, 1.0, -BUTTON_SIZE * EDSCALE);
@@ -291,7 +291,7 @@ TextShaderPreview::TextShaderPreview() {
 	error_label = memnew(Label);
 	error_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	error_label->set_v_size_flags(SIZE_EXPAND_FILL);
-	error_label->add_theme_constant_override("line_spacing", 0);
+	error_label->add_theme_constant_override("gap", 0);
 	error_box->add_child(error_label);
 }
 

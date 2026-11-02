@@ -767,8 +767,8 @@ MeshLibraryEditor::MeshLibraryEditor() {
 	empty_lib->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	empty_lib->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
 	empty_lib->set_v_size_flags(SIZE_EXPAND_FILL);
-	empty_lib->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	empty_lib->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	empty_lib->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	empty_lib->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	vb->add_child(empty_lib);
 	empty_lib->hide();
 

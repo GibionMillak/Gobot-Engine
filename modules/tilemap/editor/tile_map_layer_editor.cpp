@@ -86,7 +86,7 @@ void TileMapLayerSubEditorPlugin::draw_tile_coords_over_viewport(Control *p_over
 		text += vformat(" %s (%dx%d)", TTR("Drawing Rect:"), Math::abs(rect_size.x) + 1, Math::abs(rect_size.y) + 1);
 	}
 
-	Ref<Font> font = p_overlay->get_theme_font(SceneStringName(font), SNAME("Label"));
+	Ref<Font> font = p_overlay->get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = p_overlay->get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 
 	p_overlay->draw_string(font, msgpos + Point2(1, 1), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.8));
@@ -2368,8 +2368,8 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	missing_source_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	missing_source_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	missing_source_label->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	missing_source_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	missing_source_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	missing_source_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	missing_source_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	missing_source_label->hide();
 	tiles_bottom_panel->add_child(missing_source_label);
 
@@ -2448,8 +2448,8 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	invalid_source_label->set_text(TTRC("Invalid source selected."));
 	invalid_source_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	invalid_source_label->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	invalid_source_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	invalid_source_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	invalid_source_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	invalid_source_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	invalid_source_label->hide();
 	atlas_sources_split_container->add_child(invalid_source_label);
 
@@ -2477,7 +2477,7 @@ TileMapLayerEditorTilesPlugin::TileMapLayerEditorTilesPlugin() {
 	patterns_help_label->set_text(TTRC("Drag and drop or paste a TileMap selection here to store a pattern."));
 	patterns_help_label->set_auto_translate_mode(Node::AUTO_TRANSLATE_MODE_ALWAYS);
 	patterns_help_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
-	patterns_help_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	patterns_help_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	patterns_help_label->set_anchors_and_offsets_preset(Control::PRESET_HCENTER_WIDE);
 	patterns_item_list->add_child(patterns_help_label);
 
@@ -4427,7 +4427,7 @@ void TileMapLayerEditor::_draw_overlay() {
 		}
 
 		// Draw the IDs for debug.
-		/*Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+		/*Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 		for (int x = displayed_rect.position.x; x < (displayed_rect.position.x + displayed_rect.size.x); x++) {
 			for (int y = displayed_rect.position.y; y < (displayed_rect.position.y + displayed_rect.size.y); y++) {
 				custom_overlay->draw_string(font, xform.xform(tile_set->map_to_local(Vector2(x, y))) + Vector2i(-tile_shape_size.x / 2, 0), vformat("%s", Vector2(x, y)));
@@ -4666,8 +4666,8 @@ TileMapLayerEditor::TileMapLayerEditor() {
 	cant_edit_label->set_anchors_and_offsets_preset(Control::PRESET_HCENTER_WIDE);
 	cant_edit_label->set_h_size_flags(SIZE_EXPAND_FILL);
 	cant_edit_label->set_v_size_flags(SIZE_EXPAND_FILL);
-	cant_edit_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	cant_edit_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	cant_edit_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	cant_edit_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	cant_edit_label->hide();
 	main_box_container->add_child(cant_edit_label);
 

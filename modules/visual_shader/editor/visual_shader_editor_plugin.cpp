@@ -980,8 +980,8 @@ void VisualShaderGraphPlugin::update_theme() {
 
 	Ref<Font> label_font = EditorNode::get_singleton()->get_editor_theme()->get_font("main_msdf", EditorStringName(EditorFonts));
 	Ref<Font> label_bold_font = EditorNode::get_singleton()->get_editor_theme()->get_font("main_bold_msdf", EditorStringName(EditorFonts));
-	vs_msdf_fonts_theme->set_font(SceneStringName(font), "Label", label_font);
-	vs_msdf_fonts_theme->set_font(SceneStringName(font), "GraphNodeTitleLabel", label_bold_font);
+	vs_msdf_fonts_theme->set_font(SceneStringName(font_family), "Label", label_font);
+	vs_msdf_fonts_theme->set_font(SceneStringName(font_family), "GraphNodeTitleLabel", label_bold_font);
 	if (!EditorThemeManager::is_dark_icon_and_font()) {
 		// Override the color to white for light themes.
 		vs_msdf_fonts_theme->set_color(SceneStringName(font_color), "GraphNodeTitleLabel", Color(1, 1, 1));
@@ -1161,8 +1161,8 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 		// Add hint label.
 		Label *frame_hint_label = memnew(Label);
 		node->add_child(frame_hint_label);
-		frame_hint_label->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
-		frame_hint_label->set_vertical_alignment(VerticalAlignment::VERTICAL_ALIGNMENT_CENTER);
+		frame_hint_label->set_text_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
+		frame_hint_label->set_text_vertical_alignment(VerticalAlignment::VERTICAL_ALIGNMENT_CENTER);
 		frame_hint_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 		frame_hint_label->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 		frame_hint_label->set_text(TTR("Drag and drop nodes here to attach them."));
@@ -6120,7 +6120,7 @@ void VisualShaderEditor::_notification(int p_what) {
 
 				error_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("Panel")));
 				error_label->begin_bulk_theme_override();
-				error_label->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts)));
+				error_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts)));
 				error_label->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("status_source_size"), EditorStringName(EditorFonts)));
 				error_label->add_theme_color_override(SceneStringName(font_color), error_color);
 				error_label->end_bulk_theme_override();
@@ -7868,7 +7868,7 @@ VisualShaderEditor::VisualShaderEditor() {
 	info_label = memnew(Label);
 	info_label->set_text(vformat(TTR("Hold %s Key To Swap Connections"), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)));
 	info_label->set_anchors_and_offsets_preset(Control::PRESET_BOTTOM_WIDE, PRESET_MODE_MINSIZE, 20);
-	info_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	info_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	info_label->hide();
 	graph->get_top_layer()->add_child(info_label);
 
@@ -8270,8 +8270,8 @@ VisualShaderEditor::VisualShaderEditor() {
 
 	alert = memnew(Dialog);
 	alert->get_label()->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
-	alert->get_label()->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	alert->get_label()->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	alert->get_label()->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	alert->get_label()->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	alert->get_label()->set_custom_minimum_size(Size2(400, 60) * EDSCALE);
 	add_child(alert);
 

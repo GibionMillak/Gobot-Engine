@@ -1088,7 +1088,7 @@ ProjectDialog::ProjectDialog() :
 	iphb->add_child(install_browse);
 
 	msg = memnew(Label);
-	msg->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	msg->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	msg->set_custom_minimum_size(Size2(200, 0) * EDSCALE);
 	msg->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	vb->add_child(msg);
@@ -1170,7 +1170,7 @@ ProjectDialog::ProjectDialog() :
 
 	rd_not_supported = memnew(Label);
 	rd_not_supported->set_text(vformat(TTR("RenderingDevice-based methods not available on this GPU:\n%s\nPlease use the Compatibility renderer."), RenderingServer::get_singleton()->get_video_adapter_name()));
-	rd_not_supported->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	rd_not_supported->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	rd_not_supported->set_custom_minimum_size(Size2(200, 0) * EDSCALE);
 	rd_not_supported->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	rd_not_supported->set_visible(false);
@@ -1180,8 +1180,8 @@ ProjectDialog::ProjectDialog() :
 	l->set_text(TTRC("The renderer can be changed later, but scenes may need to be adjusted."));
 	// Add some extra spacing to separate it from the list above and the buttons below.
 	l->set_custom_minimum_size(Size2(0, 40) * EDSCALE);
-	l->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	l->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	l->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	l->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	l->set_modulate(Color(1, 1, 1, 0.7));
 	renderer_container->add_child(l);
 

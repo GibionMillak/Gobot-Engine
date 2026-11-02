@@ -70,7 +70,7 @@ ConfigPluginDialog::ConfigPluginDialog() :
 		content_vbox->add_child(fields_grid);
 		{
 			Label *name_lbl = memnew(Label);
-			name_lbl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+			name_lbl->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 			name_lbl->set_text(TTR("Plugin Name:"));
 			fields_grid->add_child(name_lbl);
 
@@ -81,7 +81,7 @@ ConfigPluginDialog::ConfigPluginDialog() :
 			fields_grid->add_child(_name_edit);
 
 			_subfolder_lbl = memnew(Label);
-			_subfolder_lbl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+			_subfolder_lbl->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 			_subfolder_lbl->set_text(TTR("Subfolder:"));
 			fields_grid->add_child(_subfolder_lbl);
 
@@ -92,7 +92,7 @@ ConfigPluginDialog::ConfigPluginDialog() :
 			fields_grid->add_child(_subfolder_edit);
 
 			Label *description_lbl = memnew(Label);
-			description_lbl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+			description_lbl->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 			description_lbl->set_text(TTR("Description:"));
 			fields_grid->add_child(description_lbl);
 
@@ -105,7 +105,7 @@ ConfigPluginDialog::ConfigPluginDialog() :
 			fields_grid->add_child(_description_edit);
 
 			Label *author_lbl = memnew(Label);
-			author_lbl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+			author_lbl->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 			author_lbl->set_text(TTR("Author:"));
 			fields_grid->add_child(author_lbl);
 
@@ -116,7 +116,7 @@ ConfigPluginDialog::ConfigPluginDialog() :
 			fields_grid->add_child(_author_edit);
 
 			Label *version_lbl = memnew(Label);
-			version_lbl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+			version_lbl->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 			version_lbl->set_text(TTR("Version:"));
 			fields_grid->add_child(version_lbl);
 
@@ -127,7 +127,7 @@ ConfigPluginDialog::ConfigPluginDialog() :
 			fields_grid->add_child(_version_edit);
 
 			Label *script_name_lbl = memnew(Label);
-			script_name_lbl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+			script_name_lbl->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 			script_name_lbl->set_text(TTR("Script Name:"));
 			fields_grid->add_child(script_name_lbl);
 

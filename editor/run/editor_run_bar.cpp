@@ -523,7 +523,7 @@ EditorRunBar::EditorRunBar() {
 	// Use a button for the indicator since it comes with a background panel and pixel perfect centering of an icon.
 	profiler_autostart_indicator = memnew(Button);
 	profiler_autostart_indicator->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	profiler_autostart_indicator->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	profiler_autostart_indicator->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	profiler_autostart_indicator->set_focus_mode(FOCUS_NONE);
 	profiler_autostart_indicator->set_theme_type_variation("ProfilerAutostartIndicator");
 	profiler_autostart_indicator->connect(SceneStringName(pressed), callable_mp(this, &EditorRunBar::_profiler_autostart_indicator_pressed));

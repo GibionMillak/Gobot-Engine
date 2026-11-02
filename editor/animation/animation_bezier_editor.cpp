@@ -285,7 +285,7 @@ void AnimationBezierTrackEdit::_notification(int p_what) {
 
 			int limit = timeline->get_name_limit();
 
-			const Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+			const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 			const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 			const Ref<Font> source_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
 			const int source_font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts));

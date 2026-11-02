@@ -1066,7 +1066,7 @@ CreateDialog::CreateDialog() :
 
 	filters_button = memnew(MenuButton);
 	filters_button->set_flat(false);
-	filters_button->set_icon_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+	filters_button->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 	filters_button->set_theme_type_variation("FlatMenuButton");
 	filters_button->set_text(TTRC("Filters"));
 	filters_button->set_h_size_flags(Control::SIZE_SHRINK_END);

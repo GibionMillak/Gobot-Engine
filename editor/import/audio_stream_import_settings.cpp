@@ -57,12 +57,12 @@ void AudioStreamImportSettingsDialog::_notification(int p_what) {
 			color_rect->set_color(get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor)));
 
 			_current_label->begin_bulk_theme_override();
-			_current_label->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts)));
+			_current_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts)));
 			_current_label->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("status_source_size"), EditorStringName(EditorFonts)));
 			_current_label->end_bulk_theme_override();
 
 			_duration_label->begin_bulk_theme_override();
-			_duration_label->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts)));
+			_duration_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts)));
 			_duration_label->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("status_source_size"), EditorStringName(EditorFonts)));
 			_duration_label->end_bulk_theme_override();
 
@@ -676,7 +676,7 @@ AudioStreamImportSettingsDialog::AudioStreamImportSettingsDialog() :
 	_stop_button->connect(SceneStringName(pressed), callable_mp(this, &AudioStreamImportSettingsDialog::_stop));
 
 	_current_label = memnew(Label);
-	_current_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+	_current_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 	_current_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	_current_label->set_modulate(Color(1, 1, 1, 0.5));
 	hbox->add_child(_current_label);

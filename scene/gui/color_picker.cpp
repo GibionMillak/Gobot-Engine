@@ -2095,7 +2095,7 @@ ColorPicker::ColorPicker() {
 	real_vbox->add_child(sample_hbc);
 
 	btn_pick = memnew(Button);
-	btn_pick->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	btn_pick->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	sample_hbc->add_child(btn_pick);
 
 	sample = memnew(TextureRect);
@@ -2110,7 +2110,7 @@ ColorPicker::ColorPicker() {
 	sample_hbc->add_child(btn_shape);
 	btn_shape->set_toggle_mode(true);
 	btn_shape->set_tooltip_text(ETR("Select a picker shape."));
-	btn_shape->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	btn_shape->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	btn_shape->set_focus_mode(FOCUS_ALL);
 
 	add_shape(memnew(ColorPickerShapeRectangle(this)));
@@ -2161,7 +2161,7 @@ ColorPicker::ColorPicker() {
 	mode_hbc->add_child(btn_mode);
 	btn_mode->set_toggle_mode(true);
 	btn_mode->set_tooltip_text(ETR("Select a picker mode."));
-	btn_mode->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	btn_mode->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	btn_mode->set_focus_mode(FOCUS_ALL);
 
 	mode_popup = btn_mode->get_popup();
@@ -2233,7 +2233,7 @@ ColorPicker::ColorPicker() {
 
 	text_copy = memnew(Button);
 	hex_hbc->add_child(text_copy);
-	text_copy->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	text_copy->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	text_copy->set_tooltip_text(ETR("Copy the color value."));
 	text_copy->connect(SceneStringName(pressed), callable_mp(this, &ColorPicker::_text_copy_pressed));
 
@@ -2259,7 +2259,7 @@ ColorPicker::ColorPicker() {
 	btn_preset->set_flat(true);
 	btn_preset->set_toggle_mode(true);
 	btn_preset->set_focus_mode(FOCUS_ALL);
-	btn_preset->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
+	btn_preset->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 	btn_preset->set_h_size_flags(SIZE_EXPAND_FILL);
 	btn_preset->connect(SceneStringName(toggled), callable_mp(this, &ColorPicker::_show_hide_preset).bind(btn_preset, preset_container));
 	palette_box->add_child(btn_preset);
@@ -2294,7 +2294,7 @@ ColorPicker::ColorPicker() {
 	btn_recent_preset->set_flat(true);
 	btn_recent_preset->set_toggle_mode(true);
 	btn_recent_preset->set_focus_mode(FOCUS_ALL);
-	btn_recent_preset->set_text_alignment(HORIZONTAL_ALIGNMENT_LEFT);
+	btn_recent_preset->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 	btn_recent_preset->connect(SceneStringName(toggled), callable_mp(this, &ColorPicker::_show_hide_preset).bind(btn_recent_preset, recent_preset_hbc));
 	swatches_vbc->add_child(btn_recent_preset);
 
@@ -2303,7 +2303,7 @@ ColorPicker::ColorPicker() {
 	set_pick_color(Color(1, 1, 1));
 
 	btn_add_preset = memnew(Button);
-	btn_add_preset->set_icon_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	btn_add_preset->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	btn_add_preset->set_tooltip_text(ETR("Add current color as a preset."));
 	btn_add_preset->connect(SceneStringName(pressed), callable_mp(this, &ColorPicker::_add_preset_pressed));
 	preset_container->add_child(btn_add_preset);

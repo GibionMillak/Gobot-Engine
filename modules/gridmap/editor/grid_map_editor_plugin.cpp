@@ -2001,8 +2001,8 @@ GridMapEditor::GridMapEditor() {
 
 	info_message = memnew(Label);
 	info_message->set_text(TTRC("Give a MeshLibrary resource to this GridMap to use its meshes."));
-	info_message->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
-	info_message->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	info_message->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	info_message->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	info_message->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	info_message->set_custom_minimum_size(Size2(100 * EDSCALE, 0));
 	info_message->set_anchors_and_offsets_preset(PRESET_FULL_RECT, PRESET_MODE_KEEP_SIZE, 8 * EDSCALE);
@@ -2236,7 +2236,7 @@ void GridMapEditorPlugin::forward_3d_draw_over_viewport(Control *p_overlay) {
 		return;
 	}
 
-	Ref<Font> font = p_overlay->get_theme_font(SceneStringName(font), SNAME("Label"));
+	Ref<Font> font = p_overlay->get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = p_overlay->get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 
 	p_overlay->draw_string(font, msgpos + Point2(1, 1), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, 0.8));

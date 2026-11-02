@@ -419,7 +419,7 @@ QuickOpenResultContainer::QuickOpenResultContainer() {
 		// Selected filepath
 		file_details_path = memnew(Label);
 		file_details_path->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-		file_details_path->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
+		file_details_path->set_text_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
 		file_details_path->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
 		add_child(file_details_path);
 	}
@@ -1334,7 +1334,7 @@ QuickOpenResultListItem::QuickOpenResultListItem() {
 	name = memnew(HighlightedLabel);
 	name->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	name->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
-	name->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT);
+	name->set_text_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT);
 	text_container->add_child(name);
 
 	path = memnew(HighlightedLabel);
@@ -1412,7 +1412,7 @@ QuickOpenResultGridItem::QuickOpenResultGridItem() {
 	name = memnew(HighlightedLabel);
 	name->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	name->set_text_overrun_behavior(TextServer::OVERRUN_TRIM_ELLIPSIS);
-	name->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
+	name->set_text_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
 	name->add_theme_font_size_override(SceneStringName(font_size), 13 * EDSCALE);
 	vbc->add_child(name);
 }

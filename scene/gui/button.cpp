@@ -178,25 +178,25 @@ void Button::_notification(int p_what) {
 				drawable_size_remained.height -= style_margin_top + style_margin_bottom;
 			}
 
-			const int h_separation = MAX(0, theme_cache.h_separation);
+			const int gap = MAX(0, theme_cache.gap);
 
-			float left_internal_margin_with_h_separation = _internal_margin[SIDE_LEFT];
-			float right_internal_margin_with_h_separation = _internal_margin[SIDE_RIGHT];
-			{ // The width reserved for internal element in derived classes (and h_separation if needed).
+			float left_internal_margin_with_gap = _internal_margin[SIDE_LEFT];
+			float right_internal_margin_with_gap = _internal_margin[SIDE_RIGHT];
+			{ // The width reserved for internal element in derived classes (and gap if needed).
 
 				if (_internal_margin[SIDE_LEFT] > 0.0f) {
-					left_internal_margin_with_h_separation += h_separation;
+					left_internal_margin_with_gap += gap;
 				}
 
 				if (_internal_margin[SIDE_RIGHT] > 0.0f) {
-					right_internal_margin_with_h_separation += h_separation;
+					right_internal_margin_with_gap += gap;
 				}
 
-				drawable_size_remained.width -= left_internal_margin_with_h_separation + right_internal_margin_with_h_separation; // The size after the internal element is stripped.
+				drawable_size_remained.width -= left_internal_margin_with_gap + right_internal_margin_with_gap; // The size after the internal element is stripped.
 			}
 
-			HorizontalAlignment icon_alignment = horizontal_icon_alignment;
-			HorizontalAlignment text_alignment = _alignment;
+			HorizontalAlignment icon_alignment = _icon_horizontal_alignment;
+			HorizontalAlignment text_alignment = _text_horizontal_alignment;
 
 			Color font_color;
 			Color icon_modulate_color(1, 1, 1, 1);
@@ -262,16 +262,16 @@ void Button::_notification(int p_what) {
 				{ // Calculate the drawing size of the icon.
 					icon_size = _icon->get_size();
 
-					if (expand_icon) {
+					if (_icon_expand) {
 						const Size2 text_buf_size = text_buf->get_size();
 						Size2 _size = custom_element_size;
 						if (!is_clipped && icon_alignment != HORIZONTAL_ALIGNMENT_CENTER && text_buf_size.width > 0.0f) {
-							// If there is not enough space for icon and h_separation, h_separation will occupy the space first,
+							// If there is not enough space for icon and gap, gap will occupy the space first,
 							// so the icon's width may be negative. Keep it negative to make it easier to calculate the space
 							// reserved for text later.
-							_size.width -= text_buf_size.width + h_separation;
+							_size.width -= text_buf_size.width + gap;
 						}
-						if (vertical_icon_alignment != VERTICAL_ALIGNMENT_CENTER) {
+						if (_icon_vertical_alignment != VERTICAL_ALIGNMENT_CENTER) {
 							_size.height -= text_buf_size.height;
 						}
 
@@ -301,17 +301,17 @@ void Button::_notification(int p_what) {
 						case HORIZONTAL_ALIGNMENT_FILL:
 						case HORIZONTAL_ALIGNMENT_LEFT: {
 							icon_ofs.x += style_margin_left;
-							icon_ofs.x += left_internal_margin_with_h_separation;
+							icon_ofs.x += left_internal_margin_with_gap;
 						} break;
 
 						case HORIZONTAL_ALIGNMENT_RIGHT: {
 							icon_ofs.x = size.x - style_margin_right;
-							icon_ofs.x -= right_internal_margin_with_h_separation;
+							icon_ofs.x -= right_internal_margin_with_gap;
 							icon_ofs.x -= icon_size.width;
 						} break;
 					}
 
-					switch (vertical_icon_alignment) {
+					switch (_icon_vertical_alignment) {
 						case VERTICAL_ALIGNMENT_CENTER: {
 							icon_ofs.y = (custom_element_size.height - icon_size.height) / 2.0f;
 						}
@@ -334,11 +334,11 @@ void Button::_notification(int p_what) {
 				if (!xl_text.is_empty()) {
 					// Update the size after the icon is stripped. Stripping only when the icon alignments are not center.
 					if (icon_alignment != HORIZONTAL_ALIGNMENT_CENTER) {
-						// Subtract the space's width occupied by icon and h_separation together.
-						drawable_size_remained.width -= icon_size.width + h_separation;
+						// Subtract the space's width occupied by icon and gap together.
+						drawable_size_remained.width -= icon_size.width + gap;
 					}
 
-					if (vertical_icon_alignment != VERTICAL_ALIGNMENT_CENTER) {
+					if (_icon_vertical_alignment != VERTICAL_ALIGNMENT_CENTER) {
 						drawable_size_remained.height -= icon_size.height;
 					}
 				}
@@ -365,16 +365,26 @@ void Button::_notification(int p_what) {
 					case HORIZONTAL_ALIGNMENT_LEFT:
 					case HORIZONTAL_ALIGNMENT_RIGHT: {
 						text_ofs.x += style_margin_left;
-						text_ofs.x += left_internal_margin_with_h_separation;
+						text_ofs.x += left_internal_margin_with_gap;
 						if (icon_alignment == HORIZONTAL_ALIGNMENT_LEFT) {
-							// Offset by the space's width that occupied by icon and h_separation together.
+							// Offset by the space's width that occupied by icon and gap together.
 							text_ofs.x += custom_element_size.width - drawable_size_remained.width;
 						}
 					} break;
 				}
 
-				text_ofs.y = (drawable_size_remained.height - text_buf->get_size().height) / 2.0f + style_margin_top;
-				if (vertical_icon_alignment == VERTICAL_ALIGNMENT_TOP) {
+				text_ofs.y = style_margin_top;
+				switch (_text_vertical_alignment) {
+					case VERTICAL_ALIGNMENT_CENTER:
+						text_ofs.y += (drawable_size_remained.height - text_buf->get_size().height) / 2.0f;
+						break;
+					case VERTICAL_ALIGNMENT_BOTTOM:
+						text_ofs.y += drawable_size_remained.height - text_buf->get_size().height;
+						break;
+					default:
+						break;
+				}
+				if (_icon_vertical_alignment == VERTICAL_ALIGNMENT_TOP) {
 					text_ofs.y += custom_element_size.height - drawable_size_remained.height; // Offset by the icon's height.
 				}
 
@@ -417,18 +427,18 @@ Size2 Button::get_minimum_size_for_text_and_icon(const String &p_text, Ref<Textu
 		minsize.width = 0;
 	}
 
-	if (!expand_icon && p_icon.is_valid()) {
+	if (!_icon_expand && p_icon.is_valid()) {
 		Size2 icon_size = _fit_icon_size(p_icon->get_size());
-		if (vertical_icon_alignment == VERTICAL_ALIGNMENT_CENTER) {
+		if (_icon_vertical_alignment == VERTICAL_ALIGNMENT_CENTER) {
 			minsize.height = MAX(minsize.height, icon_size.height);
 		} else {
 			minsize.height += icon_size.height;
 		}
 
-		if (horizontal_icon_alignment != HORIZONTAL_ALIGNMENT_CENTER) {
+		if (_icon_horizontal_alignment != HORIZONTAL_ALIGNMENT_CENTER) {
 			minsize.width += icon_size.width;
 			if (!xl_text.is_empty() || !p_text.is_empty()) {
-				minsize.width += MAX(0, theme_cache.h_separation);
+				minsize.width += MAX(0, theme_cache.gap);
 			}
 		} else {
 			minsize.width = MAX(minsize.width, icon_size.width);
@@ -438,7 +448,7 @@ Size2 Button::get_minimum_size_for_text_and_icon(const String &p_text, Ref<Textu
 	if (!xl_text.is_empty() || !p_text.is_empty()) {
 		Ref<Font> font = theme_cache.font;
 		float font_height = font->get_height(theme_cache.font_size);
-		if (vertical_icon_alignment == VERTICAL_ALIGNMENT_CENTER) {
+		if (_icon_vertical_alignment == VERTICAL_ALIGNMENT_CENTER) {
 			minsize.height = MAX(font_height, minsize.height);
 		} else {
 			minsize.height += font_height;
@@ -482,7 +492,7 @@ void Button::_shape(Ref<TextParagraph> p_paragraph, String p_text) const {
 	}
 	autowrap_flags = autowrap_flags | autowrap_flags_trim;
 	p_paragraph->set_break_flags(autowrap_flags);
-	p_paragraph->set_line_spacing(theme_cache.line_spacing);
+	p_paragraph->set_line_spacing(theme_cache.gap);
 
 	const String &lang = language.is_empty() ? _get_locale() : language;
 	p_paragraph->add_string(p_text, font, font_size, lang);
@@ -599,17 +609,17 @@ Ref<Texture2D> Button::get_button_icon() const {
 	return icon;
 }
 
-void Button::set_expand_icon(bool p_enabled) {
-	if (expand_icon != p_enabled) {
-		expand_icon = p_enabled;
+void Button::set_icon_expand(bool p_enabled) {
+	if (_icon_expand != p_enabled) {
+		_icon_expand = p_enabled;
 		_queue_update_size_cache();
 		queue_redraw();
 		update_minimum_size();
 	}
 }
 
-bool Button::is_expand_icon() const {
-	return expand_icon;
+bool Button::is_icon_expanded() const {
+	return _icon_expand;
 }
 
 void Button::set_flat(bool p_enabled) {
@@ -637,33 +647,54 @@ bool Button::get_clip_text() const {
 	return clip_text;
 }
 
-void Button::set_text_alignment(HorizontalAlignment p_alignment) {
-	if (_alignment != p_alignment) {
-		_alignment = p_alignment;
+void Button::set_text_horizontal_alignment(HorizontalAlignment p_alignment) {
+	ERR_FAIL_INDEX((int)p_alignment, 4);
+	if (_text_horizontal_alignment != p_alignment) {
+		_text_horizontal_alignment = p_alignment;
 		queue_redraw();
 	}
 }
 
-HorizontalAlignment Button::get_text_alignment() const {
-	return _alignment;
+HorizontalAlignment Button::get_text_horizontal_alignment() const {
+	return _text_horizontal_alignment;
 }
 
-void Button::set_icon_alignment(HorizontalAlignment p_alignment) {
-	if (horizontal_icon_alignment == p_alignment) {
+void Button::set_text_vertical_alignment(VerticalAlignment p_alignment) {
+	ERR_FAIL_INDEX((int)p_alignment, 3);
+	if (_text_vertical_alignment == p_alignment) {
+		return;
+	}
+	_text_vertical_alignment = p_alignment;
+	queue_redraw();
+}
+
+VerticalAlignment Button::get_text_vertical_alignment() const {
+	return _text_vertical_alignment;
+}
+
+void Button::set_icon_horizontal_alignment(HorizontalAlignment p_alignment) {
+	ERR_FAIL_INDEX((int)p_alignment, 3);
+	if (_icon_horizontal_alignment == p_alignment) {
 		return;
 	}
 
-	horizontal_icon_alignment = p_alignment;
+	_icon_horizontal_alignment = p_alignment;
+	_queue_update_size_cache();
 	update_minimum_size();
 	queue_redraw();
 }
 
-void Button::set_vertical_icon_alignment(VerticalAlignment p_alignment) {
-	if (vertical_icon_alignment == p_alignment) {
+HorizontalAlignment Button::get_icon_horizontal_alignment() const {
+	return _icon_horizontal_alignment;
+}
+
+void Button::set_icon_vertical_alignment(VerticalAlignment p_alignment) {
+	ERR_FAIL_INDEX((int)p_alignment, 3);
+	if (_icon_vertical_alignment == p_alignment) {
 		return;
 	}
-	bool need_update_cache = vertical_icon_alignment == VERTICAL_ALIGNMENT_CENTER || p_alignment == VERTICAL_ALIGNMENT_CENTER;
-	vertical_icon_alignment = p_alignment;
+	const bool need_update_cache = _icon_vertical_alignment == VERTICAL_ALIGNMENT_CENTER || p_alignment == VERTICAL_ALIGNMENT_CENTER;
+	_icon_vertical_alignment = p_alignment;
 
 	if (need_update_cache) {
 		_queue_update_size_cache();
@@ -672,55 +703,56 @@ void Button::set_vertical_icon_alignment(VerticalAlignment p_alignment) {
 	queue_redraw();
 }
 
-HorizontalAlignment Button::get_icon_alignment() const {
-	return horizontal_icon_alignment;
-}
-
-VerticalAlignment Button::get_vertical_icon_alignment() const {
-	return vertical_icon_alignment;
+VerticalAlignment Button::get_icon_vertical_alignment() const {
+	return _icon_vertical_alignment;
 }
 
 void Button::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_text", "text"), &Button::set_text);
 	ClassDB::bind_method(D_METHOD("get_text"), &Button::get_text);
-	ClassDB::bind_method(D_METHOD("set_text_overrun_behavior", "overrun_behavior"), &Button::set_text_overrun_behavior);
+	ClassDB::bind_method(D_METHOD("set_text_overrun_behavior", "text_overrun_behavior"), &Button::set_text_overrun_behavior);
 	ClassDB::bind_method(D_METHOD("get_text_overrun_behavior"), &Button::get_text_overrun_behavior);
-	ClassDB::bind_method(D_METHOD("set_autowrap_mode", "autowrap_mode"), &Button::set_autowrap_mode);
+	ClassDB::bind_method(D_METHOD("set_autowrap_mode", "text_autowrap_mode"), &Button::set_autowrap_mode);
 	ClassDB::bind_method(D_METHOD("get_autowrap_mode"), &Button::get_autowrap_mode);
-	ClassDB::bind_method(D_METHOD("set_autowrap_trim_flags", "autowrap_trim_flags"), &Button::set_autowrap_trim_flags);
+	ClassDB::bind_method(D_METHOD("set_autowrap_trim_flags", "text_autowrap_trim_flags"), &Button::set_autowrap_trim_flags);
 	ClassDB::bind_method(D_METHOD("get_autowrap_trim_flags"), &Button::get_autowrap_trim_flags);
 	ClassDB::bind_method(D_METHOD("set_language", "language"), &Button::set_language);
 	ClassDB::bind_method(D_METHOD("get_language"), &Button::get_language);
-	ClassDB::bind_method(D_METHOD("set_button_icon", "texture"), &Button::set_button_icon);
+	ClassDB::bind_method(D_METHOD("set_button_icon", "icon"), &Button::set_button_icon);
 	ClassDB::bind_method(D_METHOD("get_button_icon"), &Button::get_button_icon);
-	ClassDB::bind_method(D_METHOD("set_flat", "enabled"), &Button::set_flat);
+	ClassDB::bind_method(D_METHOD("set_flat", "flat"), &Button::set_flat);
 	ClassDB::bind_method(D_METHOD("is_flat"), &Button::is_flat);
-	ClassDB::bind_method(D_METHOD("set_clip_text", "enabled"), &Button::set_clip_text);
+	ClassDB::bind_method(D_METHOD("set_clip_text", "text_clip"), &Button::set_clip_text);
 	ClassDB::bind_method(D_METHOD("get_clip_text"), &Button::get_clip_text);
-	ClassDB::bind_method(D_METHOD("set_text_alignment", "alignment"), &Button::set_text_alignment);
-	ClassDB::bind_method(D_METHOD("get_text_alignment"), &Button::get_text_alignment);
-	ClassDB::bind_method(D_METHOD("set_icon_alignment", "icon_alignment"), &Button::set_icon_alignment);
-	ClassDB::bind_method(D_METHOD("get_icon_alignment"), &Button::get_icon_alignment);
-	ClassDB::bind_method(D_METHOD("set_vertical_icon_alignment", "vertical_icon_alignment"), &Button::set_vertical_icon_alignment);
-	ClassDB::bind_method(D_METHOD("get_vertical_icon_alignment"), &Button::get_vertical_icon_alignment);
-	ClassDB::bind_method(D_METHOD("set_expand_icon", "enabled"), &Button::set_expand_icon);
-	ClassDB::bind_method(D_METHOD("is_expand_icon"), &Button::is_expand_icon);
+	ClassDB::bind_method(D_METHOD("set_text_horizontal_alignment", "text_horizontal_alignment"), &Button::set_text_horizontal_alignment);
+	ClassDB::bind_method(D_METHOD("get_text_horizontal_alignment"), &Button::get_text_horizontal_alignment);
+	ClassDB::bind_method(D_METHOD("set_text_vertical_alignment", "text_vertical_alignment"), &Button::set_text_vertical_alignment);
+	ClassDB::bind_method(D_METHOD("get_text_vertical_alignment"), &Button::get_text_vertical_alignment);
+	ClassDB::bind_method(D_METHOD("set_icon_horizontal_alignment", "icon_horizontal_alignment"), &Button::set_icon_horizontal_alignment);
+	ClassDB::bind_method(D_METHOD("get_icon_horizontal_alignment"), &Button::get_icon_horizontal_alignment);
+	ClassDB::bind_method(D_METHOD("set_icon_vertical_alignment", "icon_vertical_alignment"), &Button::set_icon_vertical_alignment);
+	ClassDB::bind_method(D_METHOD("get_icon_vertical_alignment"), &Button::get_icon_vertical_alignment);
+	ClassDB::bind_method(D_METHOD("set_icon_expand", "icon_expand"), &Button::set_icon_expand);
+	ClassDB::bind_method(D_METHOD("is_icon_expanded"), &Button::is_icon_expanded);
 
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "text", PROPERTY_HINT_MULTILINE_TEXT), "set_text", "get_text");
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "icon", PROPERTY_HINT_RESOURCE_TYPE, Texture2D::get_class_static()), "set_button_icon", "get_button_icon");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "flat"), "set_flat", "is_flat");
 
-	ADD_GROUP("Text Behavior", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "alignment", PROPERTY_HINT_ENUM, "Left,Center,Right"), "set_text_alignment", "get_text_alignment");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_overrun_behavior", PROPERTY_HINT_ENUM, "Trim Nothing,Trim Characters,Trim Words,Ellipsis (6+ Characters),Word Ellipsis (6+ Characters),Ellipsis (Always),Word Ellipsis (Always)"), "set_text_overrun_behavior", "get_text_overrun_behavior");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "autowrap_mode", PROPERTY_HINT_ENUM, "Off,Arbitrary,Word,Word (Smart)"), "set_autowrap_mode", "get_autowrap_mode");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "autowrap_trim_flags", PROPERTY_HINT_FLAGS, vformat("Trim Spaces After Break:%d,Trim Spaces Before Break:%d", TextServer::BREAK_TRIM_START_EDGE_SPACES, TextServer::BREAK_TRIM_END_EDGE_SPACES)), "set_autowrap_trim_flags", "get_autowrap_trim_flags");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "clip_text"), "set_clip_text", "get_clip_text");
+	ADD_GROUP("Content", "");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "icon", PROPERTY_HINT_RESOURCE_TYPE, Texture2D::get_class_static()), "set_button_icon", "get_button_icon");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "text", PROPERTY_HINT_MULTILINE_TEXT), "set_text", "get_text");
 
-	ADD_GROUP("Icon Behavior", "");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "icon_alignment", PROPERTY_HINT_ENUM, "Left,Center,Right"), "set_icon_alignment", "get_icon_alignment");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "vertical_icon_alignment", PROPERTY_HINT_ENUM, "Top,Center,Bottom"), "set_vertical_icon_alignment", "get_vertical_icon_alignment");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "expand_icon"), "set_expand_icon", "is_expand_icon");
+	ADD_GROUP("Icon Behavior", "icon_");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "icon_horizontal_alignment", PROPERTY_HINT_ENUM, "Left,Center,Right"), "set_icon_horizontal_alignment", "get_icon_horizontal_alignment");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "icon_vertical_alignment", PROPERTY_HINT_ENUM, "Top,Center,Bottom"), "set_icon_vertical_alignment", "get_icon_vertical_alignment");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "icon_expand"), "set_icon_expand", "is_icon_expanded");
+
+	ADD_GROUP("Text Behavior", "text_");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_horizontal_alignment", PROPERTY_HINT_ENUM, "Left,Center,Right"), "set_text_horizontal_alignment", "get_text_horizontal_alignment");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_vertical_alignment", PROPERTY_HINT_ENUM, "Top,Center,Bottom"), "set_text_vertical_alignment", "get_text_vertical_alignment");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_overrun_behavior", PROPERTY_HINT_ENUM, "Trim Nothing,Trim Characters,Trim Words,Ellipsis (6+ Characters),Word Ellipsis (6+ Characters),Ellipsis (Always),Word Ellipsis (Always)"), "set_text_overrun_behavior", "get_text_overrun_behavior");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_autowrap_mode", PROPERTY_HINT_ENUM, "Off,Arbitrary,Word,Word (Smart)"), "set_autowrap_mode", "get_autowrap_mode");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "text_autowrap_trim_flags", PROPERTY_HINT_FLAGS, vformat("Trim Spaces After Break:%d,Trim Spaces Before Break:%d", TextServer::BREAK_TRIM_START_EDGE_SPACES, TextServer::BREAK_TRIM_END_EDGE_SPACES)), "set_autowrap_trim_flags", "get_autowrap_trim_flags");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "text_clip"), "set_clip_text", "get_clip_text");
 
 	ADD_GROUP("Localization", "");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "language", PROPERTY_HINT_LOCALE_ID, ""), "set_language", "get_language");
@@ -753,11 +785,10 @@ void Button::_bind_methods() {
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_ICON, Button, icon);
 
-	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, Button, h_separation);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, Button, icon_max_width);
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, Button, align_to_largest_stylebox);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, Button, line_spacing);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, Button, gap);
 }
 
 Button::Button(const String &p_text) {

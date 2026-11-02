@@ -820,8 +820,8 @@ ConnectDialog::ConnectDialog() :
 
 	empty_tree_label = memnew(Label(TTR("No method found matching given filters.")));
 	method_popup->add_child(empty_tree_label);
-	empty_tree_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	empty_tree_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	empty_tree_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	empty_tree_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	empty_tree_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 
 	script_methods_only = memnew(CheckButton(TTR("Script Methods Only")));
@@ -1809,8 +1809,8 @@ ConnectionsDock::ConnectionsDock() {
 	select_an_object->set_text(TTRC("Select a single node or resource to edit its signals."));
 	select_an_object->set_custom_minimum_size(Size2(100 * EDSCALE, 0));
 	select_an_object->set_v_size_flags(SIZE_EXPAND_FILL);
-	select_an_object->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
-	select_an_object->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	select_an_object->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	select_an_object->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	select_an_object->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	add_child(select_an_object);
 }

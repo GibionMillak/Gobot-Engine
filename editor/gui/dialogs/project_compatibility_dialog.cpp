@@ -139,7 +139,7 @@ bool ProjectCompatibilityDialog::is_backup_requested() const {
 void ProjectCompatibilityDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			_heading_lbl->add_theme_font_override("font", get_theme_font("bold", "EditorFonts"));
+			_heading_lbl->add_theme_font_override(SceneStringName(font_family), get_theme_font("bold", "EditorFonts"));
 		} break;
 	}
 }

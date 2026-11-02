@@ -123,7 +123,7 @@ InputEventConfigContainer::InputEventConfigContainer() {
 	input_event_text = memnew(Label);
 	input_event_text->set_h_size_flags(SIZE_EXPAND_FILL);
 	input_event_text->set_autowrap_mode(TextServer::AutowrapMode::AUTOWRAP_WORD_SMART);
-	input_event_text->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	input_event_text->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	add_child(input_event_text);
 
 	EditorInspectorActionButton *open_config_button = memnew(EditorInspectorActionButton(TTRC("Configure"), SNAME("action_edit")));

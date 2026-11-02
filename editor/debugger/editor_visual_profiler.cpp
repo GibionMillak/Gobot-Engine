@@ -493,7 +493,7 @@ void EditorVisualProfiler::_graph_tex_draw() {
 		return;
 	}
 
-	Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	const Color color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
 	Size2 graph_size = graph->get_size();

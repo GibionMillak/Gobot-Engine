@@ -2551,8 +2551,8 @@ FileDialog::FileDialog() :
 	message = memnew(Label);
 	message->hide();
 	message->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
-	message->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	message->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	message->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	message->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	file_list->add_child(message);
 
 	filename_filter_box = memnew(HBoxContainer);

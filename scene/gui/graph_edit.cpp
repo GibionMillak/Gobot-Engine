@@ -3217,7 +3217,7 @@ GraphEdit::GraphEdit() {
 	zoom_label->set_name(StringName("_zoom_label"));
 	zoom_label->set_visible(show_zoom_label);
 	zoom_label->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
-	zoom_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	zoom_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	zoom_label->set_custom_minimum_size(Size2(48, 0));
 	zoom_label->set_use_parent_material(true);
 	menu_hbox->add_child(zoom_label);

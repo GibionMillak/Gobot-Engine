@@ -68,7 +68,7 @@ Size2 CheckBox::get_minimum_size() const {
 		const Size2 padding = _get_largest_stylebox_size();
 		Size2 content_size = minsize - padding;
 		if (content_size.width > 0 && tex_size.width > 0) {
-			content_size.width += MAX(0, theme_cache.h_separation);
+			content_size.width += MAX(0, theme_cache.gap);
 		}
 		content_size.width += tex_size.width;
 		content_size.height = MAX(content_size.height, tex_size.height);
@@ -129,7 +129,7 @@ bool CheckBox::is_radio() const {
 }
 
 void CheckBox::_bind_methods() {
-	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, CheckBox, h_separation);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, CheckBox, gap);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, CheckBox, check_v_offset);
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_STYLEBOX, CheckBox, normal_style, "normal");
 

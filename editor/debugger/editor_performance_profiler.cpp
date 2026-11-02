@@ -438,8 +438,8 @@ EditorPerformanceProfiler::EditorPerformanceProfiler() {
 
 	info_message = memnew(Label);
 	info_message->set_text(TTRC("Pick one or more items from the list to display the graph."));
-	info_message->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
-	info_message->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	info_message->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	info_message->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	info_message->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	info_message->set_custom_minimum_size(Size2(100 * EDSCALE, 0));
 	info_message->set_anchors_and_offsets_preset(PRESET_FULL_RECT, PRESET_MODE_KEEP_SIZE, 8 * EDSCALE);

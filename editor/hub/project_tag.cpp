@@ -78,7 +78,7 @@ ProjectTag::ProjectTag(const String &p_text, bool p_display_close) {
 	button->set_text(p_text.capitalize());
 	button->set_tooltip_text(p_text.capitalize());
 	button->set_focus_mode(FOCUS_NONE);
-	button->set_icon_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
+	button->set_icon_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
 	button->set_theme_type_variation(SNAME("ProjectTagButton"));
 	button->set_mouse_filter(MOUSE_FILTER_PASS);
 }

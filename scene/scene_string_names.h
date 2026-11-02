@@ -73,6 +73,7 @@ public:
 	const StringName line_separation = "line_separation";
 	const StringName paragraph_separation = "paragraph_separation";
 	const StringName font = "font";
+	const StringName font_family = "font_family";
 	const StringName font_size = "font_size";
 	const StringName font_color = "font_color";
 

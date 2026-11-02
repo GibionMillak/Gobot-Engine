@@ -371,7 +371,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_color("icon_pressed_color", "Button", p_config.icon_pressed_color);
 		p_theme->set_color("icon_disabled_color", "Button", p_config.icon_disabled_color);
 
-		p_theme->set_constant("h_separation", "Button", EDSCALE_RND(4));
+		p_theme->set_constant("gap", "Button", EDSCALE_RND(8));
 		p_theme->set_constant("outline_size", "Button", 0);
 
 		p_theme->set_constant("align_to_largest_stylebox", "Button", 1); // Enabled.
@@ -501,7 +501,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_icon("arrow", "OptionButton", p_theme->get_icon(SNAME("gui_option_arrow"), EditorStringName(EditorIcons)));
 			p_theme->set_constant("arrow_margin", "OptionButton", p_config.widget_margin.x - EDSCALE_RND(2));
 			p_theme->set_constant("modulate_arrow", "OptionButton", true);
-			p_theme->set_constant("h_separation", "OptionButton", EDSCALE_RND(4));
+			p_theme->set_constant("gap", "OptionButton", EDSCALE_RND(8));
 			p_theme->set_constant("outline_size", "OptionButton", 0);
 		}
 
@@ -532,7 +532,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_color("icon_pressed_color", "CheckButton", p_config.icon_pressed_color);
 		p_theme->set_color("icon_disabled_color", "CheckButton", p_config.icon_disabled_color);
 
-		p_theme->set_constant("h_separation", "CheckButton", EDSCALE_RND(8));
+		p_theme->set_constant("gap", "CheckButton", EDSCALE_RND(8));
 		p_theme->set_constant("check_v_offset", "CheckButton", 0);
 		p_theme->set_constant("outline_size", "CheckButton", 0);
 
@@ -569,7 +569,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_color("icon_pressed_color", "CheckBox", p_config.icon_pressed_color);
 			p_theme->set_color("icon_disabled_color", "CheckBox", p_config.icon_disabled_color);
 
-			p_theme->set_constant("h_separation", "CheckBox", EDSCALE_RND(8));
+			p_theme->set_constant("gap", "CheckBox", EDSCALE_RND(8));
 			p_theme->set_constant("check_v_offset", "CheckBox", 0);
 			p_theme->set_constant("outline_size", "CheckBox", 0);
 		}
@@ -1046,7 +1046,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_stylebox(SceneStringName(panel), "FoldableContainer", foldable_container_panel);
 		p_theme->set_stylebox("focus", "FoldableContainer", p_config.button_style_focus);
 
-		p_theme->set_font(SceneStringName(font), "FoldableContainer", p_theme->get_font(SceneStringName(font), SNAME("HeaderSmall")));
+		p_theme->set_font(SceneStringName(font), "FoldableContainer", p_theme->get_font(SceneStringName(font_family), SNAME("HeaderSmall")));
 		p_theme->set_font_size(SceneStringName(font_size), "FoldableContainer", p_theme->get_font_size(SceneStringName(font_size), SNAME("HeaderSmall")));
 
 		p_theme->set_color(SceneStringName(font_color), "FoldableContainer", p_config.font_color);
@@ -1280,7 +1280,9 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_constant("shadow_offset_x", "Label", EDSCALE_RND(1));
 		p_theme->set_constant("shadow_offset_y", "Label", EDSCALE_RND(1));
 		p_theme->set_constant("shadow_outline_size", "Label", EDSCALE_RND(1));
-		p_theme->set_constant("line_spacing", "Label", EDSCALE_RND(3));
+		p_theme->set_constant("gap", "Label", EDSCALE_RND(8));
+		p_theme->set_constant("icon_max_width", "Label", 0);
+		p_theme->set_color("icon_color", "Label", Color(1, 1, 1));
 		p_theme->set_constant("outline_size", "Label", 0);
 
 		// Label with different margins.
@@ -1501,7 +1503,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_constant("shadow_outline_size", "GraphNodeTitleLabel", 4);
 			p_theme->set_constant("shadow_offset_x", "GraphNodeTitleLabel", 0);
 			p_theme->set_constant("shadow_offset_y", "GraphNodeTitleLabel", 1);
-			p_theme->set_constant("line_spacing", "GraphNodeTitleLabel", EDSCALE_RND(3));
+			p_theme->set_constant("gap", "GraphNodeTitleLabel", EDSCALE_RND(3));
 
 			// GraphFrame.
 
@@ -1536,7 +1538,7 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_constant("shadow_offset_y", "GraphFrameTitleLabel", EDSCALE_RND(1));
 			p_theme->set_constant("outline_size", "GraphFrameTitleLabel", 0);
 			p_theme->set_constant("shadow_outline_size", "GraphFrameTitleLabel", EDSCALE_RND(1));
-			p_theme->set_constant("line_spacing", "GraphFrameTitleLabel", EDSCALE_RND(3));
+			p_theme->set_constant("gap", "GraphFrameTitleLabel", EDSCALE_RND(3));
 		}
 
 		// VisualShader reroute node.
@@ -1875,7 +1877,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 
 		// Header LinkButton variation.
 		p_theme->set_type_variation("HeaderSmallLink", "LinkButton");
-		p_theme->set_font(SceneStringName(font), "HeaderSmallLink", p_theme->get_font(SceneStringName(font), SNAME("HeaderSmall")));
+		p_theme->set_font(SceneStringName(font), "HeaderSmallLink", p_theme->get_font(SceneStringName(font_family), SNAME("HeaderSmall")));
 		p_theme->set_font_size(SceneStringName(font_size), "HeaderSmallLink", p_theme->get_font_size(SceneStringName(font_size), SNAME("HeaderSmall")));
 
 		// Flat button variations.
@@ -1997,7 +1999,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_theme->set_type_variation("InspectorActionButton", "Button");
 
 			const float action_extra_margin = EDSCALE_RND(32);
-			p_theme->set_constant("h_separation", "InspectorActionButton", action_extra_margin);
+			p_theme->set_constant("gap", "InspectorActionButton", action_extra_margin);
 
 			Color color_inspector_action = p_config.dark_color_1.lerp(p_config.mono_color, 0.12);
 			color_inspector_action.a = 0.5;
@@ -2525,7 +2527,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			sm_node_end_style->set_border_color(p_config.error_color);
 			p_theme->set_stylebox("node_frame_end", "GraphStateMachine", sm_node_end_style);
 
-			p_theme->set_font("node_title_font", "GraphStateMachine", p_theme->get_font(SceneStringName(font), SNAME("Label")));
+			p_theme->set_font("node_title_font", "GraphStateMachine", p_theme->get_font(SceneStringName(font_family), SNAME("Label")));
 			p_theme->set_font_size("node_title_font_size", "GraphStateMachine", p_theme->get_font_size(SceneStringName(font_size), SNAME("Label")));
 			p_theme->set_color("node_title_font_color", "GraphStateMachine", p_config.font_color);
 

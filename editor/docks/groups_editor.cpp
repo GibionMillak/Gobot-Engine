@@ -943,8 +943,8 @@ GroupsEditor::GroupsEditor() {
 	select_a_node->set_text(TTRC("Select one or more nodes to edit their groups."));
 	select_a_node->set_custom_minimum_size(Size2(100 * EDSCALE, 0));
 	select_a_node->set_v_size_flags(SIZE_EXPAND_FILL);
-	select_a_node->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
-	select_a_node->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	select_a_node->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	select_a_node->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	select_a_node->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	add_child(select_a_node);
 

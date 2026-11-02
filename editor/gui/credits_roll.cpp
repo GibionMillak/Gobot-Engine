@@ -49,7 +49,7 @@
 
 Label *CreditsRoll::_create_label(const String &p_with_text, LabelSize p_size) {
 	Label *label = memnew(Label);
-	label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	label->set_h_size_flags(Control::SIZE_SHRINK_CENTER);
 	label->set_text(p_with_text);
 
@@ -61,12 +61,12 @@ Label *CreditsRoll::_create_label(const String &p_with_text, LabelSize p_size) {
 
 		case LabelSize::HEADER: {
 			label->add_theme_font_size_override(SceneStringName(font_size), font_size_header);
-			label->add_theme_font_override(SceneStringName(font), bold_font);
+			label->add_theme_font_override(SceneStringName(font_family), bold_font);
 		} break;
 
 		case LabelSize::BIG_HEADER: {
 			label->add_theme_font_size_override(SceneStringName(font_size), font_size_big_header);
-			label->add_theme_font_override(SceneStringName(font), bold_font);
+			label->add_theme_font_override(SceneStringName(font_family), bold_font);
 		} break;
 	}
 	content->add_child(label);

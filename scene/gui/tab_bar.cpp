@@ -1750,7 +1750,7 @@ Variant TabBar::_handle_get_drag_data(const String &p_type, const Point2 &p_poin
 	if (!text.is_empty()) {
 		Label *label = memnew(Label(text));
 		label->set_auto_translate_mode(get_auto_translate_mode()); // Reflect how the title is displayed.
-		label->add_theme_font_override(SceneStringName(font), theme_cache.font);
+		label->add_theme_font_override(SceneStringName(font_family), theme_cache.font);
 		label->add_theme_font_size_override(SceneStringName(font_size), theme_cache.font_size);
 		label->add_theme_constant_override(SNAME("outline_size"), theme_cache.outline_size);
 		label->add_theme_color_override(SceneStringName(font_color), theme_cache.font_selected_color);

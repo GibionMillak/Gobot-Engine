@@ -294,8 +294,8 @@ MaterialEditor::MaterialEditor() {
 
 	error_label = memnew(Label);
 	error_label->set_text(TTR("Preview is not available for this shader mode."));
-	error_label->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
-	error_label->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	error_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	error_label->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
 	error_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 
 	layout_error->add_child(error_label);

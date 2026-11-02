@@ -1083,7 +1083,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 
 	Label *remote_login = memnew(Label);
 	remote_login->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	remote_login->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	remote_login->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	remote_login->set_text(TTR("Remote Login"));
 	set_up_settings_vbc->add_child(remote_login);
 
@@ -1199,7 +1199,7 @@ VersionControlEditorPlugin::VersionControlEditorPlugin() {
 	set_up_ssh_passphrase_input->add_child(set_up_ssh_passphrase);
 
 	set_up_warning_text = memnew(Label);
-	set_up_warning_text->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	set_up_warning_text->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	set_up_warning_text->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	set_up_settings_vbc->add_child(set_up_warning_text);
 

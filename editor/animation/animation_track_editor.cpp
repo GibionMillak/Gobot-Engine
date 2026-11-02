@@ -1502,7 +1502,7 @@ void AnimationTimelineEdit::_notification(int p_what) {
 				return;
 			}
 
-			const Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+			const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 			const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 
 			const Ref<StyleBox> &stylebox_time_unavailable = get_theme_stylebox(SNAME("time_unavailable"), SNAME("AnimationTimelineEdit"));
@@ -1747,7 +1747,7 @@ void AnimationTimelineEdit::set_animation(const Ref<Animation> &p_animation, boo
 
 Size2 AnimationTimelineEdit::get_minimum_size() const {
 	Size2 ms = filter_track->get_minimum_size();
-	const Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	ms.height = MAX(ms.height, font->get_height(font_size));
 	ms.width = get_buttons_width() + add_track->get_minimum_size().width + get_editor_theme_icon(SNAME("gui_hsize"))->get_width() + 2 + 8 * EDSCALE;
@@ -2203,7 +2203,7 @@ void AnimationTrackEdit::_notification(int p_what) {
 				}
 			}
 
-			const Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+			const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 			const Ref<Font> source_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
 			const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 			const int source_font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts));
@@ -2664,7 +2664,7 @@ void AnimationTrackEdit::draw_key(int p_index, float p_pixels_sec, int p_x, bool
 	if (animation->track_get_type(track) == Animation::TYPE_METHOD) {
 		bool use_monospace_font = EDITOR_GET("interface/theme/use_monospace_font_for_editor_symbols");
 
-		Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+		Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 		int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 		if (use_monospace_font) {
 			font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
@@ -2795,7 +2795,7 @@ NodePath AnimationTrackEdit::get_path() const {
 
 Size2 AnimationTrackEdit::get_minimum_size() const {
 	Ref<Texture2D> texture = get_editor_theme_icon(SNAME("variant_object"));
-	const Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	const int separation = get_theme_constant(SNAME("v_separation"), SNAME("ItemList"));
 
@@ -3837,7 +3837,7 @@ void AnimationTrackEditGroup::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_DRAW: {
-			const Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+			const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 			const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 			Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
 
@@ -4046,7 +4046,7 @@ void AnimationTrackEditGroup::set_type_and_name(const Ref<Texture2D> &p_type, co
 }
 
 Size2 AnimationTrackEditGroup::get_minimum_size() const {
-	const Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	const int separation = get_theme_constant(SNAME("v_separation"), SNAME("ItemList"));
 
@@ -8209,8 +8209,8 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	info_message = memnew(Label);
 	info_message_vbox->add_child(info_message);
 	info_message->set_text(TTRC("Select an AnimationPlayer node to create and edit animations."));
-	info_message->set_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
-	info_message->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
+	info_message->set_text_vertical_alignment(VERTICAL_ALIGNMENT_CENTER);
+	info_message->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_CENTER);
 	info_message->set_autowrap_mode(TextServer::AUTOWRAP_WORD_SMART);
 	info_message->set_custom_minimum_size(Size2(100 * EDSCALE, 0));
 	info_message->set_anchors_and_offsets_preset(PRESET_FULL_RECT, PRESET_MODE_KEEP_SIZE, 8 * EDSCALE);
@@ -9092,7 +9092,7 @@ void AnimationMarkerEdit::_notification(int p_what) {
 			int limit_end = get_size().width - timeline->get_buttons_width();
 			float scale = timeline->get_zoom_scale();
 
-			Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+			Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 			Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
 
 			// SECTION PREVIEW //
@@ -9511,7 +9511,7 @@ void AnimationMarkerEdit::set_animation(const Ref<Animation> &p_animation, bool 
 
 Size2 AnimationMarkerEdit::get_minimum_size() const {
 	Ref<Texture2D> texture = get_editor_theme_icon(SNAME("variant_object"));
-	Ref<Font> font = get_theme_font(SceneStringName(font), SNAME("Label"));
+	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	int separation = get_theme_constant(SNAME("v_separation"), SNAME("ItemList"));
 
