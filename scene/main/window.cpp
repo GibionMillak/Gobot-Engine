@@ -669,6 +669,15 @@ bool Window::is_maximize_allowed() const {
 	return true;
 }
 
+void Window::request_close() {
+	ERR_MAIN_THREAD_GUARD;
+	if (exclusive_child != nullptr) {
+		return;
+	}
+	_propagate_window_notification(this, NOTIFICATION_WM_CLOSE_REQUEST);
+	emit_signal(SNAME("close_requested"));
+}
+
 void Window::request_attention() {
 	ERR_MAIN_THREAD_GUARD;
 	if (window_id != DisplayServerEnums::INVALID_WINDOW_ID) {
@@ -928,11 +937,7 @@ void Window::_event_callback(DisplayServerEnums::WindowEvent p_event) {
 			emit_signal(SceneStringName(focus_exited));
 		} break;
 		case DisplayServerEnums::WINDOW_EVENT_CLOSE_REQUEST: {
-			if (exclusive_child != nullptr) {
-				break; //has an exclusive child, can't get events until child is closed
-			}
-			_propagate_window_notification(this, NOTIFICATION_WM_CLOSE_REQUEST);
-			emit_signal(SNAME("close_requested"));
+			request_close();
 		} break;
 		case DisplayServerEnums::WINDOW_EVENT_GO_BACK_REQUEST: {
 			_propagate_window_notification(this, NOTIFICATION_WM_GO_BACK_REQUEST);

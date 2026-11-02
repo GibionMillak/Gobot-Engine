@@ -327,6 +327,8 @@ public:
 
 	bool is_maximize_allowed() const;
 
+	// Dispatches a close request unless an exclusive child is open. Handlers decide whether to close.
+	void request_close();
 	void request_attention();
 	void set_taskbar_progress_value(float p_value);
 	void set_taskbar_progress_state(DisplayServerEnums::ProgressState p_state);

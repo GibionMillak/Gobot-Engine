@@ -211,8 +211,7 @@ void EditorHeaderContainer::_on_close_pressed() {
 		w = SceneTree::get_singleton()->get_root();
 	}
 	if (w) {
-		w->propagate_notification(Node::NOTIFICATION_WM_CLOSE_REQUEST);
-		w->emit_signal(SNAME("close_requested"));
+		w->request_close();
 	} else if (SceneTree::get_singleton()) {
 		SceneTree::get_singleton()->quit();
 	}
