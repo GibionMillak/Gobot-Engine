@@ -1,0 +1,12 @@
+--- a/vk_mem_alloc.h
++++ b/vk_mem_alloc.h
+@@ -481,0 +482,2 @@
++    VMA_ALLOCATOR_CREATE_IGNORE_MAX_MEMORY_ALLOCATION_COUNT_BIT = 0x00000400,
++
+@@ -10310,0 +10313 @@
++    bool m_IgnoreMaxMemoryAllocationCount;
+@@ -12993,0 +12997 @@
++    m_IgnoreMaxMemoryAllocationCount((pCreateInfo->flags & VMA_ALLOCATOR_CREATE_IGNORE_MAX_MEMORY_ALLOCATION_COUNT_BIT) != 0),
+@@ -14493 +14497 @@
+-    if(prevDeviceMemoryCount >= m_PhysicalDeviceProperties.limits.maxMemoryAllocationCount)
++    if(!m_IgnoreMaxMemoryAllocationCount && prevDeviceMemoryCount >= m_PhysicalDeviceProperties.limits.maxMemoryAllocationCount)
