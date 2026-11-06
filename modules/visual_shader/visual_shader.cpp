@@ -1032,6 +1032,11 @@ void VisualShader::add_node(Type p_type, const Ref<VisualShaderNode> &p_node, co
 		input->shader_type = p_type;
 	}
 
+	Ref<VisualShaderNodeParameter> parameter = p_node;
+	if (parameter.is_valid()) {
+		parameter->set_parameter_name(validate_parameter_name(parameter->get_parameter_name(), parameter));
+	}
+
 	_queue_update();
 }
 
