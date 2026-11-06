@@ -1536,6 +1536,7 @@
 		</member>
 		<member name="text_editor/external/use_external_editor" type="bool" setter="" getter="">
 			If [code]true[/code], uses an external editor instead of the built-in Script Editor. See also [member text_editor/external/exec_path] and [member text_editor/external/exec_flags].
+			[b]Note:[/b] Files can also be opened with the configured external editor by selecting [b]Open in External Program[/b] in the FileSystem dock, even when this option is disabled.
 		</member>
 		<member name="text_editor/help/help_font_size" type="int" setter="" getter="">
 			The font size to use for the editor help (built-in class reference).
