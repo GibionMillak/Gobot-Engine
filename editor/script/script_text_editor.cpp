@@ -755,6 +755,9 @@ void ScriptTextEditor::_update_background_color() {
 			int warning_start_column = warning.start_column - 1;
 			int warning_end_line = CLAMP(warning.end_line - 1, 0, te->get_line_count() - 1);
 			int warning_end_column = warning.end_column - 1;
+			if (warning.end_line - 1 >= te->get_line_count() - 1) {
+				warning_end_column = te->get_line(warning_end_line).length();
+			}
 			int folded_line_header = te->get_folded_line_header(warning_start_line);
 
 			if (warning_underline_color.a != 0.0) {
@@ -782,6 +785,9 @@ void ScriptTextEditor::_update_background_color() {
 			int error_start_column = error.start_column - 1;
 			int error_end_line = CLAMP(error.end_line - 1, 0, te->get_line_count() - 1);
 			int error_end_column = error.end_column - 1;
+			if (error.end_line - 1 >= te->get_line_count() - 1) {
+				error_end_column = te->get_line(error_end_line).length();
+			}
 			int folded_line_header = te->get_folded_line_header(error_start_line);
 
 			if (error_underline_color.a != 0.0) {
