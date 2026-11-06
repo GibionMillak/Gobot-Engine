@@ -72,7 +72,7 @@ float AudioStreamGenerator::_get_target_rate() const {
 Ref<AudioStreamPlayback> AudioStreamGenerator::instantiate_playback() {
 	Ref<AudioStreamGeneratorPlayback> playback;
 	playback.instantiate();
-	playback->generator = this;
+	playback->_generator = Ref<AudioStreamGenerator>(this);
 	uint32_t target_buffer_size = _get_target_rate() * buffer_len;
 	playback->buffer.resize(Math::nearest_shift(target_buffer_size));
 	playback->buffer.clear();
@@ -185,12 +185,12 @@ int AudioStreamGeneratorPlayback::_mix_internal(AudioFrame *p_buffer, int p_fram
 		skips++;
 	}
 
-	mixed += p_frames / generator->_get_target_rate();
+	mixed += p_frames / _generator->_get_target_rate();
 	return p_frames;
 }
 
 float AudioStreamGeneratorPlayback::get_stream_sampling_rate() {
-	return generator->_get_target_rate();
+	return _generator->_get_target_rate();
 }
 
 void AudioStreamGeneratorPlayback::start(double p_from_pos) {
@@ -223,7 +223,7 @@ void AudioStreamGeneratorPlayback::seek(double p_time) {
 }
 
 void AudioStreamGeneratorPlayback::tag_used_streams() {
-	generator->tag_used(0);
+	_generator->tag_used(0);
 }
 
 void AudioStreamGeneratorPlayback::_bind_methods() {
@@ -236,7 +236,6 @@ void AudioStreamGeneratorPlayback::_bind_methods() {
 }
 
 AudioStreamGeneratorPlayback::AudioStreamGeneratorPlayback() {
-	generator = nullptr;
 	skips = 0;
 	active = false;
 	mixed = 0;
