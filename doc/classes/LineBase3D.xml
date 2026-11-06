@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="LineBase3D" inherits="GeometryInstance3D" api_type="core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+		An abstract base class for 3D lines.
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<constants>
+		<constant name="LOCAL" value="0" enum="MeshAlignment">
+			Align the line normal to the local Y axis of the line node.
+		</constant>
+		<constant name="BILLBOARD" value="1" enum="MeshAlignment">
+			Align the normal of each section of the LineBase3D to face the camera.
+			See also [member SpriteBase3D.billboard] and [enum BaseMaterial3D.BillboardMode]
+		</constant>
+		<constant name="STRETCH" value="0" enum="TilingMode">
+			Assign UVs from [code]0[/code] to [code]1[/code] across the length of the line.
+		</constant>
+		<constant name="TILE" value="1" enum="TilingMode">
+			Assign UVs from [code]0[/code] to current length, across the length of the line.
+		</constant>
+		<constant name="MIX" value="0" enum="MaterialMode">
+			Assign a built-in mix material to the line.
+		</constant>
+		<constant name="ADD" value="1" enum="MaterialMode">
+			Assign a built-in additive material to the line.
+		</constant>
+		<constant name="CUSTOM" value="2" enum="MaterialMode">
+			Assign a custom material to the line.
+		</constant>
+	</constants>
+</class>

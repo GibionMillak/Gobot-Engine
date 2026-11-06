@@ -256,14 +256,14 @@ void Trail3D::set_material_mode(MaterialMode p_material_mode) {
 		return;
 	}
 	if (material.is_null()) {
-		if (material_mode == MATERIAL_MODE_ADD) {
-			if (alignment == MESH_ALIGNMENT_LOCAL) {
+		if (material_mode == MaterialMode::ADD) {
+			if (alignment == MeshAlignment::LOCAL) {
 				material = local_additive_material->duplicate_deep();
 			} else {
 				material = billboard_additive_material->duplicate_deep();
 			}
-		} else if (material_mode == MATERIAL_MODE_MIX) {
-			if (alignment == MESH_ALIGNMENT_LOCAL) {
+		} else if (material_mode == MaterialMode::MIX) {
+			if (alignment == MeshAlignment::LOCAL) {
 				material = local_material->duplicate_deep();
 			} else {
 				material = billboard_material->duplicate_deep();
@@ -280,7 +280,7 @@ Trail3D::MaterialMode Trail3D::get_material_mode() const {
 }
 
 void Trail3D::set_material(Ref<ShaderMaterial> p_material) {
-	if (material_mode != MATERIAL_MODE_CUSTOM) {
+	if (material_mode != MaterialMode::CUSTOM) {
 		return;
 	}
 	material = p_material;
@@ -451,7 +451,7 @@ void Trail3D::_init_clear_mesh() {
 	arrays[RSE::ARRAY_COLOR] = mesh_colors;
 	arrays[RSE::ARRAY_INDEX] = mesh_indices;
 
-	if (alignment == MESH_ALIGNMENT_BILLBOARD) {
+	if (alignment == MeshAlignment::BILLBOARD) {
 		mesh_custom0.resize(_last_vertex_count * 4);
 		mesh_custom0.fill(0.);
 		arrays[RSE::ARRAY_CUSTOM0] = mesh_custom0;
@@ -564,14 +564,14 @@ void Trail3D::_do_rebuild() {
 		real_t length_uv = 0;
 
 		switch (tiling_mode) {
-			case TILING_MODE_TILE: {
+			case TilingMode::TILE: {
 				if (pin_uv) {
 					length_uv = (dist + tiling_offset) * tiling_multiplier;
 				} else {
 					length_uv = dist * tiling_multiplier;
 				}
 			} break;
-			case TILING_MODE_STRETCH: {
+			case TilingMode::STRETCH: {
 				length_uv = ratio * tiling_multiplier;
 			} break;
 			default: {
@@ -597,7 +597,7 @@ void Trail3D::_do_rebuild() {
 
 		Vector3 curve_binormal = normal.cross(tangent);
 		// we don't actually add the side offset if we're billboarding
-		real_t is_billboard = alignment == MESH_ALIGNMENT_BILLBOARD ? 0.0 : 1.0;
+		real_t is_billboard = alignment == MeshAlignment::BILLBOARD ? 0.0 : 1.0;
 		_encode_vertex(p + half_width * curve_binormal * is_billboard, j2, write_vert);
 		_encode_vertex(p, j1, write_vert);
 		_encode_vertex(p - half_width * curve_binormal * is_billboard, j0, write_vert);
@@ -610,7 +610,7 @@ void Trail3D::_do_rebuild() {
 		_encode_uv(Vector2(length_uv, 0.5), j1, write_attrib);
 		_encode_uv(Vector2(length_uv, 1), j0, write_attrib);
 
-		if (alignment == MESH_ALIGNMENT_BILLBOARD) {
+		if (alignment == MeshAlignment::BILLBOARD) {
 			Vector4 custom = Vector4();
 			custom.x = tangent.x;
 			custom.y = tangent.y;
@@ -688,7 +688,7 @@ void Trail3D::_process_trail() {
 			if (pos.distance_squared_to(points[1]) > CMP_EPSILON) {
 				real_t len = (pos - points[1]).length();
 				Vector3 t;
-				if (alignment == MESH_ALIGNMENT_BILLBOARD) {
+				if (alignment == MeshAlignment::BILLBOARD) {
 					t = (pos - points[1]) / len;
 				} else {
 					t = fw;
@@ -729,7 +729,7 @@ void Trail3D::_process_trail() {
 	switch (limit_mode) {
 		case LIMIT_MODE_MAX_LENGTH:
 			if (dist_from_leading > min_section_length && emitting) {
-				if (alignment == MESH_ALIGNMENT_BILLBOARD) {
+				if (alignment == MeshAlignment::BILLBOARD) {
 					tangents.insert(1, (pos - points[1]).normalized());
 				} else {
 					tangents.insert(1, fw);
@@ -737,14 +737,14 @@ void Trail3D::_process_trail() {
 				points.insert(1, pos);
 				normals.insert(1, up);
 				_last_pinned_u += dist_from_leading;
-				if (points.size() > 3 && alignment == MESH_ALIGNMENT_BILLBOARD) {
+				if (points.size() > 3 && alignment == MeshAlignment::BILLBOARD) {
 					tangents.write[2] = (points[1] - points[3]).normalized();
 				}
 			}
 			break;
 		case LIMIT_MODE_LIFETIME:
 			if (dist_from_leading > min_section_length && emitting) {
-				if (alignment == MESH_ALIGNMENT_BILLBOARD) {
+				if (alignment == MeshAlignment::BILLBOARD) {
 					tangents.insert(1, (pos - points[1]).normalized());
 				} else {
 					tangents.insert(1, fw);
@@ -754,7 +754,7 @@ void Trail3D::_process_trail() {
 				_times.insert(1, _time);
 				_last_pinned_u += dist_from_leading;
 				_velocities.insert(1, (points[1] - points[2]).length() / (_times[1] - _times[2]));
-				if (points.size() > 3 && alignment == MESH_ALIGNMENT_BILLBOARD) {
+				if (points.size() > 3 && alignment == MeshAlignment::BILLBOARD) {
 					tangents.write[2] = (points[1] - points[3]).normalized();
 				}
 			}
@@ -844,13 +844,13 @@ void Trail3D::_process_trail() {
 }
 
 void Trail3D::_validate_property(PropertyInfo &p_property) const {
-	if (p_property.name == "material" && material_mode != MATERIAL_MODE_CUSTOM) {
+	if (p_property.name == "material" && material_mode != MaterialMode::CUSTOM) {
 		p_property.usage = PROPERTY_USAGE_NONE;
 	} else if (p_property.name == "lifetime" && limit_mode == LIMIT_MODE_MAX_LENGTH) {
 		p_property.usage = PROPERTY_USAGE_NONE;
 	} else if (p_property.name == "max_length" && limit_mode == LIMIT_MODE_LIFETIME) {
 		p_property.usage = PROPERTY_USAGE_NONE;
-	} else if (p_property.name == "pin_uv" && tiling_mode == TILING_MODE_STRETCH) {
+	} else if (p_property.name == "pin_uv" && tiling_mode == TilingMode::STRETCH) {
 		p_property.usage = PROPERTY_USAGE_NONE;
 	}
 }
@@ -860,31 +860,29 @@ void Trail3D::_ensure_material() {
 		return;
 	}
 	switch (material_mode) {
-		case MATERIAL_MODE_ADD: {
-			if (alignment == MESH_ALIGNMENT_BILLBOARD) {
+		case MaterialMode::ADD: {
+			if (alignment == MeshAlignment::BILLBOARD) {
 				_mesh->surface_set_material(0, billboard_additive_material);
 			} else {
 				_mesh->surface_set_material(0, local_additive_material);
 			}
 
 		} break;
-		case MATERIAL_MODE_MIX: {
-			if (alignment == MESH_ALIGNMENT_BILLBOARD) {
+		case MaterialMode::MIX: {
+			if (alignment == MeshAlignment::BILLBOARD) {
 				_mesh->surface_set_material(0, billboard_material);
 			} else {
 				_mesh->surface_set_material(0, local_material);
 			}
 		} break;
-		case MATERIAL_MODE_CUSTOM: {
+		case MaterialMode::CUSTOM: {
 			_mesh->surface_set_material(0, material);
-		} break;
-		case MATERIAL_MODE_MAX: {
 		} break;
 	}
 }
 
 PackedStringArray Trail3D::get_configuration_warnings() const {
-	PackedStringArray warnings = Line3D::get_configuration_warnings();
+	PackedStringArray warnings = LineBase3D::get_configuration_warnings();
 	return warnings;
 }
 

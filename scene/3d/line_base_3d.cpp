@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  line_3d.cpp                                                           */
+/*  line_base_3d.cpp                                                    */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,27 +28,24 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include "line_3d.h"
+#include "line_base_3d.h"
 
 #include "core/object/class_db.h"
 
-PackedStringArray Line3D::get_configuration_warnings() const {
+PackedStringArray LineBase3D::get_configuration_warnings() const {
 	PackedStringArray warnings = VisualInstance3D::get_configuration_warnings();
 	EXPERIMENTAL_NODE_WARNING;
 	return warnings;
 }
 
-void Line3D::_bind_methods() {
-	BIND_ENUM_CONSTANT(MESH_ALIGNMENT_LOCAL);
-	BIND_ENUM_CONSTANT(MESH_ALIGNMENT_BILLBOARD);
-	BIND_ENUM_CONSTANT(MESH_ALIGNMENT_MAX);
+void LineBase3D::_bind_methods() {
+	BIND_ENUM_CONSTANT_EXT(MeshAlignment::LOCAL, LOCAL);
+	BIND_ENUM_CONSTANT_EXT(MeshAlignment::BILLBOARD, BILLBOARD);
 
-	BIND_ENUM_CONSTANT(TILING_MODE_STRETCH);
-	BIND_ENUM_CONSTANT(TILING_MODE_TILE);
-	BIND_ENUM_CONSTANT(TILING_MAX);
+	BIND_ENUM_CONSTANT_EXT(TilingMode::STRETCH, STRETCH);
+	BIND_ENUM_CONSTANT_EXT(TilingMode::TILE, TILE);
 
-	BIND_ENUM_CONSTANT(MATERIAL_MODE_MIX);
-	BIND_ENUM_CONSTANT(MATERIAL_MODE_ADD);
-	BIND_ENUM_CONSTANT(MATERIAL_MODE_CUSTOM);
-	BIND_ENUM_CONSTANT(MATERIAL_MODE_MAX);
+	BIND_ENUM_CONSTANT_EXT(MaterialMode::MIX, MIX);
+	BIND_ENUM_CONSTANT_EXT(MaterialMode::ADD, ADD);
+	BIND_ENUM_CONSTANT_EXT(MaterialMode::CUSTOM, CUSTOM);
 }
