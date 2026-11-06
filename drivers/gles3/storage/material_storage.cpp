@@ -1427,6 +1427,7 @@ MaterialStorage::MaterialStorage() {
 		actions.render_mode_defines["cull_disabled"] = "#define DO_SIDE_CHECK\n";
 		actions.render_mode_defines["particle_trails"] = "#define USE_PARTICLE_TRAILS\n";
 		actions.render_mode_defines["depth_prepass_alpha"] = "#define USE_OPAQUE_PREPASS\n";
+		actions.render_mode_defines["blend_mul"] = "#define BLEND_MUL\n";
 
 		bool force_lambert = GLOBAL_GET("rendering/shading/overrides/force_lambert_over_burley");
 
