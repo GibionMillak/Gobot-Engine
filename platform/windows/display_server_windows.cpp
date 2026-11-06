@@ -1378,6 +1378,20 @@ static BOOL CALLBACK _MonitorEnumProcOrigin(HMONITOR hMonitor, HDC hdcMonitor, L
 	return TRUE;
 }
 
+struct MonitorRectMatch {
+	RECT rect;
+	bool found = false;
+};
+
+static BOOL CALLBACK _monitor_rect_matches(HMONITOR p_monitor, HDC p_dc, LPRECT p_rect, LPARAM p_userdata) {
+	MonitorRectMatch *match = reinterpret_cast<MonitorRectMatch *>(p_userdata);
+	if (EqualRect(&match->rect, p_rect)) {
+		match->found = true;
+		return FALSE;
+	}
+	return TRUE;
+}
+
 Point2i DisplayServerWindows::_get_screens_origin() const {
 	_THREAD_SAFE_METHOD_
 
@@ -2790,6 +2804,12 @@ void DisplayServerWindows::window_set_mode(DisplayServerEnums::WindowMode p_mode
 			rect.right = wd.width;
 			rect.top = 0;
 			rect.bottom = wd.height;
+		}
+
+		MonitorRectMatch monitor_match{ rect };
+		EnumDisplayMonitors(nullptr, nullptr, _monitor_rect_matches, reinterpret_cast<LPARAM>(&monitor_match));
+		if (monitor_match.found) {
+			OffsetRect(&rect, GetSystemMetrics(SM_CXSIZEFRAME), GetSystemMetrics(SM_CYSIZEFRAME) + GetSystemMetrics(SM_CYCAPTION));
 		}
 
 		ShowWindow(wd.hWnd, SW_RESTORE);
