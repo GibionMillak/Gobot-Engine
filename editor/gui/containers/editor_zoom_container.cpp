@@ -83,9 +83,13 @@ float EditorZoomContainer::get_zoom() const {
 
 void EditorZoomContainer::set_zoom_by_increments(int p_increment_count, bool p_integer_only) {
 	// Remove editor scale from the index computation.
-	const float zoom_noscale = _zoom / MAX(1, EDSCALE);
+	float zoom_noscale = _zoom / MAX(1, EDSCALE);
 
 	if (p_integer_only) {
+		if (Math::is_equal_approx(zoom_noscale, Math::round(zoom_noscale))) {
+			zoom_noscale = Math::round(zoom_noscale);
+		}
+
 		// Only visit integer scaling factors above 100%, and fractions with an integer denominator below 100%
 		// (1/2 = 50%, 1/3 = 33.33%, 1/4 = 25%, …).
 		// This is useful when working on pixel art projects to avoid distortion.
