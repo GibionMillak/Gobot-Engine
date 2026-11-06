@@ -169,7 +169,7 @@ layout(location = 15) in highp uvec4 instance_color_custom_data; // Color packed
 
 #define FLAGS_NON_UNIFORM_SCALE (1 << 4)
 
-uniform highp sampler2D global_shader_parameters_texture; //texunit:-13
+uniform highp sampler2D global_shader_parameters_texture; //texunit:-1
 
 #define GLOBAL_SHADER_UNIFORM_TEXTURE_WIDTH_MASK ((1 << GLOBAL_SHADER_UNIFORM_TEXTURE_WIDTH_SHIFT) - 1)
 #define global_shader_uniforms(m_index) texelFetch(global_shader_parameters_texture, ivec2(int(m_index) & GLOBAL_SHADER_UNIFORM_TEXTURE_WIDTH_MASK, int(m_index) >> GLOBAL_SHADER_UNIFORM_TEXTURE_WIDTH_SHIFT), 0)
@@ -1103,7 +1103,7 @@ decal_data_block;
 
 #endif // USE_DECALS
 
-uniform highp sampler2D global_shader_parameters_texture; //texunit:-13
+uniform highp sampler2D global_shader_parameters_texture; //texunit:-1
 
 #define GLOBAL_SHADER_UNIFORM_TEXTURE_WIDTH_MASK ((1 << GLOBAL_SHADER_UNIFORM_TEXTURE_WIDTH_SHIFT) - 1)
 #define global_shader_uniforms(m_index) texelFetch(global_shader_parameters_texture, ivec2(int(m_index) & GLOBAL_SHADER_UNIFORM_TEXTURE_WIDTH_MASK, int(m_index) >> GLOBAL_SHADER_UNIFORM_TEXTURE_WIDTH_SHIFT), 0)
