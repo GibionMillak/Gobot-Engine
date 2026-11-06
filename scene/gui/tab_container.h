@@ -49,6 +49,7 @@ public:
 	};
 
 private:
+	static constexpr int INVALID_CURRENT_TAB = -2;
 	inline static StringName TAB_CONTAINER_META;
 
 	HBoxContainer *internal_container = nullptr;
@@ -62,8 +63,7 @@ private:
 	bool theme_changing = false;
 	Vector<Control *> children_removing;
 	bool drag_to_rearrange_enabled = false;
-	// Set the default setup current tab to be an invalid index.
-	int setup_current_tab = -2;
+	int _setup_current_tab = INVALID_CURRENT_TAB;
 	bool updating_visibility = false;
 
 	struct ThemeCache {
