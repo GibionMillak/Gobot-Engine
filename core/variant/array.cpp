@@ -293,10 +293,12 @@ void Array::append_array(const Array &p_array) {
 		return;
 	}
 
+	// Conversion can reenter script and replace or clear the source array.
+	const Vector<Variant> source = p_array._p->array;
 	Vector<Variant> validated_array;
-	validated_array.resize(p_array.size());
+	validated_array.resize(source.size());
 
-	const Variant *read = p_array._p->array.ptr();
+	const Variant *read = source.ptr();
 	Variant *write = validated_array.ptrw();
 
 	for (int i = 0; i < validated_array.size(); ++i) {
