@@ -147,7 +147,7 @@ void Sprite2DEditor::_popup_debug_uv_dialog() {
 		error_message = TTR("Can't convert a sprite from a foreign scene.");
 	}
 	Ref<Texture2D> texture = node->get_texture();
-	if (texture.is_null()) {
+	if (texture.is_null() || texture->get_image().is_null()) {
 		error_message = TTR("Can't convert an empty sprite to mesh.");
 	}
 
