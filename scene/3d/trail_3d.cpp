@@ -661,7 +661,7 @@ void Trail3D::_process_trail() {
 	Transform3D tf = get_global_transform_interpolated();
 	Vector3 pos = tf.origin;
 
-	if (!_transform_changed && points.size() == 2 && pos.distance_squared_to(points[1]) < CMP_EPSILON) {
+	if (!_transform_changed && points.size() == 2 && pos.distance_squared_to(points[1]) <= CMP_EPSILON2) {
 		return;
 	}
 
@@ -682,11 +682,14 @@ void Trail3D::_process_trail() {
 			}
 		}
 	} else {
+		if (limit_mode == LIMIT_MODE_LIFETIME) {
+			_times.write[0] = _time;
+		}
 		if (emitting) {
 			points.write[0] = pos;
 			normals.write[0] = up;
-			if (pos.distance_squared_to(points[1]) > CMP_EPSILON) {
-				real_t len = (pos - points[1]).length();
+			const real_t len = (pos - points[1]).length();
+			if (len > 0.0) {
 				Vector3 t;
 				if (alignment == MeshAlignment::BILLBOARD) {
 					t = (pos - points[1]) / len;
@@ -696,7 +699,7 @@ void Trail3D::_process_trail() {
 				tangents.write[0] = t;
 				if (points.size() == 2) {
 					tangents.write[1] = t;
-					if (_previous_position.distance_squared_to(points[1]) <= CMP_EPSILON && limit_mode == LIMIT_MODE_LIFETIME) {
+					if (_previous_position.is_same(points[1]) && limit_mode == LIMIT_MODE_LIFETIME) {
 						_times.write[1] = _time - delta;
 						_velocities.write[1] = head_velocity;
 					}
@@ -782,7 +785,10 @@ void Trail3D::_process_trail() {
 			real_t last_section_length = last_point.distance_to(second_last_point);
 			if (last_section_length > extra_length) {
 				real_t shortened_section_length = last_section_length - extra_length;
-				points.write[last_index] = second_last_point + (last_point - second_last_point) * (shortened_section_length / last_section_length);
+				const real_t ratio = shortened_section_length / last_section_length;
+				points.write[last_index] = second_last_point + (last_point - second_last_point) * ratio;
+				tangents.write[last_index] = tangents[last_index - 1].slerp(tangents[last_index], ratio);
+				normals.write[last_index] = normals[last_index - 1].slerp(normals[last_index], ratio);
 			} else {
 				points.remove_at(last_index);
 				normals.remove_at(last_index);
@@ -814,7 +820,10 @@ void Trail3D::_process_trail() {
 			real_t speed_distance = _velocities[last_index] * delta;
 
 			if (distance > 0.) {
-				points.write[last_index] += dir / distance * MIN(distance, speed_distance);
+				const real_t ratio = MIN(speed_distance / distance, 1.0);
+				points.write[last_index] += dir * ratio;
+				tangents.write[last_index] = tangents[last_index].slerp(tangents[last_index - 1], ratio);
+				normals.write[last_index] = normals[last_index].slerp(normals[last_index - 1], ratio);
 			}
 			if (speed_distance > distance) {
 				points.remove_at(last_index);
@@ -831,9 +840,14 @@ void Trail3D::_process_trail() {
 			if (points.size() == 2 && _times[0] - _times[1] > lifetime) {
 				if (distance > CMP_EPSILON) {
 					real_t speed_distance = _velocities[1] * delta;
-					points.write[1] += dir / distance * MIN(distance, speed_distance);
+					const real_t ratio = MIN(speed_distance / distance, 1.0);
+					points.write[1] += dir * ratio;
+					tangents.write[1] = tangents[1].slerp(tangents[0], ratio);
+					normals.write[1] = normals[1].slerp(normals[0], ratio);
 				} else {
 					points.write[1] = points[0];
+					tangents.write[1] = tangents[0];
+					normals.write[1] = normals[0];
 				}
 			}
 		}
