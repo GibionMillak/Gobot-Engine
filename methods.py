@@ -1010,20 +1010,20 @@ def compress_buffer_zstd(buffer: bytes, env):
     # but costs some extra decompression time (+30%). It's not helping at high levels.
     level = 20 if env["production"] else 7
     ldm = False if env["production"] or env.dev_build else True
-    if sys.version_info >= (3, 14):
+    try:
         import compression.zstd
-
-        CP = compression.zstd.CompressionParameter
-        options = {CP.compression_level: level, CP.enable_long_distance_matching: ldm}
-        return compression.zstd.compress(buffer, options=options)
-    else:
+    except ImportError:
         try:
             import zstandard
         except ImportError:
-            print_error("Python versions earlier than 3.14 require the `zstandard` module")
+            print_error("The Python `zstandard` module is required when `compression.zstd` is unavailable.")
             sys.exit(255)
         params = zstandard.ZstdCompressionParameters.from_level(level, enable_ldm=ldm)
         return zstandard.ZstdCompressor(compression_params=params).compress(buffer)
+
+    CP = compression.zstd.CompressionParameter
+    options = {CP.compression_level: level, CP.enable_long_distance_matching: ldm}
+    return compression.zstd.compress(buffer, options=options)
 
 
 def compress_buffer(buffer: bytes) -> bytes:
