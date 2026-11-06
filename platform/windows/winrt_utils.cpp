@@ -278,7 +278,7 @@ HRESULT WinRTUtils::activation_factory(const String &p_class_name, REFIID p_iid,
 		ERR_FAIL_COND_V(FAILED(GD_CoIncrementMTAUsage(&mta_cookie)), E_ABORT);
 		res = GD_RoGetActivationFactory(name->get_ptr(), p_iid, p_factory);
 	}
-	if (res == (HRESULT)0x80004001 || res == (HRESULT)0x80004002) {
+	if (res == (HRESULT)0x80004001 || res == (HRESULT)0x80004002 || res == (HRESULT)0x80040154) {
 		print_verbose(vformat("RoGetActivationFactory(%s) not supported.", p_class_name));
 		return res;
 	}
