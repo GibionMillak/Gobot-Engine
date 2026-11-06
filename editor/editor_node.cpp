@@ -2217,8 +2217,8 @@ void EditorNode::edit_item(Object *p_object, Object *p_editing_owner, bool p_set
 	for (EditorPlugin *plugin : available_plugins) {
 		if (active_plugins[owner_id].has(plugin)) {
 			// Plugin was already active, just change the object and ensure it's visible.
-			plugin->make_visible(true);
 			plugin->edit(p_object);
+			plugin->make_visible(true);
 			if (p_set_current) {
 				plugin->set_current();
 			}
@@ -2227,8 +2227,8 @@ void EditorNode::edit_item(Object *p_object, Object *p_editing_owner, bool p_set
 
 		if (active_plugins.has(plugin->get_instance_id())) {
 			// Plugin is already active, but as self-owning, so it needs a separate check.
-			plugin->make_visible(true);
 			plugin->edit(p_object);
+			plugin->make_visible(true);
 			if (p_set_current) {
 				plugin->set_current();
 			}
@@ -2255,8 +2255,8 @@ void EditorNode::edit_item(Object *p_object, Object *p_editing_owner, bool p_set
 		}
 
 		if (!need_to_add && to_fold.is_empty()) {
-			plugin->make_visible(true);
 			plugin->edit(p_object);
+			plugin->make_visible(true);
 		} else {
 			for (EditorPropertyResource *epres : to_fold) {
 				epres->fold_resource();
