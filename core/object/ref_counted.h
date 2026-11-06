@@ -33,6 +33,8 @@
 #include "core/object/object.h"
 #include "core/templates/safe_refcount.h"
 
+#include <type_traits>
+
 class RefCounted : public Object {
 	GDCLASS(RefCounted, Object);
 	SafeRefCount refcount;
@@ -127,6 +129,7 @@ public:
 	}
 
 	operator Variant() const {
+		static_assert(std::is_base_of_v<RefCounted, T>, "Ref conversion requires a complete RefCounted type.");
 		return Variant(reference);
 	}
 
