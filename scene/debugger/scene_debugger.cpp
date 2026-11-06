@@ -513,9 +513,9 @@ Error SceneDebugger::_msg_runtime_node_select_set_node_type(const Array &p_args)
 }
 
 Error SceneDebugger::_msg_runtime_node_select_set_ci_tool(const Array &p_args) {
-	ERR_FAIL_COND_V(p_args.is_empty(), ERR_INVALID_DATA);
+	ERR_FAIL_COND_V(p_args.size() != 2, ERR_INVALID_DATA);
 	CanvasItemManipulator::Tool tool = (CanvasItemManipulator::Tool)p_args[0];
-	RuntimeNodeSelect::get_singleton()->_set_ci_tool(tool);
+	RuntimeNodeSelect::get_singleton()->_set_ci_tool(tool, p_args[1]);
 	return OK;
 }
 
