@@ -68,6 +68,7 @@ struct [[nodiscard]] Quaternion {
 	Quaternion inverse() const;
 	Quaternion log() const;
 	Quaternion exp() const;
+	Quaternion get_nearest_log(const Quaternion &p_neighbor_log) const;
 	_FORCE_INLINE_ real_t dot(const Quaternion &p_q) const;
 	real_t angle_to(const Quaternion &p_to) const;
 
@@ -76,7 +77,6 @@ struct [[nodiscard]] Quaternion {
 
 	Quaternion slerp(const Quaternion &p_to, real_t p_weight) const;
 	Quaternion slerpni(const Quaternion &p_to, real_t p_weight) const;
-	static Quaternion blend_log(const Quaternion &p_from_q, const Quaternion &p_from_ln, const Quaternion &p_to_ln, const Quaternion &p_to_in_from_ln, real_t p_weight);
 	Quaternion spherical_cubic_interpolate(const Quaternion &p_b, const Quaternion &p_pre_a, const Quaternion &p_post_b, real_t p_weight) const;
 	Quaternion spherical_cubic_interpolate_in_time(const Quaternion &p_b, const Quaternion &p_pre_a, const Quaternion &p_post_b, real_t p_weight, real_t p_b_t, real_t p_pre_a_t, real_t p_post_b_t) const;
 

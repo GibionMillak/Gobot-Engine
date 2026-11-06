@@ -109,6 +109,18 @@ Quaternion Quaternion::exp() const {
 	return Quaternion(src_v, theta);
 }
 
+// Preserve logarithm continuity by selecting the nearest equivalent 720-degree phase.
+Quaternion Quaternion::get_nearest_log(const Quaternion &p_neighbor_log) const {
+	constexpr real_t PHASE = 2 * real_t(Math::TAU);
+	const Vector3 neighbor(p_neighbor_log.x, p_neighbor_log.y, p_neighbor_log.z);
+	Vector3 axis(x, y, z);
+	const real_t angle = 2 * Math::atan2(axis.length(), w);
+	axis = axis.is_zero_approx() ? neighbor.normalized() : axis.normalized();
+	const real_t phase_count = Math::round((neighbor.dot(axis) - angle) / PHASE);
+	const Vector3 nearest = axis * (angle + phase_count * PHASE);
+	return Quaternion(nearest.x, nearest.y, nearest.z, 0);
+}
+
 Quaternion Quaternion::slerp(const Quaternion &p_to, real_t p_weight) const {
 #ifdef MATH_CHECKS
 	ERR_FAIL_COND_V_MSG(!is_normalized(), Quaternion(), "The start quaternion " + operator String() + " must be normalized.");
@@ -174,27 +186,6 @@ Quaternion Quaternion::slerpni(const Quaternion &p_to, real_t p_weight) const {
 			invFactor * from.w + newFactor * p_to.w);
 }
 
-// Blends the expmap results without converting back to quaternions.
-Quaternion Quaternion::blend_log(const Quaternion &p_from_q, const Quaternion &p_from_ln, const Quaternion &p_to_ln, const Quaternion &p_to_in_from_ln, real_t p_weight) {
-	Vector3 from_ln = Vector3(p_from_ln.x, p_from_ln.y, p_from_ln.z);
-	Vector3 to_ln = Vector3(p_to_ln.x, p_to_ln.y, p_to_ln.z);
-	Vector3 to_in_from_ln = Vector3(p_to_in_from_ln.x, p_to_in_from_ln.y, p_to_in_from_ln.z);
-	// Simply rotating a point from "from_q" to "to_q" in the expmap based on "from_q" has an error depending on the Lie bracket,
-	// so the rotated point should be generated from "to_ln" by the inverse right Jacobian approximation: https://arxiv.org/html/1812.01537#A2.E144
-	real_t theta = to_in_from_ln.length();
-	Vector3 cross = to_in_from_ln.cross(to_ln);
-	to_ln += to_in_from_ln + cross * 0.5;
-	if (theta >= CMP_EPSILON) {
-		real_t c = 1.0 / (theta * theta);
-		if (!Math::is_equal_approx(theta, (real_t)Math::PI)) {
-			c -= (1.0 + Math::cos(theta)) / (2.0 * theta * Math::sin(theta)); // Avoid zero div.
-		}
-		to_ln += to_in_from_ln.cross(cross) * c;
-	}
-	Vector3 blended = from_ln.lerp(to_ln, p_weight);
-	return p_from_q * Quaternion(blended.x, blended.y, blended.z, 0).exp();
-}
-
 Quaternion Quaternion::spherical_cubic_interpolate(const Quaternion &p_b, const Quaternion &p_pre_a, const Quaternion &p_post_b, real_t p_weight) const {
 #ifdef MATH_CHECKS
 	ERR_FAIL_COND_V_MSG(!is_normalized(), Quaternion(), "The start quaternion " + operator String() + " must be normalized.");
@@ -219,31 +210,17 @@ Quaternion Quaternion::spherical_cubic_interpolate(const Quaternion &p_b, const 
 	bool flip3 = flip2 ? to_q.dot(post_q) <= 0 : std::signbit(to_q.dot(post_q));
 	post_q = flip3 ? -post_q : post_q;
 
-	// Calc by Expmap in from_q space.
-	Quaternion ln_from = Quaternion(0, 0, 0, 0);
-	Quaternion ln_to = (from_q.inverse() * to_q).log();
-	Quaternion ln_pre = (from_q.inverse() * pre_q).log();
-	Quaternion ln_post = (from_q.inverse() * post_q).log();
-	Quaternion ln = Quaternion(0, 0, 0, 0);
-	ln.x = Math::cubic_interpolate(ln_from.x, ln_to.x, ln_pre.x, ln_post.x, p_weight);
-	ln.y = Math::cubic_interpolate(ln_from.y, ln_to.y, ln_pre.y, ln_post.y, p_weight);
-	ln.z = Math::cubic_interpolate(ln_from.z, ln_to.z, ln_pre.z, ln_post.z, p_weight);
-	Quaternion from_ln = ln;
-	Quaternion to_in_from_ln = ln_to;
-
-	// Calc by Expmap in to_q space.
-	ln_from = (to_q.inverse() * from_q).log();
-	ln_to = Quaternion(0, 0, 0, 0);
-	ln_pre = (to_q.inverse() * pre_q).log();
-	ln_post = (to_q.inverse() * post_q).log();
-	ln = Quaternion(0, 0, 0, 0);
-	ln.x = Math::cubic_interpolate(ln_from.x, ln_to.x, ln_pre.x, ln_post.x, p_weight);
-	ln.y = Math::cubic_interpolate(ln_from.y, ln_to.y, ln_pre.y, ln_post.y, p_weight);
-	ln.z = Math::cubic_interpolate(ln_from.z, ln_to.z, ln_pre.z, ln_post.z, p_weight);
-	Quaternion to_ln = ln;
-
-	// To cancel error made by Expmap ambiguity, do blending.
-	return blend_log(from_q, from_ln, to_ln, to_in_from_ln, p_weight);
+	const Quaternion reference = from_q.slerp(to_q, p_weight).normalized();
+	const Quaternion inverse_reference = reference.inverse();
+	const Quaternion log_from = (inverse_reference * from_q).log();
+	const Quaternion log_to = (inverse_reference * to_q).log();
+	const Quaternion log_pre = (inverse_reference * pre_q).log();
+	const Quaternion log_post = (inverse_reference * post_q).log();
+	Quaternion logarithm(0, 0, 0, 0);
+	logarithm.x = Math::cubic_interpolate(log_from.x, log_to.x, log_pre.x, log_post.x, p_weight);
+	logarithm.y = Math::cubic_interpolate(log_from.y, log_to.y, log_pre.y, log_post.y, p_weight);
+	logarithm.z = Math::cubic_interpolate(log_from.z, log_to.z, log_pre.z, log_post.z, p_weight);
+	return reference * logarithm.exp();
 }
 
 Quaternion Quaternion::spherical_cubic_interpolate_in_time(const Quaternion &p_b, const Quaternion &p_pre_a, const Quaternion &p_post_b, real_t p_weight,
@@ -271,31 +248,17 @@ Quaternion Quaternion::spherical_cubic_interpolate_in_time(const Quaternion &p_b
 	bool flip3 = flip2 ? to_q.dot(post_q) <= 0 : std::signbit(to_q.dot(post_q));
 	post_q = flip3 ? -post_q : post_q;
 
-	// Calc by Expmap in from_q space.
-	Quaternion ln_from = Quaternion(0, 0, 0, 0);
-	Quaternion ln_to = (from_q.inverse() * to_q).log();
-	Quaternion ln_pre = (from_q.inverse() * pre_q).log();
-	Quaternion ln_post = (from_q.inverse() * post_q).log();
-	Quaternion ln = Quaternion(0, 0, 0, 0);
-	ln.x = Math::cubic_interpolate_in_time(ln_from.x, ln_to.x, ln_pre.x, ln_post.x, p_weight, p_b_t, p_pre_a_t, p_post_b_t);
-	ln.y = Math::cubic_interpolate_in_time(ln_from.y, ln_to.y, ln_pre.y, ln_post.y, p_weight, p_b_t, p_pre_a_t, p_post_b_t);
-	ln.z = Math::cubic_interpolate_in_time(ln_from.z, ln_to.z, ln_pre.z, ln_post.z, p_weight, p_b_t, p_pre_a_t, p_post_b_t);
-	Quaternion from_ln = ln;
-	Quaternion to_in_from_ln = ln_to;
-
-	// Calc by Expmap in to_q space.
-	ln_from = (to_q.inverse() * from_q).log();
-	ln_to = Quaternion(0, 0, 0, 0);
-	ln_pre = (to_q.inverse() * pre_q).log();
-	ln_post = (to_q.inverse() * post_q).log();
-	ln = Quaternion(0, 0, 0, 0);
-	ln.x = Math::cubic_interpolate_in_time(ln_from.x, ln_to.x, ln_pre.x, ln_post.x, p_weight, p_b_t, p_pre_a_t, p_post_b_t);
-	ln.y = Math::cubic_interpolate_in_time(ln_from.y, ln_to.y, ln_pre.y, ln_post.y, p_weight, p_b_t, p_pre_a_t, p_post_b_t);
-	ln.z = Math::cubic_interpolate_in_time(ln_from.z, ln_to.z, ln_pre.z, ln_post.z, p_weight, p_b_t, p_pre_a_t, p_post_b_t);
-	Quaternion to_ln = ln;
-
-	// To cancel error made by Expmap ambiguity, do blending.
-	return blend_log(from_q, from_ln, to_ln, to_in_from_ln, p_weight);
+	const Quaternion reference = from_q.slerp(to_q, p_weight).normalized();
+	const Quaternion inverse_reference = reference.inverse();
+	const Quaternion log_from = (inverse_reference * from_q).log();
+	const Quaternion log_to = (inverse_reference * to_q).log();
+	const Quaternion log_pre = (inverse_reference * pre_q).log();
+	const Quaternion log_post = (inverse_reference * post_q).log();
+	Quaternion logarithm(0, 0, 0, 0);
+	logarithm.x = Math::cubic_interpolate_in_time(log_from.x, log_to.x, log_pre.x, log_post.x, p_weight, p_b_t, p_pre_a_t, p_post_b_t);
+	logarithm.y = Math::cubic_interpolate_in_time(log_from.y, log_to.y, log_pre.y, log_post.y, p_weight, p_b_t, p_pre_a_t, p_post_b_t);
+	logarithm.z = Math::cubic_interpolate_in_time(log_from.z, log_to.z, log_pre.z, log_post.z, p_weight, p_b_t, p_pre_a_t, p_post_b_t);
+	return reference * logarithm.exp();
 }
 
 Quaternion::operator String() const {
