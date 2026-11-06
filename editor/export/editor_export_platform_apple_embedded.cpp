@@ -1913,6 +1913,10 @@ Error EditorExportPlatformAppleEmbedded::_export_project_helper(const Ref<Editor
 			if (unzGetCurrentFileInfo(src_pkg_zip, &scan_info, scan_fname, ZIP_FNAME_MAX, nullptr, 0, nullptr, 0) != UNZ_OK) {
 				break;
 			}
+			if (String::utf8(scan_fname).begins_with("MoltenVK.xcframework/")) {
+				config_data.has_moltenvk = true;
+				break;
+			}
 			scan_ret = unzGoToNextFile(src_pkg_zip);
 		}
 	}
