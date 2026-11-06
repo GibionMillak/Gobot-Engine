@@ -3851,8 +3851,12 @@ void HierarchyDock::_normalize_drop(Node *&to_node, int &to_pos, int p_type) {
 
 		to_node = to_node->get_parent();
 	} else if (p_type == 2) {
-		// Drop as first child, among others.
+		// Instance-owned children precede the first visible insertion slot.
 		to_pos = 0;
+		const int child_count = to_node->get_child_count(false);
+		while (to_pos < child_count && !_is_node_visible(to_node->get_child(to_pos, false))) {
+			to_pos++;
+		}
 	}
 }
 
