@@ -696,6 +696,11 @@ Files extracted from upstream source:
   by CMake). Bump the version number for miniupnpc in that file when upgrading.
 
 
+Patches:
+
+- `0001-minixml-bounds-checks.patch`: Bounds checks for truncated XML attributes, namespace prefixes, and tag lookahead.
+
+
 ## minizip
 
 - Upstream: https://github.com/madler/zlib

@@ -1,0 +1,11 @@
+--- a/src/minixml.c
++++ b/src/minixml.c
+@@ -65,0 +66,2 @@
++			if(p->xml >= p->xmlend)
++				return -1;
+@@ -144,0 +147,2 @@
++					if(p->xml >= p->xmlend)
++						return;
+@@ -195 +199 @@
+-						if(i>0 && p->datafunc && *(p->xml + 1) == '/')
++						if(i>0 && p->datafunc && (p->xml + 1) < p->xmlend && *(p->xml + 1) == '/')
