@@ -52,6 +52,7 @@ private:
 	Vector<Ref<EditorDebuggerSession>> sessions;
 
 	bool is_feature_enabled = true;
+	bool _was_feature_disabled_mid_play = false;
 	int node_type = RuntimeNodeSelect::NODE_TYPE_NONE;
 	bool selection_visible = true;
 	int ci_tool = CanvasItemManipulator::TOOL_SELECT;
@@ -182,6 +183,7 @@ class GameView : public VBoxContainer {
 	EditorDock *game_dock = nullptr;
 
 	bool is_feature_enabled = true;
+	bool _was_feature_disabled_mid_play = false;
 	int active_sessions = 0;
 	ObjectID _dock_before_start;
 	ScriptEditorDebugger *embedded_script_debugger = nullptr;

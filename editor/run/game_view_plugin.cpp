@@ -67,10 +67,6 @@
 #include "servers/display/display_server.h"
 
 void GameViewDebugger::_session_started(Ref<EditorDebuggerSession> p_session) {
-	if (!is_feature_enabled) {
-		return;
-	}
-
 	Dictionary settings;
 	settings["debugger/max_node_selection"] = EDITOR_GET("debugger/max_node_selection");
 	settings["editors/2d/selection_rectangle_color"] = EDITOR_GET("editors/2d/selection_rectangle_color");
@@ -165,10 +161,11 @@ void GameViewDebugger::_session_started(Ref<EditorDebuggerSession> p_session) {
 }
 
 void GameViewDebugger::_session_stopped() {
-	if (!is_feature_enabled) {
+	if (!is_feature_enabled && !_was_feature_disabled_mid_play) {
 		return;
 	}
 
+	_was_feature_disabled_mid_play = false;
 	emit_signal(SNAME("session_stopped"));
 }
 
@@ -387,6 +384,7 @@ void GameViewDebugger::setup_session(int p_session_id) {
 void GameViewDebugger::_feature_profile_changed() {
 	Ref<EditorFeatureProfile> profile = EditorFeatureProfileManager::get_singleton()->get_current_profile();
 	is_feature_enabled = profile.is_null() || !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_GAME);
+	_was_feature_disabled_mid_play = !is_feature_enabled && EditorRunBar::get_singleton()->is_playing();
 }
 
 void GameViewDebugger::_bind_methods() {
@@ -638,7 +636,7 @@ void GameView::_play_pressed() {
 }
 
 void GameView::_stop_pressed() {
-	if (!is_feature_enabled) {
+	if (!is_feature_enabled && !_was_feature_disabled_mid_play) {
 		return;
 	}
 
@@ -659,8 +657,11 @@ void GameView::_stop_pressed() {
 		}
 	}
 	_dock_before_start = ObjectID();
+	_was_feature_disabled_mid_play = false;
 
-	InspectorDock::get_inspector_singleton()->disconnect(SNAME("edited_object_changed"), callable_mp(this, &GameView::_inspector_object_changed));
+	if (InspectorDock::get_inspector_singleton()->is_connected(SNAME("edited_object_changed"), callable_mp(this, &GameView::_inspector_object_changed))) {
+		InspectorDock::get_inspector_singleton()->disconnect(SNAME("edited_object_changed"), callable_mp(this, &GameView::_inspector_object_changed));
+	}
 }
 
 void GameView::_embedding_completed() {
@@ -711,7 +712,7 @@ void GameView::_inspector_object_changed() {
 void GameView::_update_debugger_buttons() {
 	bool empty = active_sessions == 0;
 
-	suspend_button->set_disabled(empty);
+	suspend_button->set_disabled(empty || !is_feature_enabled);
 	camera_override_button->set_disabled(empty);
 	speed_state_button->set_disabled(empty);
 	game_size_label->set_visible(!empty);
@@ -1483,6 +1484,22 @@ void GameView::_feature_profile_changed() {
 	bool is_profile_null = profile.is_null();
 
 	is_feature_enabled = is_profile_null || !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_GAME);
+	_was_feature_disabled_mid_play = !is_feature_enabled && EditorRunBar::get_singleton()->is_playing();
+	if (!is_feature_enabled) {
+		if (!node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE]->is_pressed()) {
+			node_type_button[RuntimeNodeSelect::NODE_TYPE_NONE]->set_pressed(true);
+			_node_type_pressed(RuntimeNodeSelect::NODE_TYPE_NONE);
+		}
+		suspend_button->set_pressed(false);
+		camera_override_button->set_pressed(false);
+		_reset_time_scales();
+		if (debug_mute_audio) {
+			_debug_mute_audio_button_pressed();
+		}
+		// An embedded game must not remain trapped in a dock that is now inaccessible.
+		_window_close_request();
+	}
+	suspend_button->set_disabled(active_sessions == 0 || !is_feature_enabled);
 
 	bool is_3d_enabled = is_profile_null || !profile->is_feature_disabled(EditorFeatureProfile::FEATURE_3D);
 	if (!is_3d_enabled && node_type_button[RuntimeNodeSelect::NODE_TYPE_3D]->is_pressed()) {
