@@ -78,7 +78,7 @@ void ScalableContainer::_notification(int p_what) {
 
 static void _get_occupied_area(Node *p_node, Rect2 &r_rect) {
 	if (Control *control = Object::cast_to<Control>(p_node)) {
-		r_rect.expand_to(control->get_global_rect().position + control->get_bound_minimum_size());
+		r_rect.expand_to(control->get_rect().position + control->get_bound_minimum_size());
 	}
 	for (Node *child : p_node->iterate_children<false>()) {
 		_get_occupied_area(child, r_rect);
@@ -88,7 +88,7 @@ static void _get_occupied_area(Node *p_node, Rect2 &r_rect) {
 Size2 ScalableContainer::get_minimum_size() const {
 	// Preview content may use a root that does not calculate its children's size.
 	Rect2 occupied_area;
-	occupied_area.position = get_global_rect().position;
+	occupied_area.position = get_rect().position;
 	for (Node *child : iterate_children()) {
 		_get_occupied_area(child, occupied_area);
 	}
