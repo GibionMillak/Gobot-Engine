@@ -2476,6 +2476,9 @@ void DisplayServerX11::window_set_transient(DisplayServerEnums::WindowID p_windo
 			if ((xwa.map_state == IsViewable) && !wd_parent.no_focus && !wd_window.is_popup && _window_focus_check()) {
 				_set_input_focus(wd_parent.x11_window, RevertToPointerRoot);
 			}
+		} else if (wd_window.focused && wd_window.ime_active && wd_parent.is_popup && xwa.map_state == IsViewable) {
+			// Override-redirect popups need focus restored directly after a nested IME window closes.
+			_set_input_focus(wd_parent.x11_window, RevertToPointerRoot);
 		}
 	} else {
 		ERR_FAIL_COND(!windows.has(p_parent));
