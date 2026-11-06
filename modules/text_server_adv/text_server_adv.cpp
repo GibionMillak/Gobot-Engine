@@ -5769,6 +5769,33 @@ double TextServerAdvanced::_shaped_text_fit_to_width(const RID &p_shaped, double
 		}
 	}
 
+	if (!sd->objects.is_empty()) {
+		const Vector<ShapedTextDataAdvanced::Span> *spans = &sd->spans;
+		if (sd->parent.is_valid()) {
+			const ShapedTextDataAdvanced *parent = shaped_owner.get_or_null(sd->parent);
+			ERR_FAIL_NULL_V(parent, 0.0);
+			ERR_FAIL_COND_V(!parent->valid.is_set(), 0.0);
+			spans = &parent->spans;
+		}
+
+		double offset = 0.0;
+		for (const Glyph &glyph : sd->glyphs) {
+			const int span_index = glyph.span_index + sd->first_span;
+			Variant key;
+			if ((glyph.flags & GRAPHEME_IS_EMBEDDED_OBJECT) && span_index >= 0 && span_index < spans->size()) {
+				key = (*spans)[span_index].embedded_key;
+			}
+			if (key != Variant()) {
+				auto &object = sd->objects[key];
+				const int axis = sd->orientation == ORIENTATION_HORIZONTAL ? 0 : 1;
+				object.rect.position[axis] = offset;
+				offset += object.rect.size[axis];
+			} else {
+				offset += glyph.advance * glyph.repeat;
+			}
+		}
+	}
+
 	if (Math::floor(p_width) < Math::floor(justification_width)) {
 		sd->fit_width_minimum_reached = true;
 	}
