@@ -47,6 +47,7 @@ static const float earth_gravity = 9.80665;
 	CGFloat last_edr_headroom;
 	NSTimeInterval begin_timestamp[max_touches];
 	CGPoint begin_delta[max_touches];
+	int _touch_counts[max_touches];
 }
 
 @property(assign, nonatomic) BOOL isActive;
@@ -131,7 +132,7 @@ static const float earth_gravity = 9.80665;
 		[self registerForTraitChanges:@[ [UITraitUserInterfaceStyle class] ] withTarget:self action:@selector(traitCollectionDidChangeWithView:previousTraitCollection:)];
 	}
 
-	[self initTouches];
+	[self clearTouches];
 
 	self.multipleTouchEnabled = YES;
 
@@ -301,12 +302,6 @@ static const float earth_gravity = 9.80665;
 
 // MARK: Touches
 
-- (void)initTouches {
-	for (int i = 0; i < max_touches; i++) {
-		godot_touches[i] = nullptr;
-	}
-}
-
 - (int)getTouchIDForTouch:(UITouch *)p_touch {
 	int first = -1;
 	for (int i = 0; i < max_touches; i++) {
@@ -335,6 +330,9 @@ static const float earth_gravity = 9.80665;
 		}
 		if (godot_touches[i] == p_touch) {
 			godot_touches[i] = nullptr;
+			begin_timestamp[i] = 0.0;
+			begin_delta[i] = CGPointMake(0, 0);
+			_touch_counts[i] = 0;
 		} else {
 			++remaining;
 		}
@@ -345,6 +343,9 @@ static const float earth_gravity = 9.80665;
 - (void)clearTouches {
 	for (int i = 0; i < max_touches; i++) {
 		godot_touches[i] = nullptr;
+		begin_timestamp[i] = 0.0;
+		begin_delta[i] = CGPointMake(0, 0);
+		_touch_counts[i] = 0;
 	}
 }
 
@@ -354,6 +355,7 @@ static const float earth_gravity = 9.80665;
 		ERR_FAIL_COND(tid == -1);
 		CGPoint touchPoint = [touch locationInView:self];
 		begin_timestamp[tid] = [touch timestamp];
+		_touch_counts[tid] = touch.tapCount;
 		begin_delta[tid] = CGPointMake(0, 0);
 		DisplayServerAppleEmbedded::get_singleton()->touch_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, true, touch.tapCount > 1, false);
 	}
@@ -386,9 +388,9 @@ static const float earth_gravity = 9.80665;
 	for (UITouch *touch in touches) {
 		int tid = [self getTouchIDForTouch:touch];
 		ERR_FAIL_COND(tid == -1);
-		[self removeTouch:touch];
 		CGPoint touchPoint = [touch locationInView:self];
-		DisplayServerAppleEmbedded::get_singleton()->touch_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, false, false, false);
+		DisplayServerAppleEmbedded::get_singleton()->touch_press(tid, touchPoint.x * self.contentScaleFactor, touchPoint.y * self.contentScaleFactor, false, _touch_counts[tid] > 1, false);
+		[self removeTouch:touch];
 	}
 }
 
