@@ -353,12 +353,12 @@ void UndoRedo::_process_operation_list(List<Operation>::Element *r_elements, boo
 		Operation &op = r_elements->get();
 
 		Object *obj = ObjectDB::get_instance(op.object);
-		if (!obj) { //may have been deleted and this is fine
-			continue;
-		}
-
 		switch (op.type) {
 			case Operation::TYPE_METHOD: {
+				if (!op.callable.is_valid()) {
+					continue;
+				}
+
 				if (p_execute) {
 					Callable::CallError ce;
 					Variant ret;
@@ -374,7 +374,7 @@ void UndoRedo::_process_operation_list(List<Operation>::Element *r_elements, boo
 #endif
 				}
 
-				if (method_callback) {
+				if (method_callback && obj) {
 					Vector<Variant> binds;
 					if (op.callable.is_custom()) {
 						CallableCustomBind *ccb = dynamic_cast<CallableCustomBind *>(op.callable.get_custom());
@@ -397,6 +397,10 @@ void UndoRedo::_process_operation_list(List<Operation>::Element *r_elements, boo
 				}
 			} break;
 			case Operation::TYPE_PROPERTY: {
+				if (!obj) {
+					continue;
+				}
+
 				if (p_execute) {
 					obj->set(op.name, op.value);
 #ifdef TOOLS_ENABLED
