@@ -523,7 +523,9 @@
 	DisplayServerMacOS::WindowData &wd = ds->get_window(window_id);
 
 	NSPoint delta = NSMakePoint([event deltaX], [event deltaY]);
-	NSPoint mpos = [event locationInWindow];
+	const CGPoint global_position = CGEventGetLocation([event CGEvent]);
+	const NSPoint screen_position = NSMakePoint(global_position.x, CGDisplayBounds(CGMainDisplayID()).size.height - global_position.y);
+	NSPoint mpos = [wd.window_object convertPointFromScreen:screen_position];
 
 	if (ds->update_mouse_wrap(wd, delta, mpos, [event timestamp])) {
 		return;
@@ -555,9 +557,11 @@
 	mm->set_relative_screen_position(relativeMotion);
 	ds->get_key_modifier_state([event modifierFlags], mm);
 
-	const NSRect contentRect = [wd.window_view frame];
-	if (NSPointInRect([event locationInWindow], contentRect) && [NSWindow windowNumberAtPoint:[NSEvent mouseLocation] belowWindowWithWindowNumber:0 /*topmost*/] == [wd.window_object windowNumber]) {
-		ds->mouse_enter_window(window_id);
+	if (ds->get_mouseover_window() != window_id) {
+		const NSRect content_rect = [wd.window_view frame];
+		if (NSPointInRect(mpos, content_rect) && [NSWindow windowNumberAtPoint:[NSEvent mouseLocation] belowWindowWithWindowNumber:0 /*topmost*/] == [wd.window_object windowNumber]) {
+			ds->mouse_enter_window(window_id);
+		}
 	}
 
 	Input::get_singleton()->parse_input_event(mm);
