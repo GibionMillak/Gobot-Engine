@@ -2303,6 +2303,7 @@ GDScriptParser::ContinueNode *GDScriptParser::parse_continue() {
 
 GDScriptParser::ForNode *GDScriptParser::parse_for() {
 	ForNode *n_for = alloc_node<ForNode>();
+	make_completion_context(COMPLETION_DECLARATION, n_for);
 
 	if (consume(GDScriptTokenizer::Token::IDENTIFIER, R"(Expected loop variable name after "for".)")) {
 		n_for->variable = parse_identifier();
@@ -2350,6 +2351,14 @@ GDScriptParser::ForNode *GDScriptParser::parse_for() {
 	suite->is_in_loop = true;
 	n_for->loop = parse_suite(R"("for" block)", suite);
 	complete_extents(n_for);
+
+#ifdef TOOLS_ENABLED
+	// The loop variable belongs to the body scope, which did not exist at its declaration.
+	SuiteNode *previous_suite = current_suite;
+	current_suite = suite;
+	override_completion_context(n_for, COMPLETION_DECLARATION, n_for);
+	current_suite = previous_suite;
+#endif
 
 	// Reset break/continue state.
 	can_break = could_break;
