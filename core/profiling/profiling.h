@@ -188,18 +188,31 @@ namespace apple::instruments {
 extern os_log_t LOG;
 extern os_log_t LOG_TRACING;
 
-typedef void (*DeferFunc)();
-
-class Defer {
+class Zone {
 public:
-	explicit Defer(DeferFunc p_fn) :
-			_fn(p_fn) {}
-	~Defer() {
-		_fn();
+	Zone() = default;
+	~Zone() {
+		end();
+	}
+
+	Zone(const Zone &p_other) = delete;
+	Zone &operator=(const Zone &p_other) = delete;
+
+	void begin(const char *p_name) {
+		end();
+		_id = os_signpost_id_generate(LOG_TRACING);
+		os_signpost_interval_begin(LOG_TRACING, _id, "Zone", "%{public}s", p_name);
+	}
+
+	void end() {
+		if (_id != OS_SIGNPOST_ID_NULL) {
+			os_signpost_interval_end(LOG_TRACING, _id, "Zone");
+			_id = OS_SIGNPOST_ID_NULL;
+		}
 	}
 
 private:
-	DeferFunc _fn;
+	os_signpost_id_t _id = OS_SIGNPOST_ID_NULL;
 };
 
 } // namespace apple::instruments
@@ -208,22 +221,14 @@ private:
 	os_signpost_event_emit(apple::instruments::LOG, OS_SIGNPOST_ID_EXCLUSIVE, "Frame");
 
 #define GodotProfileZoneGroupedFirst(m_group_name, m_zone_name) \
-	os_signpost_interval_begin(apple::instruments::LOG_TRACING, OS_SIGNPOST_ID_EXCLUSIVE, m_zone_name); \
-	apple::instruments::DeferFunc _GD_VARNAME_CONCAT_(defer__fn, _, m_group_name) = []() { \
-		os_signpost_interval_end(apple::instruments::LOG_TRACING, OS_SIGNPOST_ID_EXCLUSIVE, m_zone_name); \
-	}; \
-	apple::instruments::Defer _GD_VARNAME_CONCAT_(__instruments_defer_zone_end__, _, m_group_name)(_GD_VARNAME_CONCAT_(defer__fn, _, m_group_name));
+	apple::instruments::Zone _GD_VARNAME_CONCAT_(instruments_zone, _, m_group_name); \
+	_GD_VARNAME_CONCAT_(instruments_zone, _, m_group_name).begin(m_zone_name);
 
 #define GodotProfileZoneGroupedEndEarly(m_group_name, m_zone_name) \
-	_GD_VARNAME_CONCAT_(__instruments_defer_zone_end__, _, m_group_name).~Defer();
+	_GD_VARNAME_CONCAT_(instruments_zone, _, m_group_name).end();
 
 #define GodotProfileZoneGrouped(m_group_name, m_zone_name) \
-	GodotProfileZoneGroupedEndEarly(m_group_name, m_zone_name); \
-	os_signpost_interval_begin(apple::instruments::LOG_TRACING, OS_SIGNPOST_ID_EXCLUSIVE, m_zone_name); \
-	_GD_VARNAME_CONCAT_(defer__fn, _, m_group_name) = []() { \
-		os_signpost_interval_end(apple::instruments::LOG_TRACING, OS_SIGNPOST_ID_EXCLUSIVE, m_zone_name); \
-	}; \
-	new (&_GD_VARNAME_CONCAT_(__instruments_defer_zone_end__, _, m_group_name)) apple::instruments::Defer(_GD_VARNAME_CONCAT_(defer__fn, _, m_group_name));
+	_GD_VARNAME_CONCAT_(instruments_zone, _, m_group_name).begin(m_zone_name);
 
 #define GodotProfileZone(m_zone_name) \
 	GodotProfileZoneGroupedFirst(__COUNTER__, m_zone_name)
