@@ -200,7 +200,7 @@ class GameView : public VBoxContainer {
 	bool debug_hide_selection = false;
 	bool debug_mute_audio = false;
 
-	EditorToolbarGroup *ci_bar = nullptr;
+	HBoxContainer *_ci_bar_hbox = nullptr;
 	EditorToolbarGroup *n3d_bar = nullptr;
 
 	bool selection_avoid_locked = false;

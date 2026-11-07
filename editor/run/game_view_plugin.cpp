@@ -773,7 +773,7 @@ void GameView::_suspend_button_toggled(bool p_pressed) {
 
 void GameView::_node_type_pressed(int p_option) {
 	RuntimeNodeSelect::NodeType type = (RuntimeNodeSelect::NodeType)p_option;
-	ci_bar->set_visible(type == RuntimeNodeSelect::NODE_TYPE_2D);
+	_ci_bar_hbox->set_visible(type == RuntimeNodeSelect::NODE_TYPE_2D);
 	n3d_bar->set_visible(type == RuntimeNodeSelect::NODE_TYPE_3D);
 
 	_update_debugger_buttons();
@@ -1671,80 +1671,86 @@ GameView::GameView(Ref<GameViewDebugger> p_debugger, EmbeddedProcessBase *p_embe
 
 	// 2D Section
 
-	ci_bar = memnew(EditorToolbarGroup);
-	main_menu_fc->add_child(ci_bar);
-	ci_bar->hide();
-
-	ci_group.instantiate();
+	_ci_bar_hbox = memnew(HBoxContainer);
+	_ci_bar_hbox->hide();
+	main_menu_fc->add_child(_ci_bar_hbox);
 
 	{
-		Button *button = _setup_button(SNAME("viewport_tool_select"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/select_mode"));
-		ci_bar->get_hbox()->add_child(button);
-		button->set_pressed(true);
-		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_SELECT));
-		ci_button[CanvasItemManipulator::TOOL_SELECT] = button;
-	}
+		HBoxContainer *ci_tools_hbox = EditorToolbarGroup::create(_ci_bar_hbox);
+		ci_group.instantiate();
 
-	VSeparator *vsep = memnew(VSeparator);
-	vsep->set_theme_type_variation("VSeparatorButtonGroup");
-	ci_bar->get_hbox()->add_child(vsep);
+		{
+			{
+				Button *select_btn = _setup_button(SNAME("viewport_tool_select"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/select_mode"));
+				select_btn->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_SELECT));
+				select_btn->set_pressed_no_signal(true);
+				ci_tools_hbox->add_child(select_btn);
+				ci_button[CanvasItemManipulator::TOOL_SELECT] = select_btn;
+			}
 
-	{
-		Button *button = _setup_button(SNAME("viewport_tool_move"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/move_mode"));
-		ci_bar->get_hbox()->add_child(button);
-		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_MOVE));
-		ci_button[CanvasItemManipulator::TOOL_MOVE] = button;
-	}
-	{
-		Button *button = _setup_button(SNAME("viewport_tool_rotate"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/rotate_mode"));
-		ci_bar->get_hbox()->add_child(button);
-		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_ROTATE));
-		ci_button[CanvasItemManipulator::TOOL_ROTATE] = button;
-	}
-	{
-		Button *button = _setup_button(SNAME("viewport_tool_scale"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/scale_mode"));
-		ci_bar->get_hbox()->add_child(button);
-		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_SCALE));
-		ci_button[CanvasItemManipulator::TOOL_SCALE] = button;
-	}
+			{
+				VSeparator *separator = memnew(VSeparator);
+				separator->set_theme_type_variation("VSeparatorButtonGroup");
+				ci_tools_hbox->add_child(separator);
+			}
 
-	vsep = memnew(VSeparator);
-	vsep->set_theme_type_variation("VSeparatorButtonGroup");
-	ci_bar->get_hbox()->add_child(vsep);
+			{
+				Button *move_btn = _setup_button(SNAME("viewport_tool_move"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/move_mode"));
+				move_btn->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_MOVE));
+				ci_tools_hbox->add_child(move_btn);
+				ci_button[CanvasItemManipulator::TOOL_MOVE] = move_btn;
+			}
 
-	{
-		Button *button = _setup_button(SNAME("action_list_select"), ci_group);
-		ci_bar->get_hbox()->add_child(button);
-		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_LIST_SELECT));
-		ci_button[CanvasItemManipulator::TOOL_LIST_SELECT] = button;
-	}
-	{
-		Button *button = _setup_button(SNAME("action_edit_pivot"), ci_group);
-		button->set_disabled(true);
-		ci_bar->get_hbox()->add_child(button);
-		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_EDIT_PIVOT));
-		ci_button[CanvasItemManipulator::TOOL_EDIT_PIVOT] = button;
-	}
-	{
-		Button *button = _setup_button(SNAME("viewport_tool_pan"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/pan_mode"));
-		ci_bar->get_hbox()->add_child(button);
-		button->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_PAN));
-		ci_button[CanvasItemManipulator::TOOL_PAN] = button;
-	}
+			{
+				Button *rotate_btn = _setup_button(SNAME("viewport_tool_rotate"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/rotate_mode"));
+				rotate_btn->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_ROTATE));
+				ci_tools_hbox->add_child(rotate_btn);
+				ci_button[CanvasItemManipulator::TOOL_ROTATE] = rotate_btn;
+			}
 
-	vsep = memnew(VSeparator);
-	vsep->set_theme_type_variation("VSeparatorButtonGroup");
-	ci_bar->get_hbox()->add_child(vsep);
+			{
+				Button *scale_btn = _setup_button(SNAME("viewport_tool_scale"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/scale_mode"));
+				scale_btn->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_SCALE));
+				ci_tools_hbox->add_child(scale_btn);
+				ci_button[CanvasItemManipulator::TOOL_SCALE] = scale_btn;
+			}
 
-	Button *ci_local_space = memnew(Button);
-	ci_bar->get_hbox()->add_child(ci_local_space);
-	ci_local_space->set_button_icon(EditorIconManager::get_icon(SNAME("variant_object")));
-	ci_local_space->set_toggle_mode(true);
-	ci_local_space->set_pressed(true);
-	ci_local_space->set_theme_type_variation(SceneStringName(FlatButton));
-	ci_local_space->connect(SceneStringName(toggled), callable_mp(*debugger, &GameViewDebugger::set_ci_local_space));
-	ci_local_space->set_shortcut(ED_GET_SHORTCUT("canvas_item_editor/use_local_space"));
-	ci_local_space->set_shortcut_context(this);
+			{
+				VSeparator *separator = memnew(VSeparator);
+				separator->set_theme_type_variation("VSeparatorButtonGroup");
+				ci_tools_hbox->add_child(separator);
+			}
+
+			{
+				Button *list_select_btn = _setup_button(SNAME("action_list_select"), ci_group);
+				list_select_btn->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_LIST_SELECT));
+				ci_tools_hbox->add_child(list_select_btn);
+				ci_button[CanvasItemManipulator::TOOL_LIST_SELECT] = list_select_btn;
+			}
+
+			{
+				Button *pivot_btn = _setup_button(SNAME("action_edit_pivot"), ci_group);
+				pivot_btn->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_EDIT_PIVOT));
+				pivot_btn->set_disabled(true);
+				ci_tools_hbox->add_child(pivot_btn);
+				ci_button[CanvasItemManipulator::TOOL_EDIT_PIVOT] = pivot_btn;
+			}
+
+			{
+				Button *pan_btn = _setup_button(SNAME("viewport_tool_pan"), ci_group, ED_GET_SHORTCUT("canvas_item_editor/pan_mode"));
+				pan_btn->connect(SceneStringName(pressed), callable_mp(*debugger, &GameViewDebugger::set_ci_tool).bind(CanvasItemManipulator::TOOL_PAN));
+				ci_tools_hbox->add_child(pan_btn);
+				ci_button[CanvasItemManipulator::TOOL_PAN] = pan_btn;
+			}
+		}
+
+		_ci_bar_hbox->add_child(memnew(VSeparator));
+
+		Button *local_space_btn = _setup_button(SNAME("variant_object"), Ref<ButtonGroup>(), ED_GET_SHORTCUT("canvas_item_editor/use_local_space"));
+		local_space_btn->connect(SceneStringName(toggled), callable_mp(*debugger, &GameViewDebugger::set_ci_local_space));
+		local_space_btn->set_pressed_no_signal(true);
+		_ci_bar_hbox->add_child(local_space_btn);
+	}
 
 	// 3D Section
 
