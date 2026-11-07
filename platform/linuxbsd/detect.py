@@ -192,6 +192,9 @@ def configure(env: "SConsEnvironment"):
 
     env.Append(CCFLAGS=["-ffp-contract=off"])
 
+    if env["debug_symbols"]:
+        env.Append(LINKFLAGS=["-Wl,--build-id"])
+
     # LTO
 
     if env["lto"] == "auto":  # Enable LTO for production.
