@@ -3190,7 +3190,7 @@ static void find_owned_by(Node *p_by, Node *p_node, List<Node *> *p_owned) {
 	}
 }
 
-void Node::replace_by(RequiredParam<Node> p_node, bool p_keep_groups, bool p_keep_owned_children) {
+void Node::replace_by(RequiredParam<Node> p_node, bool p_keep_groups) {
 	ERR_THREAD_GUARD
 	EXTRACT_PARAM_OR_FAIL(node, p_node);
 	ERR_FAIL_COND(node->data.parent);
@@ -3230,13 +3230,8 @@ void Node::replace_by(RequiredParam<Node> p_node, bool p_keep_groups, bool p_kee
 	emit_signal(SNAME("replacing_by"), node);
 
 	// Move non-internal children to `p_node`.
-	int child_index = 0;
-	while (child_index < get_child_count(false)) {
-		Node *child = get_child(child_index);
-		if (!p_keep_owned_children && child->get_owner() == this) {
-			child_index++;
-			continue;
-		}
+	while (get_child_count(false)) {
+		Node *child = get_child(0, false);
 		remove_child(child);
 		Node *child_owner = child->get_owner() == this ? node : child->get_owner();
 		child->set_owner(nullptr);
@@ -3245,20 +3240,14 @@ void Node::replace_by(RequiredParam<Node> p_node, bool p_keep_groups, bool p_kee
 	}
 
 	node->set_owner(owner);
-	if (p_keep_owned_children) {
-		for (Node *owned_node : owned) {
-			if (owned_node->data.owner != node) {
-				owned_node->set_owner(node);
-			}
+	for (Node *owned_node : owned) {
+		if (owned_node->data.owner != node) {
+			owned_node->set_owner(node);
 		}
 	}
 
 	for (Node *owned_node : owned_by_owner) {
 		if (owned_node->data.owner != owner) {
-			if (!p_keep_owned_children && owned_node->data.parent->data.owner == this) {
-				owned_node->data.parent->remove_child(owned_node);
-				node->add_child(owned_node);
-			}
 			owned_node->set_owner(owner);
 		}
 	}
@@ -3811,7 +3800,7 @@ void Node::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("create_tween"), &Node::create_tween);
 
 	ClassDB::bind_method(D_METHOD("duplicate", "flags"), &Node::duplicate, DEFVAL(DUPLICATE_DEFAULT));
-	ClassDB::bind_method(D_METHOD("replace_by", "node", "keep_groups", "keep_owned_children"), &Node::replace_by, DEFVAL(false), DEFVAL(true));
+	ClassDB::bind_method(D_METHOD("replace_by", "node", "keep_groups"), &Node::replace_by, DEFVAL(false));
 
 	ClassDB::bind_method(D_METHOD("set_scene_instance_load_placeholder", "load_placeholder"), &Node::set_scene_instance_load_placeholder);
 	ClassDB::bind_method(D_METHOD("get_scene_instance_load_placeholder"), &Node::get_scene_instance_load_placeholder);

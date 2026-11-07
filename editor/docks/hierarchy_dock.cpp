@@ -64,12 +64,14 @@
 #include "editor/shader/shader_create_dialog.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/2d/node_2d.h"
+#include "scene/3d/node_3d.h"
 #include "scene/animation/animation_tree.h"
 #include "scene/audio/audio_stream_player.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/check_box.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/panel_container.h"
+#include "scene/main/canvas_item.h"
 #include "scene/main/missing_node.h"
 #include "scene/main/scene_tree.h"
 #include "scene/property_utils.h"
@@ -1366,16 +1368,7 @@ void HierarchyDock::_tool_selected(int p_tool, bool p_confirm_override) {
 				break;
 			}
 
-			List<Node *> selection = editor_selection->get_full_selected_node_list();
-			ItemCheckState editable_state = _is_editable_children(selection);
-			bool editable = editable_state == STATE_CHECKED;
-
-			if (editable) {
-				editable_instance_remove_dialog->set_text(TTR("Disabling \"Editable Children\" will cause all properties of this subscene's descendant nodes to be reverted to their default."));
-				editable_instance_remove_dialog->popup_centered();
-			} else {
-				_toggle_editable_children(selection);
-			}
+			_toggle_editable_children_from_selection();
 		} break;
 		case TOOL_SCENE_USE_PLACEHOLDER: {
 			if (!profile_allow_editing) {
@@ -1387,27 +1380,7 @@ void HierarchyDock::_tool_selected(int p_tool, bool p_confirm_override) {
 				break;
 			}
 
-			ItemCheckState editable_state = _is_editable_children(selection);
-			ItemCheckState placeholder_state = _is_placeholder(selection);
-			bool editable = editable_state != STATE_UNCHECKED;
-			bool placeholder = placeholder_state == STATE_CHECKED;
-			// Fire confirmation dialog when children are editable.
-			if (editable && !placeholder) {
-				placeholder_editable_instance_remove_dialog->set_text(TTR("Enabling \"Load as Placeholder\" will disable \"Editable Children\" and cause all properties of the node to be reverted to their default."));
-				placeholder_editable_instance_remove_dialog->popup_centered();
-			} else {
-				placeholder = !placeholder;
-				for (Node *node : selection) {
-					if (node) {
-						if (placeholder) {
-							EditorNode::get_singleton()->get_edited_scene()->set_editable_instance(node, false);
-						}
-
-						node->set_scene_instance_load_placeholder(placeholder);
-					}
-				}
-				_hierarchy_editor->update_tree();
-			}
+			_toggle_placeholder_from_selection();
 		} break;
 		case TOOL_SCENE_MAKE_LOCAL: {
 			if (!profile_allow_editing) {
@@ -2764,132 +2737,125 @@ void HierarchyDock::_toggle_editable_children_from_selection() {
 
 void HierarchyDock::_toggle_placeholder_from_selection() {
 	List<Node *> selection = editor_selection->get_full_selected_node_list();
-	ItemCheckState placeholder_state = _is_placeholder(selection);
-	bool placeholder = placeholder_state != STATE_CHECKED;
-	if (placeholder) {
-		_toggle_editable_children(selection, STATE_CHECKED);
+	const ItemCheckState placeholder_state = _is_placeholder(selection);
+	if (selection.is_empty()) {
+		return;
 	}
+	const bool placeholder = placeholder_state != STATE_CHECKED;
+	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
+	undo_redo->create_action(TTR("Toggle Load as Placeholder"), UndoRedo::MERGE_DISABLE, edited_scene);
 
 	for (Node *node : selection) {
-		if (node) {
-			node->set_scene_instance_load_placeholder(placeholder);
+		undo_redo->add_undo_method(node, "set_scene_instance_load_placeholder", node->get_scene_instance_load_placeholder());
+		if (placeholder) {
+			_add_editable_children_undo_redo(node, false);
 		}
+		undo_redo->add_do_method(node, "set_scene_instance_load_placeholder", placeholder);
 	}
-	_hierarchy_editor->update_tree();
+
+	undo_redo->add_do_method(_hierarchy_editor, "update_tree");
+	undo_redo->add_undo_method(_hierarchy_editor, "update_tree");
+	undo_redo->commit_action();
 }
 
-void HierarchyDock::_restore_nodes_transform_and_name(const Array &p_nodes, const Array &p_names, const Array &p_transforms) {
+void HierarchyDock::_reparent_nodes_to_root(Node *p_root, const Array &p_nodes) {
+	ERR_FAIL_NULL(p_root);
+	for (const Variant &value : p_nodes) {
+		Node *node = Object::cast_to<Node>(value);
+		ERR_FAIL_NULL(node);
+		const StringName original_name = node->get_name();
+		node->reparent(p_root);
+		node->set_name(original_name);
+	}
+}
+
+void HierarchyDock::_restore_reparented_nodes(const Array &p_nodes, const Array &p_parents, const Array &p_names, const Array &p_states) {
+	ERR_FAIL_COND(p_nodes.size() != p_parents.size());
 	ERR_FAIL_COND(p_nodes.size() != p_names.size());
-	ERR_FAIL_COND(p_nodes.size() != p_transforms.size());
+	ERR_FAIL_COND(p_nodes.size() != p_states.size());
 
 	for (int i = 0; i < p_nodes.size(); i++) {
 		Node *node = Object::cast_to<Node>(p_nodes[i]);
+		Node *parent = Object::cast_to<Node>(p_parents[i]);
 		ERR_FAIL_NULL(node);
+		ERR_FAIL_NULL(parent);
+		node->reparent(parent, false);
 		node->set_name(p_names[i]);
 
-		Node3D *node_3d = Object::cast_to<Node3D>(node);
-		if (node_3d) {
-			node_3d->set_global_transform(p_transforms[i]);
-		} else {
-			Node2D *node_2d = Object::cast_to<Node2D>(node);
-			if (node_2d) {
-				node_2d->set_global_transform(p_transforms[i]);
+		if (Node3D *node_3d = Object::cast_to<Node3D>(node)) {
+			node_3d->set_transform(p_states[i]);
+		} else if (CanvasItem *canvas_item = Object::cast_to<CanvasItem>(node)) {
+			canvas_item->_edit_set_state(p_states[i]);
+		}
+	}
+}
+
+void HierarchyDock::_add_editable_children_undo_redo(Node *p_node, bool p_editable) {
+	const bool was_editable = edited_scene->is_editable_instance(p_node);
+	if (was_editable == p_editable) {
+		return;
+	}
+
+	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
+	undo_redo->add_do_method(edited_scene, "set_editable_instance", p_node, p_editable);
+	undo_redo->add_undo_method(edited_scene, "set_editable_instance", p_node, was_editable);
+
+	if (p_editable) {
+		undo_redo->add_do_method(p_node, "set_scene_instance_load_placeholder", false);
+		undo_redo->add_undo_method(p_node, "set_scene_instance_load_placeholder", p_node->get_scene_instance_load_placeholder());
+	} else {
+		List<Node *> owned;
+		p_node->get_owned_by(edited_scene, &owned);
+		Array nodes;
+		Array parents;
+		Array names;
+		Array states;
+
+		for (Node *node : owned) {
+			if (node == p_node || node == edited_scene || node->get_owner() != edited_scene || node->get_parent()->get_owner() == edited_scene) {
+				continue;
+			}
+
+			nodes.push_back(node);
+			// The retained instance keeps these parents alive, independent of temporary name changes.
+			parents.push_back(node->get_parent());
+			names.push_back(node->get_name());
+			if (const Node3D *node_3d = Object::cast_to<Node3D>(node)) {
+				states.push_back(node_3d->get_transform());
+			} else if (const CanvasItem *canvas_item = Object::cast_to<CanvasItem>(node)) {
+				states.push_back(canvas_item->_edit_get_state());
 			} else {
-				Control *control = Object::cast_to<Control>(node);
-				if (control) {
-					Transform2D transform(p_transforms[i]);
-					control->set_global_position(transform.get_origin());
-				}
+				states.push_back(Variant());
 			}
 		}
+
+		if (!nodes.is_empty()) {
+			undo_redo->add_do_method(this, "_reparent_nodes_to_root", p_node, nodes);
+			undo_redo->add_undo_method(this, "_restore_reparented_nodes", nodes, parents, names, states);
+		}
 	}
+
+	undo_redo->add_do_method(Node3DEditor::get_singleton(), "update_all_gizmos", p_node);
+	undo_redo->add_undo_method(Node3DEditor::get_singleton(), "update_all_gizmos", p_node);
 }
 
-void HierarchyDock::_reparent_nodes_to_paths_with_name(Node *p_root, const Array &p_nodes, const Array &p_paths, const Array &p_names) {
-	ERR_FAIL_COND(p_nodes.size() != p_paths.size());
-	ERR_FAIL_COND(p_nodes.size() != p_names.size());
-
-	for (int i = 0; i < p_nodes.size(); i++) {
-		Node *node = Object::cast_to<Node>(p_nodes[i]);
-		ERR_FAIL_NULL(node);
-		const NodePath &np = p_paths[i];
-		Node *parent_node = p_root->get_node_or_null(np);
-		ERR_FAIL_NULL(parent_node);
-
-		node->reparent(parent_node);
-		node->set_name(p_names[i]);
+void HierarchyDock::_toggle_editable_children(List<Node *> &r_nodes) {
+	const ItemCheckState editable_state = _is_editable_children(r_nodes);
+	if (r_nodes.is_empty()) {
+		return;
 	}
-}
-
-void HierarchyDock::_toggle_editable_children(List<Node *> &p_nodes, ItemCheckState p_current_state) {
+	const bool editable = editable_state != STATE_CHECKED;
 	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
-
 	undo_redo->create_action(TTR("Toggle Editable Children"), UndoRedo::MERGE_DISABLE, edited_scene);
 
-	bool is_indeterminate = p_current_state == STATE_INDETERMINATE;
-	ItemCheckState editable_state = is_indeterminate ? _is_editable_children(p_nodes) : p_current_state;
-	bool editable = editable_state != STATE_CHECKED;
-
-	for (Node *node : p_nodes) {
-		if (!node) {
-			continue;
+	for (Node *node : r_nodes) {
+		if (node) {
+			_add_editable_children_undo_redo(node, editable);
 		}
-
-		if (editable) {
-			undo_redo->add_do_method(edited_scene, "set_editable_instance", node, true);
-			undo_redo->add_undo_method(edited_scene, "set_editable_instance", node, false);
-			undo_redo->add_do_method(node, "set_scene_instance_load_placeholder", false);
-			undo_redo->add_undo_method(node, "set_scene_instance_load_placeholder", node->get_scene_instance_load_placeholder());
-		} else {
-			String instantiated_path = node->get_scene_file_path();
-			Ref<PackedScene> scene_data = ResourceLoader::load(instantiated_path);
-			ERR_CONTINUE_MSG(scene_data.is_null(), vformat("Error loading scene from %s.", instantiated_path));
-
-			Node *instantiated_scene = scene_data->instantiate(PackedScene::GEN_EDIT_STATE_INSTANCE);
-			ERR_CONTINUE_MSG(!instantiated_scene, vformat("Error instantiating scene from %s.", instantiated_path));
-
-			List<Node *> owned;
-			node->get_owned_by(edited_scene, &owned);
-
-			Array transforms_array;
-			Array owned_nodes_array;
-			Array paths_array;
-			Array names_array;
-
-			for (Node *owned_node : owned) {
-				if (owned_node == node || owned_node == edited_scene || owned_node->get_owner() != edited_scene || owned_node->get_parent()->get_owner() == edited_scene) {
-					continue;
-				}
-
-				owned_nodes_array.push_back(owned_node);
-				paths_array.push_back(node->get_path_to(owned_node->get_parent()));
-				names_array.push_back(owned_node->get_name());
-
-				Node3D *node_3d = Object::cast_to<Node3D>(owned_node);
-				if (node_3d) {
-					transforms_array.push_back(node_3d->get_global_transform());
-				} else {
-					CanvasItem *canvas_item_node = Object::cast_to<CanvasItem>(owned_node);
-					transforms_array.push_back(canvas_item_node ? canvas_item_node->get_global_transform() : Transform2D());
-				}
-			}
-
-			undo_redo->add_do_method(this, "replace_node", node, instantiated_scene, true, false);
-			undo_redo->add_do_reference(instantiated_scene);
-			undo_redo->add_undo_method(this, "replace_node", instantiated_scene, node, false, false);
-			undo_redo->add_undo_reference(node);
-
-			if (!owned_nodes_array.is_empty()) {
-				undo_redo->add_do_method(this, "_restore_nodes_transform_and_name", owned_nodes_array, names_array, transforms_array);
-				undo_redo->add_undo_method(this, "_reparent_nodes_to_paths_with_name", node, owned_nodes_array, paths_array, names_array);
-			}
-		}
-
-		undo_redo->add_undo_method(Node3DEditor::get_singleton(), "update_all_gizmos", node);
-		undo_redo->add_do_method(Node3DEditor::get_singleton(), "update_all_gizmos", node);
 	}
-	undo_redo->add_undo_method(_hierarchy_editor, "update_tree");
+
 	undo_redo->add_do_method(_hierarchy_editor, "update_tree");
+	undo_redo->add_undo_method(_hierarchy_editor, "update_tree");
 	undo_redo->commit_action();
 }
 
@@ -3449,12 +3415,12 @@ void HierarchyDock::replace_node(Node *p_node, Node *p_by_node) {
 	EditorUndoRedoManager *ur = EditorUndoRedoManager::get_singleton();
 	ur->create_action(TTR("Change type of node(s)"), UndoRedo::MERGE_DISABLE, p_node);
 
-	ur->add_do_method(this, "replace_node", p_node, p_by_node, true, true);
+	ur->add_do_method(this, "replace_node", p_node, p_by_node, true);
 	ur->add_do_reference(p_by_node);
 
 	_replace_node(p_node, p_by_node, true);
 
-	ur->add_undo_method(this, "replace_node", p_by_node, p_node, false, true);
+	ur->add_undo_method(this, "replace_node", p_by_node, p_node, false);
 	ur->add_undo_reference(p_node);
 
 	perform_node_replace(nullptr, p_node, p_by_node);
@@ -3462,7 +3428,7 @@ void HierarchyDock::replace_node(Node *p_node, Node *p_by_node) {
 	ur->commit_action(false);
 }
 
-void HierarchyDock::_replace_node(Node *p_node, Node *p_by_node, bool p_keep_properties, bool p_keep_owned_children) {
+void HierarchyDock::_replace_node(Node *p_node, Node *p_by_node, bool p_keep_properties) {
 	ERR_FAIL_COND_MSG(!p_node->is_inside_tree(), "_replace_node() can't be called on a node outside of tree. You might have called it twice.");
 	Node *oldnode = p_node;
 	Node *newnode = p_by_node;
@@ -3539,7 +3505,7 @@ void HierarchyDock::_replace_node(Node *p_node, Node *p_by_node, bool p_keep_pro
 	if (oldnode == edited_scene) {
 		EditorNode::get_singleton()->set_edited_scene_root(newnode, false);
 	}
-	oldnode->replace_by(newnode, true, p_keep_owned_children);
+	oldnode->replace_by(newnode, true);
 
 	// Re-apply size of anchored control.
 	Control *new_control = Object::cast_to<Control>(newnode);
@@ -4828,7 +4794,7 @@ void HierarchyDock::paste_node_as_replacement() {
 
 		// Note that due to the new node possibly having child nodes, it's not possible to unify the operations to use only do methods.
 		_replace_node(selected, new_node, is_missing_node_selected);
-		ur->add_do_method(this, "replace_node", selected, new_node, false, true);
+		ur->add_do_method(this, "replace_node", selected, new_node, false);
 		if (old_is_scene || new_is_scene) {
 			new_node->set_scene_file_path(new_scene_file_path);
 			ur->add_do_method(new_node, "set_scene_file_path", new_scene_file_path);
@@ -4846,7 +4812,7 @@ void HierarchyDock::paste_node_as_replacement() {
 			}
 		}
 
-		ur->add_undo_method(this, "replace_node", new_node, selected, false, true);
+		ur->add_undo_method(this, "replace_node", new_node, selected, false);
 		if (old_is_scene || new_is_scene) {
 			ur->add_undo_method(selected, "set_scene_file_path", old_scene_file_path);
 		}
@@ -5173,14 +5139,14 @@ void HierarchyDock::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_post_do_create_multi"), &HierarchyDock::_post_do_create_multi);
 	ClassDB::bind_method(D_METHOD("_apply_owners_map"), &HierarchyDock::_apply_owners_map);
 	ClassDB::bind_method(D_METHOD("_set_owners"), &HierarchyDock::_set_owners);
-	ClassDB::bind_method(D_METHOD("_restore_nodes_transform_and_name"), &HierarchyDock::_restore_nodes_transform_and_name);
-	ClassDB::bind_method(D_METHOD("_reparent_nodes_to_paths_with_name"), &HierarchyDock::_reparent_nodes_to_paths_with_name);
+	ClassDB::bind_method(D_METHOD("_reparent_nodes_to_root", "root", "nodes"), &HierarchyDock::_reparent_nodes_to_root);
+	ClassDB::bind_method(D_METHOD("_restore_reparented_nodes", "nodes", "parents", "names", "states"), &HierarchyDock::_restore_reparented_nodes);
 
 	ClassDB::bind_method(D_METHOD("_queue_update_script_button"), &HierarchyDock::_queue_update_script_button);
 
 	ClassDB::bind_method(D_METHOD("instantiate"), &HierarchyDock::instantiate);
 	ClassDB::bind_method(D_METHOD("get_hierarchy_editor"), &HierarchyDock::get_hierarchy_editor);
-	ClassDB::bind_method(D_METHOD("replace_node"), &HierarchyDock::_replace_node);
+	ClassDB::bind_method(D_METHOD("replace_node", "node", "by_node", "keep_properties"), &HierarchyDock::_replace_node);
 
 	ADD_SIGNAL(MethodInfo("remote_tree_selected"));
 }
@@ -5425,16 +5391,6 @@ HierarchyDock::HierarchyDock(Node *p_scene_root, EditorSelection *p_editor_selec
 	delete_tracks_checkbox = memnew(CheckBox(TTRC("Delete Related Animation Tracks")));
 	delete_tracks_checkbox->set_pressed(true);
 	vb->add_child(delete_tracks_checkbox);
-
-	editable_instance_remove_dialog = memnew(Dialog(true));
-	editable_instance_remove_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
-	add_child(editable_instance_remove_dialog);
-	editable_instance_remove_dialog->connect(SceneStringName(confirmed), callable_mp(this, &HierarchyDock::_toggle_editable_children_from_selection));
-
-	placeholder_editable_instance_remove_dialog = memnew(Dialog(true));
-	placeholder_editable_instance_remove_dialog->set_flag(Window::FLAG_RESIZE_DISABLED, true);
-	add_child(placeholder_editable_instance_remove_dialog);
-	placeholder_editable_instance_remove_dialog->connect(SceneStringName(confirmed), callable_mp(this, &HierarchyDock::_toggle_placeholder_from_selection));
 
 	new_scene_from_dialog = memnew(EditorFileDialog);
 	new_scene_from_dialog->set_title(TTRC("Save New Scene As..."));
