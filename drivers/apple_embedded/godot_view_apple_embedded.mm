@@ -123,10 +123,21 @@ static const float earth_gravity = 9.80665;
 
 - (void)godot_commonInit {
 	self.preferredFrameRate = 60;
+	self.hinge_closed = YES;
 	self.useCADisplayLink = bool(GLOBAL_DEF("display.AppleEmbedded/use_cadisplaylink", true)) ? YES : NO;
 	last_edr_headroom = 0.0;
 
 	self.contentScaleFactor = [UIScreen mainScreen].scale;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 270100
+	if (@available(iOS 27.1, *)) {
+		__weak GDTView *weak_view = self;
+		[self addInteraction:[[UIHingeInteraction alloc] initWithUpdateHandler:^(UIHingeInteraction *p_interaction, UIHingeInteractionUpdate *p_update) {
+			if (p_update.hinge) {
+				weak_view.hinge_closed = p_update.hinge.status == UIHingeStatusClosed;
+			}
+		}]];
+	}
+#endif
 
 	if (@available(iOS 17.0, *)) {
 		[self registerForTraitChanges:@[ [UITraitUserInterfaceStyle class] ] withTarget:self action:@selector(traitCollectionDidChangeWithView:previousTraitCollection:)];
