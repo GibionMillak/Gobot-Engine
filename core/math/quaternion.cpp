@@ -110,6 +110,7 @@ Quaternion Quaternion::exp() const {
 }
 
 // Preserve logarithm continuity by selecting the nearest equivalent 720-degree phase.
+// This quaternion and p_neighbor_log must be relative to the same base quaternion.
 Quaternion Quaternion::get_nearest_log(const Quaternion &p_neighbor_log) const {
 	constexpr real_t PHASE = 2 * real_t(Math::TAU);
 	const Vector3 neighbor(p_neighbor_log.x, p_neighbor_log.y, p_neighbor_log.z);
