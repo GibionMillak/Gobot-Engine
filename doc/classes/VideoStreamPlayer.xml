@@ -26,7 +26,7 @@
 		<method name="get_video_texture" qualifiers="const">
 			<return type="Texture2D" />
 			<description>
-				Returns the current frame as a [Texture2D].
+				Returns the playback texture, which updates continuously while the video plays. Use [method Texture2D.get_image] to capture a still frame.
 			</description>
 		</method>
 		<method name="is_playing" qualifiers="const">
@@ -39,7 +39,8 @@
 		<method name="play">
 			<return type="void" />
 			<description>
-				Starts the video playback from the beginning. If the video is paused, this will not unpause the video.
+				Starts playback from the beginning unless the video is already playing.
+				[b]Note:[/b] This does not unpause a paused video.
 			</description>
 		</method>
 		<method name="stop">
