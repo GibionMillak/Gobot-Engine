@@ -45,9 +45,7 @@
 #include "servers/display/display_server.h"
 
 void QuickSettingsDialog::_fetch_setting_values() {
-#ifndef ANDROID_ENABLED
-	editor_languages.clear();
-#endif
+	_editor_languages.clear();
 	editor_themes.clear();
 	editor_scales.clear();
 	editor_network_modes.clear();
@@ -60,9 +58,7 @@ void QuickSettingsDialog::_fetch_setting_values() {
 
 		for (const PropertyInfo &pi : editor_settings_properties) {
 			if (pi.name == "interface/editor/localization/editor_language") {
-#ifndef ANDROID_ENABLED
-				editor_languages = pi.hint_string.split(";", false);
-#endif
+				_editor_languages = pi.hint_string.split(";", false);
 			} else if (pi.name == "interface/theme/color_preset") {
 				editor_themes = pi.hint_string.split(",");
 			} else if (pi.name == "interface/editor/appearance/display_scale") {
@@ -79,21 +75,20 @@ void QuickSettingsDialog::_fetch_setting_values() {
 }
 
 void QuickSettingsDialog::_update_current_values() {
-#ifndef ANDROID_ENABLED
 	// Language options.
 	{
 		const String current_lang = EDITOR_GET("interface/editor/localization/editor_language");
 
-		for (int i = 0; i < editor_languages.size(); i++) {
-			const String &lang_value = editor_languages[i].get_slicec('/', 0);
+		for (int i = 0; i < _editor_languages.size(); i++) {
+			const String &lang_value = _editor_languages[i].get_slicec('/', 0);
 			if (current_lang == lang_value) {
-				language_option_button->set_text(editor_languages[i].get_slicec('/', 1));
-				language_option_button->select(i);
+				_language_option_btn->set_text(_editor_languages[i].get_slicec('/', 1));
+				_language_option_btn->select(i);
 				break;
 			}
 		}
 	}
-#endif
+
 	// Theme options.
 	{
 		const String current_theme = EDITOR_GET("interface/theme/color_preset");
@@ -180,12 +175,10 @@ void QuickSettingsDialog::_add_setting_control(const String &p_text, const Strin
 	container->add_child(p_control);
 }
 
-#ifndef ANDROID_ENABLED
 void QuickSettingsDialog::_language_selected(int p_id) {
-	const String selected_language = language_option_button->get_item_metadata(p_id);
+	const String selected_language = _language_option_btn->get_item_metadata(p_id);
 	_set_setting_value("interface/editor/localization/editor_language", selected_language);
 }
-#endif
 
 void QuickSettingsDialog::_theme_selected(int p_id) {
 	const String selected_theme = theme_option_button->get_item_text(p_id);
@@ -247,9 +240,7 @@ void QuickSettingsDialog::_request_restart() {
 }
 
 void QuickSettingsDialog::update_size_limits(const Size2 &p_max_popup_size) {
-#ifndef ANDROID_ENABLED
-	language_option_button->get_popup()->set_max_size(p_max_popup_size);
-#endif
+	_language_option_btn->get_popup()->set_max_size(p_max_popup_size);
 }
 
 void QuickSettingsDialog::_notification(int p_what) {
@@ -291,25 +282,25 @@ QuickSettingsDialog::QuickSettingsDialog() {
 		settings_list = memnew(VBoxContainer);
 		settings_list_panel->add_child(settings_list);
 
-#ifndef ANDROID_ENABLED
 		// Language options.
 		{
-			language_option_button = memnew(OptionButton);
-			language_option_button->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-			language_option_button->set_fit_to_longest_item(false);
-			language_option_button->set_search_bar_enabled(true);
-			language_option_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_language_selected));
+			_language_option_btn = memnew(OptionButton);
 
-			for (int i = 0; i < editor_languages.size(); i++) {
-				const String &lang_code = editor_languages[i].get_slicec('/', 0);
-				const String &lang_name = editor_languages[i].get_slicec('/', 1);
-				language_option_button->add_item(lang_name, i);
-				language_option_button->set_item_metadata(i, lang_code);
+			for (int i = 0; i < _editor_languages.size(); i++) {
+				const String &lang_code = _editor_languages[i].get_slicec('/', 0);
+				const String &lang_name = _editor_languages[i].get_slicec('/', 1);
+				_language_option_btn->add_item(lang_name, i);
+				_language_option_btn->set_item_metadata(i, lang_code);
 			}
 
-			_add_setting_control(TTRC("Language"), "interface/editor/localization/editor_language", language_option_button);
+			_language_option_btn->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_language_selected));
+			_language_option_btn->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+			_language_option_btn->set_fit_to_longest_item(false);
+			_language_option_btn->set_search_bar_enabled(true);
+
+			_add_setting_control(TTRC("Language"), "interface/editor/localization/editor_language", _language_option_btn);
 		}
-#endif
+
 		// Theme options.
 		{
 			theme_option_button = memnew(OptionButton);
