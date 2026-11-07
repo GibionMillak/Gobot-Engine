@@ -30,13 +30,40 @@
 
 #pragma once
 
-#define SDL_build_config_h_
+// Use the system C library consistently across the retained SDL backends.
+#define HAVE_LIBC 1
 
-#include <SDL3/SDL_platform_defines.h>
-
+#define HAVE_FLOAT_H 1
+#define HAVE_LIMITS_H 1
+#define HAVE_MATH_H 1
+#define HAVE_MEMORY_H 1
 #define HAVE_STDARG_H 1
 #define HAVE_STDDEF_H 1
+#define HAVE_STDINT_H 1
+#define HAVE_STDIO_H 1
 #define HAVE_STDLIB_H 1
+#define HAVE_STRING_H 1
+#define HAVE_WCHAR_H 1
+
+#if __has_include(<alloca.h>)
+#define HAVE_ALLOCA_H 1
+#endif
+#if __has_include(<inttypes.h>)
+#define HAVE_INTTYPES_H 1
+#endif
+#if __has_include(<malloc.h>)
+#define HAVE_MALLOC_H 1
+#endif
+#if __has_include(<strings.h>)
+#define HAVE_STRINGS_H 1
+#endif
+#if __has_include(<sys/types.h>)
+#define HAVE_SYS_TYPES_H 1
+#endif
+
+#ifdef __GNUC__
+#define HAVE_GCC_SYNC_LOCK_TEST_AND_SET 1
+#endif
 
 // Here we disable SDL subsystems that are not going to be used
 #define SDL_CPUINFO_DISABLED 1
@@ -55,7 +82,6 @@
 #if defined(WINDOWS_ENABLED)
 
 #define SDL_PLATFORM_PRIVATE_NAME "Windows"
-#define HAVE_LIBC 1
 #define HAVE_DINPUT_H 1
 #define HAVE_XINPUT_H 1
 #if defined(_WIN32_MAXVER) && _WIN32_MAXVER >= 0x0A00 /* Windows 10 SDK */
@@ -80,10 +106,8 @@
 
 #define SDL_PLATFORM_PRIVATE_NAME "Linux"
 
-#define HAVE_STDIO_H 1
-#define HAVE_LIBC 1
 #define HAVE_LINUX_INPUT_H 1
-#define HAVE_POLL 1
+#define HAVE_PPOLL 1
 
 #ifdef __linux__
 #define HAVE_INOTIFY 1
@@ -121,8 +145,6 @@
 #elif defined(MACOS_ENABLED)
 
 #define SDL_PLATFORM_PRIVATE_NAME "macOS"
-#define HAVE_STDIO_H 1
-#define HAVE_LIBC 1
 #define SDL_HAPTIC_IOKIT 1
 #define SDL_JOYSTICK_IOKIT 1
 #define SDL_JOYSTICK_MFI 1
@@ -138,8 +160,6 @@
 
 #define SDL_PLATFORM_PRIVATE_NAME "iOS"
 
-#define HAVE_STDIO_H 1
-#define HAVE_LIBC 1
 
 #define SDL_JOYSTICK_MFI 1
 #define SDL_HAPTIC_DUMMY 1
@@ -153,12 +173,4 @@
 // Other platforms are not supported (for now)
 #else
 #error "No SDL build config was found for this platform. Setup one before compiling the engine."
-#endif
-
-#if !defined(HAVE_STDINT_H) && !defined(_STDINT_H_)
-#define HAVE_STDINT_H 1
-#endif /* !_STDINT_H_ && !HAVE_STDINT_H */
-
-#ifdef __GNUC__
-#define HAVE_GCC_SYNC_LOCK_TEST_AND_SET 1
 #endif
