@@ -7,9 +7,13 @@ do not edit it manually. `editor_fonts.cpp` configures these fonts for the edito
 - `baloo_2/*.ttf`:
   * Upstream: https://github.com/EkType/Baloo2
   * License: OFL-1.1
-- `droid_sans/*.woff2`:
+- `droid_sans/fallback.woff2`:
   * Upstream: https://android.googlesource.com/platform/frameworks/base/+/master/data/fonts/
-  * Version: ? (pre-2014 commit when DroidSansJapanese.ttf was obsoleted)
+  * Version: 2.31 (97be1549ce65e01584483aec6b0b40537605db4d, 2010)
+  * License: Apache 2.0
+- `droid_sans/japanese.woff2`:
+  * Upstream: https://android.googlesource.com/platform/frameworks/base/+/master/data/fonts/
+  * Version: 1.20 (3a084af2e90849aaa8beb3a610189e3399c63ea0, 2012)
   * License: Apache 2.0
 - `inter/*.woff2`:
   * Upstream: https://github.com/rsms/inter
@@ -33,7 +37,7 @@ do not edit it manually. `editor_fonts.cpp` configures these fonts for the edito
   * License: OFL-1.1
 - `noto_sans/hebrew_*.woff2`:
   * Upstream: https://github.com/notofonts/hebrew
-  * Version: 3.001 (caa7ab0614fb5b37cc003d9bf3d7d3e765331110, 2024)
+  * Version: 3.001 (036f3206f67caac235cf8546a7751d3440771a7e, 2024)
   * License: OFL-1.1
 - `noto_sans/malayalam_ui_*.woff2`:
   * Upstream: https://github.com/notofonts/malayalam
