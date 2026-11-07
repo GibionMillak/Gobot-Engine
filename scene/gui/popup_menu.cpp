@@ -3574,39 +3574,36 @@ PopupMenu::PopupMenu() {
 	panel->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
 	add_child(panel, false, INTERNAL_MODE_FRONT);
 
-	vbox_container = memnew(VBoxContainer);
-	vbox_container->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
-	vbox_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	vbox_container->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	panel->add_child(vbox_container, false, INTERNAL_MODE_FRONT);
+	{
+		vbox_container = memnew(VBoxContainer);
+		panel->add_child(vbox_container, false, INTERNAL_MODE_FRONT);
 
-	search_bar = memnew(LineEdit);
-	search_bar->set_visible(false);
-	search_bar->set_clear_button_enabled(true);
-	search_bar->set_placeholder(ETR("Search"));
-	search_bar->set_keep_editing_on_text_submit(true);
-	search_bar->set_virtual_keyboard_show_on_focus(false);
-	search_bar->connect(SceneStringName(text_changed), callable_mp(this, &PopupMenu::_search_bar_text_changed));
-	search_bar->connect(SceneStringName(focus_entered), callable_mp(this, &PopupMenu::_search_bar_focus_entered));
-	vbox_container->add_child(search_bar, false, INTERNAL_MODE_FRONT);
+		{
+			search_bar = memnew(LineEdit);
+			search_bar->connect(SceneStringName(focus_entered), callable_mp(this, &PopupMenu::_search_bar_focus_entered));
+			search_bar->connect(SceneStringName(text_changed), callable_mp(this, &PopupMenu::_search_bar_text_changed));
+			search_bar->set_clear_button_enabled(true);
+			search_bar->set_keep_editing_on_text_submit(true);
+			search_bar->set_placeholder(ETR("Search"));
+			search_bar->set_virtual_keyboard_show_on_focus(false);
+			search_bar->set_visible(false);
+			vbox_container->add_child(search_bar, false, INTERNAL_MODE_FRONT);
 
-	// Scroll Container
-	scroll_container = memnew(ScrollContainer);
-	scroll_container->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
-	scroll_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	scroll_container->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	vbox_container->add_child(scroll_container, false, INTERNAL_MODE_FRONT);
-	scroll_container->add_theme_style_override(SceneStringName(panel), memnew(StyleBox));
+			scroll_container = memnew(ScrollContainer);
+			scroll_container->add_theme_style_override(SceneStringName(panel), memnew(StyleBox));
+			scroll_container->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+			vbox_container->add_child(scroll_container, false, INTERNAL_MODE_FRONT);
 
-	// The control which will display the items
-	control = memnew(PopupMenuItems(this));
-	control->set_clip_contents(false);
-	control->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
-	control->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	control->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	control->set_focus_mode(Control::FOCUS_ALL);
-	scroll_container->add_child(control, false, INTERNAL_MODE_FRONT);
-	control->connect(SceneStringName(draw), callable_mp(this, &PopupMenu::_draw_items));
+			{
+				control = memnew(PopupMenuItems(this));
+				control->connect(SceneStringName(draw), callable_mp(this, &PopupMenu::_draw_items));
+				control->set_focus_mode(Control::FOCUS_ALL);
+				control->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+				control->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+				scroll_container->add_child(control, false, INTERNAL_MODE_FRONT);
+			}
+		}
+	}
 
 	submenu_timer = memnew(Timer);
 	submenu_timer->set_wait_time(submenu_timer_popup_delay); // Default is 0.2.
