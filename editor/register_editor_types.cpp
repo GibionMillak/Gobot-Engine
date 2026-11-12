@@ -38,7 +38,7 @@
 #include "core/os/os.h"
 #include "editor/animation/animation_tree_editor_plugin.h"
 #include "editor/audio/audio_stream_randomizer_editor_plugin.h"
-#include "editor/builtin/assets/icons/editor_icons.h"
+#include "editor/content/editor_content_resources.h"
 #include "editor/debugger/debug_adapter/debug_adapter_server.h"
 #include "editor/debugger/editor_debugger_plugin.h"
 #include "editor/docks/filesystem_dock.h"
@@ -144,6 +144,7 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/shader/shader_editor_plugin.h"
 #include "editor/shader/shader_file_editor_plugin.h"
+#include "editor/themes/editor_icons.h"
 #include "editor/translations/editor_translation_parser.h"
 #include "editor/version_control/editor_vcs_interface.h"
 #include "servers/rendering/rendering_server.h"
@@ -153,6 +154,7 @@ void register_editor_types() {
 
 	ResourceLoader::set_timestamp_on_load(true);
 	ResourceSaver::set_timestamp_on_save(true);
+	EditorContentResources::initialize();
 
 	EditorStringNames::create();
 	editor_initialize_type_icons();
@@ -352,6 +354,7 @@ void unregister_editor_types() {
 		EditorPaths::free();
 	}
 	editor_finalize_type_icons();
+	EditorContentResources::finalize();
 	EditorStringNames::free();
 
 	OS::get_singleton()->benchmark_end_measure("Editor", "Unregister Types");

@@ -31,8 +31,8 @@
 #include "object_view.h"
 
 #include "core/object/callable_mp.h"
-#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/editor_node.h"
+#include "editor/themes/editor_icons.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/rich_text_label.h"
 #include "scene/gui/split_container.h"

@@ -31,15 +31,16 @@
 #include "editor_icons.h"
 
 #include "core/templates/hash_map.h"
-#include "editor/builtin/assets/icons/editor_icons.gen.h"
+#include "core/templates/hash_set.h"
+#include "core/variant/dictionary.h"
+#include "editor/content/assets/icons/editor_icons.gen.h"
 #include "editor/editor_string_names.h"
 #include "editor/themes/editor_color_map.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/resources/dpi_texture.h"
+#include "scene/resources/theme.h"
 
 #include "modules/svg/image_loader_svg.h"
-
-#include <cstring>
 
 static HashMap<StringName, StringName> &get_type_icon_cache() {
 	static HashMap<StringName, StringName> type_icons;
@@ -48,7 +49,8 @@ static HashMap<StringName, StringName> &get_type_icon_cache() {
 
 void editor_initialize_type_icons() {
 	HashMap<StringName, StringName> &type_icons = get_type_icon_cache();
-	for (const EditorTypeIcon &entry : EDITOR_TYPE_ICONS) {
+	for (int i = 0; i < EDITOR_TYPE_ICONS_COUNT; i++) {
+		const EditorTypeIcon &entry = EDITOR_TYPE_ICONS[i];
 		type_icons.insert(entry.type_name, entry.icon_name);
 	}
 }
@@ -70,12 +72,26 @@ void editor_configure_icons(bool p_dark_icon_and_font) {
 	}
 }
 
-// See also `generate_icon()` in `scene/theme/default_theme.cpp`.
-Ref<DPITexture> editor_generate_icon(int p_index, float p_scale, float p_saturation, const Dictionary &p_convert_colors = Dictionary()) {
-	return DPITexture::create_from_string(editor_icons_sources[p_index], p_scale, p_saturation, p_convert_colors);
+struct IconRenderingOptions {
+	float saturation;
+	const Dictionary &color_conversion_map;
+	const Dictionary &accent_color_map;
+	const HashSet<StringName> &accent_color_icons;
+	const HashSet<StringName> &conversion_exceptions;
+	const HashSet<StringName> &saturation_exceptions;
+};
+
+static Ref<DPITexture> generate_editor_icon(int p_index, float p_scale, const IconRenderingOptions &p_options) {
+	const StringName name = EDITOR_ICONS_NAMES[p_index];
+	if (p_options.accent_color_icons.has(name)) {
+		return DPITexture::create_from_string(EDITOR_ICONS_SOURCES[p_index], p_scale, 1.0, p_options.accent_color_map);
+	}
+	const float saturation = p_options.saturation_exceptions.has(name) ? 1.0 : p_options.saturation;
+	const Dictionary colors = p_options.conversion_exceptions.has(name) ? Dictionary() : p_options.color_conversion_map;
+	return DPITexture::create_from_string(EDITOR_ICONS_SOURCES[p_index], p_scale, saturation, colors);
 }
 
-float get_gizmo_handle_scale(const String &p_gizmo_handle_name, float p_gizmo_handle_scale) {
+static float get_gizmo_handle_scale(const String &p_gizmo_handle_name, float p_gizmo_handle_scale) {
 	if (p_gizmo_handle_scale > 1.0f) {
 		// The names of the icons that require additional scaling.
 		static HashSet<StringName> gizmo_to_scale;
@@ -157,94 +173,36 @@ void editor_register_icons(const Ref<Theme> &p_theme, bool p_dark_theme, float p
 	accent_color_icons.insert("gui_toggle_on");
 	accent_color_icons.insert("status_verified");
 
-	// Generate icons.
-	{
-		for (int i = 0; i < editor_icons_count; i++) {
-			const String &editor_icon_name = editor_icons_names[i];
-			Ref<DPITexture> icon;
-			if (accent_color_icons.has(editor_icon_name)) {
-				icon = editor_generate_icon(i, get_gizmo_handle_scale(editor_icon_name, p_gizmo_handle_scale), 1.0, accent_color_map);
-			} else {
-				float saturation = p_icon_saturation;
-				if (saturation_exceptions.has(editor_icon_name)) {
-					saturation = 1.0;
-				}
-
-				if (conversion_exceptions.has(editor_icon_name)) {
-					icon = editor_generate_icon(i, get_gizmo_handle_scale(editor_icon_name, p_gizmo_handle_scale), saturation);
-				} else {
-					icon = editor_generate_icon(i, get_gizmo_handle_scale(editor_icon_name, p_gizmo_handle_scale), saturation, color_conversion_map);
-				}
-			}
-
-			p_theme->set_icon(editor_icon_name, EditorStringName(EditorIcons), icon);
-		}
+	const IconRenderingOptions rendering_options = {
+		p_icon_saturation,
+		color_conversion_map,
+		accent_color_map,
+		accent_color_icons,
+		conversion_exceptions,
+		saturation_exceptions,
+	};
+	for (int i = 0; i < EDITOR_ICONS_NAMES_COUNT; i++) {
+		const StringName name = EDITOR_ICONS_NAMES[i];
+		const float scale = get_gizmo_handle_scale(name, p_gizmo_handle_scale);
+		p_theme->set_icon(name, EditorStringName(EditorIcons), generate_editor_icon(i, scale, rendering_options));
 	}
 
-	// Generate thumbnail icons with the given thumbnail size.
-	// See editor\icons\editor_icons_builders.py for the code that determines which icons are thumbnails.
-	if (p_thumb_size >= 64) {
-		const float scale = (float)p_thumb_size / 64.0 * EDSCALE;
-		for (int i = 0; i < editor_bg_thumbs_count; i++) {
-			const int index = editor_bg_thumbs_indices[i];
-			Ref<DPITexture> icon;
-
-			if (accent_color_icons.has(editor_icons_names[index])) {
-				icon = editor_generate_icon(index, scale, 1.0, accent_color_map);
-			} else {
-				float saturation = p_icon_saturation;
-				if (saturation_exceptions.has(editor_icons_names[index])) {
-					saturation = 1.0;
-				}
-
-				if (conversion_exceptions.has(editor_icons_names[index])) {
-					icon = editor_generate_icon(index, scale, saturation);
-				} else {
-					icon = editor_generate_icon(index, scale, saturation, color_conversion_map);
-				}
-			}
-
-			p_theme->set_icon(editor_icons_names[index], EditorStringName(EditorIcons), icon);
-		}
-	} else {
-		const float scale = (float)p_thumb_size / 32.0 * EDSCALE;
-		for (int i = 0; i < editor_md_thumbs_count; i++) {
-			const int index = editor_md_thumbs_indices[i];
-			Ref<DPITexture> icon;
-
-			if (accent_color_icons.has(editor_icons_names[index])) {
-				icon = editor_generate_icon(index, scale, 1.0, accent_color_map);
-			} else {
-				float saturation = p_icon_saturation;
-				if (saturation_exceptions.has(editor_icons_names[index])) {
-					saturation = 1.0;
-				}
-
-				if (conversion_exceptions.has(editor_icons_names[index])) {
-					icon = editor_generate_icon(index, scale, saturation);
-				} else {
-					icon = editor_generate_icon(index, scale, saturation, color_conversion_map);
-				}
-			}
-
-			p_theme->set_icon(editor_icons_names[index], EditorStringName(EditorIcons), icon);
-		}
+	const bool big_thumbnails = p_thumb_size >= 64;
+	const int count = big_thumbnails ? EDITOR_BG_THUMBS_INDICES_COUNT : EDITOR_MD_THUMBS_INDICES_COUNT;
+	const int *indices = big_thumbnails ? EDITOR_BG_THUMBS_INDICES : EDITOR_MD_THUMBS_INDICES;
+	const float scale = float(p_thumb_size) / (big_thumbnails ? 64.0 : 32.0) * EDSCALE;
+	for (int i = 0; i < count; i++) {
+		const int index = indices[i];
+		p_theme->set_icon(EDITOR_ICONS_NAMES[index], EditorStringName(EditorIcons), generate_editor_icon(index, scale, rendering_options));
 	}
 }
 
 void editor_copy_icons(const Ref<Theme> &p_theme, const Ref<Theme> &p_old_theme) {
-	for (int i = 0; i < editor_icons_count; i++) {
-		p_theme->set_icon(editor_icons_names[i], EditorStringName(EditorIcons), p_old_theme->get_icon(editor_icons_names[i], EditorStringName(EditorIcons)));
+	for (int i = 0; i < EDITOR_ICONS_NAMES_COUNT; i++) {
+		p_theme->set_icon(EDITOR_ICONS_NAMES[i], EditorStringName(EditorIcons), p_old_theme->get_icon(EDITOR_ICONS_NAMES[i], EditorStringName(EditorIcons)));
 	}
 }
 
-// Returns the SVG code for the default project thumbnail.
 String get_default_project_thumbnail() {
-	// FIXME: This icon can probably be predefined in editor_icons.gen.h so we don't have to look up.
-	for (int i = 0; i < editor_icons_count; i++) {
-		if (strcmp(editor_icons_names[i], "gui_project_thumbnail_default") == 0) {
-			return String(editor_icons_sources[i]);
-		}
-	}
-	return String();
+	return String(EDITOR_ICON_GUI_PROJECT_THUMBNAIL_DEFAULT);
 }

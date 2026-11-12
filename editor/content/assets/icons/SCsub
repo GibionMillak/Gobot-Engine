@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+from misc.utility.scons_hints import *
+
+Import("env")
+
+import os
+from pathlib import Path
+
+import asset_builders
+import editor_icons_builders
+
+root = Path(Dir(".").abspath)
+repository_root = Path(Dir("#").abspath)
+icon_roots = [(root, "")]
+module_roots = [
+    (name, (Path(path) if os.path.isabs(path) else repository_root / path).resolve())
+    for name, path in env.module_list.items()
+]
+for path in sorted(env.module_icons_paths):
+    icon_root = (Path(path) if os.path.isabs(path) else repository_root / path).resolve()
+    candidates = [(name, module_root) for name, module_root in module_roots if icon_root.is_relative_to(module_root)]
+    if not candidates:
+        raise ValueError(f"Icon directory does not belong to an enabled module: {icon_root}")
+    module_name, module_root = max(candidates, key=lambda candidate: len(candidate[1].parts))
+    icon_roots.append((icon_root, "module_" + module_name + "_"))
+
+records = []
+metadata = []
+for icon_root, prefix in icon_roots:
+    files = env["editor_content_files"] if not prefix else asset_builders.discover_files(icon_root)
+    icons = asset_builders.select_files(files, icon_root, {".svg"})
+    icon_metadata = asset_builders.select_files(files, icon_root, {".json"})
+    if not prefix:
+
+        def enabled_module(p_path):
+            parts = p_path.relative_to(root).parts
+            return parts[0] != "module" or len(parts) < 3 or parts[1] in env.module_list
+
+        icons = [path for path in icons if enabled_module(path)]
+        icon_metadata = [path for path in icon_metadata if enabled_module(path)]
+    root_records = asset_builders.get_asset_records(icons, icon_root, "EDITOR_ICON_", prefix)
+    for record in root_records:
+        record["relative_path"] = Path(record["path"]).relative_to(icon_root).as_posix()
+    records.extend(root_records)
+    metadata.extend(icon_metadata)
+records.sort(key=lambda record: record["path"])
+asset_builders.register_buffers(env, records, "editor/content/assets/icons/editor_icons.gen.h")
+
+env_icons = env.Clone()
+env_icons["editor_asset_records"] = records
+env_icons["editor_icon_metadata"] = [str(path) for path in metadata]
+icon_data = env_icons.CommandNoCache(
+    ["editor_icons.gen.h", "editor_icons.gen.cpp"],
+    [File(record["path"]) for record in records]
+    + [File(str(path)) for path in metadata]
+    + [env_icons.Value(records)],
+    env_icons.Run(editor_icons_builders.make_icons),
+)
+env_icons.Depends(
+    icon_data,
+    [File("../asset_builders.py"), File("editor_icons_builders.py")],
+)
+env_icons.add_source_files(env.editor_sources, [icon_data[1]])

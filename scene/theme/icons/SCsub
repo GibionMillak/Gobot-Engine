@@ -3,6 +3,9 @@ from misc.utility.scons_hints import *
 
 Import("env")
 
+from pathlib import Path
+
+import asset_builders
 import default_theme_icons_builders
 
 sources = Glob("*.svg")
@@ -10,8 +13,18 @@ if env["target"] in ["editor", "template_debug"]:
     # These are only needed for remote debugging.
     sources += Glob("debug_icons/*.svg")
 
-env.CommandNoCache(
-    "#scene/theme/default_theme_icons.gen.h",
-    sources,
-    env.Run(default_theme_icons_builders.make_default_theme_icons_action),
+records = asset_builders.get_asset_records(
+    [Path(str(item)).resolve() for item in sources], Dir(".").abspath, "DEFAULT_THEME_ICON_", p_flat_names=True,
 )
+env_icons = env.Clone()
+env_icons["default_theme_icon_records"] = records
+icon_data = env_icons.CommandNoCache(
+    ["#scene/theme/default_theme_icons.gen.h", "#scene/theme/default_theme_icons.gen.cpp"],
+    sources + [env_icons.Value(records)],
+    env_icons.Run(default_theme_icons_builders.make_icons),
+)
+env_icons.Depends(
+    icon_data,
+    [File("default_theme_icons_builders.py"), File("#editor/content/assets/asset_builders.py")],
+)
+env_icons.add_source_files(env.scene_sources, [icon_data[1]])

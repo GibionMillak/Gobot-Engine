@@ -31,12 +31,12 @@
 #include "editor_resource_picker.h"
 
 #include "core/input/input.h"
+#include "core/io/file_access_content.h"
 #include "core/io/resource_loader.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "core/os/os.h"
 #include "editor/audio/audio_stream_preview.h"
-#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/doc/editor_help.h"
 #include "editor/docks/filesystem_dock.h"
 #include "editor/docks/hierarchy_dock.h"
@@ -49,6 +49,7 @@
 #include "editor/plugins/editor_resource_conversion_plugin.h"
 #include "editor/script/script_editor_base.h"
 #include "editor/settings/editor_settings.h"
+#include "editor/themes/editor_icons.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/button.h"
 #include "scene/gui/texture_rect.h"
@@ -316,12 +317,8 @@ void EditorResourcePicker::_update_menu_items() {
 
 	// Add options for changing existing value of the resource.
 	if (edited_resource.is_valid()) {
-		// Determine if the edited resource is part of another scene (foreign) which was imported
-		bool is_edited_resource_foreign_import = EditorNode::get_singleton()->is_resource_read_only(edited_resource, true);
-
-		// If the resource is determined to be foreign and imported, change the menu entry's description to 'inspect' rather than 'edit'
-		// since will only be able to view its properties in read-only mode.
-		if (is_edited_resource_foreign_import) {
+		const bool is_resource_read_only = EditorNode::get_singleton()->is_resource_read_only(edited_resource, true);
+		if (is_resource_read_only) {
 			// The 'Search' icon is a magnifying glass, which seems appropriate, but maybe a bespoke icon is preferred here.
 			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_search")), TTR("Inspect"), OBJ_MENU_INSPECT);
 		} else {
@@ -372,7 +369,7 @@ void EditorResourcePicker::_update_menu_items() {
 			edit_menu->set_item_disabled(-1, force_allow_unique);
 		}
 
-		if (edited_resource->get_path().is_resource_file()) {
+		if (edited_resource->get_path().is_resource_file() && !FileAccessContent::is_content_path(edited_resource->get_path())) {
 			edit_menu->add_separator();
 			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("gui_show_in_file_system")), TTR("Show in FileSystem"), OBJ_MENU_SHOW_IN_FILE_SYSTEM);
 		}

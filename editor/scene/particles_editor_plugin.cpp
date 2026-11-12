@@ -31,11 +31,11 @@
 #include "particles_editor_plugin.h"
 
 #include "core/object/callable_mp.h"
-#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/docks/hierarchy_dock.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/settings/editor_settings.h"
+#include "editor/themes/editor_icons.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/menu_button.h"
 #include "scene/gui/spin_box.h"

@@ -32,10 +32,10 @@
 
 #include "core/io/resource_loader.h"
 #include "core/object/callable_mp.h"
-#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/editor_string_names.h"
 #include "editor/run/editor_run_bar.h"
 #include "editor/settings/editor_settings.h"
+#include "editor/themes/editor_icons.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/check_box.h"
 #include "scene/gui/flow_container.h"

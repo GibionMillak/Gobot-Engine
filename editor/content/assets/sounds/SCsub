@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+from misc.utility.scons_hints import *
+
+Import("env")
+
+from pathlib import Path
+
+import asset_builders
+import editor_sounds_builders
+
+if "vorbis" in env.module_list:
+    sound_root = Dir(".").abspath
+    sounds = asset_builders.select_files(env["editor_content_files"], sound_root, {".ogg"})
+    records = asset_builders.get_asset_records(sounds, sound_root, "EDITOR_SOUND_")
+    for record in records:
+        relative = Path(record["path"]).relative_to(sound_root).as_posix()
+        record["public_path"] = "res://.content/assets/sounds/" + relative
+    asset_builders.register_buffers(env, records, "editor/content/assets/sounds/editor_sounds.gen.h")
+
+    env_sounds = env.Clone()
+    env_sounds["editor_asset_records"] = records
+    sound_data = env_sounds.CommandNoCache(
+        ["editor_sounds.gen.h", "editor_sounds.gen.cpp"],
+        [File(str(path)) for path in sounds] + [env_sounds.Value(records)],
+        env_sounds.Run(editor_sounds_builders.make_sounds),
+    )
+    env_sounds.Depends(
+        sound_data,
+        [File("../asset_builders.py"), File("editor_sounds_builders.py")],
+    )
+    env_sounds.add_source_files(env.editor_sources, [sound_data[1]])

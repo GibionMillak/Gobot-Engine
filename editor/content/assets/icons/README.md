@@ -1,4 +1,4 @@
-# Built-in editor icons
+# Editor icons
 
 SVG assets use lowercase snake_case filenames in category subfolders. An icon's
 identifier is its path relative to this directory, without `.svg`, with `/`
@@ -31,14 +31,21 @@ their own categories so they are not associated with engine classes.
 returning an empty name for types without an associated icon. Move or rename an
 icon's optional JSON file along with its SVG.
 
-Built-in module icons live under `module/<module_name>` and are embedded only
-when that module is enabled. External module icon directories follow the same
-conventions, with identifiers prefixed by `module_<module_name>_`.
+Bundled module icons live under `module/<module_name>`. They receive editor theme
+entries only when that module is enabled. Their SVG files remain available as
+public editor content whenever the SVG loader is enabled, even if the module
+they depict is disabled. External module icon directories are used only for
+enabled modules and receive theme identifiers prefixed by `module_<module_name>_`;
+assets outside `editor/content` are not part of the public content namespace.
 
 The build recursively discovers SVG and JSON files. It rejects orphan metadata,
 invalid metadata, non-snake_case asset paths, duplicate identifiers, and duplicate
 type associations. Duplicate errors identify both source paths.
 
-`SCsub` invokes `editor_icons_builders.py` to generate `editor_icons.gen.h` here.
-Do not edit the generated header manually. `editor_icons.cpp` configures icon
-rendering, theme registration, thumbnail sizes, and type-name lookup.
+`SCsub` invokes `editor_icons_builders.py` to generate `editor_icons.gen.h`
+declarations and `editor_icons.gen.cpp` storage here. Do not edit generated files
+manually. `editor/themes/editor_icons.cpp` configures icon rendering, theme
+registration, thumbnail sizes, and type-name lookup.
+
+Other supported texture formats are exposed as public content through the parent
+content builder; SVG-specific metadata and theme registration apply only to SVGs.

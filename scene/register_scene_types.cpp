@@ -153,6 +153,7 @@
 #include "scene/resources/particle_process_material.h"
 #include "scene/resources/placeholder_textures.h"
 #include "scene/resources/portable_compressed_texture.h"
+#include "scene/resources/resource_format_content.h"
 #include "scene/resources/resource_format_text.h"
 #include "scene/resources/shader_include.h"
 #include "scene/resources/shader_include_resource_format.h"
@@ -364,6 +365,7 @@
 
 static Ref<ResourceFormatSaverText> resource_saver_text;
 static Ref<ResourceFormatLoaderText> resource_loader_text;
+static Ref<ResourceFormatLoaderContent> resource_loader_content;
 
 static Ref<ResourceFormatLoaderCompressedTexture2D> resource_loader_compressed_texture;
 static Ref<ResourceFormatLoaderStreamedTexture2D> resource_loader_streamed_texture;
@@ -410,6 +412,8 @@ void register_scene_types() {
 
 	resource_loader_text.instantiate();
 	ResourceLoader::add_resource_format_loader(resource_loader_text, true);
+	resource_loader_content.instantiate();
+	ResourceLoader::add_resource_format_loader(resource_loader_content, true);
 
 	if constexpr (GD_IS_CLASS_ENABLED(Shader)) {
 		resource_saver_shader.instantiate();
@@ -1125,6 +1129,8 @@ void unregister_scene_types() {
 
 	ResourceLoader::remove_resource_format_loader(resource_loader_text);
 	resource_loader_text.unref();
+	ResourceLoader::remove_resource_format_loader(resource_loader_content);
+	resource_loader_content.unref();
 
 	if constexpr (GD_IS_CLASS_ENABLED(Shader)) {
 		ResourceSaver::remove_resource_format_saver(resource_saver_shader);

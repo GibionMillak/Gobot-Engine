@@ -1,21 +1,18 @@
-"""Functions used to generate source files during build time"""
+"""Generate the default theme's embedded font storage."""
 
-import os
+from pathlib import Path
 
+import asset_builders
 import methods
 
 
-def make_fonts_header(target, source, env):
-    with methods.generated_wrapper(str(target[0])) as file:
-        for src in map(str, source):
-            # Saving uncompressed, since FreeType will reference from memory pointer.
-            buffer = methods.get_buffer(src)
-            name = os.path.splitext(os.path.basename(src))[0]
-
-            file.write(f"""\
-inline constexpr int _font_{name}_size = {len(buffer)};
-inline constexpr unsigned char _font_{name}[] = {{
-	{methods.format_buffer(buffer, 1)}
-}};
-
-""")
+def make_fonts(target, source, env):
+    paths = [Path(str(item)).resolve() for item in source]
+    records = asset_builders.get_asset_records(paths, paths[0].parent, "DEFAULT_FONT_")
+    with (
+        methods.generated_wrapper(str(target[0])) as header,
+        methods.generated_wrapper(str(target[1])) as output,
+    ):
+        output.write('#include "default_font.gen.h"\n\n#ifdef BROTLI_ENABLED\n\n')
+        asset_builders.write_asset_buffers(header, output, records)
+        output.write("#endif\n")

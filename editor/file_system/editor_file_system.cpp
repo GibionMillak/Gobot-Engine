@@ -41,6 +41,7 @@
 #include "core/object/worker_thread_pool.h"
 #include "core/os/os.h"
 #include "core/variant/variant_parser.h"
+#include "editor/content/editor_content_resources.h"
 #include "editor/doc/editor_help.h"
 #include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
@@ -489,6 +490,7 @@ void EditorFileSystem::_scan_filesystem() {
 	if (first_scan) {
 		sd = first_scan_root_dir;
 		ResourceUID::get_singleton()->copy_and_clear_cache();
+		EditorContentResources::register_uids();
 		ResourceUID::scan_for_uid_on_startup = nullptr;
 		processed_files = memnew(HashSet<String>());
 	} else {
@@ -1932,6 +1934,10 @@ bool EditorFileSystem::_find_file(const String &p_file, EditorFileSystemDirector
 }
 
 String EditorFileSystem::get_file_type(const String &p_file) const {
+	const StringName content_type = EditorContentResources::get_resource_type(p_file);
+	if (content_type != StringName()) {
+		return content_type;
+	}
 	EditorFileSystemDirectory *fs = nullptr;
 	int cpos = -1;
 
@@ -1961,6 +1967,10 @@ EditorFileSystemDirectory *EditorFileSystem::find_file(const String &p_file, int
 }
 
 ResourceUID::ID EditorFileSystem::get_file_uid(const String &p_path) const {
+	const ResourceUID::ID content_uid = EditorContentResources::get_resource_uid(p_path);
+	if (content_uid != ResourceUID::INVALID_ID) {
+		return content_uid;
+	}
 	int file_idx;
 	EditorFileSystemDirectory *directory = find_file(p_path, &file_idx);
 

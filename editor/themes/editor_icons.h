@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_sounds.cpp                                                      */
+/*  editor_icons.h                                                        */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,36 +28,22 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#include "editor_sounds.h"
+#pragma once
 
-#include "core/error/error_macros.h"
-#include "editor/themes/editor_theme.h"
+#include "core/object/ref_counted.h"
+#include "core/string/string_name.h"
 
-#include "modules/modules_enabled.gen.h"
+class Theme;
 
-#ifdef MODULE_VORBIS_ENABLED
-#include "editor_sounds.gen.h"
+void editor_initialize_type_icons();
+void editor_finalize_type_icons();
 
-#include "core/templates/vector.h"
+// Resolves an engine class or Variant type to its bundled asset identifier.
+// Returns an empty name when the type has no bundled icon.
+StringName editor_get_type_icon_name(const StringName &p_type);
 
-#include "modules/vorbis/audio_stream_ogg_vorbis.h"
+void editor_configure_icons(bool p_dark_icon_and_font);
+void editor_register_icons(const Ref<Theme> &p_theme, bool p_dark_theme, float p_icon_saturation, int p_thumb_size, float p_gizmo_handle_scale);
+void editor_copy_icons(const Ref<Theme> &p_theme, const Ref<Theme> &p_old_theme);
 
-#include <cstring>
-#endif
-
-void EditorSounds::populate_theme(const Ref<EditorTheme> &p_theme) {
-#ifdef MODULE_VORBIS_ENABLED
-	for (const EditorSoundData &sound_data : EDITOR_SOUND_DATA) {
-		Vector<uint8_t> buffer;
-		const Error error = buffer.resize(sound_data.size);
-		ERR_CONTINUE_MSG(error != OK, vformat("Could not allocate built-in editor sound '%s'.", sound_data.name));
-		memcpy(buffer.ptrw(), sound_data.data, sound_data.size);
-		Ref<AudioStreamOggVorbis> sound = AudioStreamOggVorbis::load_from_buffer(buffer);
-		ERR_CONTINUE_MSG(sound.is_null(), vformat("Could not load built-in editor sound '%s'.", sound_data.name));
-		// Operations that need loops must own their playback and stopping.
-		sound->set_loop(false);
-		sound->set_name(sound_data.name);
-		p_theme->set_sound(sound_data.name, "EditorSounds", sound);
-	}
-#endif
-}
+String get_default_project_thumbnail();

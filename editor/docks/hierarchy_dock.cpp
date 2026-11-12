@@ -2784,8 +2784,8 @@ void HierarchyDock::_restore_reparented_nodes(const Array &p_nodes, const Array 
 
 		if (Node3D *node_3d = Object::cast_to<Node3D>(node)) {
 			node_3d->set_transform(p_states[i]);
-		} else if (CanvasItem *canvas_item = Object::cast_to<CanvasItem>(node)) {
-			canvas_item->_edit_set_state(p_states[i]);
+		} else if (CanvasItem *canvas_node = Object::cast_to<CanvasItem>(node)) {
+			canvas_node->_edit_set_state(p_states[i]);
 		}
 	}
 }
@@ -2822,8 +2822,8 @@ void HierarchyDock::_add_editable_children_undo_redo(Node *p_node, bool p_editab
 			names.push_back(node->get_name());
 			if (const Node3D *node_3d = Object::cast_to<Node3D>(node)) {
 				states.push_back(node_3d->get_transform());
-			} else if (const CanvasItem *canvas_item = Object::cast_to<CanvasItem>(node)) {
-				states.push_back(canvas_item->_edit_get_state());
+			} else if (const CanvasItem *canvas_node = Object::cast_to<CanvasItem>(node)) {
+				states.push_back(canvas_node->_edit_get_state());
 			} else {
 				states.push_back(Variant());
 			}

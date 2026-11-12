@@ -34,6 +34,7 @@
 #include "core/crypto/crypto_core.h"
 #include "core/io/delta_encoding.h"
 #include "core/io/dir_access.h"
+#include "core/io/file_access_content.h"
 #include "core/io/file_access_encrypted.h"
 #include "core/io/file_access_pack.h" // PACK_HEADER_MAGIC, PACK_FORMAT_VERSION
 #include "core/io/image.h"
@@ -48,6 +49,7 @@
 #include "core/os/shared_object.h"
 #include "core/string/translation.h"
 #include "core/version.h"
+#include "editor/content/editor_content_resources.h"
 #include "editor/docks/script_editor/script_editor_dock.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
@@ -683,6 +685,79 @@ void EditorExportPlatform::_export_find_dependencies(const String &p_path, HashS
 
 	for (int i = 0; i < deps.size(); i++) {
 		_export_find_dependencies(deps[i], p_paths);
+	}
+}
+
+Error EditorExportPlatform::_export_find_editor_content_dependencies(const String &p_path, HashSet<String> &r_paths, HashSet<String> &r_visited) {
+	String path = ResourceUID::ensure_path_nocheck(p_path.get_slice("::", 0));
+	if (path.is_empty()) {
+		path = p_path.get_slice("::", 2);
+	}
+	if (path.is_empty() || r_visited.has(path)) {
+		return OK;
+	}
+	r_visited.insert(path);
+
+	const bool is_editor_content = FileAccessContent::is_content_path(path);
+	if (is_editor_content) {
+		ERR_FAIL_COND_V_MSG(!FileAccessContent::has_file(path), ERR_FILE_NOT_FOUND, vformat("Missing editor content export dependency '%s'.", path));
+		r_paths.insert(path);
+		for (const String &extra : EditorContentResources::get_extra_dependencies(path)) {
+			const Error error = _export_find_editor_content_dependencies(extra, r_paths, r_visited);
+			ERR_FAIL_COND_V(error != OK, error);
+		}
+	}
+
+	List<String> dependencies;
+	if (is_editor_content && EditorContentResources::get_resource_type(path) != StringName()) {
+		ResourceLoader::get_dependencies(path, &dependencies);
+	} else if (!is_editor_content) {
+		int index = -1;
+		EditorFileSystemDirectory *directory = EditorFileSystem::get_singleton()->find_file(path, &index);
+		if (directory) {
+			for (const String &dependency : directory->get_file_deps(index)) {
+				dependencies.push_back(dependency);
+			}
+		}
+	}
+	for (const String &dependency : dependencies) {
+		const Error error = _export_find_editor_content_dependencies(dependency, r_paths, r_visited);
+		ERR_FAIL_COND_V(error != OK, error);
+	}
+	return OK;
+}
+
+void EditorExportPlatform::_export_find_editor_content_roots(const Variant &p_value, HashSet<String> &r_roots, int p_depth) {
+	ERR_FAIL_COND(p_depth > Variant::MAX_RECURSION_DEPTH);
+	switch (p_value.get_type()) {
+		case Variant::STRING:
+		case Variant::STRING_NAME: {
+			const String path = ResourceUID::ensure_path_nocheck(p_value);
+			if (FileAccessContent::is_content_path(path)) {
+				r_roots.insert(path);
+			}
+		} break;
+		case Variant::ARRAY: {
+			const Array array = p_value;
+			for (const Variant &value : array) {
+				_export_find_editor_content_roots(value, r_roots, p_depth + 1);
+			}
+		} break;
+		case Variant::PACKED_STRING_ARRAY: {
+			const PackedStringArray array = p_value;
+			for (const String &value : array) {
+				_export_find_editor_content_roots(value, r_roots, p_depth + 1);
+			}
+		} break;
+		case Variant::DICTIONARY: {
+			const Dictionary dictionary = p_value;
+			for (const Variant &key : dictionary.get_key_list()) {
+				_export_find_editor_content_roots(key, r_roots, p_depth + 1);
+				_export_find_editor_content_roots(dictionary[key], r_roots, p_depth + 1);
+			}
+		} break;
+		default:
+			break;
 	}
 }
 
@@ -1365,6 +1440,45 @@ Error EditorExportPlatform::export_project_files(const Ref<EditorExportPreset> &
 	// Ignore import files, since these are automatically added to the jar later with the resources
 	_edit_filter_list(paths, String("*.import"), true);
 
+	// Editor content is virtual, so the project directory scan cannot discover it.
+	// Traverse the retained roots after filtering, including resources used by project settings.
+	EditorContentResources::register_uids();
+	HashSet<String> required_content_roots(paths);
+	List<PropertyInfo> settings;
+	ProjectSettings::get_singleton()->get_property_list(&settings);
+	for (const PropertyInfo &setting : settings) {
+		if (!(setting.usage & PROPERTY_USAGE_STORAGE)) {
+			continue;
+		}
+		const Variant value = get_project_setting(p_preset, setting.name);
+		_export_find_editor_content_roots(value, required_content_roots);
+	}
+	HashSet<String> visited_content_dependencies;
+	for (const String &root : required_content_roots) {
+		const Error error = _export_find_editor_content_dependencies(root, paths, visited_content_dependencies);
+		ERR_FAIL_COND_V(error != OK, error);
+	}
+
+	// Filters choose optional roots. Dependencies of every retained resource remain required.
+	const Vector<String> include_filters = p_preset->get_include_filter().split(",", false);
+	const Vector<String> exclude_filters = p_preset->get_exclude_filter().split(",", false);
+	const auto matches_filter = [](const String &p_path, const Vector<String> &p_filters) {
+		for (const String &filter : p_filters) {
+			const String pattern = filter.strip_edges();
+			if (!pattern.is_empty() && (p_path.matchn(pattern) || p_path.trim_prefix("res://").matchn(pattern))) {
+				return true;
+			}
+		}
+		return false;
+	};
+	for (const String &path : EditorContentResources::get_paths()) {
+		if (paths.has(path) || matches_filter(path, exclude_filters) || !matches_filter(path, include_filters)) {
+			continue;
+		}
+		const Error error = _export_find_editor_content_dependencies(path, paths, visited_content_dependencies);
+		ERR_FAIL_COND_V(error != OK, error);
+	}
+
 	EditorExportSaveProxy save_proxy(p_save_func, p_remove_func != nullptr);
 
 	Error err = OK;
@@ -1486,6 +1600,16 @@ Error EditorExportPlatform::export_project_files(const Ref<EditorExportPreset> &
 	for (const String &path : paths) {
 		save_info.source_path = path;
 		save_info.file_index++;
+
+		if (FileAccessContent::is_content_path(path)) {
+			Error error = OK;
+			const Vector<uint8_t> content = FileAccess::get_file_as_bytes(path, &error);
+			ERR_FAIL_COND_V(error != OK, error);
+			save_info.path = path;
+			error = save_proxy.save_file(p_preset, p_udata, save_info, content);
+			ERR_FAIL_COND_V(error != OK, error);
+			continue;
+		}
 
 		String type = ResourceLoader::get_resource_type(path);
 

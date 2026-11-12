@@ -130,6 +130,8 @@ private:
 	void _export_find_resources(EditorFileSystemDirectory *p_dir, HashSet<String> &p_paths);
 	void _export_find_customized_resources(const Ref<EditorExportPreset> &p_preset, EditorFileSystemDirectory *p_dir, EditorExportPreset::FileExportMode p_mode, HashSet<String> &p_paths);
 	void _export_find_dependencies(const String &p_path, HashSet<String> &p_paths);
+	Error _export_find_editor_content_dependencies(const String &p_path, HashSet<String> &r_paths, HashSet<String> &r_visited);
+	static void _export_find_editor_content_roots(const Variant &p_value, HashSet<String> &r_roots, int p_depth = 0);
 
 	static Error _save_pack_file(const Ref<EditorExportPreset> &p_preset, void *p_userdata, const SaveFileInfo &p_info, const Vector<uint8_t> &p_data);
 	static Error _save_pack_patch_file(const Ref<EditorExportPreset> &p_preset, void *p_userdata, const SaveFileInfo &p_info, const Vector<uint8_t> &p_data);

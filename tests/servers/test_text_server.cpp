@@ -35,7 +35,7 @@ TEST_FORCE_LINK(test_text_server)
 #ifdef TOOLS_ENABLED
 
 #include "core/variant/typed_array.h"
-#include "editor/builtin/assets/fonts/editor_fonts.gen.h"
+#include "editor/content/assets/fonts/editor_fonts.gen.h"
 #include "servers/text/text_server.h"
 
 namespace TestTextServer {
@@ -52,7 +52,7 @@ TEST_SUITE("[TextServer]") {
 				}
 
 				RID font = ts->create_font();
-				ts->font_set_data_ptr(font, _font_Inter_Regular, _font_Inter_Regular_size);
+				ts->font_set_data_ptr(font, EDITOR_FONT_INTER_REGULAR, EDITOR_FONT_INTER_REGULAR_SIZE);
 				CHECK_FALSE_MESSAGE(font == RID(), "Loading font failed.");
 				ts->free_rid(font);
 			}
@@ -68,10 +68,10 @@ TEST_SUITE("[TextServer]") {
 				}
 
 				RID font1 = ts->create_font();
-				ts->font_set_data_ptr(font1, _font_Inter_Regular, _font_Inter_Regular_size);
+				ts->font_set_data_ptr(font1, EDITOR_FONT_INTER_REGULAR, EDITOR_FONT_INTER_REGULAR_SIZE);
 				ts->font_set_allow_system_fallback(font1, false);
 				RID font2 = ts->create_font();
-				ts->font_set_data_ptr(font2, _font_NotoSansThai_Regular, _font_NotoSansThai_Regular_size);
+				ts->font_set_data_ptr(font2, EDITOR_FONT_NOTO_SANS_THAI_REGULAR, EDITOR_FONT_NOTO_SANS_THAI_REGULAR_SIZE);
 				ts->font_set_allow_system_fallback(font2, false);
 
 				Array font = { font1, font2 };
@@ -120,13 +120,13 @@ TEST_SUITE("[TextServer]") {
 				}
 
 				RID font1 = ts->create_font();
-				ts->font_set_data_ptr(font1, _font_Inter_Regular, _font_Inter_Regular_size);
+				ts->font_set_data_ptr(font1, EDITOR_FONT_INTER_REGULAR, EDITOR_FONT_INTER_REGULAR_SIZE);
 				ts->font_set_allow_system_fallback(font1, false);
 				RID font2 = ts->create_font();
-				ts->font_set_data_ptr(font2, _font_NotoSansThai_Regular, _font_NotoSansThai_Regular_size);
+				ts->font_set_data_ptr(font2, EDITOR_FONT_NOTO_SANS_THAI_REGULAR, EDITOR_FONT_NOTO_SANS_THAI_REGULAR_SIZE);
 				ts->font_set_allow_system_fallback(font2, false);
 				RID font3 = ts->create_font();
-				ts->font_set_data_ptr(font3, _font_Vazirmatn_Regular, _font_Vazirmatn_Regular_size);
+				ts->font_set_data_ptr(font3, EDITOR_FONT_VAZIRMATN_REGULAR, EDITOR_FONT_VAZIRMATN_REGULAR_SIZE);
 				ts->font_set_allow_system_fallback(font3, false);
 
 				Array font = { font1, font2, font3 };
@@ -518,9 +518,9 @@ TEST_SUITE("[TextServer]") {
 				//                   5^  10^
 
 				RID font1 = ts->create_font();
-				ts->font_set_data_ptr(font1, _font_Inter_Regular, _font_Inter_Regular_size);
+				ts->font_set_data_ptr(font1, EDITOR_FONT_INTER_REGULAR, EDITOR_FONT_INTER_REGULAR_SIZE);
 				RID font2 = ts->create_font();
-				ts->font_set_data_ptr(font2, _font_NotoSansThai_Regular, _font_NotoSansThai_Regular_size);
+				ts->font_set_data_ptr(font2, EDITOR_FONT_NOTO_SANS_THAI_REGULAR, EDITOR_FONT_NOTO_SANS_THAI_REGULAR_SIZE);
 
 				Array font = { font1, font2 };
 				RID ctx = ts->create_shaped_text();
@@ -626,9 +626,9 @@ TEST_SUITE("[TextServer]") {
 				}
 
 				RID font1 = ts->create_font();
-				ts->font_set_data_ptr(font1, _font_Inter_Regular, _font_Inter_Regular_size);
+				ts->font_set_data_ptr(font1, EDITOR_FONT_INTER_REGULAR, EDITOR_FONT_INTER_REGULAR_SIZE);
 				RID font2 = ts->create_font();
-				ts->font_set_data_ptr(font2, _font_Vazirmatn_Regular, _font_Vazirmatn_Regular_size);
+				ts->font_set_data_ptr(font2, EDITOR_FONT_VAZIRMATN_REGULAR, EDITOR_FONT_VAZIRMATN_REGULAR_SIZE);
 
 				Array font = { font1, font2 };
 				String test_1 = U"الحمد";
@@ -937,7 +937,7 @@ TEST_SUITE("[TextServer]") {
 				}
 
 				RID font1 = ts->create_font();
-				ts->font_set_data_ptr(font1, _font_Inter_Regular, _font_Inter_Regular_size);
+				ts->font_set_data_ptr(font1, EDITOR_FONT_INTER_REGULAR, EDITOR_FONT_INTER_REGULAR_SIZE);
 
 				Array font = { font1 };
 				RID ctx = ts->create_shaped_text();

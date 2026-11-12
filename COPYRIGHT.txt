@@ -269,37 +269,37 @@ Comment: etcpak
 Copyright: 2013-2022, Bartosz Taudul
 License: BSD-3-clause
 
-Files: editor/builtin/assets/fonts/baloo_2/*.ttf
+Files: editor/content/assets/fonts/baloo_2/*.ttf
 Comment: Baloo 2 font
 Copyright: 2019, The Baloo 2 Project Authors (https://github.com/EkType/Baloo2)
 License: OFL-1.1
 
-Files: editor/builtin/assets/fonts/droid_sans/*.woff2
+Files: editor/content/assets/fonts/droid_sans/*.woff2
 Comment: DroidSans font
 Copyright: 2008, The Android Open Source Project
 License: Apache-2.0
 
-Files: editor/builtin/assets/fonts/inter/*.woff2
+Files: editor/content/assets/fonts/inter/*.woff2
 Comment: Inter font
 Copyright: 2016, The Inter Project Authors
 License: OFL-1.1
 
-Files: editor/builtin/assets/fonts/jetbrains_mono/regular.woff2
+Files: editor/content/assets/fonts/jetbrains_mono/regular.woff2
 Comment: JetBrains Mono font
 Copyright: 2020, JetBrains s.r.o.
 License: OFL-1.1
 
-Files: editor/builtin/assets/fonts/noto_sans/*.woff2
+Files: editor/content/assets/fonts/noto_sans/*.woff2
 Comment: Noto Sans font
 Copyright: 2012, Google Inc.
 License: OFL-1.1
 
-Files: editor/builtin/assets/fonts/open_sans/*.woff2
+Files: editor/content/assets/fonts/open_sans/*.woff2
 Comment: Open Sans font
 Copyright: 2020, The Open Sans Project Authors
 License: OFL-1.1
 
-Files: editor/builtin/assets/fonts/vazirmatn/*.woff2
+Files: editor/content/assets/fonts/vazirmatn/*.woff2
 Comment: Vazirmatn font
 Copyright: 2015, The Vazirmatn Project Authors.
 License: OFL-1.1

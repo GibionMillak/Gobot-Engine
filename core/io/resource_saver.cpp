@@ -32,6 +32,7 @@
 
 #include "core/config/project_settings.h"
 #include "core/io/file_access.h"
+#include "core/io/file_access_content.h"
 #include "core/io/resource_loader.h"
 #include "core/object/class_db.h"
 #include "core/object/script_language.h"
@@ -106,6 +107,7 @@ Error ResourceSaver::save(RequiredParam<Resource> p_resource, const String &p_pa
 		path = resource->get_path();
 	}
 	ERR_FAIL_COND_V_MSG(path.is_empty(), ERR_INVALID_PARAMETER, "Can't save resource to empty path. Provide non-empty path or a Resource with non-empty resource_path.");
+	ERR_FAIL_COND_V_MSG(FileAccessContent::is_content_path(path), ERR_UNAUTHORIZED, "Editor content resources are read-only. Save a copy in the project instead.");
 
 	Error err = ERR_FILE_UNRECOGNIZED;
 
@@ -158,6 +160,7 @@ Error ResourceSaver::set_uid(const String &p_path, ResourceUID::ID p_uid) {
 	String path = p_path;
 
 	ERR_FAIL_COND_V_MSG(path.is_empty(), ERR_INVALID_PARAMETER, "Can't update UID to empty path. Provide non-empty path.");
+	ERR_FAIL_COND_V_MSG(FileAccessContent::is_content_path(path), ERR_UNAUTHORIZED, "Editor content resource UIDs are read-only.");
 
 	Error err = ERR_FILE_UNRECOGNIZED;
 

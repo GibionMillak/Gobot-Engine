@@ -33,6 +33,7 @@
 #include "core/config/project_settings.h"
 #include "core/crypto/crypto_core.h"
 #include "core/io/file_access_compressed.h"
+#include "core/io/file_access_content.h"
 #include "core/io/file_access_encrypted.h"
 #include "core/io/file_access_pack.h"
 #include "core/io/marshalls.h"
@@ -51,6 +52,9 @@ Ref<FileAccess> FileAccess::create(AccessType p_access) {
 }
 
 bool FileAccess::exists(const String &p_name) {
+	if (FileAccessContent::has_file(p_name)) {
+		return true;
+	}
 	if (PackedData::get_singleton() && !PackedData::get_singleton()->is_disabled() && PackedData::get_singleton()->has_path(p_name)) {
 		return true;
 	}
@@ -66,7 +70,9 @@ void FileAccess::_set_access_type(AccessType p_access) {
 
 Ref<FileAccess> FileAccess::create_for_path(const String &p_path) {
 	Ref<FileAccess> ret;
-	if (p_path.begins_with("res://") || p_path.begins_with("uid://")) {
+	if (FileAccessContent::is_content_path(p_path)) {
+		ret = memnew(FileAccessContent);
+	} else if (p_path.begins_with("res://") || p_path.begins_with("uid://")) {
 		ret = create(ACCESS_RESOURCES);
 	} else if (p_path.begins_with("user://")) {
 		ret = create(ACCESS_USERDATA);
@@ -157,10 +163,10 @@ Error FileAccess::reopen(const String &p_path, int p_mode_flags) {
 }
 
 Ref<FileAccess> FileAccess::open(const String &p_path, int p_mode_flags, Error *r_error) {
-	//try packed data first
+	// Embedded originals take precedence over project packs.
 
 	Ref<FileAccess> ret;
-	if (!(p_mode_flags & WRITE) && !(p_mode_flags & SKIP_PACK) && PackedData::get_singleton() && !PackedData::get_singleton()->is_disabled()) {
+	if (!FileAccessContent::has_file(p_path) && !(p_mode_flags & WRITE) && !(p_mode_flags & SKIP_PACK) && PackedData::get_singleton() && !PackedData::get_singleton()->is_disabled()) {
 		ret = PackedData::get_singleton()->try_open_path(p_path);
 		if (ret.is_valid()) {
 			if (r_error) {
@@ -713,6 +719,9 @@ Error FileAccess::set_hidden_attribute(const String &p_file, bool p_hidden) {
 }
 
 bool FileAccess::get_read_only_attribute(const String &p_file) {
+	if (FileAccessContent::is_content_path(p_file)) {
+		return true;
+	}
 	if (PackedData::get_singleton() && !PackedData::get_singleton()->is_disabled() && (PackedData::get_singleton()->has_path(p_file) || PackedData::get_singleton()->has_directory(p_file))) {
 		return false;
 	}

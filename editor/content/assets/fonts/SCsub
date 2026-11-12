@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+from misc.utility.scons_hints import *
+
+Import("env")
+
+import asset_builders
+import editor_fonts_builders
+
+font_root = Dir(".").abspath
+fonts = asset_builders.select_files(env["editor_content_files"], font_root, asset_builders.FONT_EXTENSIONS)
+records = asset_builders.get_asset_records(fonts, font_root, "EDITOR_FONT_")
+asset_builders.register_buffers(env, records, "editor/content/assets/fonts/editor_fonts.gen.h")
+
+env_fonts = env.Clone()
+env_fonts["editor_asset_records"] = records
+font_data = env_fonts.CommandNoCache(
+    ["editor_fonts.gen.h", "editor_fonts.gen.cpp"],
+    [File(str(path)) for path in fonts] + [env_fonts.Value(records)],
+    env_fonts.Run(editor_fonts_builders.make_fonts),
+)
+env_fonts.Depends(
+    font_data,
+    [File("../asset_builders.py"), File("editor_fonts_builders.py")],
+)
+env_fonts.add_source_files(env.editor_sources, [font_data[1]])

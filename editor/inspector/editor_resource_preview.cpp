@@ -32,12 +32,14 @@
 
 #include "core/config/project_settings.h"
 #include "core/io/file_access.h"
+#include "core/io/file_access_content.h"
 #include "core/io/resource_loader.h"
 #include "core/io/resource_saver.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "core/os/os.h"
 #include "core/variant/variant_utility.h"
+#include "editor/content/editor_content_resources.h"
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_paths.h"
@@ -319,7 +321,12 @@ void EditorResourcePreview::_iterate() {
 
 	Dictionary preview_metadata;
 	String temp_path = EditorPaths::get_singleton()->get_cache_dir();
-	String cache_base = ProjectSettings::get_singleton()->globalize_path(item.path).md5_text();
+	String cache_base = ProjectSettings::get_singleton()->globalize_path(item.path);
+	if (FileAccessContent::is_content_path(item.path)) {
+		// Referenced content can change across builds without changing this file's bytes.
+		cache_base += EditorContentResources::get_preview_hash(item.path);
+	}
+	cache_base = cache_base.md5_text();
 	cache_base = temp_path.path_join("resthumb-" + cache_base);
 
 	// Does not have it, try to load a cached thumbnail.

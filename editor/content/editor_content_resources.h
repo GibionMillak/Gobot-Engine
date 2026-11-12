@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  editor_icons.h                                                        */
+/*  editor_content_resources.h                                            */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,18 +30,29 @@
 
 #pragma once
 
+#include "core/io/resource_uid.h"
 #include "core/string/string_name.h"
-#include "scene/resources/theme.h"
+#include "core/templates/hash_map.h"
+#include "core/templates/vector.h"
 
-void editor_initialize_type_icons();
-void editor_finalize_type_icons();
+class EditorContentResources {
+public:
+	static void initialize();
+	static void finalize();
+	static void register_uids();
+	// Returned paths and cached types remain valid until finalize().
+	static const Vector<String> &get_paths();
+	static StringName get_resource_type(const String &p_path);
+	static ResourceUID::ID get_resource_uid(const String &p_path);
+	// Includes transitive content dependencies; stable until the editor is rebuilt.
+	static String get_preview_hash(const String &p_path);
+	static Vector<String> get_extra_dependencies(const String &p_path);
 
-// Resolves an engine class or Variant type to its bundled asset identifier.
-// Returns an empty name when the type has no bundled icon.
-StringName editor_get_type_icon_name(const StringName &p_type);
+private:
+	static void _initialize_metadata();
+	static int _find_path(const String &p_path);
 
-void editor_configure_icons(bool p_dark_icon_and_font);
-void editor_register_icons(const Ref<Theme> &p_theme, bool p_dark_theme, float p_icon_saturation, int p_thumb_size, float p_gizmo_handle_scale);
-void editor_copy_icons(const Ref<Theme> &p_theme, const Ref<Theme> &p_old_theme);
-
-String get_default_project_thumbnail();
+	static HashMap<String, int> _path_indices;
+	static Vector<String> _paths;
+	static Vector<StringName> _resource_types;
+};

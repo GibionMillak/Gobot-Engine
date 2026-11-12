@@ -30,7 +30,7 @@
 
 #include "editor_variant_type_selectors.h"
 
-#include "editor/builtin/assets/icons/editor_icons.h"
+#include "editor/themes/editor_icons.h"
 
 struct CompareVariantTypeNames {
 	bool operator()(const String &p_lhs, const String &p_rhs) const {

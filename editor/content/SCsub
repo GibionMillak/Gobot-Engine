@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+from misc.utility.scons_hints import *
+
+import sys
+from pathlib import Path
+
+Import("env")
+
+sys.path.insert(0, Dir(".").abspath)
+import asset_builders
+import content_builders
+
+content_root = Path(Dir(".").abspath)
+content_files = asset_builders.discover_files(content_root)
+resources, support = content_builders.discover_content(content_files, content_root)
+
+env_content = env.Clone()
+env_content.editor_sources = env.editor_sources
+env_content["editor_content_files"] = [str(path) for path in content_files]
+env_content["editor_content_shared_buffers"] = {}
+for directory in ("fonts", "icons", "sounds"):
+    SConscript(f"assets/{directory}/SCsub", exports={"env": env_content})
+
+resource_format_header = File("#scene/resources/resource_format_text.h")
+env_content["editor_content_root"] = str(content_root)
+env_content["editor_content_resources"] = [str(path) for path in resources]
+env_content["editor_content_support"] = [str(path) for path in support]
+env_content["resource_text_format_header"] = resource_format_header.abspath
+content_data = env_content.CommandNoCache(
+    ["editor_content_resources.gen.h", "editor_content_resources.gen.cpp"],
+    [File(str(path)) for path in resources + support]
+    + [resource_format_header, env_content.Value(env_content["editor_content_shared_buffers"])],
+    env_content.Run(content_builders.make_content_resources),
+)
+env_content.Depends(content_data, [File("content_builders.py"), File("assets/asset_builders.py")])
+env_content.add_source_files(env.editor_sources, [content_data[1]])
+env_content.add_source_files(env.editor_sources, "*.cpp")

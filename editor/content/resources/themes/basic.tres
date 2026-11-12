@@ -1,0 +1,10 @@
+[gd_resource type="Theme" format=4 load_steps=3]
+
+[ext_resource type="FontFile" path="res://.content/assets/fonts/inter/regular.woff2" id="1_font"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/rounded_panel.tres" id="2_panel"]
+
+[resource]
+resource_name = "Basic"
+default_font = ExtResource("1_font")
+default_font_size = 16
+PanelContainer/styles/panel = ExtResource("2_panel")

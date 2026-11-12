@@ -1,33 +1,32 @@
-"""Functions used to generate source files during build time"""
+"""Generate the default theme icon tables using the shared asset emitter."""
 
-import os
+import json
 
+import asset_builders
 import methods
 
 
-# See also `editor/builtin/assets/icons/editor_icons_builders.py`.
-def make_default_theme_icons_action(target, source, env):
-    icons_names = []
-    icons_raw = []
-
-    for src in map(str, source):
-        with open(src, encoding="utf-8", newline="\n") as file:
-            icons_raw.append(methods.to_raw_cstring(file.read()))
-
-        name = os.path.splitext(os.path.basename(src))[0]
-        icons_names.append(f'"{name}"')
-
-    icons_names_str = ",\n\t".join(icons_names)
-    icons_raw_str = ",\n\t".join(icons_raw)
-
-    with methods.generated_wrapper(str(target[0])) as file:
-        file.write(f"""\
-inline constexpr int default_theme_icons_count = {len(icons_names)};
-inline constexpr const char *default_theme_icons_sources[] = {{
-	{icons_raw_str}
-}};
-
-inline constexpr const char *default_theme_icons_names[] = {{
-	{icons_names_str}
-}};
-""")
+def make_icons(target, source, env):
+    records = env["default_theme_icon_records"]
+    with (
+        methods.generated_wrapper(str(target[0])) as header,
+        methods.generated_wrapper(str(target[1])) as output,
+    ):
+        output.write('#include "default_theme_icons.gen.h"\n\n')
+        asset_builders.write_asset_buffers(header, output, records)
+        asset_builders.write_table(
+            header,
+            output,
+            "char *const",
+            "DEFAULT_THEME_ICONS_SOURCES",
+            [record["symbol"] for record in records],
+            "nullptr",
+        )
+        asset_builders.write_table(
+            header,
+            output,
+            "char *const",
+            "DEFAULT_THEME_ICONS_NAMES",
+            [json.dumps(record["name"]) for record in records],
+            '""',
+        )

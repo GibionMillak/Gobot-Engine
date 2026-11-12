@@ -8,7 +8,7 @@ import editor_builders
 
 Import("env")
 
-sys.path.insert(0, Dir("builtin/assets").abspath)
+sys.path.insert(0, Dir("content/assets").abspath)
 
 env.editor_sources = []
 
@@ -73,9 +73,7 @@ if env.editor_build:
 
     SConscript("animation/SCsub")
     SConscript("audio/SCsub")
-    SConscript("builtin/assets/fonts/SCsub")
-    SConscript("builtin/assets/icons/SCsub")
-    SConscript("builtin/assets/sounds/SCsub")
+    SConscript("content/SCsub")
     SConscript("debugger/SCsub")
     SConscript("doc/SCsub")
     SConscript("docks/SCsub")

@@ -35,6 +35,7 @@
 #include "core/input/input.h"
 #include "core/io/config_file.h"
 #include "core/io/file_access.h"
+#include "core/io/file_access_content.h"
 #include "core/io/image.h"
 #include "core/io/missing_resource.h"
 #include "core/io/resource_importer.h"
@@ -53,7 +54,6 @@
 #include "editor/audio/audio_stream_editor_plugin.h"
 #include "editor/audio/audio_stream_preview.h"
 #include "editor/audio/editor_audio_buses.h"
-#include "editor/builtin/assets/icons/editor_icons.h"
 #include "editor/debugger/debugger_editor_plugin.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/debugger/script_editor_debugger.h"
@@ -152,6 +152,7 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/shader/editor_native_shader_source_visualizer.h"
 #include "editor/shader/shader_text_editor.h"
+#include "editor/themes/editor_icons.h"
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme_manager.h"
 #include "editor/translations/editor_translation_parser.h"
@@ -1879,9 +1880,9 @@ void EditorNode::save_resource(const Ref<Resource> &p_resource) {
 		}
 	}
 
-	// If the resource has been imported, ask the user to use a different path in order to save it.
+	// Imported and editor content originals must be saved to a different path.
 	String path = p_resource->get_path();
-	if (path.is_resource_file() && !FileAccess::exists(path + ".import")) {
+	if (path.is_resource_file() && !FileAccess::exists(path + ".import") && !FileAccessContent::is_content_path(path)) {
 		save_resource_in_path(p_resource, p_resource->get_path());
 	} else {
 		save_resource_as(p_resource);
@@ -1891,6 +1892,7 @@ void EditorNode::save_resource(const Ref<Resource> &p_resource) {
 void EditorNode::save_resource_as(const Ref<Resource> &p_resource, const String &p_at_path) {
 	String resource_path = p_resource->get_path();
 	bool is_resource = resource_path.is_resource_file();
+	const bool is_editor_content = FileAccessContent::is_content_path(resource_path);
 
 	{
 		// Early exit checks.
@@ -1914,7 +1916,9 @@ void EditorNode::save_resource_as(const Ref<Resource> &p_resource, const String 
 	}
 
 	file->set_file_mode(EditorFileDialog::FILE_MODE_SAVE_FILE);
-	saving_resource = p_resource;
+	// Keep the embedded original in the resource cache when saving an editable copy.
+	saving_resource = is_editor_content ? p_resource->duplicate_deep() : p_resource;
+	ERR_FAIL_COND(saving_resource.is_null());
 
 	current_menu_option = RESOURCE_SAVE_AS;
 	List<String> extensions;
@@ -1942,7 +1946,14 @@ void EditorNode::save_resource_as(const Ref<Resource> &p_resource, const String 
 		new_resource_name_snake_case = "new_" + resource_name_snake_case + "." + preferred.front()->get().to_lower();
 	}
 
-	if (!p_at_path.is_empty()) {
+	if (is_editor_content) {
+		file->set_current_dir(p_at_path.is_empty() ? "res://" : p_at_path);
+		String copy_filename = resource_path.get_file();
+		if (!preferred.is_empty() && !preferred.find(resource_path.get_extension().to_lower())) {
+			copy_filename = copy_filename.get_basename() + "." + preferred.front()->get().to_lower();
+		}
+		file->set_current_file(copy_filename);
+	} else if (!p_at_path.is_empty()) {
 		file->set_current_dir(p_at_path);
 		if (is_resource) {
 			file->set_current_file(resource_path.get_file());
@@ -2424,6 +2435,9 @@ bool EditorNode::is_resource_read_only(Ref<Resource> p_resource, bool p_foreign_
 	ERR_FAIL_COND_V(p_resource.is_null(), false);
 
 	String path = p_resource->get_path();
+	if (FileAccessContent::is_content_path(path)) {
+		return true;
+	}
 	if (!path.is_resource_file()) {
 		// If the resource name contains '::', that means it is a subresource embedded in another resource.
 		int srpos = path.find("::");
@@ -5141,7 +5155,9 @@ void EditorNode::_edit_current(bool p_skip_foreign, bool p_skip_inspector_update
 		}
 
 		int subr_idx = current_res->get_path().find("::");
-		if (subr_idx != -1) {
+		if (FileAccessContent::is_content_path(current_res->get_path())) {
+			editable_info = TTR("This resource is supplied with the editor and is read-only. Use Make Unique or Save As to create an editable copy in your project.");
+		} else if (subr_idx != -1) {
 			String base_path = current_res->get_path().substr(0, subr_idx);
 			if (FileAccess::exists(base_path + ".import")) {
 				if (!base_path.is_resource_file()) {

@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 from misc.utility.scons_hints import *
 
+import sys
+
 Import("env")
+
+sys.path.insert(0, Dir("#editor/content/assets").abspath)
 
 import default_theme_builders
 
@@ -9,8 +13,11 @@ env.add_source_files(env.scene_sources, "*.cpp")
 
 SConscript("icons/SCsub")
 
-env.CommandNoCache(
-    "#scene/theme/default_font.gen.h",
-    "#editor/builtin/assets/fonts/open_sans/semi_bold.woff2",
-    env.Run(default_theme_builders.make_fonts_header),
+font_data = env.CommandNoCache(
+    ["default_font.gen.h", "default_font.gen.cpp"],
+    "#editor/content/assets/fonts/open_sans/semi_bold.woff2",
+    env.Run(default_theme_builders.make_fonts),
 )
+
+env.Depends(font_data, [File("default_theme_builders.py"), File("#editor/content/assets/asset_builders.py")])
+env.add_source_files(env.scene_sources, [font_data[1]])

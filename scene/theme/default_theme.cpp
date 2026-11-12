@@ -76,9 +76,8 @@ static Ref<StyleBox> sb_expand(Ref<StyleBox> p_sbox, float p_left, float p_top, 
 	return p_sbox;
 }
 
-// See also `editor_generate_icon()` in `editor/builtin/assets/icons/editor_icons.cpp`.
 static Ref<DPITexture> generate_icon(int p_index) {
-	return DPITexture::create_from_string(default_theme_icons_sources[p_index], scale);
+	return DPITexture::create_from_string(DEFAULT_THEME_ICONS_SOURCES[p_index], scale);
 }
 
 static Ref<StyleBox> make_empty_stylebox(float p_margin_left = 0, float p_margin_top = 0, float p_margin_right = 0, float p_margin_bottom = 0) {
@@ -124,8 +123,8 @@ void fill_default_theme(Ref<Theme> &theme, const Ref<Font> &default_font, const 
 	// Convert the generated icon sources to a dictionary for easier access.
 	// Unlike the editor icons, there is no central repository of icons in the Theme resource itself to keep it tidy.
 	Dictionary icons;
-	for (int i = 0; i < default_theme_icons_count; i++) {
-		icons[default_theme_icons_names[i]] = generate_icon(i);
+	for (int i = 0; i < DEFAULT_THEME_ICONS_NAMES_COUNT; i++) {
+		icons[DEFAULT_THEME_ICONS_NAMES[i]] = generate_icon(i);
 	}
 
 	// Panel
@@ -1431,7 +1430,7 @@ void make_default_theme(float p_scale, Ref<Font> p_font, TextServer::SubpixelPos
 		Ref<FontFile> dynamic_font;
 		dynamic_font.instantiate();
 #ifdef BROTLI_ENABLED
-		dynamic_font->set_data_ptr(_font_semi_bold, _font_semi_bold_size);
+		dynamic_font->set_data_ptr(DEFAULT_FONT_SEMI_BOLD, DEFAULT_FONT_SEMI_BOLD_SIZE);
 		dynamic_font->set_subpixel_positioning(p_font_subpixel);
 		dynamic_font->set_hinting(p_font_hinting);
 		dynamic_font->set_antialiasing(p_font_antialiasing);

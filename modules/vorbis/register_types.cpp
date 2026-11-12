@@ -34,6 +34,7 @@
 
 #include "core/io/resource_importer.h"
 #include "core/object/class_db.h"
+#include "scene/resources/resource_format_content.h"
 
 #ifdef TOOLS_ENABLED
 #include "resource_importer_ogg_vorbis.h"
@@ -54,9 +55,14 @@ static void _editor_init() {
 }
 #endif
 
+static Ref<Resource> _load_content_audio(const String &p_path) {
+	return AudioStreamOggVorbis::load_from_file(p_path);
+}
+
 void initialize_vorbis_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
 		GDREGISTER_CLASS(AudioStreamOggVorbis);
+		ResourceFormatLoaderContent::register_audio_format("ogg", "AudioStreamOggVorbis", _load_content_audio);
 		GDREGISTER_CLASS(AudioStreamPlaybackOggVorbis);
 	}
 
@@ -70,4 +76,7 @@ void initialize_vorbis_module(ModuleInitializationLevel p_level) {
 }
 
 void uninitialize_vorbis_module(ModuleInitializationLevel p_level) {
+	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+		ResourceFormatLoaderContent::unregister_audio_format("ogg");
+	}
 }

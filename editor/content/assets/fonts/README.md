@@ -1,8 +1,12 @@
-# Built-in fonts
+# Editor fonts
 
 `SCsub` embeds the font files in the family subfolders using
-`editor_fonts_builders.py`. The build generates `editor_fonts.gen.h` here;
-do not edit it manually. `editor_fonts.cpp` configures these fonts for the editor.
+`editor_fonts_builders.py`. The build generates `editor_fonts.gen.h` declarations
+and `editor_fonts.gen.cpp` storage here; do not edit them manually.
+`editor/themes/editor_fonts.cpp` configures these fonts for the editor.
+Supported font extensions and naming rules are shared through `asset_builders.py`.
+Adding a font exposes it as public editor content; choosing it as an editor UI
+font remains part of the editor theme configuration.
 
 - `baloo_2/*.ttf`:
   * Upstream: https://github.com/EkType/Baloo2

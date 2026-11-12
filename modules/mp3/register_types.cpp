@@ -34,6 +34,7 @@
 
 #include "core/io/resource_importer.h"
 #include "core/object/class_db.h"
+#include "scene/resources/resource_format_content.h"
 
 #ifdef TOOLS_ENABLED
 #include "resource_importer_mp3.h"
@@ -54,9 +55,14 @@ static void _editor_init() {
 }
 #endif
 
+static Ref<Resource> _load_content_audio(const String &p_path) {
+	return AudioStreamMP3::load_from_file(p_path);
+}
+
 void initialize_mp3_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
 		GDREGISTER_CLASS(AudioStreamMP3);
+		ResourceFormatLoaderContent::register_audio_format("mp3", "AudioStreamMP3", _load_content_audio);
 	}
 
 #ifdef TOOLS_ENABLED
@@ -69,4 +75,7 @@ void initialize_mp3_module(ModuleInitializationLevel p_level) {
 }
 
 void uninitialize_mp3_module(ModuleInitializationLevel p_level) {
+	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+		ResourceFormatLoaderContent::unregister_audio_format("mp3");
+	}
 }

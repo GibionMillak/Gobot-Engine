@@ -32,6 +32,7 @@
 
 #include "core/string/fuzzy_search.h"
 #include "core/templates/a_hash_map.h"
+#include "scene/gui/box_container.h"
 #include "scene/gui/dialog.h"
 #include "scene/gui/margin_container.h"
 
@@ -143,9 +144,11 @@ private:
 	Label *no_results_label = nullptr;
 
 	Label *file_details_path = nullptr;
+	Label *_result_count_lbl = nullptr;
 	Button *display_mode_toggle = nullptr;
 	CheckButton *instant_preview_toggle = nullptr;
 	CheckButton *include_addons_toggle = nullptr;
+	CheckButton *_include_editor_content_toggle = nullptr;
 	CheckButton *fuzzy_search_toggle = nullptr;
 
 	AHashMap<StringName, Ref<Texture2D>> file_type_icons;
@@ -156,13 +159,16 @@ private:
 	void _sort_uids(int p_max_results);
 	void _create_initial_results();
 	void _find_uids_in_folder(EditorFileSystemDirectory *p_directory, bool p_include_addons);
+	void _find_editor_content_resources();
 
 	Vector<ResourceUID::ID> *_get_history();
 	void _add_candidate(QuickOpenResultCandidate &p_candidate);
+	void _editor_content_preview_ready(const String &p_path, const Ref<Texture2D> &p_preview, const Ref<Texture2D> &p_small_preview);
 	Vector<Ref<FuzzySearchMatch>> _get_fuzzy_search_results();
 	void _use_default_candidates();
 	void _score_and_sort_candidates();
 	void _update_result_items(int p_new_visible_results_count, int p_new_selection_index);
+	void _update_result_count();
 
 	void _move_selection_index(Key p_key);
 	void _select_item(int p_index);
@@ -175,6 +181,7 @@ private:
 	void _toggle_display_mode();
 	void _toggle_instant_preview(bool p_pressed);
 	void _toggle_include_addons(bool p_pressed);
+	void _toggle_include_editor_content(bool p_pressed);
 	void _toggle_fuzzy_search(bool p_pressed);
 	void _menu_option(int p_option);
 
@@ -215,33 +222,41 @@ protected:
 	void _notification(int p_what);
 
 private:
-	HBoxContainer *hbc = nullptr;
-	VBoxContainer *text_container = nullptr;
-
 	TextureRect *thumbnail = nullptr;
 	HighlightedLabel *name = nullptr;
 	HighlightedLabel *path = nullptr;
 };
 
-class QuickOpenResultItem : public HBoxContainer {
-	GDCLASS(QuickOpenResultItem, HBoxContainer)
+class QuickOpenResultItem : public MarginContainer {
+	GDCLASS(QuickOpenResultItem, MarginContainer)
 
 public:
 	QuickOpenResultItem();
-
-	bool enable_highlights = true;
 
 	void reset();
 	void set_content(const QuickOpenResultCandidate &p_candidate);
 	void set_display_mode(QuickOpenDisplayMode p_display_mode);
 	void highlight_item(bool p_enabled);
 
+	bool enable_highlights = true;
+
 protected:
 	void _notification(int p_what);
 
 private:
+	enum class ContentSource {
+		PROJECT,
+		ADDON,
+		EDITOR,
+	};
+
+	void _set_enabled(bool p_enabled);
+	void _update_source_badge();
+
 	QuickOpenResultListItem *list_item = nullptr;
 	QuickOpenResultGridItem *grid_item = nullptr;
+	TextureRect *_source_badge = nullptr;
+	ContentSource _content_source = ContentSource::PROJECT;
 
 	Ref<StyleBox> selected_stylebox;
 	Ref<StyleBox> hovering_stylebox;
@@ -249,8 +264,6 @@ private:
 
 	bool is_hovering = false;
 	bool is_selected = false;
-
-	void _set_enabled(bool p_enabled);
 };
 
 class EditorQuickOpenDialog : public Dialog {
