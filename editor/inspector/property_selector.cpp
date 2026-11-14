@@ -39,7 +39,6 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_icons.h"
 #include "editor/themes/editor_scale.h"
-#include "scene/gui/margin_container.h"
 #include "scene/gui/tree.h"
 
 void PropertySelector::_text_changed(const String &p_newtext) {
@@ -696,8 +695,7 @@ PropertySelector::PropertySelector() :
 	search_box->set_forward_control(search_options);
 	search_options->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	search_options->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTH);
-	MarginContainer *mc = vbc->add_margin_child(TTRC("Matches:"), search_options, true);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
+	vbc->add_margin_child(TTRC("Matches:"), search_options, true);
 
 	search_options->connect("item_activated", callable_mp(this, &PropertySelector::_confirmed));
 	search_options->connect("cell_selected", callable_mp(this, &PropertySelector::_item_selected));

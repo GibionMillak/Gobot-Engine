@@ -2440,7 +2440,6 @@ ThemeTypeDialog::ThemeTypeDialog() :
 
 	MarginContainer *mc = memnew(MarginContainer);
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	add_type_vb->add_child(mc);
 
 	add_type_options = memnew(ItemList);

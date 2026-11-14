@@ -362,7 +362,6 @@ EditorHelpSearch::EditorHelpSearch() :
 	hbox->add_child(filter_combo);
 
 	MarginContainer *mc = memnew(MarginContainer);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	vbox->add_child(mc);
 

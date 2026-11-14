@@ -39,8 +39,8 @@
 #include "editor/editor_node.h"
 #include "editor/editor_string_names.h"
 #include "editor/file_system/editor_file_system.h"
+#include "editor/gui/dialogs/editor_quick_open_dialog.h"
 #include "editor/gui/editor_file_dialog.h"
-#include "editor/gui/editor_quick_open_dialog.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/box_container.h"
@@ -586,7 +586,6 @@ DependencyEditorOwners::DependencyEditorOwners() {
 
 	owners_mc = memnew(MarginContainer);
 	owners_mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	owners_mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	vbox->add_child(owners_mc);
 
 	owners = memnew(ItemList);
@@ -902,7 +901,6 @@ DependencyRemoveDialog::DependencyRemoveDialog() :
 	vb->add_child(files_to_delete_label);
 
 	MarginContainer *mc = memnew(MarginContainer);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	vb->add_child(mc);
 
@@ -922,7 +920,6 @@ DependencyRemoveDialog::DependencyRemoveDialog() :
 	vb_owners->add_child(owners_label);
 
 	mc = memnew(MarginContainer);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	vb_owners->add_child(mc);
 
@@ -1245,6 +1242,5 @@ OrphanResourcesDialog::OrphanResourcesDialog() :
 	files->connect("button_clicked", callable_mp(this, &OrphanResourcesDialog::_button_pressed));
 
 	MarginContainer *mc = vbc->add_margin_child(TTRC("Resources Without Explicit Ownership:"), files, true);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 }

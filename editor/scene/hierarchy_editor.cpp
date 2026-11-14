@@ -2530,7 +2530,6 @@ HierarchyDialog::HierarchyDialog() :
 
 	MarginContainer *mc = memnew(MarginContainer);
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	content->add_child(mc);
 
 	tree = memnew(HierarchyEditor(false, false, true));

@@ -162,7 +162,6 @@ EditorLayoutsDialog::EditorLayoutsDialog() :
 	MarginContainer *mc = makevb->add_margin_child(TTRC("Select Existing Layout:"), layout_names);
 	mc->set_custom_minimum_size(Size2(300 * EDSCALE, 50 * EDSCALE));
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 
 	name = memnew(LineEdit);
 	makevb->add_child(name);

@@ -7,4 +7,6 @@ env.add_source_files(env.editor_sources, "*.cpp")
 
 SConscript("buttons/SCsub")
 SConscript("containers/SCsub")
+SConscript("data/SCsub")
 SConscript("dialogs/SCsub")
+SConscript("labels/SCsub")

@@ -743,7 +743,6 @@ InputEventConfigurationDialog::InputEventConfigurationDialog() :
 
 	MarginContainer *mc = memnew(MarginContainer);
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	manual_vbox->add_child(mc);
 
 	input_list_tree = memnew(Tree);

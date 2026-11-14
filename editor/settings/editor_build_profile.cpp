@@ -1389,7 +1389,6 @@ EditorBuildProfileManager::EditorBuildProfileManager() {
 
 	// It will be displayed once the user creates or chooses a profile.
 	MarginContainer *mc = main_vbc->add_margin_child(TTRC("Configure Engine Compilation Profile:"), class_list, true);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 
 	description_bit = memnew(EditorHelpBit);

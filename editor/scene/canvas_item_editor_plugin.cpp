@@ -49,7 +49,7 @@
 #include "editor/gui/containers/editor_toolbar_flow_container.h"
 #include "editor/gui/containers/editor_zoom_container.h"
 #include "editor/gui/create_dialog.h"
-#include "editor/gui/editor_quick_open_dialog.h"
+#include "editor/gui/dialogs/editor_quick_open_dialog.h"
 #include "editor/gui/editor_viewport_toolbar.h"
 #include "editor/inspector/editor_context_menu_plugin.h"
 #include "editor/plugins/editor_plugin_list.h"

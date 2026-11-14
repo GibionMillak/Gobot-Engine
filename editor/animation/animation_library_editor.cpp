@@ -998,7 +998,6 @@ AnimationLibraryEditor::AnimationLibraryEditor() {
 
 	MarginContainer *mc = memnew(MarginContainer);
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	vb->add_child(mc);
 
 	tree = memnew(Tree);

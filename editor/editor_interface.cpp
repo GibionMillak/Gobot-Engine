@@ -44,7 +44,7 @@
 #include "editor/file_system/editor_paths.h"
 #include "editor/gui/containers/editor_toaster_container.h"
 #include "editor/gui/create_dialog.h"
-#include "editor/gui/editor_quick_open_dialog.h"
+#include "editor/gui/dialogs/editor_quick_open_dialog.h"
 #include "editor/inspector/editor_preview_plugins.h"
 #include "editor/inspector/editor_resource_preview.h"
 #include "editor/inspector/property_selector.h"

@@ -38,9 +38,9 @@
 #include "editor/docks/filesystem_dock.h"
 #include "editor/editor_undo_redo_manager.h"
 #include "editor/gui/containers/editor_toaster_container.h"
+#include "editor/gui/dialogs/editor_quick_open_dialog.h"
 #include "editor/gui/dialogs/project_settings_editor.h"
 #include "editor/gui/editor_file_dialog.h"
-#include "editor/gui/editor_quick_open_dialog.h"
 #include "editor/settings/editor_command_palette.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/translations/editor_translation_parser.h"
@@ -819,7 +819,6 @@ LocalizationEditor::LocalizationEditor() {
 		thb->add_child(addtr);
 
 		MarginContainer *mc = memnew(MarginContainer);
-		mc->set_theme_type_variation("NoBorderHorizontalWindow");
 		mc->set_v_size_flags(SIZE_EXPAND_FILL);
 		tvb->add_child(mc);
 
@@ -900,7 +899,6 @@ LocalizationEditor::LocalizationEditor() {
 		thb->add_child(template_generate_button);
 
 		MarginContainer *mc = memnew(MarginContainer);
-		mc->set_theme_type_variation("NoBorderHorizontalWindow");
 		mc->set_v_size_flags(SIZE_EXPAND_FILL);
 		tvb->add_child(mc);
 

@@ -8742,7 +8742,6 @@ AnimationTrackEditor::AnimationTrackEditor() {
 	track_copy_vbox->add_child(select_all_button);
 
 	mc = memnew(MarginContainer);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	mc->set_v_size_flags(SIZE_EXPAND_FILL);
 	track_copy_vbox->add_child(mc);
 

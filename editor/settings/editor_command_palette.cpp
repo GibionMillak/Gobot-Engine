@@ -337,7 +337,6 @@ EditorCommandPalette::EditorCommandPalette() :
 	register_text_enter(command_search_box);
 
 	MarginContainer *mc = memnew(MarginContainer);
-	mc->set_theme_type_variation("NoBorderHorizontalWindow");
 	mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	mc->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	vbc->add_child(mc);
