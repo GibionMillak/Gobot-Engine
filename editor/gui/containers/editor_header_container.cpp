@@ -32,11 +32,13 @@
 
 #include "core/input/input_event.h"
 #include "core/object/callable_mp.h"
+#include "core/version.h"
 #include "editor/editor_string_names.h"
 #include "editor/gui/buttons/editor_fullscreen_button.h"
 #include "editor/gui/buttons/editor_help_button.h"
 #include "editor/gui/buttons/settings_button.h"
 #include "scene/gui/button.h"
+#include "scene/gui/label.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/window.h"
 #include "scene/scene_string_names.h"
@@ -48,6 +50,13 @@ EditorHeaderContainer::EditorHeaderContainer() {
 	_left_hbox->set_h_size_flags(SIZE_EXPAND_FILL);
 	_left_hbox->set_v_size_flags(SIZE_EXPAND_FILL);
 	add_child(_left_hbox);
+
+	{
+		_editor_name_lbl = memnew(Label);
+		_editor_name_lbl->set_mouse_filter(MOUSE_FILTER_IGNORE);
+		_editor_name_lbl->set_text(GODOT_VERSION_NAME);
+		_left_hbox->add_child(_editor_name_lbl);
+	}
 
 	_center_hbox = memnew(HBoxContainer);
 	_center_hbox->set_alignment(ALIGNMENT_CENTER);
@@ -112,6 +121,7 @@ void EditorHeaderContainer::_notification(int p_what) {
 			_update_window_buttons();
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
+			_editor_name_lbl->set_icon(get_editor_theme_icon(SNAME("branding_logo_solid")));
 			_update_window_buttons();
 		} break;
 	}

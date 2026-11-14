@@ -33,6 +33,7 @@
 #include "scene/gui/box_container.h"
 
 class Button;
+class Label;
 class Texture2D;
 
 class EditorHeaderContainer : public HBoxContainer {
@@ -72,6 +73,7 @@ private:
 	HBoxContainer *_left_hbox = nullptr;
 	HBoxContainer *_center_hbox = nullptr;
 	HBoxContainer *_right_hbox = nullptr;
+	Label *_editor_name_lbl = nullptr;
 	bool _editor_controls_added = false;
 	HBoxContainer *_window_buttons_hbox = nullptr;
 	Button *_minimize_btn = nullptr;

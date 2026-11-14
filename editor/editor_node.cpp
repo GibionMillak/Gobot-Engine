@@ -884,6 +884,7 @@ EditorNode::EditorNode() {
 		left_menu_spacer = memnew(Control);
 		left_menu_spacer->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
 		title_bar->get_left_section()->add_child(left_menu_spacer);
+		title_bar->get_left_section()->move_child(left_menu_spacer, 0);
 	}
 
 	file_menu = memnew(PopupMenu);
@@ -8458,7 +8459,7 @@ void EditorNode::_update_main_menu_type() {
 		}
 
 		title_bar->get_left_section()->add_child(main_menu_button);
-		title_bar->get_left_section()->move_child(main_menu_button, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
+		title_bar->get_left_section()->move_child(main_menu_button, left_menu_spacer ? left_menu_spacer->get_index() + 2 : 1);
 	} else {
 		main_menu_bar = memnew(MenuBar);
 		main_menu_bar->set_mouse_filter(Control::MOUSE_FILTER_STOP);
@@ -8472,7 +8473,7 @@ void EditorNode::_update_main_menu_type() {
 		}
 
 		title_bar->get_left_section()->add_child(main_menu_bar);
-		title_bar->get_left_section()->move_child(main_menu_bar, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
+		title_bar->get_left_section()->move_child(main_menu_bar, left_menu_spacer ? left_menu_spacer->get_index() + 2 : 1);
 	}
 }
 
