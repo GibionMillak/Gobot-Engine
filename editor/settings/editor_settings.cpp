@@ -53,8 +53,8 @@
 #include "editor/editor_node.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/gui/buttons/editor_redraw_button.h"
-#include "editor/inspector/editor_property_name_processor.h"
 #include "editor/hub/engine_update_label.h"
+#include "editor/inspector/editor_property_name_processor.h"
 #include "editor/themes/editor_theme_manager.h"
 #include "editor/translations/editor_translation.h"
 #include "main/main.h"
@@ -471,8 +471,8 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING_USAGE(Variant::BOOL, PROPERTY_HINT_NONE, "interface/editor/appearance/use_native_file_dialogs", false, "", PROPERTY_USAGE_DEFAULT)
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_RANGE, "interface/editor/appearance/max_sticky_tree_items", 6, "0,16")
 
-	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_RANGE, "interface/editor/fonts/main_font_size", 14, "8,48,1")
-	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_RANGE, "interface/editor/fonts/code_font_size", 14, "8,48,1")
+	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_RANGE, "interface/editor/fonts/main_font_size", 16, "8,48,1")
+	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_RANGE, "interface/editor/fonts/code_font_size", 16, "8,48,1")
 	_initial_set("interface/editor/fonts/main_font_custom_opentype_features", "");
 	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/editor/fonts/code_font_contextual_ligatures", 1, "Enabled,Disable Contextual Alternates (Coding Ligatures),Use Custom OpenType Feature Set")
 	_initial_set("interface/editor/fonts/code_font_custom_opentype_features", "");
@@ -541,8 +541,6 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	PackedStringArray open_in_new_inspector_defaults;
 	open_in_new_inspector_defaults.push_back("Script"); // Required for the script editor to work.
 	_initial_set("interface/inspector/resources_to_open_in_new_inspector", open_in_new_inspector_defaults);
-
-
 
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "interface/inspector/default_color_picker_mode", (int32_t)ColorPicker::MODE_RGB, "RGB,HSV,RAW,OKHSL")
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "interface/inspector/default_color_picker_shape", (int32_t)ColorPicker::SHAPE_VHS_CIRCLE, "HSV Rectangle,HSV Rectangle Wheel,VHS Circle,OKHSL Circle,OK HS Rectangle:5,OK HL Rectangle") // `SHAPE_NONE` is 4.

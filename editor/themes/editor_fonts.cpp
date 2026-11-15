@@ -302,8 +302,8 @@ void editor_register_fonts(const Ref<Theme> &p_theme) {
 		default_fc->set_opentype_features(default_features);
 		default_fc->set_base_font(default_font);
 	}
-	default_fc->set_spacing(TextServer::SPACING_TOP, -1 * EDSCALE);
-	default_fc->set_spacing(TextServer::SPACING_BOTTOM, -4 * EDSCALE);
+	default_fc->set_spacing(TextServer::SPACING_TOP, -4 * EDSCALE);
+	default_fc->set_spacing(TextServer::SPACING_BOTTOM, -6 * EDSCALE);
 	Dictionary default_fc_opentype;
 	default_fc_opentype["weight"] = 400;
 	default_fc->set_variation_opentype(default_fc_opentype);
