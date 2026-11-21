@@ -1,0 +1,20 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "Table footer"
+background_color = "(theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.font_normal_color, 0.05)"
+border_color = Color(0.8, 0.8, 0.8, 1)
+border_width_bottom = 0
+border_width_left = 0
+border_width_right = 0
+border_width_top = 0
+corner_detail = "pixels(int(ceil(((0.8 * (int(round(theme.default_border_radius)))) * theme.default_base_scale))))"
+corner_radius_bottom_left = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+corner_radius_bottom_right = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+padding_bottom = "pixels((4 * theme.default_base_scale))"
+padding_left = "pixels((4 * theme.default_base_scale))"
+padding_right = "pixels((4 * theme.default_base_scale))"
+padding_top = "pixels((4 * theme.default_base_scale))"
+shadow_color = Color(0, 0, 0, 0.6)

@@ -411,7 +411,7 @@ void SceneImportSettingsDialog::_fill_scene(Node *p_node, TreeItem *p_parent_ite
 
 	String type = p_node->get_class();
 
-	if (!has_theme_icon(editor_get_type_icon_name(type), EditorStringName(EditorIcons))) {
+	if (!has_theme_icon(editor_get_type_icon_name(type), EditorStringName(Editor))) {
 		type = "Node3D";
 	}
 

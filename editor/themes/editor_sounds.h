@@ -36,7 +36,7 @@ class EditorTheme;
 
 namespace EditorSounds {
 
-// Loads shared, non-looping streams into the editor theme's EditorSounds catalog.
+// Loads shared, non-looping streams into the shared Editor theme namespace.
 // Leaves the theme unchanged when Vorbis support is disabled.
 void populate_theme(const Ref<EditorTheme> &p_theme);
 

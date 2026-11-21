@@ -1032,7 +1032,7 @@ static void _find_annotation_arguments(const GDScriptParser::AnnotationNode *p_a
 			const Ref<Theme> theme = EditorNode::get_singleton()->get_editor_theme();
 			if (theme.is_valid()) {
 				List<StringName> icon_list;
-				theme->get_icon_list(EditorStringName(EditorIcons), &icon_list);
+				theme->get_icon_list(EditorStringName(Editor), &icon_list);
 				for (const StringName &E : icon_list) {
 					EditorLanguage::CompletionOption option = _calculate_string_insertion(existing_argument, E, Variant::NIL);
 					option.kind = EditorLanguage::CompletionKind::CLASS;

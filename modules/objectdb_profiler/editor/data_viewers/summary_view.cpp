@@ -88,8 +88,8 @@ SnapshotSummaryView::SnapshotSummaryView() {
 
 void SnapshotSummaryView::_notification(int p_what) {
 	if (p_what == NOTIFICATION_THEME_CHANGED) {
-		content_wrapper->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("ObjectDBContentWrapper"), EditorStringName(EditorStyles)));
-		title->add_theme_style_override(SNAME("normal"), get_theme_stylebox(SNAME("ObjectDBTitle"), EditorStringName(EditorStyles)));
+		content_wrapper->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("object_db_content_wrapper"), EditorStringName(Editor)));
+		title->add_theme_style_override(SNAME("normal"), get_theme_stylebox(SNAME("object_db_title"), EditorStringName(Editor)));
 	}
 }
 

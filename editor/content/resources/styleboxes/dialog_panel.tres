@@ -1,0 +1,21 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "Dialog panel"
+background_color = "theme.default_base_color"
+border_color = "theme.default_base_color"
+border_width_bottom = "pixels(round((theme.default_border_width * theme.default_base_scale)))"
+border_width_left = "pixels(round((theme.default_border_width * theme.default_base_scale)))"
+border_width_right = "pixels(round((theme.default_border_width * theme.default_base_scale)))"
+border_width_top = "pixels(round((theme.default_border_width * theme.default_base_scale)))"
+corner_detail = 8
+corner_radius_bottom_left = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+corner_radius_bottom_right = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+expand_margin_bottom = "pixels(round((2 * theme.default_base_scale)))"
+padding_bottom = "pixels(((((int(round(theme.default_padding))) * 2.4) * theme.default_base_scale)))"
+padding_left = "pixels(((((int(round(theme.default_padding))) * 2.4) * theme.default_base_scale)))"
+padding_right = "pixels(((((int(round(theme.default_padding))) * 2.4) * theme.default_base_scale)))"
+padding_top = "pixels(((((int(round(theme.default_padding))) * 2.4) * theme.default_base_scale)))"
+shadow_color = "theme.default_shadow_color"

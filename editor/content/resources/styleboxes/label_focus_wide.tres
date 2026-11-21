@@ -1,0 +1,16 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "Label Focus Wide"
+padding_left = "theme.default_padding * 2"
+padding_right = "theme.default_padding * 2"
+background_color = Color(0, 0, 0, 0)
+border_color = "theme.default_accent_color"
+border_width_left = "theme.default_focus_border_width"
+border_width_top = "theme.default_focus_border_width"
+border_width_right = "theme.default_focus_border_width"
+border_width_bottom = "theme.default_focus_border_width"
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0

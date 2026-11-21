@@ -222,7 +222,7 @@ Ref<Texture2D> FileSystemDock::_get_tree_item_icon(bool p_is_valid, const String
 
 	if (!p_is_valid) {
 		return get_editor_theme_icon(SNAME("gui_import_fail"));
-	} else if (has_theme_icon(editor_get_type_icon_name(p_file_type), EditorStringName(EditorIcons))) {
+	} else if (has_theme_icon(editor_get_type_icon_name(p_file_type), EditorStringName(Editor))) {
 		return get_editor_theme_icon(editor_get_type_icon_name(p_file_type));
 	} else {
 		return get_editor_theme_icon(SNAME("file_file"));
@@ -1714,15 +1714,15 @@ void FileSystemDock::_update_dependencies_after_move(const HashMap<String, Strin
 }
 
 void FileSystemDock::_update_project_settings_after_move(const HashMap<String, String> &p_renames, const HashMap<String, String> &p_folders_renames) {
-	// Find all project settings of type FILE and replace them if needed.
+	// Update project settings that store resource or file paths.
 	const HashMap<StringName, PropertyInfo> prop_info(ProjectSettings::get_singleton()->get_custom_property_info());
 	for (const KeyValue<StringName, PropertyInfo> &E : prop_info) {
-		if (E.value.hint == PROPERTY_HINT_FILE || E.value.hint == PROPERTY_HINT_FILE_PATH) {
-			String old_path = GLOBAL_GET(E.key);
+		if (E.value.hint == PROPERTY_HINT_FILE || E.value.hint == PROPERTY_HINT_FILE_PATH || (E.value.type == Variant::STRING && E.value.hint == PROPERTY_HINT_RESOURCE_TYPE)) {
+			const String old_path = GLOBAL_GET(E.key);
 			if (p_renames.has(old_path)) {
 				ProjectSettings::get_singleton()->set_setting(E.key, p_renames[old_path]);
 			}
-		};
+		}
 	}
 
 	// Also search for the file in autoload, as they are stored differently from normal files.
@@ -3584,7 +3584,7 @@ void FileSystemDock::_file_and_folders_fill_popup(PopupMenu *p_popup, const Vect
 
 				for (const String &E : cached_valid_conversion_targets) {
 					Ref<Texture2D> icon;
-					if (has_theme_icon(editor_get_type_icon_name(E), SNAME("EditorIcons"))) {
+					if (has_theme_icon(editor_get_type_icon_name(E), SNAME("Editor"))) {
 						icon = get_editor_theme_icon(editor_get_type_icon_name(E));
 					} else {
 						icon = get_editor_theme_icon(SNAME("variant_object"));

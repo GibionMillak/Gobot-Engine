@@ -38,6 +38,7 @@
 #include "core/io/certs_compressed.gen.h"
 #include "core/io/dir_access.h"
 #include "core/io/file_access.h"
+#include "core/io/file_access_content.h"
 #include "core/io/ip.h"
 #include "core/io/resource_loader.h"
 #include "core/io/resource_saver.h"
@@ -362,7 +363,94 @@ bool EditorSettings::has_default_value(const String &p_setting) const {
 }
 
 void EditorSettings::_set_initialized() {
+	if (!props.has("interface/theme/theme") || props["interface/theme/theme"].variant.get_type() != Variant::OBJECT) {
+		set("interface/theme/theme", EditorThemeManager::get_default_theme());
+	}
+	notify_property_list_changed();
 	initialized = true;
+}
+
+Variant EditorSettings::_make_theme_snapshot(const Variant &p_value, HashMap<Ref<Resource>, Ref<Resource>> &r_resources, Error &r_error, int p_depth) {
+	if (r_error != OK) {
+		return Variant();
+	}
+	constexpr int MAX_THEME_SNAPSHOT_DEPTH = 64;
+	if (p_depth > MAX_THEME_SNAPSHOT_DEPTH) {
+		r_error = ERR_CYCLIC_LINK;
+		ERR_FAIL_V_MSG(Variant(), "The selected editor theme contains excessively nested resource data.");
+	}
+	switch (p_value.get_type()) {
+		case Variant::OBJECT: {
+			const Ref<Resource> resource = p_value;
+			if (resource.is_null() || FileAccessContent::is_content_path(resource->get_path())) {
+				return p_value;
+			}
+			const Ref<Resource> *cached = r_resources.getptr(resource);
+			if (cached) {
+				return *cached;
+			}
+			const Ref<Resource> snapshot = resource->duplicate();
+			if (snapshot.is_null()) {
+				r_error = ERR_CANT_CREATE;
+				ERR_FAIL_V_MSG(Variant(), vformat("Could not duplicate editor theme resource '%s'.", resource->get_path()));
+			}
+			r_resources.insert(resource, snapshot);
+			List<PropertyInfo> properties;
+			resource->get_property_list(&properties);
+			for (const PropertyInfo &property : properties) {
+				if (property.usage & PROPERTY_USAGE_STORAGE) {
+					const Variant value = _make_theme_snapshot(resource->get(property.name), r_resources, r_error, p_depth + 1);
+					if (r_error != OK) {
+						return Variant();
+					}
+					snapshot->set(property.name, value);
+				}
+			}
+			return snapshot;
+		} break;
+		case Variant::ARRAY: {
+			const Array source = p_value;
+			Array snapshot;
+			if (source.is_typed()) {
+				const Variant script = _make_theme_snapshot(source.get_typed_script(), r_resources, r_error, p_depth + 1);
+				if (r_error != OK) {
+					return Variant();
+				}
+				snapshot.set_typed(source.get_typed_builtin(), source.get_typed_class_name(), script);
+			}
+			snapshot.resize(source.size());
+			for (int i = 0; i < source.size(); i++) {
+				snapshot[i] = _make_theme_snapshot(source[i], r_resources, r_error, p_depth + 1);
+				if (r_error != OK) {
+					return Variant();
+				}
+			}
+			return snapshot;
+		} break;
+		case Variant::DICTIONARY: {
+			const Dictionary source = p_value;
+			Dictionary snapshot;
+			if (source.is_typed()) {
+				const Variant key_script = _make_theme_snapshot(source.get_typed_key_script(), r_resources, r_error, p_depth + 1);
+				const Variant value_script = _make_theme_snapshot(source.get_typed_value_script(), r_resources, r_error, p_depth + 1);
+				if (r_error != OK) {
+					return Variant();
+				}
+				snapshot.set_typed(source.get_typed_key_builtin(), source.get_typed_key_class_name(), key_script, source.get_typed_value_builtin(), source.get_typed_value_class_name(), value_script);
+			}
+			for (const Variant &key : source.get_key_list()) {
+				const Variant snapshot_key = _make_theme_snapshot(key, r_resources, r_error, p_depth + 1);
+				const Variant snapshot_value = _make_theme_snapshot(source[key], r_resources, r_error, p_depth + 1);
+				if (r_error != OK) {
+					return Variant();
+				}
+				snapshot.set(snapshot_key, snapshot_value);
+			}
+			return snapshot;
+		} break;
+		default:
+			return p_value;
+	}
 }
 
 static LocalVector<String> _get_skipped_locales() {
@@ -547,21 +635,12 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	EDITOR_SETTING_BASIC(Variant::BOOL, PROPERTY_HINT_NONE, "interface/inspector/color_picker_show_intensity", true, "");
 
 	// Theme
+	EDITOR_SETTING_BASIC(Variant::OBJECT, PROPERTY_HINT_RESOURCE_TYPE, "interface/theme/theme", EditorThemeManager::get_default_theme(), "Theme")
 	EDITOR_SETTING_BASIC(Variant::BOOL, PROPERTY_HINT_ENUM, "interface/theme/follow_system_theme", false, "")
-	EDITOR_SETTING_BASIC(Variant::STRING, PROPERTY_HINT_ENUM, "interface/theme/color_preset", "Default", "Default,Breeze Dark,Godot 2,Godot 3,Gray,Light,Solarized (Dark),Solarized (Light),Black (OLED),Custom")
 	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/theme/icon_and_font_color", 0, "Auto,Dark,Light")
-	EDITOR_SETTING_BASIC(Variant::COLOR, PROPERTY_HINT_NONE, "interface/theme/base_color", Color(0.14, 0.14, 0.14), "")
-	EDITOR_SETTING_BASIC(Variant::COLOR, PROPERTY_HINT_NONE, "interface/theme/accent_color", Color(0.34, 0.62, 1.0), "")
 	EDITOR_SETTING_BASIC(Variant::BOOL, PROPERTY_HINT_NONE, "interface/theme/use_system_accent_color", false, "")
-	EDITOR_SETTING_BASIC(Variant::FLOAT, PROPERTY_HINT_RANGE, "interface/theme/contrast", 0.3, "-1,1,0.01")
-	EDITOR_SETTING(Variant::FLOAT, PROPERTY_HINT_RANGE, "interface/theme/icon_saturation", 2.0, "0,2,0.01")
-	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_ENUM, "interface/theme/draw_relationship_lines", (int32_t)EditorThemeManager::RELATIONSHIP_SELECTED_ONLY, "None,Selected Only,All")
 	EDITOR_SETTING(Variant::FLOAT, PROPERTY_HINT_RANGE, "interface/theme/relationship_line_opacity", 0.1, "0.00,1,0.01")
-	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_RANGE, "interface/theme/border_size", 0, "0,2,1")
-	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_RANGE, "interface/theme/border_radius", 4, "0,6,1")
-	EDITOR_SETTING(Variant::INT, PROPERTY_HINT_RANGE, "interface/theme/padding", 4, "0,8,1")
 	EDITOR_SETTING_BASIC(Variant::BOOL, PROPERTY_HINT_NONE, "interface/theme/use_monospace_font_for_editor_symbols", true, "")
-	EDITOR_SETTING_USAGE(Variant::STRING, PROPERTY_HINT_GLOBAL_FILE, "interface/theme/custom_theme", "", "*.res,*.tres,*.theme", PROPERTY_USAGE_DEFAULT)
 
 	// Touchscreen
 	bool has_touchscreen_ui = DisplayServer::get_singleton()->is_touchscreen_available();
@@ -1381,11 +1460,10 @@ void EditorSettings::setup_network() {
 }
 
 void EditorSettings::save() {
-	//_THREAD_SAFE_METHOD_
-
 	if (!singleton.ptr()) {
 		return;
 	}
+	MutexLock settings_lock(singleton->_thread_safe_);
 	// Only save if a setting has been changed or
 	// the setting file for this version does not exist yet.
 	// Fixes issues when multiple editor instances are open.
@@ -1393,7 +1471,16 @@ void EditorSettings::save() {
 		return;
 	}
 
-	Error err = ResourceSaver::save(singleton);
+	const StringName theme_setting = SNAME("interface/theme/theme");
+	const Variant selected_theme = singleton->get(theme_setting);
+	HashMap<Ref<Resource>, Ref<Resource>> resources;
+	Error err = OK;
+	const Variant theme_snapshot = _make_theme_snapshot(selected_theme, resources, err);
+	ERR_FAIL_COND_MSG(err != OK, "Could not create a portable snapshot of the selected editor theme.");
+	// Serialize project resources inline without changing the selected resource or its cache path.
+	singleton->props[theme_setting].variant = theme_snapshot;
+	err = ResourceSaver::save(singleton);
+	singleton->props[theme_setting].variant = selected_theme;
 	if (err != OK) {
 		ERR_PRINT("Error saving editor settings to " + singleton->get_path());
 	} else {

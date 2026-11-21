@@ -59,7 +59,7 @@ void CreateDialog::popup_create(bool p_dont_clear, bool p_replace_mode, const St
 	_update_filter_button_state();
 
 	const StringName base_icon = editor_get_type_icon_name(base_type);
-	icon_fallback = search_options->has_theme_icon(base_icon, EditorStringName(EditorIcons)) ? base_icon : SNAME("variant_object");
+	icon_fallback = search_options->has_theme_icon(base_icon, EditorStringName(Editor)) ? base_icon : SNAME("variant_object");
 
 	if (p_dont_clear) {
 		search_box->select_all();

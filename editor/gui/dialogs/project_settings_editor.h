@@ -45,6 +45,7 @@
 
 class EditorVariantTypeOptionButton;
 class FileSystemDock;
+class Resource;
 
 class ProjectSettingsEditor : public Dialog {
 	GDCLASS(ProjectSettingsEditor, Dialog);
@@ -103,6 +104,7 @@ class ProjectSettingsEditor : public Dialog {
 
 	String _get_setting_name() const;
 	void _setting_edited(const String &p_name);
+	void _inspect_project_theme(const Ref<Resource> &p_resource, const String &p_property);
 	void _setting_selected(const String &p_path);
 	void _add_setting();
 	void _delete_setting();

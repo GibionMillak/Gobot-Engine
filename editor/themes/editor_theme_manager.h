@@ -30,165 +30,48 @@
 
 #pragma once
 
+#include "core/templates/vector.h"
 #include "editor/themes/editor_theme.h"
 
-class StyleBox;
+#include <atomic>
 
 class EditorThemeManager {
-	static int benchmark_run;
-	static inline bool outdated_cache = false;
-	static inline bool outdated_cache_dirty = true;
+public:
+	static Ref<EditorTheme> generate_theme(const Ref<EditorTheme> &p_old_theme = nullptr);
+	static bool is_generated_theme_outdated();
+	static void set_theme_outdated();
+	static Ref<Theme> get_default_theme();
+	static Vector<Ref<Resource>> get_builtin_themes();
+	static float get_icon_saturation();
+	static bool is_dark_theme();
+	static bool is_dark_icon_and_font();
+	static void initialize();
+	static void finalize();
 
-	static String get_benchmark_key();
-
+private:
 	enum ColorMode {
 		AUTO_COLOR,
 		DARK_COLOR,
 		LIGHT_COLOR,
 	};
 
-public:
-	struct ThemeConfiguration {
-		// Basic properties.
-
-		String preset;
-
-		Color base_color;
-		Color accent_color;
-		float contrast = 1.0;
-		float icon_saturation = 1.0;
-
-		// Extra properties.
-
-		int padding = 4;
-		Size2 dialogs_buttons_min_size = Size2(105, 34);
-		int border_width = 0;
-		int border_radius = 3;
-
-		int draw_relationship_lines;
-		float relationship_line_opacity = 1.0;
-		int thumb_size = 16;
-		int class_icon_size = 16;
-		bool enable_touch_optimizations = false;
-		float gizmo_handle_scale = 1.0;
-		int inspector_property_height = 28;
-		float subresource_hue_tint = 0.0;
-		float dragging_hover_wait_msec = 0;
-		int max_sticky_tree_items = 5;
-
-		// Make sure to keep those in sync with the definitions in the editor settings.
-		const float default_icon_saturation = 2.0;
-		const float default_contrast = 0.3;
-
-		// Generated properties.
-
-		bool dark_theme = false;
-		bool dark_icon_and_font = false;
-
-		int base_margin = 4;
-		int increased_margin = 4;
-		int separation_margin = 4;
-		int popup_margin = 12;
-		int window_border_margin = 8;
-		int top_bar_separation = 8;
-		int forced_even_separation = 0;
-
-		Color mono_color;
-		Color mono_color_font;
-		Color dark_color_1;
-		Color dark_color_2;
-		Color dark_color_3;
-		Color contrast_color_1;
-		Color contrast_color_2;
-		Color highlight_color;
-		Color highlight_disabled_color;
-		Color info_color;
-		Color success_color;
-		Color warning_color;
-		Color error_color;
-
-		Color font_color;
-		Color font_secondary_color;
-		Color font_focus_color;
-		Color font_hover_color;
-		Color font_pressed_color;
-		Color font_hover_pressed_color;
-		Color font_disabled_color;
-		Color font_readonly_color;
-		Color font_placeholder_color;
-		Color font_outline_color;
-
-		Color font_dark_background_color;
-		Color font_dark_background_focus_color;
-		Color font_dark_background_hover_color;
-		Color font_dark_background_pressed_color;
-		Color font_dark_background_hover_pressed_color;
-
-		Color icon_normal_color;
-		Color icon_focus_color;
-		Color icon_hover_color;
-		Color icon_pressed_color;
-		Color icon_disabled_color;
-
-		Color shadow_color;
-		Color selection_color;
-		Color disabled_border_color;
-		Color disabled_bg_color;
-		Color separator_color;
-
-		Ref<StyleBox> base_style;
-		Ref<StyleBox> base_empty_style;
-
-		Ref<StyleBox> button_style;
-		Ref<StyleBox> button_style_disabled;
-		Ref<StyleBox> button_style_focus;
-		Ref<StyleBox> button_style_pressed;
-		Ref<StyleBox> button_style_hover;
-
-		Ref<StyleBox> popup_style;
-		Ref<StyleBox> popup_border_style;
-		Ref<StyleBox> window_style;
-		Ref<StyleBox> dialog_style;
-		Ref<StyleBox> panel_container_style;
-		Ref<StyleBox> content_panel_style;
-		Ref<StyleBox> tree_panel_style;
-		Ref<StyleBox> tab_container_style;
-
-		Vector2 widget_margin;
-
-		uint32_t hash();
-		uint32_t hash_fonts();
-		uint32_t hash_icons();
-	};
-
-	enum RelationshipLinesMode {
-		RELATIONSHIP_NONE,
-		RELATIONSHIP_SELECTED_ONLY,
-		RELATIONSHIP_ALL,
-	};
-
-private:
-	static Ref<EditorTheme> _create_base_theme(const Ref<EditorTheme> &p_old_theme = nullptr);
-	static ThemeConfiguration _create_theme_config();
-
-	static void _populate_text_editor_styles(const Ref<EditorTheme> &p_theme, ThemeConfiguration &p_config);
-	static void _populate_visual_shader_styles(const Ref<EditorTheme> &p_theme, ThemeConfiguration &p_config);
-
+	static String _get_benchmark_key();
+	static Ref<EditorTheme> _create_base_theme(const Ref<EditorTheme> &p_old_theme);
+	static void _apply_editor_preferences(const Ref<Theme> &p_theme);
+	static String _get_text_editor_color_setting(const StringName &p_name);
+	static void _apply_preference_defaults(const Ref<Theme> &p_theme);
+	static void _load_text_editor_theme();
+	static bool _is_complete_theme_definition(const Ref<Theme> &p_theme);
+	static Ref<Theme> _get_theme_definition();
+	static void _theme_definition_changed();
+	static void _refresh_theme_definition();
 	static void _reset_dirty_flag();
 
-public:
-	static Ref<StyleBox> make_color_stylebox(Color p_color, float p_margin_left = 0, float p_margin_top = 0, float p_margin_right = 0, float p_margin_bottom = 0, int p_corner_width = 0);
-	static Ref<StyleBox> make_empty_stylebox(float p_margin_left = 0, float p_margin_top = 0, float p_margin_right = 0, float p_margin_bottom = 0);
-	static Ref<StyleBox> make_stylebox(Ref<Texture2D> p_texture, float p_left, float p_top, float p_right, float p_bottom, float p_margin_left = 0, float p_margin_top = 0, float p_margin_right = 0, float p_margin_bottom = 0);
-	static Ref<StyleBox> make_line_stylebox(Color p_color, int p_thickness = 1, float p_grow_begin = 1, float p_grow_end = 1, bool p_vertical = false);
-
-	static Ref<EditorTheme> generate_theme(const Ref<EditorTheme> &p_old_theme = nullptr);
-	static bool is_generated_theme_outdated();
-	static void set_theme_outdated();
-
-	static bool is_dark_theme();
-	static bool is_dark_icon_and_font();
-
-	static void initialize();
-	static void finalize();
+	static int _benchmark_run;
+	static inline bool _outdated_cache = false;
+	static inline bool _outdated_cache_dirty = true;
+	static bool _definition_refresh_pending;
+	static Ref<Theme> _theme_definition;
+	static std::atomic<bool> _active_dark_theme;
+	static std::atomic<float> _active_icon_saturation;
 };

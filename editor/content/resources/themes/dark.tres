@@ -1,0 +1,1804 @@
+[gd_resource type="Theme" format=4 load_steps=312]
+
+[ext_resource type="FontFile" path="res://.content/assets/fonts/baloo_2/regular.ttf" id="1_font"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/button_focus.tres" id="2_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/button_normal.tres" id="3_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/color_picker_focus_circle.tres" id="4_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/base_panel.tres" id="5_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/button_panel.tres" id="6_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/label_focus.tres" id="7_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/label_focus_wide.tres" id="8_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/label_normal.tres" id="9_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/label_normal_wide.tres" id="10_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/viewport_focus.tres" id="11_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/option_button_focus.tres" id="12_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/panel_normal.tres" id="13_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/panel_container.tres" id="14_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/primary_button_focus.tres" id="15_asset"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tree_line_edit_focus.tres" id="16_asset"]
+[ext_resource type="FontFile" path="res://.content/assets/fonts/jetbrains_mono/regular.woff2" id="asset_17"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/add.svg" id="asset_18"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/color_pick.svg" id="asset_19"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/copy.svg" id="asset_20"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/favorite.svg" id="asset_21"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/grid_layout.svg" id="asset_22"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/move_down.svg" id="asset_23"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/move_up.svg" id="asset_24"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/refresh.svg" id="asset_25"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/remove.svg" id="asset_26"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/revert.svg" id="asset_27"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/search.svg" id="asset_28"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/snap_grid.svg" id="asset_29"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/action/sort.svg" id="asset_30"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/file/big_thumb.svg" id="asset_31"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/file/browse.svg" id="asset_32"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/file/file.svg" id="asset_33"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/file/thumbnail.svg" id="asset_34"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/folder/big_thumb.svg" id="asset_35"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/folder/browse.svg" id="asset_36"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/folder/create.svg" id="asset_37"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/folder/folder.svg" id="asset_38"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/checked.svg" id="asset_39"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/checked_disabled.svg" id="asset_40"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/close.svg" id="asset_41"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/color_picker_bar_arrow.svg" id="asset_42"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/dropdown.svg" id="asset_43"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/eye_open.svg" id="asset_44"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/file_list.svg" id="asset_45"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/filename_filter.svg" id="asset_46"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/filesystem.svg" id="asset_47"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/graph_node_port.svg" id="asset_48"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/grid_minimap.svg" id="asset_49"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/grid_toggle.svg" id="asset_50"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/hsplitter.svg" id="asset_51"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/indeterminate.svg" id="asset_52"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/indeterminate_disabled.svg" id="asset_53"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/mini_checkerboard.svg" id="asset_54"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/option_arrow.svg" id="asset_55"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/picker_cursor.svg" id="asset_56"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/picker_cursor_bg.svg" id="asset_57"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/picker_shape_circle.svg" id="asset_58"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/picker_shape_rectangle.svg" id="asset_59"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/picker_shape_rectangle_wheel.svg" id="asset_60"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/progress_bar.svg" id="asset_61"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/progress_fill.svg" id="asset_62"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/radio_checked.svg" id="asset_63"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/radio_checked_disabled.svg" id="asset_64"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/radio_unchecked.svg" id="asset_65"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/radio_unchecked_disabled.svg" id="asset_66"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/resizer.svg" id="asset_67"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/resizer_top_left.svg" id="asset_68"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/scroll_arrow_left.svg" id="asset_69"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/scroll_arrow_left_hl.svg" id="asset_70"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/scroll_arrow_right.svg" id="asset_71"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/scroll_arrow_right_hl.svg" id="asset_72"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/scroll_bg.svg" id="asset_73"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/scroll_grabber.svg" id="asset_74"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/scroll_grabber_hl.svg" id="asset_75"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/scroll_grabber_pressed.svg" id="asset_76"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/slider_grabber.svg" id="asset_77"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/slider_grabber_hl.svg" id="asset_78"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/space.svg" id="asset_79"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/spinbox_down.svg" id="asset_80"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/spinbox_up.svg" id="asset_81"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/spinbox_updown.svg" id="asset_82"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/spinbox_updown_disabled.svg" id="asset_83"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/tab.svg" id="asset_84"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/tab_drop_mark.svg" id="asset_85"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/tab_menu.svg" id="asset_86"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/tab_menu_hl.svg" id="asset_87"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/toggle_off.svg" id="asset_88"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/toggle_off_disabled.svg" id="asset_89"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/toggle_on.svg" id="asset_90"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/toggle_on_disabled.svg" id="asset_91"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/tree_arrow_down.svg" id="asset_92"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/tree_arrow_right.svg" id="asset_93"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/tree_arrow_up.svg" id="asset_94"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/tree_updown.svg" id="asset_95"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/unchecked.svg" id="asset_96"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/unchecked_disabled.svg" id="asset_97"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/gui/vsplitter.svg" id="asset_98"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/navigation/arrow_right.svg" id="asset_99"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/navigation/back.svg" id="asset_100"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/navigation/forward.svg" id="asset_101"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/navigation/zoom_less.svg" id="asset_102"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/navigation/zoom_more.svg" id="asset_103"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/navigation/zoom_reset.svg" id="asset_104"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/resource/script.svg" id="asset_105"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/scripting/breakpoint.svg" id="asset_106"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/scripting/code_fold_down_arrow.svg" id="asset_107"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/scripting/code_folded_right_arrow.svg" id="asset_108"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/scripting/code_region_fold_down_arrow.svg" id="asset_109"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/scripting/code_region_folded_right_arrow.svg" id="asset_110"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/scripting/text_editor_play.svg" id="asset_111"]
+[ext_resource type="Texture2D" path="res://.content/assets/icons/viewport/overbright_indicator.svg" id="asset_112"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/animation_timeline_edit_time_available.tres" id="stylebox_1"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/animation_timeline_edit_time_unavailable.tres" id="stylebox_2"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/animation_track_edit_hover.tres" id="stylebox_3"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/animation_track_edit_odd.tres" id="stylebox_4"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/animation_track_edit_group_header.tres" id="stylebox_5"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/animation_track_edit_group_hover.tres" id="stylebox_6"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/button_disabled.tres" id="stylebox_7"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/button_hover.tres" id="stylebox_8"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/button_hover_pressed.tres" id="stylebox_9"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/check_box_disabled.tres" id="stylebox_10"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/code_edit_focus.tres" id="stylebox_11"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/code_edit_normal.tres" id="stylebox_12"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/color_preset_button_preset_fg.tres" id="stylebox_13"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/dialog_panel.tres" id="stylebox_14"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/dock_toolbar_button_hover.tres" id="stylebox_15"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/dock_toolbar_button_normal.tres" id="stylebox_16"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/dock_toolbar_button_pressed.tres" id="stylebox_17"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_prop_subsection_stylebox.tres" id="stylebox_18"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_about_dialog_panel.tres" id="stylebox_19"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_audio_bus_master.tres" id="stylebox_20"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_audio_bus_normal.tres" id="stylebox_21"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_help_background.tres" id="stylebox_22"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_help_bit_content_normal.tres" id="stylebox_23"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_help_bit_title_normal.tres" id="stylebox_24"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_inspector_panel.tres" id="stylebox_25"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_inspector_category_bg.tres" id="stylebox_26"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_inspector_section_indent_box.tres" id="stylebox_27"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_log_filter_button_hover.tres" id="stylebox_28"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_log_filter_button_normal.tres" id="stylebox_29"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_log_filter_button_pressed.tres" id="stylebox_30"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_property_bg_group_note.tres" id="stylebox_31"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_property_bg_selected.tres" id="stylebox_32"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_property_child_bg.tres" id="stylebox_33"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_spin_slider_label_bg.tres" id="stylebox_34"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_background.tres" id="stylebox_35"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_content.tres" id="stylebox_36"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_debugger_panel.tres" id="stylebox_37"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_0.tres" id="stylebox_38"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_1.tres" id="stylebox_39"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_10.tres" id="stylebox_40"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_11.tres" id="stylebox_41"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_12.tres" id="stylebox_42"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_13.tres" id="stylebox_43"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_14.tres" id="stylebox_44"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_15.tres" id="stylebox_45"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_16.tres" id="stylebox_46"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dock_background.tres" id="stylebox_47"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_information_3d_viewport.tres" id="stylebox_48"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_launch_pad_movie_mode.tres" id="stylebox_49"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_launch_pad_normal.tres" id="stylebox_50"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_launch_pad_recovery_mode.tres" id="stylebox_51"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_movie_writer_button_normal.tres" id="stylebox_52"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_movie_writer_button_pressed.tres" id="stylebox_53"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_object_db_content_wrapper.tres" id="stylebox_54"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_object_db_title.tres" id="stylebox_55"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_panel_foreground.tres" id="stylebox_56"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_recovery_mode_button.tres" id="stylebox_57"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_texture_region_preview_bg.tres" id="stylebox_58"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_theme_editor_preview_bg.tres" id="stylebox_59"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_theme_editor_preview_fg.tres" id="stylebox_60"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_0.tres" id="stylebox_61"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_1.tres" id="stylebox_62"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_10.tres" id="stylebox_63"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_11.tres" id="stylebox_64"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_12.tres" id="stylebox_65"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_13.tres" id="stylebox_66"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_14.tres" id="stylebox_67"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_15.tres" id="stylebox_68"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_16.tres" id="stylebox_69"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_bg_no_border.tres" id="stylebox_70"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_color_category_bg_1.tres" id="stylebox_71"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_color_category_bg_10.tres" id="stylebox_72"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_color_category_bg_11.tres" id="stylebox_73"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_color_category_bg_12.tres" id="stylebox_74"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_color_category_bg_13.tres" id="stylebox_75"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_color_category_bg_14.tres" id="stylebox_76"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_color_category_bg_15.tres" id="stylebox_77"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_color_category_bg_16.tres" id="stylebox_78"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_property_bg_0.tres" id="stylebox_79"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_property_bg_1.tres" id="stylebox_80"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_property_bg_10.tres" id="stylebox_81"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_property_bg_11.tres" id="stylebox_82"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_property_bg_12.tres" id="stylebox_83"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_property_bg_13.tres" id="stylebox_84"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_property_bg_14.tres" id="stylebox_85"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_property_bg_15.tres" id="stylebox_86"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_sub_inspector_property_bg_16.tres" id="stylebox_87"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_validation_panel_panel.tres" id="stylebox_88"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/flat_button_pressed.tres" id="stylebox_89"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/foldable_container_panel.tres" id="stylebox_90"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/foldable_container_title_collapsed_hover_panel.tres" id="stylebox_91"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/foldable_container_title_collapsed_panel.tres" id="stylebox_92"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/foldable_container_title_hover_panel.tres" id="stylebox_93"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/foldable_container_title_panel.tres" id="stylebox_94"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/game_panel_panel.tres" id="stylebox_95"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_edit_menu_panel.tres" id="stylebox_96"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_edit_minimap_camera.tres" id="stylebox_97"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_edit_minimap_node.tres" id="stylebox_98"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_edit_minimap_panel.tres" id="stylebox_99"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_element_panel.tres" id="stylebox_100"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_element_panel_selected.tres" id="stylebox_101"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_element_titlebar.tres" id="stylebox_102"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_element_titlebar_selected.tres" id="stylebox_103"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_frame_panel.tres" id="stylebox_104"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_frame_panel_selected.tres" id="stylebox_105"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_frame_titlebar.tres" id="stylebox_106"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_node_separator.tres" id="stylebox_107"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_node_slot.tres" id="stylebox_108"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_state_machine_node_frame.tres" id="stylebox_109"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_state_machine_node_frame_end.tres" id="stylebox_110"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_state_machine_node_frame_playing.tres" id="stylebox_111"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_state_machine_node_frame_selected.tres" id="stylebox_112"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/graph_state_machine_node_frame_start.tres" id="stylebox_113"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/h_scroll_bar_grabber.tres" id="stylebox_115"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/h_scroll_bar_grabber_highlight.tres" id="stylebox_116"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/h_scroll_bar_grabber_pressed.tres" id="stylebox_117"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/h_scroll_bar_scroll.tres" id="stylebox_118"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/h_scroll_bar_scroll_focus.tres" id="stylebox_119"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/h_slider_grabber_area.tres" id="stylebox_120"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/h_slider_grabber_area_highlight.tres" id="stylebox_121"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/h_slider_slider.tres" id="stylebox_122"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/header_close_button_hover.tres" id="stylebox_123"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/header_close_button_hover_pressed.tres" id="stylebox_124"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/hub_panel_container.tres" id="stylebox_125"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/inspector_action_button_disabled.tres" id="stylebox_126"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/inspector_action_button_hover.tres" id="stylebox_127"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/inspector_action_button_normal.tres" id="stylebox_128"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/inspector_action_button_pressed.tres" id="stylebox_129"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/item_list_cursor.tres" id="stylebox_131"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/item_list_hovered.tres" id="stylebox_132"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/item_list_hovered_selected.tres" id="stylebox_133"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/item_list_panel.tres" id="stylebox_134"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/label_no_margin_vertical_normal.tres" id="stylebox_135"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/line_edit_normal.tres" id="stylebox_136"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/menu_bar_pressed.tres" id="stylebox_137"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/panel_background_button_hover.tres" id="stylebox_138"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/panel_background_button_normal.tres" id="stylebox_139"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/panel_background_button_pressed.tres" id="stylebox_140"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/panel_container_button_group_panel.tres" id="stylebox_141"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/popup_dialog_panel.tres" id="stylebox_142"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/popup_menu_hover.tres" id="stylebox_143"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/popup_menu_labeled_separator_left.tres" id="stylebox_144"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/popup_menu_labeled_separator_right.tres" id="stylebox_145"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/popup_menu_panel.tres" id="stylebox_146"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/popup_menu_separator.tres" id="stylebox_147"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/popup_panel_panel.tres" id="stylebox_148"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/primary_button_disabled.tres" id="stylebox_149"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/primary_button_hover.tres" id="stylebox_150"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/primary_button_hover_pressed.tres" id="stylebox_151"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/primary_button_normal.tres" id="stylebox_152"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/profiler_autostart_indicator_hover.tres" id="stylebox_153"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/progress_bar_background.tres" id="stylebox_154"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/progress_bar_fill.tres" id="stylebox_155"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/project_list_hovered.tres" id="stylebox_156"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/project_tag_button_hover.tres" id="stylebox_157"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/project_tag_button_normal.tres" id="stylebox_158"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/project_tag_button_pressed.tres" id="stylebox_159"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/run_bar_button_movie_maker_enabled_hover_pressed.tres" id="stylebox_160"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tab_bar_tab_disabled.tres" id="stylebox_161"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tab_bar_tab_hovered.tres" id="stylebox_162"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tab_bar_tab_selected.tres" id="stylebox_163"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tab_bar_tab_unselected.tres" id="stylebox_164"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tab_container_panel.tres" id="stylebox_165"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tab_container_tabbar_background.tres" id="stylebox_166"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tab_container_odd_panel.tres" id="stylebox_167"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tab_container_odd_tab_selected.tres" id="stylebox_168"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/table_background.tres" id="stylebox_169"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/table_footer.tres" id="stylebox_170"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/table_header.tres" id="stylebox_171"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/table_row_even.tres" id="stylebox_172"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/table_row_odd.tres" id="stylebox_173"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/theme_editor_preview_picker_label.tres" id="stylebox_174"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/theme_editor_preview_picker_overlay.tres" id="stylebox_175"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tooltip_panel_panel.tres" id="stylebox_176"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tree_cursor.tres" id="stylebox_177"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tree_hovered_dimmed.tres" id="stylebox_178"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/tree_line_edit_normal.tres" id="stylebox_179"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/vs_reroute_node_titlebar.tres" id="stylebox_180"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/v_scroll_bar_scroll.tres" id="stylebox_181"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/v_separator_separator.tres" id="stylebox_182"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/v_separator_button_group_separator.tres" id="stylebox_183"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/v_shader_editor_label_style.tres" id="stylebox_184"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/v_slider_grabber_area.tres" id="stylebox_185"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/v_slider_grabber_area_highlight.tres" id="stylebox_186"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/v_slider_slider.tres" id="stylebox_187"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/viewport_toolbar_panel.tres" id="stylebox_188"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/window_embedded_border.tres" id="stylebox_189"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_114"]
+resource_name = "HScrollBar decrement"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_130"]
+resource_name = "ItemList scroll_hint"
+
+[sub_resource type="FontVariation" id="FontVariation_asset_1"]
+resource_name = "Editor main"
+base_font = ExtResource("1_font")
+spacing_top = -4
+spacing_bottom = -6
+
+
+[sub_resource type="FontVariation" id="FontVariation_asset_2"]
+resource_name = "Editor main_msdf"
+base_font = ExtResource("1_font")
+spacing_top = -1
+spacing_bottom = -1
+
+
+[sub_resource type="FontVariation" id="FontVariation_asset_3"]
+resource_name = "Editor bold"
+base_font = ExtResource("1_font")
+spacing_top = -1
+spacing_bottom = -1
+variation_embolden = 0.6
+
+
+[sub_resource type="FontVariation" id="FontVariation_asset_4"]
+resource_name = "Editor italic"
+base_font = ExtResource("1_font")
+spacing_top = -4
+spacing_bottom = -6
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+
+[sub_resource type="FontVariation" id="FontVariation_asset_5"]
+resource_name = "Editor bold_italic"
+base_font = ExtResource("1_font")
+spacing_top = -1
+spacing_bottom = -1
+variation_embolden = 0.6
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+
+[sub_resource type="FontVariation" id="FontVariation_asset_6"]
+resource_name = "Editor doc_source"
+base_font = ExtResource("asset_17")
+spacing_top = -1
+spacing_bottom = -1
+
+
+[sub_resource type="FontVariation" id="FontVariation_asset_7"]
+resource_name = "Editor output_source_bold"
+base_font = ExtResource("asset_17")
+spacing_top = -1
+spacing_bottom = -1
+variation_embolden = 0.6
+
+
+[sub_resource type="FontVariation" id="FontVariation_asset_8"]
+resource_name = "Editor output_source_italic"
+base_font = ExtResource("asset_17")
+spacing_top = -1
+spacing_bottom = -1
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+
+[sub_resource type="FontVariation" id="FontVariation_asset_9"]
+resource_name = "Editor output_source_bold_italic"
+base_font = ExtResource("asset_17")
+spacing_top = -1
+spacing_bottom = -1
+variation_embolden = 0.6
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+
+[sub_resource type="FontVariation" id="FontVariation_asset_10"]
+resource_name = "Editor output_source_mono"
+base_font = ExtResource("asset_17")
+spacing_top = -1
+spacing_bottom = -1
+variation_embolden = -0.25
+variation_transform = Transform2D(1, 0.1, 0, 1, 0, 0)
+
+[resource]
+resource_name = "Dark"
+default_font_family = ExtResource("1_font")
+default_font_size = 16
+default_base_color = Color(0.1255, 0.1373, 0.149, 1)
+default_accent_color = Color(0.239, 0.682, 0.914, 1)
+default_contrast = 0.3
+default_icon_saturation = 2.0
+default_padding = 4.0
+default_border_width = 0.0
+default_border_radius = 4.0
+default_focus_border_width = 2.0
+default_shadow_color = Color(0, 0, 0, 0.6)
+default_base_scale = 1.0
+default_background_color = "theme.default_base_color.lerp(Color(0, 0, 0, 1), theme.default_contrast).clamp()"
+default_border_color = "theme.default_base_color.lerp(Color(0, 0, 0, 1), theme.default_contrast * 1.5).clamp()"
+AnimationBezierTrackEdit/colors/focus_color = "(theme.Editor.colors.accent_color * Color(1, 1, 1, 0.7))"
+AnimationBezierTrackEdit/colors/h_line_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.2))"
+AnimationBezierTrackEdit/colors/track_focus_color = "(theme.Editor.colors.accent_color * Color(1, 1, 1, 0.5))"
+AnimationBezierTrackEdit/colors/v_line_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.2))"
+AnimationBezierTrackEdit/constants/h_separation = "int(round((((int(round(theme.default_padding))) + 2) * theme.default_base_scale)))"
+AnimationBezierTrackEdit/constants/v_separation = "int(round((((((int(round(theme.default_padding))) + 6) + (((int(round(theme.default_padding))) + 6) % 2))) * theme.default_base_scale)))"
+AnimationTimelineEdit/colors/font_primary_color = "theme.Editor.colors.font_normal_color"
+AnimationTimelineEdit/colors/font_secondary_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.5))"
+AnimationTimelineEdit/colors/h_line_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.2))"
+AnimationTimelineEdit/colors/v_line_primary_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.2))"
+AnimationTimelineEdit/colors/v_line_secondary_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.2))"
+AnimationTimelineEdit/constants/text_primary_margin = "int(round((3 * theme.default_base_scale)))"
+AnimationTimelineEdit/constants/text_secondary_margin = "int(round((3 * theme.default_base_scale)))"
+AnimationTimelineEdit/constants/v_line_primary_margin = 0
+AnimationTimelineEdit/constants/v_line_primary_width = "int(round((1 * theme.default_base_scale)))"
+AnimationTimelineEdit/constants/v_line_secondary_margin = 0
+AnimationTimelineEdit/constants/v_line_secondary_width = "int(round((1 * theme.default_base_scale)))"
+AnimationTimelineEdit/styles/time_available = ExtResource("stylebox_1")
+AnimationTimelineEdit/styles/time_unavailable = ExtResource("stylebox_2")
+AnimationTrackEdit/colors/h_line_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.2))"
+AnimationTrackEdit/constants/h_separation = "int(round((((int(round(theme.default_padding))) + 2) * theme.default_base_scale)))"
+AnimationTrackEdit/constants/outer_margin = "int(round((((int(round(theme.default_padding))) * 6) * theme.default_base_scale)))"
+AnimationTrackEdit/styles/focus = ExtResource("2_asset")
+AnimationTrackEdit/styles/hover = ExtResource("stylebox_3")
+AnimationTrackEdit/styles/odd = ExtResource("stylebox_4")
+AnimationTrackEditGroup/colors/h_line_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.2))"
+AnimationTrackEditGroup/colors/v_line_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.2))"
+AnimationTrackEditGroup/constants/h_separation = "int(round((((int(round(theme.default_padding))) + 2) * theme.default_base_scale)))"
+AnimationTrackEditGroup/constants/v_separation = 0
+AnimationTrackEditGroup/styles/header = ExtResource("stylebox_5")
+AnimationTrackEditGroup/styles/hover = ExtResource("stylebox_6")
+AnimationTrackEditor/constants/timeline_v_separation = 0
+AnimationTrackEditor/constants/track_v_separation = 0
+BaseButton/constants/click_margin = "(int(int(round((2 * theme.default_base_scale)))))"
+BoxContainer/constants/separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+Button/colors/font_color = "theme.Editor.colors.font_normal_color"
+Button/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
+Button/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
+Button/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
+Button/colors/font_hover_pressed_color = "theme.Editor.colors.font_hover_pressed_color"
+Button/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+Button/colors/font_pressed_color = "theme.Editor.colors.font_pressed_color"
+Button/colors/icon_disabled_color = "theme.Editor.colors.icon_disabled_color"
+Button/colors/icon_focus_color = "theme.Editor.colors.icon_focus_color"
+Button/colors/icon_hover_color = "theme.Editor.colors.icon_hover_color"
+Button/colors/icon_hover_pressed_color = "theme.Editor.colors.icon_pressed_color"
+Button/colors/icon_normal_color = "theme.Editor.colors.icon_normal_color"
+Button/colors/icon_pressed_color = "theme.Editor.colors.icon_pressed_color"
+Button/constants/align_to_largest_stylebox = 1
+Button/constants/gap = "int(round((8 * theme.default_base_scale)))"
+Button/constants/outline_size = 0
+Button/styles/disabled = ExtResource("stylebox_7")
+Button/styles/focus = ExtResource("2_asset")
+Button/styles/hover = ExtResource("stylebox_8")
+Button/styles/hover_pressed = ExtResource("stylebox_9")
+Button/styles/normal = ExtResource("3_asset")
+Button/styles/pressed = ExtResource("stylebox_9")
+CheckBox/colors/font_color = "theme.Editor.colors.font_normal_color"
+CheckBox/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
+CheckBox/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
+CheckBox/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
+CheckBox/colors/font_hover_pressed_color = "theme.Editor.colors.font_hover_pressed_color"
+CheckBox/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+CheckBox/colors/font_pressed_color = "theme.Editor.colors.font_pressed_color"
+CheckBox/colors/icon_disabled_color = "theme.Editor.colors.icon_disabled_color"
+CheckBox/colors/icon_focus_color = "theme.Editor.colors.icon_focus_color"
+CheckBox/colors/icon_hover_color = "theme.Editor.colors.icon_hover_color"
+CheckBox/colors/icon_normal_color = "theme.Editor.colors.icon_normal_color"
+CheckBox/colors/icon_pressed_color = "theme.Editor.colors.icon_pressed_color"
+CheckBox/constants/check_v_offset = 0
+CheckBox/constants/gap = "int(round((8 * theme.default_base_scale)))"
+CheckBox/constants/outline_size = 0
+CheckBox/icons/checked = "theme.Editor.icons.gui_checked"
+CheckBox/icons/checked_disabled = "theme.Editor.icons.gui_checked_disabled"
+CheckBox/icons/radio_checked = "theme.Editor.icons.gui_radio_checked"
+CheckBox/icons/radio_checked_disabled = "theme.Editor.icons.gui_radio_checked_disabled"
+CheckBox/icons/radio_unchecked = "theme.Editor.icons.gui_radio_unchecked"
+CheckBox/icons/radio_unchecked_disabled = "theme.Editor.icons.gui_radio_unchecked_disabled"
+CheckBox/icons/unchecked = "theme.Editor.icons.gui_unchecked"
+CheckBox/icons/unchecked_disabled = "theme.Editor.icons.gui_unchecked_disabled"
+CheckBox/styles/disabled = ExtResource("stylebox_10")
+CheckBox/styles/hover = ExtResource("stylebox_10")
+CheckBox/styles/hover_pressed = ExtResource("stylebox_10")
+CheckBox/styles/normal = ExtResource("stylebox_10")
+CheckBox/styles/pressed = ExtResource("stylebox_10")
+CheckBoxNoIconTint/base_type = "CheckBox"
+CheckBoxNoIconTint/colors/icon_hover_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? theme.Editor.colors.mono_color : (theme.Editor.colors.mono_color).inverted())"
+CheckBoxNoIconTint/colors/icon_hover_pressed_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? theme.Editor.colors.mono_color : (theme.Editor.colors.mono_color).inverted())"
+CheckBoxNoIconTint/colors/icon_pressed_color = "theme.Editor.colors.icon_normal_color"
+CheckBoxNoIconTintNoDim/base_type = "CheckBoxNoIconTint"
+CheckBoxNoIconTintNoDim/colors/checkbox_unchecked_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(1, 1, 1) : Color(3, 3, 3))"
+CheckButton/colors/font_color = "theme.Editor.colors.font_normal_color"
+CheckButton/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
+CheckButton/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
+CheckButton/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
+CheckButton/colors/font_hover_pressed_color = "theme.Editor.colors.font_hover_pressed_color"
+CheckButton/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+CheckButton/colors/font_pressed_color = "theme.Editor.colors.font_pressed_color"
+CheckButton/colors/icon_disabled_color = "theme.Editor.colors.icon_disabled_color"
+CheckButton/colors/icon_focus_color = "theme.Editor.colors.icon_focus_color"
+CheckButton/colors/icon_hover_color = "theme.Editor.colors.icon_hover_color"
+CheckButton/colors/icon_normal_color = "theme.Editor.colors.icon_normal_color"
+CheckButton/colors/icon_pressed_color = "theme.Editor.colors.icon_pressed_color"
+CheckButton/constants/check_v_offset = 0
+CheckButton/constants/gap = "int(round((8 * theme.default_base_scale)))"
+CheckButton/constants/outline_size = 0
+CheckButton/icons/checked = "theme.Editor.icons.gui_toggle_on"
+CheckButton/icons/checked_disabled = "theme.Editor.icons.gui_toggle_on_disabled"
+CheckButton/icons/unchecked = "theme.Editor.icons.gui_toggle_off"
+CheckButton/icons/unchecked_disabled = "theme.Editor.icons.gui_toggle_off_disabled"
+CheckButton/styles/disabled = ExtResource("stylebox_10")
+CheckButton/styles/hover = ExtResource("stylebox_10")
+CheckButton/styles/hover_pressed = ExtResource("stylebox_10")
+CheckButton/styles/normal = ExtResource("stylebox_10")
+CheckButton/styles/pressed = ExtResource("stylebox_10")
+CodeEdit/colors/bookmark_color = "theme.Editor.colors.text_editor_bookmark_color"
+CodeEdit/colors/brace_mismatch_color = "theme.Editor.colors.text_editor_brace_mismatch_color"
+CodeEdit/colors/breakpoint_color = "theme.Editor.colors.text_editor_breakpoint_color"
+CodeEdit/colors/caret_color = "theme.Editor.colors.text_editor_caret_color"
+CodeEdit/colors/code_folding_color = "theme.Editor.colors.text_editor_code_folding_color"
+CodeEdit/colors/completion_background_color = "theme.Editor.colors.text_editor_completion_background_color"
+CodeEdit/colors/completion_existing_color = "theme.Editor.colors.text_editor_completion_existing_color"
+CodeEdit/colors/completion_scroll_color = "theme.Editor.colors.text_editor_completion_scroll_color"
+CodeEdit/colors/completion_scroll_hovered_color = "theme.Editor.colors.text_editor_completion_scroll_hovered_color"
+CodeEdit/colors/completion_selected_color = "theme.Editor.colors.text_editor_completion_selected_color"
+CodeEdit/colors/current_line_color = "theme.Editor.colors.text_editor_current_line_color"
+CodeEdit/colors/executing_line_color = "theme.Editor.colors.text_editor_executing_line_color"
+CodeEdit/colors/folded_code_region_color = "theme.Editor.colors.text_editor_folded_code_region_color"
+CodeEdit/colors/font_color = "theme.Editor.colors.text_editor_text_color"
+CodeEdit/colors/font_selected_color = "theme.Editor.colors.text_editor_text_selected_color"
+CodeEdit/colors/line_length_guideline_color = "theme.Editor.colors.text_editor_line_length_guideline_color"
+CodeEdit/colors/line_number_color = "theme.Editor.colors.text_editor_line_number_color"
+CodeEdit/colors/search_result_border_color = "theme.Editor.colors.text_editor_search_result_border_color"
+CodeEdit/colors/search_result_color = "theme.Editor.colors.text_editor_search_result_color"
+CodeEdit/colors/selection_color = "theme.Editor.colors.text_editor_selection_color"
+CodeEdit/colors/word_highlighted_color = "theme.Editor.colors.text_editor_word_highlighted_color"
+CodeEdit/constants/line_spacing = "int((4))"
+CodeEdit/font_sizes/font_size = "int(theme.Editor.font_sizes.source_size)"
+CodeEdit/fonts/font = "theme.Editor.fonts.source"
+CodeEdit/icons/breakpoint = "theme.Editor.icons.scripting_breakpoint"
+CodeEdit/icons/can_fold = "theme.Editor.icons.scripting_code_fold_down_arrow"
+CodeEdit/icons/can_fold_code_region = "theme.Editor.icons.scripting_code_region_fold_down_arrow"
+CodeEdit/icons/executing_line = "theme.Editor.icons.scripting_text_editor_play"
+CodeEdit/icons/folded = "theme.Editor.icons.scripting_code_folded_right_arrow"
+CodeEdit/icons/folded_code_region = "theme.Editor.icons.scripting_code_region_folded_right_arrow"
+CodeEdit/icons/space = "theme.Editor.icons.gui_space"
+CodeEdit/icons/tab = "theme.Editor.icons.gui_tab"
+CodeEdit/styles/focus = ExtResource("stylebox_11")
+CodeEdit/styles/normal = ExtResource("stylebox_12")
+CodeEdit/styles/read_only = ExtResource("stylebox_12")
+ColorPicker/colors/focused_not_editing_cursor_color = "theme.Editor.colors.highlight_color"
+ColorPicker/constants/center_slider_grabbers = 1
+ColorPicker/constants/h_width = "int(round((30 * theme.default_base_scale)))"
+ColorPicker/constants/label_width = "int(round((10 * theme.default_base_scale)))"
+ColorPicker/constants/margin = "int(round(theme.default_padding))"
+ColorPicker/constants/sv_height = "int(round((256 * theme.default_base_scale)))"
+ColorPicker/constants/sv_width = "int(round((256 * theme.default_base_scale)))"
+ColorPicker/icons/add_preset = "theme.Editor.icons.action_add"
+ColorPicker/icons/bar_arrow = "theme.Editor.icons.gui_color_picker_bar_arrow"
+ColorPicker/icons/color_copy = "theme.Editor.icons.action_copy"
+ColorPicker/icons/color_script = "theme.Editor.icons.resource_script"
+ColorPicker/icons/expanded_arrow = "theme.Editor.icons.gui_tree_arrow_down"
+ColorPicker/icons/folded_arrow = "theme.Editor.icons.gui_tree_arrow_right"
+ColorPicker/icons/menu_option = "theme.Editor.icons.gui_tab_menu_hl"
+ColorPicker/icons/overbright_indicator = "theme.Editor.icons.viewport_overbright_indicator"
+ColorPicker/icons/picker_cursor = "theme.Editor.icons.gui_picker_cursor"
+ColorPicker/icons/picker_cursor_bg = "theme.Editor.icons.gui_picker_cursor_bg"
+ColorPicker/icons/sample_bg = "theme.Editor.icons.gui_mini_checkerboard"
+ColorPicker/icons/sample_revert = "theme.Editor.icons.action_revert"
+ColorPicker/icons/screen_picker = "theme.Editor.icons.action_color_pick"
+ColorPicker/icons/shape_circle = "theme.Editor.icons.gui_picker_shape_circle"
+ColorPicker/icons/shape_rect = "theme.Editor.icons.gui_picker_shape_rectangle"
+ColorPicker/icons/shape_rect_wheel = "theme.Editor.icons.gui_picker_shape_rectangle_wheel"
+ColorPicker/styles/picker_focus_circle = ExtResource("4_asset")
+ColorPicker/styles/picker_focus_rectangle = ExtResource("2_asset")
+ColorPicker/styles/sample_focus = ExtResource("2_asset")
+ColorPickerButton/icons/bg = "theme.Editor.icons.gui_mini_checkerboard"
+ColorPresetButton/icons/overbright_indicator = "theme.Editor.icons.viewport_overbright_indicator"
+ColorPresetButton/icons/preset_bg = "theme.Editor.icons.gui_mini_checkerboard"
+ColorPresetButton/styles/preset_fg = ExtResource("stylebox_13")
+Dialog/constants/buttons_min_height = "int(round((((Vector2(105, 34))).y * theme.default_base_scale)))"
+Dialog/constants/buttons_min_width = "int(round((((Vector2(105, 34))).x * theme.default_base_scale)))"
+Dialog/constants/buttons_separation = "int(round((8 * theme.default_base_scale)))"
+Dialog/styles/panel = ExtResource("stylebox_14")
+DockToolbarButton/base_type = "FlatMenuButton"
+DockToolbarButton/colors/icon_hover_color = "Color(((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).r, ((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).g, ((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).b, 1.0)"
+DockToolbarButton/colors/icon_hover_pressed_color = "Color(((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).r, ((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).g, ((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).b, 1.0)"
+DockToolbarButton/colors/icon_pressed_color = Color(1, 1, 1, 1)
+DockToolbarButton/styles/hover = ExtResource("stylebox_15")
+DockToolbarButton/styles/hover_pressed = ExtResource("stylebox_15")
+DockToolbarButton/styles/normal = ExtResource("stylebox_16")
+DockToolbarButton/styles/pressed = ExtResource("stylebox_17")
+Editor/colors/accent_color = "theme.default_accent_color"
+Editor/colors/axis_view_plane_color = Color(0.75, 0.75, 0.75, 0.33)
+Editor/colors/axis_w_color = Color(0.55, 0.55, 0.55, 1)
+Editor/colors/axis_x_color = Color(0.96, 0.2, 0.32, 1)
+Editor/colors/axis_y_color = Color(0.53, 0.84, 0.01, 1)
+Editor/colors/axis_z_color = Color(0.16, 0.55, 0.96, 1)
+Editor/colors/background = "Color((theme.Editor.colors.dark_color_2).r, (theme.Editor.colors.dark_color_2).g, (theme.Editor.colors.dark_color_2).b, 1.0)"
+Editor/colors/base_color = "theme.default_base_color"
+Editor/colors/box_selection_fill_color = "(theme.Editor.colors.accent_color * Color(1, 1, 1, 0.3))"
+Editor/colors/box_selection_stroke_color = "(theme.Editor.colors.accent_color * Color(1, 1, 1, 0.8))"
+Editor/colors/contrast_color_1 = "(theme.Editor.colors.base_color).lerp(theme.Editor.colors.mono_color, max((theme.default_contrast), 0.3))"
+Editor/colors/contrast_color_2 = "(theme.Editor.colors.base_color).lerp(theme.Editor.colors.mono_color, max(((theme.default_contrast) * 1.5), 0.44999999999999996))"
+Editor/colors/dark_color_1 = "((theme.Editor.colors.base_color).lerp(Color(0, 0, 0, 1), (theme.default_contrast))).clamp()"
+Editor/colors/dark_color_2 = "((theme.Editor.colors.base_color).lerp(Color(0, 0, 0, 1), ((theme.default_contrast) * 1.5))).clamp()"
+Editor/colors/dark_color_3 = "((theme.Editor.colors.base_color).lerp(Color(0, 0, 0, 1), ((theme.default_contrast) * 2))).clamp()"
+Editor/colors/disabled_bg_color = "((theme.Editor.colors.mono_color).inverted()).lerp(theme.Editor.colors.base_color, 0.9)"
+Editor/colors/disabled_border_color = "((theme.Editor.colors.mono_color).inverted()).lerp(theme.Editor.colors.base_color, 0.7)"
+Editor/colors/error_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(1, 0.47, 0.42) : Color(0.8, 0.22, 0.22))"
+Editor/colors/error_color_dark_background = Color(1, 0.47, 0.42, 1)
+Editor/colors/font_color = "theme.Editor.colors.font_normal_color"
+Editor/colors/font_dark_background_color = "(((theme.default_base_color.get_luminance() < 0.5)) ? theme.Editor.colors.font_normal_color : ((theme.Editor.colors.mono_color).inverted()).lerp(theme.Editor.colors.base_color, 0.75))"
+Editor/colors/font_dark_background_focus_color = "(((theme.default_base_color.get_luminance() < 0.5)) ? theme.Editor.colors.font_focus_color : ((theme.Editor.colors.mono_color).inverted()).lerp(theme.Editor.colors.base_color, 0.25))"
+Editor/colors/font_dark_background_hover_color = "(((theme.default_base_color.get_luminance() < 0.5)) ? theme.Editor.colors.font_hover_color : ((theme.Editor.colors.mono_color).inverted()).lerp(theme.Editor.colors.base_color, 0.25))"
+Editor/colors/font_dark_background_hover_pressed_color = "(((theme.default_base_color.get_luminance() < 0.5)) ? theme.Editor.colors.font_hover_pressed_color : (theme.Editor.colors.font_dark_background_color).lerp(theme.Editor.colors.accent_color, 0.5))"
+Editor/colors/font_dark_background_pressed_color = "(((theme.default_base_color.get_luminance() < 0.5)) ? theme.Editor.colors.font_pressed_color : (theme.Editor.colors.font_dark_background_color).lerp(theme.Editor.colors.accent_color, 0.74))"
+Editor/colors/font_disabled_color = "Color((theme.Editor.colors.mono_color_font).r, (theme.Editor.colors.mono_color_font).g, (theme.Editor.colors.mono_color_font).b, 0.35)"
+Editor/colors/font_focus_color = "(theme.Editor.colors.mono_color_font).lerp(theme.Editor.colors.base_color, 0.125)"
+Editor/colors/font_hover_color = "(theme.Editor.colors.mono_color_font).lerp(theme.Editor.colors.base_color, 0.125)"
+Editor/colors/font_hover_pressed_color = "(theme.Editor.colors.font_hover_color).lerp(theme.Editor.colors.accent_color, 0.74)"
+Editor/colors/font_normal_color = "(theme.Editor.colors.mono_color_font).lerp(theme.Editor.colors.base_color, 0.25)"
+Editor/colors/font_outline_color = Color(0, 0, 0, 0)
+Editor/colors/font_placeholder_color = "Color((theme.Editor.colors.mono_color_font).r, (theme.Editor.colors.mono_color_font).g, (theme.Editor.colors.mono_color_font).b, 0.5)"
+Editor/colors/font_pressed_color = "theme.Editor.colors.accent_color"
+Editor/colors/font_readonly_color = "Color((theme.Editor.colors.mono_color_font).r, (theme.Editor.colors.mono_color_font).g, (theme.Editor.colors.mono_color_font).b, 0.65)"
+Editor/colors/forward_plus_color = Color(0.36470588235294116, 0.5490196078431373, 0.24705882352941178, 1.0)
+Editor/colors/gl_compatibility_color = Color(0.3333333333333333, 0.5254901960784314, 0.6431372549019608, 1.0)
+Editor/colors/highlight_color = "Color((theme.Editor.colors.accent_color).r, (theme.Editor.colors.accent_color).g, (theme.Editor.colors.accent_color).b, 0.275)"
+Editor/colors/highlight_disabled_color = "(theme.Editor.colors.highlight_color).lerp(((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0, 0, 0) : Color(1, 1, 1)), 0.5)"
+Editor/colors/icon_disabled_color = "Color(theme.Editor.colors.icon_normal_color, 0.4)"
+Editor/colors/icon_focus_color = "Color((((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.45)))).r, (((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.45)))).g, (((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.45)))).b, 1.0)"
+Editor/colors/icon_hover_color = "theme.Editor.colors.icon_focus_color"
+Editor/colors/icon_normal_color = Color(1, 1, 1, 1)
+Editor/colors/icon_pressed_color = "Color((((theme.Editor.colors.accent_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 3.5)))).r, (((theme.Editor.colors.accent_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 3.5)))).g, (((theme.Editor.colors.accent_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 3.5)))).b, 1.0)"
+Editor/colors/icon_saturation = "Color((theme.default_icon_saturation), (theme.default_icon_saturation), (theme.default_icon_saturation))"
+Editor/colors/info_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(0.7, 0.8, 1) : Color(0.35, 0.6, 0.9))"
+Editor/colors/mobile_color = Color(0.6470588235294118, 0.3333333333333333, 0.49019607843137253, 1.0)
+Editor/colors/mono_color = "((((theme.default_base_color.get_luminance() < 0.5))) ? Color(1, 1, 1) : Color(0, 0, 0))"
+Editor/colors/mono_color_font = "(((theme.default_base_color.get_luminance() < 0.5)) ? Color(1, 1, 1) : Color(0, 0, 0))"
+Editor/colors/prop_subsection = "(theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.06)"
+Editor/colors/prop_subsection_stylebox_color = Color(1, 1, 1, 0)
+Editor/colors/property_color_w = "Color((float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 1.0))), (float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 0.30000000000000027))), (float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 0))))"
+Editor/colors/property_color_x = "Color((float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 0))), (float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 0.7))), (float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 1.0))))"
+Editor/colors/property_color_y = "Color((float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 1.0))), (float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 0))), (float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 0.7000000000000002))))"
+Editor/colors/property_color_z = "Color((float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 0.7000000000000002))), (float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 1.0))), (float((theme.Editor.colors.accent_color).v) * (1 - (float(((theme.Editor.colors.accent_color).s * 0.75)) * 0))))"
+Editor/colors/ruler_color = "theme.Editor.colors.dark_color_2"
+Editor/colors/selection_color = "(theme.Editor.colors.accent_color * Color(1, 1, 1, 0.4))"
+Editor/colors/separator_color = "Color((theme.Editor.colors.mono_color).r, (theme.Editor.colors.mono_color).g, (theme.Editor.colors.mono_color).b, 0.1)"
+Editor/colors/shadow_color = "Color(0, 0, 0, ((((theme.default_base_color.get_luminance() < 0.5))) ? 0.3 : 0.1))"
+Editor/colors/sub_inspector_property_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(1, 1, 1, 1) : Color(0, 0, 0, 1))"
+Editor/colors/success_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(0.45, 0.95, 0.5) : ((Color(0.45, 0.95, 0.5))).lerp(theme.Editor.colors.mono_color_font, 0.35))"
+Editor/colors/success_color_dark_background = Color(0.45, 0.95, 0.5, 1)
+Editor/colors/text_editor_background_color = "((theme.Editor.colors.base_color).lerp(Color(0, 0, 0), ((theme.default_contrast) * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.2 : 1.8)))).clamp()"
+Editor/colors/text_editor_base_type_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0.26, 1.0, 0.76) : Color(0, 0.6, 0.2))"
+Editor/colors/text_editor_bookmark_color = Color(0.08, 0.49, 0.98, 1)
+Editor/colors/text_editor_brace_mismatch_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? theme.Editor.colors.error_color : Color(1, 0.08, 0, 1))"
+Editor/colors/text_editor_breakpoint_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? theme.Editor.colors.error_color : Color(1, 0.27, 0.2, 1))"
+Editor/colors/text_editor_caret_background_color = "(theme.Editor.colors.mono_color).inverted()"
+Editor/colors/text_editor_caret_color = "theme.Editor.colors.mono_color"
+Editor/colors/text_editor_code_folding_color = "Color(float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), 0.27)"
+Editor/colors/text_editor_comment_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(theme.Editor.colors.font_normal_color, 0.5) : Color(0.08, 0.08, 0.08, 0.5))"
+Editor/colors/text_editor_comment_markers_critical_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(0.77, 0.35, 0.35) : Color(0.8, 0.14, 0.14))"
+Editor/colors/text_editor_comment_markers_notice_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(0.56, 0.67, 0.51) : Color(0.24, 0.54, 0.09))"
+Editor/colors/text_editor_comment_markers_warning_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(0.72, 0.61, 0.48) : Color(0.75, 0.39, 0.03))"
+Editor/colors/text_editor_completion_background_color = "((theme.Editor.colors.base_color).lerp(Color(0, 0, 0), ((theme.default_contrast) * 0.3))).clamp()"
+Editor/colors/text_editor_completion_existing_color = "Color(float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), 0.14)"
+Editor/colors/text_editor_completion_font_color = "theme.Editor.colors.font_normal_color"
+Editor/colors/text_editor_completion_scroll_color = "Color(float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), 0.29)"
+Editor/colors/text_editor_completion_scroll_hovered_color = "Color(float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), 0.4)"
+Editor/colors/text_editor_completion_selected_color = "Color(float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), 0.07)"
+Editor/colors/text_editor_control_flow_keyword_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(1.0, 0.55, 0.8) : Color(0.743, 0.12, 0.8))"
+Editor/colors/text_editor_current_line_color = "Color(float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), 0.07)"
+Editor/colors/text_editor_doc_comment_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0.6, 0.7, 0.8, 0.8) : Color(0.15, 0.15, 0.4, 0.7))"
+Editor/colors/text_editor_engine_type_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0.56, 1, 0.86) : Color(0.11, 0.55, 0.4))"
+Editor/colors/text_editor_error_underline_color = Color(1.0, 0.0, 0.0, 1)
+Editor/colors/text_editor_executing_line_color = Color(0.98, 0.89, 0.27, 1)
+Editor/colors/text_editor_folded_code_region_color = Color(0.68, 0.46, 0.77, 0.2)
+Editor/colors/text_editor_function_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0.34, 0.7, 1.0) : Color(0, 0.225, 0.9, 1))"
+Editor/colors/text_editor_gdscript_annotation_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(1.0, 0.7, 0.45) : Color(0.8, 0.37, 0))"
+Editor/colors/text_editor_gdscript_function_definition_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(0.4, 0.9, 1.0) : Color(0, 0.6, 0.6))"
+Editor/colors/text_editor_gdscript_global_function_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(0.64, 0.64, 0.96) : Color(0.36, 0.18, 0.72))"
+Editor/colors/text_editor_gdscript_node_path_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(0.72, 0.77, 0.49) : Color(0.18, 0.55, 0))"
+Editor/colors/text_editor_gdscript_node_reference_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(0.39, 0.76, 0.35) : Color(0.0, 0.5, 0))"
+Editor/colors/text_editor_gdscript_string_name_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(1.0, 0.76, 0.65) : Color(0.8, 0.56, 0.45))"
+Editor/colors/text_editor_keyword_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(1.0, 0.44, 0.52) : Color(0.9, 0.135, 0.51))"
+Editor/colors/text_editor_line_length_guideline_color = "((theme.Editor.colors.base_color).lerp(Color(0, 0, 0), ((theme.default_contrast) * -1.25))).clamp()"
+Editor/colors/text_editor_line_number_color = "Color(theme.Editor.colors.font_normal_color, 0.5)"
+Editor/colors/text_editor_mark_color = "Color((theme.Editor.colors.error_color).r, (theme.Editor.colors.error_color).g, (theme.Editor.colors.error_color).b, 0.3)"
+Editor/colors/text_editor_member_variable_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? (Color(0.34, 0.7, 1.0)).lerp(theme.Editor.colors.mono_color, 0.6) : Color(0, 0.4, 0.68, 1))"
+Editor/colors/text_editor_number_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0.63, 1, 0.88) : Color(0, 0.55, 0.28, 1))"
+Editor/colors/text_editor_safe_line_number_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? (Color(theme.Editor.colors.font_normal_color, 0.5) * Color(1, 1.2, 1, 1.5)) : Color(0, 0.4, 0, 0.75))"
+Editor/colors/text_editor_search_result_border_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0.41, 0.61, 0.91, 0.38) : Color(0, 0.4, 1, 0.38))"
+Editor/colors/text_editor_search_result_color = "Color(float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), 0.07)"
+Editor/colors/text_editor_selection_color = "theme.Editor.colors.selection_color"
+Editor/colors/text_editor_string_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(1, 0.93, 0.63) : Color(0.6, 0.42, 0))"
+Editor/colors/text_editor_string_placeholder_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(1, 0.75, 0.4) : Color(0.93, 0.6, 0.33))"
+Editor/colors/text_editor_symbol_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0.67, 0.79, 1) : Color(0, 0, 0.61))"
+Editor/colors/text_editor_text_color = "theme.Editor.colors.font_normal_color"
+Editor/colors/text_editor_text_selected_color = Color(0, 0, 0, 0)
+Editor/colors/text_editor_user_type_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0.78, 1, 0.93) : Color(0.18, 0.45, 0.4))"
+Editor/colors/text_editor_warning_color = "Color((theme.Editor.colors.warning_color).r, (theme.Editor.colors.warning_color).g, (theme.Editor.colors.warning_color).b, 0.15)"
+Editor/colors/text_editor_warning_underline_color = Color(0.89, 0.7, 0.2, 1)
+Editor/colors/text_editor_word_highlighted_color = "Color(float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), float((theme.Editor.colors.mono_color).r), 0.07)"
+Editor/colors/texture_preview_outline_color = Color(0.5, 0.5, 0.5, 1)
+Editor/colors/visual_shader_default_category_colors_color_color = Color(0.5, 0.5, 0.1, 1)
+Editor/colors/visual_shader_default_category_colors_conditional_color = Color(0.208, 0.522, 0.298, 1)
+Editor/colors/visual_shader_default_category_colors_input_color = Color(0.502, 0.2, 0.204, 1)
+Editor/colors/visual_shader_default_category_colors_output_color = Color(0.26, 0.1, 0.15, 1)
+Editor/colors/visual_shader_default_category_colors_particle_color = Color(0.12, 0.358, 0.8, 1)
+Editor/colors/visual_shader_default_category_colors_scalar_color = Color(0.1, 0.5, 0.6, 1)
+Editor/colors/visual_shader_default_category_colors_special_color = Color(0.098, 0.361, 0.294, 1)
+Editor/colors/visual_shader_default_category_colors_textures_color = Color(0.5, 0.3, 0.1, 1)
+Editor/colors/visual_shader_default_category_colors_transform_color = Color(0.5, 0.3, 0.5, 1)
+Editor/colors/visual_shader_default_category_colors_utility_color = Color(0.2, 0.2, 0.2, 1)
+Editor/colors/visual_shader_default_category_colors_vector_color = Color(0.2, 0.2, 0.5, 1)
+Editor/colors/visual_shader_default_connection_colors_boolean_color = Color(0.243, 0.612, 0.349, 1)
+Editor/colors/visual_shader_default_connection_colors_sampler_color = Color(0.659, 0.4, 0.137, 1)
+Editor/colors/visual_shader_default_connection_colors_scalar_color = Color(0.55, 0.55, 0.55, 1)
+Editor/colors/visual_shader_default_connection_colors_transform_color = Color(0.71, 0.357, 0.64, 1)
+Editor/colors/visual_shader_default_connection_colors_vector2_color = Color(0.44, 0.43, 0.64, 1)
+Editor/colors/visual_shader_default_connection_colors_vector3_color = Color(0.337, 0.314, 0.71, 1)
+Editor/colors/visual_shader_default_connection_colors_vector4_color = Color(0.7, 0.65, 0.147, 1)
+Editor/colors/visual_shader_legacy_category_colors_color_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_conditional_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_input_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_output_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_particle_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_scalar_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_special_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_textures_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_transform_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_utility_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_category_colors_vector_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+Editor/colors/visual_shader_legacy_connection_colors_boolean_color = Color(0.55, 0.65, 0.94, 1)
+Editor/colors/visual_shader_legacy_connection_colors_sampler_color = Color(1.0, 1.0, 0.0, 1)
+Editor/colors/visual_shader_legacy_connection_colors_scalar_color = Color(0.38, 0.85, 0.96, 1)
+Editor/colors/visual_shader_legacy_connection_colors_transform_color = Color(0.96, 0.66, 0.43, 1)
+Editor/colors/visual_shader_legacy_connection_colors_vector2_color = Color(0.74, 0.57, 0.95, 1)
+Editor/colors/visual_shader_legacy_connection_colors_vector3_color = Color(0.84, 0.49, 0.93, 1)
+Editor/colors/visual_shader_legacy_connection_colors_vector4_color = Color(1.0, 0.125, 0.95, 1)
+Editor/colors/warning_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(1, 0.87, 0.4) : Color(0.82, 0.56, 0.1))"
+Editor/colors/warning_color_dark_background = Color(1, 0.87, 0.4, 1)
+Editor/constants/bold_spacing_bottom = -1
+Editor/constants/bold_spacing_top = -1
+Editor/constants/border_radius = "int(round(theme.default_border_radius))"
+Editor/constants/class_icon_size = "int(((16 * theme.default_base_scale)))"
+Editor/constants/dark_theme = "int(((theme.default_base_color.get_luminance() < 0.5)))"
+Editor/constants/draw_relationship_lines = 2
+Editor/constants/embolden_strength_percent = 60
+Editor/constants/focus_circle_detail = 32
+Editor/constants/focus_circle_radius = 256
+Editor/constants/gizmo_handle_scale = "int(((1)))"
+Editor/constants/inspector_margin = "int(round((12 * theme.default_base_scale)))"
+Editor/constants/inspector_property_height = "int((((Vector2(max((Vector2(0, 0)).x, (((theme.default_padding * 2 * theme.default_base_scale) + round((theme.default_border_width * theme.default_base_scale))) + ((theme.default_padding * 2 * theme.default_base_scale) + round((theme.default_border_width * theme.default_base_scale))))), max((Vector2(0, 0)).y, (((theme.default_padding * 2 * theme.default_base_scale) + round((theme.default_border_width * theme.default_base_scale))) + ((theme.default_padding * 2 * theme.default_base_scale) + round((theme.default_border_width * theme.default_base_scale))))))).y + (theme.LineEdit.fonts.font).get_height(int(theme.LineEdit.font_sizes.font_size)))))"
+Editor/constants/italic_skew_percent = 20
+Editor/constants/main_msdf_spacing_bottom = -1
+Editor/constants/main_msdf_spacing_top = -1
+Editor/constants/main_spacing_bottom = -6
+Editor/constants/main_spacing_top = -4
+Editor/constants/mono_spacing_bottom = -1
+Editor/constants/mono_spacing_top = -1
+Editor/constants/option_button_arrow_padding = 4
+Editor/constants/padding = "int(round(theme.default_padding))"
+Editor/constants/scale = "int(theme.default_base_scale)"
+Editor/constants/thumb_size = "int(((64)))"
+Editor/constants/top_bar_separation = "int((max(1, ((int(round(theme.default_padding))) * theme.default_base_scale))))"
+Editor/constants/window_border_margin = "int((max(1, ((int(round(theme.default_padding))) * theme.default_base_scale))))"
+Editor/font_sizes/bold_size = "int(theme.default_font_size)"
+Editor/font_sizes/doc_keyboard_size = "int(((int((15)) - 1) * theme.default_base_scale))"
+Editor/font_sizes/doc_size = "int((int((16)) * theme.default_base_scale))"
+Editor/font_sizes/doc_source_size = "int((int((15)) * theme.default_base_scale))"
+Editor/font_sizes/doc_title_size = "int((int((23)) * theme.default_base_scale))"
+Editor/font_sizes/expression_size = "int(((int((16)) - 1) * theme.default_base_scale))"
+Editor/font_sizes/italic_size = "int(theme.default_font_size)"
+Editor/font_sizes/main_size = "int(theme.default_font_size)"
+Editor/font_sizes/output_source_size = "int((int((14)) * theme.default_base_scale))"
+Editor/font_sizes/rotation_control_size = "int((13 * theme.default_base_scale))"
+Editor/font_sizes/rulers_size = "int((8 * theme.default_base_scale))"
+Editor/font_sizes/source_size = "int((int((16)) * theme.default_base_scale))"
+Editor/font_sizes/status_source_size = "int(theme.default_font_size)"
+Editor/font_sizes/title_size = "int((theme.default_font_size + (1 * theme.default_base_scale)))"
+Editor/fonts/bold = SubResource("FontVariation_asset_3")
+Editor/fonts/bold_italic = SubResource("FontVariation_asset_5")
+Editor/fonts/doc = SubResource("FontVariation_asset_1")
+Editor/fonts/doc_bold = SubResource("FontVariation_asset_3")
+Editor/fonts/doc_italic = SubResource("FontVariation_asset_4")
+Editor/fonts/doc_keyboard = SubResource("FontVariation_asset_6")
+Editor/fonts/doc_source = SubResource("FontVariation_asset_6")
+Editor/fonts/doc_title = SubResource("FontVariation_asset_3")
+Editor/fonts/expression = SubResource("FontVariation_asset_6")
+Editor/fonts/italic = SubResource("FontVariation_asset_4")
+Editor/fonts/main = SubResource("FontVariation_asset_1")
+Editor/fonts/main_bold_msdf = SubResource("FontVariation_asset_3")
+Editor/fonts/main_msdf = SubResource("FontVariation_asset_2")
+Editor/fonts/output_source = SubResource("FontVariation_asset_6")
+Editor/fonts/output_source_bold = SubResource("FontVariation_asset_7")
+Editor/fonts/output_source_bold_italic = SubResource("FontVariation_asset_9")
+Editor/fonts/output_source_italic = SubResource("FontVariation_asset_8")
+Editor/fonts/output_source_mono = SubResource("FontVariation_asset_10")
+Editor/fonts/rotation_control = SubResource("FontVariation_asset_1")
+Editor/fonts/rulers = SubResource("FontVariation_asset_1")
+Editor/fonts/source = SubResource("FontVariation_asset_6")
+Editor/fonts/status_source = SubResource("FontVariation_asset_6")
+Editor/fonts/title = SubResource("FontVariation_asset_3")
+Editor/icons/action_add = ExtResource("asset_18")
+Editor/icons/action_color_pick = ExtResource("asset_19")
+Editor/icons/action_copy = ExtResource("asset_20")
+Editor/icons/action_favorite = ExtResource("asset_21")
+Editor/icons/action_grid_layout = ExtResource("asset_22")
+Editor/icons/action_move_down = ExtResource("asset_23")
+Editor/icons/action_move_up = ExtResource("asset_24")
+Editor/icons/action_refresh = ExtResource("asset_25")
+Editor/icons/action_remove = ExtResource("asset_26")
+Editor/icons/action_revert = ExtResource("asset_27")
+Editor/icons/action_search = ExtResource("asset_28")
+Editor/icons/action_snap_grid = ExtResource("asset_29")
+Editor/icons/action_sort = ExtResource("asset_30")
+Editor/icons/file_big_thumb = ExtResource("asset_31")
+Editor/icons/file_browse = ExtResource("asset_32")
+Editor/icons/file_file = ExtResource("asset_33")
+Editor/icons/file_thumbnail = ExtResource("asset_34")
+Editor/icons/folder_big_thumb = ExtResource("asset_35")
+Editor/icons/folder_browse = ExtResource("asset_36")
+Editor/icons/folder_create = ExtResource("asset_37")
+Editor/icons/folder_folder = ExtResource("asset_38")
+Editor/icons/gui_checked = ExtResource("asset_39")
+Editor/icons/gui_checked_disabled = ExtResource("asset_40")
+Editor/icons/gui_close = ExtResource("asset_41")
+Editor/icons/gui_color_picker_bar_arrow = ExtResource("asset_42")
+Editor/icons/gui_dropdown = ExtResource("asset_43")
+Editor/icons/gui_eye_open = ExtResource("asset_44")
+Editor/icons/gui_file_list = ExtResource("asset_45")
+Editor/icons/gui_filename_filter = ExtResource("asset_46")
+Editor/icons/gui_filesystem = ExtResource("asset_47")
+Editor/icons/gui_graph_node_port = ExtResource("asset_48")
+Editor/icons/gui_grid_minimap = ExtResource("asset_49")
+Editor/icons/gui_grid_toggle = ExtResource("asset_50")
+Editor/icons/gui_hsplitter = ExtResource("asset_51")
+Editor/icons/gui_indeterminate = ExtResource("asset_52")
+Editor/icons/gui_indeterminate_disabled = ExtResource("asset_53")
+Editor/icons/gui_mini_checkerboard = ExtResource("asset_54")
+Editor/icons/gui_option_arrow = ExtResource("asset_55")
+Editor/icons/gui_picker_cursor = ExtResource("asset_56")
+Editor/icons/gui_picker_cursor_bg = ExtResource("asset_57")
+Editor/icons/gui_picker_shape_circle = ExtResource("asset_58")
+Editor/icons/gui_picker_shape_rectangle = ExtResource("asset_59")
+Editor/icons/gui_picker_shape_rectangle_wheel = ExtResource("asset_60")
+Editor/icons/gui_progress_bar = ExtResource("asset_61")
+Editor/icons/gui_progress_fill = ExtResource("asset_62")
+Editor/icons/gui_radio_checked = ExtResource("asset_63")
+Editor/icons/gui_radio_checked_disabled = ExtResource("asset_64")
+Editor/icons/gui_radio_unchecked = ExtResource("asset_65")
+Editor/icons/gui_radio_unchecked_disabled = ExtResource("asset_66")
+Editor/icons/gui_resizer = ExtResource("asset_67")
+Editor/icons/gui_resizer_top_left = ExtResource("asset_68")
+Editor/icons/gui_scroll_arrow_left = ExtResource("asset_69")
+Editor/icons/gui_scroll_arrow_left_hl = ExtResource("asset_70")
+Editor/icons/gui_scroll_arrow_right = ExtResource("asset_71")
+Editor/icons/gui_scroll_arrow_right_hl = ExtResource("asset_72")
+Editor/icons/gui_scroll_bg = ExtResource("asset_73")
+Editor/icons/gui_scroll_grabber = ExtResource("asset_74")
+Editor/icons/gui_scroll_grabber_hl = ExtResource("asset_75")
+Editor/icons/gui_scroll_grabber_pressed = ExtResource("asset_76")
+Editor/icons/gui_slider_grabber = ExtResource("asset_77")
+Editor/icons/gui_slider_grabber_hl = ExtResource("asset_78")
+Editor/icons/gui_space = ExtResource("asset_79")
+Editor/icons/gui_spinbox_down = ExtResource("asset_80")
+Editor/icons/gui_spinbox_up = ExtResource("asset_81")
+Editor/icons/gui_spinbox_updown = ExtResource("asset_82")
+Editor/icons/gui_spinbox_updown_disabled = ExtResource("asset_83")
+Editor/icons/gui_tab = ExtResource("asset_84")
+Editor/icons/gui_tab_drop_mark = ExtResource("asset_85")
+Editor/icons/gui_tab_menu = ExtResource("asset_86")
+Editor/icons/gui_tab_menu_hl = ExtResource("asset_87")
+Editor/icons/gui_toggle_off = ExtResource("asset_88")
+Editor/icons/gui_toggle_off_disabled = ExtResource("asset_89")
+Editor/icons/gui_toggle_on = ExtResource("asset_90")
+Editor/icons/gui_toggle_on_disabled = ExtResource("asset_91")
+Editor/icons/gui_tree_arrow_down = ExtResource("asset_92")
+Editor/icons/gui_tree_arrow_right = ExtResource("asset_93")
+Editor/icons/gui_tree_arrow_up = ExtResource("asset_94")
+Editor/icons/gui_tree_updown = ExtResource("asset_95")
+Editor/icons/gui_unchecked = ExtResource("asset_96")
+Editor/icons/gui_unchecked_disabled = ExtResource("asset_97")
+Editor/icons/gui_vsplitter = ExtResource("asset_98")
+Editor/icons/navigation_arrow_right = ExtResource("asset_99")
+Editor/icons/navigation_back = ExtResource("asset_100")
+Editor/icons/navigation_forward = ExtResource("asset_101")
+Editor/icons/navigation_zoom_less = ExtResource("asset_102")
+Editor/icons/navigation_zoom_more = ExtResource("asset_103")
+Editor/icons/navigation_zoom_reset = ExtResource("asset_104")
+Editor/icons/resource_script = ExtResource("asset_105")
+Editor/icons/scripting_breakpoint = ExtResource("asset_106")
+Editor/icons/scripting_code_fold_down_arrow = ExtResource("asset_107")
+Editor/icons/scripting_code_folded_right_arrow = ExtResource("asset_108")
+Editor/icons/scripting_code_region_fold_down_arrow = ExtResource("asset_109")
+Editor/icons/scripting_code_region_folded_right_arrow = ExtResource("asset_110")
+Editor/icons/scripting_text_editor_play = ExtResource("asset_111")
+Editor/icons/viewport_overbright_indicator = ExtResource("asset_112")
+Editor/styles/background = ExtResource("stylebox_35")
+Editor/styles/base_panel = ExtResource("5_asset")
+Editor/styles/button_disabled = ExtResource("stylebox_7")
+Editor/styles/button_focus = ExtResource("2_asset")
+Editor/styles/button_hover = ExtResource("stylebox_8")
+Editor/styles/button_hover_pressed = ExtResource("stylebox_9")
+Editor/styles/button_normal = ExtResource("3_asset")
+Editor/styles/button_panel = ExtResource("6_asset")
+Editor/styles/button_pressed = ExtResource("stylebox_9")
+Editor/styles/content = ExtResource("stylebox_36")
+Editor/styles/debugger_panel = ExtResource("stylebox_37")
+Editor/styles/dictionary_add_item_0 = ExtResource("stylebox_38")
+Editor/styles/dictionary_add_item_1 = ExtResource("stylebox_39")
+Editor/styles/dictionary_add_item_10 = ExtResource("stylebox_40")
+Editor/styles/dictionary_add_item_11 = ExtResource("stylebox_41")
+Editor/styles/dictionary_add_item_12 = ExtResource("stylebox_42")
+Editor/styles/dictionary_add_item_13 = ExtResource("stylebox_43")
+Editor/styles/dictionary_add_item_14 = ExtResource("stylebox_44")
+Editor/styles/dictionary_add_item_15 = ExtResource("stylebox_45")
+Editor/styles/dictionary_add_item_16 = ExtResource("stylebox_46")
+Editor/styles/dictionary_add_item_2 = ExtResource("stylebox_40")
+Editor/styles/dictionary_add_item_3 = ExtResource("stylebox_41")
+Editor/styles/dictionary_add_item_4 = ExtResource("stylebox_42")
+Editor/styles/dictionary_add_item_5 = ExtResource("stylebox_43")
+Editor/styles/dictionary_add_item_6 = ExtResource("stylebox_44")
+Editor/styles/dictionary_add_item_7 = ExtResource("stylebox_45")
+Editor/styles/dictionary_add_item_8 = ExtResource("stylebox_46")
+Editor/styles/dictionary_add_item_9 = ExtResource("stylebox_39")
+Editor/styles/dock_background = ExtResource("stylebox_47")
+Editor/styles/dock_content = ExtResource("stylebox_21")
+Editor/styles/focus = ExtResource("2_asset")
+Editor/styles/focus_viewport = ExtResource("11_asset")
+Editor/styles/information_3d_viewport = ExtResource("stylebox_48")
+Editor/styles/label_focus = ExtResource("7_asset")
+Editor/styles/label_focus_wide = ExtResource("8_asset")
+Editor/styles/label_normal = ExtResource("9_asset")
+Editor/styles/label_normal_wide = ExtResource("10_asset")
+Editor/styles/launch_pad_movie_mode = ExtResource("stylebox_49")
+Editor/styles/launch_pad_normal = ExtResource("stylebox_50")
+Editor/styles/launch_pad_recovery_mode = ExtResource("stylebox_51")
+Editor/styles/movie_writer_button_normal = ExtResource("stylebox_52")
+Editor/styles/movie_writer_button_pressed = ExtResource("stylebox_53")
+Editor/styles/object_db_content_wrapper = ExtResource("stylebox_54")
+Editor/styles/object_db_title = ExtResource("stylebox_55")
+Editor/styles/panel_foreground = ExtResource("stylebox_56")
+Editor/styles/prop_subsection_stylebox = ExtResource("stylebox_18")
+Editor/styles/prop_subsection_stylebox_left = ExtResource("stylebox_18")
+Editor/styles/prop_subsection_stylebox_right = ExtResource("stylebox_18")
+Editor/styles/recovery_mode_button = ExtResource("stylebox_57")
+Editor/styles/script_editor_dock = ExtResource("stylebox_52")
+Editor/styles/sub_inspector_bg_0 = ExtResource("stylebox_61")
+Editor/styles/sub_inspector_bg_1 = ExtResource("stylebox_62")
+Editor/styles/sub_inspector_bg_10 = ExtResource("stylebox_63")
+Editor/styles/sub_inspector_bg_11 = ExtResource("stylebox_64")
+Editor/styles/sub_inspector_bg_12 = ExtResource("stylebox_65")
+Editor/styles/sub_inspector_bg_13 = ExtResource("stylebox_66")
+Editor/styles/sub_inspector_bg_14 = ExtResource("stylebox_67")
+Editor/styles/sub_inspector_bg_15 = ExtResource("stylebox_68")
+Editor/styles/sub_inspector_bg_16 = ExtResource("stylebox_69")
+Editor/styles/sub_inspector_bg_2 = ExtResource("stylebox_63")
+Editor/styles/sub_inspector_bg_3 = ExtResource("stylebox_64")
+Editor/styles/sub_inspector_bg_4 = ExtResource("stylebox_65")
+Editor/styles/sub_inspector_bg_5 = ExtResource("stylebox_66")
+Editor/styles/sub_inspector_bg_6 = ExtResource("stylebox_67")
+Editor/styles/sub_inspector_bg_7 = ExtResource("stylebox_68")
+Editor/styles/sub_inspector_bg_8 = ExtResource("stylebox_69")
+Editor/styles/sub_inspector_bg_9 = ExtResource("stylebox_62")
+Editor/styles/sub_inspector_bg_no_border = ExtResource("stylebox_70")
+Editor/styles/sub_inspector_category_bg = ExtResource("stylebox_26")
+Editor/styles/sub_inspector_color_category_bg_1 = ExtResource("stylebox_71")
+Editor/styles/sub_inspector_color_category_bg_10 = ExtResource("stylebox_72")
+Editor/styles/sub_inspector_color_category_bg_11 = ExtResource("stylebox_73")
+Editor/styles/sub_inspector_color_category_bg_12 = ExtResource("stylebox_74")
+Editor/styles/sub_inspector_color_category_bg_13 = ExtResource("stylebox_75")
+Editor/styles/sub_inspector_color_category_bg_14 = ExtResource("stylebox_76")
+Editor/styles/sub_inspector_color_category_bg_15 = ExtResource("stylebox_77")
+Editor/styles/sub_inspector_color_category_bg_16 = ExtResource("stylebox_78")
+Editor/styles/sub_inspector_color_category_bg_2 = ExtResource("stylebox_72")
+Editor/styles/sub_inspector_color_category_bg_3 = ExtResource("stylebox_73")
+Editor/styles/sub_inspector_color_category_bg_4 = ExtResource("stylebox_74")
+Editor/styles/sub_inspector_color_category_bg_5 = ExtResource("stylebox_75")
+Editor/styles/sub_inspector_color_category_bg_6 = ExtResource("stylebox_76")
+Editor/styles/sub_inspector_color_category_bg_7 = ExtResource("stylebox_77")
+Editor/styles/sub_inspector_color_category_bg_8 = ExtResource("stylebox_78")
+Editor/styles/sub_inspector_color_category_bg_9 = ExtResource("stylebox_71")
+Editor/styles/sub_inspector_property_bg_0 = ExtResource("stylebox_79")
+Editor/styles/sub_inspector_property_bg_1 = ExtResource("stylebox_80")
+Editor/styles/sub_inspector_property_bg_10 = ExtResource("stylebox_81")
+Editor/styles/sub_inspector_property_bg_11 = ExtResource("stylebox_82")
+Editor/styles/sub_inspector_property_bg_12 = ExtResource("stylebox_83")
+Editor/styles/sub_inspector_property_bg_13 = ExtResource("stylebox_84")
+Editor/styles/sub_inspector_property_bg_14 = ExtResource("stylebox_85")
+Editor/styles/sub_inspector_property_bg_15 = ExtResource("stylebox_86")
+Editor/styles/sub_inspector_property_bg_16 = ExtResource("stylebox_87")
+Editor/styles/sub_inspector_property_bg_2 = ExtResource("stylebox_81")
+Editor/styles/sub_inspector_property_bg_3 = ExtResource("stylebox_82")
+Editor/styles/sub_inspector_property_bg_4 = ExtResource("stylebox_83")
+Editor/styles/sub_inspector_property_bg_5 = ExtResource("stylebox_84")
+Editor/styles/sub_inspector_property_bg_6 = ExtResource("stylebox_85")
+Editor/styles/sub_inspector_property_bg_7 = ExtResource("stylebox_86")
+Editor/styles/sub_inspector_property_bg_8 = ExtResource("stylebox_87")
+Editor/styles/sub_inspector_property_bg_9 = ExtResource("stylebox_80")
+Editor/styles/texture_region_preview_bg = ExtResource("stylebox_58")
+Editor/styles/texture_region_preview_fg = ExtResource("stylebox_52")
+Editor/styles/theme_editor_preview_bg = ExtResource("stylebox_59")
+Editor/styles/theme_editor_preview_fg = ExtResource("stylebox_60")
+EditorAboutDialog/styles/panel = ExtResource("stylebox_19")
+EditorAudioBus/styles/focus = ExtResource("2_asset")
+EditorAudioBus/styles/master = ExtResource("stylebox_20")
+EditorAudioBus/styles/normal = ExtResource("stylebox_21")
+EditorAudioBusAddBusPanel/base_type = "PanelContainer"
+EditorAudioBusAddBusPanel/styles/panel = ExtResource("stylebox_21")
+EditorAudioBusEffectsTree/base_type = "Tree"
+EditorAudioBusEffectsTree/constants/h_separation = 0
+EditorFileDialog/constants/thumbnail_size = "int(((64)))"
+EditorHelp/colors/code_bg_color = "theme.Editor.colors.dark_color_3"
+EditorHelp/colors/code_color = "(theme.Editor.colors.accent_color).lerp(theme.Editor.colors.mono_color_font, 0.6)"
+EditorHelp/colors/comment_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.6))"
+EditorHelp/colors/headline_color = "theme.Editor.colors.mono_color_font"
+EditorHelp/colors/important_color = "(theme.Editor.colors.warning_color).lerp(theme.Editor.colors.error_color, 0.5)"
+EditorHelp/colors/kbd_bg_color = "theme.Editor.colors.dark_color_1"
+EditorHelp/colors/kbd_color = "(theme.Editor.colors.accent_color).lerp((theme.Editor.colors.font_normal_color).lerp(Color(0.5, 0.5, 0.5), 0.5), 0.6)"
+EditorHelp/colors/link_color = "(theme.Editor.colors.accent_color).lerp(theme.Editor.colors.mono_color_font, 0.8)"
+EditorHelp/colors/note_color = "theme.Editor.colors.info_color"
+EditorHelp/colors/override_color = "theme.Editor.colors.warning_color"
+EditorHelp/colors/param_bg_color = "theme.Editor.colors.dark_color_1"
+EditorHelp/colors/primary_hr_color = "(theme.Editor.colors.base_color).lerp(theme.Editor.colors.mono_color_font, ((((theme.default_base_color.get_luminance() < 0.5))) ? 0.14 : 0.24))"
+EditorHelp/colors/qualifier_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.8))"
+EditorHelp/colors/secondary_hr_color = "(theme.Editor.colors.base_color).lerp(theme.Editor.colors.mono_color_font, ((((theme.default_base_color.get_luminance() < 0.5))) ? 0.12 : 0.22))"
+EditorHelp/colors/selection_color = "theme.Editor.colors.selection_color"
+EditorHelp/colors/symbol_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.6))"
+EditorHelp/colors/text_color = "theme.Editor.colors.font_normal_color"
+EditorHelp/colors/tip_color = "(theme.Editor.colors.success_color).lerp(theme.Editor.colors.mono_color, 0.2)"
+EditorHelp/colors/title_color = "theme.Editor.colors.accent_color"
+EditorHelp/colors/type_color = "(theme.Editor.colors.accent_color).lerp(theme.Editor.colors.font_normal_color, 0.5)"
+EditorHelp/colors/value_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.6))"
+EditorHelp/colors/warning_color = "theme.Editor.colors.warning_color"
+EditorHelp/constants/line_separation = "int(round((6 * theme.default_base_scale)))"
+EditorHelp/constants/paragraph_separation = "int(round((10 * theme.default_base_scale)))"
+EditorHelp/constants/table_h_separation = "int(round((16 * theme.default_base_scale)))"
+EditorHelp/constants/table_v_separation = "int(round((6 * theme.default_base_scale)))"
+EditorHelp/constants/text_highlight_h_padding = "int(round((1 * theme.default_base_scale)))"
+EditorHelp/constants/text_highlight_v_padding = "int(round((2 * theme.default_base_scale)))"
+EditorHelp/styles/background = ExtResource("stylebox_22")
+EditorHelpBitContent/base_type = "RichTextLabel"
+EditorHelpBitContent/styles/normal = ExtResource("stylebox_23")
+EditorHelpBitTitle/base_type = "RichTextLabel"
+EditorHelpBitTitle/styles/normal = ExtResource("stylebox_24")
+EditorHelpBitTooltipContent/base_type = "EditorHelpBitContent"
+EditorHelpBitTooltipTitle/base_type = "EditorHelpBitTitle"
+EditorInspector/colors/subresource_color_0 = "(theme.Editor.colors.accent_color).lerp(Color(0, 0, 0, 1).from_hsv(fmod(float(((theme.Editor.colors.accent_color).h + float(0.0))), float(1.0)), (theme.Editor.colors.accent_color).s, (theme.Editor.colors.accent_color).v), 0.75)"
+EditorInspector/colors/subresource_color_1 = "(theme.Editor.colors.accent_color).lerp(Color(0, 0, 0, 1).from_hsv(fmod(float(((theme.Editor.colors.accent_color).h + float(0.125))), float(1.0)), (theme.Editor.colors.accent_color).s, (theme.Editor.colors.accent_color).v), 0.75)"
+EditorInspector/colors/subresource_color_2 = "(theme.Editor.colors.accent_color).lerp(Color(0, 0, 0, 1).from_hsv(fmod(float(((theme.Editor.colors.accent_color).h + float(0.25))), float(1.0)), (theme.Editor.colors.accent_color).s, (theme.Editor.colors.accent_color).v), 0.75)"
+EditorInspector/colors/subresource_color_3 = "(theme.Editor.colors.accent_color).lerp(Color(0, 0, 0, 1).from_hsv(fmod(float(((theme.Editor.colors.accent_color).h + float(0.375))), float(1.0)), (theme.Editor.colors.accent_color).s, (theme.Editor.colors.accent_color).v), 0.75)"
+EditorInspector/colors/subresource_color_4 = "(theme.Editor.colors.accent_color).lerp(Color(0, 0, 0, 1).from_hsv(fmod(float(((theme.Editor.colors.accent_color).h + float(0.5))), float(1.0)), (theme.Editor.colors.accent_color).s, (theme.Editor.colors.accent_color).v), 0.75)"
+EditorInspector/colors/subresource_color_5 = "(theme.Editor.colors.accent_color).lerp(Color(0, 0, 0, 1).from_hsv(fmod(float(((theme.Editor.colors.accent_color).h + float(0.625))), float(1.0)), (theme.Editor.colors.accent_color).s, (theme.Editor.colors.accent_color).v), 0.75)"
+EditorInspector/colors/subresource_color_6 = "(theme.Editor.colors.accent_color).lerp(Color(0, 0, 0, 1).from_hsv(fmod(float(((theme.Editor.colors.accent_color).h + float(0.75))), float(1.0)), (theme.Editor.colors.accent_color).s, (theme.Editor.colors.accent_color).v), 0.75)"
+EditorInspector/colors/subresource_color_7 = "(theme.Editor.colors.accent_color).lerp(Color(0, 0, 0, 1).from_hsv(fmod(float(((theme.Editor.colors.accent_color).h + float(0.875))), float(1.0)), (theme.Editor.colors.accent_color).s, (theme.Editor.colors.accent_color).v), 0.75)"
+EditorInspector/styles/panel = ExtResource("stylebox_25")
+EditorInspectorArray/colors/bg = "theme.Editor.colors.dark_color_1"
+EditorInspectorCategory/styles/bg = ExtResource("stylebox_26")
+EditorInspectorContainer/base_type = "VBoxContainer"
+EditorInspectorContainer/constants/separation = 0
+EditorInspectorSection/colors/font_color = "(theme.Editor.colors.font_normal_color).lerp(Color(0.5, 0.5, 0.5), 0.35)"
+EditorInspectorSection/constants/h_separation = "int(round((2.0 * theme.default_base_scale)))"
+EditorInspectorSection/constants/indent_size = "int(round((6.0 * theme.default_base_scale)))"
+EditorInspectorSection/styles/indent_box = ExtResource("stylebox_27")
+EditorLogFilterButton/base_type = "Button"
+EditorLogFilterButton/colors/icon_hover_color = "Color(((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).r, ((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).g, ((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).b, 1.0)"
+EditorLogFilterButton/colors/icon_hover_pressed_color = "Color(((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).r, ((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).g, ((theme.Editor.colors.icon_normal_color * ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 1.15 : 1.0))).b, 1.0)"
+EditorLogFilterButton/colors/icon_normal_color = "Color(theme.Editor.colors.icon_normal_color, ((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? 0.4 : 0.8))"
+EditorLogFilterButton/colors/icon_pressed_color = "theme.Editor.colors.icon_normal_color"
+EditorLogFilterButton/styles/hover = ExtResource("stylebox_28")
+EditorLogFilterButton/styles/normal = ExtResource("stylebox_29")
+EditorLogFilterButton/styles/pressed = ExtResource("stylebox_30")
+EditorProperty/colors/property_color = "(theme.Editor.colors.font_normal_color).lerp(Color(0.5, 0.5, 0.5), 0.5)"
+EditorProperty/colors/readonly_color = "((theme.Editor.colors.font_normal_color).lerp(Color(0.5, 0.5, 0.5), 0.5)).lerp(((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0, 0, 0) : Color(1, 1, 1)), 0.25)"
+EditorProperty/colors/readonly_warning_color = "(theme.Editor.colors.error_color).lerp(((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(0, 0, 0) : Color(1, 1, 1)), 0.25)"
+EditorProperty/colors/warning_color = "theme.Editor.colors.warning_color"
+EditorProperty/constants/font_offset = "int(round((8 * theme.default_base_scale)))"
+EditorProperty/styles/bg = ExtResource("stylebox_11")
+EditorProperty/styles/bg_group_note = ExtResource("stylebox_31")
+EditorProperty/styles/bg_selected = ExtResource("stylebox_32")
+EditorProperty/styles/child_bg = ExtResource("stylebox_33")
+EditorPropertyContainer/base_type = "VBoxContainer"
+EditorPropertyContainer/constants/separation = "int(round(((int(round(theme.default_padding))) * theme.default_base_scale)))"
+EditorSectionContainer/base_type = "VBoxContainer"
+EditorSectionContainer/constants/separation = 0
+EditorSettingsDialog/styles/panel = ExtResource("stylebox_19")
+EditorSpinSlider/colors/label_color = "theme.Editor.colors.font_normal_color"
+EditorSpinSlider/colors/read_only_label_color = "theme.Editor.colors.font_readonly_color"
+EditorSpinSlider/constants/line_edit_margin = "int(round((24 * theme.default_base_scale)))"
+EditorSpinSlider/constants/line_edit_margin_empty = "int(round((16 * theme.default_base_scale)))"
+EditorSpinSlider/icons/updown = "theme.Editor.icons.gui_spinbox_updown"
+EditorSpinSlider/icons/updown_disabled = "theme.Editor.icons.gui_spinbox_updown_disabled"
+EditorSpinSlider/styles/label_bg = ExtResource("stylebox_34")
+EditorValidationPanel/styles/panel = ExtResource("stylebox_88")
+FileDialog/colors/file_disabled_color = "theme.Editor.colors.font_disabled_color"
+FileDialog/colors/folder_icon_color = "(((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(1, 1, 1) : Color(4.25, 4.25, 4.25))).lerp(theme.Editor.colors.accent_color, 0.7)"
+FileDialog/icons/back_folder = "theme.Editor.icons.navigation_back"
+FileDialog/icons/create_folder = "theme.Editor.icons.folder_create"
+FileDialog/icons/favorite = "theme.Editor.icons.action_favorite"
+FileDialog/icons/favorite_down = "theme.Editor.icons.action_move_down"
+FileDialog/icons/favorite_up = "theme.Editor.icons.action_move_up"
+FileDialog/icons/file = "theme.Editor.icons.file_file"
+FileDialog/icons/file_thumbnail = "theme.Editor.icons.file_big_thumb"
+FileDialog/icons/folder = "theme.Editor.icons.folder_folder"
+FileDialog/icons/folder_thumbnail = "theme.Editor.icons.folder_big_thumb"
+FileDialog/icons/forward_folder = "theme.Editor.icons.navigation_forward"
+FileDialog/icons/list_mode = "theme.Editor.icons.gui_file_list"
+FileDialog/icons/menu_copy_path = "theme.Editor.icons.action_copy"
+FileDialog/icons/menu_delete = "theme.Editor.icons.action_remove"
+FileDialog/icons/menu_new_folder = "theme.Editor.icons.folder_folder"
+FileDialog/icons/menu_open_bundle = "theme.Editor.icons.folder_browse"
+FileDialog/icons/menu_refresh = "theme.Editor.icons.action_refresh"
+FileDialog/icons/menu_show_in_file_manager = "theme.Editor.icons.gui_filesystem"
+FileDialog/icons/parent_folder = "theme.Editor.icons.gui_tree_arrow_up"
+FileDialog/icons/reload = "theme.Editor.icons.action_refresh"
+FileDialog/icons/sort = "theme.Editor.icons.action_sort"
+FileDialog/icons/thumbnail_mode = "theme.Editor.icons.file_thumbnail"
+FileDialog/icons/toggle_filename_filter = "theme.Editor.icons.gui_filename_filter"
+FileDialog/icons/toggle_hidden = "theme.Editor.icons.gui_eye_open"
+FlatButton/base_type = "Button"
+FlatButton/styles/disabled = ExtResource("stylebox_29")
+FlatButton/styles/hover = ExtResource("stylebox_28")
+FlatButton/styles/normal = ExtResource("stylebox_29")
+FlatButton/styles/pressed = ExtResource("stylebox_89")
+FlatButtonNoIconTint/base_type = "FlatButton"
+FlatButtonNoIconTint/colors/icon_hover_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? theme.Editor.colors.mono_color : (theme.Editor.colors.mono_color).inverted())"
+FlatButtonNoIconTint/colors/icon_hover_pressed_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? theme.Editor.colors.mono_color : (theme.Editor.colors.mono_color).inverted())"
+FlatButtonNoIconTint/colors/icon_pressed_color = "theme.Editor.colors.icon_normal_color"
+FlatMenuButton/styles/disabled = ExtResource("stylebox_29")
+FlatMenuButton/styles/hover = ExtResource("stylebox_28")
+FlatMenuButton/styles/normal = ExtResource("stylebox_29")
+FlatMenuButton/styles/pressed = ExtResource("stylebox_89")
+FlatMenuButtonNoIconTint/base_type = "FlatMenuButton"
+FlatMenuButtonNoIconTint/colors/icon_hover_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? theme.Editor.colors.mono_color : (theme.Editor.colors.mono_color).inverted())"
+FlatMenuButtonNoIconTint/colors/icon_hover_pressed_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? theme.Editor.colors.mono_color : (theme.Editor.colors.mono_color).inverted())"
+FlatMenuButtonNoIconTint/colors/icon_pressed_color = "theme.Editor.colors.icon_normal_color"
+FlowContainer/constants/h_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+FlowContainer/constants/v_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+FoldableContainer/colors/collapsed_font_color = "theme.Editor.colors.font_pressed_color"
+FoldableContainer/colors/font_color = "theme.Editor.colors.font_normal_color"
+FoldableContainer/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+FoldableContainer/colors/hover_font_color = "theme.Editor.colors.font_hover_color"
+FoldableContainer/constants/h_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+FoldableContainer/constants/outline_size = 0
+FoldableContainer/font_sizes/font_size = "int(theme.HeaderSmall.font_sizes.font_size)"
+FoldableContainer/fonts/font = "theme.HeaderSmall.fonts.font_family"
+FoldableContainer/icons/expanded_arrow = "theme.Editor.icons.gui_tree_arrow_down"
+FoldableContainer/icons/expanded_arrow_bottom = "theme.Editor.icons.gui_tree_arrow_up"
+FoldableContainer/icons/folded_arrow = "theme.Editor.icons.gui_tree_arrow_right"
+FoldableContainer/styles/focus = ExtResource("2_asset")
+FoldableContainer/styles/panel = ExtResource("stylebox_90")
+FoldableContainer/styles/title_collapsed_hover_panel = ExtResource("stylebox_91")
+FoldableContainer/styles/title_collapsed_panel = ExtResource("stylebox_92")
+FoldableContainer/styles/title_hover_panel = ExtResource("stylebox_93")
+FoldableContainer/styles/title_panel = ExtResource("stylebox_94")
+GamePanel/base_type = "Panel"
+GamePanel/styles/panel = ExtResource("stylebox_95")
+GraphBlendSpace/styles/panel = ExtResource("stylebox_58")
+GraphEdit/colors/activity = "((((theme.default_base_color.get_luminance() < 0.5))) ? Color(1, 1, 1) : Color(0, 0, 0))"
+GraphEdit/colors/connection_hover_tint_color = "((((theme.default_base_color.get_luminance() < 0.5))) ? Color(0, 0, 0, 0.3) : Color(1, 1, 1, 0.3))"
+GraphEdit/colors/connection_rim_color = "(theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5)"
+GraphEdit/colors/connection_valid_target_tint_color = "((((theme.default_base_color.get_luminance() < 0.5))) ? Color(1, 1, 1, 0.4) : Color(0, 0, 0, 0.4))"
+GraphEdit/colors/grid_major = "theme.Editor.colors.mono_color * Color(1, 1, 1, 0.1)"
+GraphEdit/colors/grid_minor = "theme.Editor.colors.mono_color * Color(1, 1, 1, 0.05)"
+GraphEdit/colors/selection_fill = "theme.Editor.colors.box_selection_fill_color"
+GraphEdit/colors/selection_stroke = "theme.Editor.colors.box_selection_stroke_color"
+GraphEdit/constants/connection_hover_thickness = 0
+GraphEdit/icons/grid_toggle = "theme.Editor.icons.gui_grid_toggle"
+GraphEdit/icons/layout = "theme.Editor.icons.action_grid_layout"
+GraphEdit/icons/minimap_toggle = "theme.Editor.icons.gui_grid_minimap"
+GraphEdit/icons/snapping_toggle = "theme.Editor.icons.action_snap_grid"
+GraphEdit/icons/zoom_in = "theme.Editor.icons.navigation_zoom_more"
+GraphEdit/icons/zoom_out = "theme.Editor.icons.navigation_zoom_less"
+GraphEdit/icons/zoom_reset = "theme.Editor.icons.navigation_zoom_reset"
+GraphEdit/styles/menu_panel = ExtResource("stylebox_96")
+GraphEdit/styles/panel = ExtResource("stylebox_88")
+GraphEdit/styles/panel_focus = ExtResource("2_asset")
+GraphEditMinimap/colors/resizer_color = "((((theme.default_base_color.get_luminance() < 0.5))) ? Color(1, 1, 1, 0.65) : Color(0, 0, 0, 0.65))"
+GraphEditMinimap/icons/resizer = "theme.Editor.icons.gui_resizer_top_left"
+GraphEditMinimap/styles/camera = ExtResource("stylebox_97")
+GraphEditMinimap/styles/node = ExtResource("stylebox_98")
+GraphEditMinimap/styles/panel = ExtResource("stylebox_99")
+GraphElement/colors/resizer_color = "(theme.Editor.colors.dark_color_1).inverted()"
+GraphElement/icons/resizer = "theme.Editor.icons.gui_resizer"
+GraphElement/styles/panel = ExtResource("stylebox_100")
+GraphElement/styles/panel_selected = ExtResource("stylebox_101")
+GraphElement/styles/titlebar = ExtResource("stylebox_102")
+GraphElement/styles/titlebar_selected = ExtResource("stylebox_103")
+GraphFrame/colors/resizer_color = "(theme.Editor.colors.dark_color_1).inverted()"
+GraphFrame/styles/panel = ExtResource("stylebox_104")
+GraphFrame/styles/panel_selected = ExtResource("stylebox_105")
+GraphFrame/styles/titlebar = ExtResource("stylebox_106")
+GraphFrame/styles/titlebar_selected = ExtResource("stylebox_106")
+GraphFrameTitleLabel/base_type = "Label"
+GraphFrameTitleLabel/colors/font_color = Color(1, 1, 1, 1)
+GraphFrameTitleLabel/colors/font_outline_color = Color(1, 1, 1, 1)
+GraphFrameTitleLabel/colors/font_shadow_color = Color(0, 0, 0, 0)
+GraphFrameTitleLabel/constants/gap = "int(round((3 * theme.default_base_scale)))"
+GraphFrameTitleLabel/constants/outline_size = 0
+GraphFrameTitleLabel/constants/shadow_offset_x = "int(round((1 * theme.default_base_scale)))"
+GraphFrameTitleLabel/constants/shadow_offset_y = "int(round((1 * theme.default_base_scale)))"
+GraphFrameTitleLabel/constants/shadow_outline_size = "int(round((1 * theme.default_base_scale)))"
+GraphFrameTitleLabel/font_sizes/font_size = "int(round((22 * theme.default_base_scale)))"
+GraphFrameTitleLabel/styles/normal = ExtResource("stylebox_11")
+GraphNode/colors/resizer_color = "(theme.Editor.colors.dark_color_1).inverted()"
+GraphNode/constants/port_h_offset = 1
+GraphNode/constants/separation = "int(round((1 * theme.default_base_scale)))"
+GraphNode/icons/port = "theme.Editor.icons.gui_graph_node_port"
+GraphNode/styles/panel = ExtResource("stylebox_100")
+GraphNode/styles/panel_focus = ExtResource("2_asset")
+GraphNode/styles/panel_selected = ExtResource("stylebox_101")
+GraphNode/styles/separator = ExtResource("stylebox_107")
+GraphNode/styles/slot = ExtResource("stylebox_108")
+GraphNode/styles/slot_selected = ExtResource("2_asset")
+GraphNode/styles/titlebar = ExtResource("stylebox_102")
+GraphNode/styles/titlebar_selected = ExtResource("stylebox_103")
+GraphNodeTitleLabel/base_type = "Label"
+GraphNodeTitleLabel/colors/font_shadow_color = "theme.Editor.colors.shadow_color"
+GraphNodeTitleLabel/constants/gap = "int(round((3 * theme.default_base_scale)))"
+GraphNodeTitleLabel/constants/shadow_offset_x = 0
+GraphNodeTitleLabel/constants/shadow_offset_y = 1
+GraphNodeTitleLabel/constants/shadow_outline_size = 4
+GraphNodeTitleLabel/styles/normal = ExtResource("stylebox_52")
+GraphStateMachine/colors/error_color = "theme.Editor.colors.error_color"
+GraphStateMachine/colors/focus_color = "theme.Editor.colors.accent_color"
+GraphStateMachine/colors/guideline_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.3))"
+GraphStateMachine/colors/highlight_color = "theme.Editor.colors.accent_color"
+GraphStateMachine/colors/highlight_disabled_color = "(theme.Editor.colors.accent_color * Color(1, 1, 1, 0.6))"
+GraphStateMachine/colors/node_title_font_color = "theme.Editor.colors.font_normal_color"
+GraphStateMachine/colors/playback_background_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.3))"
+GraphStateMachine/colors/playback_color = "theme.Editor.colors.font_normal_color"
+GraphStateMachine/colors/transition_color = "theme.Editor.colors.font_normal_color"
+GraphStateMachine/colors/transition_disabled_color = "(theme.Editor.colors.font_normal_color * Color(1, 1, 1, 0.2))"
+GraphStateMachine/colors/transition_icon_color = Color(1, 1, 1, 1)
+GraphStateMachine/colors/transition_icon_disabled_color = Color(1, 1, 1, 0.2)
+GraphStateMachine/font_sizes/node_title_font_size = "int(theme.Label.font_sizes.font_size)"
+GraphStateMachine/fonts/node_title_font = "theme.Label.fonts.font_family"
+GraphStateMachine/styles/error_panel = ExtResource("stylebox_88")
+GraphStateMachine/styles/node_frame = ExtResource("stylebox_109")
+GraphStateMachine/styles/node_frame_end = ExtResource("stylebox_110")
+GraphStateMachine/styles/node_frame_playing = ExtResource("stylebox_111")
+GraphStateMachine/styles/node_frame_selected = ExtResource("stylebox_112")
+GraphStateMachine/styles/node_frame_start = ExtResource("stylebox_113")
+GraphStateMachine/styles/panel = ExtResource("stylebox_88")
+GridContainer/constants/h_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+GridContainer/constants/v_separation = "int(round((round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)) - round((2 * theme.default_base_scale)))))"
+HBoxContainer/constants/separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+HFlowContainer/constants/h_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+HFlowContainer/constants/v_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+HScrollBar/icons/decrement = SubResource("ImageTexture_114")
+HScrollBar/icons/decrement_highlight = SubResource("ImageTexture_114")
+HScrollBar/icons/decrement_pressed = SubResource("ImageTexture_114")
+HScrollBar/icons/increment = SubResource("ImageTexture_114")
+HScrollBar/icons/increment_highlight = SubResource("ImageTexture_114")
+HScrollBar/icons/increment_pressed = SubResource("ImageTexture_114")
+HScrollBar/styles/grabber = ExtResource("stylebox_115")
+HScrollBar/styles/grabber_highlight = ExtResource("stylebox_116")
+HScrollBar/styles/grabber_pressed = ExtResource("stylebox_117")
+HScrollBar/styles/scroll = ExtResource("stylebox_118")
+HScrollBar/styles/scroll_focus = ExtResource("stylebox_119")
+HSeparator/styles/separator = ExtResource("stylebox_107")
+HSlider/constants/center_grabber = 0
+HSlider/constants/grabber_offset = 0
+HSlider/icons/grabber = "theme.Editor.icons.gui_slider_grabber"
+HSlider/icons/grabber_highlight = "theme.Editor.icons.gui_slider_grabber_hl"
+HSlider/styles/grabber_area = ExtResource("stylebox_120")
+HSlider/styles/grabber_area_highlight = ExtResource("stylebox_121")
+HSlider/styles/slider = ExtResource("stylebox_122")
+HSplitContainer/constants/minimum_grab_thickness = "int(round(((int(round(theme.default_padding))) * theme.default_base_scale)))"
+HSplitContainer/constants/separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+HSplitContainer/icons/grabber = "theme.Editor.icons.gui_hsplitter"
+HeaderCloseButton/base_type = "Button"
+HeaderCloseButton/styles/hover = ExtResource("stylebox_123")
+HeaderCloseButton/styles/hover_pressed = ExtResource("stylebox_124")
+HeaderCloseButton/styles/pressed = ExtResource("stylebox_124")
+HeaderLarge/base_type = "Label"
+HeaderLarge/font_sizes/font_size = "int((theme.Editor.font_sizes.main_size + (3 * theme.default_base_scale)))"
+HeaderLarge/fonts/font_family = "theme.Editor.fonts.bold"
+HeaderMedium/base_type = "Label"
+HeaderMedium/font_sizes/font_size = "int((theme.Editor.font_sizes.main_size + (1 * theme.default_base_scale)))"
+HeaderMedium/fonts/font_family = "theme.Editor.fonts.bold"
+HeaderSmall/base_type = "Label"
+HeaderSmall/font_sizes/font_size = "int(theme.Editor.font_sizes.main_size)"
+HeaderSmall/fonts/font_family = "theme.Editor.fonts.bold"
+HeaderSmallLink/base_type = "LinkButton"
+HeaderSmallLink/font_sizes/font_size = "int(theme.HeaderSmall.font_sizes.font_size)"
+HeaderSmallLink/fonts/font = "theme.HeaderSmall.fonts.font_family"
+Hub/constants/sidebar_button_icon_separation = "int(int(round((6 * theme.default_base_scale))))"
+Hub/icons/browse_file = "theme.Editor.icons.file_browse"
+Hub/icons/browse_folder = "theme.Editor.icons.folder_browse"
+Hub/styles/panel_container = ExtResource("stylebox_125")
+Hub/styles/project_list = ExtResource("stylebox_88")
+Hub/styles/quick_settings_panel = ExtResource("stylebox_88")
+InspectorActionButton/base_type = "Button"
+InspectorActionButton/constants/gap = "int(float(round((32 * theme.default_base_scale))))"
+InspectorActionButton/styles/disabled = ExtResource("stylebox_126")
+InspectorActionButton/styles/hover = ExtResource("stylebox_127")
+InspectorActionButton/styles/normal = ExtResource("stylebox_128")
+InspectorActionButton/styles/pressed = ExtResource("stylebox_129")
+ItemList/colors/font_color = "theme.Editor.colors.font_normal_color"
+ItemList/colors/font_hovered_color = "theme.Editor.colors.mono_color_font"
+ItemList/colors/font_hovered_selected_color = "theme.Editor.colors.mono_color_font"
+ItemList/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+ItemList/colors/font_selected_color = "theme.Editor.colors.mono_color_font"
+ItemList/colors/guide_color = Color(1, 1, 1, 0)
+ItemList/constants/h_separation = "int(round((((int(round(theme.default_padding))) + 2) * theme.default_base_scale)))"
+ItemList/constants/icon_margin = "int(round((((int(round(theme.default_padding))) + 2) * theme.default_base_scale)))"
+ItemList/constants/line_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+ItemList/constants/outline_size = 0
+ItemList/constants/scrollbar_h_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+ItemList/constants/v_separation = "int(round((((((int(round(theme.default_padding))) + 6) + (((int(round(theme.default_padding))) + 6) % 2))) * theme.default_base_scale)))"
+ItemList/icons/scroll_hint = SubResource("CompressedTexture2D_130")
+ItemList/styles/cursor = ExtResource("stylebox_131")
+ItemList/styles/cursor_unfocused = ExtResource("stylebox_131")
+ItemList/styles/focus = ExtResource("2_asset")
+ItemList/styles/hovered = ExtResource("stylebox_132")
+ItemList/styles/hovered_selected = ExtResource("stylebox_133")
+ItemList/styles/hovered_selected_focus = ExtResource("stylebox_133")
+ItemList/styles/panel = ExtResource("stylebox_134")
+ItemList/styles/selected = ExtResource("stylebox_32")
+ItemList/styles/selected_focus = ExtResource("stylebox_32")
+ItemListSecondary/base_type = "ItemList"
+Label/colors/font_color = "theme.Editor.colors.font_normal_color"
+Label/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+Label/colors/font_shadow_color = Color(0, 0, 0, 0)
+Label/colors/icon_color = Color(1, 1, 1, 1)
+Label/constants/gap = "int(round((8 * theme.default_base_scale)))"
+Label/constants/icon_max_width = 0
+Label/constants/outline_size = 0
+Label/constants/shadow_offset_x = "int(round((1 * theme.default_base_scale)))"
+Label/constants/shadow_offset_y = "int(round((1 * theme.default_base_scale)))"
+Label/constants/shadow_outline_size = "int(round((1 * theme.default_base_scale)))"
+Label/font_sizes/font_size = "theme.default_font_size"
+Label/fonts/font_family = "theme.Editor.fonts.main"
+Label/styles/focus = ExtResource("8_asset")
+Label/styles/normal = ExtResource("10_asset")
+LabelNoMargin/base_type = "Label"
+LabelNoMargin/styles/normal = ExtResource("stylebox_52")
+LabelNoMarginVertical/base_type = "Label"
+LabelNoMarginVertical/styles/normal = ExtResource("stylebox_135")
+LineEdit/colors/caret_color = "theme.Editor.colors.font_normal_color"
+LineEdit/colors/clear_button_color = "theme.Editor.colors.font_normal_color"
+LineEdit/colors/clear_button_color_pressed = "theme.Editor.colors.accent_color"
+LineEdit/colors/font_color = "theme.Editor.colors.font_normal_color"
+LineEdit/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+LineEdit/colors/font_placeholder_color = "theme.Editor.colors.font_placeholder_color"
+LineEdit/colors/font_selected_color = "theme.Editor.colors.mono_color_font"
+LineEdit/colors/font_uneditable_color = "theme.Editor.colors.font_readonly_color"
+LineEdit/colors/selection_color = "theme.Editor.colors.selection_color"
+LineEdit/constants/caret_width = 1
+LineEdit/constants/minimum_character_width = 4
+LineEdit/constants/outline_size = 0
+LineEdit/font_sizes/font_size = "theme.default_font_size"
+LineEdit/fonts/font = "theme.default_font_family"
+LineEdit/icons/clear = "theme.Editor.icons.gui_close"
+LineEdit/styles/focus = ExtResource("2_asset")
+LineEdit/styles/normal = ExtResource("stylebox_136")
+LineEdit/styles/read_only = ExtResource("stylebox_20")
+LinkButton/colors/font_color = "theme.Editor.colors.font_normal_color"
+LinkButton/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
+LinkButton/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
+LinkButton/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
+LinkButton/colors/font_hover_pressed_color = "theme.Editor.colors.font_hover_pressed_color"
+LinkButton/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+LinkButton/colors/font_pressed_color = "theme.Editor.colors.font_pressed_color"
+LinkButton/constants/outline_size = 0
+LinkButton/styles/focus = ExtResource("9_asset")
+MainMenuBar/base_type = "FlatMenuButton"
+MainMenuBar/styles/hover = ExtResource("stylebox_28")
+MainMenuBar/styles/hover_pressed = ExtResource("stylebox_28")
+MainMenuBar/styles/normal = ExtResource("stylebox_16")
+MainMenuBar/styles/pressed = ExtResource("stylebox_28")
+MainMenuButton/base_type = "Button"
+MainMenuButton/font_sizes/font_size = "int((theme.Editor.font_sizes.main_size + (2 * theme.default_base_scale)))"
+MainMenuButton/fonts/font = "theme.Editor.fonts.bold"
+MainToolBarMargin/base_type = "MarginContainer"
+MainToolBarMargin/constants/margin_left = "int(round((4 * theme.default_base_scale)))"
+MainToolBarMargin/constants/margin_right = "int(round((4 * theme.default_base_scale)))"
+MarginContainer/constants/margin_bottom = 0
+MarginContainer/constants/margin_left = 0
+MarginContainer/constants/margin_right = 0
+MarginContainer/constants/margin_top = 0
+MarginContainer4px/base_type = "MarginContainer"
+MarginContainer4px/constants/margin_bottom = "int(round((4 * theme.default_base_scale)))"
+MarginContainer4px/constants/margin_left = "int(round((4 * theme.default_base_scale)))"
+MarginContainer4px/constants/margin_right = "int(round((4 * theme.default_base_scale)))"
+MarginContainer4px/constants/margin_top = "int(round((4 * theme.default_base_scale)))"
+MenuBar/colors/font_color = "theme.Editor.colors.font_normal_color"
+MenuBar/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
+MenuBar/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
+MenuBar/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
+MenuBar/colors/font_hover_pressed_color = "theme.Editor.colors.font_hover_pressed_color"
+MenuBar/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+MenuBar/colors/font_pressed_color = "theme.Editor.colors.font_pressed_color"
+MenuBar/constants/h_separation = "int(round((4 * theme.default_base_scale)))"
+MenuBar/constants/outline_size = 0
+MenuBar/styles/disabled = ExtResource("stylebox_20")
+MenuBar/styles/hover = ExtResource("stylebox_28")
+MenuBar/styles/normal = ExtResource("stylebox_136")
+MenuBar/styles/pressed = ExtResource("stylebox_137")
+ObjectSelectorMargin/base_type = "MarginContainer"
+ObjectSelectorMargin/constants/margin_left = "int(round((4 * theme.default_base_scale)))"
+ObjectSelectorMargin/constants/margin_right = "int(round((6 * theme.default_base_scale)))"
+OptionButton/colors/font_color = "theme.Editor.colors.font_normal_color"
+OptionButton/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
+OptionButton/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
+OptionButton/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
+OptionButton/colors/font_hover_pressed_color = "theme.Editor.colors.font_hover_pressed_color"
+OptionButton/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+OptionButton/colors/font_pressed_color = "theme.Editor.colors.font_pressed_color"
+OptionButton/colors/icon_disabled_color = "theme.Editor.colors.icon_disabled_color"
+OptionButton/colors/icon_focus_color = "theme.Editor.colors.icon_focus_color"
+OptionButton/colors/icon_hover_color = "theme.Editor.colors.icon_hover_color"
+OptionButton/colors/icon_normal_color = "theme.Editor.colors.icon_normal_color"
+OptionButton/colors/icon_pressed_color = "theme.Editor.colors.icon_pressed_color"
+OptionButton/constants/arrow_margin = "int((round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)) - round((2 * theme.default_base_scale))))"
+OptionButton/constants/gap = "int(round((8 * theme.default_base_scale)))"
+OptionButton/constants/modulate_arrow = true
+OptionButton/constants/outline_size = 0
+OptionButton/icons/arrow = "theme.Editor.icons.gui_option_arrow"
+OptionButton/styles/disabled = ExtResource("stylebox_7")
+OptionButton/styles/focus = ExtResource("12_asset")
+OptionButton/styles/hover = ExtResource("stylebox_8")
+OptionButton/styles/normal = ExtResource("3_asset")
+OptionButton/styles/pressed = ExtResource("stylebox_9")
+Panel/styles/panel = ExtResource("13_asset")
+PanelBackgroundButton/base_type = "Button"
+PanelBackgroundButton/styles/disabled = ExtResource("stylebox_20")
+PanelBackgroundButton/styles/hover = ExtResource("stylebox_138")
+PanelBackgroundButton/styles/normal = ExtResource("stylebox_139")
+PanelBackgroundButton/styles/pressed = ExtResource("stylebox_140")
+PanelContainer/styles/panel = ExtResource("14_asset")
+PanelContainerButtonGroup/base_type = "PanelContainer"
+PanelContainerButtonGroup/styles/panel = ExtResource("stylebox_141")
+PanelContainerTabbarInner/base_type = "PanelContainer"
+PanelContainerTabbarInner/styles/panel = ExtResource("stylebox_52")
+PanelForeground/base_type = "Panel"
+PanelForeground/styles/panel = ExtResource("9_asset")
+PopupDialog/styles/panel = ExtResource("stylebox_142")
+PopupMenu/colors/font_accelerator_color = "theme.Editor.colors.font_disabled_color"
+PopupMenu/colors/font_color = "theme.Editor.colors.font_normal_color"
+PopupMenu/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
+PopupMenu/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
+PopupMenu/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+PopupMenu/colors/font_separator_color = "theme.Editor.colors.font_disabled_color"
+PopupMenu/constants/h_separation = "int(round((4 * theme.default_base_scale)))"
+PopupMenu/constants/item_end_padding = "int(((((int(round(theme.default_padding))) * 2.4) * theme.default_base_scale)))"
+PopupMenu/constants/item_start_padding = "int(((((int(round(theme.default_padding))) * 2.4) * theme.default_base_scale)))"
+PopupMenu/constants/outline_size = 0
+PopupMenu/constants/search_bar_separation = "int(int(((((((int(round(theme.default_padding))) + 6) + (((int(round(theme.default_padding))) + 6) % 2)))) * theme.default_base_scale)))"
+PopupMenu/constants/v_separation = "int(int(((((((int(round(theme.default_padding))) + 6) + (((int(round(theme.default_padding))) + 6) % 2)))) * theme.default_base_scale)))"
+PopupMenu/icons/checked = "theme.Editor.icons.gui_checked"
+PopupMenu/icons/checked_disabled = "theme.Editor.icons.gui_checked_disabled"
+PopupMenu/icons/indeterminate = "theme.Editor.icons.gui_indeterminate"
+PopupMenu/icons/indeterminate_disabled = "theme.Editor.icons.gui_indeterminate_disabled"
+PopupMenu/icons/radio_checked = "theme.Editor.icons.gui_radio_checked"
+PopupMenu/icons/radio_checked_disabled = "theme.Editor.icons.gui_radio_checked_disabled"
+PopupMenu/icons/radio_unchecked = "theme.Editor.icons.gui_radio_unchecked"
+PopupMenu/icons/radio_unchecked_disabled = "theme.Editor.icons.gui_radio_unchecked_disabled"
+PopupMenu/icons/search = "theme.Editor.icons.action_search"
+PopupMenu/icons/submenu = "theme.Editor.icons.navigation_arrow_right"
+PopupMenu/icons/unchecked = "theme.Editor.icons.gui_unchecked"
+PopupMenu/icons/unchecked_disabled = "theme.Editor.icons.gui_unchecked_disabled"
+PopupMenu/styles/hover = ExtResource("stylebox_143")
+PopupMenu/styles/labeled_separator_left = ExtResource("stylebox_144")
+PopupMenu/styles/labeled_separator_right = ExtResource("stylebox_145")
+PopupMenu/styles/panel = ExtResource("stylebox_146")
+PopupMenu/styles/separator = ExtResource("stylebox_147")
+PopupPanel/styles/panel = ExtResource("stylebox_148")
+PreviewLightButton/base_type = "Button"
+PreviewLightButton/colors/icon_focus_color = "(theme.Editor.colors.icon_normal_color).darkened(0.24)"
+PreviewLightButton/colors/icon_hover_color = "(theme.Editor.colors.icon_normal_color).darkened(0.18)"
+PreviewLightButton/colors/icon_hover_pressed_color = "theme.Editor.colors.icon_normal_color"
+PreviewLightButton/colors/icon_normal_color = "(theme.Editor.colors.icon_normal_color).darkened(0.24)"
+PreviewLightButton/colors/icon_pressed_color = "theme.Editor.colors.icon_normal_color"
+PreviewLightButton/styles/focus = ExtResource("stylebox_52")
+PreviewLightButton/styles/hover = ExtResource("stylebox_52")
+PreviewLightButton/styles/normal = ExtResource("stylebox_52")
+PreviewLightButton/styles/pressed = ExtResource("stylebox_52")
+PrimaryButton/base_type = "Button"
+PrimaryButton/colors/font_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/font_disabled_color = "Color(((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1)), 0.5)"
+PrimaryButton/colors/font_focus_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/font_hover_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/font_hover_pressed_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/font_pressed_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/icon_disabled_color = "Color(((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1)), 0.5)"
+PrimaryButton/colors/icon_focus_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/icon_hover_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/icon_hover_pressed_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/icon_normal_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/icon_pressed_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/styles/disabled = ExtResource("stylebox_149")
+PrimaryButton/styles/focus = ExtResource("15_asset")
+PrimaryButton/styles/hover = ExtResource("stylebox_150")
+PrimaryButton/styles/hover_pressed = ExtResource("stylebox_151")
+PrimaryButton/styles/normal = ExtResource("stylebox_152")
+PrimaryButton/styles/pressed = ExtResource("stylebox_151")
+ProfilerAutostartIndicator/base_type = "Button"
+ProfilerAutostartIndicator/styles/hover = ExtResource("stylebox_153")
+ProfilerAutostartIndicator/styles/normal = ExtResource("stylebox_153")
+ProfilerAutostartIndicator/styles/pressed = ExtResource("stylebox_153")
+ProgressBar/colors/font_color = "theme.Editor.colors.font_normal_color"
+ProgressBar/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+ProgressBar/constants/outline_size = 0
+ProgressBar/styles/background = ExtResource("stylebox_154")
+ProgressBar/styles/fill = ExtResource("stylebox_155")
+ProjectList/colors/font_color = "theme.Editor.colors.font_normal_color"
+ProjectList/colors/guide_color = "(theme.Editor.colors.mono_color * Color(1, 1, 1, 0.05))"
+ProjectList/styles/focus = ExtResource("2_asset")
+ProjectList/styles/hover_pressed = ExtResource("stylebox_133")
+ProjectList/styles/hovered = ExtResource("stylebox_156")
+ProjectList/styles/selected = ExtResource("stylebox_32")
+ProjectSettingsEditor/styles/panel = ExtResource("stylebox_19")
+ProjectTagButton/base_type = "Button"
+ProjectTagButton/styles/hover = ExtResource("stylebox_157")
+ProjectTagButton/styles/normal = ExtResource("stylebox_158")
+ProjectTagButton/styles/pressed = ExtResource("stylebox_159")
+RichTextLabel/colors/default_color = "theme.Editor.colors.font_normal_color"
+RichTextLabel/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+RichTextLabel/colors/font_shadow_color = Color(0, 0, 0, 0)
+RichTextLabel/colors/selection_color = "theme.Editor.colors.selection_color"
+RichTextLabel/constants/outline_size = 0
+RichTextLabel/constants/shadow_offset_x = "int(round((1 * theme.default_base_scale)))"
+RichTextLabel/constants/shadow_offset_y = "int(round((1 * theme.default_base_scale)))"
+RichTextLabel/constants/shadow_outline_size = "int(round((1 * theme.default_base_scale)))"
+RichTextLabel/fonts/bold_font = "theme.Editor.fonts.bold"
+RichTextLabel/fonts/bold_italics_font = "theme.Editor.fonts.bold_italic"
+RichTextLabel/fonts/italics_font = "theme.Editor.fonts.italic"
+RichTextLabel/fonts/normal_font = "theme.Editor.fonts.main"
+RichTextLabel/styles/focus = ExtResource("stylebox_52")
+RichTextLabel/styles/normal = ExtResource("stylebox_88")
+RunBarButton/base_type = "FlatMenuButton"
+RunBarButton/styles/disabled = ExtResource("stylebox_16")
+RunBarButton/styles/pressed = ExtResource("stylebox_16")
+RunBarButtonMovieMakerDisabled/base_type = "RunBarButton"
+RunBarButtonMovieMakerDisabled/colors/icon_hover_color = Color(1, 1, 1, 0.9)
+RunBarButtonMovieMakerDisabled/colors/icon_hover_pressed_color = Color(1, 1, 1, 0.84)
+RunBarButtonMovieMakerDisabled/colors/icon_normal_color = Color(1, 1, 1, 0.7)
+RunBarButtonMovieMakerDisabled/colors/icon_pressed_color = Color(1, 1, 1, 0.84)
+RunBarButtonMovieMakerEnabled/base_type = "RunBarButton"
+RunBarButtonMovieMakerEnabled/colors/icon_hover_color = Color(0, 0, 0, 0.9)
+RunBarButtonMovieMakerEnabled/colors/icon_hover_pressed_color = Color(0, 0, 0, 0.84)
+RunBarButtonMovieMakerEnabled/colors/icon_normal_color = Color(0, 0, 0, 0.7)
+RunBarButtonMovieMakerEnabled/colors/icon_pressed_color = Color(0, 0, 0, 0.84)
+RunBarButtonMovieMakerEnabled/styles/hover_pressed = ExtResource("stylebox_160")
+ScrollContainer/icons/scroll_hint_horizontal = SubResource("CompressedTexture2D_130")
+ScrollContainer/icons/scroll_hint_vertical = SubResource("CompressedTexture2D_130")
+ScrollContainer/styles/focus = ExtResource("2_asset")
+SpinBox/colors/down_disabled_icon_modulate = "theme.Editor.colors.font_disabled_color"
+SpinBox/colors/down_hover_icon_modulate = "theme.Editor.colors.font_hover_color"
+SpinBox/colors/down_icon_modulate = "theme.Editor.colors.font_normal_color"
+SpinBox/colors/down_pressed_icon_modulate = "theme.Editor.colors.font_pressed_color"
+SpinBox/colors/up_disabled_icon_modulate = "theme.Editor.colors.font_disabled_color"
+SpinBox/colors/up_hover_icon_modulate = "theme.Editor.colors.font_hover_color"
+SpinBox/colors/up_icon_modulate = "theme.Editor.colors.font_normal_color"
+SpinBox/colors/up_pressed_icon_modulate = "theme.Editor.colors.font_pressed_color"
+SpinBox/constants/buttons_vertical_separation = 0
+SpinBox/constants/buttons_width = 16
+SpinBox/constants/field_and_buttons_separation = 2
+SpinBox/icons/down = "theme.Editor.icons.gui_spinbox_down"
+SpinBox/icons/down_disabled = "theme.Editor.icons.gui_spinbox_down"
+SpinBox/icons/down_hover = "theme.Editor.icons.gui_spinbox_down"
+SpinBox/icons/down_pressed = "theme.Editor.icons.gui_spinbox_down"
+SpinBox/icons/up = "theme.Editor.icons.gui_spinbox_up"
+SpinBox/icons/up_disabled = "theme.Editor.icons.gui_spinbox_up"
+SpinBox/icons/up_hover = "theme.Editor.icons.gui_spinbox_up"
+SpinBox/icons/up_pressed = "theme.Editor.icons.gui_spinbox_up"
+SpinBox/icons/updown = SubResource("ImageTexture_114")
+SpinBox/styles/down_background = ExtResource("stylebox_52")
+SpinBox/styles/down_background_disabled = ExtResource("stylebox_52")
+SpinBox/styles/down_background_hovered = ExtResource("stylebox_28")
+SpinBox/styles/down_background_pressed = ExtResource("stylebox_137")
+SpinBox/styles/field_and_buttons_separator = ExtResource("stylebox_52")
+SpinBox/styles/up_background = ExtResource("stylebox_52")
+SpinBox/styles/up_background_disabled = ExtResource("stylebox_52")
+SpinBox/styles/up_background_hovered = ExtResource("stylebox_28")
+SpinBox/styles/up_background_pressed = ExtResource("stylebox_137")
+SpinBox/styles/up_down_buttons_separator = ExtResource("stylebox_52")
+SplitContainer/constants/minimum_grab_thickness = "int(round(((int(round(theme.default_padding))) * theme.default_base_scale)))"
+SplitContainer/constants/separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+SplitContainer/icons/h_grabber = "theme.Editor.icons.gui_hsplitter"
+SplitContainer/icons/v_grabber = "theme.Editor.icons.gui_vsplitter"
+TabBar/colors/drop_mark_color = "(theme.Editor.colors.dark_color_2).lerp(theme.Editor.colors.accent_color, 0.75)"
+TabBar/colors/font_hovered_color = "theme.Editor.colors.font_normal_color"
+TabBar/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+TabBar/colors/font_selected_color = "theme.Editor.colors.font_normal_color"
+TabBar/colors/font_unselected_color = "theme.Editor.colors.font_disabled_color"
+TabBar/colors/icon_hovered_color = Color(1, 1, 1, 1)
+TabBar/colors/icon_selected_color = Color(1, 1, 1, 1)
+TabBar/colors/icon_unselected_color = Color(1, 1, 1, 1)
+TabBar/constants/h_separation = "int(round((4 * theme.default_base_scale)))"
+TabBar/constants/hover_switch_wait_msec = "int((((1) * 1000)))"
+TabBar/constants/outline_size = 0
+TabBar/icons/close = "theme.Editor.icons.gui_close"
+TabBar/icons/decrement = "theme.Editor.icons.gui_scroll_arrow_left"
+TabBar/icons/decrement_highlight = "theme.Editor.icons.gui_scroll_arrow_left_hl"
+TabBar/icons/drop_mark = "theme.Editor.icons.gui_tab_drop_mark"
+TabBar/icons/increment = "theme.Editor.icons.gui_scroll_arrow_right"
+TabBar/icons/increment_highlight = "theme.Editor.icons.gui_scroll_arrow_right_hl"
+TabBar/styles/button_highlight = ExtResource("stylebox_10")
+TabBar/styles/button_pressed = ExtResource("stylebox_10")
+TabBar/styles/tab_disabled = ExtResource("stylebox_161")
+TabBar/styles/tab_focus = ExtResource("2_asset")
+TabBar/styles/tab_hovered = ExtResource("stylebox_162")
+TabBar/styles/tab_selected = ExtResource("stylebox_163")
+TabBar/styles/tab_unselected = ExtResource("stylebox_164")
+TabContainer/colors/drop_mark_color = "(theme.Editor.colors.dark_color_2).lerp(theme.Editor.colors.accent_color, 0.75)"
+TabContainer/colors/font_hovered_color = "theme.Editor.colors.font_normal_color"
+TabContainer/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+TabContainer/colors/font_selected_color = "theme.Editor.colors.font_normal_color"
+TabContainer/colors/font_unselected_color = "theme.Editor.colors.font_disabled_color"
+TabContainer/colors/icon_hovered_color = Color(1, 1, 1, 1)
+TabContainer/colors/icon_selected_color = Color(1, 1, 1, 1)
+TabContainer/colors/icon_unselected_color = Color(1, 1, 1, 1)
+TabContainer/constants/outline_size = 0
+TabContainer/constants/side_margin = 0
+TabContainer/icons/decrement = "theme.Editor.icons.gui_scroll_arrow_left"
+TabContainer/icons/decrement_highlight = "theme.Editor.icons.gui_scroll_arrow_left_hl"
+TabContainer/icons/drop_mark = "theme.Editor.icons.gui_tab_drop_mark"
+TabContainer/icons/increment = "theme.Editor.icons.gui_scroll_arrow_right"
+TabContainer/icons/increment_highlight = "theme.Editor.icons.gui_scroll_arrow_right_hl"
+TabContainer/icons/menu = "theme.Editor.icons.gui_tab_menu"
+TabContainer/icons/menu_highlight = "theme.Editor.icons.gui_tab_menu_hl"
+TabContainer/styles/panel = ExtResource("stylebox_165")
+TabContainer/styles/tab_disabled = ExtResource("stylebox_161")
+TabContainer/styles/tab_focus = ExtResource("2_asset")
+TabContainer/styles/tab_hovered = ExtResource("stylebox_162")
+TabContainer/styles/tab_selected = ExtResource("stylebox_163")
+TabContainer/styles/tab_unselected = ExtResource("stylebox_164")
+TabContainer/styles/tabbar_background = ExtResource("stylebox_166")
+TabContainerOdd/base_type = "TabContainer"
+TabContainerOdd/styles/panel = ExtResource("stylebox_167")
+TabContainerOdd/styles/tab_selected = ExtResource("stylebox_168")
+Table/colors/font_color = "theme.Tree.colors.font_color"
+Table/colors/header_font_color = "theme.Tree.colors.title_button_color"
+Table/constants/gap = "int((1 * theme.default_base_scale))"
+Table/constants/horizontal_cell_padding = "int((8 * theme.default_base_scale))"
+Table/constants/icon_gap = "int((8 * theme.default_base_scale))"
+Table/constants/icon_max_width = "int((24 * theme.default_base_scale))"
+Table/constants/vertical_cell_padding = "int((4 * theme.default_base_scale))"
+Table/font_sizes/font_size = -1
+Table/fonts/font = null
+Table/styles/background = ExtResource("stylebox_169")
+Table/styles/footer = ExtResource("stylebox_170")
+Table/styles/header = ExtResource("stylebox_171")
+Table/styles/row_even = ExtResource("stylebox_172")
+Table/styles/row_odd = ExtResource("stylebox_173")
+TextEdit/colors/caret_color = "theme.Editor.colors.font_normal_color"
+TextEdit/colors/font_color = "theme.Editor.colors.font_normal_color"
+TextEdit/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+TextEdit/colors/font_placeholder_color = "theme.Editor.colors.font_placeholder_color"
+TextEdit/colors/font_readonly_color = "theme.Editor.colors.font_readonly_color"
+TextEdit/colors/selection_color = "theme.Editor.colors.selection_color"
+TextEdit/constants/caret_width = 1
+TextEdit/constants/line_spacing = "int(round((4 * theme.default_base_scale)))"
+TextEdit/constants/outline_size = 0
+TextEdit/icons/space = "theme.Editor.icons.gui_space"
+TextEdit/icons/tab = "theme.Editor.icons.gui_tab"
+TextEdit/styles/focus = ExtResource("2_asset")
+TextEdit/styles/normal = ExtResource("stylebox_136")
+TextEdit/styles/read_only = ExtResource("stylebox_20")
+ThemeEditor/colors/preview_picker_overlay_color = Color(0.1, 0.1, 0.1, 0.25)
+ThemeEditor/styles/preview_picker_label = ExtResource("stylebox_174")
+ThemeEditor/styles/preview_picker_overlay = ExtResource("stylebox_175")
+TileSetEditor/styles/expand_panel = ExtResource("stylebox_88")
+TooltipLabel/colors/font_color = "theme.Editor.colors.font_hover_color"
+TooltipLabel/colors/font_shadow_color = Color(0, 0, 0, 0)
+TooltipLabel/styles/normal = ExtResource("9_asset")
+TooltipPanel/styles/panel = ExtResource("stylebox_176")
+Tree/colors/children_hl_line_color = "(theme.Editor.colors.mono_color * Color(1, 1, 1, clamp((((0.1)) + 0.25), 0.0, 1.0)))"
+Tree/colors/custom_button_font_highlight = "theme.Editor.colors.font_hover_color"
+Tree/colors/drop_on_item_color = "theme.Editor.colors.accent_color"
+Tree/colors/drop_position_color = "(theme.Editor.colors.mono_color * Color(1, 1, 1, 1))"
+Tree/colors/font_color = "theme.Editor.colors.font_normal_color"
+Tree/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
+Tree/colors/font_hovered_color = "theme.Editor.colors.mono_color_font"
+Tree/colors/font_hovered_dimmed_color = "theme.Editor.colors.font_normal_color"
+Tree/colors/font_hovered_selected_color = "theme.Editor.colors.mono_color_font"
+Tree/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
+Tree/colors/font_selected_color = "theme.Editor.colors.mono_color_font"
+Tree/colors/guide_color = "(theme.Editor.colors.mono_color * Color(1, 1, 1, 0.05))"
+Tree/colors/parent_hl_line_color = "(theme.Editor.colors.mono_color * Color(1, 1, 1, clamp((((0.1)) + 0.45), 0.0, 1.0)))"
+Tree/colors/relationship_line_color = "(theme.Editor.colors.mono_color * Color(1, 1, 1, ((0.1))))"
+Tree/colors/title_button_color = "theme.Editor.colors.font_normal_color"
+Tree/constants/button_margin = "int(round(((int(round(theme.default_padding))) * theme.default_base_scale)))"
+Tree/constants/check_h_separation = "int(round((((int(round(theme.default_padding))) + 2) * theme.default_base_scale)))"
+Tree/constants/children_hl_line_width = 1
+Tree/constants/dragging_unfold_wait_msec = "int((((1) * 1000)))"
+Tree/constants/draw_guides = "theme.Editor.constants.draw_relationship_lines == 0"
+Tree/constants/draw_relationship_lines = "theme.Editor.constants.draw_relationship_lines != 0"
+Tree/constants/guide_width = "int((int(round((theme.default_border_width * max(1, theme.default_base_scale))))))"
+Tree/constants/h_separation = "int(round((((int(round(theme.default_padding))) + 2) * theme.default_base_scale)))"
+Tree/constants/icon_h_separation = "int(round((((int(round(theme.default_padding))) + 2) * theme.default_base_scale)))"
+Tree/constants/inner_item_margin_bottom = "int(round((((int(round(theme.default_padding))) * 0.75) * theme.default_base_scale)))"
+Tree/constants/inner_item_margin_left = "int(round(((int(round(theme.default_padding))) * theme.default_base_scale)))"
+Tree/constants/inner_item_margin_right = "int(round(((int(round(theme.default_padding))) * theme.default_base_scale)))"
+Tree/constants/inner_item_margin_top = "int(round((((int(round(theme.default_padding))) * 0.75) * theme.default_base_scale)))"
+Tree/constants/item_margin = "int(round((max((3 * (int(round(theme.default_padding)))), 12) * theme.default_base_scale)))"
+Tree/constants/outline_size = 0
+Tree/constants/parent_hl_line_margin = 3
+Tree/constants/parent_hl_line_width = 2
+Tree/constants/relationship_line_width = "theme.Editor.constants.draw_relationship_lines == 2 ? 2 : 0"
+Tree/constants/scroll_border = "int(round((40 * theme.default_base_scale)))"
+Tree/constants/scroll_max_sticky_items = "int(((5)))"
+Tree/constants/scroll_speed = 12
+Tree/constants/scrollbar_h_separation = "int(round((1 * theme.default_base_scale)))"
+Tree/constants/scrollbar_margin_bottom = 0
+Tree/constants/scrollbar_margin_left = 0
+Tree/constants/scrollbar_margin_right = 0
+Tree/constants/scrollbar_margin_top = 0
+Tree/constants/scrollbar_v_separation = "int(round((1 * theme.default_base_scale)))"
+Tree/constants/v_separation = "int(round(((int(round(theme.default_padding))) * theme.default_base_scale)))"
+Tree/icons/arrow = "theme.Editor.icons.gui_tree_arrow_down"
+Tree/icons/arrow_collapsed = "theme.Editor.icons.gui_tree_arrow_right"
+Tree/icons/checked = "theme.Editor.icons.gui_checked"
+Tree/icons/checked_disabled = "theme.Editor.icons.gui_checked_disabled"
+Tree/icons/indeterminate = "theme.Editor.icons.gui_indeterminate"
+Tree/icons/indeterminate_disabled = "theme.Editor.icons.gui_indeterminate_disabled"
+Tree/icons/scroll_hint = SubResource("CompressedTexture2D_130")
+Tree/icons/select_arrow = "theme.Editor.icons.gui_dropdown"
+Tree/icons/unchecked = "theme.Editor.icons.gui_unchecked"
+Tree/icons/unchecked_disabled = "theme.Editor.icons.gui_unchecked_disabled"
+Tree/icons/updown = "theme.Editor.icons.gui_tree_updown"
+Tree/styles/button_hover = ExtResource("stylebox_156")
+Tree/styles/button_pressed = ExtResource("stylebox_32")
+Tree/styles/cursor = ExtResource("stylebox_177")
+Tree/styles/cursor_unfocused = ExtResource("stylebox_177")
+Tree/styles/custom_button = ExtResource("stylebox_52")
+Tree/styles/custom_button_hover = ExtResource("stylebox_136")
+Tree/styles/custom_button_pressed = ExtResource("stylebox_52")
+Tree/styles/focus = ExtResource("2_asset")
+Tree/styles/hovered = ExtResource("stylebox_156")
+Tree/styles/hovered_dimmed = ExtResource("stylebox_178")
+Tree/styles/hovered_selected = ExtResource("stylebox_133")
+Tree/styles/hovered_selected_focus = ExtResource("stylebox_133")
+Tree/styles/panel = ExtResource("stylebox_88")
+Tree/styles/selected = ExtResource("stylebox_32")
+Tree/styles/selected_focus = ExtResource("stylebox_32")
+Tree/styles/title_button_hover = ExtResource("stylebox_34")
+Tree/styles/title_button_normal = ExtResource("stylebox_34")
+Tree/styles/title_button_pressed = ExtResource("stylebox_34")
+TreeLineEdit/base_type = "LineEdit"
+TreeLineEdit/styles/focus = ExtResource("16_asset")
+TreeLineEdit/styles/normal = ExtResource("stylebox_179")
+TreeSecondary/base_type = "Tree"
+VBoxContainer/constants/separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+VFlowContainer/constants/h_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+VFlowContainer/constants/v_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+VSRerouteNode/colors/drag_background = "((((theme.default_base_color.get_luminance() < 0.5))) ? Color(0.19, 0.21, 0.24) : Color(0.8, 0.8, 0.8))"
+VSRerouteNode/colors/selected_rim_color = "((((theme.default_base_color.get_luminance() < 0.5))) ? Color(1, 1, 1) : Color(0, 0, 0))"
+VSRerouteNode/styles/panel = ExtResource("stylebox_52")
+VSRerouteNode/styles/panel_selected = ExtResource("stylebox_52")
+VSRerouteNode/styles/slot = ExtResource("stylebox_52")
+VSRerouteNode/styles/titlebar = ExtResource("stylebox_180")
+VSRerouteNode/styles/titlebar_selected = ExtResource("stylebox_180")
+VScrollBar/icons/decrement = SubResource("ImageTexture_114")
+VScrollBar/icons/decrement_highlight = SubResource("ImageTexture_114")
+VScrollBar/icons/decrement_pressed = SubResource("ImageTexture_114")
+VScrollBar/icons/increment = SubResource("ImageTexture_114")
+VScrollBar/icons/increment_highlight = SubResource("ImageTexture_114")
+VScrollBar/icons/increment_pressed = SubResource("ImageTexture_114")
+VScrollBar/styles/grabber = ExtResource("stylebox_115")
+VScrollBar/styles/grabber_highlight = ExtResource("stylebox_116")
+VScrollBar/styles/grabber_pressed = ExtResource("stylebox_117")
+VScrollBar/styles/scroll = ExtResource("stylebox_181")
+VScrollBar/styles/scroll_focus = ExtResource("stylebox_119")
+VSeparator/styles/separator = ExtResource("stylebox_182")
+VSeparatorButtonGroup/base_type = "VSeparator"
+VSeparatorButtonGroup/styles/separator = ExtResource("stylebox_183")
+VShaderEditor/styles/label_style = ExtResource("stylebox_184")
+VSlider/constants/center_grabber = 0
+VSlider/constants/grabber_offset = 0
+VSlider/icons/grabber = "theme.Editor.icons.gui_slider_grabber"
+VSlider/icons/grabber_highlight = "theme.Editor.icons.gui_slider_grabber_hl"
+VSlider/styles/grabber_area = ExtResource("stylebox_185")
+VSlider/styles/grabber_area_highlight = ExtResource("stylebox_186")
+VSlider/styles/slider = ExtResource("stylebox_187")
+VSplitContainer/constants/minimum_grab_thickness = "int(round(((int(round(theme.default_padding))) * theme.default_base_scale)))"
+VSplitContainer/constants/separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
+VSplitContainer/icons/grabber = "theme.Editor.icons.gui_vsplitter"
+ViewportToolbar/base_type = "ScrollContainer"
+ViewportToolbar/constants/margin = "int(round((4 * theme.default_base_scale)))"
+ViewportToolbar/styles/panel = ExtResource("stylebox_188")
+ViewportToolbarGroups/base_type = "VFlowContainer"
+ViewportToolbarGroups/constants/h_separation = "int(round((8 * theme.default_base_scale)))"
+ViewportToolbarGroups/constants/v_separation = "int(round((8 * theme.default_base_scale)))"
+Window/colors/title_color = "theme.Editor.colors.font_normal_color"
+Window/constants/close_h_offset = "int(round((22 * theme.default_base_scale)))"
+Window/constants/close_v_offset = "int(round((20 * theme.default_base_scale)))"
+Window/constants/resize_margin = "int(round((4 * theme.default_base_scale)))"
+Window/constants/title_height = "int(round((24 * theme.default_base_scale)))"
+Window/font_sizes/title_font_size = "int(theme.Editor.font_sizes.title_size)"
+Window/fonts/title_font = "theme.Editor.fonts.title"
+Window/icons/close = "theme.Editor.icons.gui_close"
+Window/icons/close_pressed = "theme.Editor.icons.gui_close"
+Window/styles/embedded_border = ExtResource("stylebox_189")
+Window/styles/embedded_unfocused_border = ExtResource("stylebox_189")

@@ -158,7 +158,7 @@ void DocumentOutline::update_visibility() {
 
 	bool use_monospace_font = members_overview_visible && EDITOR_GET("interface/theme/use_monospace_font_for_editor_symbols");
 	if (use_monospace_font) {
-		Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
+		Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(Editor));
 		if (_tree->get_theme_font(SceneStringName(font)) != monospace_font) {
 			_tree->add_theme_font_override(SceneStringName(font), monospace_font);
 		}

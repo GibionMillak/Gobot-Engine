@@ -73,6 +73,8 @@
 #include "scene/gui/base_button.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/grid_container.h"
+#include "scene/gui/menu_button.h"
+#include "scene/gui/popup_menu.h"
 #include "scene/gui/rich_text_label.h"
 #include "scene/gui/separator.h"
 #include "scene/gui/split_container.h"
@@ -989,17 +991,17 @@ void CanvasItemEditor::_reset_transform(TransformType p_type) {
 void CanvasItemEditor::_switch_theme_preview(int p_mode) {
 	view_menu->get_popup()->hide();
 
-	if (theme_preview == p_mode) {
+	const ThemePreviewMode mode = static_cast<ThemePreviewMode>(p_mode);
+	if (_theme_preview == mode) {
 		return;
 	}
-	theme_preview = (ThemePreviewMode)p_mode;
-	EditorSettings::get_singleton()->set_project_metadata("2d_editor", "theme_preview", theme_preview);
 
-	for (int i = 0; i < THEME_PREVIEW_MAX; i++) {
-		theme_menu->set_item_checked(i, i == theme_preview);
-	}
+	_theme_menu->set_item_checked(_theme_menu->get_item_index(static_cast<int>(_theme_preview)), false);
+	_theme_preview = mode;
+	_theme_menu->set_item_checked(_theme_menu->get_item_index(p_mode), true);
+	EditorSettings::get_singleton()->set_project_metadata("2d_editor", "theme_preview", p_mode);
 
-	EditorNode::get_singleton()->update_preview_themes(theme_preview);
+	EditorNode::get_singleton()->update_preview_themes();
 }
 
 bool CanvasItemEditor::_gui_input_zoom_or_pan(const Ref<InputEvent> &p_event, bool p_already_accepted) {
@@ -1375,7 +1377,7 @@ void CanvasItemEditor::_draw_percentage_at_position(real_t p_value, Point2 p_pos
 void CanvasItemEditor::_draw_focus() {
 	// Draw the focus around the base viewport
 	if (viewport->has_focus()) {
-		get_theme_stylebox(SNAME("FocusViewport"), EditorStringName(EditorStyles))->draw(viewport->get_canvas_item(), Rect2(Point2(), viewport->get_size()));
+		get_theme_stylebox(SNAME("focus_viewport"), EditorStringName(Editor))->draw(viewport->get_canvas_item(), Rect2(Point2(), viewport->get_size()));
 	}
 }
 
@@ -1417,8 +1419,8 @@ void CanvasItemEditor::_draw_guides() {
 
 	if (drag == CanvasItemManipulator::DRAG_DOUBLE_GUIDE || drag == CanvasItemManipulator::DRAG_V_GUIDE) {
 		String str = TranslationServer::get_singleton()->format_number(vformat("%d px", Math::round(xform.affine_inverse().xform(dragged_guide_pos).x)), lang);
-		Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
-		int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
+		Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(Editor));
+		int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(Editor));
 		Size2 text_size = font->get_string_size(str, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size);
 		viewport->draw_string_outline(font, Point2(dragged_guide_pos.x + 10, ruler_width + text_size.y / 2 + 10), str, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, outline_size, outline_color);
 		viewport->draw_string(font, Point2(dragged_guide_pos.x + 10, ruler_width + text_size.y / 2 + 10), str, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, text_color);
@@ -1426,8 +1428,8 @@ void CanvasItemEditor::_draw_guides() {
 	}
 	if (drag == CanvasItemManipulator::DRAG_DOUBLE_GUIDE || drag == CanvasItemManipulator::DRAG_H_GUIDE) {
 		String str = TranslationServer::get_singleton()->format_number(vformat("%d px", Math::round(xform.affine_inverse().xform(dragged_guide_pos).y)), lang);
-		Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
-		int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
+		Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(Editor));
+		int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(Editor));
 		Size2 text_size = font->get_string_size(str, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size);
 		viewport->draw_string_outline(font, Point2(ruler_width + 10, dragged_guide_pos.y + text_size.y / 2 + 10), str, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, outline_size, outline_color);
 		viewport->draw_string(font, Point2(ruler_width + 10, dragged_guide_pos.y + text_size.y / 2 + 10), str, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, text_color);
@@ -1457,7 +1459,7 @@ void CanvasItemEditor::_draw_rulers() {
 	Color graduation_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor)).lerp(bg_color, 0.5);
 	Color font_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
 	font_color.a = 0.9;
-	Ref<Font> font = get_theme_font(SNAME("rulers"), EditorStringName(EditorFonts));
+	Ref<Font> font = get_theme_font(SNAME("rulers"), EditorStringName(Editor));
 	real_t ruler_width = ci_manipulator->get_ruler_width();
 	real_t ruler_tick_scale = ruler_width / 15.0;
 	const String lang = _get_locale();
@@ -1644,8 +1646,8 @@ void CanvasItemEditor::_draw_ruler_tool() {
 		const real_t horizontal_angle_rad = length_vector.angle();
 		const real_t vertical_angle_rad = Math::PI / 2.0 - horizontal_angle_rad;
 
-		Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
-		int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
+		Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(Editor));
+		int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(Editor));
 		Color font_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
 		Color font_secondary_color = font_color;
 		font_secondary_color.set_v(font_secondary_color.get_v() > 0.5 ? 0.7 : 0.3);
@@ -2590,7 +2592,7 @@ void CanvasItemEditor::_update_editor_settings() {
 
 	// Compute the ruler width here so we can reuse the result throughout the various draw functions.
 	real_t ruler_width_unscaled = EDITOR_GET("editors/2d/ruler_width");
-	ruler_font_size = MAX(get_theme_font_size(SNAME("rulers_size"), EditorStringName(EditorFonts)) * ruler_width_unscaled / 15.0, 8);
+	ruler_font_size = MAX(get_theme_font_size(SNAME("rulers_size"), EditorStringName(Editor)) * ruler_width_unscaled / 15.0, 8);
 	ci_manipulator->set_ruler_width(MAX(ruler_width_unscaled * EDSCALE, ruler_font_size * 2.0));
 
 	ci_manipulator->set_grab_distance(EDITOR_GET("editors/polygon_editor/point_grab_radius"));
@@ -4292,17 +4294,17 @@ CanvasItemEditor::CanvasItemEditor() {
 		p->set_item_checked(p->get_item_index(AUTO_RESAMPLE_CANVAS_ITEMS), auto_resampling_enabled);
 		p->add_check_shortcut(ED_SHORTCUT("canvas_item_editor/preview_canvas_scale", TTRC("Preview Canvas Scale")), PREVIEW_CANVAS_SCALE);
 
-		theme_menu = memnew(PopupMenu);
-		theme_menu->connect(SceneStringName(id_pressed), callable_mp(this, &CanvasItemEditor::_switch_theme_preview));
-		theme_menu->add_radio_check_item(TTRC("Project theme"), THEME_PREVIEW_PROJECT);
-		theme_menu->add_radio_check_item(TTRC("Editor theme"), THEME_PREVIEW_EDITOR);
-		theme_menu->add_radio_check_item(TTRC("Default theme"), THEME_PREVIEW_DEFAULT);
-		p->add_submenu_node_item(TTRC("Preview Theme"), theme_menu);
+		_theme_menu = memnew(PopupMenu);
+		_theme_menu->add_radio_check_item(TTRC("Editor theme"), static_cast<int>(ThemePreviewMode::EDITOR));
+		_theme_menu->add_radio_check_item(TTRC("Project theme"), static_cast<int>(ThemePreviewMode::PROJECT));
+		_theme_menu->connect(SceneStringName(id_pressed), callable_mp(this, &CanvasItemEditor::_switch_theme_preview));
 
-		theme_preview = (ThemePreviewMode)(int)EditorSettings::get_singleton()->get_project_metadata("2d_editor", "theme_preview", THEME_PREVIEW_PROJECT);
-		for (int i = 0; i < THEME_PREVIEW_MAX; i++) {
-			theme_menu->set_item_checked(i, i == theme_preview);
+		const int saved_theme_preview = EditorSettings::get_singleton()->get_project_metadata("2d_editor", "theme_preview", static_cast<int>(ThemePreviewMode::PROJECT));
+		if (_theme_menu->get_item_index(saved_theme_preview) >= 0) {
+			_theme_preview = static_cast<ThemePreviewMode>(saved_theme_preview);
 		}
+		_theme_menu->set_item_checked(_theme_menu->get_item_index(static_cast<int>(_theme_preview)), true);
+		p->add_submenu_node_item(TTRC("Preview Theme"), _theme_menu);
 
 		p->add_submenu_node_item(TTRC("Preview Translation"), memnew(EditorTranslationPreviewMenu));
 	}
@@ -5157,7 +5159,7 @@ void CanvasItemEditorViewport::_update_theme() {
 		check->set_button_icon(get_editor_theme_icon(editor_get_type_icon_name(check->get_text())));
 	}
 	Control *gui_base = EditorNode::get_singleton()->get_gui_base();
-	const Ref<StyleBox> &information_3d_stylebox = gui_base->get_theme_stylebox(SNAME("Information3dViewport"), EditorStringName(EditorStyles));
+	const Ref<StyleBox> &information_3d_stylebox = gui_base->get_theme_stylebox(SNAME("information_3d_viewport"), EditorStringName(Editor));
 	tooltip_panel->add_theme_style_override(CoreStringName(normal), information_3d_stylebox);
 
 	frame_time_gradient->set_color(0, get_theme_color(SNAME("success_color_dark_background"), EditorStringName(Editor)));
@@ -5172,7 +5174,7 @@ void CanvasItemEditorViewport::_update_theme() {
 	// Set a minimum width to prevent the width from changing all the time
 	// when numbers vary rapidly. This minimum width is set based on a
 	// GPU time of 999.99 ms in the current editor language.
-	const float min_width = get_theme_font(SNAME("main"), EditorStringName(EditorFonts))->get_string_size(vformat(TTR("GPU Time: %s ms"), 999.99)).x;
+	const float min_width = get_theme_font(SNAME("main"), EditorStringName(Editor))->get_string_size(vformat(TTR("GPU Time: %s ms"), 999.99)).x;
 	frame_time_panel->set_custom_minimum_size(Size2(min_width, 0) * EDSCALE);
 	frame_time_vbox->add_theme_constant_override("separation", Math::round(-1 * EDSCALE));
 }

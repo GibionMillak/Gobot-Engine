@@ -404,11 +404,11 @@ public:
 	void stop_child_process(ProcessID p_pid);
 
 	Ref<Theme> get_editor_theme() const { return theme; }
-	void update_preview_themes(int p_mode);
+	void update_preview_themes();
 
 	Ref<Script> get_object_custom_type_base(const Object *p_object) const;
 	StringName get_object_custom_type_name(const Object *p_object) const;
-	// p_fallback selects an EditorIcons asset identifier when the type has no icon.
+	// p_fallback selects a shared Editor icon identifier when the type has no icon.
 	Ref<Texture2D> get_object_icon(const Object *p_object, const String &p_fallback = "");
 	Ref<Texture2D> get_class_icon(const String &p_class, const String &p_fallback = "");
 

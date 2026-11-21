@@ -287,8 +287,8 @@ void AnimationBezierTrackEdit::_notification(int p_what) {
 
 			const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 			const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
-			const Ref<Font> source_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
-			const int source_font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts));
+			const Ref<Font> source_font = get_theme_font(SNAME("source"), EditorStringName(Editor));
+			const int source_font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(Editor));
 			const Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
 
 			const Color h_line_color = get_theme_color(SNAME("h_line_color"), SNAME("AnimationBezierTrackEdit"));

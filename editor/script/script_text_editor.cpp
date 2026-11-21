@@ -873,7 +873,7 @@ Ref<Texture2D> ScriptTextEditor::get_theme_icon() {
 	Ref<Script> script = edited_res;
 	if (get_parent_control()) {
 		const StringName icon_name = script->is_built_in() && script->get_class() == "GDScript" ? SNAME("module_gdscript_gd_script_internal") : editor_get_type_icon_name(script->get_class());
-		if (!icon_name.is_empty() && get_parent_control()->has_theme_icon(icon_name, EditorStringName(EditorIcons))) {
+		if (!icon_name.is_empty() && get_parent_control()->has_theme_icon(icon_name, EditorStringName(Editor))) {
 			return get_parent_control()->get_editor_theme_icon(icon_name);
 		}
 	}

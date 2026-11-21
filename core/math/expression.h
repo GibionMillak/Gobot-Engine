@@ -32,10 +32,26 @@
 
 #include "core/object/ref_counted.h"
 
+#include <functional>
+
 class Expression : public RefCounted {
 	GDCLASS(Expression, RefCounted);
 
+public:
+	using InputResolver = std::function<bool(int p_index, Variant &r_value)>;
+
+	~Expression();
+
+	Error parse(const String &p_expression, const Vector<String> &p_input_names = Vector<String>());
+	Variant execute(const Array &p_inputs = Array(), Object *p_base = nullptr, bool p_show_error = true, bool p_const_calls_only = false);
+	// Executes an already parsed expression without mutating its error state.
+	[[nodiscard]] Error execute_with_resolver(const InputResolver &p_resolve_input, Variant &r_value, String &r_error, bool p_const_calls_only = false) const;
+	bool has_execute_failed() const;
+	String get_error_text() const;
+
 protected:
+	static void _bind_methods();
+
 	String expression;
 
 	int str_ofs = 0;
@@ -55,6 +71,7 @@ protected:
 		TK_SELF,
 		TK_CONSTANT,
 		TK_BASIC_TYPE,
+		QUESTION_MARK,
 		TK_COLON,
 		TK_COMMA,
 		TK_PERIOD,
@@ -111,6 +128,7 @@ protected:
 			TYPE_CONSTANT,
 			TYPE_SELF,
 			TYPE_OPERATOR,
+			CONDITIONAL,
 			TYPE_INDEX,
 			TYPE_NAMED_INDEX,
 			TYPE_ARRAY,
@@ -160,6 +178,16 @@ protected:
 
 		OperatorNode() {
 			type = TYPE_OPERATOR;
+		}
+	};
+
+	struct ConditionalNode : public ENode {
+		ENode *condition = nullptr;
+		ENode *when_true = nullptr;
+		ENode *when_false = nullptr;
+
+		ConditionalNode() {
+			type = CONDITIONAL;
 		}
 	};
 
@@ -242,16 +270,6 @@ protected:
 	Vector<String> input_names;
 
 	bool execution_error = false;
-	bool _execute(const Array &p_inputs, Object *p_instance, Expression::ENode *p_node, Variant &r_ret, bool p_const_calls_only, String &r_error_str);
+	bool _execute(const InputResolver &p_resolve_input, Object *p_instance, const ENode *p_node, Variant &r_ret, bool p_const_calls_only, String &r_error_str) const;
 
-protected:
-	static void _bind_methods();
-
-public:
-	Error parse(const String &p_expression, const Vector<String> &p_input_names = Vector<String>());
-	Variant execute(const Array &p_inputs = Array(), Object *p_base = nullptr, bool p_show_error = true, bool p_const_calls_only = false);
-	bool has_execute_failed() const;
-	String get_error_text() const;
-
-	~Expression();
 };

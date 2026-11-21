@@ -51,7 +51,6 @@
 #include "scene/gui/texture_rect.h"
 #include "scene/gui/tree.h"
 #include "scene/main/scene_tree.h"
-#include "scene/resources/style_box.h"
 
 void EditorAboutDialog::_notification(int p_what) {
 	switch (p_what) {
@@ -73,8 +72,8 @@ void EditorAboutDialog::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			const Ref<Font> font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
-			const int font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts));
+			const Ref<Font> font = get_theme_font(SNAME("source"), EditorStringName(Editor));
+			const int font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(Editor));
 
 			_tpl_text->begin_bulk_theme_override();
 			_tpl_text->add_theme_font_override("normal_font", font);
@@ -93,7 +92,7 @@ void EditorAboutDialog::_notification(int p_what) {
 			for (ItemList *il : name_lists) {
 				for (int i = 0; i < il->get_item_count(); i++) {
 					if (il->get_item_metadata(i)) {
-						il->set_item_icon(i, get_theme_icon(SNAME("navigation_external_link"), EditorStringName(EditorIcons)));
+						il->set_item_icon(i, get_theme_icon(SNAME("navigation_external_link"), EditorStringName(Editor)));
 						il->set_item_icon_modulate(i, get_theme_color(SNAME("font_disabled_color"), EditorStringName(Editor)));
 					}
 				}
@@ -189,10 +188,6 @@ Label *EditorAboutDialog::_create_section(Control *p_parent, const String &p_nam
 	}
 
 	if ((has_website && p_flags.has_flag(FLAG_ALLOW_WEBSITE)) || p_flags.has_flag(FLAG_EASTER_EGG)) {
-		Ref<StyleBox> empty_stylebox = memnew(StyleBox);
-		il->add_theme_style_override("focus", empty_stylebox);
-		il->add_theme_style_override("selected", empty_stylebox);
-
 		il->connect("item_activated", callable_mp(this, &EditorAboutDialog::_item_activated).bind(il));
 	} else {
 		il->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);

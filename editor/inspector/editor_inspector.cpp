@@ -841,11 +841,11 @@ void EditorProperty::_update_property_bg() {
 				n = n->get_parent();
 			}
 		}
-		add_theme_style_override(SNAME("DictionaryAddItem"), get_theme_stylebox("DictionaryAddItem" + itos(sub_inspector_color_level), EditorStringName(EditorStyles)));
+		add_theme_style_override(SNAME("DictionaryAddItem"), get_theme_stylebox("dictionary_add_item_" + itos(sub_inspector_color_level), EditorStringName(Editor)));
 		if (delimitate_all_container_and_resources || is_colored(nested_color_mode)) {
-			bottom_editor->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("sub_inspector_bg" + itos(sub_inspector_color_level), EditorStringName(EditorStyles)));
+			bottom_editor->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("sub_inspector_bg_" + itos(sub_inspector_color_level), EditorStringName(Editor)));
 		} else {
-			bottom_editor->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("sub_inspector_bg_no_border", EditorStringName(EditorStyles)));
+			bottom_editor->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("sub_inspector_bg_no_border", EditorStringName(Editor)));
 			sub_inspector_color_level = -1;
 		}
 	} else {
@@ -1481,6 +1481,11 @@ void EditorProperty::menu_option(int p_option) {
 			emit_changed(_get_revert_property(), revert_value);
 			update_property();
 		} break;
+		case EDIT_THEME_EXPRESSION: {
+			const Variant value = object->get(property);
+			ERR_FAIL_COND(!value.is_num());
+			emit_changed(property, "pixels(" + String::num_real(double(value)) + ")");
+		} break;
 		case MENU_OPEN_DOCUMENTATION: {
 			ScriptEditorDock::get_singleton()->goto_help(doc_path);
 			ScriptEditorDock::get_singleton()->focus_editor();
@@ -1638,6 +1643,10 @@ void EditorProperty::_update_popup() {
 			menu->set_item_disabled(menu->get_item_index(MENU_PIN_VALUE), true);
 		}
 		menu->set_item_tooltip(menu->get_item_index(MENU_PIN_VALUE), TTR("Pinning a value forces it to be saved even if it's equal to the default."));
+	}
+	if (!read_only && Object::cast_to<StyleBox>(object) && StyleBox::is_theme_expression_property(property) && object->get(property).is_num()) {
+		menu->add_separator();
+		menu->add_item(TTR("Edit as Theme Expression"), EDIT_THEME_EXPRESSION);
 	}
 	if (deletable || can_revert || can_override) {
 		menu->add_separator();
@@ -2849,7 +2858,7 @@ void EditorInspectorArray::_vbox_visibility_changed() {
 void EditorInspectorArray::_panel_draw(int p_index) {
 	ERR_FAIL_INDEX(p_index, (int)array_elements.size());
 
-	Ref<StyleBox> style = get_theme_stylebox(SNAME("Focus"), EditorStringName(EditorStyles));
+	Ref<StyleBox> style = get_theme_stylebox(SNAME("focus"), EditorStringName(Editor));
 	if (style.is_null()) {
 		return;
 	}
@@ -3256,7 +3265,7 @@ void EditorInspectorArray::_setup() {
 	bool unresizable = is_const || read_only;
 
 	if (numbered) {
-		numbers_font = get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
+		numbers_font = get_theme_font(SNAME("bold"), EditorStringName(Editor));
 		int digits_found = count;
 		String test;
 		while (digits_found) {
@@ -3290,7 +3299,7 @@ void EditorInspectorArray::_setup() {
 		ae.margin = memnew(MarginContainer);
 		ae.margin->set_mouse_filter(MOUSE_FILTER_PASS);
 		if (is_inside_tree()) {
-			Size2 min_size = get_theme_stylebox(SNAME("Focus"), EditorStringName(EditorStyles))->get_minimum_size();
+			Size2 min_size = get_theme_stylebox(SNAME("focus"), EditorStringName(Editor))->get_minimum_size();
 			ae.margin->begin_bulk_theme_override();
 			ae.margin->add_theme_constant_override("margin_left", min_size.x / 2);
 			ae.margin->add_theme_constant_override("margin_top", min_size.y / 2);
@@ -3443,7 +3452,7 @@ void EditorInspectorArray::_notification(int p_what) {
 				if (ae.move_down) {
 					ae.move_down->set_button_icon(get_editor_theme_icon(SNAME("action_move_down")));
 				}
-				Size2 min_size = get_theme_stylebox(SNAME("Focus"), EditorStringName(EditorStyles))->get_minimum_size();
+				Size2 min_size = get_theme_stylebox(SNAME("focus"), EditorStringName(Editor))->get_minimum_size();
 				ae.margin->begin_bulk_theme_override();
 				ae.margin->add_theme_constant_override("margin_left", min_size.x / 2);
 				ae.margin->add_theme_constant_override("margin_top", min_size.y / 2);
@@ -3708,7 +3717,7 @@ void EditorInspector::initialize_section_theme(EditorInspectorSection::ThemeCach
 	p_cache.vertical_separation = p_control->get_theme_constant(SNAME("separation"), SNAME("EditorPropertyContainer"));
 	p_cache.inspector_margin = p_control->get_theme_constant(SNAME("inspector_margin"), EditorStringName(Editor));
 	p_cache.indent_size = p_control->get_theme_constant(SNAME("indent_size"), SNAME("EditorInspectorSection"));
-	p_cache.padding_size = int(EDITOR_GET("interface/theme/padding")) * 2;
+	p_cache.padding_size = p_control->get_theme_constant(SNAME("padding"), EditorStringName(Editor)) * 2;
 
 	p_cache.warning_color = p_control->get_theme_color(SNAME("warning_color"), EditorStringName(Editor));
 	p_cache.prop_subsection = p_control->get_theme_color(SNAME("prop_subsection"), EditorStringName(Editor));
@@ -3721,10 +3730,10 @@ void EditorInspector::initialize_section_theme(EditorInspectorSection::ThemeCach
 
 	p_cache.font = p_control->get_theme_font(SceneStringName(font), SNAME("Tree"));
 	p_cache.font_size = p_control->get_theme_font_size(SceneStringName(font_size), SNAME("Tree"));
-	p_cache.bold_font = p_control->get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
-	p_cache.bold_font_size = p_control->get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
-	p_cache.light_font = p_control->get_theme_font(SNAME("main"), EditorStringName(EditorFonts));
-	p_cache.light_font_size = p_control->get_theme_font_size(SNAME("main_size"), EditorStringName(EditorFonts));
+	p_cache.bold_font = p_control->get_theme_font(SNAME("bold"), EditorStringName(Editor));
+	p_cache.bold_font_size = p_control->get_theme_font_size(SNAME("bold_size"), EditorStringName(Editor));
+	p_cache.light_font = p_control->get_theme_font(SNAME("main"), EditorStringName(Editor));
+	p_cache.light_font_size = p_control->get_theme_font_size(SNAME("main_size"), EditorStringName(Editor));
 
 	p_cache.arrow = p_control->get_theme_icon(SNAME("arrow"), SNAME("Tree"));
 	p_cache.arrow_collapsed = p_control->get_theme_icon(SNAME("arrow_collapsed"), SNAME("Tree"));
@@ -3754,8 +3763,8 @@ void EditorInspector::initialize_category_theme(EditorInspectorCategory::ThemeCa
 
 	p_cache.font_color = p_control->get_theme_color(SceneStringName(font_color), SNAME("Tree"));
 
-	p_cache.bold_font = p_control->get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
-	p_cache.bold_font_size = p_control->get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
+	p_cache.bold_font = p_control->get_theme_font(SNAME("bold"), EditorStringName(Editor));
+	p_cache.bold_font_size = p_control->get_theme_font_size(SNAME("bold_size"), EditorStringName(Editor));
 
 	p_cache.icon_copy = p_control->get_editor_theme_icon(SNAME("action_copy"));
 	p_cache.icon_paste = p_control->get_editor_theme_icon(SNAME("action_paste"));
@@ -3768,9 +3777,9 @@ void EditorInspector::initialize_category_theme(EditorInspectorCategory::ThemeCa
 
 	if (p_control == parent_inspector) {
 		// Only initialize for the inspector, as stand-alone categories won't need it.
-		p_cache.sub_inspector_background = p_control->get_theme_stylebox("sub_inspector_category_bg", EditorStringName(EditorStyles));
+		p_cache.sub_inspector_background = p_control->get_theme_stylebox("sub_inspector_category_bg", EditorStringName(Editor));
 		for (int i = 0; i <= 16; i++) {
-			p_cache.sub_inspector_color_background[i] = p_control->get_theme_stylebox("sub_inspector_color_category_bg" + itos(i), EditorStringName(EditorStyles));
+			p_cache.sub_inspector_color_background[i] = p_control->get_theme_stylebox("sub_inspector_color_category_bg_" + itos(i), EditorStringName(Editor));
 		}
 	}
 }
@@ -3809,7 +3818,7 @@ void EditorInspector::initialize_property_theme(EditorProperty::ThemeCache &p_ca
 	p_cache.font_offset = p_control->get_theme_constant(SNAME("font_offset"), SNAME("EditorProperty"));
 	p_cache.horizontal_separation = p_control->get_theme_constant(SNAME("h_separation"), SNAME("Tree"));
 	p_cache.vertical_separation = p_control->get_theme_constant(SNAME("separation"), SNAME("EditorPropertyContainer"));
-	p_cache.padding = int(EDITOR_GET("interface/theme/padding")) * 2;
+	p_cache.padding = p_control->get_theme_constant(SNAME("padding"), EditorStringName(Editor)) * 2;
 	p_cache.inspector_property_height = p_control->get_theme_constant(SNAME("inspector_property_height"), EditorStringName(Editor));
 
 	p_cache.property_color = p_control->get_theme_color(SNAME("property_color"), SNAME("EditorProperty"));
@@ -3820,12 +3829,12 @@ void EditorInspector::initialize_property_theme(EditorProperty::ThemeCache &p_ca
 	p_cache.property_color_y = p_control->get_theme_color(SNAME("property_color_y"), EditorStringName(Editor));
 	p_cache.property_color_z = p_control->get_theme_color(SNAME("property_color_z"), EditorStringName(Editor));
 	p_cache.property_color_w = p_control->get_theme_color(SNAME("property_color_w"), EditorStringName(Editor));
-	p_cache.sub_inspector_property_color = p_control->get_theme_color(SNAME("sub_inspector_property_color"), EditorStringName(EditorStyles));
+	p_cache.sub_inspector_property_color = p_control->get_theme_color(SNAME("sub_inspector_property_color"), EditorStringName(Editor));
 
 	if (p_control == parent_inspector) {
 		// Only initialize for the inspector, as stand-alone properties won't need it.
 		for (int i = 0; i <= 16; i++) {
-			p_cache.sub_inspector_background[i] = p_control->get_theme_stylebox("sub_inspector_property_bg" + itos(i), EditorStringName(EditorStyles));
+			p_cache.sub_inspector_background[i] = p_control->get_theme_stylebox("sub_inspector_property_bg_" + itos(i), EditorStringName(Editor));
 		}
 	}
 }
@@ -4172,6 +4181,24 @@ void EditorInspector::update_tree() {
 	List<PropertyInfo> plist;
 	object->get_property_list(&plist, true);
 
+	if (!_visible_property_group.is_empty()) {
+		bool in_visible_group = false;
+		List<PropertyInfo>::Element *property = plist.front();
+		while (property) {
+			List<PropertyInfo>::Element *next = property->next();
+			const PropertyInfo &info = property->get();
+			if (info.usage & PROPERTY_USAGE_CATEGORY) {
+				in_visible_group = false;
+			} else if (info.usage & PROPERTY_USAGE_GROUP) {
+				in_visible_group = info.name == _visible_property_group;
+			}
+			if (!in_visible_group && !(info.usage & PROPERTY_USAGE_CATEGORY)) {
+				plist.erase(property);
+			}
+			property = next;
+		}
+	}
+
 	HashMap<VBoxContainer *, HashMap<String, VBoxContainer *>> vbox_per_path;
 	HashMap<String, EditorInspectorArray *> editor_inspector_array_per_prefix;
 	HashMap<String, HashMap<String, LocalVector<EditorProperty *>>> favorites_to_add;
@@ -4180,7 +4207,7 @@ void EditorInspector::update_tree() {
 	const Color sscolor = theme_cache.prop_subsection;
 	bool sub_inspectors_enabled = EDITOR_GET("interface/inspector/open_resources_in_current_inspector");
 
-	if (!valid_plugins.is_empty()) {
+	if (_visible_property_group.is_empty() && !valid_plugins.is_empty()) {
 		for (Ref<EditorInspectorPlugin> &ped : valid_plugins) {
 			ped->parse_begin(object);
 			_parse_added_editors(begin_vbox, nullptr, ped);
@@ -5051,10 +5078,11 @@ void EditorInspector::update_tree() {
 		}
 	}
 
-	// Get the lists of to add at the end.
-	for (Ref<EditorInspectorPlugin> &ped : valid_plugins) {
-		ped->parse_end(object);
-		_parse_added_editors(main_vbox, nullptr, ped);
+	if (_visible_property_group.is_empty()) {
+		for (Ref<EditorInspectorPlugin> &ped : valid_plugins) {
+			ped->parse_end(object);
+			_parse_added_editors(main_vbox, nullptr, ped);
+		}
 	}
 
 	if (is_main_editor_inspector()) {
@@ -5157,7 +5185,7 @@ void EditorInspector::edit(Object *p_object) {
 		}
 		object->connect(CoreStringName(property_list_changed), callable_mp(this, &EditorInspector::_changed_callback));
 
-		can_favorite = Object::cast_to<Node>(object) || Object::cast_to<Resource>(object) || Object::cast_to<MultiNodeEdit>(object);
+		can_favorite = _visible_property_group.is_empty() && (Object::cast_to<Node>(object) || Object::cast_to<Resource>(object) || Object::cast_to<MultiNodeEdit>(object));
 		_update_current_favorites();
 
 		update_tree();
@@ -5439,6 +5467,10 @@ void EditorInspector::_edit_set(const String &p_name, const Variant &p_value, bo
 		undo_redo->add_do_property(object, p_name, new_value);
 		bool valid = false;
 		Variant value = object->get(p_name, &valid);
+		if (StyleBox *stylebox = Object::cast_to<StyleBox>(object); stylebox && StyleBox::is_theme_expression_property(p_name) && !stylebox->has_theme_override(p_name)) {
+			// Restoring a native value would turn an inherited property into a literal override.
+			value = String();
+		}
 		const Variant::Type type = new_value.get_type();
 		const Variant::Type previous_type = value.get_type();
 		if (valid) {
@@ -6039,6 +6071,10 @@ void EditorInspector::_vscroll_changed(double p_offset) {
 
 void EditorInspector::set_property_prefix(const String &p_prefix) {
 	property_prefix = p_prefix;
+}
+
+void EditorInspector::set_visible_property_group(const String &p_group) {
+	_visible_property_group = p_group;
 }
 
 void EditorInspector::add_custom_property_description(const String &p_class, const String &p_property, const String &p_description) {

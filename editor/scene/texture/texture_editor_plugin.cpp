@@ -111,7 +111,7 @@ void TexturePreview::_notification(int p_what) {
 			}
 
 			if (metadata_label) {
-				Ref<Font> metadata_label_font = get_theme_font(SNAME("expression"), EditorStringName(EditorFonts));
+				Ref<Font> metadata_label_font = get_theme_font(SNAME("expression"), EditorStringName(Editor));
 				metadata_label->add_theme_font_override(SceneStringName(font_family), metadata_label_font);
 			}
 

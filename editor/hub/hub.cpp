@@ -175,9 +175,9 @@ void Hub::_build_icon_type_cache(Ref<Theme> p_theme) {
 		return;
 	}
 	List<StringName> tl;
-	p_theme->get_icon_list(EditorStringName(EditorIcons), &tl);
+	p_theme->get_icon_list(EditorStringName(Editor), &tl);
 	for (const StringName &name : tl) {
-		icon_type_cache[name] = p_theme->get_icon(name, EditorStringName(EditorIcons));
+		icon_type_cache[name] = p_theme->get_icon(name, EditorStringName(Editor));
 	}
 }
 
@@ -260,14 +260,14 @@ void Hub::_update_theme(bool p_skip_creation) {
 		root_container->add_theme_constant_override("margin_right", top_bar_separation);
 		main_vbox->add_theme_constant_override("separation", top_bar_separation);
 
-		background_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("Background", EditorStringName(EditorStyles)));
+		background_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("background", EditorStringName(Editor)));
 		_project_list_pc->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("panel_container", "Hub"));
 
 		title_bar_logo->set_button_icon(get_editor_theme_icon("branding_logo_solid"));
 
 		// Project list.
 		{
-			loading_label->add_theme_font_override(SceneStringName(font_family), get_theme_font("bold", EditorStringName(EditorFonts)));
+			loading_label->add_theme_font_override(SceneStringName(font_family), get_theme_font("bold", EditorStringName(Editor)));
 			project_list_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox("project_list", "Hub"));
 
 			empty_list_create_project->set_button_icon(get_editor_theme_icon("action_add"));
@@ -1311,7 +1311,6 @@ Hub::Hub() {
 				empty_list_message->set_use_bbcode(true);
 				empty_list_message->set_fit_content(true);
 				empty_list_message->set_h_size_flags(SIZE_EXPAND_FILL);
-				empty_list_message->add_theme_style_override(CoreStringName(normal), memnew(StyleBox));
 
 				empty_list_placeholder->add_child(empty_list_message);
 

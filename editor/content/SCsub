@@ -6,7 +6,7 @@ from pathlib import Path
 
 Import("env")
 
-sys.path.insert(0, Dir(".").abspath)
+sys.path[:0] = [Dir(".").abspath, Dir("assets").abspath]
 import asset_builders
 import content_builders
 

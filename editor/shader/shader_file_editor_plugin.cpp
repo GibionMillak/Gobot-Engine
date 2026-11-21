@@ -93,7 +93,7 @@ void ShaderFileEditor::_version_selected(int p_option) {
 
 	String error = bytecode->get_stage_compile_error(stage);
 
-	error_text->push_font(get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
+	error_text->push_font(get_theme_font(SNAME("source"), EditorStringName(Editor)));
 
 	if (error.is_empty()) {
 		error_text->add_text(TTR("Shader stage compiled without errors."));
@@ -109,7 +109,7 @@ void ShaderFileEditor::_update_options() {
 		stage_hb->hide();
 		versions->hide();
 		error_text->clear();
-		error_text->push_font(get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
+		error_text->push_font(get_theme_font(SNAME("source"), EditorStringName(Editor)));
 		error_text->add_text(vformat(TTR("File structure for '%s' contains unrecoverable errors:\n\n"), shader_file->get_path().get_file()));
 		error_text->add_text(shader_file->get_base_error());
 		return;

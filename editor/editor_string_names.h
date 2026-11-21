@@ -45,9 +45,6 @@ public:
 	_FORCE_INLINE_ static EditorStringNames *get_singleton() { return singleton; }
 
 	const StringName Editor = StringName("Editor");
-	const StringName EditorFonts = StringName("EditorFonts");
-	const StringName EditorIcons = StringName("EditorIcons");
-	const StringName EditorStyles = StringName("EditorStyles");
 };
 
 #define EditorStringName(m_name) EditorStringNames::get_singleton()->m_name

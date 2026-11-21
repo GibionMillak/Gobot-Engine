@@ -246,7 +246,7 @@ void ThemeEditorPreview::_notification(int p_what) {
 			theme_cache.preview_picker_overlay = get_theme_stylebox(SNAME("preview_picker_overlay"), SNAME("ThemeEditor"));
 			theme_cache.preview_picker_overlay_color = get_theme_color(SNAME("preview_picker_overlay_color"), SNAME("ThemeEditor"));
 			theme_cache.preview_picker_label = get_theme_stylebox(SNAME("preview_picker_label"), SNAME("ThemeEditor"));
-			theme_cache.preview_picker_font = get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts));
+			theme_cache.preview_picker_font = get_theme_font(SNAME("status_source"), EditorStringName(Editor));
 			theme_cache.font_size = get_theme_default_font_size();
 		} break;
 	}

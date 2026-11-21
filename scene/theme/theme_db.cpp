@@ -33,73 +33,74 @@
 #include "core/config/engine.h"
 #include "core/config/project_settings.h"
 #include "core/io/resource_loader.h"
+#include "core/io/resource_uid.h"
+#include "core/math/expression.h"
+#include "core/math/math_funcs.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "core/object/message_queue.h"
 #include "scene/gui/control.h"
 #include "scene/main/node.h"
 #include "scene/main/window.h"
+#include "scene/resources/dpi_texture.h"
 #include "scene/resources/font.h"
 #include "scene/resources/style_box.h"
 #include "scene/resources/texture.h"
-#include "scene/theme/default_theme.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/text/text_server.h"
 
 // Default engine theme creation and configuration.
 
-void ThemeDB::initialize_theme() {
+Error ThemeDB::initialize_theme() {
 	// Default theme-related project settings.
 
 	// Allow creating the default theme at a different scale to suit higher/lower base resolutions.
-	float default_theme_scale = GLOBAL_DEF(PropertyInfo(Variant::FLOAT, "gui/theme/default_theme_scale", PROPERTY_HINT_RANGE, "0.5,8,0.01", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), 1.0);
+	const float default_theme_scale = GLOBAL_DEF(PropertyInfo(Variant::FLOAT, "gui/theme/default_theme_scale", PROPERTY_HINT_RANGE, "0.5,8,0.01", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), 1.0);
 
-	String project_theme_path = GLOBAL_DEF_RST_BASIC(PropertyInfo(Variant::STRING, "gui/theme/custom", PROPERTY_HINT_FILE, "*.tres,*.res,*.theme", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), "");
-	String project_font_path = GLOBAL_DEF_RST_BASIC(PropertyInfo(Variant::STRING, "gui/theme/custom_font", PROPERTY_HINT_FILE, "*.tres,*.res,*.otf,*.ttf,*.woff,*.woff2,*.fnt,*.font,*.pfb,*.pfm", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), "");
-
-	TextServer::FontAntialiasing font_antialiasing = (TextServer::FontAntialiasing)(int)GLOBAL_GET("gui/theme/default_font_antialiasing");
-	TextServer::Hinting font_hinting = (TextServer::Hinting)(int)GLOBAL_GET("gui/theme/default_font_hinting");
-	TextServer::SubpixelPositioning font_subpixel_positioning = (TextServer::SubpixelPositioning)(int)GLOBAL_GET("gui/theme/default_font_subpixel_positioning");
-
-	const bool font_msdf = GLOBAL_GET("gui/theme/default_font_multichannel_signed_distance_field");
-	const bool font_generate_mipmaps = GLOBAL_GET("gui/theme/default_font_generate_mipmaps");
-
-	// Attempt to load custom project theme and font.
-
-	if (!project_theme_path.is_empty()) {
-		Ref<Theme> theme = ResourceLoader::load(project_theme_path);
-		if (theme.is_valid()) {
-			set_project_theme(theme);
-		} else {
-			ERR_PRINT("Error loading custom project theme '" + project_theme_path + "'");
-		}
-	}
+	const String project_theme_reference = GLOBAL_DEF_RST_BASIC(PropertyInfo(Variant::STRING, PROJECT_THEME_SETTING, PROPERTY_HINT_RESOURCE_TYPE, "Theme", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), String(DEFAULT_THEME_PATH));
+	const String project_font_path = GLOBAL_DEF_RST_BASIC(PropertyInfo(Variant::STRING, "gui/theme/custom_font", PROPERTY_HINT_FILE, "*.tres,*.res,*.otf,*.ttf,*.woff,*.woff2,*.fnt,*.font,*.pfb,*.pfm", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_RESTART_IF_CHANGED), "");
 
 	Ref<Font> project_font;
 	if (!project_font_path.is_empty()) {
 		project_font = ResourceLoader::load(project_font_path, "", ResourceFormatLoader::CACHE_MODE_IGNORE);
-		if (project_font.is_valid()) {
-			set_fallback_font(project_font);
-		} else {
+		if (project_font.is_null()) {
 			ERR_PRINT("Error loading custom project font '" + project_font_path + "'");
 		}
 	}
 
-	// Always generate the default theme to serve as a fallback for all required theme definitions.
-
 	if (RenderingServer::get_singleton()) {
-		make_default_theme(default_theme_scale, project_font, font_subpixel_positioning, font_hinting, font_antialiasing, font_msdf, font_generate_mipmaps);
+		const Error error = _load_default_theme(default_theme_scale, project_font, true);
+		if (error != OK) {
+			return error;
+		}
+	} else if (project_font.is_valid()) {
+		set_fallback_font(project_font);
+	}
+
+	project_theme = default_theme;
+	if (!project_theme_reference.is_empty() && ResourceUID::ensure_path_nocheck(project_theme_reference) != DEFAULT_THEME_PATH) {
+		const Ref<Theme> selected_theme = ResourceLoader::load(project_theme_reference, Theme::get_class_static());
+		if (selected_theme.is_valid()) {
+			project_theme = selected_theme;
+		} else {
+			ERR_PRINT(vformat("Could not load the selected project theme '%s'. Using the bundled Default theme.", project_theme_reference));
+		}
 	}
 
 	_init_default_theme_context();
+	return OK;
 }
 
-void ThemeDB::initialize_theme_noproject() {
+Error ThemeDB::initialize_theme_noproject() {
 	if (RenderingServer::get_singleton()) {
-		make_default_theme(1.0, Ref<Font>());
+		const Error error = _load_default_theme(1.0, Ref<Font>(), false);
+		if (error != OK) {
+			return error;
+		}
 	}
 
 	_init_default_theme_context();
+	return OK;
 }
 
 void ThemeDB::finalize_theme() {
@@ -108,6 +109,7 @@ void ThemeDB::finalize_theme() {
 	}
 
 	_finalize_theme_contexts();
+	project_theme.unref();
 	default_theme.unref();
 
 	fallback_font.unref();
@@ -117,16 +119,8 @@ void ThemeDB::finalize_theme() {
 
 // Global Theme resources.
 
-void ThemeDB::set_default_theme(const Ref<Theme> &p_default) {
-	default_theme = p_default;
-}
-
 Ref<Theme> ThemeDB::get_default_theme() {
 	return default_theme;
-}
-
-void ThemeDB::set_project_theme(const Ref<Theme> &p_project_default) {
-	project_theme = p_project_default;
 }
 
 Ref<Theme> ThemeDB::get_project_theme() {
@@ -233,8 +227,7 @@ ThemeContext *ThemeDB::create_theme_context(Node *p_node, Vector<Ref<Theme>> &p_
 	ERR_FAIL_COND_V(p_themes.is_empty(), nullptr);
 
 	ThemeContext *context = memnew(ThemeContext);
-	context->node = p_node;
-	context->parent = get_nearest_theme_context(p_node);
+	context->_parent = get_nearest_theme_context(p_node);
 	context->set_themes(p_themes);
 
 	theme_contexts[p_node] = context;
@@ -253,9 +246,70 @@ void ThemeDB::destroy_theme_context(Node *p_node) {
 	ThemeContext *context = theme_contexts[p_node];
 
 	theme_contexts.erase(p_node);
-	_propagate_theme_context(p_node, context->parent);
+	_propagate_theme_context(p_node, context->_parent);
 
 	memdelete(context);
+}
+
+Error ThemeDB::_load_default_theme(float p_scale, const Ref<Font> &p_project_font, bool p_use_project_settings) {
+	// The editor and projects can also load the authored resource independently.
+	Error error = OK;
+	const Ref<Theme> theme = ResourceLoader::load(DEFAULT_THEME_PATH, Theme::get_class_static(), ResourceFormatLoader::CACHE_MODE_IGNORE_DEEP, &error);
+	ERR_FAIL_COND_V_MSG(theme.is_null(), error == OK ? ERR_CANT_CREATE : error, vformat("Could not load the bundled default theme at '%s'.", DEFAULT_THEME_PATH));
+
+	const float scale = CLAMP(p_scale, 0.5f, 8.0f);
+	theme->set_default_base_scale(scale);
+	theme->set_default_font_size(Math::round(theme->get_default_font_size() * scale));
+
+	const Ref<FontFile> bundled_font = theme->get_default_font_family();
+	ERR_FAIL_COND_V_MSG(bundled_font.is_null(), ERR_INVALID_DATA, "The bundled default theme must define a default font file.");
+	if (p_project_font.is_valid()) {
+		List<StringName> font_types;
+		theme->get_font_type_list(&font_types);
+		for (const StringName &type : font_types) {
+			List<StringName> font_names;
+			theme->get_font_list(type, &font_names);
+			for (const StringName &name : font_names) {
+				const Ref<FontVariation> variation = theme->get_font(name, type);
+				if (variation.is_valid() && variation->get_base_font().ptr() == bundled_font.ptr()) {
+					variation->set_base_font(p_project_font);
+				}
+			}
+		}
+		theme->set_default_font_family(p_project_font);
+	} else if (p_use_project_settings) {
+		bundled_font->set_antialiasing((TextServer::FontAntialiasing)(int)GLOBAL_GET("gui/theme/default_font_antialiasing"));
+		bundled_font->set_hinting((TextServer::Hinting)(int)GLOBAL_GET("gui/theme/default_font_hinting"));
+		bundled_font->set_subpixel_positioning((TextServer::SubpixelPositioning)(int)GLOBAL_GET("gui/theme/default_font_subpixel_positioning"));
+		bundled_font->set_multichannel_signed_distance_field(GLOBAL_GET("gui/theme/default_font_multichannel_signed_distance_field"));
+		bundled_font->set_generate_mipmaps(GLOBAL_GET("gui/theme/default_font_generate_mipmaps"));
+	}
+
+	if (scale != 1.0f) {
+		List<StringName> icon_types;
+		theme->get_icon_type_list(&icon_types);
+		for (const StringName &type : icon_types) {
+			List<StringName> icon_names;
+			theme->get_icon_list(type, &icon_names);
+			for (const StringName &name : icon_names) {
+				const Ref<DPITexture> icon = theme->get_icon(name, type);
+				if (icon.is_valid()) {
+					icon->set_base_scale(scale);
+				}
+			}
+		}
+	}
+
+	const Ref<Texture2D> error_icon = theme->get_icon("icon", "Fallback");
+	const Ref<StyleBox> error_stylebox = theme->get_stylebox("stylebox", "Fallback");
+	ERR_FAIL_COND_V_MSG(error_icon.is_null() || error_stylebox.is_null(), ERR_INVALID_DATA, "The bundled default theme must define fallback icon and stylebox resources.");
+	default_theme = theme;
+	set_fallback_base_scale(scale);
+	set_fallback_font(theme->get_default_font_family());
+	set_fallback_font_size(theme->get_default_font_size());
+	set_fallback_icon(error_icon);
+	set_fallback_stylebox(error_stylebox);
+	return OK;
 }
 
 void ThemeDB::_propagate_theme_context(Node *p_from_node, ThemeContext *p_context) {
@@ -274,7 +328,7 @@ void ThemeDB::_propagate_theme_context(Node *p_from_node, ThemeContext *p_contex
 		// If the child is the root of another global context, stop the propagation
 		// in this branch.
 		if (theme_contexts.has(child_node)) {
-			theme_contexts[child_node]->parent = p_context;
+			theme_contexts[child_node]->_parent = p_context;
 			continue;
 		}
 
@@ -289,13 +343,9 @@ void ThemeDB::_init_default_theme_context() {
 
 	// Only add the project theme to the default context when running projects.
 
-#ifdef TOOLS_ENABLED
-	if (!Engine::get_singleton()->is_editor_hint()) {
+	if (project_theme != default_theme && !Engine::get_singleton()->is_editor_hint()) {
 		themes.push_back(project_theme);
 	}
-#else
-	themes.push_back(project_theme);
-#endif
 
 	themes.push_back(default_theme);
 	default_theme_context->set_themes(themes);
@@ -499,42 +549,110 @@ ThemeDB::~ThemeDB() {
 	singleton = nullptr;
 }
 
-void ThemeContext::_emit_changed() {
+void ThemeContext::set_themes(Vector<Ref<Theme>> &p_themes) {
+	{
+		MutexLock lock(_stylebox_cache_mutex);
+		for (const Ref<Theme> &theme : _themes) {
+			theme->disconnect_changed(callable_mp(this, &ThemeContext::_emit_changed));
+		}
+
+		_themes.clear();
+		for (const Ref<Theme> &theme : p_themes) {
+			if (theme.is_valid() && !_themes.has(theme)) {
+				_themes.push_back(theme);
+				theme->connect_changed(callable_mp(this, &ThemeContext::_emit_changed));
+			}
+		}
+		++_stylebox_cache_generation;
+		_resolved_styleboxes.clear();
+	}
 	emit_signal(CoreStringName(changed));
 }
 
-void ThemeContext::set_themes(Vector<Ref<Theme>> &p_themes) {
-	for (const Ref<Theme> &theme : themes) {
-		theme->disconnect_changed(callable_mp(this, &ThemeContext::_emit_changed));
-	}
-
-	themes.clear();
-
-	for (const Ref<Theme> &theme : p_themes) {
-		if (theme.is_null()) {
-			continue;
-		}
-
-		themes.push_back(theme);
-		theme->connect_changed(callable_mp(this, &ThemeContext::_emit_changed));
-	}
-
-	_emit_changed();
-}
-
 const Vector<Ref<Theme>> ThemeContext::get_themes() const {
-	return themes;
+	MutexLock lock(_stylebox_cache_mutex);
+	return _themes;
 }
 
 Ref<Theme> ThemeContext::get_fallback_theme() const {
+	MutexLock lock(_stylebox_cache_mutex);
 	// We expect all contexts to be valid and non-empty, but just in case...
-	if (themes.is_empty()) {
+	if (_themes.is_empty()) {
 		return ThemeDB::get_singleton()->get_default_theme();
 	}
 
-	return themes[themes.size() - 1];
+	return _themes[_themes.size() - 1];
+}
+
+Ref<StyleBox> ThemeContext::resolve_stylebox(const Ref<StyleBox> &p_style, ObjectID p_owner, const Vector<Ref<Theme>> &p_local_themes) {
+	ERR_FAIL_COND_V(p_style.is_null(), Ref<StyleBox>());
+	const StyleBoxCacheKey key(p_style->get_instance_id(), p_owner);
+	const auto matches_local_themes = [&p_local_themes](const Vector<ThemeRevision> &p_revisions) {
+		if (p_revisions.size() != p_local_themes.size()) {
+			return false;
+		}
+		for (int i = 0; i < p_local_themes.size(); i++) {
+			const Ref<Theme> &theme = p_local_themes[i];
+			if (p_revisions[i] != ThemeRevision(theme->get_instance_id(), theme->_stylebox_revision)) {
+				return false;
+			}
+		}
+		return true;
+	};
+	const uint64_t revision = p_style->_theme_override_revision;
+	// A script can modify a StyleBox independently of its native setters.
+	const bool cacheable = p_style->get_script().get_type() == Variant::NIL;
+	uint64_t generation;
+	Vector<Ref<Theme>> resolution_themes;
+	Vector<ThemeRevision> local_revisions;
+	{
+		MutexLock lock(_stylebox_cache_mutex);
+		if (cacheable) {
+			const ResolvedStyleBox *cached = _resolved_styleboxes.getptr(key);
+			if (cached && cached->revision == revision && matches_local_themes(cached->local_revisions)) {
+				return cached->style;
+			}
+			for (const Ref<Theme> &theme : p_local_themes) {
+				local_revisions.push_back(ThemeRevision(theme->get_instance_id(), theme->_stylebox_revision));
+			}
+		}
+		generation = _stylebox_cache_generation;
+		resolution_themes = p_local_themes.is_empty() ? _themes : p_local_themes;
+		if (!p_local_themes.is_empty()) {
+			resolution_themes.append_array(_themes);
+		}
+	}
+	if (resolution_themes.is_empty()) {
+		const Ref<Theme> fallback = get_fallback_theme();
+		if (fallback.is_null()) {
+			return p_style;
+		}
+		resolution_themes.push_back(fallback);
+	}
+
+	ThemeResolver resolver(resolution_themes);
+	const Ref<StyleBox> resolved = p_style->resolve_theme_in_context(resolver);
+	if (cacheable && resolved.is_valid() && resolved != p_style) {
+		MutexLock lock(_stylebox_cache_mutex);
+		if (generation == _stylebox_cache_generation && revision == p_style->_theme_override_revision && matches_local_themes(local_revisions)) {
+			if (_resolved_styleboxes.size() >= MAX_RESOLVED_STYLEBOXES && !_resolved_styleboxes.has(key)) {
+				_resolved_styleboxes.remove(_resolved_styleboxes.begin());
+			}
+			_resolved_styleboxes.insert(key, { revision, local_revisions, resolved });
+		}
+	}
+	return resolved;
 }
 
 void ThemeContext::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("changed"));
+}
+
+void ThemeContext::_emit_changed() {
+	{
+		MutexLock lock(_stylebox_cache_mutex);
+		++_stylebox_cache_generation;
+		_resolved_styleboxes.clear();
+	}
+	emit_signal(CoreStringName(changed));
 }

@@ -341,8 +341,8 @@ void ViewportRotationControl::_draw_axis(const Axis2D &p_axis) {
 
 		// Draw the axis letter for the positive axes.
 		const String axis_name = direction == 0 ? "X" : (direction == 1 ? "Y" : "Z");
-		const Ref<Font> &font = get_theme_font(SNAME("rotation_control"), EditorStringName(EditorFonts));
-		const int font_size = get_theme_font_size(SNAME("rotation_control_size"), EditorStringName(EditorFonts));
+		const Ref<Font> &font = get_theme_font(SNAME("rotation_control"), EditorStringName(Editor));
+		const int font_size = get_theme_font_size(SNAME("rotation_control_size"), EditorStringName(Editor));
 		const Size2 char_size = font->get_char_size(axis_name[0], font_size);
 		const Vector2 char_offset = Vector2(-char_size.width / 2.0, char_size.height * 0.25);
 		draw_char(font, p_axis.screen_point + char_offset, axis_name, font_size, c_positive_axis);
@@ -353,8 +353,8 @@ void ViewportRotationControl::_draw_axis(const Axis2D &p_axis) {
 
 		// Draw the text for the negative axes.
 		const String axis_name = direction == 0 ? "-X" : (direction == 1 ? "-Y" : "-Z");
-		const Ref<Font> &font = get_theme_font(SNAME("rotation_control"), EditorStringName(EditorFonts));
-		const int font_size = get_theme_font_size(SNAME("rotation_control_size"), EditorStringName(EditorFonts));
+		const Ref<Font> &font = get_theme_font(SNAME("rotation_control"), EditorStringName(Editor));
+		const int font_size = get_theme_font_size(SNAME("rotation_control_size"), EditorStringName(Editor));
 		const Size2 string_size = font->get_string_size(axis_name, HORIZONTAL_ALIGNMENT_LEFT, -1.0f, font_size);
 		const float font_ascent = font->get_ascent(font_size);
 		const float font_descent = font->get_descent(font_size);
@@ -3882,7 +3882,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 			pilot_camera->set_button_icon(get_editor_theme_icon(SNAME("gui_3d")));
 			Control *gui_base = EditorNode::get_singleton()->get_gui_base();
 
-			const Ref<StyleBox> &information_3d_stylebox = gui_base->get_theme_stylebox(SNAME("Information3dViewport"), EditorStringName(EditorStyles));
+			const Ref<StyleBox> &information_3d_stylebox = gui_base->get_theme_stylebox(SNAME("information_3d_viewport"), EditorStringName(Editor));
 
 			override_control_stylebox(view_display_menu, information_3d_stylebox);
 			override_label_colors(view_display_menu);
@@ -3908,7 +3908,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 			// Set a minimum width to prevent the width from changing all the time
 			// when numbers vary rapidly. This minimum width is set based on a
 			// GPU time of 999.99 ms in the current editor language.
-			const float min_width = get_theme_font(SNAME("main"), EditorStringName(EditorFonts))->get_string_size(vformat(TTR("GPU Time: %s ms"), 999.99)).x;
+			const float min_width = get_theme_font(SNAME("main"), EditorStringName(Editor))->get_string_size(vformat(TTR("GPU Time: %s ms"), 999.99)).x;
 			frame_time_panel->set_custom_minimum_size(Size2(min_width, 0) * EDSCALE);
 			frame_time_vbox->add_theme_constant_override("separation", Math::round(-1 * EDSCALE));
 
@@ -3921,22 +3921,22 @@ void Node3DEditorViewport::_notification(int p_what) {
 			ruler_label->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
 			ruler_label->add_theme_constant_override("outline_size", 4 * EDSCALE);
 			ruler_label->add_theme_font_size_override(SceneStringName(font_size), 15 * EDSCALE);
-			ruler_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			ruler_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(Editor)));
 
 			ruler_label_x->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
 			ruler_label_x->add_theme_constant_override("outline_size", 4 * EDSCALE);
 			ruler_label_x->add_theme_font_size_override(SceneStringName(font_size), 15 * EDSCALE);
-			ruler_label_x->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			ruler_label_x->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(Editor)));
 
 			ruler_label_y->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
 			ruler_label_y->add_theme_constant_override("outline_size", 4 * EDSCALE);
 			ruler_label_y->add_theme_font_size_override(SceneStringName(font_size), 15 * EDSCALE);
-			ruler_label_y->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			ruler_label_y->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(Editor)));
 
 			ruler_label_z->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
 			ruler_label_z->add_theme_constant_override("outline_size", 4 * EDSCALE);
 			ruler_label_z->add_theme_font_size_override(SceneStringName(font_size), 15 * EDSCALE);
-			ruler_label_z->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			ruler_label_z->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(Editor)));
 		} break;
 
 		case NOTIFICATION_DRAG_END: {
@@ -4048,7 +4048,7 @@ void Node3DEditorViewport::_draw() {
 	if (surface->has_focus() || rotation_control->has_focus()) {
 		Size2 size = surface->get_size();
 		Rect2 r = Rect2(Point2(), size);
-		get_theme_stylebox(SNAME("FocusViewport"), EditorStringName(EditorStyles))->draw(surface->get_canvas_item(), r);
+		get_theme_stylebox(SNAME("focus_viewport"), EditorStringName(Editor))->draw(surface->get_canvas_item(), r);
 	}
 
 	View3DController::Cursor cursor = view_3d_controller->cursor;
@@ -4281,7 +4281,7 @@ void Node3DEditorViewport::_draw() {
 							*surface,
 							1.0 - logscale_t,
 							get_editor_theme_icon(SNAME("viewport_speed")),
-							get_theme_font("bold", EditorStringName(EditorFonts)),
+							get_theme_font("bold", EditorStringName(Editor)),
 							get_theme_font_size(SceneStringName(font_size), SNAME("Label")),
 							vformat("%s m/s", String::num(freelook_speed).pad_decimals(precision)),
 							Color(1.0, 0.95, 0.7));
@@ -4303,7 +4303,7 @@ void Node3DEditorViewport::_draw() {
 							*surface,
 							logscale_t,
 							get_editor_theme_icon(SNAME("viewport_zoom")),
-							get_theme_font("bold", EditorStringName(EditorFonts)),
+							get_theme_font("bold", EditorStringName(Editor)),
 							get_theme_font_size(SceneStringName(font_size), SNAME("Label")),
 							vformat("%s m", String::num(cursor.distance).pad_decimals(precision)),
 							Color(0.7, 0.95, 1.0));

@@ -365,7 +365,7 @@ void EditorDebuggerNode::stop(bool p_force) {
 void EditorDebuggerNode::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			multi_session_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("DebuggerPanel"), EditorStringName(EditorStyles));
+			multi_session_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("debugger_panel"), EditorStringName(Editor));
 			if (tabs->are_tabs_visible()) {
 				tabs->add_theme_style_override(SceneStringName(panel), multi_session_style);
 			}
@@ -519,7 +519,7 @@ void EditorDebuggerNode::_update_errors(bool p_force) {
 }
 
 void EditorDebuggerNode::_update_margins() {
-	Ref<StyleBox> dock_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("DockContent"), EditorStringName(EditorStyles));
+	Ref<StyleBox> dock_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("dock_content"), EditorStringName(Editor));
 	add_theme_constant_override("margin_top", -dock_style->get_content_inset(SIDE_TOP));
 	add_theme_constant_override("margin_left", -dock_style->get_content_inset(SIDE_LEFT));
 	add_theme_constant_override("margin_right", -dock_style->get_content_inset(SIDE_RIGHT));

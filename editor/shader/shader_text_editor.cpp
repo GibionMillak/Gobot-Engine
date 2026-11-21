@@ -324,7 +324,7 @@ void TextShaderPreview::_notification(int p_what) {
 
 			delete_button->set_button_icon(get_editor_theme_icon(SNAME("gui_close")));
 
-			goto_button->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
+			goto_button->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("source"), EditorStringName(Editor)));
 			goto_button->add_theme_font_size_override(SceneStringName(font_size), Math::round(12 * EDSCALE));
 
 			Ref<StyleBox> sq_hover = get_theme_stylebox(SceneStringName(hover), "FlatMenuButton")->duplicate();
@@ -761,14 +761,6 @@ void ShaderTextEditor::_notification(int p_what) {
 					_update_warning_panel();
 				}
 			}
-
-			Ref<StyleBox> tab_style = get_theme_stylebox(SNAME("tab_selected"), "TabBar");
-			Ref<StyleBox> preview_style = memnew(StyleBox);
-			preview_style->set_background_color(get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor)));
-			if (tab_style.is_valid()) {
-				preview_style->set_corner_radius_all(tab_style->get_corner_radius(CORNER_TOP_LEFT));
-			}
-			preview_panel->add_theme_style_override(SceneStringName(panel), preview_style);
 
 			update_params_btn->set_button_icon(get_editor_theme_icon(SNAME("action_refresh")));
 			remove_all_btn->set_button_icon(get_editor_theme_icon(SNAME("action_remove")));

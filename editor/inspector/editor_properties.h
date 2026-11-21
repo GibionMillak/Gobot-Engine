@@ -742,6 +742,8 @@ class EditorPropertyResource : public EditorProperty {
 
 	EditorResourcePicker *resource_picker = nullptr;
 	HierarchyDialog *_hierarchy_dialog = nullptr;
+	bool _store_resource_path = false;
+	bool _show_theme_defaults = false;
 
 	bool use_sub_inspector = false;
 	EditorInspector *sub_inspector = nullptr;
@@ -773,7 +775,7 @@ protected:
 public:
 	virtual void make_passthrough(bool p_passthrough) override;
 	virtual void update_property() override;
-	void setup(Object *p_object, const String &p_path, const String &p_base_type);
+	void setup(Object *p_object, const String &p_path, const String &p_base_type, bool p_store_resource_path = false);
 	EditorResourcePicker *get_resource_picker() const { return resource_picker; }
 
 	void collapse_all_folding() override;

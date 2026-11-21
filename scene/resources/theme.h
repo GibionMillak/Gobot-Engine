@@ -31,10 +31,14 @@
 #pragma once
 
 #include "core/io/resource.h"
+#include "core/templates/hash_set.h"
 #include "scene/resources/audio/audio_stream.h"
 #include "scene/resources/font.h"
 #include "scene/resources/style_box.h"
 #include "scene/resources/texture.h"
+
+class Expression;
+class ThemeResolver;
 
 class Theme : public Resource {
 	GDCLASS(Theme, Resource);
@@ -66,71 +70,31 @@ public:
 		DATA_TYPE_MAX
 	};
 
-private:
-	bool no_change_propagation = false;
+	Theme();
+	~Theme();
 
-	void _emit_theme_changed(bool p_notify_list_changed = false);
-
-	Vector<String> _get_icon_list(const String &p_theme_type) const;
-	Vector<String> _get_icon_type_list() const;
-	Vector<String> _get_stylebox_list(const String &p_theme_type) const;
-	Vector<String> _get_stylebox_type_list() const;
-	Vector<String> _get_font_list(const String &p_theme_type) const;
-	Vector<String> _get_font_type_list() const;
-	Vector<String> _get_font_size_list(const String &p_theme_type) const;
-	Vector<String> _get_font_size_type_list() const;
-	Vector<String> _get_color_list(const String &p_theme_type) const;
-	Vector<String> _get_color_type_list() const;
-	Vector<String> _get_constant_list(const String &p_theme_type) const;
-	Vector<String> _get_constant_type_list() const;
-	Vector<String> _get_sound_list(const String &p_theme_type) const;
-	Vector<String> _get_sound_type_list() const;
-
-	Vector<String> _get_theme_item_list(DataType p_data_type, const String &p_theme_type) const;
-	Vector<String> _get_theme_item_type_list(DataType p_data_type) const;
-
-	Vector<String> _get_type_variation_list(const StringName &p_theme_type) const;
-	Vector<String> _get_type_list() const;
-
-protected:
-	bool _set(const StringName &p_name, const Variant &p_value);
-	bool _get(const StringName &p_name, Variant &r_ret) const;
-	void _get_property_list(List<PropertyInfo> *p_list) const;
-
-	// Default values configurable for each individual theme.
-	float default_base_scale = 0.0;
-	Ref<Font> default_font;
-	int default_font_size = -1;
-
-	HashMap<StringName, ThemeIconMap> icon_map;
-	HashMap<StringName, ThemeStyleMap> style_map;
-	HashMap<StringName, ThemeFontMap> font_map;
-	HashMap<StringName, ThemeFontSizeMap> font_size_map;
-	HashMap<StringName, ThemeColorMap> color_map;
-	HashMap<StringName, ThemeConstantMap> constant_map;
-	HashMap<StringName, ThemeSoundMap> sound_map;
-	HashMap<StringName, StringName> variation_map;
-	HashMap<StringName, List<StringName>> variation_base_map;
-
-	static void _bind_methods();
-
-	void _freeze_change_propagation();
-	void _unfreeze_and_propagate_changes();
-
-	virtual void reset_state() override;
-
-public:
 	static bool is_valid_type_name(const String &p_name);
 	static bool is_valid_item_name(const String &p_name);
 	static String validate_type_name(const String &p_name);
+
+	// Dimensions are unscaled pixels. Unset parameters do not override stylebox defaults.
+	void set_style_parameter(const StringName &p_name, const Variant &p_value);
+	Variant get_style_parameter(const StringName &p_name) const;
+	bool has_style_parameter(const StringName &p_name) const;
+	void clear_style_parameter(const StringName &p_name);
+	void set_theme_expression(const StringName &p_property, const String &p_expression);
+	String get_theme_expression(const StringName &p_property) const;
+	static bool is_theme_expression_property(const StringName &p_property);
+	static Error validate_theme_expression(const String &p_expression);
+	Variant evaluate_theme_expression(const String &p_expression, bool *r_pixels = nullptr, Error *r_error = nullptr) const;
 
 	void set_default_base_scale(float p_base_scale);
 	float get_default_base_scale() const;
 	bool has_default_base_scale() const;
 
-	void set_default_font(const Ref<Font> &p_default_font);
-	Ref<Font> get_default_font() const;
-	bool has_default_font() const;
+	void set_default_font_family(const Ref<Font> &p_default_font_family);
+	Ref<Font> get_default_font_family() const;
+	bool has_default_font_family() const;
 
 	void set_default_font_size(int p_font_size);
 	int get_default_font_size() const;
@@ -150,6 +114,8 @@ public:
 
 	void set_stylebox(const StringName &p_name, const StringName &p_theme_type, const Ref<StyleBox> &p_style);
 	virtual Ref<StyleBox> get_stylebox(const StringName &p_name, const StringName &p_theme_type) const;
+	// Returns the authored resource for editing or serialization, without resolving theme values.
+	Ref<StyleBox> get_stylebox_definition(const StringName &p_name, const StringName &p_theme_type) const;
 	bool has_stylebox(const StringName &p_name, const StringName &p_theme_type) const;
 	bool has_stylebox_nocheck(const StringName &p_name, const StringName &p_theme_type) const;
 	void rename_stylebox(const StringName &p_old_name, const StringName &p_name, const StringName &p_theme_type);
@@ -224,6 +190,7 @@ public:
 
 	void set_theme_item(DataType p_data_type, const StringName &p_name, const StringName &p_theme_type, const Variant &p_value);
 	Variant get_theme_item(DataType p_data_type, const StringName &p_name, const StringName &p_theme_type) const;
+	Variant get_theme_item_definition(DataType p_data_type, const StringName &p_name, const StringName &p_theme_type) const;
 	bool has_theme_item(DataType p_data_type, const StringName &p_name, const StringName &p_theme_type) const;
 	bool has_theme_item_nocheck(DataType p_data_type, const StringName &p_name, const StringName &p_theme_type) const;
 	void rename_theme_item(DataType p_data_type, const StringName &p_old_name, const StringName &p_name, const StringName &p_theme_type);
@@ -249,8 +216,117 @@ public:
 	void merge_with(const Ref<Theme> &p_other);
 	void clear();
 
-	Theme();
-	~Theme();
+protected:
+	static void _bind_methods();
+	bool _set(const StringName &p_name, const Variant &p_value);
+	bool _get(const StringName &p_name, Variant &r_ret) const;
+	void _get_property_list(List<PropertyInfo> *p_list) const;
+	void _validate_property(PropertyInfo &r_property) const;
+	void _freeze_change_propagation();
+	void _unfreeze_and_propagate_changes();
+	Ref<StyleBox> _resolve_stylebox(const Ref<StyleBox> &p_style) const;
+	void reset_state() override;
+
+	// Default values configurable for each individual theme.
+	float _default_base_scale = 0.0;
+	Ref<Font> _default_font_family;
+	int _default_font_size = -1;
+	HashMap<StringName, ThemeIconMap> _icon_map;
+	HashMap<StringName, ThemeStyleMap> _style_map;
+	HashMap<StringName, ThemeFontMap> _font_map;
+	HashMap<StringName, ThemeFontSizeMap> _font_size_map;
+	HashMap<StringName, ThemeColorMap> _color_map;
+	HashMap<StringName, ThemeConstantMap> _constant_map;
+	HashMap<StringName, ThemeSoundMap> _sound_map;
+	HashMap<StringName, StringName> _variation_map;
+	HashMap<StringName, List<StringName>> _variation_base_map;
+
+private:
+	friend class ThemeDB;
+	friend class ThemeContext;
+	friend class ThemeResolver;
+
+	struct ParsedExpression {
+		Ref<Expression> expression;
+		Vector<StringName> references;
+		bool pixels = false;
+	};
+
+	static constexpr const char *ITEM_CATEGORIES[] = { "colors", "constants", "fonts", "font_sizes", "icons", "styles", "sounds" };
+
+	enum StyleParameter {
+		PADDING,
+		BORDER_WIDTH,
+		BORDER_RADIUS,
+		BACKGROUND_COLOR,
+		BORDER_COLOR,
+		ACCENT_COLOR,
+		SHADOW_COLOR,
+		BASE_COLOR,
+		CONTRAST,
+		ICON_SATURATION,
+		FOCUS_BORDER_WIDTH,
+		MAX_STYLE_PARAMETERS,
+	};
+
+	void _emit_theme_changed(bool p_notify_list_changed = false);
+	Vector<String> _get_icon_list(const String &p_theme_type) const;
+	Vector<String> _get_icon_type_list() const;
+	Vector<String> _get_stylebox_list(const String &p_theme_type) const;
+	Vector<String> _get_stylebox_type_list() const;
+	Vector<String> _get_font_list(const String &p_theme_type) const;
+	Vector<String> _get_font_type_list() const;
+	Vector<String> _get_font_size_list(const String &p_theme_type) const;
+	Vector<String> _get_font_size_type_list() const;
+	Vector<String> _get_color_list(const String &p_theme_type) const;
+	Vector<String> _get_color_type_list() const;
+	Vector<String> _get_constant_list(const String &p_theme_type) const;
+	Vector<String> _get_constant_type_list() const;
+	Vector<String> _get_sound_list(const String &p_theme_type) const;
+	Vector<String> _get_sound_type_list() const;
+	Vector<String> _get_theme_item_list(DataType p_data_type, const String &p_theme_type) const;
+	Vector<String> _get_theme_item_type_list(DataType p_data_type) const;
+	Vector<String> _get_type_variation_list(const StringName &p_theme_type) const;
+	Vector<String> _get_type_list() const;
+	static Variant::Type _get_style_parameter_type(const StringName &p_name);
+	static StringName _get_style_parameter_name(int p_parameter);
+	void _set_style_parameter_value(int p_parameter, const Variant &p_value);
+	Variant _get_style_parameter_value(int p_parameter) const;
+	static Error _get_parsed_theme_expression(const String &p_source, ParsedExpression &r_parsed);
+	static Error _parse_theme_expression(const String &p_source, ParsedExpression &r_parsed);
+	Variant _evaluate_theme_expression(const String &p_expression, bool *r_pixels, Error *r_error, ThemeResolver *r_context) const;
+	Variant _resolve_expression_value(const StringName &p_property, Error &r_error, ThemeResolver *r_context = nullptr) const;
+	void _move_expression_type(const StringName &p_old_type, const StringName &p_type, const StringName &p_category);
+
+	bool _no_change_propagation = false;
+	uint64_t _stylebox_revision = 0;
+	HashMap<StringName, Variant> _style_parameters;
+	mutable HashMap<Ref<StyleBox>, Ref<StyleBox>> _resolved_styleboxes;
+	HashMap<StringName, String> _item_expressions;
+	mutable HashMap<StringName, Variant> _expression_values;
+	mutable HashSet<StringName> _resolving_expressions;
+};
+
+// Evaluates a StyleBox against the same ordered themes used by its owner.
+class ThemeResolver {
+public:
+	explicit ThemeResolver(const Vector<Ref<Theme>> &p_themes);
+
+	float get_base_scale() const;
+	bool has_style_parameter(const StringName &p_name) const;
+	Variant get_style_parameter(const StringName &p_name, Error &r_error);
+	Variant evaluate_expression(const String &p_expression, bool *r_pixels, Error *r_error);
+	Ref<StyleBox> resolve_stylebox_item(const StringName &p_name, const StringName &p_type);
+
+private:
+	friend class Theme;
+	friend class StyleBox;
+
+	const Theme *_get_style_parameter_owner(const StringName &p_name) const;
+
+	const Vector<Ref<Theme>> &_themes;
+	HashMap<StringName, Variant> _expression_values;
+	HashSet<StringName> _resolving_expressions;
 };
 
 VARIANT_ENUM_CAST(Theme::DataType);

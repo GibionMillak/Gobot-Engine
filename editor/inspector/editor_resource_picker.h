@@ -30,12 +30,14 @@
 
 #pragma once
 
+#include "core/templates/vector.h"
 #include "scene/gui/box_container.h"
 #include "scene/resources/material.h"
 
 class Button;
 class Dialog;
 class EditorFileDialog;
+class EditorQuickOpenDialog;
 class PopupMenu;
 class TextureRect;
 class Tree;
@@ -97,6 +99,10 @@ class EditorResourcePicker : public HBoxContainer {
 	void _file_selected(const String &p_path);
 
 	void _resource_saved(Object *p_resource);
+	void _open_resource_selection_save_dialog(const Ref<Resource> &p_resource, const String &p_file_basename);
+	void _open_resource_copy_save_dialog(const Ref<Resource> &p_source, const Ref<Resource> &p_copy);
+	void _save_resource_selection(const String &p_path);
+	void _cancel_resource_selection_save();
 
 	void _update_menu();
 	void _update_menu_items();
@@ -119,6 +125,7 @@ class EditorResourcePicker : public HBoxContainer {
 	void drop_data_fw(const Point2 &p_point, const Variant &p_data, Control *p_from);
 
 	void _ensure_resource_menu();
+	void _show_duplicate_resources_dialog(const Ref<Resource> &p_resource);
 	void _gather_resources_to_duplicate(const Ref<Resource> p_resource, TreeItem *p_item, const String &p_property_name = "") const;
 	void _duplicate_selected_resources();
 	bool _is_uniqueness_enabled(bool p_check_recursive = false);
@@ -144,6 +151,11 @@ public:
 	void make_passthrough(bool p_passthrough);
 
 	bool is_resource_allowed(const Ref<Resource> &p_resource);
+	void set_builtin_resources(const Vector<Ref<Resource>> &p_resources);
+	void set_file_selection_only(bool p_enabled) { _file_selection_only = p_enabled; }
+	void set_show_quick_load_when_assigned(bool p_enabled) { _show_quick_load_when_assigned = p_enabled; }
+	// Selection remains available when opening and expanding the assigned resource is disabled.
+	void set_resource_inspection_enabled(bool p_enabled);
 	void set_edited_resource(Ref<Resource> p_resource);
 	void set_edited_resource_no_check(Ref<Resource> p_resource);
 	Ref<Resource> get_edited_resource();
@@ -164,6 +176,17 @@ public:
 	virtual bool handle_menu_selected(int p_which);
 
 	EditorResourcePicker(bool p_hide_assign_button_controls = false);
+
+private:
+	static constexpr int BUILTIN_RESOURCE_BASE_ID = 2000;
+
+	Vector<Ref<Resource>> _builtin_resources;
+	EditorQuickOpenDialog *_quick_open_dialog = nullptr;
+	EditorFileDialog *_resource_selection_save_dialog = nullptr;
+	Ref<Resource> _resource_to_save;
+	bool _resource_inspection_enabled = true;
+	bool _file_selection_only = false;
+	bool _show_quick_load_when_assigned = false;
 };
 
 class EditorScriptPicker : public EditorResourcePicker {

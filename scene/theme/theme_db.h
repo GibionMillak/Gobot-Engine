@@ -30,7 +30,10 @@
 
 #pragma once
 
+#include "core/error/error_list.h"
 #include "core/object/ref_counted.h"
+#include "core/os/mutex.h"
+#include "core/templates/pair.h"
 #include "scene/resources/theme.h"
 
 #include <functional>
@@ -71,6 +74,13 @@ class ThemeContext;
 
 class ThemeDB : public Object {
 	GDCLASS(ThemeDB, Object);
+	friend class Theme;
+
+	static constexpr int MAX_PARSED_THEME_EXPRESSIONS = 2048;
+
+	Mutex _parsed_expression_mutex;
+	HashMap<String, Theme::ParsedExpression> _parsed_theme_expressions;
+
 
 	static ThemeDB *singleton;
 
@@ -93,6 +103,7 @@ class ThemeDB : public Object {
 	ThemeContext *default_theme_context = nullptr;
 	HashMap<Node *, ThemeContext *> theme_contexts;
 
+	Error _load_default_theme(float p_scale, const Ref<Font> &p_project_font, bool p_use_project_settings);
 	void _propagate_theme_context(Node *p_from_node, ThemeContext *p_context);
 	void _init_default_theme_context();
 	void _finalize_theme_contexts();
@@ -100,6 +111,9 @@ class ThemeDB : public Object {
 	// Binding of theme items to Node classes.
 
 public:
+	static constexpr const char *DEFAULT_THEME_PATH = "res://.content/resources/themes/default.tres";
+	static constexpr const char *PROJECT_THEME_SETTING = "gui/theme/theme";
+
 	typedef std::function<void(Node *, const StringName &, const StringName &)> ThemeItemSetter;
 
 	struct ThemeItemBind {
@@ -128,16 +142,14 @@ protected:
 	static void _bind_methods();
 
 public:
-	void initialize_theme();
-	void initialize_theme_noproject();
+	Error initialize_theme();
+	Error initialize_theme_noproject();
 	void finalize_theme();
 
 	// Global Theme resources.
 
-	void set_default_theme(const Ref<Theme> &p_default);
 	Ref<Theme> get_default_theme();
 
-	void set_project_theme(const Ref<Theme> &p_project_default);
 	Ref<Theme> get_project_theme();
 
 	// Universal fallback values.
@@ -190,23 +202,36 @@ public:
 class ThemeContext : public Object {
 	GDCLASS(ThemeContext, Object);
 
-	friend class ThemeDB;
-
-	Node *node = nullptr;
-	ThemeContext *parent = nullptr;
-
-	// Themes are stacked in the order of relevance, for easy iteration.
-	// This means that the first theme is the one you should check first,
-	// and the last theme is the fallback theme where every lookup ends.
-	Vector<Ref<Theme>> themes;
-
-	void _emit_changed();
-
-protected:
-	static void _bind_methods();
-
 public:
 	void set_themes(Vector<Ref<Theme>> &p_themes);
 	const Vector<Ref<Theme>> get_themes() const;
 	Ref<Theme> get_fallback_theme() const;
+	Ref<StyleBox> resolve_stylebox(const Ref<StyleBox> &p_style, ObjectID p_owner, const Vector<Ref<Theme>> &p_local_themes);
+
+protected:
+	static void _bind_methods();
+
+private:
+	friend class ThemeDB;
+
+	using StyleBoxCacheKey = Pair<ObjectID, ObjectID>;
+	using ThemeRevision = Pair<ObjectID, uint64_t>;
+
+	struct ResolvedStyleBox {
+		uint64_t revision;
+		Vector<ThemeRevision> local_revisions;
+		Ref<StyleBox> style;
+	};
+
+	static constexpr int MAX_RESOLVED_STYLEBOXES = 512;
+
+	void _emit_changed();
+
+	ThemeContext *_parent = nullptr;
+
+	// The last theme provides defaults for the earlier, higher-priority themes.
+	Vector<Ref<Theme>> _themes;
+	Mutex _stylebox_cache_mutex;
+	HashMap<StyleBoxCacheKey, ResolvedStyleBox> _resolved_styleboxes;
+	uint64_t _stylebox_cache_generation = 0;
 };

@@ -63,6 +63,8 @@
 #include "scene/main/node.h"
 #include "scene/resources/packed_scene.h"
 #include "scene/resources/texture.h"
+#include "scene/resources/theme.h"
+#include "scene/theme/theme_db.h"
 
 class EditorExportSaveProxy {
 	HashSet<String> saved_paths;
@@ -591,7 +593,7 @@ Error EditorExportPlatform::_save_zip_patch_file(const Ref<EditorExportPreset> &
 Ref<Texture2D> EditorExportPlatform::get_option_icon(int p_index) const {
 	Ref<Theme> theme = EditorNode::get_singleton()->get_editor_theme();
 	ERR_FAIL_COND_V(theme.is_null(), Ref<Texture2D>());
-	return theme->get_icon(SNAME("playback_play"), EditorStringName(EditorIcons));
+	return theme->get_icon(SNAME("playback_play"), EditorStringName(Editor));
 }
 
 String EditorExportPlatform::find_export_template(const String &template_file_name, String *err) const {
@@ -1440,15 +1442,27 @@ Error EditorExportPlatform::export_project_files(const Ref<EditorExportPreset> &
 	// Ignore import files, since these are automatically added to the jar later with the resources
 	_edit_filter_list(paths, String("*.import"), true);
 
+	EditorContentResources::register_uids();
+	const String project_theme_path = ResourceUID::ensure_path_nocheck(get_project_setting(p_preset, ThemeDB::PROJECT_THEME_SETTING));
+	if (project_theme_path.is_resource_file() && !FileAccessContent::is_content_path(project_theme_path) && ResourceLoader::exists(project_theme_path, Theme::get_class_static())) {
+		HashSet<String> theme_dependencies;
+		_export_find_dependencies(project_theme_path, theme_dependencies);
+		for (const String &path : theme_dependencies) {
+			paths.insert(path);
+		}
+	}
+
 	// Editor content is virtual, so the project directory scan cannot discover it.
 	// Traverse the retained roots after filtering, including resources used by project settings.
-	EditorContentResources::register_uids();
 	HashSet<String> required_content_roots(paths);
 	List<PropertyInfo> settings;
 	ProjectSettings::get_singleton()->get_property_list(&settings);
 	for (const PropertyInfo &setting : settings) {
 		if (!(setting.usage & PROPERTY_USAGE_STORAGE)) {
 			continue;
+		}
+		if (setting.name == ThemeDB::PROJECT_THEME_SETTING && project_theme_path == ThemeDB::DEFAULT_THEME_PATH) {
+			continue; // The export template already embeds Default and its dependencies.
 		}
 		const Variant value = get_project_setting(p_preset, setting.name);
 		_export_find_editor_content_roots(value, required_content_roots);

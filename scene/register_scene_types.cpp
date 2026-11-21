@@ -175,6 +175,12 @@
 #include "servers/display/display_server.h"
 #include "servers/rendering/rendering_server.h"
 
+#ifndef TOOLS_ENABLED
+#include "core/io/file_access_content.h"
+#include "core/io/resource_uid.h"
+#include "scene/theme/runtime_theme_resources.gen.h"
+#endif
+
 #ifndef _2D_DISABLED
 #include "scene/2d/animated_sprite_2d.h"
 #include "scene/2d/audio_listener_2d.h"
@@ -414,6 +420,21 @@ void register_scene_types() {
 	ResourceLoader::add_resource_format_loader(resource_loader_text, true);
 	resource_loader_content.instantiate();
 	ResourceLoader::add_resource_format_loader(resource_loader_content, true);
+
+#ifndef TOOLS_ENABLED
+	ResourceUID *resource_uid = ResourceUID::get_singleton();
+	for (const RuntimeThemeResourceData &entry : RUNTIME_THEME_RESOURCE_DATA) {
+		FileAccessContent::register_file(entry.path, entry.data, entry.size);
+		if (entry.uid == ResourceUID::INVALID_ID) {
+			continue;
+		}
+		if (resource_uid->has_id(entry.uid)) {
+			ERR_CONTINUE_MSG(resource_uid->get_id_path(entry.uid) != entry.path, vformat("Bundled theme resource UID collision for '%s'.", entry.path));
+		} else {
+			resource_uid->add_id(entry.uid, entry.path);
+		}
+	}
+#endif
 
 	if constexpr (GD_IS_CLASS_ENABLED(Shader)) {
 		resource_saver_shader.instantiate();
@@ -1131,6 +1152,9 @@ void unregister_scene_types() {
 	resource_loader_text.unref();
 	ResourceLoader::remove_resource_format_loader(resource_loader_content);
 	resource_loader_content.unref();
+#ifndef TOOLS_ENABLED
+	FileAccessContent::cleanup();
+#endif
 
 	if constexpr (GD_IS_CLASS_ENABLED(Shader)) {
 		ResourceSaver::remove_resource_format_saver(resource_saver_shader);

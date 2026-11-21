@@ -178,10 +178,10 @@ void EditorHeaderContainer::gui_input(const Ref<InputEvent> &p_event) {
 }
 
 Ref<Texture2D> EditorHeaderContainer::_get_window_icon(const StringName &p_name, const StringName &p_fallback) const {
-	if (has_theme_icon(p_name, EditorStringName(EditorIcons))) {
+	if (has_theme_icon(p_name, EditorStringName(Editor))) {
 		return get_editor_theme_icon(p_name);
 	}
-	if (has_theme_icon(p_fallback, EditorStringName(EditorIcons))) {
+	if (has_theme_icon(p_fallback, EditorStringName(Editor))) {
 		return get_editor_theme_icon(p_fallback);
 	}
 	return Ref<Texture2D>();

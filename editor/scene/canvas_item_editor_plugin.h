@@ -81,6 +81,11 @@ class CanvasItemEditor : public MarginContainer {
 	GDCLASS(CanvasItemEditor, MarginContainer);
 
 public:
+	enum class ThemePreviewMode {
+		PROJECT,
+		EDITOR,
+	};
+
 	enum AddNodeOption {
 		ADD_NODE,
 		ADD_INSTANCE,
@@ -275,7 +280,8 @@ private:
 	Button *_frame_selection_btn = nullptr;
 	MenuButton *view_menu = nullptr;
 	PopupMenu *grid_menu = nullptr;
-	PopupMenu *theme_menu = nullptr;
+	PopupMenu *_theme_menu = nullptr;
+	ThemePreviewMode _theme_preview = ThemePreviewMode::PROJECT;
 	PopupMenu *gizmos_menu = nullptr;
 	EditorToolbarFlowContainer *_animation_vflow = nullptr;
 	MenuButton *animation_menu = nullptr;
@@ -357,18 +363,6 @@ private:
 	void _toggle_grid();
 	void _reset_transform(TransformType p_type);
 	void _update_oversampling();
-
-public:
-	enum ThemePreviewMode {
-		THEME_PREVIEW_PROJECT,
-		THEME_PREVIEW_EDITOR,
-		THEME_PREVIEW_DEFAULT,
-
-		THEME_PREVIEW_MAX // The number of options for enumerating.
-	};
-
-private:
-	ThemePreviewMode theme_preview = THEME_PREVIEW_PROJECT;
 	void _switch_theme_preview(int p_mode);
 
 	List<CanvasItem *> _get_edited_canvas_items(bool p_retrieve_locked = false, bool p_remove_canvas_item_if_parent_in_selection = true, bool *r_has_locked_items = nullptr) const;
@@ -511,7 +505,7 @@ public:
 	void set_cursor_shape_override(CursorShape p_shape = CURSOR_ARROW);
 	virtual CursorShape get_cursor_shape(const Point2 &p_pos) const override;
 
-	ThemePreviewMode get_theme_preview() const { return theme_preview; }
+	ThemePreviewMode get_theme_preview() const { return _theme_preview; }
 
 	bool cyclical_dependency_exists(const String &p_target_scene_path, Node *p_desired_node) const;
 	void add_node_to_scene(Node *p_parent, Node *p_child, const Vector2 &p_target_position);

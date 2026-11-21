@@ -95,7 +95,7 @@ Skeleton2DEditor::Skeleton2DEditor() {
 	options->set_tooltip_text(TTR("Skeleton2D"));
 	CanvasItemEditor::get_singleton()->add_control_to_menu_panel(options);
 
-	options->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("node_2d_skeleton_2d"), EditorStringName(EditorIcons)));
+	options->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("node_2d_skeleton_2d"), EditorStringName(Editor)));
 	options->set_flat(false);
 	options->set_theme_type_variation("FlatMenuButtonNoIconTint");
 

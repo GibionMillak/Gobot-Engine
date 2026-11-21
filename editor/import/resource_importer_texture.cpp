@@ -836,7 +836,7 @@ Error ResourceImporterTexture::import(ResourceUID::ID p_source_id, const String 
 			WARN_PRINT(vformat("Failed to import an image resource for editor use from '%s'.", p_source_file));
 		} else {
 			if (convert_editor_colors) {
-				float image_saturation = EDITOR_GET("interface/theme/icon_saturation");
+				const float image_saturation = EditorThemeManager::get_icon_saturation();
 				editor_image->adjust_bcs(1.0, 1.0, image_saturation);
 			}
 
@@ -1009,6 +1009,7 @@ Error ResourceImporterTexture::import(ResourceUID::ID p_source_id, const String 
 
 		if (convert_editor_colors) {
 			editor_meta["editor_dark_theme"] = EditorThemeManager::is_dark_theme();
+			editor_meta["editor_icon_saturation"] = EditorThemeManager::get_icon_saturation();
 		}
 
 		_save_editor_meta(editor_meta, p_save_path + ".editor.meta");
@@ -1068,8 +1069,10 @@ bool ResourceImporterTexture::are_import_settings_valid(const String &p_path, co
 			return false;
 		}
 
-		if (editor_meta.has("editor_dark_theme") && (bool)editor_meta["editor_dark_theme"] != EditorThemeManager::is_dark_theme()) {
-			return false;
+		if (editor_meta.has("editor_dark_theme")) {
+			if ((bool)editor_meta["editor_dark_theme"] != EditorThemeManager::is_dark_theme() || !editor_meta.has("editor_icon_saturation") || (float)editor_meta["editor_icon_saturation"] != EditorThemeManager::get_icon_saturation()) {
+				return false;
+			}
 		}
 	}
 

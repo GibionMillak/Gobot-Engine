@@ -187,7 +187,7 @@ GPUParticlesCollisionSDF3DEditorPlugin::GPUParticlesCollisionSDF3DEditorPlugin()
 	{
 		_bake_btn = memnew(Button);
 		_bake_btn->connect(SceneStringName(pressed), callable_mp(this, &GPUParticlesCollisionSDF3DEditorPlugin::_bake));
-		_bake_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
+		_bake_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_bake"), EditorStringName(Editor)));
 		_bake_btn->set_theme_type_variation(SceneStringName(FlatButton));
 		_bake_btn->set_tooltip_text(TTR("Bake SDF"));
 		_bake_vflow->add_child(_bake_btn);

@@ -440,7 +440,7 @@ void ScriptEditorDock::update_layout(EditorDock::DockLayout p_layout, int p_slot
 		remove_theme_constant_override("margin_right");
 		remove_theme_constant_override("margin_bottom");
 	} else {
-		int margin = EDSCALE_RND(EditorNode::get_singleton()->get_editor_theme()->get_constant("base_margin", EditorStringName(Editor)));
+		int margin = EDSCALE_RND(EditorNode::get_singleton()->get_editor_theme()->get_constant("padding", EditorStringName(Editor)));
 		add_theme_constant_override("margin_left", margin);
 		add_theme_constant_override("margin_right", margin);
 		add_theme_constant_override("margin_bottom", margin);

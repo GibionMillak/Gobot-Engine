@@ -64,7 +64,7 @@ void PropertySelector::_update_search() {
 
 	// Set up font.
 	bool use_monospace_font = EDITOR_GET("interface/theme/use_monospace_font_for_editor_symbols");
-	Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
+	Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(Editor));
 
 	if (properties) {
 		List<PropertyInfo> props;
@@ -519,7 +519,7 @@ void PropertySelector::_create_subproperty(TreeItem *p_parent_item, const String
 
 	bool use_monospace_font = EDITOR_GET("interface/theme/use_monospace_font_for_editor_symbols");
 	if (use_monospace_font) {
-		item->set_custom_font(0, get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
+		item->set_custom_font(0, get_theme_font(SNAME("source"), EditorStringName(Editor)));
 	}
 	item->set_metadata(0, String(p_parent_item->get_metadata(0)) + ":" + p_name);
 	item->set_icon(0, search_options->get_editor_theme_icon(editor_get_type_icon_name(Variant::get_type_name(p_type))));

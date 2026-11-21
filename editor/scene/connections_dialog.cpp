@@ -297,7 +297,7 @@ StringName ConnectDialog::generate_method_callback_name(Object *p_source, const 
 
 void ConnectDialog::_create_method_tree_items(const List<MethodInfo> &p_methods, TreeItem *p_parent_item) {
 	bool use_monospace_font = EDITOR_GET("interface/theme/use_monospace_font_for_editor_symbols");
-	Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
+	Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(Editor));
 	for (const MethodInfo &mi : p_methods) {
 		TreeItem *method_item = method_tree->create_item(p_parent_item);
 		method_item->set_text(0, get_signature(mi));
@@ -428,7 +428,7 @@ void ConnectDialog::_update_method_tree() {
 		TreeItem *class_item = method_tree->create_item(root_item);
 		class_item->set_text(0, current_class);
 		Ref<Texture2D> icon = get_editor_theme_icon(SNAME("node_node"));
-		if (has_theme_icon(editor_get_type_icon_name(current_class), EditorStringName(EditorIcons))) {
+		if (has_theme_icon(editor_get_type_icon_name(current_class), EditorStringName(Editor))) {
 			icon = get_editor_theme_icon(editor_get_type_icon_name(current_class));
 		}
 		class_item->set_icon(0, icon);
@@ -501,7 +501,7 @@ void ConnectDialog::_notification(int p_what) {
 			open_method_tree->set_button_icon(get_editor_theme_icon("action_edit"));
 
 			bool use_monospace_font = EDITOR_GET("interface/theme/use_monospace_font_for_editor_symbols");
-			Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
+			Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(Editor));
 
 			if (use_monospace_font) {
 				from_signal->add_theme_font_override(SceneStringName(font), monospace_font);
@@ -1535,7 +1535,7 @@ void ConnectionsDock::update_tree() {
 	Ref<Script> script_base = selected_object->get_script();
 
 	bool use_monospace_font = EDITOR_GET("interface/theme/use_monospace_font_for_editor_symbols");
-	Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
+	Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(Editor));
 
 	while (native_base != StringName()) {
 		String class_name;
@@ -1558,7 +1558,7 @@ void ConnectionsDock::update_tree() {
 			}
 
 			class_icon = editor_data.get_script_icon(script_base->get_path());
-			if (class_icon.is_null() && has_theme_icon(editor_get_type_icon_name(native_base), EditorStringName(EditorIcons))) {
+			if (class_icon.is_null() && has_theme_icon(editor_get_type_icon_name(native_base), EditorStringName(Editor))) {
 				class_icon = get_editor_theme_icon(editor_get_type_icon_name(native_base));
 			}
 
@@ -1591,7 +1591,7 @@ void ConnectionsDock::update_tree() {
 				doc_class_name = String();
 			}
 
-			if (has_theme_icon(editor_get_type_icon_name(native_base), EditorStringName(EditorIcons))) {
+			if (has_theme_icon(editor_get_type_icon_name(native_base), EditorStringName(Editor))) {
 				class_icon = get_editor_theme_icon(editor_get_type_icon_name(native_base));
 			}
 

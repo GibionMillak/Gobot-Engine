@@ -1,0 +1,21 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "VSeparatorButtonGroup separator"
+background_color = "theme.Editor.colors.base_color"
+border_color = Color(0.8, 0.8, 0.8, 1)
+border_width_bottom = 0
+border_width_left = 0
+border_width_right = 0
+border_width_top = 0
+corner_detail = 8
+corner_radius_bottom_left = 0
+corner_radius_bottom_right = 0
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+minimum_size = "pixels(Vector2(max(round((1 * theme.default_base_scale)), (int(round((theme.default_border_width * max(1, theme.default_base_scale)))))), 0))"
+padding_bottom = 0
+padding_left = 0
+padding_right = 0
+padding_top = 0
+shadow_color = Color(0, 0, 0, 0.6)

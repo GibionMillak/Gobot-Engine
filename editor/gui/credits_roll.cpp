@@ -155,13 +155,13 @@ void CreditsRoll::roll_credits() {
 		} else {
 			return;
 		}
-		font_size_normal = theme->get_font_size("main_size", EditorStringName(EditorFonts)) * 2;
+		font_size_normal = theme->get_font_size("main_size", EditorStringName(Editor)) * 2;
 		font_size_header = font_size_normal + 10 * EDSCALE;
 		font_size_big_header = font_size_header + 20 * EDSCALE;
-		bold_font = theme->get_font("bold", EditorStringName(EditorFonts));
+		bold_font = theme->get_font("bold", EditorStringName(Editor));
 
 		{
-		const Ref<Texture2D> logo_texture = theme->get_icon("branding_logo_colorful", EditorStringName(EditorIcons));
+		const Ref<Texture2D> logo_texture = theme->get_icon("branding_logo_colorful", EditorStringName(Editor));
 
 			TextureRect *logo = memnew(TextureRect);
 			logo->set_custom_minimum_size(Vector2(0, logo_texture->get_height() * 3));

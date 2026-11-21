@@ -1,0 +1,20 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "GraphStateMachine node_frame"
+background_color = "(theme.Editor.colors.dark_color_3 * Color(1, 1, 1, 0.7))"
+border_color = "((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))"
+border_width_bottom = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
+border_width_left = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
+border_width_right = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
+border_width_top = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
+corner_detail = "pixels(int(ceil(((0.8 * (int(round(theme.default_border_radius)))) * theme.default_base_scale))))"
+corner_radius_bottom_left = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+corner_radius_bottom_right = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+corner_radius_top_left = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+corner_radius_top_right = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+padding_bottom = "pixels((int(2) * theme.default_base_scale))"
+padding_left = "pixels((int(round((10 * theme.default_base_scale))) * theme.default_base_scale))"
+padding_right = "pixels((int(round((10 * theme.default_base_scale))) * theme.default_base_scale))"
+padding_top = "pixels((round((24 * theme.default_base_scale)) * theme.default_base_scale))"
+shadow_color = Color(0, 0, 0, 0.6)

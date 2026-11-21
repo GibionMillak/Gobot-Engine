@@ -1,0 +1,20 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "Editor ObjectDBTitle"
+background_color = "theme.Editor.colors.dark_color_3"
+border_color = "theme.default_border_color"
+border_width_bottom = 0
+border_width_left = 0
+border_width_right = 0
+border_width_top = 0
+corner_detail = 8
+corner_radius_bottom_left = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+corner_radius_bottom_right = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+corner_radius_top_left = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+corner_radius_top_right = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+padding_bottom = "pixels((theme.default_padding * 2 * theme.default_base_scale))"
+padding_left = "pixels((theme.default_padding * 2 * theme.default_base_scale))"
+padding_right = "pixels((theme.default_padding * 2 * theme.default_base_scale))"
+padding_top = "pixels((theme.default_padding * 2 * theme.default_base_scale))"
+shadow_color = "theme.default_shadow_color"

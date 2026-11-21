@@ -1299,7 +1299,7 @@ void Variant::call_const(const StringName &p_method, const Variant **p_args, int
 			return;
 		}
 
-		if (!imf->is_const) {
+		if (!imf->is_const && !imf->is_static) {
 			r_error.error = Callable::CallError::CALL_ERROR_METHOD_NOT_CONST;
 			return;
 		}

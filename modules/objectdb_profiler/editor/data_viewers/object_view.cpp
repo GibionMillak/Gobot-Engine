@@ -147,7 +147,7 @@ void SnapshotObjectView::_insert_data(GameStateSnapshot *p_snapshot, const Strin
 		item->set_auto_translate_mode(offset + 0, AUTO_TRANSLATE_MODE_DISABLED);
 		item->set_auto_translate_mode(offset + 1, AUTO_TRANSLATE_MODE_DISABLED);
 		item->set_text(offset + 0, pair.value->type_name);
-		if (has_theme_icon(editor_get_type_icon_name(pair.value->type_name), SNAME("EditorIcons"))) {
+		if (has_theme_icon(editor_get_type_icon_name(pair.value->type_name), SNAME("Editor"))) {
 			item->set_icon(offset + 0, get_editor_theme_icon(editor_get_type_icon_name(pair.value->type_name)));
 		} else {
 			item->set_icon(offset + 0, get_editor_theme_icon(SNAME("variant_object")));

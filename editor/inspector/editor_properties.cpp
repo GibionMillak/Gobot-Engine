@@ -31,6 +31,7 @@
 #include "editor_properties.h"
 
 #include "core/config/project_settings.h"
+#include "core/io/file_access.h"
 #include "core/input/input_map.h"
 #include "core/io/marshalls.h"
 #include "core/io/resource_loader.h"
@@ -51,6 +52,7 @@
 #include "editor/inspector/editor_properties_array_dict.h"
 #include "editor/inspector/editor_properties_vector.h"
 #include "editor/inspector/editor_resource_picker.h"
+#include "editor/inspector/editor_sectioned_inspector.h"
 #include "editor/inspector/property_selector.h"
 #include "editor/scene/hierarchy_editor.h"
 #include "editor/script/syntax_highlighters.h"
@@ -69,6 +71,7 @@
 #include "scene/resources/font.h"
 #include "scene/resources/mesh.h"
 #include "scene/resources/sky.h"
+#include "scene/theme/theme_db.h"
 #include "servers/audio/audio_server.h"
 #include "servers/display/display_server.h"
 
@@ -207,8 +210,8 @@ void EditorPropertyText::_update_theme() {
 	int font_size;
 
 	if (monospaced) {
-		font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
-		font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts));
+		font = get_theme_font(SNAME("source"), EditorStringName(Editor));
+		font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(Editor));
 	} else {
 		font = get_theme_font(SceneStringName(font), SNAME("LineEdit"));
 		font_size = get_theme_font_size(SceneStringName(font_size), SNAME("LineEdit"));
@@ -366,13 +369,13 @@ void EditorPropertyMultilineText::_update_theme() {
 	Ref<Font> font;
 	int font_size;
 	if (expression) {
-		font = get_theme_font(SNAME("expression"), EditorStringName(EditorFonts));
-		font_size = get_theme_font_size(SNAME("expression_size"), EditorStringName(EditorFonts));
+		font = get_theme_font(SNAME("expression"), EditorStringName(Editor));
+		font_size = get_theme_font_size(SNAME("expression_size"), EditorStringName(Editor));
 	} else {
 		// Non expression.
 		if (monospaced) {
-			font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
-			font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts));
+			font = get_theme_font(SNAME("source"), EditorStringName(Editor));
+			font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(Editor));
 		} else {
 			font = get_theme_font(SceneStringName(font), SNAME("TextEdit"));
 			font_size = get_theme_font_size(SceneStringName(font_size), SNAME("TextEdit"));
@@ -3423,7 +3426,7 @@ void EditorPropertyResource::_select_resource(const Ref<Resource> &p_resource, b
 		}
 	}
 
-	if (!p_inspect && use_sub_inspector) {
+	if (!p_inspect && (_show_theme_defaults || (!_store_resource_path && use_sub_inspector))) {
 		bool unfold = p_force_open;
 		if (!unfold) {
 			unfold = !get_edited_object()->editor_is_section_unfolded(get_edited_property());
@@ -3437,6 +3440,15 @@ void EditorPropertyResource::_select_resource(const Ref<Resource> &p_resource, b
 }
 
 void EditorPropertyResource::_resource_changed(const Ref<Resource> &p_resource) {
+	if (_store_resource_path) {
+		const String path = p_resource.is_valid() ? p_resource->get_path() : String();
+		if (p_resource.is_null() || (path.is_resource_file() && FileAccess::exists(path))) {
+			emit_changed(get_edited_property(), path);
+		}
+		update_property();
+		return;
+	}
+
 	Resource *r = Object::cast_to<Resource>(get_edited_object());
 	if (r) {
 		// Check for recursive setting of resource
@@ -3632,7 +3644,7 @@ void EditorPropertyResource::_viewport_selected(const NodePath &p_path) {
 	update_property();
 }
 
-void EditorPropertyResource::setup(Object *p_object, const String &p_path, const String &p_base_type) {
+void EditorPropertyResource::setup(Object *p_object, const String &p_path, const String &p_base_type, bool p_store_resource_path) {
 	if (resource_picker) {
 		memdelete(resource_picker);
 		resource_picker = nullptr;
@@ -3654,11 +3666,17 @@ void EditorPropertyResource::setup(Object *p_object, const String &p_path, const
 		resource_picker = memnew(EditorResourcePicker);
 	}
 
+	_store_resource_path = p_store_resource_path;
+	_show_theme_defaults = p_base_type == "Theme" &&
+			(SectionedInspector::matches_property(p_object, p_path, EditorSettings::get_singleton(), "interface/theme/theme") ||
+					SectionedInspector::matches_property(p_object, p_path, ProjectSettings::get_singleton(), ThemeDB::PROJECT_THEME_SETTING));
 	resource_picker->set_base_type(p_base_type);
-	resource_picker->set_resource_owner(p_object);
-	resource_picker->set_property_path(p_path);
 	resource_picker->set_editable(true);
+	resource_picker->set_file_selection_only(_store_resource_path);
 	resource_picker->set_h_size_flags(SIZE_EXPAND_FILL);
+	resource_picker->set_property_path(p_path);
+	resource_picker->set_resource_owner(p_object);
+	resource_picker->set_show_quick_load_when_assigned(_show_theme_defaults || _store_resource_path);
 	add_child(resource_picker);
 
 	resource_picker->connect("resource_selected", callable_mp(this, &EditorPropertyResource::_resource_selected));
@@ -3678,54 +3696,61 @@ void EditorPropertyResource::make_passthrough(bool p_passthrough) {
 }
 
 void EditorPropertyResource::update_property() {
-	Ref<Resource> res = get_edited_property_display_value();
+	Ref<Resource> res;
+	if (_store_resource_path) {
+		const String path = get_edited_property_display_value();
+		if (!path.is_empty()) {
+			res = ResourceLoader::load(path, resource_picker->get_base_type());
+		}
+	} else {
+		res = get_edited_property_display_value();
+	}
 
-	if (use_sub_inspector) {
+	if (_show_theme_defaults || (!_store_resource_path && use_sub_inspector)) {
 		if (res.is_valid() != resource_picker->is_toggle_mode()) {
 			resource_picker->set_toggle_mode(res.is_valid());
 		}
 
 		if (res.is_valid() && get_edited_object()->editor_is_section_unfolded(get_edited_property())) {
 			if (!sub_inspector) {
-				sub_inspector = memnew(EditorInspector);
-				sub_inspector->set_vertical_scroll_mode(ScrollContainer::SCROLL_MODE_DISABLED);
-				sub_inspector->set_show_categories(true, true);
-				sub_inspector->set_use_doc_hints(true);
-
 				EditorInspector *parent_inspector = get_parent_inspector();
-				if (parent_inspector) {
-					sub_inspector->set_root_inspector(parent_inspector->get_root_inspector());
-					sub_inspector->register_text_enter(parent_inspector->search_box);
-				}
-
-				sub_inspector->set_property_name_style(InspectorDock::get_singleton()->get_property_name_style());
-
+				sub_inspector = memnew(EditorInspector);
+				sub_inspector->connect("object_id_selected", callable_mp(this, &EditorPropertyResource::_sub_inspector_object_id_selected));
 				sub_inspector->connect("property_keyed", callable_mp(this, &EditorPropertyResource::_sub_inspector_property_keyed));
 				sub_inspector->connect("resource_selected", callable_mp(this, &EditorPropertyResource::_sub_inspector_resource_selected));
-				sub_inspector->connect("object_id_selected", callable_mp(this, &EditorPropertyResource::_sub_inspector_object_id_selected));
-				sub_inspector->set_keying(is_keying());
-				sub_inspector->set_read_only(is_read_only());
-				sub_inspector->set_use_folding(is_using_folding());
-
+				if (parent_inspector && !_show_theme_defaults) {
+					sub_inspector->register_text_enter(parent_inspector->search_box);
+				}
 				sub_inspector->set_draw_focus_border(false);
 				sub_inspector->set_focus_mode(FocusMode::FOCUS_NONE);
-
-				sub_inspector->set_use_filter(use_filter);
-
+				sub_inspector->set_keying(is_keying());
+				sub_inspector->set_property_name_style(InspectorDock::get_singleton()->get_property_name_style());
+				sub_inspector->set_read_only(is_read_only());
+				if (parent_inspector) {
+					sub_inspector->set_root_inspector(parent_inspector->get_root_inspector());
+				}
+				sub_inspector->set_show_categories(!_show_theme_defaults, !_show_theme_defaults);
+				sub_inspector->set_use_doc_hints(true);
+				sub_inspector->set_use_filter(!_show_theme_defaults && use_filter);
+				sub_inspector->set_use_folding(!_show_theme_defaults && is_using_folding());
+				sub_inspector->set_vertical_scroll_mode(ScrollContainer::SCROLL_MODE_DISABLED);
+				if (_show_theme_defaults) {
+					sub_inspector->set_visible_property_group("Default");
+				}
 				add_child(sub_inspector);
 				set_bottom_editor(sub_inspector);
 
 				resource_picker->set_toggle_pressed(true);
 
 				ScriptEditorDock *script_editor = ScriptEditorDock::get_singleton();
-				if ((script_editor && script_editor->handles_resource(res.ptr())) || !EditorNode::get_editor_data().get_handling_sub_editors(res.ptr()).is_empty()) {
+				if (!_show_theme_defaults && ((script_editor && script_editor->handles_resource(res.ptr())) || !EditorNode::get_editor_data().get_handling_sub_editors(res.ptr()).is_empty())) {
 					// Open editor directly.
 					_open_editor_pressed();
 					opened_editor = true;
 				}
 			}
 
-			sub_inspector->set_read_only(is_checkable() && !is_checked());
+			sub_inspector->set_read_only(is_read_only() || (is_checkable() && !is_checked()));
 			sub_inspector->set_category_color_level(get_sub_inspector_color_level());
 
 			if (res.ptr() != sub_inspector->get_edited_object()) {
@@ -3746,8 +3771,7 @@ void EditorPropertyResource::update_property() {
 	}
 
 	resource_picker->set_edited_resource_no_check(res);
-	const Ref<Resource> &real_res = get_edited_property_value();
-	resource_picker->set_force_allow_unique(real_res.is_null() && res.is_valid());
+	resource_picker->set_force_allow_unique(!_store_resource_path && res.is_valid() && Ref<Resource>(get_edited_property_value()).is_null());
 
 	user_opened_editor = false;
 }
@@ -3837,7 +3861,7 @@ void EditorPropertyResource::_bind_methods() {
 }
 
 EditorPropertyResource::EditorPropertyResource() {
-	use_sub_inspector = bool(EDITOR_GET("interface/inspector/open_resources_in_current_inspector"));
+	use_sub_inspector = EditorNode::get_singleton() && bool(EDITOR_GET("interface/inspector/open_resources_in_current_inspector"));
 	has_borders = true;
 }
 
@@ -4059,6 +4083,11 @@ EditorProperty *EditorInspectorDefaultPlugin::get_editor_for_property(Object *p_
 			}
 		} break;
 		case Variant::STRING: {
+			if (p_hint == PROPERTY_HINT_RESOURCE_TYPE) {
+				EditorPropertyResource *editor = memnew(EditorPropertyResource);
+				editor->setup(p_object, p_path, p_hint_text, true);
+				return editor;
+			}
 			if (p_hint == PROPERTY_HINT_ENUM || p_hint == PROPERTY_HINT_ENUM_SUGGESTION) {
 				EditorPropertyTextEnum *editor = memnew(EditorPropertyTextEnum);
 				Vector<String> options;

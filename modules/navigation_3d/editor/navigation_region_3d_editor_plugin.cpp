@@ -61,8 +61,8 @@ void NavigationRegion3DEditor::_node_removed(Node *p_node) {
 void NavigationRegion3DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
-			_bake_btn->set_button_icon(get_theme_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
-			_reset_btn->set_button_icon(get_theme_icon(SNAME("action_revert"), EditorStringName(EditorIcons)));
+			_bake_btn->set_button_icon(get_theme_icon(SNAME("action_bake"), EditorStringName(Editor)));
+			_reset_btn->set_button_icon(get_theme_icon(SNAME("action_revert"), EditorStringName(Editor)));
 		} break;
 		case NOTIFICATION_PROCESS: {
 			if (currently_baking_region) {

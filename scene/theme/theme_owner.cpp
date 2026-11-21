@@ -33,6 +33,8 @@
 #include "core/object/callable_mp.h"
 #include "scene/gui/control.h"
 #include "scene/main/window.h"
+#include "scene/resources/style_box.h"
+#include "scene/resources/theme.h"
 #include "scene/theme/theme_db.h"
 
 // Theme owner node.
@@ -238,7 +240,7 @@ Variant ThemeOwner::get_theme_item_in_types(Theme::DataType p_data_type, const S
 			Ref<Theme> owner_theme = _get_owner_node_theme(current_owner);
 
 			if (owner_theme.is_valid() && owner_theme->has_theme_item(p_data_type, p_name, E)) {
-				return owner_theme->get_theme_item(p_data_type, p_name, E);
+				return _get_theme_item(owner_theme, p_data_type, p_name, E);
 			}
 		}
 
@@ -251,7 +253,7 @@ Variant ThemeOwner::get_theme_item_in_types(Theme::DataType p_data_type, const S
 		if (theme.is_valid()) {
 			for (const StringName &E : p_theme_types) {
 				if (theme->has_theme_item(p_data_type, p_name, E)) {
-					return theme->get_theme_item(p_data_type, p_name, E);
+					return _get_theme_item(theme, p_data_type, p_name, E);
 				}
 			}
 		}
@@ -297,6 +299,12 @@ bool ThemeOwner::has_theme_item_in_types(Theme::DataType p_data_type, const Stri
 	return false;
 }
 
+Ref<StyleBox> ThemeOwner::resolve_stylebox_override(const Ref<StyleBox> &p_style) {
+	ERR_FAIL_COND_V(p_style.is_null(), Ref<StyleBox>());
+	const ObjectID owner_id = owner_node ? owner_node->get_instance_id() : ObjectID();
+	return _get_active_owner_context()->resolve_stylebox(p_style, owner_id, _get_local_stylebox_themes());
+}
+
 float ThemeOwner::get_theme_default_base_scale() {
 	// First, look through each control or window node in the branch, until no valid parent can be found.
 	// Only nodes with a theme resource attached are considered.
@@ -336,8 +344,8 @@ Ref<Font> ThemeOwner::get_theme_default_font() {
 	while (current_owner) {
 		Ref<Theme> owner_theme = _get_owner_node_theme(current_owner);
 
-		if (owner_theme.is_valid() && owner_theme->has_default_font()) {
-			return owner_theme->get_default_font();
+		if (owner_theme.is_valid() && owner_theme->has_default_font_family()) {
+			return owner_theme->get_default_font_family();
 		}
 
 		current_owner = _get_next_owner_node(current_owner);
@@ -347,8 +355,8 @@ Ref<Font> ThemeOwner::get_theme_default_font() {
 	ThemeContext *global_context = _get_active_owner_context();
 	for (const Ref<Theme> &theme : global_context->get_themes()) {
 		if (theme.is_valid()) {
-			if (theme->has_default_font()) {
-				return theme->get_default_font();
+			if (theme->has_default_font_family()) {
+				return theme->get_default_font_family();
 			}
 		}
 	}
@@ -415,4 +423,35 @@ Node *ThemeOwner::_get_next_owner_node(Node *p_from_node) const {
 	}
 
 	return nullptr;
+}
+
+Vector<Ref<Theme>> ThemeOwner::_get_local_stylebox_themes() const {
+	Vector<Ref<Theme>> themes;
+	for (Node *current_owner = owner_node; current_owner; current_owner = _get_next_owner_node(current_owner)) {
+		const Ref<Theme> theme = _get_owner_node_theme(current_owner);
+		if (theme.is_valid() && !themes.has(theme)) {
+			themes.push_back(theme);
+		}
+	}
+
+	return themes;
+}
+
+Variant ThemeOwner::_get_theme_item(const Ref<Theme> &p_theme, Theme::DataType p_data_type, const StringName &p_name, const StringName &p_type) {
+	if (p_data_type != Theme::DATA_TYPE_STYLEBOX) {
+		return p_theme->get_theme_item(p_data_type, p_name, p_type);
+	}
+
+	Ref<StyleBox> resolved;
+	const Ref<StyleBox> definition = p_theme->get_stylebox_definition(p_name, p_type);
+	if (definition.is_valid()) {
+		resolved = resolve_stylebox_override(definition);
+	} else {
+		Vector<Ref<Theme>> themes = _get_local_stylebox_themes();
+		themes.append_array(_get_active_owner_context()->get_themes());
+		ThemeResolver resolver(themes);
+		resolved = resolver.resolve_stylebox_item(p_name, p_type);
+	}
+	ERR_FAIL_COND_V_MSG(resolved.is_null(), ThemeDB::get_singleton()->get_fallback_stylebox(), vformat("Could not resolve StyleBox '%s' for '%s'.", p_name, p_type));
+	return resolved;
 }

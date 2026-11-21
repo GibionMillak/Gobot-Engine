@@ -2606,7 +2606,7 @@ Variant Window::get_theme_item(Theme::DataType p_data_type, const StringName &p_
 
 #ifdef TOOLS_ENABLED
 Ref<Texture2D> Window::get_editor_theme_icon(const StringName &p_name) const {
-	return get_theme_icon(p_name, SNAME("EditorIcons"));
+	return get_theme_icon(p_name, SNAME("Editor"));
 }
 #endif
 

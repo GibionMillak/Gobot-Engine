@@ -70,27 +70,27 @@ void EditorLog::_error_handler(void *p_self, const char *p_func, const char *p_f
 }
 
 void EditorLog::_update_theme() {
-	const Ref<Font> normal_font = get_theme_font(SNAME("output_source"), EditorStringName(EditorFonts));
+	const Ref<Font> normal_font = get_theme_font(SNAME("output_source"), EditorStringName(Editor));
 	if (normal_font.is_valid()) {
 		log->add_theme_font_override("normal_font", normal_font);
 	}
 
-	const Ref<Font> bold_font = get_theme_font(SNAME("output_source_bold"), EditorStringName(EditorFonts));
+	const Ref<Font> bold_font = get_theme_font(SNAME("output_source_bold"), EditorStringName(Editor));
 	if (bold_font.is_valid()) {
 		log->add_theme_font_override("bold_font", bold_font);
 	}
 
-	const Ref<Font> italics_font = get_theme_font(SNAME("output_source_italic"), EditorStringName(EditorFonts));
+	const Ref<Font> italics_font = get_theme_font(SNAME("output_source_italic"), EditorStringName(Editor));
 	if (italics_font.is_valid()) {
 		log->add_theme_font_override("italics_font", italics_font);
 	}
 
-	const Ref<Font> bold_italics_font = get_theme_font(SNAME("output_source_bold_italic"), EditorStringName(EditorFonts));
+	const Ref<Font> bold_italics_font = get_theme_font(SNAME("output_source_bold_italic"), EditorStringName(Editor));
 	if (bold_italics_font.is_valid()) {
 		log->add_theme_font_override("bold_italics_font", bold_italics_font);
 	}
 
-	const Ref<Font> mono_font = get_theme_font(SNAME("output_source_mono"), EditorStringName(EditorFonts));
+	const Ref<Font> mono_font = get_theme_font(SNAME("output_source_mono"), EditorStringName(Editor));
 	if (mono_font.is_valid()) {
 		log->add_theme_font_override("mono_font", mono_font);
 	}
@@ -100,7 +100,7 @@ void EditorLog::_update_theme() {
 	log->add_theme_constant_override("text_highlight_h_padding", 0);
 	log->add_theme_constant_override("text_highlight_v_padding", 0);
 
-	const int font_size = get_theme_font_size(SNAME("output_source_size"), EditorStringName(EditorFonts));
+	const int font_size = get_theme_font_size(SNAME("output_source_size"), EditorStringName(Editor));
 	log->begin_bulk_theme_override();
 	log->add_theme_font_size_override("normal_font_size", font_size);
 	log->add_theme_font_size_override("bold_font_size", font_size);

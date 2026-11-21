@@ -1,4 +1,4 @@
-"""Discover and embed editor content using its original filenames and formats."""
+"""Discover and embed bundled content using its original filenames and formats."""
 
 import hashlib
 import json
@@ -54,6 +54,19 @@ def _uid_id(p_uid):
     if value > UID_MASK:
         raise ValueError(f"Editor content UID exceeds the supported range: {p_uid}")
     return value
+
+
+def _collect_dependencies(p_path, p_entries, p_resource_dependencies):
+    visited = set()
+    pending = [p_path]
+    while pending:
+        dependency = pending.pop()
+        if dependency in visited:
+            continue
+        visited.add(dependency)
+        pending.extend(p_entries[dependency][3])
+        pending.extend(p_resource_dependencies.get(dependency, []))
+    return visited
 
 
 def make_content_resources(target, source, env):
@@ -125,6 +138,15 @@ def make_content_resources(target, source, env):
                 if dependency not in entries:
                     raise ValueError(f"Unknown dependency '{dependency}' in '{public_path}'")
                 resource_dependencies.setdefault(public_path, []).append(dependency)
+
+    runtime_theme_entry = env.get("runtime_theme_entry")
+    if runtime_theme_entry:
+        if runtime_theme_entry not in entries:
+            raise ValueError(f"Missing bundled default theme: {runtime_theme_entry}")
+        required = _collect_dependencies(runtime_theme_entry, entries, resource_dependencies)
+        _write_runtime_theme_resources(target, {path: entries[path] for path in required})
+        return
+
     file_hashes = {
         path: hashlib.sha256(data if data is not None else Path(shared["path"]).read_bytes()).digest()
         for path, (_, data, shared, _) in entries.items()
@@ -133,15 +155,7 @@ def make_content_resources(target, source, env):
     for path, (uid, _, _, _) in entries.items():
         if uid < 0:
             continue
-        visited = set()
-        pending = [path]
-        while pending:
-            dependency = pending.pop()
-            if dependency in visited:
-                continue
-            visited.add(dependency)
-            pending.extend(entries[dependency][3])
-            pending.extend(resource_dependencies.get(dependency, []))
+        visited = _collect_dependencies(path, entries, resource_dependencies)
         digest = hashlib.sha256()
         for dependency in sorted(visited):
             digest.update(dependency.encode("utf-8") + b"\0" + file_hashes[dependency])
@@ -194,4 +208,35 @@ struct EditorContentResourceData {
             "EDITOR_CONTENT_RESOURCE_DATA",
             rows,
             '{ "", -1, "", nullptr, 0, nullptr, 0 }',
+        )
+
+
+def _write_runtime_theme_resources(p_target, p_entries):
+    with (
+        methods.generated_wrapper(str(p_target[0])) as header,
+        methods.generated_wrapper(str(p_target[1])) as output,
+    ):
+        header.write('#include "core/io/resource_uid.h"\n\n')
+        header.write("""\
+struct RuntimeThemeResourceData {
+\tconst char *path;
+\tResourceUID::ID uid;
+\tconst unsigned char *data;
+\tuint64_t size;
+};
+
+""")
+        output.write('#include "runtime_theme_resources.gen.h"\n\n')
+        rows = []
+        for index, (path, (uid, data, _, _)) in enumerate(sorted(p_entries.items())):
+            buffer_name = f"RUNTIME_THEME_BUFFER_{index}"
+            asset_builders.write_buffer(output, buffer_name, data)
+            rows.append(f"{{ {json.dumps(path)}, {uid}, {buffer_name}, {len(data)} }}")
+        asset_builders.write_table(
+            header,
+            output,
+            "RuntimeThemeResourceData",
+            "RUNTIME_THEME_RESOURCE_DATA",
+            rows,
+            '{ "", -1, nullptr, 0 }',
         )

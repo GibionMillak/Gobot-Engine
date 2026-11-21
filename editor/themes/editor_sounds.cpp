@@ -52,7 +52,7 @@ void EditorSounds::populate_theme(const Ref<EditorTheme> &p_theme) {
 		sound->set("loop", false, &valid);
 		ERR_CONTINUE_MSG(!valid, vformat("Bundled editor sound '%s' does not support disabling loops.", sound_data.name));
 		sound->set_name(sound_data.name);
-		p_theme->set_sound(sound_data.name, "EditorSounds", sound);
+		p_theme->set_sound(sound_data.name, "Editor", sound);
 	}
 #endif
 }

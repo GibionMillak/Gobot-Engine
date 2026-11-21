@@ -198,7 +198,7 @@
 		<method name="get_theme_default_font" qualifiers="const">
 			<return type="Font" />
 			<description>
-				Returns the default font from the first matching [Theme] in the tree if that [Theme] has a valid [member Theme.default_font] value.
+				Returns the default font from the first matching [Theme] in the tree if that [Theme] has a valid [member Theme.default_font_family] value.
 				See [method Control.get_theme_color] for details.
 			</description>
 		</method>

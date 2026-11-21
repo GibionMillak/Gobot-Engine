@@ -56,7 +56,7 @@ void EmbeddedProcessBase::_notification(int p_what) {
 		} break;
 		case NOTIFICATION_THEME_CHANGED: {
 			checkerboard = get_editor_theme_icon(SNAME("gui_checkerboard"));
-			focus_style_box = get_theme_stylebox(SNAME("FocusViewport"), EditorStringName(EditorStyles));
+			focus_style_box = get_theme_stylebox(SNAME("focus_viewport"), EditorStringName(Editor));
 			if (focus_style_box.is_valid()) {
 				margin_top_left = Point2i(focus_style_box->get_border_width(SIDE_LEFT), focus_style_box->get_border_width(SIDE_TOP));
 				margin_bottom_right = Point2i(focus_style_box->get_border_width(SIDE_RIGHT), focus_style_box->get_border_width(SIDE_BOTTOM));

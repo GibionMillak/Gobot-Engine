@@ -120,6 +120,7 @@ private:
 	bool _property_get_revert(const StringName &p_name, Variant &r_property) const;
 
 	void _set_initialized();
+	static Variant _make_theme_snapshot(const Variant &p_value, HashMap<Ref<Resource>, Ref<Resource>> &r_resources, Error &r_error, int p_depth = 0);
 	void _load_defaults(Ref<ConfigFile> p_extra_config = Ref<ConfigFile>());
 	void _load_default_visual_shader_editor_theme();
 	static String _guess_exec_args_for_extenal_editor(const String &p_value);

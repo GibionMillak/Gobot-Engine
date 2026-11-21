@@ -1,0 +1,25 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "HScrollBar scroll_focus"
+background_color = Color(0, 0, 0, 0)
+border_color = Color(0.8, 0.8, 0.8, 1)
+border_width_bottom = 0
+border_width_left = 0
+border_width_right = 0
+border_width_top = 0
+corner_detail = 8
+corner_radius_bottom_left = 0
+corner_radius_bottom_right = 0
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+padding_bottom = "pixels((6 * theme.default_base_scale))"
+padding_left = "pixels((6 * theme.default_base_scale))"
+padding_right = "pixels((6 * theme.default_base_scale))"
+padding_top = "pixels((6 * theme.default_base_scale))"
+shadow_color = Color(0, 0, 0, 0.6)
+texture = "theme.Editor.icons.gui_scroll_bg"
+texture_slice_bottom = "pixels((5 * theme.default_base_scale))"
+texture_slice_left = "pixels((5 * theme.default_base_scale))"
+texture_slice_right = "pixels((5 * theme.default_base_scale))"
+texture_slice_top = "pixels((5 * theme.default_base_scale))"

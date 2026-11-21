@@ -191,17 +191,17 @@ void EditorHelp::_update_theme_item_cache() {
 	theme_cache.primary_hr_color = get_theme_color(SNAME("primary_hr_color"), SNAME("EditorHelp"));
 	theme_cache.secondary_hr_color = get_theme_color(SNAME("secondary_hr_color"), SNAME("EditorHelp"));
 
-	theme_cache.doc_font = get_theme_font(SNAME("doc"), EditorStringName(EditorFonts));
-	theme_cache.doc_bold_font = get_theme_font(SNAME("doc_bold"), EditorStringName(EditorFonts));
-	theme_cache.doc_italic_font = get_theme_font(SNAME("doc_italic"), EditorStringName(EditorFonts));
-	theme_cache.doc_title_font = get_theme_font(SNAME("doc_title"), EditorStringName(EditorFonts));
-	theme_cache.doc_code_font = get_theme_font(SNAME("doc_source"), EditorStringName(EditorFonts));
-	theme_cache.doc_kbd_font = get_theme_font(SNAME("doc_keyboard"), EditorStringName(EditorFonts));
+	theme_cache.doc_font = get_theme_font(SNAME("doc"), EditorStringName(Editor));
+	theme_cache.doc_bold_font = get_theme_font(SNAME("doc_bold"), EditorStringName(Editor));
+	theme_cache.doc_italic_font = get_theme_font(SNAME("doc_italic"), EditorStringName(Editor));
+	theme_cache.doc_title_font = get_theme_font(SNAME("doc_title"), EditorStringName(Editor));
+	theme_cache.doc_code_font = get_theme_font(SNAME("doc_source"), EditorStringName(Editor));
+	theme_cache.doc_kbd_font = get_theme_font(SNAME("doc_keyboard"), EditorStringName(Editor));
 
-	theme_cache.doc_font_size = get_theme_font_size(SNAME("doc_size"), EditorStringName(EditorFonts));
-	theme_cache.doc_title_font_size = get_theme_font_size(SNAME("doc_title_size"), EditorStringName(EditorFonts));
-	theme_cache.doc_code_font_size = get_theme_font_size(SNAME("doc_source_size"), EditorStringName(EditorFonts));
-	theme_cache.doc_kbd_font_size = get_theme_font_size(SNAME("doc_keyboard_size"), EditorStringName(EditorFonts));
+	theme_cache.doc_font_size = get_theme_font_size(SNAME("doc_size"), EditorStringName(Editor));
+	theme_cache.doc_title_font_size = get_theme_font_size(SNAME("doc_title_size"), EditorStringName(Editor));
+	theme_cache.doc_code_font_size = get_theme_font_size(SNAME("doc_source_size"), EditorStringName(Editor));
+	theme_cache.doc_kbd_font_size = get_theme_font_size(SNAME("doc_keyboard_size"), EditorStringName(Editor));
 
 	theme_cache.background_style = get_theme_stylebox(SNAME("background"), SNAME("EditorHelp"));
 
@@ -2430,15 +2430,15 @@ static void _add_text_to_rt(const String &p_bbcode, RichTextLabel *p_rt, const C
 	const bool using_space_indent = int(EDITOR_GET("text_editor/behavior/indent/type")) == 1;
 	const int indent_size = MAX(1, int(EDITOR_GET("text_editor/behavior/indent/size")));
 
-	const Ref<Font> doc_font = p_owner_node->get_theme_font(SNAME("doc"), EditorStringName(EditorFonts));
-	const Ref<Font> doc_bold_font = p_owner_node->get_theme_font(SNAME("doc_bold"), EditorStringName(EditorFonts));
-	const Ref<Font> doc_italic_font = p_owner_node->get_theme_font(SNAME("doc_italic"), EditorStringName(EditorFonts));
-	const Ref<Font> doc_code_font = p_owner_node->get_theme_font(SNAME("doc_source"), EditorStringName(EditorFonts));
-	const Ref<Font> doc_kbd_font = p_owner_node->get_theme_font(SNAME("doc_keyboard"), EditorStringName(EditorFonts));
+	const Ref<Font> doc_font = p_owner_node->get_theme_font(SNAME("doc"), EditorStringName(Editor));
+	const Ref<Font> doc_bold_font = p_owner_node->get_theme_font(SNAME("doc_bold"), EditorStringName(Editor));
+	const Ref<Font> doc_italic_font = p_owner_node->get_theme_font(SNAME("doc_italic"), EditorStringName(Editor));
+	const Ref<Font> doc_code_font = p_owner_node->get_theme_font(SNAME("doc_source"), EditorStringName(Editor));
+	const Ref<Font> doc_kbd_font = p_owner_node->get_theme_font(SNAME("doc_keyboard"), EditorStringName(Editor));
 
-	const int doc_font_size = p_owner_node->get_theme_font_size(SNAME("doc_size"), EditorStringName(EditorFonts));
-	const int doc_code_font_size = p_owner_node->get_theme_font_size(SNAME("doc_source_size"), EditorStringName(EditorFonts));
-	const int doc_kbd_font_size = p_owner_node->get_theme_font_size(SNAME("doc_keyboard_size"), EditorStringName(EditorFonts));
+	const int doc_font_size = p_owner_node->get_theme_font_size(SNAME("doc_size"), EditorStringName(Editor));
+	const int doc_code_font_size = p_owner_node->get_theme_font_size(SNAME("doc_source_size"), EditorStringName(Editor));
+	const int doc_kbd_font_size = p_owner_node->get_theme_font_size(SNAME("doc_keyboard_size"), EditorStringName(Editor));
 
 	const Color type_color = p_owner_node->get_theme_color(SNAME("type_color"), SNAME("EditorHelp"));
 	const Color code_color = p_owner_node->get_theme_color(SNAME("code_color"), SNAME("EditorHelp"));
@@ -3847,7 +3847,7 @@ void EditorHelpBit::_add_type_to_title(const DocType &p_doc_type) {
 }
 
 void EditorHelpBit::_update_labels() {
-	const Ref<Font> doc_bold_font = get_theme_font(SNAME("doc_bold"), EditorStringName(EditorFonts));
+	const Ref<Font> doc_bold_font = get_theme_font(SNAME("doc_bold"), EditorStringName(Editor));
 
 	if (!symbol_type.is_empty() || !symbol_name.is_empty()) {
 		title->clear();
@@ -3883,8 +3883,8 @@ void EditorHelpBit::_update_labels() {
 		const Color symbol_color = get_theme_color(SNAME("symbol_color"), SNAME("EditorHelp"));
 		const Color value_color = get_theme_color(SNAME("value_color"), SNAME("EditorHelp"));
 		const Color qualifier_color = get_theme_color(SNAME("qualifier_color"), SNAME("EditorHelp"));
-		const Ref<Font> doc_source = get_theme_font(SNAME("doc_source"), EditorStringName(EditorFonts));
-		const int doc_source_size = get_theme_font_size(SNAME("doc_source_size"), EditorStringName(EditorFonts));
+		const Ref<Font> doc_source = get_theme_font(SNAME("doc_source"), EditorStringName(Editor));
+		const int doc_source_size = get_theme_font_size(SNAME("doc_source_size"), EditorStringName(Editor));
 
 		switch (symbol_hint) {
 			case SYMBOL_HINT_NONE: {

@@ -110,9 +110,9 @@ void ScriptEditorDebugger::debug_skip_breakpoints() {
 void ScriptEditorDebugger::debug_ignore_error_breaks() {
 	ignore_error_breaks_value = !ignore_error_breaks_value;
 	if (ignore_error_breaks_value) {
-		ignore_error_breaks->set_button_icon(get_theme_icon(SNAME("status_notification_disabled"), SNAME("EditorIcons")));
+		ignore_error_breaks->set_button_icon(get_theme_icon(SNAME("status_notification_disabled"), SNAME("Editor")));
 	} else {
-		ignore_error_breaks->set_button_icon(get_theme_icon(SNAME("status_notification"), SNAME("EditorIcons")));
+		ignore_error_breaks->set_button_icon(get_theme_icon(SNAME("status_notification"), SNAME("Editor")));
 	}
 
 	Array msg = { ignore_error_breaks_value };
@@ -178,7 +178,7 @@ void ScriptEditorDebugger::update_tabs() {
 }
 
 void ScriptEditorDebugger::add_style() {
-	tabs->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("DebuggerPanel"), EditorStringName(EditorStyles)));
+	tabs->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("debugger_panel"), EditorStringName(Editor)));
 }
 
 void ScriptEditorDebugger::clear_style() {
@@ -494,11 +494,11 @@ void ScriptEditorDebugger::_msg_servers_memory_usage(uint64_t p_thread_id, const
 		total += bytes;
 
 		// If it does not have a theme icon, just go up the inheritance tree until we find one.
-		if (!has_theme_icon(editor_get_type_icon_name(type), EditorStringName(EditorIcons))) {
+		if (!has_theme_icon(editor_get_type_icon_name(type), EditorStringName(Editor))) {
 			StringName base_type = type;
 			while (base_type != "Resource" && base_type != "") {
 				base_type = ClassDB::get_parent_class(base_type);
-				if (has_theme_icon(editor_get_type_icon_name(base_type), EditorStringName(EditorIcons))) {
+				if (has_theme_icon(editor_get_type_icon_name(base_type), EditorStringName(Editor))) {
 					type = base_type;
 					break;
 				}
@@ -1136,11 +1136,11 @@ void ScriptEditorDebugger::_notification(int p_what) {
 			reason->add_theme_color_override(SNAME("default_color"), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 			reason->add_theme_style_override(SNAME("normal"), get_theme_stylebox(SNAME("normal"), SNAME("Label"))); // Empty stylebox.
 
-			const Ref<Font> source_font = get_theme_font(SNAME("output_source"), EditorStringName(EditorFonts));
+			const Ref<Font> source_font = get_theme_font(SNAME("output_source"), EditorStringName(Editor));
 			if (source_font.is_valid()) {
 				error_tree->add_theme_font_override("font", source_font);
 			}
-			const int font_size = get_theme_font_size(SNAME("output_source_size"), EditorStringName(EditorFonts));
+			const int font_size = get_theme_font_size(SNAME("output_source_size"), EditorStringName(Editor));
 			error_tree->add_theme_font_size_override("font_size", font_size);
 
 			TreeItem *error_root = error_tree->get_root();

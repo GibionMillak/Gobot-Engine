@@ -1053,7 +1053,7 @@ Ref<Texture2D> CodeTextEditor::_get_completion_icon(const EditorLanguage::Comple
 	switch (p_option.kind) {
 		case EditorLanguage::CompletionKind::CLASS: {
 			const String formatted_class_name = p_option.display.unquote();
-			if (has_theme_icon(editor_get_type_icon_name(formatted_class_name), EditorStringName(EditorIcons))) {
+			if (has_theme_icon(editor_get_type_icon_name(formatted_class_name), EditorStringName(Editor))) {
 				tex = get_editor_theme_icon(editor_get_type_icon_name(formatted_class_name));
 			} else {
 				tex = EditorNode::get_singleton()->get_class_icon(formatted_class_name);
@@ -1642,8 +1642,8 @@ Point2i CodeTextEditor::get_pos_for_display(Point2i p_internal_position) const {
 void CodeTextEditor::_update_text_editor_theme() {
 	emit_signal(SNAME("load_theme_settings"));
 
-	const Ref<Font> status_bar_font = get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts));
-	const int status_bar_font_size = get_theme_font_size(SNAME("status_source_size"), EditorStringName(EditorFonts));
+	const Ref<Font> status_bar_font = get_theme_font(SNAME("status_source"), EditorStringName(Editor));
+	const int status_bar_font_size = get_theme_font_size(SNAME("status_source_size"), EditorStringName(Editor));
 	const Color &error_color = get_theme_color(SNAME("error_color"), EditorStringName(Editor));
 	const Color &warning_color = get_theme_color(SNAME("warning_color"), EditorStringName(Editor));
 	const Ref<StyleBox> label_stylebox = get_theme_stylebox(SNAME("normal"), SNAME("Label")); // Empty stylebox.

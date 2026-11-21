@@ -1,0 +1,13 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "Button Panel"
+padding_left = "theme.default_padding * 2"
+padding_top = "theme.default_padding * 2"
+padding_right = "theme.default_padding * 2"
+padding_bottom = "theme.default_padding * 2"
+background_color = Color(0, 0, 0, 0)
+border_width_left = 0
+border_width_top = 0
+border_width_right = 0
+border_width_bottom = 0

@@ -34,6 +34,7 @@
 #include "scene/gui/label.h"
 
 class Button;
+class EditorResourcePicker;
 class EditorSettingsDialog;
 class MarginContainer;
 class OptionButton;
@@ -43,7 +44,7 @@ class VBoxContainer;
 class SettingLabel : public Label {
 	GDCLASS(SettingLabel, Label);
 
-	String setting_name;
+	String _setting_name;
 
 public:
 	virtual Control *make_custom_tooltip(const String &p_text) const override;
@@ -55,32 +56,30 @@ class QuickSettingsDialog : public Dialog {
 	GDCLASS(QuickSettingsDialog, Dialog);
 
 	Vector<String> _editor_languages;
-	Vector<String> editor_themes;
-	Vector<String> editor_scales;
-	Vector<String> editor_network_modes;
-	Vector<String> editor_check_for_updates;
-	Vector<String> editor_directory_naming_conventions;
+	Vector<String> _editor_scales;
+	Vector<String> _editor_network_modes;
+	Vector<String> _editor_check_for_updates;
+	Vector<String> _editor_directory_naming_conventions;
 
 	void _fetch_setting_values();
 	void _update_current_values();
 
-	PanelContainer *settings_list_panel = nullptr;
-	VBoxContainer *settings_list = nullptr;
+	PanelContainer *_settings_list_panel = nullptr;
+	VBoxContainer *_settings_list = nullptr;
 
 	void _add_setting_control(const String &p_text, const String &p_setting, Control *p_control);
 
 	OptionButton *_language_option_btn = nullptr;
-	OptionButton *theme_option_button = nullptr;
-	OptionButton *scale_option_button = nullptr;
-	OptionButton *network_mode_option_button = nullptr;
-	OptionButton *check_for_update_button = nullptr;
-	OptionButton *directory_naming_convention_button = nullptr;
+	EditorResourcePicker *_theme_picker = nullptr;
+	OptionButton *_scale_option_button = nullptr;
+	OptionButton *_network_mode_option_button = nullptr;
+	OptionButton *_check_for_update_button = nullptr;
+	OptionButton *_directory_naming_convention_button = nullptr;
 
-	Label *custom_theme_label = nullptr;
-	EditorSettingsDialog *editor_settings_dialog = nullptr;
+	EditorSettingsDialog *_editor_settings_dialog = nullptr;
 
 	void _language_selected(int p_id);
-	void _theme_selected(int p_id);
+	void _theme_changed(const Ref<Resource> &p_resource);
 	void _scale_selected(int p_id);
 	void _network_mode_selected(int p_id);
 	void _check_for_update_selected(int p_id);
@@ -88,8 +87,8 @@ class QuickSettingsDialog : public Dialog {
 	void _set_setting_value(const String &p_setting, const Variant &p_value, bool p_restart_required = false);
 	void _show_full_settings();
 
-	Label *restart_required_label = nullptr;
-	Button *restart_required_button = nullptr;
+	Label *_restart_required_label = nullptr;
+	Button *_restart_required_button = nullptr;
 
 	void _request_restart();
 

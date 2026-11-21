@@ -196,7 +196,7 @@ struct GodotTestCaseListener : public doctest::IReporter {
 			// So we have to do this for each test case. Also make sure there is
 			// no residual theme from something else.
 			ThemeDB::get_singleton()->finalize_theme();
-			ThemeDB::get_singleton()->initialize_theme();
+			CRASH_COND_MSG(ThemeDB::get_singleton()->initialize_theme() != OK, "Could not initialize the default theme for the test scene tree.");
 
 #ifndef PHYSICS_3D_DISABLED
 			physics_server_3d = PhysicsServer3DManager::get_singleton()->new_default_server();

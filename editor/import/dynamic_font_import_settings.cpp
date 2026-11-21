@@ -821,7 +821,7 @@ void DynamicFontImportSettingsDialog::open_settings(const String &p_path) {
 	}
 	font_preview_label->set_text(sample);
 
-	Ref<Font> bold_font = get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
+	Ref<Font> bold_font = get_theme_font(SNAME("bold"), EditorStringName(Editor));
 	if (bold_font.is_valid()) {
 		font_name_label->add_theme_font_override("bold_font", bold_font);
 	}

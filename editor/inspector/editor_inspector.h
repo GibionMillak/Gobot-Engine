@@ -127,6 +127,7 @@ public:
 		MENU_DELETE,
 		MENU_REVERT_VALUE,
 		MENU_OPEN_DOCUMENTATION,
+		EDIT_THEME_EXPRESSION,
 	};
 
 	enum ColorationMode {
@@ -830,6 +831,7 @@ private:
 	HashMap<ObjectID, int> scroll_cache;
 
 	String property_prefix; // Used for sectioned inspector.
+	String _visible_property_group;
 	String object_class;
 	static inline PropertyClipboard property_clipboard;
 
@@ -956,6 +958,8 @@ public:
 	int get_scroll_offset() const;
 
 	void set_property_prefix(const String &p_prefix);
+	// Configure before assigning the inspected object.
+	void set_visible_property_group(const String &p_group);
 
 	void add_custom_property_description(const String &p_class, const String &p_property, const String &p_description);
 	String get_custom_property_description(const String &p_property) const;

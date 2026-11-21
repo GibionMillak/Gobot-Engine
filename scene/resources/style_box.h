@@ -36,11 +36,15 @@
 #include "core/math/rect2.h"
 #include "core/math/vector2.h"
 #include "core/object/gdvirtual.gen.h"
+#include "core/templates/hash_map.h"
 #include "core/templates/rid.h"
 #include "core/templates/vector.h"
 #include "scene/resources/texture.h"
 
 class CanvasItem;
+class Theme;
+class ThemeResolver;
+class ThemeContext;
 
 class StyleBox : public Resource {
 	GDCLASS(StyleBox, Resource);
@@ -136,9 +140,23 @@ public:
 	CanvasItem *get_current_item_drawn() const;
 	virtual bool test_mask(const Point2 &p_point, const Rect2 &p_rect) const;
 
+	// Expressions use theme parameters, named theme items, and the theme context.
+	// Numeric geometry uses the base scale unless wrapped in pixels(...).
+	[[nodiscard]] Error set_theme_expression(const StringName &p_property, const String &p_expression);
+	String get_theme_expression(const StringName &p_property) const;
+	static bool is_theme_expression_property(const StringName &p_property);
+	bool has_theme_override(const StringName &p_property) const;
+	void clear_theme_override(const StringName &p_property);
+	// Produces a snapshot for this theme; leaves the source unchanged. Returns null on invalid expressions.
+	[[nodiscard]] Ref<StyleBox> resolve_theme(const Theme &p_theme) const;
+	[[nodiscard]] Ref<StyleBox> resolve_theme_in_context(ThemeResolver &r_context) const;
+
 protected:
 	static void _bind_methods();
 	void _validate_property(PropertyInfo &r_property) const;
+	bool _property_can_revert(const StringName &p_property) const;
+	bool _property_get_revert(const StringName &p_property, Variant &r_value) const;
+	void reset_state() override;
 
 	GDVIRTUAL0RC(Size2, _get_minimum_size)
 	GDVIRTUAL2C(_draw, RID, Rect2)
@@ -146,6 +164,49 @@ protected:
 	GDVIRTUAL2RC(bool, _test_mask, Point2, Rect2)
 
 private:
+	friend class ThemeContext;
+
+	enum ThemeProperty {
+		PADDING_LEFT,
+		PADDING_TOP,
+		PADDING_RIGHT,
+		PADDING_BOTTOM,
+		BORDER_WIDTH_LEFT,
+		BORDER_WIDTH_TOP,
+		BORDER_WIDTH_RIGHT,
+		BORDER_WIDTH_BOTTOM,
+		CORNER_RADIUS_TOP_LEFT,
+		CORNER_RADIUS_TOP_RIGHT,
+		CORNER_RADIUS_BOTTOM_RIGHT,
+		CORNER_RADIUS_BOTTOM_LEFT,
+		CORNER_DETAIL,
+		BACKGROUND_COLOR,
+		BORDER_COLOR,
+		SHADOW_COLOR,
+		EXPAND_MARGIN_LEFT,
+		EXPAND_MARGIN_TOP,
+		EXPAND_MARGIN_RIGHT,
+		EXPAND_MARGIN_BOTTOM,
+		SHADOW_SIZE,
+		ANTI_ALIASING_SIZE,
+		TEXTURE_SLICE_LEFT,
+		TEXTURE_SLICE_TOP,
+		TEXTURE_SLICE_RIGHT,
+		TEXTURE_SLICE_BOTTOM,
+		MINIMUM_SIZE,
+		SHADOW_OFFSET,
+		TEXTURE,
+		TEXTURE_MODULATE,
+		SKEW,
+		ANTI_ALIASING,
+		BORDER_BLEND,
+		AXIS_STRETCH_HORIZONTAL,
+		AXIS_STRETCH_VERTICAL,
+		REGION_RECT,
+		MAX_THEME_PROPERTIES,
+	};
+
+
 	struct TextureAxisSegment {
 		real_t begin = 0;
 		real_t end = 0;
@@ -169,8 +230,20 @@ private:
 	static Vector<TextureVertex> _clip_texture_polygon(const Vector<TextureVertex> &p_polygon, int p_axis, real_t p_edge, bool p_keep_greater);
 	void _draw_texture(RID p_canvas_item, const Rect2 &p_rect, const real_t *p_corner_radius, real_t p_aa_size) const;
 	void _texture_changed();
+	Ref<StyleBox> _resolve_theme(const Theme &p_theme, ThemeResolver *r_context) const;
+	static StringName _get_theme_property_name(int p_property);
+	static Variant::Type _get_theme_property_type(int p_property);
+	static Variant _get_theme_native_default(int p_property);
+	static int _get_theme_property_index(const StringName &p_property);
+	static StringName _get_theme_default_name(int p_property);
+	bool _mark_theme_override(int p_property);
+	void _set_theme_value(int p_property, const Variant &p_value);
+	Variant _get_theme_value(int p_property) const;
 
 	Ref<Texture2D> _texture;
+	uint64_t _theme_overrides = 0;
+	uint64_t _theme_override_revision = 0;
+	HashMap<StringName, String> _theme_expressions;
 	Color _texture_modulate = Color(1, 1, 1, 1);
 	float _texture_slice[4] = {};
 	AxisStretchMode _axis_h = STRETCH;

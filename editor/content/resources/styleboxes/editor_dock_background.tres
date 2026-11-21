@@ -1,0 +1,20 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "Editor DockBackground"
+background_color = "Color((theme.Editor.colors.dark_color_3).r, (theme.Editor.colors.dark_color_3).g, (theme.Editor.colors.dark_color_3).b, 1.0)"
+border_color = Color(0.8, 0.8, 0.8, 1)
+border_width_bottom = 0
+border_width_left = 0
+border_width_right = 0
+border_width_top = 0
+corner_detail = 1
+corner_radius_bottom_left = 0
+corner_radius_bottom_right = 0
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+padding_bottom = "pixels(((int(round(theme.default_padding))) * theme.default_base_scale))"
+padding_left = "pixels(((int(round(theme.default_padding))) * theme.default_base_scale))"
+padding_right = "pixels(((int(round(theme.default_padding))) * theme.default_base_scale))"
+padding_top = "pixels(((int(round(theme.default_padding))) * theme.default_base_scale))"
+shadow_color = Color(0, 0, 0, 0.6)

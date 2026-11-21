@@ -650,6 +650,24 @@ if env["build_profile"] != "":
         print_error(f'Feature build profile not found at: "{env["build_profile"]}"')
         Exit(255)
 
+    # The bundled default theme is loaded even when the profile uses no GUI nodes.
+    required_theme_classes = {
+        "DPITexture",
+        "Font",
+        "FontFile",
+        "FontVariation",
+        "Gradient",
+        "GradientTexture2D",
+        "Image",
+        "ImageTexture",
+        "Resource",
+        "StyleBox",
+        "Texture",
+        "Texture2D",
+        "Theme",
+    }
+    env.disabled_classes = [name for name in env.disabled_classes if name not in required_theme_classes]
+
 # 'dev_mode' and 'production' are aliases to set default options if they haven't been
 # set manually by the user.
 if env["dev_mode"]:

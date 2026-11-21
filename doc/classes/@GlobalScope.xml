@@ -2830,7 +2830,7 @@
 			Hints that a string property is a password, and every character is replaced with the secret character.
 		</constant>
 		<constant name="PROPERTY_HINT_TOOL_BUTTON" value="39" enum="PropertyHint">
-			Hints that a [Callable] property should be displayed as a clickable button. When the button is pressed, the callable is called. The hint string specifies the button text and optionally an icon from the [code]"EditorIcons"[/code] theme type.
+			Hints that a [Callable] property should be displayed as a clickable button. When the button is pressed, the callable is called. The hint string specifies the button text and optionally an icon from the [code]"Editor"[/code] theme type.
 			[codeblock lang=text]
 			"Click me!" - A button with the text "Click me!" and the default "variant_callable" icon.
 			"Click me!,node_control_color_rect" - A button with the text "Click me!" and the "node_control_color_rect" icon.
@@ -2949,6 +2949,9 @@
 		</constant>
 		<constant name="PROPERTY_USAGE_SECRET" value="536870912" enum="PropertyUsageFlags" is_bitfield="true">
 			An export preset property with this flag contains confidential information and is stored separately from the rest of the export preset configuration.
+		</constant>
+		<constant name="PROPERTY_USAGE_STORE_IF_DEFAULT" value="1073741824" enum="PropertyUsageFlags" is_bitfield="true">
+			Stores the property even when its value equals the native default. Use this when an explicit default value has different semantics from an omitted property. This flag does not enable storage by itself; combine it with [constant PROPERTY_USAGE_STORAGE]. For null object values, also use [constant PROPERTY_USAGE_STORE_IF_NULL].
 		</constant>
 		<constant name="PROPERTY_USAGE_DEFAULT" value="6" enum="PropertyUsageFlags" is_bitfield="true">
 			Default usage (storage and editor).

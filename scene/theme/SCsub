@@ -2,22 +2,32 @@
 from misc.utility.scons_hints import *
 
 import sys
+from pathlib import Path
 
 Import("env")
 
-sys.path.insert(0, Dir("#editor/content/assets").abspath)
-
-import default_theme_builders
-
 env.add_source_files(env.scene_sources, "*.cpp")
 
-SConscript("icons/SCsub")
+if not env.editor_build:
+    content_root = Path(Dir("#editor/content").abspath)
+    sys.path[:0] = [str(content_root), str(content_root / "assets")]
+    import asset_builders
+    import content_builders
 
-font_data = env.CommandNoCache(
-    ["default_font.gen.h", "default_font.gen.cpp"],
-    "#editor/content/assets/fonts/open_sans/semi_bold.woff2",
-    env.Run(default_theme_builders.make_fonts),
-)
+    resources, support = content_builders.discover_content(asset_builders.discover_files(content_root), content_root)
+    format_header = File("#scene/resources/resource_format_text.h")
+    env_theme = env.Clone()
+    env_theme["editor_content_root"] = str(content_root)
+    env_theme["editor_content_resources"] = [str(path) for path in resources]
+    env_theme["editor_content_support"] = [str(path) for path in support]
+    env_theme["editor_content_shared_buffers"] = {}
+    env_theme["resource_text_format_header"] = format_header.abspath
+    env_theme["runtime_theme_entry"] = "res://.content/resources/themes/default.tres"
 
-env.Depends(font_data, [File("default_theme_builders.py"), File("#editor/content/assets/asset_builders.py")])
-env.add_source_files(env.scene_sources, [font_data[1]])
+    theme_data = env_theme.CommandNoCache(
+        ["runtime_theme_resources.gen.h", "runtime_theme_resources.gen.cpp"],
+        [File(str(path)) for path in resources + support] + [format_header, env_theme.Value(env_theme["runtime_theme_entry"])],
+        env_theme.Run(content_builders.make_content_resources),
+    )
+    env_theme.Depends(theme_data, [File("#editor/content/content_builders.py"), File("#editor/content/assets/asset_builders.py")])
+    env_theme.add_source_files(env.scene_sources, [theme_data[1]])

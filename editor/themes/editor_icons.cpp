@@ -83,12 +83,22 @@ struct IconRenderingOptions {
 
 static Ref<DPITexture> generate_editor_icon(int p_index, float p_scale, const IconRenderingOptions &p_options) {
 	const StringName name = EDITOR_ICONS_NAMES[p_index];
+	Ref<DPITexture> icon;
 	if (p_options.accent_color_icons.has(name)) {
-		return DPITexture::create_from_string(EDITOR_ICONS_SOURCES[p_index], p_scale, 1.0, p_options.accent_color_map);
+		icon = DPITexture::create_from_string(EDITOR_ICONS_SOURCES[p_index], p_scale, 1.0, p_options.accent_color_map);
+	} else {
+		const float saturation = p_options.saturation_exceptions.has(name) ? 1.0 : p_options.saturation;
+		const Dictionary colors = p_options.conversion_exceptions.has(name) ? Dictionary() : p_options.color_conversion_map;
+		icon = DPITexture::create_from_string(EDITOR_ICONS_SOURCES[p_index], p_scale, saturation, colors);
 	}
-	const float saturation = p_options.saturation_exceptions.has(name) ? 1.0 : p_options.saturation;
-	const Dictionary colors = p_options.conversion_exceptions.has(name) ? Dictionary() : p_options.color_conversion_map;
-	return DPITexture::create_from_string(EDITOR_ICONS_SOURCES[p_index], p_scale, saturation, colors);
+	for (int i = 0; i < EDITOR_ICON_SIZE_OVERRIDES_COUNT; i++) {
+		const EditorIconSizeOverride &entry = EDITOR_ICON_SIZE_OVERRIDES[i];
+		if (entry.index == p_index) {
+			icon->set_size_override(Size2i(entry.width, entry.height));
+			break;
+		}
+	}
+	return icon;
 }
 
 static float get_gizmo_handle_scale(const String &p_gizmo_handle_name, float p_gizmo_handle_scale) {
@@ -184,7 +194,7 @@ void editor_register_icons(const Ref<Theme> &p_theme, bool p_dark_theme, float p
 	for (int i = 0; i < EDITOR_ICONS_NAMES_COUNT; i++) {
 		const StringName name = EDITOR_ICONS_NAMES[i];
 		const float scale = get_gizmo_handle_scale(name, p_gizmo_handle_scale);
-		p_theme->set_icon(name, EditorStringName(EditorIcons), generate_editor_icon(i, scale, rendering_options));
+		p_theme->set_icon(name, EditorStringName(Editor), generate_editor_icon(i, scale, rendering_options));
 	}
 
 	const bool big_thumbnails = p_thumb_size >= 64;
@@ -193,13 +203,13 @@ void editor_register_icons(const Ref<Theme> &p_theme, bool p_dark_theme, float p
 	const float scale = float(p_thumb_size) / (big_thumbnails ? 64.0 : 32.0) * EDSCALE;
 	for (int i = 0; i < count; i++) {
 		const int index = indices[i];
-		p_theme->set_icon(EDITOR_ICONS_NAMES[index], EditorStringName(EditorIcons), generate_editor_icon(index, scale, rendering_options));
+		p_theme->set_icon(EDITOR_ICONS_NAMES[index], EditorStringName(Editor), generate_editor_icon(index, scale, rendering_options));
 	}
 }
 
 void editor_copy_icons(const Ref<Theme> &p_theme, const Ref<Theme> &p_old_theme) {
 	for (int i = 0; i < EDITOR_ICONS_NAMES_COUNT; i++) {
-		p_theme->set_icon(EDITOR_ICONS_NAMES[i], EditorStringName(EditorIcons), p_old_theme->get_icon(EDITOR_ICONS_NAMES[i], EditorStringName(EditorIcons)));
+		p_theme->set_icon(EDITOR_ICONS_NAMES[i], EditorStringName(Editor), p_old_theme->get_icon(EDITOR_ICONS_NAMES[i], EditorStringName(Editor)));
 	}
 }
 

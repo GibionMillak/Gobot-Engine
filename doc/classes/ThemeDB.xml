@@ -19,8 +19,7 @@
 		<method name="get_project_theme">
 			<return type="Theme" />
 			<description>
-				Returns a reference to the custom project [Theme]. This theme resources allows to override the default engine theme for every control node in the project.
-				To set the project theme, see [member ProjectSettings.gui/theme/custom].
+				Returns the project [Theme] selected in [member ProjectSettings.gui/theme/theme]. With the initial selection, this returns the same resource as [method get_default_theme]. The default engine theme supplies items missing from the selected theme.
 			</description>
 		</method>
 	</methods>
@@ -31,7 +30,7 @@
 		</member>
 		<member name="fallback_font" type="Font" setter="set_fallback_font" getter="get_fallback_font">
 			The fallback font of every [Control] node and [Theme] resource. Used when no other value is available to the control.
-			See also [member Theme.default_font].
+			See also [member Theme.default_font_family].
 		</member>
 		<member name="fallback_font_size" type="int" setter="set_fallback_font_size" getter="get_fallback_font_size" default="16">
 			The fallback font size of every [Control] node and [Theme] resource. Used when no other value is available to the control.

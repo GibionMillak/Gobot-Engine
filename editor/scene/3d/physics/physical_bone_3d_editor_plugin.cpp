@@ -58,7 +58,7 @@ PhysicalBone3DEditor::PhysicalBone3DEditor() {
 		_transform_joint_btn = memnew(Button);
 		_transform_joint_btn->connect(SceneStringName(toggled), callable_mp(this, &PhysicalBone3DEditor::_on_toggle_button_transform_joint));
 		// TODO: Rework this as a dedicated toolbar control so we can update its icon on theme changes.
-		_transform_joint_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("node_3d_physical_bone_3d"), EditorStringName(EditorIcons)));
+		_transform_joint_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("node_3d_physical_bone_3d"), EditorStringName(Editor)));
 		_transform_joint_btn->set_theme_type_variation(SceneStringName(FlatButton));
 		_transform_joint_btn->set_toggle_mode(true);
 		_transform_joint_btn->set_tooltip_text(TTR("Move Joint"));

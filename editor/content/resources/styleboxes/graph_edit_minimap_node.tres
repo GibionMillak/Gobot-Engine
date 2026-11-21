@@ -1,0 +1,21 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "GraphEditMinimap node"
+anti_aliasing = false
+background_color = "(((theme.default_base_color.get_luminance() < 0.5)) ? Color(1, 1, 1) : Color(0, 0, 0))"
+border_color = Color(0.8, 0.8, 0.8, 1)
+border_width_bottom = 0
+border_width_left = 0
+border_width_right = 0
+border_width_top = 0
+corner_detail = 1
+corner_radius_bottom_left = 0
+corner_radius_bottom_right = 0
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+padding_bottom = 0
+padding_left = 0
+padding_right = 0
+padding_top = 0
+shadow_color = Color(0, 0, 0, 0.6)

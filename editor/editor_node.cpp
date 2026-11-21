@@ -907,8 +907,8 @@ EditorNode::EditorNode() {
 	_update_main_menu_type();
 
 	project_title = memnew(Label);
-	project_title->add_theme_font_override(SceneStringName(font_family), theme->get_font(SNAME("bold"), EditorStringName(EditorFonts)));
-	project_title->add_theme_font_size_override(SceneStringName(font_size), theme->get_font_size(SNAME("bold_size"), EditorStringName(EditorFonts)));
+	project_title->add_theme_font_override(SceneStringName(font_family), theme->get_font(SNAME("bold"), EditorStringName(Editor)));
+	project_title->add_theme_font_size_override(SceneStringName(font_size), theme->get_font_size(SNAME("bold_size"), EditorStringName(Editor)));
 	project_title->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
 	title_bar->get_center_section()->add_child(project_title);
 
@@ -1566,7 +1566,7 @@ void EditorNode::disambiguate_filenames(const Vector<String> p_full_paths, Vecto
 
 void EditorNode::add_io_error(const String &p_error) {
 	DEV_ASSERT(Thread::get_caller_id() == Thread::get_main_id());
-	singleton->load_errors->add_image(singleton->theme->get_icon(SNAME("status_error"), EditorStringName(EditorIcons)));
+	singleton->load_errors->add_image(singleton->theme->get_icon(SNAME("status_error"), EditorStringName(Editor)));
 	singleton->load_errors->add_text(p_error + "\n");
 	// When a progress dialog is displayed, we will wait for it ot close before displaying
 	// the io errors to prevent the io popup to set it's parent to the progress dialog.
@@ -1579,7 +1579,7 @@ void EditorNode::add_io_error(const String &p_error) {
 
 void EditorNode::add_io_warning(const String &p_warning) {
 	DEV_ASSERT(Thread::get_caller_id() == Thread::get_main_id());
-	singleton->load_errors->add_image(singleton->theme->get_icon(SNAME("status_warning"), EditorStringName(EditorIcons)));
+	singleton->load_errors->add_image(singleton->theme->get_icon(SNAME("status_warning"), EditorStringName(Editor)));
 	singleton->load_errors->add_text(p_warning + "\n");
 	// When a progress dialog is displayed, we will wait for it ot close before displaying
 	// the io errors to prevent the io popup to set it's parent to the progress dialog.
@@ -3197,33 +3197,26 @@ void EditorNode::stop_child_process(ProcessID p_pid) {
 	project_run_bar->stop_child_process(p_pid);
 }
 
-void EditorNode::update_preview_themes(int p_mode) {
+void EditorNode::update_preview_themes() {
 	if (!scene_root->is_inside_tree()) {
 		return; // Too early.
 	}
 
+	const CanvasItemEditor::ThemePreviewMode mode = CanvasItemEditor::get_singleton()->get_theme_preview();
+	ThemeDB *theme_db = ThemeDB::get_singleton();
+	const Ref<Theme> default_theme = theme_db->get_default_theme();
+	const Ref<Theme> selected_theme = mode == CanvasItemEditor::ThemePreviewMode::EDITOR ? get_editor_theme() : theme_db->get_project_theme();
 	Vector<Ref<Theme>> preview_themes;
-
-	switch (p_mode) {
-		case CanvasItemEditor::THEME_PREVIEW_PROJECT:
-			preview_themes.push_back(ThemeDB::get_singleton()->get_project_theme());
-			break;
-
-		case CanvasItemEditor::THEME_PREVIEW_EDITOR:
-			preview_themes.push_back(get_editor_theme());
-			break;
-
-		default:
-			break;
+	if (selected_theme != default_theme) {
+		preview_themes.push_back(selected_theme);
 	}
+	preview_themes.push_back(default_theme);
 
-	preview_themes.push_back(ThemeDB::get_singleton()->get_default_theme());
-
-	ThemeContext *preview_context = ThemeDB::get_singleton()->get_theme_context(scene_root);
+	ThemeContext *preview_context = theme_db->get_theme_context(scene_root);
 	if (preview_context) {
 		preview_context->set_themes(preview_themes);
 	} else {
-		ThemeDB::get_singleton()->create_theme_context(scene_root, preview_themes);
+		theme_db->create_theme_context(scene_root, preview_themes);
 	}
 }
 
@@ -3958,7 +3951,7 @@ Dictionary EditorNode::drag_resource(const Ref<Resource> &p_res, Control *p_from
 
 	{
 		// TODO: make proper previews
-		Ref<Texture2D> texture = theme->get_icon(SNAME("file_big_thumb"), EditorStringName(EditorIcons));
+		Ref<Texture2D> texture = theme->get_icon(SNAME("file_big_thumb"), EditorStringName(Editor));
 		if (texture.is_valid()) {
 			Ref<Image> img = texture->get_image();
 			img = img->duplicate();
@@ -4011,10 +4004,10 @@ Dictionary EditorNode::drag_files_and_dirs(const Vector<String> &p_paths, Contro
 
 		if (p_paths[i].ends_with("/")) {
 			label->set_text(p_paths[i].substr(0, p_paths[i].length() - 1).get_file());
-			icon->set_texture(theme->get_icon(SNAME("folder_folder"), EditorStringName(EditorIcons)));
+			icon->set_texture(theme->get_icon(SNAME("folder_folder"), EditorStringName(Editor)));
 		} else {
 			label->set_text(p_paths[i].get_file());
-			icon->set_texture(theme->get_icon(SNAME("file_file"), EditorStringName(EditorIcons)));
+			icon->set_texture(theme->get_icon(SNAME("file_file"), EditorStringName(Editor)));
 		}
 		icon->set_stretch_mode(TextureRect::STRETCH_KEEP_CENTERED);
 		icon->set_size(Size2(16, 16));
@@ -4560,8 +4553,7 @@ void EditorNode::_notification(int p_what) {
 			_titlebar_resized();
 
 			// Set up a theme context for the 2D preview viewport using the stored preview theme.
-			CanvasItemEditor::ThemePreviewMode theme_preview_mode = (CanvasItemEditor::ThemePreviewMode)(int)EditorSettings::get_singleton()->get_project_metadata("2d_editor", "theme_preview", CanvasItemEditor::THEME_PREVIEW_PROJECT);
-			update_preview_themes(theme_preview_mode);
+			update_preview_themes();
 
 			// Remember the selected locale to preview node translations.
 			const String preview_locale = EditorSettings::get_singleton()->get_project_metadata("editor_metadata", "preview_locale", String());
@@ -4783,18 +4775,18 @@ void EditorNode::_resource_loaded(Ref<Resource> p_resource, const String &p_path
 }
 
 void EditorNode::_update_main_menu_icons() {
-	file_menu->set_item_icon(file_menu->get_item_index(SCENE_NEW_SCENE), theme->get_icon(SNAME("action_create_new_scene_from"), EditorStringName(EditorIcons)));
-	file_menu->set_item_icon(file_menu->get_item_index(SCENE_OPEN_SCENE), theme->get_icon(SNAME("resource_packed_scene"), EditorStringName(EditorIcons)));
-	file_menu->set_item_icon(file_menu->get_item_index(SCENE_SAVE_SCENE), theme->get_icon(SNAME("action_save"), EditorStringName(EditorIcons)));
-	file_menu->set_item_icon(file_menu->get_item_index(SCENE_QUICK_OPEN), theme->get_icon(SNAME("action_load"), EditorStringName(EditorIcons)));
-	file_menu->set_item_icon(file_menu->get_item_index(SCENE_UNDO), theme->get_icon(SNAME("action_rotate_left"), EditorStringName(EditorIcons)));
-	file_menu->set_item_icon(file_menu->get_item_index(SCENE_CLOSE), theme->get_icon(SNAME("action_close_scene"), EditorStringName(EditorIcons)));
-	file_menu->set_item_icon(file_menu->get_item_index(SCENE_QUIT), theme->get_icon(SNAME("action_close"), EditorStringName(EditorIcons)));
+	file_menu->set_item_icon(file_menu->get_item_index(SCENE_NEW_SCENE), theme->get_icon(SNAME("action_create_new_scene_from"), EditorStringName(Editor)));
+	file_menu->set_item_icon(file_menu->get_item_index(SCENE_OPEN_SCENE), theme->get_icon(SNAME("resource_packed_scene"), EditorStringName(Editor)));
+	file_menu->set_item_icon(file_menu->get_item_index(SCENE_SAVE_SCENE), theme->get_icon(SNAME("action_save"), EditorStringName(Editor)));
+	file_menu->set_item_icon(file_menu->get_item_index(SCENE_QUICK_OPEN), theme->get_icon(SNAME("action_load"), EditorStringName(Editor)));
+	file_menu->set_item_icon(file_menu->get_item_index(SCENE_UNDO), theme->get_icon(SNAME("action_rotate_left"), EditorStringName(Editor)));
+	file_menu->set_item_icon(file_menu->get_item_index(SCENE_CLOSE), theme->get_icon(SNAME("action_close_scene"), EditorStringName(Editor)));
+	file_menu->set_item_icon(file_menu->get_item_index(SCENE_QUIT), theme->get_icon(SNAME("action_close"), EditorStringName(Editor)));
 
-	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_PLUGINS), theme->get_icon(SNAME("action_plugin"), EditorStringName(EditorIcons)));
-	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_AUTOLOADS), theme->get_icon(SNAME("gui_autoload"), EditorStringName(EditorIcons)));
-	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_EXPORT), theme->get_icon(SNAME("node_resource_preloader"), EditorStringName(EditorIcons)));
-	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_QUIT_TO_HUB), theme->get_icon(SNAME("action_close"), EditorStringName(EditorIcons)));
+	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_PLUGINS), theme->get_icon(SNAME("action_plugin"), EditorStringName(Editor)));
+	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_OPEN_AUTOLOADS), theme->get_icon(SNAME("gui_autoload"), EditorStringName(Editor)));
+	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_EXPORT), theme->get_icon(SNAME("node_resource_preloader"), EditorStringName(Editor)));
+	project_menu->set_item_icon(project_menu->get_item_index(PROJECT_QUIT_TO_HUB), theme->get_icon(SNAME("action_close"), EditorStringName(Editor)));
 }
 
 void EditorNode::_update_theme(bool p_skip_creation) {
@@ -4831,18 +4823,18 @@ void EditorNode::_update_theme(bool p_skip_creation) {
 		}
 	}
 
-	if (CanvasItemEditor::get_singleton()->get_theme_preview() == CanvasItemEditor::THEME_PREVIEW_EDITOR) {
-		update_preview_themes(CanvasItemEditor::THEME_PREVIEW_EDITOR);
+	if (CanvasItemEditor::get_singleton()->get_theme_preview() == CanvasItemEditor::ThemePreviewMode::EDITOR) {
+		update_preview_themes();
 	}
 
 	// Update styles.
 	{
-		gui_base->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("Background"), EditorStringName(EditorStyles)));
-		_dock_panel_pc->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("DockBackground"), EditorStringName(EditorStyles)));
+		gui_base->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("background"), EditorStringName(Editor)));
+		_dock_panel_pc->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("dock_background"), EditorStringName(Editor)));
 		main_vbox->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT, Control::PRESET_MODE_MINSIZE, theme->get_constant(SNAME("window_border_margin"), EditorStringName(Editor)));
 
 		if (main_menu_button != nullptr) {
-			main_menu_button->set_button_icon(theme->get_icon(SNAME("gui_triple_bar"), EditorStringName(EditorIcons)));
+			main_menu_button->set_button_icon(theme->get_icon(SNAME("gui_triple_bar"), EditorStringName(Editor)));
 		}
 
 		_update_main_menu_icons();
@@ -4866,8 +4858,8 @@ void EditorNode::_build_icon_type_cache() {
 	ClassDB::get_class_list(classes);
 	for (const StringName &class_name : classes) {
 		const StringName icon_name = editor_get_type_icon_name(class_name);
-		if (!icon_name.is_empty() && theme->has_icon(icon_name, EditorStringName(EditorIcons))) {
-			icon_type_cache[class_name] = theme->get_icon(icon_name, EditorStringName(EditorIcons));
+		if (!icon_name.is_empty() && theme->has_icon(icon_name, EditorStringName(Editor))) {
+			icon_type_cache[class_name] = theme->get_icon(icon_name, EditorStringName(Editor));
 		}
 	}
 }
@@ -6393,7 +6385,7 @@ int EditorNode::_save_external_resources(bool p_also_save_external_data) {
 		}
 
 		String path = res->get_path();
-		if (path.begins_with("res://")) {
+		if (path.begins_with("res://") && !FileAccessContent::is_content_path(path)) {
 			int subres_pos = path.find("::");
 			if (subres_pos == -1) {
 				// Actual resource.
@@ -7309,6 +7301,11 @@ bool EditorNode::_find_and_save_resource(Ref<Resource> p_res, HashMap<Ref<Resour
 	if (r_processed.has(p_res)) {
 		return r_processed[p_res];
 	}
+	if (FileAccessContent::is_content_path(p_res->get_path())) {
+		p_res->set_edited(false);
+		r_processed[p_res] = false;
+		return false;
+	}
 
 	bool changed = p_res->is_edited();
 	p_res->set_edited(false);
@@ -8123,12 +8120,12 @@ Ref<Texture2D> EditorNode::_get_class_or_script_icon(const String &p_class, cons
 	// Look up the class name or the fallback name in the editor theme.
 	// This is only relevant for built-in classes.
 	if (theme.is_valid()) {
-		if (theme->has_icon(editor_get_type_icon_name(p_class), EditorStringName(EditorIcons))) {
-			return theme->get_icon(editor_get_type_icon_name(p_class), EditorStringName(EditorIcons));
+		if (theme->has_icon(editor_get_type_icon_name(p_class), EditorStringName(Editor))) {
+			return theme->get_icon(editor_get_type_icon_name(p_class), EditorStringName(Editor));
 		}
 
-		if (!p_fallback.is_empty() && theme->has_icon(p_fallback, EditorStringName(EditorIcons))) {
-			return theme->get_icon(p_fallback, EditorStringName(EditorIcons));
+		if (!p_fallback.is_empty() && theme->has_icon(p_fallback, EditorStringName(Editor))) {
+			return theme->get_icon(p_fallback, EditorStringName(Editor));
 		}
 
 		// If the fallback is empty or wasn't found, use the default fallback.
@@ -8137,9 +8134,9 @@ Ref<Texture2D> EditorNode::_get_class_or_script_icon(const String &p_class, cons
 				bool instantiable = !ClassDB::is_virtual(p_class) && ClassDB::can_instantiate(p_class);
 				if (!instantiable) {
 					if (ClassDB::is_parent_class(p_class, SNAME("Node"))) {
-						return theme->get_icon("status_node_disabled", EditorStringName(EditorIcons));
+						return theme->get_icon("status_node_disabled", EditorStringName(Editor));
 					} else {
-						return theme->get_icon("status_object_disabled", EditorStringName(EditorIcons));
+						return theme->get_icon("status_object_disabled", EditorStringName(Editor));
 					}
 				}
 			}
@@ -8282,9 +8279,9 @@ void EditorNode::_build_file_menu() {
 	}
 	file_menu->clear(false);
 
-	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_create_new_scene_from"), EditorStringName(EditorIcons)), ED_GET_SHORTCUT("editor/new_scene"), SCENE_NEW_SCENE);
+	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_create_new_scene_from"), EditorStringName(Editor)), ED_GET_SHORTCUT("editor/new_scene"), SCENE_NEW_SCENE);
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/new_inherited_scene"), SCENE_NEW_INHERITED_SCENE);
-	file_menu->add_icon_shortcut(theme->get_icon(SNAME("resource_packed_scene"), EditorStringName(EditorIcons)), ED_GET_SHORTCUT("editor/open_scene"), SCENE_OPEN_SCENE);
+	file_menu->add_icon_shortcut(theme->get_icon(SNAME("resource_packed_scene"), EditorStringName(Editor)), ED_GET_SHORTCUT("editor/open_scene"), SCENE_OPEN_SCENE);
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/reopen_closed_scene"), SCENE_OPEN_PREV);
 	if (!recent_scenes) {
 		recent_scenes = memnew(PopupMenu);
@@ -8295,12 +8292,12 @@ void EditorNode::_build_file_menu() {
 	file_menu->add_submenu_node_item(TTRC("Open Recent"), recent_scenes, SCENE_OPEN_RECENT);
 	file_menu->add_separator();
 
-	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_save"), EditorStringName(EditorIcons)), ED_GET_SHORTCUT("editor/save_scene"), SCENE_SAVE_SCENE);
+	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_save"), EditorStringName(Editor)), ED_GET_SHORTCUT("editor/save_scene"), SCENE_SAVE_SCENE);
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/save_scene_as"), SCENE_SAVE_AS_SCENE);
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/save_all_scenes"), SCENE_SAVE_ALL_SCENES);
 	file_menu->add_separator();
 
-	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_load"), EditorStringName(EditorIcons)), ED_GET_SHORTCUT("editor/quick_open"), SCENE_QUICK_OPEN);
+	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_load"), EditorStringName(Editor)), ED_GET_SHORTCUT("editor/quick_open"), SCENE_QUICK_OPEN);
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/quick_open_scene"), SCENE_QUICK_OPEN_SCENE);
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/quick_open_script"), SCENE_QUICK_OPEN_SCRIPT);
 	file_menu->add_separator();
@@ -8313,15 +8310,15 @@ void EditorNode::_build_file_menu() {
 	file_menu->add_submenu_node_item(TTRC("Export As..."), export_as_menu, SCENE_EXPORT_AS);
 	file_menu->add_separator();
 
-	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_rotate_left"), EditorStringName(EditorIcons)), ED_GET_SHORTCUT("ui_undo"), SCENE_UNDO, false, true);
+	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_rotate_left"), EditorStringName(Editor)), ED_GET_SHORTCUT("ui_undo"), SCENE_UNDO, false, true);
 	file_menu->add_shortcut(ED_GET_SHORTCUT("ui_redo"), SCENE_REDO, false, true);
 	file_menu->add_separator();
 
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/reload_saved_scene"), SCENE_RELOAD_SAVED_SCENE);
-	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_close_scene"), EditorStringName(EditorIcons)), ED_GET_SHORTCUT("editor/close_scene"), SCENE_CLOSE);
+	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_close_scene"), EditorStringName(Editor)), ED_GET_SHORTCUT("editor/close_scene"), SCENE_CLOSE);
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/close_all_scenes"), SCENE_CLOSE_ALL);
 	file_menu->add_separator();
-	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_close"), EditorStringName(EditorIcons)), ED_GET_SHORTCUT("editor/file_quit"), SCENE_QUIT, true);
+	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_close"), EditorStringName(Editor)), ED_GET_SHORTCUT("editor/file_quit"), SCENE_QUIT, true);
 }
 
 void EditorNode::_build_project_menu() {
@@ -8330,7 +8327,7 @@ void EditorNode::_build_project_menu() {
 	}
 	project_menu->clear(false);
 
-	project_menu->add_icon_item(theme->get_icon(SNAME("gui_autoload"), EditorStringName(EditorIcons)), TTRC("Autoloads"), PROJECT_OPEN_AUTOLOADS);
+	project_menu->add_icon_item(theme->get_icon(SNAME("gui_autoload"), EditorStringName(Editor)), TTRC("Autoloads"), PROJECT_OPEN_AUTOLOADS);
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/find_in_files"), PROJECT_FIND_IN_FILES);
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/replace_in_files"), PROJECT_REPLACE_IN_FILES);
 	project_menu->add_separator();
@@ -8345,7 +8342,7 @@ void EditorNode::_build_project_menu() {
 	project_menu->set_item_submenu_node(project_menu->get_item_index(PROJECT_VERSION_CONTROL), vcs_actions_menu);
 
 	project_menu->add_separator();
-	project_menu->add_icon_shortcut(theme->get_icon(SNAME("node_resource_preloader"), EditorStringName(EditorIcons)), ED_GET_SHORTCUT("editor/export"), PROJECT_EXPORT);
+	project_menu->add_icon_shortcut(theme->get_icon(SNAME("node_resource_preloader"), EditorStringName(Editor)), ED_GET_SHORTCUT("editor/export"), PROJECT_EXPORT);
 	project_menu->add_item(TTRC("Pack Project as ZIP..."), PROJECT_PACK_AS_ZIP);
 	project_menu->add_item(TTRC("Setup Android Build..."), PROJECT_SETUP_ANDROID_BUILD);
 #ifndef ANDROID_ENABLED
@@ -8361,11 +8358,11 @@ void EditorNode::_build_project_menu() {
 		tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/clear_project_cache"), TOOLS_CLEAR_PROJECT_CACHE);
 	}
 	project_menu->add_submenu_node_item(TTRC("Tools"), tool_menu);
-	project_menu->add_icon_item(theme->get_icon(SNAME("action_plugin"), EditorStringName(EditorIcons)), TTRC("Plugins"), PROJECT_OPEN_PLUGINS);
+	project_menu->add_icon_item(theme->get_icon(SNAME("action_plugin"), EditorStringName(Editor)), TTRC("Plugins"), PROJECT_OPEN_PLUGINS);
 
 	project_menu->add_separator();
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/reload_current_project"), PROJECT_RELOAD_CURRENT_PROJECT);
-	project_menu->add_icon_shortcut(theme->get_icon(SNAME("action_close"), EditorStringName(EditorIcons)), ED_GET_SHORTCUT("editor/quit_to_project_list"), PROJECT_QUIT_TO_HUB, true);
+	project_menu->add_icon_shortcut(theme->get_icon(SNAME("action_close"), EditorStringName(Editor)), ED_GET_SHORTCUT("editor/quit_to_project_list"), PROJECT_QUIT_TO_HUB, true);
 }
 
 void EditorNode::_build_settings_menu() {
@@ -8449,7 +8446,7 @@ void EditorNode::_update_main_menu_type() {
 		main_menu_button->set_theme_type_variation("MainMenuButton");
 		main_menu_button->set_focus_mode(Control::FOCUS_NONE);
 		if (is_inside_tree()) {
-			main_menu_button->set_button_icon(theme->get_icon(SNAME("gui_triple_bar"), EditorStringName(EditorIcons)));
+			main_menu_button->set_button_icon(theme->get_icon(SNAME("gui_triple_bar"), EditorStringName(Editor)));
 		}
 		main_menu_button->set_switch_on_hover(true);
 

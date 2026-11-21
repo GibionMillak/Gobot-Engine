@@ -44,12 +44,12 @@
 #include "scene/gui/texture_progress_bar.h"
 #include "scene/gui/tree.h"
 
+class ColorRect;
 class EditorAudioBuses;
 class EditorFileDialog;
 class Gradient;
 class GradientTexture2D;
 class HBoxContainer;
-class StyleBox;
 class Timer;
 
 class EditorAudioBus : public PanelContainer {
@@ -71,8 +71,8 @@ class EditorAudioBus : public PanelContainer {
 		TextureProgressBar *vu_l = nullptr;
 		TextureProgressBar *vu_r = nullptr;
 
-		Panel *peak_indicator_l = nullptr;
-		Panel *peak_indicator_r = nullptr;
+		ColorRect *peak_indicator_l = nullptr;
+		ColorRect *peak_indicator_r = nullptr;
 		Timer *peak_timer_l = nullptr;
 		Timer *peak_timer_r = nullptr;
 
@@ -91,9 +91,6 @@ class EditorAudioBus : public PanelContainer {
 	Ref<Gradient> active_gradient;
 	Ref<GradientTexture2D> inactive_bus_texture;
 	Ref<Gradient> inactive_gradient;
-
-	Ref<StyleBox> peak_indicator_stylebox_l;
-	Ref<StyleBox> peak_indicator_stylebox_r;
 
 	const float vu_width = 16;
 	const float vu_height = 128;

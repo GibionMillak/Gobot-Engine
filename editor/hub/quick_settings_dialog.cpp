@@ -35,8 +35,10 @@
 #include "editor/editor_string_names.h"
 #include "editor/gui/dialogs/editor_settings_dialog.h"
 #include "editor/inspector/editor_properties.h"
+#include "editor/inspector/editor_resource_picker.h"
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_scale.h"
+#include "editor/themes/editor_theme_manager.h"
 #include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
 #include "scene/gui/label.h"
@@ -46,11 +48,10 @@
 
 void QuickSettingsDialog::_fetch_setting_values() {
 	_editor_languages.clear();
-	editor_themes.clear();
-	editor_scales.clear();
-	editor_network_modes.clear();
-	editor_check_for_updates.clear();
-	editor_directory_naming_conventions.clear();
+	_editor_scales.clear();
+	_editor_network_modes.clear();
+	_editor_check_for_updates.clear();
+	_editor_directory_naming_conventions.clear();
 
 	{
 		List<PropertyInfo> editor_settings_properties;
@@ -59,16 +60,14 @@ void QuickSettingsDialog::_fetch_setting_values() {
 		for (const PropertyInfo &pi : editor_settings_properties) {
 			if (pi.name == "interface/editor/localization/editor_language") {
 				_editor_languages = pi.hint_string.split(";", false);
-			} else if (pi.name == "interface/theme/color_preset") {
-				editor_themes = pi.hint_string.split(",");
 			} else if (pi.name == "interface/editor/appearance/display_scale") {
-				editor_scales = pi.hint_string.split(",");
+				_editor_scales = pi.hint_string.split(",");
 			} else if (pi.name == "network/connection/network_mode") {
-				editor_network_modes = pi.hint_string.split(",");
+				_editor_network_modes = pi.hint_string.split(",");
 			} else if (pi.name == "network/connection/check_for_updates") {
-				editor_check_for_updates = pi.hint_string.split(",");
+				_editor_check_for_updates = pi.hint_string.split(",");
 			} else if (pi.name == "hub/directory_naming_convention") {
-				editor_directory_naming_conventions = pi.hint_string.split(",");
+				_editor_directory_naming_conventions = pi.hint_string.split(",");
 			}
 		}
 	}
@@ -91,29 +90,18 @@ void QuickSettingsDialog::_update_current_values() {
 
 	// Theme options.
 	{
-		const String current_theme = EDITOR_GET("interface/theme/color_preset");
-
-		for (int i = 0; i < editor_themes.size(); i++) {
-			const String &theme_value = editor_themes[i];
-			if (current_theme == theme_value) {
-				theme_option_button->set_text(current_theme);
-				theme_option_button->select(i);
-				theme_option_button->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-
-				custom_theme_label->set_visible(current_theme == "Custom");
-			}
-		}
+		_theme_picker->set_edited_resource(EDITOR_GET("interface/theme/theme"));
 	}
 
 	// Scale options.
 	{
 		const int current_scale = EDITOR_GET("interface/editor/appearance/display_scale");
 
-		for (int i = 0; i < editor_scales.size(); i++) {
-			const String &scale_value = editor_scales[i];
+		for (int i = 0; i < _editor_scales.size(); i++) {
+			const String &scale_value = _editor_scales[i];
 			if (current_scale == i) {
-				scale_option_button->set_text(scale_value);
-				scale_option_button->select(i);
+				_scale_option_button->set_text(scale_value);
+				_scale_option_button->select(i);
 			}
 		}
 	}
@@ -122,11 +110,11 @@ void QuickSettingsDialog::_update_current_values() {
 	{
 		const int current_network_mode = EDITOR_GET("network/connection/network_mode");
 
-		for (int i = 0; i < editor_network_modes.size(); i++) {
-			const String &network_mode_value = editor_network_modes[i];
+		for (int i = 0; i < _editor_network_modes.size(); i++) {
+			const String &network_mode_value = _editor_network_modes[i];
 			if (current_network_mode == i) {
-				network_mode_option_button->set_text(network_mode_value);
-				network_mode_option_button->select(i);
+				_network_mode_option_button->set_text(network_mode_value);
+				_network_mode_option_button->select(i);
 			}
 		}
 	}
@@ -135,14 +123,14 @@ void QuickSettingsDialog::_update_current_values() {
 	{
 		const int current_update_mode = EDITOR_GET("network/connection/check_for_updates");
 
-		for (int i = 0; i < editor_check_for_updates.size(); i++) {
-			const String &check_for_update_value = editor_check_for_updates[i];
+		for (int i = 0; i < _editor_check_for_updates.size(); i++) {
+			const String &check_for_update_value = _editor_check_for_updates[i];
 			if (current_update_mode == i) {
-				check_for_update_button->set_text(check_for_update_value);
-				check_for_update_button->select(i);
+				_check_for_update_button->set_text(check_for_update_value);
+				_check_for_update_button->select(i);
 
 				// Disables Check for Updates selection if Network mode is set to Offline.
-				check_for_update_button->set_disabled(!EDITOR_GET("network/connection/network_mode"));
+				_check_for_update_button->set_disabled(!EDITOR_GET("network/connection/network_mode"));
 			}
 		}
 	}
@@ -151,11 +139,11 @@ void QuickSettingsDialog::_update_current_values() {
 	{
 		const int current_directory_naming = EDITOR_GET("hub/directory_naming_convention");
 
-		for (int i = 0; i < editor_directory_naming_conventions.size(); i++) {
-			const String &directory_naming_value = editor_directory_naming_conventions[i];
+		for (int i = 0; i < _editor_directory_naming_conventions.size(); i++) {
+			const String &directory_naming_value = _editor_directory_naming_conventions[i];
 			if (current_directory_naming == i) {
-				directory_naming_convention_button->set_text(directory_naming_value);
-				directory_naming_convention_button->select(i);
+				_directory_naming_convention_button->set_text(directory_naming_value);
+				_directory_naming_convention_button->select(i);
 			}
 		}
 	}
@@ -163,7 +151,7 @@ void QuickSettingsDialog::_update_current_values() {
 
 void QuickSettingsDialog::_add_setting_control(const String &p_text, const String &p_setting, Control *p_control) {
 	HBoxContainer *container = memnew(HBoxContainer);
-	settings_list->add_child(container);
+	_settings_list->add_child(container);
 
 	Label *label = memnew(SettingLabel(p_text, p_setting));
 	label->set_text(p_text);
@@ -180,11 +168,9 @@ void QuickSettingsDialog::_language_selected(int p_id) {
 	_set_setting_value("interface/editor/localization/editor_language", selected_language);
 }
 
-void QuickSettingsDialog::_theme_selected(int p_id) {
-	const String selected_theme = theme_option_button->get_item_text(p_id);
-	_set_setting_value("interface/theme/color_preset", selected_theme);
-
-	custom_theme_label->set_visible(selected_theme == "Custom");
+void QuickSettingsDialog::_theme_changed(const Ref<Resource> &p_resource) {
+	EditorSettings::get_singleton()->set_manually("interface/theme/follow_system_theme", false);
+	_set_setting_value("interface/theme/theme", p_resource);
 }
 
 void QuickSettingsDialog::_scale_selected(int p_id) {
@@ -195,7 +181,7 @@ void QuickSettingsDialog::_network_mode_selected(int p_id) {
 	_set_setting_value("network/connection/network_mode", p_id);
 
 	// Disables Check for Updates selection if Network mode is set to Offline.
-	check_for_update_button->set_disabled(!p_id);
+	_check_for_update_button->set_disabled(!p_id);
 }
 
 void QuickSettingsDialog::_check_for_update_selected(int p_id) {
@@ -212,27 +198,27 @@ void QuickSettingsDialog::_set_setting_value(const String &p_setting, const Vari
 	EditorSettings::get_singleton()->save();
 
 	if (p_restart_required) {
-		restart_required_label->show();
+		_restart_required_label->show();
 
-		if (!restart_required_button) {
-			restart_required_button = add_button(TTRC("Restart Now"), true);
-			restart_required_button->connect(SceneStringName(pressed), callable_mp(this, &QuickSettingsDialog::_request_restart));
+		if (!_restart_required_button) {
+			_restart_required_button = add_button(TTRC("Restart Now"), true);
+			_restart_required_button->connect(SceneStringName(pressed), callable_mp(this, &QuickSettingsDialog::_request_restart));
 		}
 	}
 }
 
 void QuickSettingsDialog::_show_full_settings() {
-	if (!editor_settings_dialog) {
+	if (!_editor_settings_dialog) {
 		Ref<EditorInspectorDefaultPlugin> eidp;
 		eidp.instantiate();
 		EditorInspector::add_inspector_plugin(eidp);
 
-		editor_settings_dialog = memnew(EditorSettingsDialog);
-		get_parent()->add_child(editor_settings_dialog);
-		editor_settings_dialog->connect("restart_requested", callable_mp(this, &QuickSettingsDialog::_request_restart));
+		_editor_settings_dialog = memnew(EditorSettingsDialog);
+		get_parent()->add_child(_editor_settings_dialog);
+		_editor_settings_dialog->connect("restart_requested", callable_mp(this, &QuickSettingsDialog::_request_restart));
 	}
 	hide();
-	editor_settings_dialog->popup_edit_settings();
+	_editor_settings_dialog->popup_edit_settings();
 }
 
 void QuickSettingsDialog::_request_restart() {
@@ -246,10 +232,9 @@ void QuickSettingsDialog::update_size_limits(const Size2 &p_max_popup_size) {
 void QuickSettingsDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			settings_list_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("quick_settings_panel"), SNAME("Hub")));
+			_settings_list_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("quick_settings_panel"), SNAME("Hub")));
 
-			restart_required_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
-			custom_theme_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("font_placeholder_color"), EditorStringName(Editor)));
+			_restart_required_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {
@@ -276,11 +261,11 @@ QuickSettingsDialog::QuickSettingsDialog() {
 	{
 		_fetch_setting_values();
 
-		settings_list_panel = memnew(PanelContainer);
-		main_vbox->add_child(settings_list_panel);
+		_settings_list_panel = memnew(PanelContainer);
+		main_vbox->add_child(_settings_list_panel);
 
-		settings_list = memnew(VBoxContainer);
-		settings_list_panel->add_child(settings_list);
+		_settings_list = memnew(VBoxContainer);
+		_settings_list_panel->add_child(_settings_list);
 
 		// Language options.
 		{
@@ -303,81 +288,70 @@ QuickSettingsDialog::QuickSettingsDialog() {
 
 		// Theme options.
 		{
-			theme_option_button = memnew(OptionButton);
-			theme_option_button->set_fit_to_longest_item(false);
-			theme_option_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_theme_selected));
-
-			for (int i = 0; i < editor_themes.size(); i++) {
-				const String &theme_value = editor_themes[i];
-				theme_option_button->add_item(theme_value, i);
-			}
-
-			_add_setting_control(TTRC("Color Preset"), "interface/theme/color_preset", theme_option_button);
-
-			custom_theme_label = memnew(Label(TTRC("Custom preset can be further configured in the full settings.")));
-			custom_theme_label->set_text_horizontal_alignment(HORIZONTAL_ALIGNMENT_RIGHT);
-			custom_theme_label->set_custom_minimum_size(Size2(220, 0) * EDSCALE);
-			custom_theme_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
-			custom_theme_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-			custom_theme_label->set_stretch_ratio(2.0);
-			custom_theme_label->hide();
-			settings_list->add_child(custom_theme_label);
+			_theme_picker = memnew(EditorResourcePicker);
+			_theme_picker->connect("resource_changed", callable_mp(this, &QuickSettingsDialog::_theme_changed));
+			_theme_picker->set_base_type("Theme");
+			_theme_picker->set_builtin_resources(EditorThemeManager::get_builtin_themes());
+			_theme_picker->set_property_path("interface/theme/theme");
+			_theme_picker->set_resource_inspection_enabled(false);
+			_theme_picker->set_resource_owner(EditorSettings::get_singleton());
+			_add_setting_control(TTRC("Theme"), "interface/theme/theme", _theme_picker);
 		}
 
 		// Scale options.
 		{
-			scale_option_button = memnew(OptionButton);
-			scale_option_button->set_fit_to_longest_item(false);
-			scale_option_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_scale_selected));
+			_scale_option_button = memnew(OptionButton);
+			_scale_option_button->set_fit_to_longest_item(false);
+			_scale_option_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_scale_selected));
 
-			for (int i = 0; i < editor_scales.size(); i++) {
-				const String &scale_value = editor_scales[i];
-				scale_option_button->add_item(scale_value, i);
+			for (int i = 0; i < _editor_scales.size(); i++) {
+				const String &scale_value = _editor_scales[i];
+				_scale_option_button->add_item(scale_value, i);
 			}
 
-			_add_setting_control(TTRC("Display Scale"), "interface/editor/appearance/display_scale", scale_option_button);
+			_add_setting_control(TTRC("Display Scale"), "interface/editor/appearance/display_scale", _scale_option_button);
 		}
 
 		// Network mode options.
 		{
-			network_mode_option_button = memnew(OptionButton);
-			network_mode_option_button->set_fit_to_longest_item(false);
-			network_mode_option_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_network_mode_selected));
+			_network_mode_option_button = memnew(OptionButton);
+			_network_mode_option_button->set_fit_to_longest_item(false);
+			_network_mode_option_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_network_mode_selected));
 
-			for (int i = 0; i < editor_network_modes.size(); i++) {
-				const String &network_mode_value = editor_network_modes[i];
-				network_mode_option_button->add_item(network_mode_value, i);
+			for (int i = 0; i < _editor_network_modes.size(); i++) {
+				const String &network_mode_value = _editor_network_modes[i];
+				_network_mode_option_button->add_item(network_mode_value, i);
 			}
 
-			_add_setting_control(TTRC("Network Mode"), "network/connection/network_mode", network_mode_option_button);
+			_add_setting_control(TTRC("Network Mode"), "network/connection/network_mode", _network_mode_option_button);
 		}
 
 		// Check for updates options.
 		{
-			check_for_update_button = memnew(OptionButton);
-			check_for_update_button->set_fit_to_longest_item(false);
-			check_for_update_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_check_for_update_selected));
+			_check_for_update_button = memnew(OptionButton);
+			_check_for_update_button->set_fit_to_longest_item(false);
+			_check_for_update_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_check_for_update_selected));
 
-			for (int i = 0; i < editor_check_for_updates.size(); i++) {
-				const String &check_for_update_value = editor_check_for_updates[i];
-				check_for_update_button->add_item(check_for_update_value, i);
+			for (int i = 0; i < _editor_check_for_updates.size(); i++) {
+				const String &check_for_update_value = _editor_check_for_updates[i];
+				_check_for_update_button->add_item(check_for_update_value, i);
 			}
 
-			_add_setting_control(TTRC("Check for Updates"), "network/connection/check_for_updates", check_for_update_button);
+			_add_setting_control(TTRC("Check for Updates"), "network/connection/check_for_updates", _check_for_update_button);
 		}
 
 		// Project directory naming options.
 		{
-			directory_naming_convention_button = memnew(OptionButton);
-			directory_naming_convention_button->set_fit_to_longest_item(false);
-			directory_naming_convention_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_directory_naming_convention_selected));
+			_directory_naming_convention_button = memnew(OptionButton);
+			_directory_naming_convention_button->set_fit_to_longest_item(false);
+			_directory_naming_convention_button->connect(SceneStringName(item_selected), callable_mp(this, &QuickSettingsDialog::_directory_naming_convention_selected));
 
-			for (int i = 0; i < editor_directory_naming_conventions.size(); i++) {
-				const String &directory_naming_convention = editor_directory_naming_conventions[i];
-				directory_naming_convention_button->add_item(directory_naming_convention, i);
+			for (int i = 0; i < _editor_directory_naming_conventions.size(); i++) {
+				const String &directory_naming_convention = _editor_directory_naming_conventions[i];
+				_directory_naming_convention_button->add_item(directory_naming_convention, i);
 			}
 
-			_add_setting_control(TTRC("Directory Naming Convention"), "hub/directory_naming_convention", directory_naming_convention_button);
+			_add_setting_control(TTRC("Directory Naming Convention"), "hub/directory_naming_convention", _directory_naming_convention_button);
 		}
 
 		_update_current_values();
@@ -388,26 +362,26 @@ QuickSettingsDialog::QuickSettingsDialog() {
 		Button *open_full_settings = memnew(Button);
 		open_full_settings->set_text(TTRC("Edit All Settings"));
 		open_full_settings->set_h_size_flags(Control::SIZE_SHRINK_END);
-		settings_list->add_child(open_full_settings);
+		_settings_list->add_child(open_full_settings);
 		open_full_settings->connect(SceneStringName(pressed), callable_mp(this, &QuickSettingsDialog::_show_full_settings));
 	}
 
 	// Restart required panel.
 	{
-		restart_required_label = memnew(Label(TTRC("Settings changed! The hub must be restarted for changes to take effect.")));
-		restart_required_label->set_custom_minimum_size(Size2(560, 0) * EDSCALE);
-		restart_required_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
-		restart_required_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-		restart_required_label->hide();
-		main_vbox->add_child(restart_required_label);
+		_restart_required_label = memnew(Label(TTRC("Settings changed! The hub must be restarted for changes to take effect.")));
+		_restart_required_label->set_custom_minimum_size(Size2(560, 0) * EDSCALE);
+		_restart_required_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
+		_restart_required_label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+		_restart_required_label->hide();
+		main_vbox->add_child(_restart_required_label);
 	}
 }
 
 Control *SettingLabel::make_custom_tooltip(const String &p_text) const {
-	return EditorHelpBitTooltip::make_tooltip(const_cast<SettingLabel *>(this), vformat("property|EditorSettings|%s", setting_name), String());
+	return EditorHelpBitTooltip::make_tooltip(const_cast<SettingLabel *>(this), vformat("property|EditorSettings|%s", _setting_name), String());
 }
 
 SettingLabel::SettingLabel(const String &p_text, const String &p_setting) :
 		Label(p_text) {
-	setting_name = p_setting;
+	_setting_name = p_setting;
 }

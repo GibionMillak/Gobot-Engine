@@ -8,12 +8,12 @@ import asset_builders
 import methods
 
 
-# See also `scene/theme/icons/default_theme_icons_builders.py`.
 def make_icons(target, source, env):
     icons_names = []
     icons_med = []
     icons_big = []
     type_entries = []
+    size_overrides = []
     types = {}
     records = env["editor_asset_records"]
     icon_paths = {Path(record["path"]) for record in records}
@@ -27,12 +27,16 @@ def make_icons(target, source, env):
             metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as error:
             raise ValueError(f"Invalid icon metadata JSON: {metadata_path}: {error}") from error
-        if not isinstance(metadata, dict) or set(metadata) - {"type", "thumbnail"}:
+        if not isinstance(metadata, dict) or set(metadata) - {"type", "thumbnail", "size_override"}:
             raise ValueError(f"Invalid icon metadata: {metadata_path}")
         if "thumbnail" in metadata and metadata["thumbnail"] not in ("medium", "big"):
             raise ValueError(f"Invalid thumbnail size: {metadata_path}")
         if "type" in metadata and (not isinstance(metadata["type"], str) or not metadata["type"]):
             raise ValueError(f"Invalid icon type association: {metadata_path}")
+        if "size_override" in metadata:
+            size = metadata["size_override"]
+            if not isinstance(size, list) or len(size) != 2 or any(type(value) is not int or value <= 0 for value in size):
+                raise ValueError(f"Invalid icon display size: {metadata_path}")
         icon_metadata[asset_path] = metadata
 
     for idx, record in enumerate(records):
@@ -50,6 +54,9 @@ def make_icons(target, source, env):
             types[type_name] = path
             type_entries.append(f"{{ {json.dumps(type_name)}, {json.dumps(name)} }}")
         icons_names.append(json.dumps(name))
+        if "size_override" in metadata:
+            width, height = metadata["size_override"]
+            size_overrides.append(f"{{ {idx}, {width}, {height} }}")
 
         if metadata.get("thumbnail") == "medium":
             icons_med.append(str(idx))
@@ -67,12 +74,19 @@ struct EditorTypeIcon {
 \tconst char *icon_name;
 };
 
+struct EditorIconSizeOverride {
+\tint index;
+\tint width;
+\tint height;
+};
+
 """)
         asset_builders.write_asset_buffers(header, output, records)
         tables = (
             ("char *const", "EDITOR_ICONS_SOURCES", [record["symbol"] for record in records], "nullptr"),
             ("char *const", "EDITOR_ICONS_NAMES", icons_names, '""'),
             ("EditorTypeIcon", "EDITOR_TYPE_ICONS", type_entries, '{ "", "" }'),
+            ("EditorIconSizeOverride", "EDITOR_ICON_SIZE_OVERRIDES", size_overrides, "{ 0, 0, 0 }"),
             ("int", "EDITOR_MD_THUMBS_INDICES", icons_med, "0"),
             ("int", "EDITOR_BG_THUMBS_INDICES", icons_big, "0"),
         )

@@ -57,13 +57,13 @@ void AudioStreamImportSettingsDialog::_notification(int p_what) {
 			color_rect->set_color(get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor)));
 
 			_current_label->begin_bulk_theme_override();
-			_current_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts)));
-			_current_label->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("status_source_size"), EditorStringName(EditorFonts)));
+			_current_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("status_source"), EditorStringName(Editor)));
+			_current_label->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("status_source_size"), EditorStringName(Editor)));
 			_current_label->end_bulk_theme_override();
 
 			_duration_label->begin_bulk_theme_override();
-			_duration_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("status_source"), EditorStringName(EditorFonts)));
-			_duration_label->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("status_source_size"), EditorStringName(EditorFonts)));
+			_duration_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("status_source"), EditorStringName(Editor)));
+			_duration_label->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("status_source_size"), EditorStringName(Editor)));
 			_duration_label->end_bulk_theme_override();
 
 			zoom_in->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_more")));
@@ -96,8 +96,8 @@ void AudioStreamImportSettingsDialog::_draw_preview() {
 	float preview_offset = zoom_bar->get_value();
 	float preview_len = zoom_bar->get_page();
 
-	Ref<Font> beat_font = get_theme_font(SNAME("main"), EditorStringName(EditorFonts));
-	int main_size = get_theme_font_size(SNAME("main_size"), EditorStringName(EditorFonts));
+	Ref<Font> beat_font = get_theme_font(SNAME("main"), EditorStringName(Editor));
+	int main_size = get_theme_font_size(SNAME("main_size"), EditorStringName(Editor));
 	Vector<Vector2> points;
 	points.resize(width * 2);
 	Color color_active = get_theme_color(SNAME("contrast_color_2"), EditorStringName(Editor));
@@ -311,8 +311,8 @@ void AudioStreamImportSettingsDialog::_draw_indicator() {
 
 	Rect2 rect = _preview->get_rect();
 
-	Ref<Font> beat_font = get_theme_font(SNAME("main"), EditorStringName(EditorFonts));
-	int main_size = get_theme_font_size(SNAME("main_size"), EditorStringName(EditorFonts));
+	Ref<Font> beat_font = get_theme_font(SNAME("main"), EditorStringName(Editor));
+	int main_size = get_theme_font_size(SNAME("main_size"), EditorStringName(Editor));
 
 	if (stream->get_bpm() > 0) {
 		int y_ofs = beat_font->get_height(main_size) + 4 * EDSCALE;
@@ -366,8 +366,8 @@ void AudioStreamImportSettingsDialog::_on_input_indicator(Ref<InputEvent> p_even
 	const Ref<InputEventMouseButton> mb = p_event;
 	if (mb.is_valid() && mb->get_button_index() == MouseButton::LEFT) {
 		if (stream->get_bpm() > 0) {
-			int main_size = get_theme_font_size(SNAME("main_size"), EditorStringName(EditorFonts));
-			Ref<Font> beat_font = get_theme_font(SNAME("main"), EditorStringName(EditorFonts));
+			int main_size = get_theme_font_size(SNAME("main_size"), EditorStringName(Editor));
+			Ref<Font> beat_font = get_theme_font(SNAME("main"), EditorStringName(Editor));
 			int y_ofs = beat_font->get_height(main_size) + 4 * EDSCALE;
 			if ((!_dragging && mb->get_position().y < y_ofs) || _beat_len_dragging) {
 				if (mb->is_pressed()) {
@@ -395,8 +395,8 @@ void AudioStreamImportSettingsDialog::_on_input_indicator(Ref<InputEvent> p_even
 			_set_beat_len_to(mm->get_position().x);
 		}
 		if (stream->get_bpm() > 0) {
-			int main_size = get_theme_font_size(SNAME("main_size"), EditorStringName(EditorFonts));
-			Ref<Font> beat_font = get_theme_font(SNAME("main"), EditorStringName(EditorFonts));
+			int main_size = get_theme_font_size(SNAME("main_size"), EditorStringName(Editor));
+			Ref<Font> beat_font = get_theme_font(SNAME("main"), EditorStringName(Editor));
 			int y_ofs = beat_font->get_height(main_size) + 4 * EDSCALE;
 			if (mm->get_position().y < y_ofs) {
 				int new_hovering_beat = _get_beat_at_pos(mm->get_position().x);

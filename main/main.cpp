@@ -740,7 +740,10 @@ Error Main::test_setup() {
 	register_platform_apis();
 
 	// Theme needs modules to be initialized so that sub-resources can be loaded.
-	theme_db->initialize_theme_noproject();
+	const Error theme_error = theme_db->initialize_theme_noproject();
+	if (theme_error != OK) {
+		return theme_error;
+	}
 
 	ERR_FAIL_COND_V(TextServerManager::get_singleton()->get_interface_count() == 0, ERR_CANT_CREATE);
 
@@ -3486,7 +3489,10 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 #endif
 
-	theme_db->initialize_theme();
+	const Error theme_error = theme_db->initialize_theme();
+	if (theme_error != OK) {
+		return theme_error;
+	}
 	audio_server->load_default_bus_layout();
 
 #ifdef DEBUG_ENABLED

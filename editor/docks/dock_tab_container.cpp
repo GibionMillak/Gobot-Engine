@@ -131,19 +131,14 @@ void EditorDockDragHint::set_highlighted(bool p_highlighted) {
 
 void EditorDockDragHint::_notification(int p_what) {
 	switch (p_what) {
-		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {
-			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/theme")) {
-				dock_drop_highlight->set_corner_radius_all(EDSCALE * EDITOR_GET("interface/theme/border_radius").operator int());
-				if (mouse_inside) {
-					queue_redraw();
-				}
-			}
-		} break;
-
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color valid_drop_color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 			dock_drop_highlight->set_border_color(valid_drop_color);
 			dock_drop_highlight->set_background_color(valid_drop_color * Color(1, 1, 1, 0.1));
+			dock_drop_highlight->set_corner_radius_all(EDSCALE * get_theme_constant(SNAME("border_radius"), EditorStringName(Editor)));
+			if (mouse_inside) {
+				queue_redraw();
+			}
 		} break;
 
 		case NOTIFICATION_MOUSE_ENTER:
@@ -206,7 +201,6 @@ EditorDockDragHint::EditorDockDragHint() {
 	hide();
 
 	dock_drop_highlight.instantiate();
-	dock_drop_highlight->set_corner_radius_all(EDSCALE * EDITOR_GET("interface/theme/border_radius").operator int());
 	dock_drop_highlight->set_border_width_all(Math::round(2 * EDSCALE));
 }
 

@@ -1,0 +1,21 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "Editor sub_inspector_property_bg10"
+anti_aliasing = false
+background_color = "(theme.EditorInspector.colors.subresource_color_1 * Color(0.7, 0.7, 0.7, 0.8))"
+border_color = Color(0.8, 0.8, 0.8, 1)
+border_width_bottom = 0
+border_width_left = 0
+border_width_right = 0
+border_width_top = 0
+corner_detail = "pixels(int(ceil(((0.8 * (int(round(theme.default_border_radius)))) * theme.default_base_scale))))"
+corner_radius_bottom_left = 0
+corner_radius_bottom_right = 0
+corner_radius_top_left = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+corner_radius_top_right = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+padding_bottom = 0
+padding_left = 0
+padding_right = 0
+padding_top = 0
+shadow_color = Color(0, 0, 0, 0.6)

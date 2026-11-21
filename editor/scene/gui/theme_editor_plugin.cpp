@@ -94,7 +94,7 @@ void ThemeItemImportTree::_update_items_tree() {
 	}
 
 	bool use_monospace_font = EDITOR_GET("interface/theme/use_monospace_font_for_editor_symbols");
-	Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
+	Ref<Font> monospace_font = get_theme_font(SNAME("source"), EditorStringName(Editor));
 
 	String filter_text = import_items_filter->get_text();
 
@@ -837,7 +837,7 @@ void ThemeItemImportTree::_import_selected() {
 			Variant item_value = Variant();
 
 			if (cs == SELECT_IMPORT_FULL) {
-				item_value = base_theme->get_theme_item(ti.data_type, ti.item_name, ti.type_name);
+				item_value = base_theme->get_theme_item_definition(ti.data_type, ti.item_name, ti.type_name);
 			} else {
 				switch (ti.data_type) {
 					case Theme::DATA_TYPE_COLOR:
@@ -1677,7 +1677,8 @@ void ThemeItemEditorDialog::_item_tree_button_pressed(Object *p_item, int p_colu
 			EditorUndoRedoManager *ur = EditorUndoRedoManager::get_singleton();
 			ur->create_action(TTR("Remove Theme Item"));
 			ur->add_do_method(*edited_theme, "clear_theme_item", (Theme::DataType)data_type, item_name, edited_item_type);
-			ur->add_undo_method(*edited_theme, "set_theme_item", (Theme::DataType)data_type, item_name, edited_item_type, edited_theme->get_theme_item((Theme::DataType)data_type, item_name, edited_item_type));
+			const Variant item_value = edited_theme->get_theme_item_definition((Theme::DataType)data_type, item_name, edited_item_type);
+			ur->add_undo_method(*edited_theme, "set_theme_item", (Theme::DataType)data_type, item_name, edited_item_type, item_value);
 			ur->add_do_method(this, "_update_edit_item_tree", edited_item_type);
 			ur->add_undo_method(this, "_update_edit_item_tree", edited_item_type);
 			ur->commit_action();
@@ -1718,7 +1719,7 @@ void ThemeItemEditorDialog::_add_theme_item(Theme::DataType p_data_type, const S
 			ur->add_do_method(*edited_theme, "set_stylebox", p_item_name, p_item_type, Ref<StyleBox>());
 			ur->add_undo_method(*edited_theme, "clear_stylebox", p_item_name, p_item_type);
 
-			if (theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox(p_item_name, p_item_type))) {
+			if (theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox_definition(p_item_name, p_item_type))) {
 				ur->add_undo_method(theme_type_editor, "_unpin_leading_stylebox");
 			}
 			break;
@@ -1781,9 +1782,9 @@ void ThemeItemEditorDialog::_remove_data_type_items(Theme::DataType p_data_type,
 	for (const StringName &E : names) {
 		new_snapshot->clear_theme_item(p_data_type, E, edited_item_type);
 
-		if (p_data_type == Theme::DATA_TYPE_STYLEBOX && theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox(E, p_item_type))) {
+		if (p_data_type == Theme::DATA_TYPE_STYLEBOX && theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox_definition(E, p_item_type))) {
 			ur->add_do_method(theme_type_editor, "_unpin_leading_stylebox");
-			ur->add_undo_method(theme_type_editor, "_pin_leading_stylebox", E, edited_theme->get_stylebox(E, p_item_type));
+			ur->add_undo_method(theme_type_editor, "_pin_leading_stylebox", E, edited_theme->get_stylebox_definition(E, p_item_type));
 		}
 	}
 
@@ -1815,9 +1816,9 @@ void ThemeItemEditorDialog::_remove_class_items() {
 			if (new_snapshot->has_theme_item_nocheck(data_type, E, edited_item_type)) {
 				new_snapshot->clear_theme_item(data_type, E, edited_item_type);
 
-				if (dt == Theme::DATA_TYPE_STYLEBOX && theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox(E, edited_item_type))) {
+				if (dt == Theme::DATA_TYPE_STYLEBOX && theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox_definition(E, edited_item_type))) {
 					ur->add_do_method(theme_type_editor, "_unpin_leading_stylebox");
-					ur->add_undo_method(theme_type_editor, "_pin_leading_stylebox", E, edited_theme->get_stylebox(E, edited_item_type));
+					ur->add_undo_method(theme_type_editor, "_pin_leading_stylebox", E, edited_theme->get_stylebox_definition(E, edited_item_type));
 				}
 			}
 		}
@@ -1851,9 +1852,9 @@ void ThemeItemEditorDialog::_remove_custom_items() {
 			if (!ThemeDB::get_singleton()->get_default_theme()->has_theme_item_nocheck(data_type, E, edited_item_type)) {
 				new_snapshot->clear_theme_item(data_type, E, edited_item_type);
 
-				if (dt == Theme::DATA_TYPE_STYLEBOX && theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox(E, edited_item_type))) {
+				if (dt == Theme::DATA_TYPE_STYLEBOX && theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox_definition(E, edited_item_type))) {
 					ur->add_do_method(theme_type_editor, "_unpin_leading_stylebox");
-					ur->add_undo_method(theme_type_editor, "_pin_leading_stylebox", E, edited_theme->get_stylebox(E, edited_item_type));
+					ur->add_undo_method(theme_type_editor, "_pin_leading_stylebox", E, edited_theme->get_stylebox_definition(E, edited_item_type));
 				}
 			}
 		}
@@ -1886,9 +1887,9 @@ void ThemeItemEditorDialog::_remove_all_items() {
 		for (const StringName &E : names) {
 			new_snapshot->clear_theme_item(data_type, E, edited_item_type);
 
-			if (dt == Theme::DATA_TYPE_STYLEBOX && theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox(E, edited_item_type))) {
+			if (dt == Theme::DATA_TYPE_STYLEBOX && theme_type_editor->is_stylebox_pinned(edited_theme->get_stylebox_definition(E, edited_item_type))) {
 				ur->add_do_method(theme_type_editor, "_unpin_leading_stylebox");
-				ur->add_undo_method(theme_type_editor, "_pin_leading_stylebox", E, edited_theme->get_stylebox(E, edited_item_type));
+				ur->add_undo_method(theme_type_editor, "_pin_leading_stylebox", E, edited_theme->get_stylebox_definition(E, edited_item_type));
 			}
 		}
 	}
@@ -2947,7 +2948,7 @@ void ThemeTypeEditor::_update_type_items() {
 
 			if (E.value) {
 				if (edited_theme->has_stylebox(E.key, edited_type)) {
-					item_editor->set_edited_resource(edited_theme->get_stylebox(E.key, edited_type));
+					item_editor->set_edited_resource(edited_theme->get_stylebox_definition(E.key, edited_type));
 					item_editor->set_force_allow_unique(false);
 				} else {
 					item_editor->set_edited_resource(Ref<Resource>());
@@ -3297,57 +3298,15 @@ void ThemeTypeEditor::_item_remove_cbk(int p_data_type, String p_item_name) {
 	EditorUndoRedoManager *ur = EditorUndoRedoManager::get_singleton();
 	ur->create_action(TTR("Remove Theme Item"));
 
-	switch (p_data_type) {
-		case Theme::DATA_TYPE_COLOR: {
-			ur->add_do_method(*edited_theme, "clear_color", p_item_name, edited_type);
-			ur->add_undo_method(*edited_theme, "set_color", p_item_name, edited_type, edited_theme->get_color(p_item_name, edited_type));
-		} break;
-		case Theme::DATA_TYPE_CONSTANT: {
-			ur->add_do_method(*edited_theme, "clear_constant", p_item_name, edited_type);
-			ur->add_undo_method(*edited_theme, "set_constant", p_item_name, edited_type, edited_theme->get_constant(p_item_name, edited_type));
-		} break;
-		case Theme::DATA_TYPE_FONT: {
-			ur->add_do_method(*edited_theme, "clear_font", p_item_name, edited_type);
-			if (edited_theme->has_font(p_item_name, edited_type)) {
-				ur->add_undo_method(*edited_theme, "set_font", p_item_name, edited_type, edited_theme->get_font(p_item_name, edited_type));
-			} else {
-				ur->add_undo_method(*edited_theme, "set_font", p_item_name, edited_type, Ref<Font>());
-			}
-		} break;
-		case Theme::DATA_TYPE_FONT_SIZE: {
-			ur->add_do_method(*edited_theme, "clear_font_size", p_item_name, edited_type);
-			ur->add_undo_method(*edited_theme, "set_font_size", p_item_name, edited_type, edited_theme->get_font_size(p_item_name, edited_type));
-		} break;
-		case Theme::DATA_TYPE_ICON: {
-			ur->add_do_method(*edited_theme, "clear_icon", p_item_name, edited_type);
-			if (edited_theme->has_icon(p_item_name, edited_type)) {
-				ur->add_undo_method(*edited_theme, "set_icon", p_item_name, edited_type, edited_theme->get_icon(p_item_name, edited_type));
-			} else {
-				ur->add_undo_method(*edited_theme, "set_icon", p_item_name, edited_type, Ref<Texture2D>());
-			}
-		} break;
-		case Theme::DATA_TYPE_STYLEBOX: {
-			Ref<StyleBox> sb = edited_theme->get_stylebox(p_item_name, edited_type);
-			ur->add_do_method(*edited_theme, "clear_stylebox", p_item_name, edited_type);
-			if (edited_theme->has_stylebox(p_item_name, edited_type)) {
-				ur->add_undo_method(*edited_theme, "set_stylebox", p_item_name, edited_type, sb);
-			} else {
-				ur->add_undo_method(*edited_theme, "set_stylebox", p_item_name, edited_type, Ref<StyleBox>());
-			}
-
-			if (is_stylebox_pinned(sb)) {
-				ur->add_do_method(this, "_unpin_leading_stylebox");
-				ur->add_undo_method(this, "_pin_leading_stylebox", p_item_name, sb);
-			}
-		} break;
-		case Theme::DATA_TYPE_SOUND: {
-			ur->add_do_method(*edited_theme, "clear_sound", p_item_name, edited_type);
-			if (edited_theme->has_sound(p_item_name, edited_type)) {
-				ur->add_undo_method(*edited_theme, "set_sound", p_item_name, edited_type, edited_theme->get_sound(p_item_name, edited_type));
-			} else {
-				ur->add_undo_method(*edited_theme, "set_sound", p_item_name, edited_type, Ref<AudioStream>());
-			}
-		} break;
+	const Theme::DataType data_type = static_cast<Theme::DataType>(p_data_type);
+	ur->add_do_method(*edited_theme, "clear_theme_item", data_type, p_item_name, edited_type);
+	ur->add_undo_method(*edited_theme, "set_theme_item", data_type, p_item_name, edited_type, edited_theme->get_theme_item_definition(data_type, p_item_name, edited_type));
+	if (data_type == Theme::DATA_TYPE_STYLEBOX) {
+		const Ref<StyleBox> style = edited_theme->get_stylebox_definition(p_item_name, edited_type);
+		if (is_stylebox_pinned(style)) {
+			ur->add_do_method(this, "_unpin_leading_stylebox");
+			ur->add_undo_method(this, "_pin_leading_stylebox", p_item_name, style);
+		}
 	}
 
 	ur->commit_action();
@@ -3443,7 +3402,7 @@ void ThemeTypeEditor::_color_item_changed(Color p_value, String p_item_name) {
 	EditorUndoRedoManager *ur = EditorUndoRedoManager::get_singleton();
 	ur->create_action(TTR("Set Color Item in Theme"), UndoRedo::MERGE_ENDS);
 	ur->add_do_method(*edited_theme, "set_color", p_item_name, edited_type, p_value);
-	ur->add_undo_method(*edited_theme, "set_color", p_item_name, edited_type, edited_theme->get_color(p_item_name, edited_type));
+	ur->add_undo_method(*edited_theme, "set_theme_item", Theme::DATA_TYPE_COLOR, p_item_name, edited_type, edited_theme->get_theme_item_definition(Theme::DATA_TYPE_COLOR, p_item_name, edited_type));
 	ur->commit_action();
 }
 
@@ -3451,7 +3410,7 @@ void ThemeTypeEditor::_constant_item_changed(float p_value, String p_item_name) 
 	EditorUndoRedoManager *ur = EditorUndoRedoManager::get_singleton();
 	ur->create_action(TTR("Set Constant Item in Theme"));
 	ur->add_do_method(*edited_theme, "set_constant", p_item_name, edited_type, p_value);
-	ur->add_undo_method(*edited_theme, "set_constant", p_item_name, edited_type, edited_theme->get_constant(p_item_name, edited_type));
+	ur->add_undo_method(*edited_theme, "set_theme_item", Theme::DATA_TYPE_CONSTANT, p_item_name, edited_type, edited_theme->get_theme_item_definition(Theme::DATA_TYPE_CONSTANT, p_item_name, edited_type));
 	ur->commit_action();
 }
 
@@ -3459,7 +3418,7 @@ void ThemeTypeEditor::_font_size_item_changed(float p_value, String p_item_name)
 	EditorUndoRedoManager *ur = EditorUndoRedoManager::get_singleton();
 	ur->create_action(TTR("Set Font Size Item in Theme"));
 	ur->add_do_method(*edited_theme, "set_font_size", p_item_name, edited_type, p_value);
-	ur->add_undo_method(*edited_theme, "set_font_size", p_item_name, edited_type, edited_theme->get_font_size(p_item_name, edited_type));
+	ur->add_undo_method(*edited_theme, "set_theme_item", Theme::DATA_TYPE_FONT_SIZE, p_item_name, edited_type, edited_theme->get_theme_item_definition(Theme::DATA_TYPE_FONT_SIZE, p_item_name, edited_type));
 	ur->commit_action();
 }
 
@@ -3473,7 +3432,7 @@ void ThemeTypeEditor::_font_item_changed(Ref<Font> p_value, String p_item_name) 
 
 	ur->add_do_method(*edited_theme, "set_font", p_item_name, edited_type, p_value.is_valid() ? p_value : Ref<Font>());
 	if (edited_theme->has_font(p_item_name, edited_type)) {
-		ur->add_undo_method(*edited_theme, "set_font", p_item_name, edited_type, edited_theme->get_font(p_item_name, edited_type));
+		ur->add_undo_method(*edited_theme, "set_theme_item", Theme::DATA_TYPE_FONT, p_item_name, edited_type, edited_theme->get_theme_item_definition(Theme::DATA_TYPE_FONT, p_item_name, edited_type));
 	} else {
 		ur->add_undo_method(*edited_theme, "clear_font", p_item_name, edited_type);
 	}
@@ -3490,7 +3449,7 @@ void ThemeTypeEditor::_icon_item_changed(Ref<Texture2D> p_value, String p_item_n
 
 	ur->add_do_method(*edited_theme, "set_icon", p_item_name, edited_type, p_value.is_valid() ? p_value : Ref<Texture2D>());
 	if (edited_theme->has_icon(p_item_name, edited_type)) {
-		ur->add_undo_method(*edited_theme, "set_icon", p_item_name, edited_type, edited_theme->get_icon(p_item_name, edited_type));
+		ur->add_undo_method(*edited_theme, "set_theme_item", Theme::DATA_TYPE_ICON, p_item_name, edited_type, edited_theme->get_theme_item_definition(Theme::DATA_TYPE_ICON, p_item_name, edited_type));
 	} else {
 		ur->add_undo_method(*edited_theme, "clear_icon", p_item_name, edited_type);
 	}
@@ -3507,7 +3466,7 @@ void ThemeTypeEditor::_stylebox_item_changed(Ref<StyleBox> p_value, String p_ite
 
 	ur->add_do_method(*edited_theme, "set_stylebox", p_item_name, edited_type, p_value.is_valid() ? p_value : Ref<StyleBox>());
 	if (edited_theme->has_stylebox(p_item_name, edited_type)) {
-		ur->add_undo_method(*edited_theme, "set_stylebox", p_item_name, edited_type, edited_theme->get_stylebox(p_item_name, edited_type));
+		ur->add_undo_method(*edited_theme, "set_theme_item", Theme::DATA_TYPE_STYLEBOX, p_item_name, edited_type, edited_theme->get_theme_item_definition(Theme::DATA_TYPE_STYLEBOX, p_item_name, edited_type));
 	} else {
 		ur->add_undo_method(*edited_theme, "clear_stylebox", p_item_name, edited_type);
 	}
@@ -3527,7 +3486,7 @@ void ThemeTypeEditor::_sound_item_changed(Ref<AudioStream> p_value, String p_ite
 
 	ur->add_do_method(*edited_theme, "set_sound", p_item_name, edited_type, p_value.is_valid() ? p_value : Ref<AudioStream>());
 	if (edited_theme->has_sound(p_item_name, edited_type)) {
-		ur->add_undo_method(*edited_theme, "set_sound", p_item_name, edited_type, edited_theme->get_sound(p_item_name, edited_type));
+		ur->add_undo_method(*edited_theme, "set_theme_item", Theme::DATA_TYPE_SOUND, p_item_name, edited_type, edited_theme->get_theme_item_definition(Theme::DATA_TYPE_SOUND, p_item_name, edited_type));
 	} else {
 		ur->add_undo_method(*edited_theme, "set_sound", p_item_name, edited_type, Ref<AudioStream>());
 	}
@@ -3544,7 +3503,7 @@ void ThemeTypeEditor::_change_pinned_stylebox() {
 			leading_stylebox.stylebox->disconnect_changed(callable_mp(this, &ThemeTypeEditor::_update_stylebox_from_leading));
 		}
 
-		Ref<StyleBox> new_stylebox = edited_theme->get_stylebox(leading_stylebox.item_name, edited_type);
+		Ref<StyleBox> new_stylebox = edited_theme->get_stylebox_definition(leading_stylebox.item_name, edited_type);
 		leading_stylebox.stylebox = new_stylebox;
 		leading_stylebox.ref_stylebox = (new_stylebox.is_valid() ? new_stylebox->duplicate() : Ref<Resource>());
 
@@ -3627,7 +3586,7 @@ void ThemeTypeEditor::_update_stylebox_from_leading() {
 	edited_theme->get_stylebox_list(edited_type, &names);
 	List<Ref<StyleBox>> styleboxes;
 	for (const StringName &E : names) {
-		Ref<StyleBox> sb = edited_theme->get_stylebox(E, edited_type);
+		Ref<StyleBox> sb = edited_theme->get_stylebox_definition(E, edited_type);
 
 		// Avoid itself, stylebox can be shared between items.
 		if (sb == leading_stylebox.stylebox) {
@@ -4157,8 +4116,8 @@ void ThemeEditor::_notification(int p_what) {
 			theme_edit_button->set_button_icon(get_editor_theme_icon(SNAME("viewport_tools")));
 			theme_close_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 
-			preview_tabs->add_theme_style_override("tab_selected", get_theme_stylebox(SNAME("ThemeEditorPreviewFG"), EditorStringName(EditorStyles)));
-			preview_tabs->add_theme_style_override("tab_unselected", get_theme_stylebox(SNAME("ThemeEditorPreviewBG"), EditorStringName(EditorStyles)));
+			preview_tabs->add_theme_style_override("tab_selected", get_theme_stylebox(SNAME("theme_editor_preview_fg"), EditorStringName(Editor)));
+			preview_tabs->add_theme_style_override("tab_unselected", get_theme_stylebox(SNAME("theme_editor_preview_bg"), EditorStringName(Editor)));
 			preview_tabs_content->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("TabContainerOdd")));
 
 			add_preview_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));

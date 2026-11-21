@@ -48,6 +48,7 @@
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme_manager.h"
 #include "scene/gui/box_container.h"
+#include "scene/gui/color_rect.h"
 #include "scene/gui/margin_container.h"
 #include "scene/gui/separator.h"
 #include "scene/main/scene_tree.h"
@@ -101,13 +102,6 @@ void EditorAudioBus::_notification(int p_what) {
 			Color solo_color_darkened = solo_color.darkened(darkening_factor);
 			Color mute_color_darkened = mute_color.darkened(darkening_factor);
 			Color bypass_color_darkened = bypass_color.darkened(darkening_factor);
-
-			Ref<StyleBox>(solo->get_theme_stylebox(SceneStringName(pressed)))->set_border_color(solo_color_darkened);
-			Ref<StyleBox>(mute->get_theme_stylebox(SceneStringName(pressed)))->set_border_color(mute_color_darkened);
-			Ref<StyleBox>(bypass->get_theme_stylebox(SceneStringName(pressed)))->set_border_color(bypass_color_darkened);
-			Ref<StyleBox>(solo->get_theme_stylebox("hover_pressed"))->set_border_color(solo_color_darkened);
-			Ref<StyleBox>(mute->get_theme_stylebox("hover_pressed"))->set_border_color(mute_color_darkened);
-			Ref<StyleBox>(bypass->get_theme_stylebox("hover_pressed"))->set_border_color(bypass_color_darkened);
 
 			solo->set_button_icon(get_editor_theme_icon(SNAME("audio_bus_solo")));
 			solo->add_theme_color_override("icon_pressed_color", solo_color);
@@ -207,7 +201,7 @@ void EditorAudioBus::_notification(int p_what) {
 					channel[i].peak_timer_l->start();
 				}
 
-				peak_indicator_stylebox_l->set_background_color(active_gradient->get_color_at_offset(normalized_peak_indicator));
+				channel[i].peak_indicator_l->set_color(active_gradient->get_color_at_offset(normalized_peak_indicator));
 
 				normalized_peak_indicator = (channel[i].peak_indicator_r->get_position().height - peak_indicator_range) / -peak_indicator_range;
 
@@ -221,7 +215,7 @@ void EditorAudioBus::_notification(int p_what) {
 					channel[i].peak_timer_r->start();
 				}
 
-				peak_indicator_stylebox_r->set_background_color(active_gradient->get_color_at_offset(normalized_peak_indicator));
+				channel[i].peak_indicator_r->set_color(active_gradient->get_color_at_offset(normalized_peak_indicator));
 
 				if (activity_found != channel[i].prev_active) {
 					if (activity_found) {
@@ -950,24 +944,6 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	hbc->add_child(bypass);
 	hbc->add_spacer();
 
-	Ref<StyleBox> sbempty = memnew(StyleBox);
-	for (int i = 0; i < hbc->get_child_count(); i++) {
-		Control *child = Object::cast_to<Control>(hbc->get_child(i));
-		child->begin_bulk_theme_override();
-		child->add_theme_style_override(CoreStringName(normal), sbempty);
-		child->add_theme_style_override(SceneStringName(hover), sbempty);
-		child->add_theme_style_override("focus", sbempty);
-
-		Ref<StyleBox> peak_style = memnew(StyleBox);
-		peak_style->set_padding_all(0);
-		peak_style->set_background_color(Color(1, 1, 1, 0));
-		peak_style->set_border_width(Side::SIDE_BOTTOM, Math::round(3 * EDSCALE));
-		child->add_theme_style_override(SceneStringName(pressed), peak_style);
-		child->add_theme_style_override("hover_pressed", peak_style);
-
-		child->end_bulk_theme_override();
-	}
-
 	HSeparator *separator = memnew(HSeparator);
 	separator->set_mouse_filter(MOUSE_FILTER_PASS);
 	vb->add_child(separator);
@@ -1037,11 +1013,6 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 	inactive_bus_texture->set_fill_from(Vector2(0.0, 1.0));
 	inactive_bus_texture->set_fill_to(Vector2(0.0, 0.0));
 
-	peak_indicator_stylebox_l = memnew(StyleBox);
-	peak_indicator_stylebox_l->set_background_color(Color(1.0, 1.0, 1.0, 0.75));
-	peak_indicator_stylebox_r = memnew(StyleBox);
-	peak_indicator_stylebox_r->set_background_color(Color(1.0, 1.0, 1.0, 0.75));
-
 	peak_indicator_range = vu_height * EDSCALE - 2.0;
 
 	cc = 0;
@@ -1059,17 +1030,19 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 		channel[i].vu_l->set_max(1);
 		channel[i].vu_l->set_step(0.0001);
 
-		channel[i].peak_indicator_l = memnew(Panel);
+		channel[i].peak_indicator_l = memnew(ColorRect);
+		channel[i].peak_indicator_l->set_color(Color(1.0, 1.0, 1.0, 0.75));
 		channel[i].peak_indicator_l->set_custom_minimum_size(Size2(vu_width * EDSCALE, 2.0));
-		channel[i].peak_indicator_l->add_theme_style_override(SceneStringName(panel), peak_indicator_stylebox_l);
 		channel[i].vu_l->add_child(channel[i].peak_indicator_l);
 		channel[i].peak_indicator_l->set_position(Point2(0.0, peak_indicator_range));
-		channel[i].peak_timer_l = memnew(Timer);
-		channel[i].peak_timer_l->set_wait_time(1.5f);
-		channel[i].peak_timer_l->set_one_shot(true);
-		channel[i].peak_timer_l->set_paused(true);
-		channel[i].peak_indicator_l->add_child(channel[i].peak_timer_l);
-		channel[i].peak_timer_l->connect("timeout", callable_mp(this, &EditorAudioBus::_enable_indicator_fall));
+		{
+			channel[i].peak_timer_l = memnew(Timer);
+			channel[i].peak_timer_l->connect("timeout", callable_mp(this, &EditorAudioBus::_enable_indicator_fall));
+			channel[i].peak_timer_l->set_one_shot(true);
+			channel[i].peak_timer_l->set_paused(true);
+			channel[i].peak_timer_l->set_wait_time(1.5f);
+			channel[i].peak_indicator_l->add_child(channel[i].peak_timer_l);
+		}
 
 		channel[i].vu_r = memnew(TextureProgressBar);
 		channel[i].vu_r->set_fill_mode(TextureProgressBar::FILL_BOTTOM_TO_TOP);
@@ -1084,17 +1057,19 @@ EditorAudioBus::EditorAudioBus(EditorAudioBuses *p_buses, bool p_is_master) {
 		channel[i].vu_r->set_max(1);
 		channel[i].vu_r->set_step(0.0001);
 
-		channel[i].peak_indicator_r = memnew(Panel);
+		channel[i].peak_indicator_r = memnew(ColorRect);
+		channel[i].peak_indicator_r->set_color(Color(1.0, 1.0, 1.0, 0.75));
 		channel[i].peak_indicator_r->set_custom_minimum_size(Size2(vu_width * EDSCALE, 2.0));
-		channel[i].peak_indicator_r->add_theme_style_override(SceneStringName(panel), peak_indicator_stylebox_r);
 		channel[i].vu_r->add_child(channel[i].peak_indicator_r);
 		channel[i].peak_indicator_r->set_position(Point2(0.0, peak_indicator_range));
-		channel[i].peak_timer_r = memnew(Timer);
-		channel[i].peak_timer_r->set_wait_time(1.5f);
-		channel[i].peak_timer_r->set_one_shot(true);
-		channel[i].peak_timer_r->set_paused(true);
-		channel[i].peak_indicator_r->add_child(channel[i].peak_timer_r);
-		channel[i].peak_timer_r->connect("timeout", callable_mp(this, &EditorAudioBus::_enable_indicator_fall));
+		{
+			channel[i].peak_timer_r = memnew(Timer);
+			channel[i].peak_timer_r->connect("timeout", callable_mp(this, &EditorAudioBus::_enable_indicator_fall));
+			channel[i].peak_timer_r->set_one_shot(true);
+			channel[i].peak_timer_r->set_paused(true);
+			channel[i].peak_timer_r->set_wait_time(1.5f);
+			channel[i].peak_indicator_r->add_child(channel[i].peak_timer_r);
+		}
 
 		channel[i].peak_l = -100.0f;
 		channel[i].peak_r = -100.0f;

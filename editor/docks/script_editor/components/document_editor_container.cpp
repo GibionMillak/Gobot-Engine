@@ -1443,7 +1443,7 @@ void DocumentEditorContainer::_notification(int p_what) {
 			[[fallthrough]];
 		}
 		case NOTIFICATION_THEME_CHANGED: {
-			_tab_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("ScriptEditorDock"), EditorStringName(EditorStyles)));
+			_tab_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("script_editor_dock"), EditorStringName(Editor)));
 
 			_calculate_script_name_button_size();
 

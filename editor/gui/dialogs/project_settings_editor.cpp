@@ -46,6 +46,7 @@
 #include "scene/gui/check_button.h"
 #include "scene/gui/line_edit.h"
 #include "scene/main/timer.h"
+#include "scene/theme/theme_db.h"
 #include "servers/movie_writer/movie_writer.h"
 
 void ProjectSettingsEditor::connect_filesystem_dock_signals(FileSystemDock *p_fs_dock) {
@@ -122,6 +123,13 @@ void ProjectSettingsEditor::_setting_edited(const String &p_name) {
 		pending_override_notify = true;
 	}
 	queue_save();
+}
+
+void ProjectSettingsEditor::_inspect_project_theme(const Ref<Resource> &p_resource, const String &p_property) {
+	if (general_settings_inspector->get_full_item_path(p_property) == ThemeDB::PROJECT_THEME_SETTING) {
+		hide();
+		EditorNode::get_singleton()->edit_resource(p_resource);
+	}
 }
 
 void ProjectSettingsEditor::_update_advanced(bool p_is_advanced) {
@@ -769,6 +777,7 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	general_settings_inspector->get_inspector()->connect("property_selected", callable_mp(this, &ProjectSettingsEditor::_setting_selected));
 	general_settings_inspector->get_inspector()->connect("property_edited", callable_mp(this, &ProjectSettingsEditor::_setting_edited));
 	general_settings_inspector->get_inspector()->connect("property_deleted", callable_mp(this, &ProjectSettingsEditor::_on_editor_override_deleted));
+	general_settings_inspector->get_inspector()->connect("resource_selected", callable_mp(this, &ProjectSettingsEditor::_inspect_project_theme));
 	general_settings_inspector->get_inspector()->connect("restart_requested", callable_mp(this, &ProjectSettingsEditor::_editor_restart_request));
 	general_editor->add_child(general_settings_inspector);
 

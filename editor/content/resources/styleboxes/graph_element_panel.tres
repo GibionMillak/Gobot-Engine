@@ -1,0 +1,20 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "GraphElement panel"
+background_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).lerp((theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.dark_color_2, 0.5), 0.3)"
+border_color = "(((((theme.default_base_color.get_luminance() < 0.5))) ? theme.Editor.colors.dark_color_3 : (theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.09))).darkened(0.3)"
+border_width_bottom = "pixels(int(round((2 * theme.default_base_scale))))"
+border_width_left = "pixels(int(round((2 * theme.default_base_scale))))"
+border_width_right = "pixels(int(round((2 * theme.default_base_scale))))"
+border_width_top = 0
+corner_detail = "pixels(int(ceil(((0.8 * (int(round(theme.default_border_radius)))) * theme.default_base_scale))))"
+corner_radius_bottom_left = "pixels(round((int(3) * theme.default_base_scale)))"
+corner_radius_bottom_right = "pixels(round((int(3) * theme.default_base_scale)))"
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+padding_bottom = "pixels((int(2) * theme.default_base_scale))"
+padding_left = "pixels((int(2) * theme.default_base_scale))"
+padding_right = "pixels((int(2) * theme.default_base_scale))"
+padding_top = "pixels((int(2) * theme.default_base_scale))"
+shadow_color = Color(0, 0, 0, 0.6)

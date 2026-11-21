@@ -30,7 +30,7 @@
 
 #include "editor/gui/editor_toolbar_group.h"
 
-#include "editor/settings/editor_settings.h"
+#include "editor/editor_string_names.h"
 #include "editor/themes/editor_scale.h"
 #include "scene/gui/box_container.h"
 
@@ -54,7 +54,7 @@ void EditorToolbarGroup::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			const int font_size = get_theme_default_font_size();
-			const int padding = int(EDITOR_GET("interface/theme/padding")) * 2;
+			const int padding = get_theme_constant(SNAME("padding"), EditorStringName(Editor)) * 2;
 			const int max_size = MAX(32 * EDSCALE, font_size + (padding + 10) * EDSCALE);
 			set_custom_minimum_size(Size2(-1, max_size));
 			set_custom_maximum_size(Size2(-1, max_size));

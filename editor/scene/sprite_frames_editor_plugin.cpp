@@ -148,8 +148,8 @@ void SpriteFramesEditor::_sheet_preview_draw() {
 
 	_sheet_sort_frames();
 
-	Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
-	int font_size = get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
+	Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(Editor));
+	int font_size = get_theme_font_size(SNAME("bold_size"), EditorStringName(Editor));
 
 	for (int i = 0; i < frames_ordered.size(); ++i) {
 		const int idx = frames_ordered[i].second;

@@ -153,7 +153,7 @@ void ProjectPluginsDialog::update_plugins() {
 		item->set_metadata(NAME, entry.config_path);
 		item->set_text(VERSION, entry.version);
 		item->set_auto_translate_mode(VERSION, AUTO_TRANSLATE_MODE_DISABLED);
-		item->set_custom_font(VERSION, get_theme_font("source", EditorStringName(EditorFonts)));
+		item->set_custom_font(VERSION, get_theme_font("source", EditorStringName(Editor)));
 		item->set_metadata(VERSION, entry.script);
 		item->set_text(AUTHOR, entry.author);
 		item->set_auto_translate_mode(AUTHOR, AUTO_TRANSLATE_MODE_DISABLED);

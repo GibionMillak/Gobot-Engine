@@ -122,6 +122,9 @@ void ResourceFormatLoaderContent::get_recognized_extensions(List<String> *r_exte
 		r_extensions->push_back(extension);
 	}
 	ImageLoader::get_recognized_extensions(r_extensions);
+#ifndef MODULE_SVG_ENABLED
+	r_extensions->push_back("svg");
+#endif
 	r_extensions->push_back("wav");
 	for (const KeyValue<String, AudioFormat> &format : _audio_formats) {
 		r_extensions->push_back(format.key);
@@ -160,11 +163,9 @@ String ResourceFormatLoaderContent::_get_type_for_extension(const String &p_exte
 			return "FontFile";
 		}
 	}
-#ifdef MODULE_SVG_ENABLED
 	if (p_extension == "svg") {
 		return "DPITexture";
 	}
-#endif
 	if (ImageLoader::recognize(p_extension).is_valid()) {
 		return "ImageTexture";
 	}

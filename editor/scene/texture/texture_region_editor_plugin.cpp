@@ -905,8 +905,8 @@ void TextureRegionEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			texture_preview->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("TextureRegionPreviewBG"), EditorStringName(EditorStyles)));
-			texture_overlay->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("TextureRegionPreviewFG"), EditorStringName(EditorStyles)));
+			texture_preview->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("texture_region_preview_bg"), EditorStringName(Editor)));
+			texture_overlay->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("texture_region_preview_fg"), EditorStringName(Editor)));
 
 			zoom_out->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_less")));
 			zoom_reset->set_button_icon(get_editor_theme_icon(SNAME("navigation_zoom_reset")));

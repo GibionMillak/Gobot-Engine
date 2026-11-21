@@ -3533,12 +3533,14 @@ bool Control::is_clipping_contents() {
 // Theming.
 
 void Control::_theme_changed() {
+	data.theme_style_cache.clear();
 	if (is_inside_tree()) {
 		data.theme_owner->propagate_theme_changed(this, this, true, false);
 	}
 }
 
 void Control::_notify_theme_override_changed() {
+	data.theme_style_cache.clear();
 	if (!data.bulk_theme_override && is_inside_tree()) {
 		notification(NOTIFICATION_THEME_CHANGED);
 	}
@@ -3663,15 +3665,22 @@ Ref<StyleBox> Control::get_theme_stylebox(const StringName &p_name, const String
 		WARN_PRINT_ONCE(vformat("Attempting to access theme items too early in %s; prefer NOTIFICATION_POSTINITIALIZE and NOTIFICATION_THEME_CHANGED", get_description()));
 	}
 
-	if (p_theme_type == StringName() || p_theme_type == get_class_name() || p_theme_type == data.theme_type_variation) {
-		const Ref<StyleBox> *style = data.theme_style_override.getptr(p_name);
+	const HashMap<StringName, Ref<StyleBox>> *type_cache = data.theme_style_cache.getptr(p_theme_type);
+	if (type_cache) {
+		const Ref<StyleBox> *style = type_cache->getptr(p_name);
 		if (style) {
 			return *style;
 		}
 	}
 
-	if (data.theme_style_cache.has(p_theme_type) && data.theme_style_cache[p_theme_type].has(p_name)) {
-		return data.theme_style_cache[p_theme_type][p_name];
+	if (p_theme_type == StringName() || p_theme_type == get_class_name() || p_theme_type == data.theme_type_variation) {
+		const Ref<StyleBox> *style = data.theme_style_override.getptr(p_name);
+		if (style) {
+			const Ref<StyleBox> resolved = data.theme_owner->resolve_stylebox_override(*style);
+			ERR_FAIL_COND_V_MSG(resolved.is_null(), ThemeDB::get_singleton()->get_fallback_stylebox(), vformat("Could not resolve stylebox override '%s' on %s.", p_name, get_description()));
+			data.theme_style_cache[p_theme_type][p_name] = resolved;
+			return resolved;
+		}
 	}
 
 	Vector<StringName> theme_types;
@@ -3869,7 +3878,7 @@ Variant Control::get_used_theme_item(const String &p_full_name, const StringName
 
 #ifdef TOOLS_ENABLED
 Ref<Texture2D> Control::get_editor_theme_icon(const StringName &p_name) const {
-	return get_theme_icon(p_name, SNAME("EditorIcons"));
+	return get_theme_icon(p_name, SNAME("Editor"));
 }
 #endif // TOOLS_ENABLED
 

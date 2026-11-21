@@ -2151,7 +2151,7 @@ Error ResourceFormatSaverBinaryInstance::save(const String &p_path, const Ref<Re
 					bool is_script = F.name == CoreStringName(script);
 					Variant default_value = is_script ? Variant() : PropertyUtils::get_property_default_value(E.ptr(), F.name);
 
-					if (default_value.get_type() != Variant::NIL && bool(Variant::evaluate(Variant::OP_EQUAL, p.value, default_value))) {
+					if (!(F.usage & PROPERTY_USAGE_STORE_IF_DEFAULT) && default_value.get_type() != Variant::NIL && bool(Variant::evaluate(Variant::OP_EQUAL, p.value, default_value))) {
 						continue;
 					}
 

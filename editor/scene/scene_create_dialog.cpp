@@ -130,7 +130,7 @@ void SceneCreateDialog::update_dialog() {
 	}
 
 	const StringName root_type_name = StringName(other_type_display->get_text());
-	if (has_theme_icon(editor_get_type_icon_name(root_type_name), EditorStringName(EditorIcons))) {
+	if (has_theme_icon(editor_get_type_icon_name(root_type_name), EditorStringName(Editor))) {
 		node_type_other->set_button_icon(get_editor_theme_icon(editor_get_type_icon_name(root_type_name)));
 	} else {
 		node_type_other->set_button_icon(nullptr);

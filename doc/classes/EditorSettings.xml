@@ -1151,51 +1151,21 @@
 		<member name="interface/scene_tabs/show_thumbnail_on_hover" type="bool" setter="" getter="">
 			If [code]true[/code], display an automatically-generated thumbnail when hovering scene tabs with the mouse. Scene thumbnails are generated when saving the scene.
 		</member>
-		<member name="interface/theme/accent_color" type="Color" setter="" getter="">
-			The color to use for "highlighted" user interface elements in the editor (pressed and hovered items).
-		</member>
-		<member name="interface/theme/base_color" type="Color" setter="" getter="">
-			The base color to use for user interface elements in the editor. Secondary colors (such as darker/lighter variants) are derived from this color.
-		</member>
-		<member name="interface/theme/border_radius" type="int" setter="" getter="">
-			The border radius to use for interface elements (in pixels). [code]0[/code] is square.
-		</member>
-		<member name="interface/theme/border_size" type="int" setter="" getter="">
-			The border size to use for interface elements (in pixels).
-		</member>
-		<member name="interface/theme/color_preset" type="String" setter="" getter="">
-			The editor color preset to use.
-		</member>
-		<member name="interface/theme/contrast" type="float" setter="" getter="">
-			The contrast factor to use when deriving the editor theme's base color (see [member interface/theme/base_color]). When using positive values, the derived colors will be [i]darker[/i] than the base color. This contrast factor can be set to a negative value, which will make the derived colors [i]brighter[/i] than the base color. Negative contrast rates often look better for light themes.
-		</member>
-		<member name="interface/theme/custom_theme" type="String" setter="" getter="">
-			The custom theme resource to use for the editor. Must be a Godot theme resource in [code].tres[/code] or [code].res[/code] format.
-		</member>
-		<member name="interface/theme/draw_relationship_lines" type="int" setter="" getter="">
-			What relationship lines to draw in the editor's [Tree]-based GUIs (such as the Hierarchy dock).
-			- [b]None[/b] will make it so that no relationship lines are drawn.
-			- [b]Selected Only[/b] will only draw them for selected items.
-			- [b]All[/b] will always draw them for all items.
-		</member>
 		<member name="interface/theme/follow_system_theme" type="bool" setter="" getter="">
-			If [code]true[/code], the editor theme preset will attempt to automatically match the system theme.
+			If [code]true[/code], use the bundled Dark or Light editor theme to match the system appearance. Assigning [member interface/theme/theme] manually disables this setting without changing the assigned resource.
 		</member>
 		<member name="interface/theme/icon_and_font_color" type="int" setter="" getter="">
 			The icon and font color scheme to use in the editor.
-			- [b]Auto[/b] determines the color scheme to use automatically based on [member interface/theme/base_color].
+			- [b]Auto[/b] determines the color scheme automatically from the selected theme's [member Theme.default_base_color].
 			- [b]Dark[/b] makes fonts and icons dark (suitable for light themes). Icon colors are automatically converted by the editor following the set of rules defined in [url=https://github.com/godotengine/godot/blob/master/editor/themes/editor_theme_manager.cpp]this file[/url].
 			- [b]Light[/b] makes fonts and icons light (suitable for dark themes).
 		</member>
-		<member name="interface/theme/icon_saturation" type="float" setter="" getter="">
-			The saturation to use for editor icons. Higher values result in more vibrant colors.
-			[b]Note:[/b] The default editor icon saturation was increased by 30% in Godot 4.0 and later. To get Godot 3.x's icon saturation back, set [member interface/theme/icon_saturation] to [code]0.77[/code].
-		</member>
-		<member name="interface/theme/padding" type="int" setter="" getter="">
-			The padding used by various GUI elements in the editor (in pixels).
-		</member>
 		<member name="interface/theme/relationship_line_opacity" type="float" setter="" getter="">
 			The opacity to use when drawing relationship lines in the editor's [Tree]-based GUIs (such as the Hierarchy dock).
+		</member>
+		<member name="interface/theme/theme" type="Theme" setter="" getter="">
+			The editor [Theme] resource to use. The bundled Default theme is assigned initially and is used when this property is empty. Use the resource picker to assign a bundled theme or load another complete editor theme definition. Each definition provides its font, appearance parameters, colors, borders, and styleboxes. See also [member interface/theme/follow_system_theme].
+			Click the selected theme to expand its [b]Default[/b] group. Open the resource separately to access all its theme items.
 		</member>
 		<member name="interface/theme/use_monospace_font_for_editor_symbols" type="bool" setter="" getter="">
 			If [code]true[/code], use the monospace font for some labels in the editor that display code symbols, such as signals, properties, and methods.

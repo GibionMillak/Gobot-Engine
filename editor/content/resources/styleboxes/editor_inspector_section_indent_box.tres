@@ -1,0 +1,20 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "EditorInspectorSection indent_box"
+background_color = "Color((theme.Editor.colors.accent_color).r, (theme.Editor.colors.accent_color).g, (theme.Editor.colors.accent_color).b, 0.2)"
+border_color = Color(0.8, 0.8, 0.8, 1)
+border_width_bottom = 0
+border_width_left = 0
+border_width_right = 0
+border_width_top = 0
+corner_detail = 1
+corner_radius_bottom_left = 0
+corner_radius_bottom_right = 0
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+padding_bottom = 0
+padding_left = "pixels((round((2.0 * theme.default_base_scale)) * theme.default_base_scale))"
+padding_right = "pixels((round((2.0 * theme.default_base_scale)) * theme.default_base_scale))"
+padding_top = 0
+shadow_color = Color(0, 0, 0, 0.6)

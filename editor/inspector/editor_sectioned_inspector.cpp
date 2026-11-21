@@ -129,6 +129,10 @@ class SectionedInspectorFilter : public Object {
 	}
 
 public:
+	bool matches_property(const String &p_property, const Object *p_owner, const String &p_full_path) const {
+		return edited == p_owner && (section.is_empty() ? p_property : section + "/" + p_property) == p_full_path;
+	}
+
 	void set_section(const String &p_section, bool p_allow_sub) {
 		section = p_section;
 		allow_sub = p_allow_sub;
@@ -140,6 +144,14 @@ public:
 		notify_property_list_changed();
 	}
 };
+
+bool SectionedInspector::matches_property(const Object *p_object, const String &p_property, const Object *p_owner, const String &p_full_path) {
+	const SectionedInspectorFilter *section_filter = Object::cast_to<SectionedInspectorFilter>(p_object);
+	if (section_filter) {
+		return section_filter->matches_property(p_property, p_owner, p_full_path);
+	}
+	return p_object == p_owner && p_property == p_full_path;
+}
 
 void SectionedInspector::_bind_methods() {
 	ClassDB::bind_method("update_category_list", &SectionedInspector::update_category_list);
@@ -274,7 +286,7 @@ void SectionedInspector::update_category_list() {
 		for (int i = 0; i < sc; i++) {
 			TreeItem *parent = section_map[metasection];
 			//parent->set_custom_bg_color(0, get_theme_color(SNAME("prop_subsection"), EditorStringName(Editor)));
-			parent->set_custom_font(0, get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			parent->set_custom_font(0, get_theme_font(SNAME("bold"), EditorStringName(Editor)));
 
 			if (i > 0) {
 				metasection += "/" + sectionarr[i];

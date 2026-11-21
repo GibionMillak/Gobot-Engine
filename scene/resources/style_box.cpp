@@ -35,16 +35,22 @@
 #include "core/math/math_funcs.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
+#include "core/string/ustring.h"
 #include "scene/main/canvas_item.h"
 #include "scene/resources/atlas_texture.h"
 #include "scene/resources/dpi_texture.h"
+#include "scene/resources/theme.h"
 #include "servers/rendering/rendering_server.h"
 #include "servers/text/text_server.h"
 
 #include <cfloat>
 
 void StyleBox::set_texture(Ref<Texture2D> p_texture) {
+	const bool override_changed = _mark_theme_override(TEXTURE);
 	if (_texture == p_texture) {
+		if (override_changed) {
+			emit_changed();
+		}
 		return;
 	}
 	if (_texture.is_valid()) {
@@ -63,7 +69,11 @@ Ref<Texture2D> StyleBox::get_texture() const {
 }
 
 void StyleBox::set_texture_modulate(const Color &p_modulate) {
+	const bool override_changed = _mark_theme_override(TEXTURE_MODULATE);
 	if (_texture_modulate == p_modulate) {
+		if (override_changed) {
+			emit_changed();
+		}
 		return;
 	}
 	_texture_modulate = p_modulate;
@@ -76,6 +86,7 @@ Color StyleBox::get_texture_modulate() const {
 
 void StyleBox::set_texture_slice(Side p_side, float p_size) {
 	ERR_FAIL_INDEX((int)p_side, 4);
+	_mark_theme_override(TEXTURE_SLICE_LEFT + int(p_side));
 
 	_texture_slice[p_side] = MAX(0.0f, p_size);
 	emit_changed();
@@ -89,12 +100,18 @@ float StyleBox::get_texture_slice(Side p_side) const {
 
 void StyleBox::set_texture_slice_all(float p_size) {
 	for (int i = 0; i < 4; i++) {
+		_mark_theme_override(TEXTURE_SLICE_LEFT + i);
+	}
+	for (int i = 0; i < 4; i++) {
 		_texture_slice[i] = MAX(0.0f, p_size);
 	}
 	emit_changed();
 }
 
 void StyleBox::set_texture_slice_individual(float p_left, float p_top, float p_right, float p_bottom) {
+	for (int i = 0; i < 4; i++) {
+		_mark_theme_override(TEXTURE_SLICE_LEFT + i);
+	}
 	_texture_slice[SIDE_LEFT] = MAX(0.0f, p_left);
 	_texture_slice[SIDE_TOP] = MAX(0.0f, p_top);
 	_texture_slice[SIDE_RIGHT] = MAX(0.0f, p_right);
@@ -104,6 +121,7 @@ void StyleBox::set_texture_slice_individual(float p_left, float p_top, float p_r
 
 void StyleBox::set_h_axis_stretch_mode(AxisStretchMode p_mode) {
 	ERR_FAIL_INDEX((int)p_mode, 3);
+	_mark_theme_override(AXIS_STRETCH_HORIZONTAL);
 	_axis_h = p_mode;
 	emit_changed();
 }
@@ -114,6 +132,7 @@ StyleBox::AxisStretchMode StyleBox::get_h_axis_stretch_mode() const {
 
 void StyleBox::set_v_axis_stretch_mode(AxisStretchMode p_mode) {
 	ERR_FAIL_INDEX((int)p_mode, 3);
+	_mark_theme_override(AXIS_STRETCH_VERTICAL);
 	_axis_v = p_mode;
 	emit_changed();
 }
@@ -123,6 +142,7 @@ StyleBox::AxisStretchMode StyleBox::get_v_axis_stretch_mode() const {
 }
 
 void StyleBox::set_region_rect(const Rect2 &p_region_rect) {
+	_mark_theme_override(REGION_RECT);
 	if (_region_rect == p_region_rect) {
 		return;
 	}
@@ -136,6 +156,7 @@ Rect2 StyleBox::get_region_rect() const {
 }
 
 void StyleBox::set_background_color(const Color &p_color) {
+	_mark_theme_override(BACKGROUND_COLOR);
 	_background_color = p_color;
 	emit_changed();
 }
@@ -145,6 +166,7 @@ Color StyleBox::get_background_color() const {
 }
 
 void StyleBox::set_skew(Vector2 p_skew) {
+	_mark_theme_override(SKEW);
 	_skew = p_skew;
 	emit_changed();
 }
@@ -156,6 +178,7 @@ Vector2 StyleBox::get_skew() const {
 void StyleBox::set_padding(Side p_side, float p_padding) {
 	ERR_FAIL_INDEX((int)p_side, 4);
 
+	_mark_theme_override(PADDING_LEFT + int(p_side));
 	_padding[p_side] = MAX(0.0f, p_padding);
 	emit_changed();
 }
@@ -171,6 +194,9 @@ void StyleBox::set_padding_all(float p_padding) {
 }
 
 void StyleBox::set_padding_individual(float p_left, float p_top, float p_right, float p_bottom) {
+	for (int i = 0; i < 4; i++) {
+		_mark_theme_override(PADDING_LEFT + i);
+	}
 	_padding[SIDE_LEFT] = MAX(0.0f, p_left);
 	_padding[SIDE_TOP] = MAX(0.0f, p_top);
 	_padding[SIDE_RIGHT] = MAX(0.0f, p_right);
@@ -179,6 +205,7 @@ void StyleBox::set_padding_individual(float p_left, float p_top, float p_right, 
 }
 
 void StyleBox::set_border_color(const Color &p_color) {
+	_mark_theme_override(BORDER_COLOR);
 	_border_color = p_color;
 	emit_changed();
 }
@@ -188,6 +215,7 @@ Color StyleBox::get_border_color() const {
 }
 
 void StyleBox::set_border_blend(bool p_blend) {
+	_mark_theme_override(BORDER_BLEND);
 	_blend_border = p_blend;
 	emit_changed();
 }
@@ -198,6 +226,7 @@ bool StyleBox::get_border_blend() const {
 
 void StyleBox::set_border_width(Side p_side, int p_width) {
 	ERR_FAIL_INDEX((int)p_side, 4);
+	_mark_theme_override(BORDER_WIDTH_LEFT + int(p_side));
 	_border_width[p_side] = MAX(0, p_width);
 	emit_changed();
 }
@@ -208,6 +237,9 @@ int StyleBox::get_border_width(Side p_side) const {
 }
 
 void StyleBox::set_border_width_all(int p_size) {
+	for (int i = 0; i < 4; i++) {
+		_mark_theme_override(BORDER_WIDTH_LEFT + i);
+	}
 	_border_width[0] = MAX(0, p_size);
 	_border_width[1] = MAX(0, p_size);
 	_border_width[2] = MAX(0, p_size);
@@ -221,6 +253,7 @@ int StyleBox::get_border_width_min() const {
 
 void StyleBox::set_corner_radius(const Corner p_corner, const int p_radius) {
 	ERR_FAIL_INDEX((int)p_corner, 4);
+	_mark_theme_override(CORNER_RADIUS_TOP_LEFT + int(p_corner));
 	_corner_radius[p_corner] = MAX(0, p_radius);
 	emit_changed();
 }
@@ -232,6 +265,7 @@ int StyleBox::get_corner_radius(const Corner p_corner) const {
 
 void StyleBox::set_corner_radius_all(int p_radius) {
 	for (int i = 0; i < 4; i++) {
+		_mark_theme_override(CORNER_RADIUS_TOP_LEFT + i);
 		_corner_radius[i] = MAX(0, p_radius);
 	}
 
@@ -239,6 +273,9 @@ void StyleBox::set_corner_radius_all(int p_radius) {
 }
 
 void StyleBox::set_corner_radius_individual(const int p_top_left, const int p_top_right, const int p_bottom_right, const int p_bottom_left) {
+	for (int i = 0; i < 4; i++) {
+		_mark_theme_override(CORNER_RADIUS_TOP_LEFT + i);
+	}
 	_corner_radius[0] = MAX(0, p_top_left);
 	_corner_radius[1] = MAX(0, p_top_right);
 	_corner_radius[2] = MAX(0, p_bottom_right);
@@ -248,6 +285,7 @@ void StyleBox::set_corner_radius_individual(const int p_top_left, const int p_to
 }
 
 void StyleBox::set_corner_detail(int p_corner_detail) {
+	_mark_theme_override(CORNER_DETAIL);
 	_corner_detail = CLAMP(p_corner_detail, 1, 20);
 	emit_changed();
 }
@@ -258,6 +296,7 @@ int StyleBox::get_corner_detail() const {
 
 void StyleBox::set_expand_margin(Side p_side, float p_size) {
 	ERR_FAIL_INDEX((int)p_side, 4);
+	_mark_theme_override(EXPAND_MARGIN_LEFT + int(p_side));
 	_expand_margin[p_side] = p_size;
 	emit_changed();
 }
@@ -269,12 +308,18 @@ float StyleBox::get_expand_margin(Side p_side) const {
 
 void StyleBox::set_expand_margin_all(float p_expand_margin_size) {
 	for (int i = 0; i < 4; i++) {
+		_mark_theme_override(EXPAND_MARGIN_LEFT + i);
+	}
+	for (int i = 0; i < 4; i++) {
 		_expand_margin[i] = p_expand_margin_size;
 	}
 	emit_changed();
 }
 
 void StyleBox::set_expand_margin_individual(float p_left, float p_top, float p_right, float p_bottom) {
+	for (int i = 0; i < 4; i++) {
+		_mark_theme_override(EXPAND_MARGIN_LEFT + i);
+	}
 	_expand_margin[SIDE_LEFT] = p_left;
 	_expand_margin[SIDE_TOP] = p_top;
 	_expand_margin[SIDE_RIGHT] = p_right;
@@ -283,6 +328,7 @@ void StyleBox::set_expand_margin_individual(float p_left, float p_top, float p_r
 }
 
 void StyleBox::set_shadow_color(const Color &p_color) {
+	_mark_theme_override(SHADOW_COLOR);
 	_shadow_color = p_color;
 	emit_changed();
 }
@@ -292,6 +338,7 @@ Color StyleBox::get_shadow_color() const {
 }
 
 void StyleBox::set_shadow_size(int p_size) {
+	_mark_theme_override(SHADOW_SIZE);
 	_shadow_size = MAX(0, p_size);
 	emit_changed();
 }
@@ -301,6 +348,7 @@ int StyleBox::get_shadow_size() const {
 }
 
 void StyleBox::set_shadow_offset(const Point2 &p_offset) {
+	_mark_theme_override(SHADOW_OFFSET);
 	_shadow_offset = p_offset;
 	emit_changed();
 }
@@ -310,6 +358,7 @@ Point2 StyleBox::get_shadow_offset() const {
 }
 
 void StyleBox::set_anti_aliased(bool p_anti_aliased) {
+	_mark_theme_override(ANTI_ALIASING);
 	_anti_aliased = p_anti_aliased;
 	emit_changed();
 	notify_property_list_changed();
@@ -320,6 +369,7 @@ bool StyleBox::is_anti_aliased() const {
 }
 
 void StyleBox::set_aa_size(const real_t p_aa_size) {
+	_mark_theme_override(ANTI_ALIASING_SIZE);
 	_aa_size = CLAMP(p_aa_size, 0.01, 10);
 	emit_changed();
 }
@@ -329,6 +379,7 @@ real_t StyleBox::get_aa_size() const {
 }
 
 void StyleBox::set_minimum_size(const Size2 &p_size) {
+	_mark_theme_override(MINIMUM_SIZE);
 	ERR_FAIL_COND(!p_size.is_finite());
 	_minimum_size = p_size.maxf(0);
 	emit_changed();
@@ -585,7 +636,58 @@ bool StyleBox::test_mask(const Point2 &p_point, const Rect2 &p_rect) const {
 	return ret;
 }
 
+Error StyleBox::set_theme_expression(const StringName &p_property, const String &p_expression) {
+	const int index = _get_theme_property_index(p_property);
+	ERR_FAIL_COND_V_MSG(index < 0, ERR_INVALID_PARAMETER, vformat("StyleBox property '%s' does not support theme expressions.", p_property));
+	ERR_FAIL_COND_V_MSG(Theme::validate_theme_expression(p_expression) != OK, ERR_PARSE_ERROR, vformat("Invalid theme expression '%s' for '%s'.", p_expression, p_property));
+	++_theme_override_revision;
+	_theme_expressions[p_property] = p_expression.strip_edges();
+	_theme_overrides |= uint64_t(1) << index;
+	notify_property_list_changed();
+	emit_changed();
+	return OK;
+}
+
+String StyleBox::get_theme_expression(const StringName &p_property) const {
+	const String *expression = _theme_expressions.getptr(p_property);
+	return expression ? *expression : String();
+}
+
+bool StyleBox::is_theme_expression_property(const StringName &p_property) {
+	return _get_theme_property_index(p_property) >= 0;
+}
+
+bool StyleBox::has_theme_override(const StringName &p_property) const {
+	const int index = _get_theme_property_index(p_property);
+	return index >= 0 && (_theme_overrides & (uint64_t(1) << index));
+}
+
+void StyleBox::clear_theme_override(const StringName &p_property) {
+	const int index = _get_theme_property_index(p_property);
+	ERR_FAIL_COND_MSG(index < 0, vformat("Unknown StyleBox theme property '%s'.", p_property));
+	_set_theme_value(index, _get_theme_native_default(index));
+	++_theme_override_revision;
+	_theme_overrides &= ~(uint64_t(1) << index);
+	_theme_expressions.erase(p_property);
+	notify_property_list_changed();
+	emit_changed();
+}
+
+Ref<StyleBox> StyleBox::resolve_theme(const Theme &p_theme) const {
+	return _resolve_theme(p_theme, nullptr);
+}
+
+Ref<StyleBox> StyleBox::resolve_theme_in_context(ThemeResolver &r_context) const {
+	ERR_FAIL_COND_V(r_context._themes.is_empty(), Ref<StyleBox>());
+	return _resolve_theme(*r_context._themes[0].ptr(), &r_context);
+}
+
 void StyleBox::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_theme_expression", "property", "expression"), &StyleBox::set_theme_expression);
+	ClassDB::bind_method(D_METHOD("get_theme_expression", "property"), &StyleBox::get_theme_expression);
+	ClassDB::bind_method(D_METHOD("clear_theme_override", "property"), &StyleBox::clear_theme_override);
+	ClassDB::bind_method(D_METHOD("_set_theme_value", "property", "value"), &StyleBox::_set_theme_value);
+	ClassDB::bind_method(D_METHOD("_get_theme_value", "property"), &StyleBox::_get_theme_value);
 	ClassDB::bind_method(D_METHOD("set_texture", "texture"), &StyleBox::set_texture);
 	ClassDB::bind_method(D_METHOD("get_texture"), &StyleBox::get_texture);
 
@@ -660,55 +762,59 @@ void StyleBox::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_current_item_drawn"), &StyleBox::get_current_item_drawn);
 	ClassDB::bind_method(D_METHOD("test_mask", "point", "rect"), &StyleBox::test_mask);
 
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture", PROPERTY_HINT_RESOURCE_TYPE, Texture2D::get_class_static()), "set_texture", "get_texture");
-	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "texture_modulate"), "set_texture_modulate", "get_texture_modulate");
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "texture", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", TEXTURE);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "texture_modulate", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", TEXTURE_MODULATE);
 	ADD_GROUP("Texture Slices", "texture_slice_");
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "texture_slice_left", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_texture_slice", "get_texture_slice", SIDE_LEFT);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "texture_slice_top", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_texture_slice", "get_texture_slice", SIDE_TOP);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "texture_slice_right", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_texture_slice", "get_texture_slice", SIDE_RIGHT);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "texture_slice_bottom", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_texture_slice", "get_texture_slice", SIDE_BOTTOM);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "texture_slice_left", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", TEXTURE_SLICE_LEFT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "texture_slice_top", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", TEXTURE_SLICE_TOP);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "texture_slice_right", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", TEXTURE_SLICE_RIGHT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "texture_slice_bottom", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", TEXTURE_SLICE_BOTTOM);
 	ADD_GROUP("Axis Stretch", "axis_stretch_");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "axis_stretch_horizontal", PROPERTY_HINT_ENUM, "Stretch,Tile,Tile Fit"), "set_h_axis_stretch_mode", "get_h_axis_stretch_mode");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "axis_stretch_vertical", PROPERTY_HINT_ENUM, "Stretch,Tile,Tile Fit"), "set_v_axis_stretch_mode", "get_v_axis_stretch_mode");
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "axis_stretch_horizontal", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", AXIS_STRETCH_HORIZONTAL);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "axis_stretch_vertical", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", AXIS_STRETCH_VERTICAL);
 	ADD_GROUP("Sub-Region", "region_");
-	ADD_PROPERTY(PropertyInfo(Variant::RECT2, "region_rect", PROPERTY_HINT_NONE, "suffix:px"), "set_region_rect", "get_region_rect");
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "region_rect", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", REGION_RECT);
 	ADD_GROUP("", "");
-	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "background_color"), "set_background_color", "get_background_color");
-	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "skew"), "set_skew", "get_skew");
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "background_color", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", BACKGROUND_COLOR);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "skew", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", SKEW);
 	ADD_GROUP("Padding", "padding_");
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "padding_left", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_padding", "get_padding", SIDE_LEFT);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "padding_top", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_padding", "get_padding", SIDE_TOP);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "padding_right", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_padding", "get_padding", SIDE_RIGHT);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "padding_bottom", PROPERTY_HINT_RANGE, "0,2048,1,suffix:px"), "set_padding", "get_padding", SIDE_BOTTOM);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "padding_left", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", PADDING_LEFT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "padding_top", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", PADDING_TOP);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "padding_right", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", PADDING_RIGHT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "padding_bottom", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", PADDING_BOTTOM);
 	ADD_GROUP("Border", "border_");
-	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "border_color"), "set_border_color", "get_border_color");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "border_blend"), "set_border_blend", "get_border_blend");
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "border_color", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", BORDER_COLOR);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "border_blend", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", BORDER_BLEND);
 	ADD_SUBGROUP("Width", "border_width_");
-	ADD_PROPERTYI(PropertyInfo(Variant::INT, "border_width_left", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:px"), "set_border_width", "get_border_width", SIDE_LEFT);
-	ADD_PROPERTYI(PropertyInfo(Variant::INT, "border_width_top", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:px"), "set_border_width", "get_border_width", SIDE_TOP);
-	ADD_PROPERTYI(PropertyInfo(Variant::INT, "border_width_right", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:px"), "set_border_width", "get_border_width", SIDE_RIGHT);
-	ADD_PROPERTYI(PropertyInfo(Variant::INT, "border_width_bottom", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:px"), "set_border_width", "get_border_width", SIDE_BOTTOM);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "border_width_left", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", BORDER_WIDTH_LEFT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "border_width_top", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", BORDER_WIDTH_TOP);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "border_width_right", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", BORDER_WIDTH_RIGHT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "border_width_bottom", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", BORDER_WIDTH_BOTTOM);
 	ADD_GROUP("Corner", "corner_");
 	ADD_SUBGROUP("Radius", "corner_radius_");
-	ADD_PROPERTYI(PropertyInfo(Variant::INT, "corner_radius_top_left", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:px"), "set_corner_radius", "get_corner_radius", CORNER_TOP_LEFT);
-	ADD_PROPERTYI(PropertyInfo(Variant::INT, "corner_radius_top_right", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:px"), "set_corner_radius", "get_corner_radius", CORNER_TOP_RIGHT);
-	ADD_PROPERTYI(PropertyInfo(Variant::INT, "corner_radius_bottom_right", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:px"), "set_corner_radius", "get_corner_radius", CORNER_BOTTOM_RIGHT);
-	ADD_PROPERTYI(PropertyInfo(Variant::INT, "corner_radius_bottom_left", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:px"), "set_corner_radius", "get_corner_radius", CORNER_BOTTOM_LEFT);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "corner_detail", PROPERTY_HINT_RANGE, "1,20,1"), "set_corner_detail", "get_corner_detail");
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "corner_radius_top_left", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", CORNER_RADIUS_TOP_LEFT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "corner_radius_top_right", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", CORNER_RADIUS_TOP_RIGHT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "corner_radius_bottom_right", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", CORNER_RADIUS_BOTTOM_RIGHT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "corner_radius_bottom_left", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", CORNER_RADIUS_BOTTOM_LEFT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "corner_detail", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", CORNER_DETAIL);
 	ADD_GROUP("Expand Margins", "expand_margin_");
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "expand_margin_left", PROPERTY_HINT_RANGE, "-100,100,1,or_less,or_greater,suffix:px"), "set_expand_margin", "get_expand_margin", SIDE_LEFT);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "expand_margin_top", PROPERTY_HINT_RANGE, "-100,100,1,or_less,or_greater,suffix:px"), "set_expand_margin", "get_expand_margin", SIDE_TOP);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "expand_margin_right", PROPERTY_HINT_RANGE, "-100,100,1,or_less,or_greater,suffix:px"), "set_expand_margin", "get_expand_margin", SIDE_RIGHT);
-	ADD_PROPERTYI(PropertyInfo(Variant::FLOAT, "expand_margin_bottom", PROPERTY_HINT_RANGE, "-100,100,1,or_less,or_greater,suffix:px"), "set_expand_margin", "get_expand_margin", SIDE_BOTTOM);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "expand_margin_left", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", EXPAND_MARGIN_LEFT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "expand_margin_top", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", EXPAND_MARGIN_TOP);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "expand_margin_right", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", EXPAND_MARGIN_RIGHT);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "expand_margin_bottom", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", EXPAND_MARGIN_BOTTOM);
 	ADD_GROUP("Shadow", "shadow_");
-	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "shadow_color"), "set_shadow_color", "get_shadow_color");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "shadow_size", PROPERTY_HINT_RANGE, "0,100,1,or_greater,suffix:px"), "set_shadow_size", "get_shadow_size");
-	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "shadow_offset", PROPERTY_HINT_NONE, "suffix:px"), "set_shadow_offset", "get_shadow_offset");
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "shadow_color", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", SHADOW_COLOR);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "shadow_size", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", SHADOW_SIZE);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "shadow_offset", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", SHADOW_OFFSET);
 	ADD_GROUP("Anti Aliasing", "anti_aliasing_");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "anti_aliasing"), "set_anti_aliased", "is_anti_aliased");
-	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "anti_aliasing_size", PROPERTY_HINT_RANGE, "0.01,10,0.001,suffix:px"), "set_aa_size", "get_aa_size");
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "anti_aliasing", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", ANTI_ALIASING);
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "anti_aliasing_size", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", ANTI_ALIASING_SIZE);
 	ADD_GROUP("", "");
-	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "minimum_size", PROPERTY_HINT_NONE, "suffix:px"), "set_minimum_size", "get_intrinsic_minimum_size");
+	ADD_PROPERTYI(PropertyInfo(Variant::NIL, "minimum_size", PROPERTY_HINT_EXPRESSION, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_NIL_IS_VARIANT), "_set_theme_value", "_get_theme_value", MINIMUM_SIZE);
+	// A literal equal to the native default is still an explicit override of the theme.
+	for (int i = 0; i < MAX_THEME_PROPERTIES; i++) {
+		ClassDB::set_property_default_value(get_class_static(), _get_theme_property_name(i), Variant());
+	}
 
 	BIND_ENUM_CONSTANT(STRETCH);
 	BIND_ENUM_CONSTANT(TILE);
@@ -721,15 +827,74 @@ void StyleBox::_bind_methods() {
 }
 
 void StyleBox::_validate_property(PropertyInfo &r_property) const {
+	const int index = _get_theme_property_index(r_property.name);
+	if (index >= 0) {
+		if (!(_theme_overrides & (uint64_t(1) << index))) {
+			r_property.usage &= ~PROPERTY_USAGE_STORAGE;
+		} else {
+			r_property.usage |= PROPERTY_USAGE_STORE_IF_DEFAULT;
+			if (_get_theme_property_type(index) == Variant::OBJECT) {
+				r_property.usage |= PROPERTY_USAGE_STORE_IF_NULL;
+			}
+		}
+		if (_theme_expressions.has(r_property.name)) {
+			r_property.type = Variant::STRING;
+			r_property.hint = PROPERTY_HINT_EXPRESSION;
+			r_property.hint_string = "";
+		} else {
+			r_property.type = _get_theme_property_type(index);
+			r_property.hint = PROPERTY_HINT_NONE;
+			r_property.hint_string = "";
+			if (r_property.type == Variant::OBJECT) {
+				r_property.hint = PROPERTY_HINT_RESOURCE_TYPE;
+				r_property.hint_string = String(Texture2D::get_class_static());
+			} else if (index == CORNER_DETAIL) {
+				r_property.hint = PROPERTY_HINT_RANGE;
+				r_property.hint_string = "1,20,1";
+			} else if (index == ANTI_ALIASING_SIZE) {
+				r_property.hint = PROPERTY_HINT_RANGE;
+				r_property.hint_string = "0.01,10,0.01,suffix:px";
+			} else if (r_property.type == Variant::INT || r_property.type == Variant::FLOAT) {
+				const bool allows_negative = index >= EXPAND_MARGIN_LEFT && index <= EXPAND_MARGIN_BOTTOM;
+				const String step = r_property.type == Variant::INT ? "1" : "0.01";
+				r_property.hint = PROPERTY_HINT_RANGE;
+				r_property.hint_string = (allows_negative ? "-100,100," : "0,100,") + step + (allows_negative ? ",or_less,or_greater,suffix:px" : ",or_greater,suffix:px");
+			}
+		}
+	}
 	if (!Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
 	if (!_anti_aliased && r_property.name == "anti_aliasing_size") {
-		r_property.usage = PROPERTY_USAGE_NO_EDITOR;
+		r_property.usage &= ~PROPERTY_USAGE_EDITOR;
 	}
 	if (_texture.is_null() && (r_property.name.begins_with("texture_slice_") || r_property.name.begins_with("axis_stretch_") || r_property.name == "region_rect" || r_property.name == "texture_modulate")) {
-		r_property.usage = PROPERTY_USAGE_NO_EDITOR;
+		r_property.usage &= ~PROPERTY_USAGE_EDITOR;
 	}
+}
+
+bool StyleBox::_property_can_revert(const StringName &p_property) const {
+	return has_theme_override(p_property);
+}
+
+bool StyleBox::_property_get_revert(const StringName &p_property, Variant &r_value) const {
+	if (!has_theme_override(p_property)) {
+		return false;
+	}
+	r_value = String();
+	return true;
+}
+
+void StyleBox::reset_state() {
+	for (int i = 0; i < MAX_THEME_PROPERTIES; i++) {
+		_set_theme_value(i, _get_theme_native_default(i));
+	}
+	++_theme_override_revision;
+	_theme_overrides = 0;
+	_theme_expressions.clear();
+	Resource::reset_state();
+	notify_property_list_changed();
+	emit_changed();
 }
 
 void StyleBox::_set_inner_corner_radius(const Rect2 p_style_rect, const Rect2 p_inner_rect, const real_t p_corner_radius[4], real_t *r_inner_corner_radius) {
@@ -1127,4 +1292,343 @@ void StyleBox::_draw_texture(RID p_canvas_item, const Rect2 &p_rect, const real_
 
 void StyleBox::_texture_changed() {
 	emit_changed();
+}
+
+Ref<StyleBox> StyleBox::_resolve_theme(const Theme &p_theme, ThemeResolver *r_context) const {
+	const auto has_style_parameter = [&p_theme, r_context](const StringName &p_parameter) {
+		return r_context ? r_context->has_style_parameter(p_parameter) : p_theme.has_style_parameter(p_parameter);
+	};
+	bool dependent = !_theme_expressions.is_empty();
+	for (int i = 0; !dependent && i < MAX_THEME_PROPERTIES; i++) {
+		dependent = !(_theme_overrides & (uint64_t(1) << i)) && has_style_parameter(_get_theme_default_name(i));
+	}
+	if (!dependent) {
+		return Ref<StyleBox>(const_cast<StyleBox *>(this));
+	}
+	Ref<StyleBox> resolved = duplicate();
+	ERR_FAIL_COND_V(resolved.is_null(), Ref<StyleBox>());
+	const double scale = r_context ? r_context->get_base_scale() : p_theme.has_default_base_scale() ? p_theme.get_default_base_scale() : 1.0;
+	for (int i = 0; i < MAX_THEME_PROPERTIES; i++) {
+		const StringName property = _get_theme_property_name(i);
+		const String *source = _theme_expressions.getptr(property);
+		Variant value;
+		bool pixels = false;
+		if (source) {
+			Error error = OK;
+			value = r_context ? r_context->evaluate_expression(*source, &pixels, &error) : p_theme.evaluate_theme_expression(*source, &pixels, &error);
+			ERR_FAIL_COND_V_MSG(error != OK, Ref<StyleBox>(), vformat("Could not resolve '%s' in stylebox '%s'.", property, get_path()));
+		} else {
+			if (_theme_overrides & (uint64_t(1) << i)) {
+				continue;
+			}
+			const StringName parameter = _get_theme_default_name(i);
+			if (!has_style_parameter(parameter)) {
+				continue;
+			}
+			Error error = OK;
+			value = r_context ? r_context->get_style_parameter(parameter, error) : p_theme.get_style_parameter(parameter);
+			ERR_FAIL_COND_V_MSG(error != OK, Ref<StyleBox>(), vformat("Could not resolve '%s' in stylebox '%s'.", parameter, get_path()));
+		}
+		const Variant::Type type = _get_theme_property_type(i);
+		if (type == Variant::INT || type == Variant::FLOAT) {
+			ERR_FAIL_COND_V_MSG(!value.is_num(), Ref<StyleBox>(), vformat("Theme value for '%s' must be numeric.", property));
+			const bool dimension = i < BACKGROUND_COLOR || (i >= EXPAND_MARGIN_LEFT && i <= TEXTURE_SLICE_BOTTOM);
+			const double number = double(value) * (dimension && !pixels ? scale : 1.0);
+			ERR_FAIL_COND_V_MSG(!Math::is_finite(number) || number < INT32_MIN || number > INT32_MAX, Ref<StyleBox>(), vformat("Theme value for '%s' is outside the supported range.", property));
+			value = number;
+		} else if (type == Variant::VECTOR2 && (i == MINIMUM_SIZE || i == SHADOW_OFFSET) && !pixels) {
+			ERR_FAIL_COND_V_MSG(value.get_type() != Variant::VECTOR2, Ref<StyleBox>(), vformat("Theme value for '%s' must be a Vector2.", property));
+			const Vector2 vector = value;
+			value = vector * scale;
+		}
+		if (type == Variant::OBJECT) {
+			ERR_FAIL_COND_V_MSG(value.get_type() != Variant::OBJECT && value.get_type() != Variant::NIL, Ref<StyleBox>(), vformat("Theme value for '%s' must be a resource.", property));
+		} else if (type != Variant::FLOAT && type != Variant::INT) {
+			ERR_FAIL_COND_V_MSG(value.get_type() != type, Ref<StyleBox>(), vformat("Invalid theme value type for '%s'.", property));
+		}
+		if (type == Variant::COLOR) {
+			const Color color = value;
+			ERR_FAIL_COND_V_MSG(!Math::is_finite(color.r) || !Math::is_finite(color.g) || !Math::is_finite(color.b) || !Math::is_finite(color.a), Ref<StyleBox>(), vformat("Non-finite theme color for '%s'.", property));
+		} else if (type == Variant::VECTOR2) {
+			const Vector2 vector = value;
+			ERR_FAIL_COND_V_MSG(!Math::is_finite(vector.x) || !Math::is_finite(vector.y), Ref<StyleBox>(), vformat("Non-finite theme vector for '%s'.", property));
+		}
+		resolved->_set_theme_value(i, value);
+	}
+	return resolved;
+}
+
+StringName StyleBox::_get_theme_property_name(int p_property) {
+	static const char *const NAMES[] = {
+		"padding_left", "padding_top", "padding_right", "padding_bottom",
+		"border_width_left", "border_width_top", "border_width_right", "border_width_bottom",
+		"corner_radius_top_left", "corner_radius_top_right", "corner_radius_bottom_right", "corner_radius_bottom_left",
+		"corner_detail",
+		"background_color", "border_color", "shadow_color",
+		"expand_margin_left",
+		"expand_margin_top",
+		"expand_margin_right",
+		"expand_margin_bottom",
+		"shadow_size",
+		"anti_aliasing_size",
+		"texture_slice_left",
+		"texture_slice_top",
+		"texture_slice_right",
+		"texture_slice_bottom",
+		"minimum_size",
+		"shadow_offset",
+		"texture",
+		"texture_modulate",
+		"skew",
+		"anti_aliasing",
+		"border_blend",
+		"axis_stretch_horizontal",
+		"axis_stretch_vertical",
+		"region_rect",
+
+	};
+	ERR_FAIL_INDEX_V(p_property, MAX_THEME_PROPERTIES, StringName());
+	return NAMES[p_property];
+}
+
+Variant::Type StyleBox::_get_theme_property_type(int p_property) {
+	if (p_property < BORDER_WIDTH_LEFT || (p_property >= EXPAND_MARGIN_LEFT && p_property <= EXPAND_MARGIN_BOTTOM) || p_property == ANTI_ALIASING_SIZE || (p_property >= TEXTURE_SLICE_LEFT && p_property <= TEXTURE_SLICE_BOTTOM)) {
+		return Variant::FLOAT;
+	}
+	if (p_property < BACKGROUND_COLOR || p_property == SHADOW_SIZE || p_property == AXIS_STRETCH_HORIZONTAL || p_property == AXIS_STRETCH_VERTICAL) {
+		return Variant::INT;
+	}
+	if (p_property == BACKGROUND_COLOR || p_property == BORDER_COLOR || p_property == SHADOW_COLOR || p_property == TEXTURE_MODULATE) {
+		return Variant::COLOR;
+	}
+	if (p_property == MINIMUM_SIZE || p_property == SHADOW_OFFSET || p_property == SKEW) {
+		return Variant::VECTOR2;
+	}
+	if (p_property == ANTI_ALIASING || p_property == BORDER_BLEND) {
+		return Variant::BOOL;
+	}
+	return p_property == REGION_RECT ? Variant::RECT2 : Variant::OBJECT;
+}
+
+Variant StyleBox::_get_theme_native_default(int p_property) {
+	switch (p_property) {
+		case BACKGROUND_COLOR:
+			return Color(0, 0, 0, 0);
+		case BORDER_COLOR:
+			return Color(0.8, 0.8, 0.8);
+		case SHADOW_COLOR:
+			return Color(0, 0, 0, 0.6);
+		case TEXTURE_MODULATE:
+			return Color(1, 1, 1, 1);
+		case CORNER_DETAIL:
+			return 8;
+		case ANTI_ALIASING_SIZE:
+			return 1.0;
+		case ANTI_ALIASING:
+			return true;
+		case BORDER_BLEND:
+			return false;
+		case MINIMUM_SIZE:
+		case SHADOW_OFFSET:
+		case SKEW:
+			return Vector2();
+		case REGION_RECT:
+			return Rect2();
+		case TEXTURE:
+			return Ref<Texture2D>();
+		default:
+			return 0;
+	}
+}
+
+int StyleBox::_get_theme_property_index(const StringName &p_property) {
+	for (int i = 0; i < MAX_THEME_PROPERTIES; i++) {
+		if (p_property == _get_theme_property_name(i)) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+StringName StyleBox::_get_theme_default_name(int p_property) {
+	if (p_property < BORDER_WIDTH_LEFT) {
+		return "default_padding";
+	}
+	if (p_property < CORNER_RADIUS_TOP_LEFT) {
+		return "default_border_width";
+	}
+	if (p_property < CORNER_DETAIL) {
+		return "default_border_radius";
+	}
+	return StringName("default_" + String(_get_theme_property_name(p_property)));
+}
+
+
+bool StyleBox::_mark_theme_override(int p_property) {
+	++_theme_override_revision;
+	const uint64_t bit = uint64_t(1) << p_property;
+	const bool was_inherited = !(_theme_overrides & bit);
+	_theme_overrides |= bit;
+	if (_theme_expressions.erase(_get_theme_property_name(p_property))) {
+		notify_property_list_changed();
+		return true;
+	}
+	return was_inherited;
+}
+
+void StyleBox::_set_theme_value(int p_property, const Variant &p_value) {
+	ERR_FAIL_INDEX(p_property, MAX_THEME_PROPERTIES);
+	const StringName property = _get_theme_property_name(p_property);
+	if (p_value.get_type() == Variant::STRING) {
+		const String text = String(p_value).strip_edges();
+		if (text.is_empty()) {
+			clear_theme_override(property);
+			return;
+		}
+		const Error error = set_theme_expression(property, text);
+		ERR_FAIL_COND(error != OK);
+		return;
+	}
+	Variant value = p_value;
+	const Variant::Type type = _get_theme_property_type(p_property);
+	if (type == Variant::INT || type == Variant::FLOAT) {
+		ERR_FAIL_COND_MSG(!value.is_num(), vformat("Expected a number for '%s'.", property));
+		const double number = value;
+		ERR_FAIL_COND_MSG(!Math::is_finite(number) || number < INT32_MIN || number > INT32_MAX, vformat("Invalid numeric value for '%s'.", property));
+		value = type == Variant::INT ? Variant(int(Math::round(number))) : Variant(number);
+	} else if (type == Variant::OBJECT) {
+		ERR_FAIL_COND_MSG(value.get_type() != Variant::NIL && value.get_type() != Variant::OBJECT, vformat("Expected a resource for '%s'.", property));
+	} else {
+		ERR_FAIL_COND_MSG(value.get_type() != type, vformat("Invalid value type for '%s'.", property));
+	}
+	if (type == Variant::COLOR) {
+		const Color color = value;
+		ERR_FAIL_COND_MSG(!Math::is_finite(color.r) || !Math::is_finite(color.g) || !Math::is_finite(color.b) || !Math::is_finite(color.a), vformat("Non-finite color for '%s'.", property));
+	} else if (type == Variant::VECTOR2) {
+		const Vector2 vector = value;
+		ERR_FAIL_COND_MSG(!Math::is_finite(vector.x) || !Math::is_finite(vector.y), vformat("Non-finite vector for '%s'.", property));
+	}
+	if (p_property < BORDER_WIDTH_LEFT) {
+		set_padding(static_cast<Side>(p_property), value);
+	} else if (p_property < CORNER_RADIUS_TOP_LEFT) {
+		set_border_width(static_cast<Side>(p_property - BORDER_WIDTH_LEFT), value);
+	} else if (p_property < CORNER_DETAIL) {
+		set_corner_radius(static_cast<Corner>(p_property - CORNER_RADIUS_TOP_LEFT), value);
+	} else if (p_property >= EXPAND_MARGIN_LEFT && p_property <= EXPAND_MARGIN_BOTTOM) {
+		set_expand_margin(static_cast<Side>(p_property - EXPAND_MARGIN_LEFT), value);
+	} else if (p_property >= TEXTURE_SLICE_LEFT && p_property <= TEXTURE_SLICE_BOTTOM) {
+		set_texture_slice(static_cast<Side>(p_property - TEXTURE_SLICE_LEFT), value);
+	} else {
+		switch (p_property) {
+			case CORNER_DETAIL:
+				set_corner_detail(value);
+				break;
+			case BACKGROUND_COLOR:
+				set_background_color(value);
+				break;
+			case BORDER_COLOR:
+				set_border_color(value);
+				break;
+			case SHADOW_COLOR:
+				set_shadow_color(value);
+				break;
+			case SHADOW_SIZE:
+				set_shadow_size(value);
+				break;
+			case ANTI_ALIASING_SIZE:
+				set_aa_size(value);
+				break;
+			case MINIMUM_SIZE:
+				set_minimum_size(value);
+				break;
+			case SHADOW_OFFSET:
+				set_shadow_offset(value);
+				break;
+			case TEXTURE:
+				set_texture(value);
+				break;
+			case TEXTURE_MODULATE:
+				set_texture_modulate(value);
+				break;
+			case SKEW:
+				set_skew(value);
+				break;
+			case ANTI_ALIASING:
+				set_anti_aliased(value);
+				break;
+			case BORDER_BLEND:
+				set_border_blend(value);
+				break;
+			case AXIS_STRETCH_HORIZONTAL:
+				set_h_axis_stretch_mode(static_cast<AxisStretchMode>(int(value)));
+				break;
+			case AXIS_STRETCH_VERTICAL:
+				set_v_axis_stretch_mode(static_cast<AxisStretchMode>(int(value)));
+				break;
+			case REGION_RECT:
+				set_region_rect(value);
+				break;
+			default:
+				ERR_FAIL();
+		}
+	}
+}
+
+Variant StyleBox::_get_theme_value(int p_property) const {
+	ERR_FAIL_INDEX_V(p_property, MAX_THEME_PROPERTIES, Variant());
+	const String *expression = _theme_expressions.getptr(_get_theme_property_name(p_property));
+	if (expression) {
+		return *expression;
+	}
+	if (p_property < BORDER_WIDTH_LEFT) {
+		return get_padding(static_cast<Side>(p_property));
+	}
+	if (p_property < CORNER_RADIUS_TOP_LEFT) {
+		return get_border_width(static_cast<Side>(p_property - BORDER_WIDTH_LEFT));
+	}
+	if (p_property < CORNER_DETAIL) {
+		return get_corner_radius(static_cast<Corner>(p_property - CORNER_RADIUS_TOP_LEFT));
+	}
+	if (p_property >= EXPAND_MARGIN_LEFT && p_property <= EXPAND_MARGIN_BOTTOM) {
+		return get_expand_margin(static_cast<Side>(p_property - EXPAND_MARGIN_LEFT));
+	}
+	if (p_property >= TEXTURE_SLICE_LEFT && p_property <= TEXTURE_SLICE_BOTTOM) {
+		return get_texture_slice(static_cast<Side>(p_property - TEXTURE_SLICE_LEFT));
+	}
+	switch (p_property) {
+		case CORNER_DETAIL:
+			return get_corner_detail();
+		case BACKGROUND_COLOR:
+			return get_background_color();
+		case BORDER_COLOR:
+			return get_border_color();
+		case SHADOW_COLOR:
+			return get_shadow_color();
+		case SHADOW_SIZE:
+			return get_shadow_size();
+		case ANTI_ALIASING_SIZE:
+			return get_aa_size();
+		case MINIMUM_SIZE:
+			return get_intrinsic_minimum_size();
+		case SHADOW_OFFSET:
+			return get_shadow_offset();
+		case TEXTURE:
+			return get_texture();
+		case TEXTURE_MODULATE:
+			return get_texture_modulate();
+		case SKEW:
+			return get_skew();
+		case ANTI_ALIASING:
+			return is_anti_aliased();
+		case BORDER_BLEND:
+			return get_border_blend();
+		case AXIS_STRETCH_HORIZONTAL:
+			return get_h_axis_stretch_mode();
+		case AXIS_STRETCH_VERTICAL:
+			return get_v_axis_stretch_mode();
+		case REGION_RECT:
+			return get_region_rect();
+		default:
+			ERR_FAIL_V(Variant());
+	}
 }

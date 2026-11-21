@@ -191,7 +191,7 @@ VoxelGIEditorPlugin::VoxelGIEditorPlugin() {
 		_bake_btn->connect(SceneStringName(pressed), callable_mp(this, &VoxelGIEditorPlugin::_bake));
 		// TODO: Rework this as a dedicated toolbar control so we can hook into theme changes and update it
 		// when the editor theme updates.
-		_bake_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_bake"), EditorStringName(EditorIcons)));
+		_bake_btn->set_button_icon(EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("action_bake"), EditorStringName(Editor)));
 		_bake_btn->set_theme_type_variation(SceneStringName(FlatButton));
 		_bake_btn->set_tooltip_text(TTR("Bake VoxelGI"));
 		_bake_vflow->add_child(_bake_btn);

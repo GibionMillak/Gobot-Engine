@@ -498,7 +498,7 @@ HashSet<String> FindInFilesSearchPanel::get_filter() const {
 void FindInFilesSearchPanel::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			filters_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(EditorFonts)));
+			filters_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("bold"), EditorStringName(Editor)));
 			match_case_checkbox->set_button_icon(get_editor_theme_icon(SNAME("gui_match_case")));
 			whole_words_checkbox->set_button_icon(get_editor_theme_icon(SNAME("gui_match_word")));
 			replace_all_button->set_button_icon(get_editor_theme_icon(SNAME("action_replace_text")));
@@ -626,10 +626,6 @@ FindInFilesSearchPanel::FindInFilesSearchPanel() {
 	set_name(TTRC("Find in Files"));
 	set_anchors_preset(LayoutPreset::PRESET_FULL_RECT);
 	set_horizontal_scroll_mode(SCROLL_MODE_DISABLED);
-
-	Ref<StyleBox> sb = memnew(StyleBox);
-	sb->set_padding_all(6 * EDSCALE);
-	add_theme_style_override("panel", sb);
 
 	default_view = memnew(VBoxContainer);
 	default_view->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -1088,8 +1084,8 @@ void FindInFilesResultsPanel::_on_result_found(const String &p_fpath, int p_line
 
 void FindInFilesResultsPanel::_on_theme_changed() {
 	new_tab_button->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
-	results_display->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("source"), EditorStringName(EditorFonts)));
-	results_display->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts)));
+	results_display->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("source"), EditorStringName(Editor)));
+	results_display->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("source_size"), EditorStringName(Editor)));
 
 	Color file_item_color = results_display->get_theme_color(SceneStringName(font_color)) * Color(1, 1, 1, 0.67);
 	Ref<Texture2D> remove_texture = get_editor_theme_icon(SNAME("action_close"));
@@ -1531,7 +1527,7 @@ void FindInFilesContainer::_notification(int p_what) {
 }
 
 void FindInFilesContainer::_on_theme_changed() {
-	const Ref<StyleBox> dock_content_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("DockContent"), EditorStringName(EditorStyles));
+	const Ref<StyleBox> dock_content_style = EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SNAME("dock_content"), EditorStringName(Editor));
 	if (dock_content_style.is_valid()) {
 		begin_bulk_theme_override();
 		add_theme_constant_override("margin_top", -dock_content_style->get_content_inset(SIDE_TOP));

@@ -84,16 +84,16 @@ void EditorNetworkProfiler::_notification(int p_what) {
 void EditorNetworkProfiler::_update_theme_item_cache() {
 	VBoxContainer::_update_theme_item_cache();
 
-	theme_cache.node_icon = get_theme_icon(SNAME("node_node"), EditorStringName(EditorIcons));
-	theme_cache.stop_icon = get_theme_icon(SNAME("playback_stop"), EditorStringName(EditorIcons));
-	theme_cache.play_icon = get_theme_icon(SNAME("playback_play"), EditorStringName(EditorIcons));
-	theme_cache.clear_icon = get_theme_icon(SNAME("action_clear"), EditorStringName(EditorIcons));
+	theme_cache.node_icon = get_theme_icon(SNAME("node_node"), EditorStringName(Editor));
+	theme_cache.stop_icon = get_theme_icon(SNAME("playback_stop"), EditorStringName(Editor));
+	theme_cache.play_icon = get_theme_icon(SNAME("playback_play"), EditorStringName(Editor));
+	theme_cache.clear_icon = get_theme_icon(SNAME("action_clear"), EditorStringName(Editor));
 
-	theme_cache.multiplayer_synchronizer_icon = get_theme_icon("module_multiplayer_multiplayer_synchronizer", EditorStringName(EditorIcons));
-	theme_cache.instance_options_icon = get_theme_icon(SNAME("gui_instance_options"), EditorStringName(EditorIcons));
+	theme_cache.multiplayer_synchronizer_icon = get_theme_icon("module_multiplayer_multiplayer_synchronizer", EditorStringName(Editor));
+	theme_cache.instance_options_icon = get_theme_icon(SNAME("gui_instance_options"), EditorStringName(Editor));
 
-	theme_cache.incoming_bandwidth_icon = get_theme_icon(SNAME("navigation_arrow_down"), EditorStringName(EditorIcons));
-	theme_cache.outgoing_bandwidth_icon = get_theme_icon(SNAME("gui_tree_arrow_up"), EditorStringName(EditorIcons));
+	theme_cache.incoming_bandwidth_icon = get_theme_icon(SNAME("navigation_arrow_down"), EditorStringName(Editor));
+	theme_cache.outgoing_bandwidth_icon = get_theme_icon(SNAME("gui_tree_arrow_up"), EditorStringName(Editor));
 
 	theme_cache.incoming_bandwidth_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
 	theme_cache.outgoing_bandwidth_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
@@ -150,7 +150,7 @@ void EditorNetworkProfiler::refresh_replication_data() {
 		const NodeInfo &cfg_info = node_data[E.value.config];
 
 		node->set_text(0, root_info.path.get_file());
-		node->set_icon(0, has_theme_icon(editor_get_type_icon_name(root_info.type), EditorStringName(EditorIcons)) ? get_theme_icon(editor_get_type_icon_name(root_info.type), EditorStringName(EditorIcons)) : theme_cache.node_icon);
+		node->set_icon(0, has_theme_icon(editor_get_type_icon_name(root_info.type), EditorStringName(Editor)) ? get_theme_icon(editor_get_type_icon_name(root_info.type), EditorStringName(Editor)) : theme_cache.node_icon);
 		node->set_tooltip_text(0, root_info.path);
 
 		node->set_text(1, sync_info.path.get_file());

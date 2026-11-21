@@ -1211,9 +1211,6 @@
 		<member name="gui/fonts/dynamic_fonts/use_oversampling" type="bool" setter="" getter="" default="true">
 			If set to [code]true[/code] and [member display/window/stretch/mode] is set to [code]"canvas_items"[/code], font and [DPITexture] oversampling is enabled in the main window. Use [member Viewport.oversampling] to control oversampling in other viewports and windows.
 		</member>
-		<member name="gui/theme/custom" type="String" setter="" getter="" default="&quot;&quot;">
-			Path to a custom [Theme] resource file to use for the project ([code].theme[/code] or generic [code].tres[/code]/[code].res[/code] extension).
-		</member>
 		<member name="gui/theme/custom_font" type="String" setter="" getter="" default="&quot;&quot;">
 			Path to a custom [Font] resource to use as default for all GUI elements of the project.
 		</member>
@@ -1245,6 +1242,10 @@
 		</member>
 		<member name="gui/theme/lcd_subpixel_layout" type="int" setter="" getter="" default="1">
 			LCD subpixel layout used for font anti-aliasing. See [enum TextServer.FontLCDSubpixelLayout].
+		</member>
+		<member name="gui/theme/theme" type="String" setter="" getter="" default="&quot;res://.content/resources/themes/default.tres&quot;">
+			The [Theme] used by the project. The project settings editor provides a resource picker and stores the selected resource's path.
+			Click the selected theme to expand its [b]Default[/b] group. The bundled Default theme supplies any items missing from the selected theme. This setting is read at startup.
 		</member>
 		<member name="gui/timers/button_shortcut_feedback_highlight_time" type="float" setter="" getter="" default="0.2">
 			When [member BaseButton.shortcut_feedback] is enabled, this is the time the [BaseButton] will remain highlighted after a shortcut. This duration is not affected by [member Engine.time_scale].

@@ -1,0 +1,20 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+resource_name = "Editor sub_inspector_color_category_bg11"
+background_color = "(theme.Editor.colors.dark_color_1).lerp(theme.EditorInspector.colors.subresource_color_2, 0.15)"
+border_color = "(theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.mono_color, 0.12)"
+border_width_bottom = "pixels(round((theme.default_border_width * theme.default_base_scale)))"
+border_width_left = "pixels(round((theme.default_border_width * theme.default_base_scale)))"
+border_width_right = "pixels(round((theme.default_border_width * theme.default_base_scale)))"
+border_width_top = "pixels(round((theme.default_border_width * theme.default_base_scale)))"
+corner_detail = 8
+corner_radius_bottom_left = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+corner_radius_bottom_right = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+corner_radius_top_left = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+corner_radius_top_right = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+padding_bottom = 0
+padding_left = 0
+padding_right = 0
+padding_top = 0
+shadow_color = "theme.default_shadow_color"

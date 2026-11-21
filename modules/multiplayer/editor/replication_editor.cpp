@@ -381,8 +381,8 @@ void ReplicationEditor::_notification(int p_what) {
 		}
 		case NOTIFICATION_ENTER_TREE: {
 			add_theme_style_override(SceneStringName(panel), EditorNode::get_singleton()->get_editor_theme()->get_stylebox(SceneStringName(panel), SNAME("Panel")));
-			add_pick_button->set_button_icon(get_theme_icon(SNAME("action_add"), EditorStringName(EditorIcons)));
-			pin->set_button_icon(get_theme_icon(SNAME("action_pin"), EditorStringName(EditorIcons)));
+			add_pick_button->set_button_icon(get_theme_icon(SNAME("action_add"), EditorStringName(Editor)));
+			pin->set_button_icon(get_theme_icon(SNAME("action_pin"), EditorStringName(Editor)));
 		} break;
 	}
 }
@@ -546,10 +546,10 @@ void ReplicationEditor::edit(MultiplayerSynchronizer *p_sync) {
 }
 
 Ref<Texture2D> ReplicationEditor::_get_class_icon(const Node *p_node) {
-	if (!p_node || !has_theme_icon(editor_get_type_icon_name(p_node->get_class()), EditorStringName(EditorIcons))) {
-		return get_theme_icon(SNAME("gui_import_fail"), EditorStringName(EditorIcons));
+	if (!p_node || !has_theme_icon(editor_get_type_icon_name(p_node->get_class()), EditorStringName(Editor))) {
+		return get_theme_icon(SNAME("gui_import_fail"), EditorStringName(Editor));
 	}
-	return get_theme_icon(editor_get_type_icon_name(p_node->get_class()), EditorStringName(EditorIcons));
+	return get_theme_icon(editor_get_type_icon_name(p_node->get_class()), EditorStringName(Editor));
 }
 
 static bool can_sync(const Variant &p_var) {
@@ -594,7 +594,7 @@ void ReplicationEditor::_add_property(const NodePath &p_property, bool p_spawn, 
 		bool valid = false;
 		Variant value = node->get(subpath, &valid);
 		if (valid && !can_sync(value)) {
-			item->set_icon(0, get_theme_icon(SNAME("status_warning"), EditorStringName(EditorIcons)));
+			item->set_icon(0, get_theme_icon(SNAME("status_warning"), EditorStringName(Editor)));
 			item->set_tooltip_text(0, TTRC("Property of this type not supported."));
 		} else {
 			item->set_icon(0, icon);
@@ -602,7 +602,7 @@ void ReplicationEditor::_add_property(const NodePath &p_property, bool p_spawn, 
 	} else {
 		item->set_icon(0, icon);
 	}
-	item->add_button(3, get_theme_icon(SNAME("action_remove"), EditorStringName(EditorIcons)));
+	item->add_button(3, get_theme_icon(SNAME("action_remove"), EditorStringName(Editor)));
 	item->set_text_alignment(1, HORIZONTAL_ALIGNMENT_CENTER);
 	item->set_cell_mode(1, TreeItem::CELL_MODE_CHECK);
 	item->set_checked(1, p_spawn);

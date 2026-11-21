@@ -1,0 +1,17 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+padding_left = 0.0
+padding_top = 0.0
+padding_right = 0.0
+padding_bottom = 0.0
+background_color = Color(0.1, 0.1, 0.1, 0.6)
+border_width_left = 0
+border_width_top = 0
+border_width_right = 0
+border_width_bottom = 0
+corner_radius_top_left = 10000
+corner_radius_top_right = 10000
+corner_radius_bottom_right = 10000
+corner_radius_bottom_left = 10000
+corner_detail = "pixels(24 * theme.default_base_scale)"

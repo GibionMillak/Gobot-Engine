@@ -838,7 +838,7 @@ void EditorQuickOpenDialog::_add_candidate(QuickOpenResultCandidate &r_candidate
 		r_candidate.thumbnail = item.preview;
 	} else if (_file_type_icons.has(*actual_type)) {
 		r_candidate.thumbnail = *_file_type_icons.getptr(*actual_type);
-	} else if (has_theme_icon(editor_get_type_icon_name(*actual_type), EditorStringName(EditorIcons))) {
+	} else if (has_theme_icon(editor_get_type_icon_name(*actual_type), EditorStringName(Editor))) {
 		r_candidate.thumbnail = get_editor_theme_icon(editor_get_type_icon_name(*actual_type));
 		_file_type_icons.insert(*actual_type, r_candidate.thumbnail);
 	} else {

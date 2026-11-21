@@ -38,6 +38,34 @@
 #include "core/object/script_language.h"
 #include "scene/property_utils.h"
 #include "scene/resources/packed_scene.h"
+#include "scene/resources/style_box.h"
+#include "scene/resources/theme.h"
+
+static Error _validate_and_set_theme_expression(Resource *r_resource, const StringName &p_property, const Variant &p_value, bool &r_handled, String &r_error) {
+	r_handled = false;
+	if (p_value.get_type() != Variant::STRING) {
+		return OK;
+	}
+
+	const String expression = p_value;
+	if (Object::cast_to<Theme>(r_resource) && Theme::is_theme_expression_property(p_property)) {
+		const Error error = Theme::validate_theme_expression(expression);
+		if (error != OK) {
+			r_error = vformat("Invalid theme expression for '%s'.", p_property);
+		}
+		return error;
+	}
+	StyleBox *stylebox = Object::cast_to<StyleBox>(r_resource);
+	if (stylebox && StyleBox::is_theme_expression_property(p_property) && !expression.is_empty()) {
+		r_handled = true;
+		const Error error = stylebox->set_theme_expression(p_property, expression);
+		if (error != OK) {
+			r_error = vformat("Invalid theme expression for stylebox property '%s'.", p_property);
+		}
+		return error;
+	}
+	return OK;
+}
 
 String ResourceLoaderText::_get_error_string() {
 	return vformat("%s:%d - Parse Error: %s.", res_path, lines, error_text);
@@ -629,6 +657,12 @@ Error ResourceLoaderText::load() {
 			if (!assign.is_empty()) {
 				if (do_assign) {
 					bool set_valid = true;
+					bool expression_handled = false;
+					error = _validate_and_set_theme_expression(res.ptr(), assign, value, expression_handled, error_text);
+					ERR_FAIL_COND_V_MSG(error != OK, error, _get_error_string());
+					if (expression_handled) {
+						continue;
+					}
 
 					if (value.get_type() == Variant::OBJECT && missing_resource.is_null() && ResourceLoader::is_creating_missing_resources_if_class_unavailable_enabled()) {
 						// If the property being set is a missing resource (and the parent is not),
@@ -782,6 +816,12 @@ Error ResourceLoaderText::load() {
 
 			if (!empty_assign) {
 				bool set_valid = true;
+				bool expression_handled = false;
+				error = _validate_and_set_theme_expression(resource.ptr(), assign, value, expression_handled, error_text);
+				ERR_FAIL_COND_V_MSG(error != OK, error, _get_error_string());
+				if (expression_handled) {
+					continue;
+				}
 
 				if (value.get_type() == Variant::OBJECT && missing_resource.is_null() && ResourceLoader::is_creating_missing_resources_if_class_unavailable_enabled()) {
 					// If the property being set is a missing resource (and the parent is not),
@@ -2095,7 +2135,7 @@ Error ResourceFormatSaverTextInstance::save(const String &p_path, const Ref<Reso
 				bool is_script = name == CoreStringName(script);
 				Variant default_value = is_script ? Variant() : PropertyUtils::get_property_default_value(res.ptr(), name);
 
-				if (default_value.get_type() != Variant::NIL && bool(Variant::evaluate(Variant::OP_EQUAL, value, default_value))) {
+				if (!(pi.usage & PROPERTY_USAGE_STORE_IF_DEFAULT) && default_value.get_type() != Variant::NIL && bool(Variant::evaluate(Variant::OP_EQUAL, value, default_value))) {
 					continue;
 				}
 

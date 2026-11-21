@@ -628,18 +628,11 @@ bool ColorPicker::_select_from_recent_preset_hbc(const Color &p_color) {
 }
 
 void ColorPicker::_reset_sliders_theme() {
-	Ref<StyleBox> slider_style(memnew(StyleBox));
-	slider_style->set_padding(SIDE_TOP, 16 * theme_cache.base_scale);
-	slider_style->set_background_color(Color(0.2, 0.23, 0.31).lerp(Color(0, 0, 0, 1), 0.3).clamp());
-
 	for (int i = 0; i < MODE_SLIDER_COUNT; i++) {
 		sliders[i]->begin_bulk_theme_override();
 		sliders[i]->add_theme_icon_override(SNAME("grabber"), theme_cache.bar_arrow);
 		sliders[i]->add_theme_icon_override(SNAME("grabber_highlight"), theme_cache.bar_arrow);
 		sliders[i]->add_theme_constant_override(SNAME("grabber_offset"), 8 * theme_cache.base_scale);
-		if (!colorize_sliders) {
-			sliders[i]->add_theme_style_override(SNAME("slider"), slider_style);
-		}
 		sliders[i]->end_bulk_theme_override();
 	}
 
@@ -647,9 +640,6 @@ void ColorPicker::_reset_sliders_theme() {
 	alpha_slider->add_theme_icon_override(SNAME("grabber"), theme_cache.bar_arrow);
 	alpha_slider->add_theme_icon_override(SNAME("grabber_highlight"), theme_cache.bar_arrow);
 	alpha_slider->add_theme_constant_override(SNAME("grabber_offset"), 8 * theme_cache.base_scale);
-	if (!colorize_sliders) {
-		alpha_slider->add_theme_style_override(SNAME("slider"), slider_style);
-	}
 	alpha_slider->end_bulk_theme_override();
 }
 
@@ -1286,25 +1276,10 @@ void ColorPicker::set_colorize_sliders(bool p_colorize_sliders) {
 	colorize_sliders = p_colorize_sliders;
 	mode_popup->set_item_checked(MODE_MAX + 1, colorize_sliders);
 
-	if (colorize_sliders) {
-		Ref<StyleBox> empty_slider_style(memnew(StyleBox));
-
-		for (int i = 0; i < MODE_SLIDER_COUNT; i++) {
-			sliders[i]->add_theme_style_override("slider", empty_slider_style);
-		}
-
-		alpha_slider->add_theme_style_override("slider", empty_slider_style);
-	} else {
-		Ref<StyleBox> slider_style(memnew(StyleBox));
-		slider_style->set_padding(SIDE_TOP, 16 * theme_cache.base_scale);
-		slider_style->set_background_color(Color(0.2, 0.23, 0.31).lerp(Color(0, 0, 0, 1), 0.3).clamp());
-
-		for (int i = 0; i < MODE_SLIDER_COUNT; i++) {
-			sliders[i]->add_theme_style_override("slider", slider_style);
-		}
-
-		alpha_slider->add_theme_style_override("slider", slider_style);
+	for (int i = 0; i < MODE_SLIDER_COUNT; i++) {
+		sliders[i]->queue_redraw();
 	}
+	alpha_slider->queue_redraw();
 }
 
 bool ColorPicker::is_colorizing_sliders() const {

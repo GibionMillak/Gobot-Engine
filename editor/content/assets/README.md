@@ -27,5 +27,5 @@ them discoverable as public content; automatic theme use has separate rules:
 SVG icons receive theme entries, OGG clips receive sound entries when Vorbis is
 enabled, and editor font choices are configured in `editor_fonts.cpp`.
 
-The root content README documents public paths, UIDs, read-only behavior, and
-export. Asset READMEs describe format-specific metadata and provenance.
+The root content README documents public paths, theme integration, UIDs,
+read-only behavior, and export.

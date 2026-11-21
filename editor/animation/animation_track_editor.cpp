@@ -2204,9 +2204,9 @@ void AnimationTrackEdit::_notification(int p_what) {
 			}
 
 			const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
-			const Ref<Font> source_font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
+			const Ref<Font> source_font = get_theme_font(SNAME("source"), EditorStringName(Editor));
 			const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
-			const int source_font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts));
+			const int source_font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(Editor));
 			const Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
 
 			const Color dc = get_theme_color(SNAME("font_disabled_color"), EditorStringName(Editor));
@@ -2667,8 +2667,8 @@ void AnimationTrackEdit::draw_key(int p_index, float p_pixels_sec, int p_x, bool
 		Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 		int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 		if (use_monospace_font) {
-			font = get_theme_font(SNAME("source"), EditorStringName(EditorFonts));
-			font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(EditorFonts));
+			font = get_theme_font(SNAME("source"), EditorStringName(Editor));
+			font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(Editor));
 		}
 
 		Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
@@ -7062,7 +7062,7 @@ void AnimationTrackEditor::_edit_menu_pressed(int p_option) {
 				String text;
 				Ref<Texture2D> icon = get_editor_theme_icon(SNAME("node_node"));
 				if (node) {
-					if (has_theme_icon(editor_get_type_icon_name(node->get_class()), EditorStringName(EditorIcons))) {
+					if (has_theme_icon(editor_get_type_icon_name(node->get_class()), EditorStringName(Editor))) {
 						icon = get_editor_theme_icon(editor_get_type_icon_name(node->get_class()));
 					}
 

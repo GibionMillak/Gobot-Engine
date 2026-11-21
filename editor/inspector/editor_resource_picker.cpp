@@ -33,6 +33,7 @@
 #include "core/input/input.h"
 #include "core/io/file_access_content.h"
 #include "core/io/resource_loader.h"
+#include "core/io/resource_saver.h"
 #include "core/object/callable_mp.h"
 #include "core/object/class_db.h"
 #include "core/os/os.h"
@@ -51,8 +52,13 @@
 #include "editor/settings/editor_settings.h"
 #include "editor/themes/editor_icons.h"
 #include "editor/themes/editor_scale.h"
+#include "scene/gui/box_container.h"
 #include "scene/gui/button.h"
+#include "scene/gui/dialog.h"
+#include "scene/gui/label.h"
+#include "scene/gui/popup_menu.h"
 #include "scene/gui/texture_rect.h"
+#include "scene/gui/tree.h"
 #include "scene/property_utils.h"
 #include "scene/resources/3d/sky_material.h"
 #include "scene/resources/gradient_texture.h"
@@ -105,7 +111,7 @@ void EditorResourcePicker::_update_resource() {
 			assign_button->set_text(TTR("<empty>"));
 			assign_button->set_tooltip_text("");
 		} else {
-			assign_button->set_button_icon(EditorNode::get_singleton()->get_object_icon(edited_resource.operator->()));
+			assign_button->set_button_icon(EditorNode::get_singleton() ? EditorNode::get_singleton()->get_object_icon(edited_resource.operator->()) : get_editor_theme_icon(editor_get_type_icon_name(class_name)));
 
 			if (!edited_resource->get_name().is_empty()) {
 				assign_button->set_text(edited_resource->get_name());
@@ -121,13 +127,15 @@ void EditorResourcePicker::_update_resource() {
 			assign_button->set_tooltip_text(resource_path + TTR("Type:") + " " + class_name);
 
 			// Preview will override the above, so called at the end.
-			EditorResourcePreview::get_singleton()->queue_edited_resource_preview(edited_resource, callable_mp(this, &EditorResourcePicker::_update_resource_preview).bind(edited_resource->get_instance_id()));
+			if (EditorResourcePreview::get_singleton()) {
+				EditorResourcePreview::get_singleton()->queue_edited_resource_preview(edited_resource, callable_mp(this, &EditorResourcePicker::_update_resource_preview).bind(edited_resource->get_instance_id()));
+			}
 		}
 	} else if (edited_resource.is_valid()) {
 		assign_button->set_tooltip_text(resource_path + TTR("Type:") + " " + edited_resource->get_class());
 	}
 
-	if (edited_resource.is_null()) {
+	if (edited_resource.is_null() || !EditorNode::get_singleton()) {
 		make_unique_button->set_visible(false);
 	} else {
 		Ref<Resource> parent_res = _has_parent_resource();
@@ -181,8 +189,8 @@ void EditorResourcePicker::_update_resource() {
 		make_unique_button->set_tooltip_text(tooltip);
 	}
 
-	assign_button->set_disabled(!editable && edited_resource.is_null());
-	quick_load_button->set_visible(editable && edited_resource.is_null());
+	assign_button->set_disabled(!_resource_inspection_enabled || (!editable && edited_resource.is_null()));
+	quick_load_button->set_visible(editable && (_show_quick_load_when_assigned || edited_resource.is_null()) && EditorNode::get_singleton());
 }
 
 void EditorResourcePicker::_update_resource_preview(const String &p_path, const Ref<Texture2D> &p_preview, const Ref<Texture2D> &p_small_preview, ObjectID p_obj) {
@@ -223,6 +231,9 @@ void EditorResourcePicker::_update_resource_preview(const String &p_path, const 
 }
 
 void EditorResourcePicker::_resource_selected() {
+	if (!_resource_inspection_enabled) {
+		return;
+	}
 	if (edited_resource.is_null()) {
 		edit_button->set_pressed(true);
 		_update_menu();
@@ -247,7 +258,7 @@ void EditorResourcePicker::_file_selected(const String &p_path) {
 		String res_type = loaded_resource->get_class();
 		Ref<Script> res_script = loaded_resource->get_script();
 		bool is_global_class = false;
-		if (res_script.is_valid()) {
+		if (res_script.is_valid() && EditorNode::get_singleton()) {
 			String script_type = EditorNode::get_editor_data().script_class_get_name(res_script->get_path());
 			if (!script_type.is_empty()) {
 				is_global_class = true;
@@ -266,7 +277,12 @@ void EditorResourcePicker::_file_selected(const String &p_path) {
 		}
 
 		if (!any_type_matches) {
-			EditorNode::get_singleton()->show_warning(vformat(TTR("The selected resource (%s) does not match any type expected for this property (%s)."), res_type, base_type));
+			const String message = vformat(TTR("The selected resource (%s) does not match any type expected for this property (%s)."), res_type, base_type);
+			if (EditorNode::get_singleton()) {
+				EditorNode::get_singleton()->show_warning(message);
+			} else {
+				ERR_PRINT(message);
+			}
 			return;
 		}
 	}
@@ -280,6 +296,55 @@ void EditorResourcePicker::_resource_saved(Object *p_resource) {
 		emit_signal(SNAME("resource_changed"), edited_resource);
 		_update_resource();
 	}
+}
+
+void EditorResourcePicker::_open_resource_selection_save_dialog(const Ref<Resource> &p_resource, const String &p_file_basename) {
+	ERR_FAIL_NULL(EditorNode::get_singleton());
+	ERR_FAIL_COND(p_resource.is_null());
+	List<String> extensions;
+	ResourceSaver::get_recognized_extensions(p_resource, &extensions);
+	ERR_FAIL_COND(extensions.is_empty());
+
+	if (!_resource_selection_save_dialog) {
+		_resource_selection_save_dialog = memnew(EditorFileDialog);
+		_resource_selection_save_dialog->connect("canceled", callable_mp(this, &EditorResourcePicker::_cancel_resource_selection_save));
+		_resource_selection_save_dialog->connect("file_selected", callable_mp(this, &EditorResourcePicker::_save_resource_selection));
+		_resource_selection_save_dialog->set_access(EditorFileDialog::ACCESS_RESOURCES);
+		_resource_selection_save_dialog->set_file_mode(EditorFileDialog::FILE_MODE_SAVE_FILE);
+		_resource_selection_save_dialog->set_title(TTR("Save Resource As..."));
+		add_child(_resource_selection_save_dialog);
+	}
+
+	_resource_to_save = p_resource;
+	_resource_selection_save_dialog->clear_filters();
+	for (const String &extension : extensions) {
+		_resource_selection_save_dialog->add_filter("*." + extension, extension.to_upper());
+	}
+	const String extension = extensions.find("tres") ? "tres" : extensions.front()->get();
+	_resource_selection_save_dialog->set_current_file(p_file_basename + "." + extension);
+	_resource_selection_save_dialog->popup_file_dialog();
+}
+
+void EditorResourcePicker::_open_resource_copy_save_dialog(const Ref<Resource> &p_source, const Ref<Resource> &p_copy) {
+	const String file_basename = p_source->get_path().is_resource_file() ? p_source->get_path().get_file().get_basename() : p_source->get_class().to_snake_case();
+	_open_resource_selection_save_dialog(p_copy, file_basename + "_copy");
+}
+
+void EditorResourcePicker::_save_resource_selection(const String &p_path) {
+	ERR_FAIL_COND(_resource_to_save.is_null());
+	ERR_FAIL_COND(!p_path.is_resource_file());
+	const Ref<Resource> resource = _resource_to_save;
+	_resource_to_save.unref();
+
+	EditorNode::get_singleton()->save_resource_in_path(resource, p_path);
+	if (resource->get_path() == p_path) {
+		edited_resource = resource;
+		_resource_changed();
+	}
+}
+
+void EditorResourcePicker::_cancel_resource_selection_save() {
+	_resource_to_save.unref();
 }
 
 void EditorResourcePicker::_update_menu() {
@@ -306,9 +371,20 @@ void EditorResourcePicker::_update_menu_items() {
 	// Add options for creating specific subtypes of the base resource type.
 	if (is_editable()) {
 		set_create_options(edit_menu);
+		if (!_builtin_resources.is_empty()) {
+			edit_menu->add_separator(TTR("Bundled"));
+			for (int i = 0; i < _builtin_resources.size(); i++) {
+				const Ref<Resource> resource = _builtin_resources[i];
+				ERR_CONTINUE(resource.is_null());
+				edit_menu->add_item(resource->get_name().is_empty() ? resource->get_path().get_file() : resource->get_name(), BUILTIN_RESOURCE_BASE_ID + i);
+				edit_menu->set_item_auto_translate_mode(-1, AUTO_TRANSLATE_MODE_DISABLED);
+			}
+			edit_menu->add_separator();
+		}
 
 		// Add an option to load a resource from a file using the QuickOpen dialog.
 		edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_load_quick")), TTR("Quick Load..."), OBJ_MENU_QUICKLOAD);
+		edit_menu->set_item_disabled(-1, !EditorNode::get_singleton());
 		edit_menu->set_item_tooltip(-1, TTR("Opens a quick menu to select from a list of allowed Resource files."));
 
 		// Add an option to load a resource from a file using the regular file dialog.
@@ -317,13 +393,18 @@ void EditorResourcePicker::_update_menu_items() {
 
 	// Add options for changing existing value of the resource.
 	if (edited_resource.is_valid()) {
-		const bool is_resource_read_only = EditorNode::get_singleton()->is_resource_read_only(edited_resource, true);
-		if (is_resource_read_only) {
-			// The 'Search' icon is a magnifying glass, which seems appropriate, but maybe a bespoke icon is preferred here.
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_search")), TTR("Inspect"), OBJ_MENU_INSPECT);
-		} else {
-			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_edit")), TTR("Edit"), OBJ_MENU_INSPECT);
-			edit_menu->set_item_disabled(-1, force_allow_unique);
+		const bool is_resource_read_only = FileAccessContent::is_content_path(edited_resource->get_path()) || (EditorNode::get_singleton() && EditorNode::get_singleton()->is_resource_read_only(edited_resource, true));
+		if (_resource_inspection_enabled) {
+			if (is_resource_read_only) {
+				// The 'Search' icon is a magnifying glass, which seems appropriate, but maybe a bespoke icon is preferred here.
+				edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_search")), TTR("Inspect"), OBJ_MENU_INSPECT);
+			} else {
+				edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_edit")), TTR("Edit"), OBJ_MENU_INSPECT);
+				edit_menu->set_item_disabled(-1, force_allow_unique);
+			}
+			if (!EditorNode::get_singleton()) {
+				edit_menu->set_item_disabled(-1, true);
+			}
 		}
 
 		if (is_editable()) {
@@ -341,7 +422,7 @@ void EditorResourcePicker::_update_menu_items() {
 			}
 			const String drag_and_drop_text = vformat(TTR("Hold %s while drag-and-dropping from the FileSystem dock or another resource picker to automatically make a dropped resource unique."), modifier);
 
-			if (!unique_enabled) {
+			if (!unique_enabled && EditorNode::get_singleton()) {
 				if (EditorNode::get_singleton()->is_resource_internal_to_scene(edited_resource) && EditorNode::get_singleton()->get_resource_count(edited_resource) == 1) {
 					edit_menu->set_item_tooltip(-1, TTR("This Resource is already unique.") + "\n" + drag_and_drop_text);
 				} else if (_has_parent_resource().is_valid()) {
@@ -355,21 +436,20 @@ void EditorResourcePicker::_update_menu_items() {
 				unique_enabled = _is_uniqueness_enabled(true);
 				edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_duplicate")), TTR("Make Unique (Recursive)"), OBJ_MENU_MAKE_UNIQUE_RECURSIVE);
 				edit_menu->set_item_disabled(-1, !unique_enabled);
-				if (!unique_enabled) {
+				if (!unique_enabled && EditorNode::get_singleton()) {
 					Ref<Resource> parent_res = _has_parent_resource();
 					if (EditorNode::get_singleton()->get_editor_selection()->get_full_selected_node_list().size() == 1) {
 						edit_menu->set_item_tooltip(-1, (parent_res.is_valid() && EditorNode::get_singleton()->get_resource_count(parent_res) > 1) ? TTRC("In order to duplicate recursively, make its parent Resource unique.") : TTRC("Subresources have already been made unique."));
 					}
 				}
 			}
-
 			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_save")), TTR("Save"), OBJ_MENU_SAVE);
-			edit_menu->set_item_disabled(-1, force_allow_unique);
+			edit_menu->set_item_disabled(-1, force_allow_unique || is_resource_read_only || !EditorNode::get_singleton());
 			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_save")), TTR("Save As..."), OBJ_MENU_SAVE_AS);
-			edit_menu->set_item_disabled(-1, force_allow_unique);
+			edit_menu->set_item_disabled(-1, force_allow_unique || !EditorNode::get_singleton());
 		}
 
-		if (edited_resource->get_path().is_resource_file() && !FileAccessContent::is_content_path(edited_resource->get_path())) {
+		if (EditorNode::get_singleton() && edited_resource->get_path().is_resource_file() && !FileAccessContent::is_content_path(edited_resource->get_path())) {
 			edit_menu->add_separator();
 			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("gui_show_in_file_system")), TTR("Show in FileSystem"), OBJ_MENU_SHOW_IN_FILE_SYSTEM);
 		}
@@ -387,7 +467,7 @@ void EditorResourcePicker::_update_menu_items() {
 			for (int i = 0; i < base_type.get_slice_count(","); i++) {
 				String base = base_type.get_slicec(',', i);
 
-				paste_valid = ClassDB::is_parent_class(res_type, base) || EditorNode::get_editor_data().script_class_is_parent(res_type, base);
+				paste_valid = ClassDB::is_parent_class(res_type, base) || (EditorNode::get_singleton() && EditorNode::get_editor_data().script_class_is_parent(res_type, base));
 
 				if (paste_valid) {
 					break;
@@ -406,11 +486,12 @@ void EditorResourcePicker::_update_menu_items() {
 		if (paste_valid) {
 			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_paste")), TTRC("Paste"), OBJ_MENU_PASTE);
 			edit_menu->add_icon_item(get_editor_theme_icon(SNAME("action_paste")), TTRC("Paste as Unique"), OBJ_MENU_PASTE_AS_UNIQUE);
+			edit_menu->set_item_disabled(-1, !EditorNode::get_singleton());
 		}
 	}
 
 	// Add options to convert existing resource to another type of resource.
-	if (is_editable() && edited_resource.is_valid()) {
+	if (is_editable() && edited_resource.is_valid() && EditorNode::get_singleton()) {
 		Vector<Ref<EditorResourceConversionPlugin>> conversions = EditorNode::get_singleton()->find_resource_conversion_plugin_for_resource(edited_resource);
 		if (!conversions.is_empty()) {
 			edit_menu->add_separator();
@@ -419,7 +500,7 @@ void EditorResourcePicker::_update_menu_items() {
 		for (const Ref<EditorResourceConversionPlugin> &conversion : conversions) {
 			String what = conversion->converts_to();
 			Ref<Texture2D> icon;
-			if (has_theme_icon(editor_get_type_icon_name(what), EditorStringName(EditorIcons))) {
+			if (has_theme_icon(editor_get_type_icon_name(what), EditorStringName(Editor))) {
 				icon = get_editor_theme_icon(editor_get_type_icon_name(what));
 			} else {
 				icon = get_editor_theme_icon(SNAME("variant_object"));
@@ -453,6 +534,9 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 
 			if (!file_dialog) {
 				file_dialog = memnew(EditorFileDialog);
+				if (Object::cast_to<EditorSettings>(resource_owner)) {
+					file_dialog->set_access(EditorFileDialog::ACCESS_FILESYSTEM);
+				}
 				file_dialog->set_file_mode(EditorFileDialog::FILE_MODE_OPEN_FILE);
 				add_child(file_dialog);
 				file_dialog->connect("file_selected", callable_mp(this, &EditorResourcePicker::_file_selected));
@@ -467,6 +551,7 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 		} break;
 
 		case OBJ_MENU_QUICKLOAD: {
+			ERR_FAIL_NULL(EditorNode::get_singleton());
 			const Vector<String> &base_types_string = base_type.split(",");
 
 			Vector<StringName> base_types;
@@ -475,6 +560,13 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 			}
 
 			EditorQuickOpenDialog *quick_open = EditorNode::get_singleton()->get_quick_open_dialog();
+			if (get_window() != quick_open->get_parent_visible_window()) {
+				if (!_quick_open_dialog) {
+					_quick_open_dialog = memnew(EditorQuickOpenDialog);
+					add_child(_quick_open_dialog);
+				}
+				quick_open = _quick_open_dialog;
+			}
 			if (resource_owner) {
 				quick_open->popup_dialog_for_property(base_types, resource_owner, property_path, callable_mp(this, &EditorResourcePicker::_file_selected));
 			} else {
@@ -484,7 +576,7 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 		} break;
 
 		case OBJ_MENU_INSPECT: {
-			if (edited_resource.is_valid()) {
+			if (_resource_inspection_enabled && edited_resource.is_valid()) {
 				emit_signal(SNAME("resource_selected"), edited_resource, true);
 			}
 		} break;
@@ -498,6 +590,10 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 			if (edited_resource.is_null()) {
 				return;
 			}
+			if (_file_selection_only) {
+				_open_resource_copy_save_dialog(edited_resource, edited_resource->duplicate());
+				break;
+			}
 			Ref<Resource> unique_resource = edited_resource->duplicate();
 			ERR_FAIL_COND(unique_resource.is_null()); // duplicate() may fail.
 
@@ -510,31 +606,7 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 				return;
 			}
 
-			if (!duplicate_resources_dialog) {
-				duplicate_resources_dialog = memnew(Dialog(true));
-				add_child(duplicate_resources_dialog);
-				duplicate_resources_dialog->set_title(TTR("Make Unique (Recursive)"));
-				duplicate_resources_dialog->connect(SceneStringName(confirmed), callable_mp(this, &EditorResourcePicker::_duplicate_selected_resources));
-
-				VBoxContainer *vb = memnew(VBoxContainer);
-				duplicate_resources_dialog->add_child(vb);
-
-				Label *label = memnew(Label(TTR("Select resources to make unique:")));
-				vb->add_child(label);
-
-				duplicate_resources_tree = memnew(Tree);
-				duplicate_resources_tree->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-				vb->add_child(duplicate_resources_tree);
-				duplicate_resources_tree->set_columns(2);
-				duplicate_resources_tree->set_v_size_flags(SIZE_EXPAND_FILL);
-			}
-
-			duplicate_resources_tree->clear();
-			TreeItem *root = duplicate_resources_tree->create_item();
-			_gather_resources_to_duplicate(edited_resource, root);
-
-			duplicate_resources_dialog->reset_size();
-			duplicate_resources_dialog->popup_centered(Vector2(500, 400) * EDSCALE);
+			_show_duplicate_resources_dialog(edited_resource);
 		} break;
 
 		case OBJ_MENU_SAVE: {
@@ -546,6 +618,10 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 
 		case OBJ_MENU_SAVE_AS: {
 			if (edited_resource.is_null()) {
+				return;
+			}
+			if (_file_selection_only) {
+				_open_resource_copy_save_dialog(edited_resource, edited_resource->duplicate_deep());
 				return;
 			}
 			Callable resource_saved = callable_mp(this, &EditorResourcePicker::_resource_saved);
@@ -560,11 +636,22 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 		} break;
 
 		case OBJ_MENU_PASTE: {
+			if (_file_selection_only) {
+				const Ref<Resource> resource = EditorSettings::get_singleton()->get_resource_clipboard();
+				ERR_FAIL_COND(resource.is_null());
+				if (resource->get_path().is_resource_file()) {
+					edited_resource = resource;
+					_resource_changed();
+				} else {
+					_open_resource_copy_save_dialog(resource, resource->duplicate());
+				}
+				break;
+			}
 			edited_resource = EditorSettings::get_singleton()->get_resource_clipboard();
 			bool make_unique = true;
 
 			// Automatically make resource unique if it belongs to another scene or resource.
-			if (!EditorNode::get_singleton()->get_edited_scene() || !edited_resource->is_built_in() || edited_resource->get_path().get_slice("::", 0) == EditorNode::get_singleton()->get_edited_scene()->get_scene_file_path()) {
+			if (!EditorNode::get_singleton() || !EditorNode::get_singleton()->get_edited_scene() || !edited_resource->is_built_in() || edited_resource->get_path().get_slice("::", 0) == EditorNode::get_singleton()->get_edited_scene()->get_scene_file_path()) {
 				make_unique = false;
 			} else if (resource_owner) {
 				Resource *res = Object::cast_to<Resource>(resource_owner);
@@ -581,6 +668,16 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 		} break;
 
 		case OBJ_MENU_PASTE_AS_UNIQUE: {
+			if (_file_selection_only) {
+				const Ref<Resource> resource = EditorSettings::get_singleton()->get_resource_clipboard();
+				ERR_FAIL_COND(resource.is_null());
+				if (_has_sub_resources(resource)) {
+					_show_duplicate_resources_dialog(resource);
+				} else {
+					_open_resource_copy_save_dialog(resource, resource->duplicate());
+				}
+				break;
+			}
 			edited_resource = EditorSettings::get_singleton()->get_resource_clipboard();
 			if (_has_sub_resources(edited_resource)) {
 				// Use the recursive version when the Resource has sub-resources.
@@ -596,6 +693,13 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 		} break;
 
 		default: {
+			if (p_which >= BUILTIN_RESOURCE_BASE_ID) {
+				const int index = p_which - BUILTIN_RESOURCE_BASE_ID;
+				ERR_FAIL_INDEX(index, _builtin_resources.size());
+				edited_resource = _builtin_resources[index];
+				_resource_changed();
+				break;
+			}
 			// Allow subclasses to handle their own options first, only then fallback on the default branch logic.
 			if (handle_menu_selected(p_which)) {
 				break;
@@ -608,8 +712,12 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 
 				Ref<Resource> converted_resource = conversions[to_type]->convert(edited_resource);
 				if (converted_resource.is_valid()) {
-					edited_resource = converted_resource;
-					_resource_changed();
+					if (_file_selection_only) {
+						_open_resource_copy_save_dialog(edited_resource, converted_resource);
+					} else {
+						edited_resource = converted_resource;
+						_resource_changed();
+					}
 				}
 				break;
 			}
@@ -631,16 +739,22 @@ void EditorResourcePicker::_edit_menu_cbk(int p_which) {
 
 			Ref<Resource> resp(obj);
 			ERR_BREAK(resp.is_null());
-			EditorNode::setup_built_in_resource(resp, _get_owner_path()); // Assign a base path for built-in Resources.
-
-			EditorNode::get_editor_data().instantiate_object_properties(obj);
+			if (_file_selection_only) {
+				EditorNode::get_editor_data().instantiate_object_properties(obj);
+				_open_resource_selection_save_dialog(resp, "new_" + resp->get_class().to_snake_case());
+				break;
+			}
+			if (EditorNode::get_singleton()) {
+				EditorNode::setup_built_in_resource(resp, _get_owner_path()); // Assign a base path for built-in Resources.
+				EditorNode::get_editor_data().instantiate_object_properties(obj);
+			}
 
 			// Prevent freeing of the object until the end of the update of the resource (GH-88286).
 			Ref<Resource> old_edited_resource = edited_resource;
 			edited_resource = resp;
 			_resource_changed();
 
-			if (edited_resource.is_valid() && bool(EDITOR_GET("interface/inspector/open_resources_in_current_inspector"))) {
+			if (_resource_inspection_enabled && edited_resource.is_valid() && bool(EDITOR_GET("interface/inspector/open_resources_in_current_inspector"))) {
 				// Expand newly created resources, as the user will most likely want to change at least one property within the resource.
 				// This is disabled when resources are forcibly opened in a new inspector, as it would be too intrusive.
 				emit_signal(SNAME("_resource_expand_requested"), edited_resource, false);
@@ -684,7 +798,7 @@ void EditorResourcePicker::set_create_options(Object *p_menu_node) {
 
 			inheritors_array.push_back(t);
 
-			Ref<Texture2D> icon = EditorNode::get_singleton()->get_class_icon(t);
+			Ref<Texture2D> icon = EditorNode::get_singleton() ? EditorNode::get_singleton()->get_class_icon(t) : get_editor_theme_icon(editor_get_type_icon_name(t));
 			int id = TYPE_BASE_ID + idx;
 			edit_menu->add_icon_item(icon, t, id);
 			edit_menu->set_item_auto_translate_mode(-1, AUTO_TRANSLATE_MODE_DISABLED);
@@ -792,7 +906,7 @@ String EditorResourcePicker::_get_resource_type(const Ref<Resource> &p_resource)
 	String res_type = p_resource->get_class();
 
 	Ref<Script> res_script = p_resource->get_script();
-	if (res_script.is_null()) {
+	if (res_script.is_null() || !EditorNode::get_singleton()) {
 		return res_type;
 	}
 
@@ -896,17 +1010,20 @@ bool EditorResourcePicker::_is_drop_valid(const Dictionary &p_drag_data) const {
 		}
 	}
 
-	if (base_type.is_empty()) {
+	if (base_type.is_empty() && !_file_selection_only) {
 		return true;
 	}
 
 	Ref<Resource> res = _get_dropped_resource(p_drag_data);
-	if (res.is_null()) {
+	if (res.is_null() || (_file_selection_only && !res->get_path().is_resource_file())) {
 		return false;
+	}
+	if (base_type.is_empty()) {
+		return true;
 	}
 
 	_ensure_allowed_types();
-	HashSet<StringName> allowed_types(allowed_types_with_convert);
+	const HashSet<StringName> &allowed_types = _file_selection_only ? allowed_types_without_convert : allowed_types_with_convert;
 
 	String res_type = _get_resource_type(res);
 
@@ -914,7 +1031,7 @@ bool EditorResourcePicker::_is_drop_valid(const Dictionary &p_drag_data) const {
 		return true;
 	}
 
-	if (res->get_script()) {
+	if (res->get_script() && EditorNode::get_singleton()) {
 		StringName custom_class = EditorNode::get_singleton()->get_object_custom_type_name(res->get_script());
 		if (_is_type_valid(custom_class, allowed_types)) {
 			return true;
@@ -926,7 +1043,7 @@ bool EditorResourcePicker::_is_drop_valid(const Dictionary &p_drag_data) const {
 bool EditorResourcePicker::_is_type_valid(const String &p_type_name, const HashSet<StringName> &p_allowed_types) const {
 	for (const StringName &E : p_allowed_types) {
 		String at = E;
-		if (p_type_name == at || ClassDB::is_parent_class(p_type_name, at) || EditorNode::get_editor_data().script_class_is_parent(p_type_name, at)) {
+		if (p_type_name == at || ClassDB::is_parent_class(p_type_name, at) || (EditorNode::get_singleton() && EditorNode::get_editor_data().script_class_is_parent(p_type_name, at))) {
 			return true;
 		}
 	}
@@ -984,7 +1101,7 @@ Ref<Resource> EditorResourcePicker::_get_dropped_resource(const Variant &p_data)
 }
 
 Variant EditorResourcePicker::get_drag_data_fw(const Point2 &p_point, Control *p_from) {
-	if (edited_resource.is_valid()) {
+	if (edited_resource.is_valid() && EditorNode::get_singleton()) {
 		Dictionary drag_data = EditorNode::get_singleton()->drag_resource(edited_resource, p_from);
 		drag_data["source_picker"] = get_instance_id();
 		return drag_data;
@@ -1053,6 +1170,10 @@ void EditorResourcePicker::drop_data_fw(const Point2 &p_point, const Variant &p_
 			}
 		}
 
+		if (_file_selection_only && Input::get_singleton()->is_key_pressed(Key::CMD_OR_CTRL)) {
+			_open_resource_copy_save_dialog(dropped_resource, dropped_resource->duplicate());
+			return;
+		}
 		edited_resource = dropped_resource;
 
 		if (Input::get_singleton()->is_key_pressed(Key::CMD_OR_CTRL)) {
@@ -1093,7 +1214,9 @@ void EditorResourcePicker::_bind_methods() {
 void EditorResourcePicker::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
-			EditorNode::get_singleton()->connect("resource_counter_changed", callable_mp(this, &EditorResourcePicker::_update_resource));
+			if (EditorNode::get_singleton()) {
+				EditorNode::get_singleton()->connect("resource_counter_changed", callable_mp(this, &EditorResourcePicker::_update_resource));
+			}
 			_update_resource();
 			[[fallthrough]];
 		}
@@ -1132,6 +1255,9 @@ void EditorResourcePicker::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_EXIT_TREE: {
+			if (!EditorNode::get_singleton()) {
+				break;
+			}
 			Callable resource_saved = callable_mp(this, &EditorResourcePicker::_resource_saved);
 			Callable resource_counter_changed = callable_mp(this, &EditorResourcePicker::_update_resource);
 			if (EditorNode::get_singleton()->is_connected("resource_saved", resource_saved)) {
@@ -1160,7 +1286,7 @@ void EditorResourcePicker::set_base_type(const String &p_base_type) {
 
 		StringName custom_class;
 		bool is_custom = false;
-		if (edited_resource->get_script()) {
+		if (edited_resource->get_script() && EditorNode::get_singleton()) {
 			custom_class = EditorNode::get_singleton()->get_object_custom_type_name(edited_resource->get_script());
 			is_custom = _is_type_valid(custom_class, allowed_types);
 		}
@@ -1213,7 +1339,7 @@ bool EditorResourcePicker::is_resource_allowed(const Ref<Resource> &p_resource) 
 
 		StringName custom_class;
 		bool is_custom = false;
-		if (p_resource->get_script()) {
+		if (p_resource->get_script() && EditorNode::get_singleton()) {
 			custom_class = EditorNode::get_singleton()->get_object_custom_type_name(p_resource->get_script());
 			is_custom = _is_type_valid(custom_class, allowed_types);
 		}
@@ -1225,10 +1351,19 @@ bool EditorResourcePicker::is_resource_allowed(const Ref<Resource> &p_resource) 
 	return true;
 }
 
+void EditorResourcePicker::set_builtin_resources(const Vector<Ref<Resource>> &p_resources) {
+	_builtin_resources = p_resources;
+}
+
+void EditorResourcePicker::set_resource_inspection_enabled(bool p_enabled) {
+	_resource_inspection_enabled = p_enabled;
+	assign_button->set_disabled(!_resource_inspection_enabled || (!editable && edited_resource.is_null()));
+}
+
 void EditorResourcePicker::set_edited_resource(Ref<Resource> p_resource) {
 	if (!is_resource_allowed(p_resource)) {
 		StringName custom_class;
-		if (p_resource->get_script()) {
+		if (p_resource->get_script() && EditorNode::get_singleton()) {
 			custom_class = EditorNode::get_singleton()->get_object_custom_type_name(p_resource->get_script());
 		}
 		const String class_str = (custom_class.is_empty() ? p_resource->get_class() : vformat("%s (%s)", custom_class, p_resource->get_class()));
@@ -1272,8 +1407,8 @@ void EditorResourcePicker::set_resource_owner(Object *p_object) {
 
 void EditorResourcePicker::set_editable(bool p_editable) {
 	editable = p_editable;
-	assign_button->set_disabled(!editable && edited_resource.is_null());
-	quick_load_button->set_visible(editable && edited_resource.is_null());
+	assign_button->set_disabled(!_resource_inspection_enabled || (!editable && edited_resource.is_null()));
+	quick_load_button->set_visible(editable && (_show_quick_load_when_assigned || edited_resource.is_null()) && EditorNode::get_singleton());
 	edit_button->set_visible(editable);
 }
 
@@ -1286,12 +1421,46 @@ void EditorResourcePicker::_ensure_resource_menu() {
 		return;
 	}
 	edit_menu = memnew(PopupMenu);
+	edit_menu->add_theme_constant_override("icon_max_width", get_theme_constant(SNAME("class_icon_size"), EditorStringName(Editor)));
 	edit_menu->set_search_bar_enabled(true);
 	edit_menu->set_search_bar_min_item_count(10);
-	edit_menu->add_theme_constant_override("icon_max_width", get_theme_constant(SNAME("class_icon_size"), EditorStringName(Editor)));
 	add_child(edit_menu);
 	edit_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorResourcePicker::_edit_menu_cbk));
 	edit_menu->connect("popup_hide", callable_mp((BaseButton *)edit_button, &BaseButton::set_pressed).bind(false));
+}
+
+void EditorResourcePicker::_show_duplicate_resources_dialog(const Ref<Resource> &p_resource) {
+	if (!duplicate_resources_dialog) {
+		duplicate_resources_dialog = memnew(Dialog(true));
+		duplicate_resources_dialog->connect(SceneStringName(confirmed), callable_mp(this, &EditorResourcePicker::_duplicate_selected_resources));
+		duplicate_resources_dialog->set_title(TTR("Make Unique (Recursive)"));
+		add_child(duplicate_resources_dialog);
+		{
+			VBoxContainer *content_vbox = memnew(VBoxContainer);
+			duplicate_resources_dialog->add_child(content_vbox);
+			{
+				Label *instructions_lbl = memnew(Label(TTR("Select resources to make unique:")));
+				content_vbox->add_child(instructions_lbl);
+
+				duplicate_resources_tree = memnew(Tree);
+				duplicate_resources_tree->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+				duplicate_resources_tree->set_columns(2);
+				duplicate_resources_tree->set_v_size_flags(SIZE_EXPAND_FILL);
+				content_vbox->add_child(duplicate_resources_tree);
+			}
+		}
+	}
+
+	duplicate_resources_tree->clear();
+	TreeItem *root = duplicate_resources_tree->create_item();
+	_gather_resources_to_duplicate(p_resource, root);
+	if (_file_selection_only) {
+		root->set_checked(0, true);
+		root->set_editable(0, false);
+	}
+
+	duplicate_resources_dialog->reset_size();
+	duplicate_resources_dialog->popup_centered(Vector2(500, 400) * EDSCALE);
 }
 
 void EditorResourcePicker::_gather_resources_to_duplicate(const Ref<Resource> p_resource, TreeItem *p_item, const String &p_property_name) const {
@@ -1391,8 +1560,34 @@ void EditorResourcePicker::_gather_resources_to_duplicate(const Ref<Resource> p_
 }
 
 void EditorResourcePicker::_duplicate_selected_resources() {
-	for (TreeItem *item = duplicate_resources_tree->get_root(); item; item = item->get_next_in_tree()) {
-		if (!item->is_checked(0)) {
+	TreeItem *root = duplicate_resources_tree->get_root();
+	ERR_FAIL_NULL(root);
+	const Array root_metadata = root->get_metadata(0);
+	const Ref<Resource> source = root_metadata[0];
+	Ref<Resource> selection_copy;
+	HashSet<TreeItem *> items_to_copy;
+	if (_file_selection_only) {
+		// Any ancestor that receives a copied resource must also be detached from the original.
+		for (TreeItem *item = root; item; item = item->get_next_in_tree()) {
+			if (!item->is_checked(0)) {
+				continue;
+			}
+			Vector<TreeItem *> ancestors;
+			for (TreeItem *ancestor = item; ancestor && !items_to_copy.has(ancestor); ancestor = ancestor->get_parent()) {
+				if (!ancestor->is_editable(0) && !ancestor->is_checked(0)) {
+					ancestors.clear();
+					break;
+				}
+				ancestors.push_back(ancestor);
+			}
+			for (TreeItem *ancestor : ancestors) {
+				items_to_copy.insert(ancestor);
+			}
+		}
+	}
+
+	for (TreeItem *item = root; item; item = item->get_next_in_tree()) {
+		if (_file_selection_only ? !items_to_copy.has(item) : !item->is_checked(0)) {
 			continue;
 		}
 
@@ -1403,7 +1598,11 @@ void EditorResourcePicker::_duplicate_selected_resources() {
 		meta[0] = unique_resource;
 
 		if (meta.size() == 1) { // Root.
-			edited_resource = unique_resource;
+			if (_file_selection_only) {
+				selection_copy = unique_resource;
+			} else {
+				edited_resource = unique_resource;
+			}
 			continue;
 		}
 		Array parent_meta = item->get_parent()->get_metadata(0);
@@ -1447,10 +1646,20 @@ void EditorResourcePicker::_duplicate_selected_resources() {
 			dict[meta[2]] = unique_resource;
 		}
 	}
-	_resource_changed();
+	if (_file_selection_only) {
+		_open_resource_copy_save_dialog(source, selection_copy);
+	} else {
+		_resource_changed();
+	}
 }
 
 bool EditorResourcePicker::_is_uniqueness_enabled(bool p_check_recursive) {
+	if (!EditorNode::get_singleton()) {
+		return false;
+	}
+	if (_file_selection_only) {
+		return edited_resource.is_valid() && (!p_check_recursive || _has_sub_resources(edited_resource));
+	}
 	if (force_allow_unique) {
 		return true;
 	}

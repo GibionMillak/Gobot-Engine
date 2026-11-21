@@ -576,7 +576,7 @@ Polygon3DEditor::Polygon3DEditor() {
 	handle_material->set_flag(StandardMaterial3D::FLAG_SRGB_VERTEX_COLOR, true);
 	handle_material->set_flag(StandardMaterial3D::FLAG_DISABLE_FOG, true);
 	handle_material->set_flag(StandardMaterial3D::FLAG_DISABLE_DEPTH_TEST, true);
-	Ref<Texture2D> handle = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_3d_handle"), EditorStringName(EditorIcons));
+	Ref<Texture2D> handle = EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_3d_handle"), EditorStringName(Editor));
 	handle_material->set_point_size(handle->get_width());
 	handle_material->set_texture(StandardMaterial3D::TEXTURE_ALBEDO, handle);
 

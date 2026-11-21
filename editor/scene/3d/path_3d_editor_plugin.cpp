@@ -1315,10 +1315,10 @@ Path3DGizmoPlugin::Path3DGizmoPlugin() {
 	create_material("path_thin_material", Color(0.6, 0.6, 0.6));
 	create_material("path_tilt_material", path_tilt_color);
 	create_material("path_tilt_muted_material", path_tilt_color * 0.7);
-	create_handle_material("handles", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
-	create_handle_material("first_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
-	create_handle_material("last_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
-	create_handle_material("closed_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
-	create_handle_material("selected_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(EditorIcons)));
-	create_handle_material("sec_handles", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_curve_handle"), EditorStringName(EditorIcons)));
+	create_handle_material("handles", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(Editor)));
+	create_handle_material("first_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(Editor)));
+	create_handle_material("last_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(Editor)));
+	create_handle_material("closed_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(Editor)));
+	create_handle_material("selected_pt_handle", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_path_smooth_handle"), EditorStringName(Editor)));
+	create_handle_material("sec_handles", false, EditorNode::get_singleton()->get_editor_theme()->get_icon(SNAME("viewport_editor_curve_handle"), EditorStringName(Editor)));
 }
