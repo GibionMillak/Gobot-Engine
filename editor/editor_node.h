@@ -590,8 +590,6 @@ private:
 	void _titlebar_resized();
 	void _viewport_resized();
 
-	void _update_undo_redo_allowed();
-
 	int _save_external_resources(bool p_also_save_external_data = false);
 	void _save_scene_silently();
 

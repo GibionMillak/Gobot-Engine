@@ -399,9 +399,7 @@ EditorNode::EditorNode() {
 	EditorPropertyNameProcessor *epnp = memnew(EditorPropertyNameProcessor);
 	add_child(epnp);
 
-	EditorUndoRedoManager::get_singleton()->connect("version_changed", callable_mp(this, &EditorNode::_update_undo_redo_allowed));
 	EditorUndoRedoManager::get_singleton()->connect("version_changed", callable_mp(this, &EditorNode::_update_unsaved_cache));
-	EditorUndoRedoManager::get_singleton()->connect("history_changed", callable_mp(this, &EditorNode::_update_undo_redo_allowed));
 	EditorUndoRedoManager::get_singleton()->connect("history_changed", callable_mp(this, &EditorNode::_update_unsaved_cache));
 	ProjectSettings::get_singleton()->connect("settings_changed", callable_mp(this, &EditorNode::_update_from_settings));
 
@@ -891,7 +889,7 @@ EditorNode::EditorNode() {
 	file_menu = memnew(PopupMenu);
 	file_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
 	file_menu->connect("about_to_popup", callable_mp(this, &EditorNode::_update_file_menu_opened));
-	_add_to_main_menu(TTRC("Scene"), file_menu);
+	_add_to_main_menu(TTRC("File"), file_menu);
 
 	project_menu = memnew(PopupMenu);
 	project_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
@@ -910,6 +908,12 @@ EditorNode::EditorNode() {
 	title_bar->get_center_section()->add_child(project_title);
 
 	title_bar->add_editor_controls();
+
+	tool_menu = title_bar->get_tools_menu();
+	tool_menu->connect("index_pressed", callable_mp(this, &EditorNode::_tool_menu_option));
+	tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/orphan_resource_explorer"), TOOLS_ORPHAN_RESOURCES);
+	tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/engine_compilation_configuration_editor"), TOOLS_BUILD_PROFILE_MANAGER);
+	tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/clear_project_cache"), TOOLS_CLEAR_PROJECT_CACHE);
 
 	EditorFooterContainer *footer_container = memnew(EditorFooterContainer);
 	main_vbox->add_child(footer_container);
@@ -4776,7 +4780,6 @@ void EditorNode::_update_main_menu_icons() {
 	file_menu->set_item_icon(file_menu->get_item_index(SCENE_OPEN_SCENE), theme->get_icon(SNAME("resource_packed_scene"), EditorStringName(Editor)));
 	file_menu->set_item_icon(file_menu->get_item_index(SCENE_SAVE_SCENE), theme->get_icon(SNAME("action_save"), EditorStringName(Editor)));
 	file_menu->set_item_icon(file_menu->get_item_index(SCENE_QUICK_OPEN), theme->get_icon(SNAME("action_load"), EditorStringName(Editor)));
-	file_menu->set_item_icon(file_menu->get_item_index(SCENE_UNDO), theme->get_icon(SNAME("action_rotate_left"), EditorStringName(Editor)));
 	file_menu->set_item_icon(file_menu->get_item_index(SCENE_CLOSE), theme->get_icon(SNAME("action_close_scene"), EditorStringName(Editor)));
 	file_menu->set_item_icon(file_menu->get_item_index(SCENE_QUIT), theme->get_icon(SNAME("action_close"), EditorStringName(Editor)));
 
@@ -6013,7 +6016,6 @@ void EditorNode::_update_file_menu_opened() {
 		file_menu->set_item_disabled(file_menu->get_item_index(SCENE_SAVE_ALL_SCENES), true);
 		file_menu->set_item_tooltip(file_menu->get_item_index(SCENE_SAVE_ALL_SCENES), TTR("All scenes are already saved."));
 	}
-	_update_undo_redo_allowed();
 }
 
 void EditorNode::_palette_quick_open_dialog() {
@@ -6298,13 +6300,8 @@ void EditorNode::_save_editor_states(const String &p_file, int p_idx) {
 }
 
 void EditorNode::_update_title() {
-	const String appname = GLOBAL_GET("application/config/about/name");
-	String title = (appname.is_empty() ? TTR("Unnamed Project") : appname);
-	const String edited = editor_data.get_edited_scene_root() ? editor_data.get_edited_scene_root()->get_scene_file_path() : String();
-	if (!edited.is_empty()) {
-		// Display the edited scene name before the program name so that it can be seen in the OS task bar.
-		title = vformat("%s - %s", edited.get_file(), title);
-	}
+	const String project_name = GLOBAL_GET("application/config/about/name");
+	String title = project_name.is_empty() ? TTR("Unnamed Project") : project_name;
 	if (unsaved_cache) {
 		// Display the "modified" mark before anything else so that it can always be seen in the OS task bar.
 		title = vformat("(*) %s", title);
@@ -6354,12 +6351,6 @@ void EditorNode::_viewport_resized() {
 	if (w) {
 		was_window_windowed_last = w->get_mode() == Window::MODE_WINDOWED;
 	}
-}
-
-void EditorNode::_update_undo_redo_allowed() {
-	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
-	file_menu->set_item_disabled(file_menu->get_item_index(SCENE_UNDO), !undo_redo->has_undo());
-	file_menu->set_item_disabled(file_menu->get_item_index(SCENE_REDO), !undo_redo->has_redo());
 }
 
 int EditorNode::_save_external_resources(bool p_also_save_external_data) {
@@ -6510,7 +6501,6 @@ void EditorNode::_set_current_scene_nocheck(int p_idx, bool p_ignore_state) {
 
 	const Dictionary state = editor_data.restore_edited_scene_state(editor_selection, &editor_history);
 	_set_main_scene_state(state);
-	_update_undo_redo_allowed();
 	_update_unsaved_cache();
 
 	changing_scene = false;
@@ -8307,10 +8297,6 @@ void EditorNode::_build_file_menu() {
 	file_menu->add_submenu_node_item(TTRC("Export As..."), export_as_menu, SCENE_EXPORT_AS);
 	file_menu->add_separator();
 
-	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_rotate_left"), EditorStringName(Editor)), ED_GET_SHORTCUT("ui_undo"), SCENE_UNDO, false, true);
-	file_menu->add_shortcut(ED_GET_SHORTCUT("ui_redo"), SCENE_REDO, false, true);
-	file_menu->add_separator();
-
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/reload_saved_scene"), SCENE_RELOAD_SAVED_SCENE);
 	file_menu->add_icon_shortcut(theme->get_icon(SNAME("action_close_scene"), EditorStringName(Editor)), ED_GET_SHORTCUT("editor/close_scene"), SCENE_CLOSE);
 	file_menu->add_shortcut(ED_GET_SHORTCUT("editor/close_all_scenes"), SCENE_CLOSE_ALL);
@@ -8347,14 +8333,6 @@ void EditorNode::_build_project_menu() {
 #endif
 	project_menu->add_separator();
 
-	if (!tool_menu) {
-		tool_menu = memnew(PopupMenu);
-		tool_menu->connect("index_pressed", callable_mp(this, &EditorNode::_tool_menu_option));
-		tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/orphan_resource_explorer"), TOOLS_ORPHAN_RESOURCES);
-		tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/engine_compilation_configuration_editor"), TOOLS_BUILD_PROFILE_MANAGER);
-		tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/clear_project_cache"), TOOLS_CLEAR_PROJECT_CACHE);
-	}
-	project_menu->add_submenu_node_item(TTRC("Tools"), tool_menu);
 	project_menu->add_icon_item(theme->get_icon(SNAME("action_plugin"), EditorStringName(Editor)), TTRC("Plugins"), PROJECT_OPEN_PLUGINS);
 
 	project_menu->add_separator();

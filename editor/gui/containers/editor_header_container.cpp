@@ -38,6 +38,7 @@
 #include "editor/gui/buttons/editor_fullscreen_button.h"
 #include "editor/gui/buttons/editor_help_button.h"
 #include "editor/gui/buttons/settings_button.h"
+#include "editor/gui/containers/undo_redo_container.h"
 #include "scene/gui/button.h"
 #include "scene/gui/label.h"
 #include "scene/gui/menu_button.h"
@@ -78,6 +79,15 @@ void EditorHeaderContainer::add_editor_controls() {
 		return;
 	}
 
+	_tools_btn = memnew(MenuButton);
+	_tools_btn->set_flat(true);
+	_tools_btn->set_switch_on_hover(true);
+	_tools_btn->set_text(TTRC("Tools"));
+	_left_hbox->add_child(_tools_btn);
+
+	UndoRedoContainer *undo_redo_hbox = memnew(UndoRedoContainer);
+	_left_hbox->add_child(undo_redo_hbox);
+
 	_debug_btn = memnew(MenuButton);
 	_debug_btn->set_button_icon(get_editor_theme_icon(SNAME("gui_debug")));
 	_debug_btn->set_flat(true);
@@ -97,6 +107,10 @@ void EditorHeaderContainer::add_editor_controls() {
 	if (_window_buttons_hbox) {
 		_right_hbox->move_child(_window_buttons_hbox, _right_hbox->get_child_count() - 1);
 	}
+}
+
+PopupMenu *EditorHeaderContainer::get_tools_menu() const {
+	return _tools_btn ? _tools_btn->get_popup() : nullptr;
 }
 
 PopupMenu *EditorHeaderContainer::get_debug_menu() const {

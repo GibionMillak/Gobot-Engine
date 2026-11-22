@@ -8,7 +8,7 @@
 		[b]Performance:[/b] CSG nodes are only intended for prototyping as they have a significant CPU performance cost. Consider baking final CSG operation results into static geometry that replaces the CSG nodes.
 		Individual CSG root node results can be baked to nodes with static resources with the editor menu that appears when a CSG root node is selected.
 		Individual CSG root nodes can also be baked to static resources with scripts by calling [method bake_static_mesh] for the visual mesh or [method bake_collision_shape] for the physics collision.
-		Entire scenes of CSG nodes can be baked to static geometry and exported with the editor glTF scene exporter: [b]Scene &gt; Export As... &gt; glTF 2.0 Scene...[/b]
+		Entire scenes of CSG nodes can be baked to static geometry and exported with the editor glTF scene exporter: [b]File &gt; Export As... &gt; glTF 2.0 Scene...[/b]
 	</description>
 	<tutorials>
 		<link title="Prototyping levels with CSG">$DOCS_URL/tutorials/3d/csg_tools.html</link>

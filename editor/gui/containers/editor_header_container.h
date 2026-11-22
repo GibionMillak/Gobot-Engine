@@ -49,6 +49,7 @@ public:
 	HBoxContainer *get_right_section() const { return _right_hbox; }
 
 	void add_editor_controls();
+	PopupMenu *get_tools_menu() const;
 	PopupMenu *get_debug_menu() const;
 
 	void set_can_move_window(bool p_enabled);
@@ -77,6 +78,7 @@ private:
 	HBoxContainer *_center_hbox = nullptr;
 	HBoxContainer *_right_hbox = nullptr;
 	Label *_editor_name_lbl = nullptr;
+	MenuButton *_tools_btn = nullptr;
 	MenuButton *_debug_btn = nullptr;
 	HBoxContainer *_window_buttons_hbox = nullptr;
 	Button *_minimize_btn = nullptr;
