@@ -170,7 +170,7 @@ protected:
 
 		Ref<Font> font;
 		int font_size = 0;
-		Color font_color;
+		Color font_normal_color;
 		Color font_hovered_color;
 		Color font_hovered_selected_color;
 		Color font_selected_color;

@@ -2207,7 +2207,7 @@ void AnimationTrackEdit::_notification(int p_what) {
 			const Ref<Font> source_font = get_theme_font(SNAME("source"), EditorStringName(Editor));
 			const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 			const int source_font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(Editor));
-			const Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
+			const Color color = get_theme_color(SceneStringName(font_normal_color), SNAME("Label"));
 
 			const Color dc = get_theme_color(SNAME("font_disabled_color"), EditorStringName(Editor));
 
@@ -2625,7 +2625,7 @@ void AnimationTrackEdit::draw_key_link(int p_index_from, int p_index_to, float p
 		return;
 	}
 
-	Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
+	Color color = get_theme_color(SceneStringName(font_normal_color), SNAME("Label"));
 	color.a = 0.5;
 
 	int from_x = MAX(p_x, p_clip_left);
@@ -2671,7 +2671,7 @@ void AnimationTrackEdit::draw_key(int p_index, float p_pixels_sec, int p_x, bool
 			font_size = get_theme_font_size(SNAME("source_size"), EditorStringName(Editor));
 		}
 
-		Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
+		Color color = get_theme_color(SceneStringName(font_normal_color), SNAME("Label"));
 		color.a = 0.5;
 
 		Dictionary d = animation->track_get_key_value(track, p_index);
@@ -3839,7 +3839,7 @@ void AnimationTrackEditGroup::_notification(int p_what) {
 		case NOTIFICATION_DRAW: {
 			const Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 			const int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
-			Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
+			Color color = get_theme_color(SceneStringName(font_normal_color), SNAME("Label"));
 
 			const Ref<StyleBox> &stylebox_header = get_theme_stylebox(SNAME("header"), SNAME("AnimationTrackEditGroup"));
 			float v_margin_offset = stylebox_header->get_content_inset(SIDE_TOP) - stylebox_header->get_content_inset(SIDE_BOTTOM);
@@ -9092,7 +9092,7 @@ void AnimationMarkerEdit::_notification(int p_what) {
 			float scale = timeline->get_zoom_scale();
 
 			Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
-			Color color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
+			Color color = get_theme_color(SceneStringName(font_normal_color), SNAME("Label"));
 
 			// SECTION PREVIEW //
 

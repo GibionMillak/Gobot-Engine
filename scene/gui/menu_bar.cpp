@@ -470,7 +470,7 @@ void MenuBar::_draw_menu_item(int p_index) {
 		if (has_theme_color(SNAME("font_pressed_color"))) {
 			color = theme_cache.font_pressed_color;
 		} else {
-			color = theme_cache.font_color;
+			color = theme_cache.font_normal_color;
 		}
 	} else if (hovered) {
 		style = theme_cache.hover;
@@ -487,7 +487,7 @@ void MenuBar::_draw_menu_item(int p_index) {
 		if (has_focus(true)) {
 			color = theme_cache.font_focus_color;
 		} else {
-			color = theme_cache.font_color;
+			color = theme_cache.font_normal_color;
 		}
 	}
 
@@ -745,7 +745,7 @@ void MenuBar::_bind_methods() {
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, MenuBar, outline_size);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, MenuBar, font_outline_color);
 
-	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, MenuBar, font_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, MenuBar, font_normal_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, MenuBar, font_disabled_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, MenuBar, font_pressed_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, MenuBar, font_hover_color);

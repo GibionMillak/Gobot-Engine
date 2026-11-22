@@ -4788,7 +4788,7 @@ EditorHelpHighlighter::EditorHelpHighlighter() {
 #ifdef MODULE_GDSCRIPT_ENABLED
 	const Color text_color = EDITOR_GET("text_editor/theme/highlighting/text_color");
 	TextEdit *gdscript_text_edit = memnew(TextEdit);
-	gdscript_text_edit->add_theme_color_override(SceneStringName(font_color), text_color);
+	gdscript_text_edit->add_theme_color_override(SceneStringName(font_normal_color), text_color);
 
 	Ref<GDScript> gdscript;
 	gdscript.instantiate();
@@ -4850,7 +4850,7 @@ void EditorHelpHighlighter::clear_cache() {
 #ifdef MODULE_GDSCRIPT_ENABLED
 	const Color text_color = EDITOR_GET("text_editor/theme/highlighting/text_color");
 	_highlight_data_cache.clear();
-	_text_edit->add_theme_color_override(SceneStringName(font_color), text_color);
+	_text_edit->add_theme_color_override(SceneStringName(font_normal_color), text_color);
 #endif
 }
 
@@ -4967,7 +4967,7 @@ void FindBar::_notification(int p_what) {
 			find_prev->set_button_icon(get_editor_theme_icon(SNAME("action_move_up")));
 			find_next->set_button_icon(get_editor_theme_icon(SNAME("action_move_down")));
 			hide_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
-			matches_label->add_theme_color_override(SceneStringName(font_color), results_count > 0 ? get_theme_color(SceneStringName(font_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+			matches_label->add_theme_color_override(SceneStringName(font_normal_color), results_count > 0 ? get_theme_color(SceneStringName(font_normal_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {
@@ -5050,7 +5050,7 @@ void FindBar::_update_matches_label() {
 	} else {
 		matches_label->show();
 
-		matches_label->add_theme_color_override(SceneStringName(font_color), results_count > 0 ? get_theme_color(SceneStringName(font_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+		matches_label->add_theme_color_override(SceneStringName(font_normal_color), results_count > 0 ? get_theme_color(SceneStringName(font_normal_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 		if (results_count == 0) {
 			matches_label->set_text(TTR("No match"));
 		} else if (results_count_to_current == 0) {

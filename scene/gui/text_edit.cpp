@@ -1042,7 +1042,7 @@ void TextEdit::_notification(int p_what) {
 					// Else, it stays zero.
 					line_background_color.a = 1.0 * (line_background_color != Color(0, 0, 0, 0));
 
-					Color current_color = editable ? theme_cache.font_color : theme_cache.font_readonly_color;
+					Color current_color = editable ? theme_cache.font_normal_color : theme_cache.font_readonly_color;
 
 					const Vector<String> wrap_rows = get_line_wrapped_text(minimap_line);
 					int line_wrap_amount = get_line_wrap_count(minimap_line);
@@ -1187,7 +1187,7 @@ void TextEdit::_notification(int p_what) {
 				const int has_highlighting = _update_line_syntax_highlighting(line);
 
 				// Ensure we at least use the font color.
-				Color current_color = !editable ? theme_cache.font_readonly_color : theme_cache.font_color;
+				Color current_color = !editable ? theme_cache.font_readonly_color : theme_cache.font_normal_color;
 				if (draw_placeholder) {
 					current_color = theme_cache.font_placeholder_color;
 				}
@@ -1422,7 +1422,7 @@ void TextEdit::_notification(int p_what) {
 
 					if (!clipped && lookup_symbol_word.length() != 0) { // Highlight word
 						if (is_unicode_identifier_start(lookup_symbol_word[0]) || lookup_symbol_word[0] == '.') {
-							Color highlight_underline_color = !editable ? theme_cache.font_readonly_color : theme_cache.font_color;
+							Color highlight_underline_color = !editable ? theme_cache.font_readonly_color : theme_cache.font_normal_color;
 							int lookup_symbol_word_col = _get_column_pos_of_word(lookup_symbol_word, str, SEARCH_MATCH_CASE | SEARCH_WHOLE_WORDS, 0);
 							int lookup_symbol_word_len = lookup_symbol_word.length();
 							while (lookup_symbol_word_col != -1) {
@@ -3787,7 +3787,7 @@ Variant TextEdit::get_drag_data(const Point2 &p_point) {
 		l->add_theme_font_override(SceneStringName(font_family), theme_cache.font);
 		l->add_theme_font_size_override(SceneStringName(font_size), theme_cache.font_size);
 		l->add_theme_constant_override(SNAME("outline_size"), theme_cache.outline_size);
-		l->add_theme_color_override(SceneStringName(font_color), theme_cache.font_color);
+		l->add_theme_color_override(SceneStringName(font_normal_color), theme_cache.font_normal_color);
 		l->add_theme_color_override(SNAME("font_outline_color"), theme_cache.outline_color);
 		l->add_theme_style_override(CoreStringName(normal), memnew(StyleBox())); // Ensure that the label has no margins inherited from the theme.
 		set_drag_preview(l);
@@ -7313,7 +7313,7 @@ bool TextEdit::is_drawing_spaces() const {
 }
 
 Color TextEdit::get_font_color() const {
-	return theme_cache.font_color;
+	return theme_cache.font_normal_color;
 }
 
 void TextEdit::_bind_methods() {
@@ -7838,7 +7838,7 @@ void TextEdit::_bind_methods() {
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT, TextEdit, font);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, TextEdit, font_size);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, TextEdit, font_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, TextEdit, font_normal_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, TextEdit, font_readonly_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, TextEdit, font_placeholder_color);
 
@@ -9244,7 +9244,7 @@ bool TextEdit::_update_line_syntax_highlighting(int p_line) {
 	for (const Variant *key = color_map.next(nullptr); key; key = color_map.next(key), i++) {
 		int64_t key_data = *key;
 		const Variant *color_data = color_map.getptr(*key);
-		Color color_value = editable ? theme_cache.font_color : theme_cache.font_readonly_color;
+		Color color_value = editable ? theme_cache.font_normal_color : theme_cache.font_readonly_color;
 		if (color_data != nullptr) {
 			color_value = (color_data->operator Dictionary()).get("color", color_value);
 		}

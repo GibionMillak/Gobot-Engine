@@ -115,7 +115,7 @@ void EditorAudioBus::_notification(int p_what) {
 
 			bus_options->set_button_icon(get_editor_theme_icon(SNAME("gui_tab_menu_hl")));
 
-			audio_value_preview_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SceneStringName(font_color), SNAME("TooltipLabel")));
+			audio_value_preview_label->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color(SceneStringName(font_normal_color), SNAME("TooltipLabel")));
 			audio_value_preview_label->add_theme_color_override("font_shadow_color", get_theme_color(SNAME("font_shadow_color"), SNAME("TooltipLabel")));
 			audio_value_preview_box->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("TooltipPanel")));
 
@@ -1656,7 +1656,7 @@ Size2 EditorAudioMeterNotches::get_minimum_size() const {
 void EditorAudioMeterNotches::_update_theme_item_cache() {
 	Control::_update_theme_item_cache();
 
-	theme_cache.notch_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	theme_cache.notch_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 
 	theme_cache.font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	theme_cache.font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));

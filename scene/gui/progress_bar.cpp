@@ -174,7 +174,7 @@ void ProgressBar::_notification(int p_what) {
 					tl.draw_outline(get_canvas_item(), text_pos, theme_cache.font_outline_size, theme_cache.font_outline_color);
 				}
 
-				tl.draw(get_canvas_item(), text_pos, theme_cache.font_color);
+				tl.draw(get_canvas_item(), text_pos, theme_cache.font_normal_color);
 			}
 		} break;
 	}
@@ -274,7 +274,7 @@ void ProgressBar::_bind_methods() {
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT, ProgressBar, font);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, ProgressBar, font_size);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, ProgressBar, font_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, ProgressBar, font_normal_color);
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_CONSTANT, ProgressBar, font_outline_size, "outline_size");
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, ProgressBar, font_outline_color);
 }

@@ -463,7 +463,7 @@
 		<theme_item name="clear_button_color_pressed" data_type="color" type="Color" default="Color(1, 1, 1, 1)">
 			Color used for the clear button when it's pressed.
 		</theme_item>
-		<theme_item name="font_color" data_type="color" type="Color" default="Color(0.875, 0.875, 0.875, 1)">
+		<theme_item name="font_normal_color" data_type="color" type="Color" default="Color(0.875, 0.875, 0.875, 1)">
 			Default font color.
 		</theme_item>
 		<theme_item name="font_outline_color" data_type="color" type="Color" default="Color(0, 0, 0, 1)">

@@ -6297,7 +6297,7 @@ Variant RichTextLabel::get_drag_data(const Point2 &p_point) {
 		l->add_theme_font_override(SceneStringName(font_family), theme_cache.normal_font);
 		l->add_theme_font_size_override(SceneStringName(font_size), theme_cache.normal_font_size);
 		l->add_theme_constant_override(SNAME("outline_size"), theme_cache.outline_size);
-		l->add_theme_color_override(SceneStringName(font_color), theme_cache.default_color);
+		l->add_theme_color_override(SceneStringName(font_normal_color), theme_cache.default_color);
 		l->add_theme_color_override(SNAME("font_outline_color"), theme_cache.font_outline_color);
 		l->add_theme_style_override(CoreStringName(normal), memnew(StyleBox())); // Ensure that the label has no margins inherited from the theme.
 		set_drag_preview(l);

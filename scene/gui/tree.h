@@ -615,7 +615,7 @@ private:
 		Ref<Texture2D> updown;
 		Ref<Texture2D> scroll_hint;
 
-		Color font_color;
+		Color font_normal_color;
 		Color font_hovered_color;
 		Color font_hovered_dimmed_color;
 		Color font_hovered_selected_color;

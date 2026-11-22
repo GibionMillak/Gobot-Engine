@@ -210,7 +210,7 @@ void Button::_notification(int p_what) {
 							icon_modulate_color = theme_cache.icon_focus_color;
 						}
 					} else {
-						font_color = theme_cache.font_color;
+						font_color = theme_cache.font_normal_color;
 						if (has_theme_color(SNAME("icon_normal_color"))) {
 							icon_modulate_color = theme_cache.icon_normal_color;
 						}
@@ -227,7 +227,7 @@ void Button::_notification(int p_what) {
 					if (has_theme_color(SNAME("font_pressed_color"))) {
 						font_color = theme_cache.font_pressed_color;
 					} else {
-						font_color = theme_cache.font_color;
+						font_color = theme_cache.font_normal_color;
 					}
 					if (has_theme_color(SNAME("icon_pressed_color"))) {
 						icon_modulate_color = theme_cache.icon_pressed_color;
@@ -764,7 +764,7 @@ void Button::_bind_methods() {
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, disabled);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, Button, focus);
 
-	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Button, font_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Button, font_normal_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Button, font_focus_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Button, font_pressed_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Button, font_hover_color);

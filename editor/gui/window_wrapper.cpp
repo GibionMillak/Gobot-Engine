@@ -359,7 +359,7 @@ void ScreenSelect::_build_advanced_menu() {
 
 		if (i == current_screen) {
 			Color accent_color = get_theme_color("accent_color", EditorStringName(Editor));
-			button->add_theme_color_override(SceneStringName(font_color), accent_color);
+			button->add_theme_color_override(SceneStringName(font_normal_color), accent_color);
 		}
 
 		button->connect(SceneStringName(pressed), callable_mp(this, &ScreenSelect::_emit_screen_signal).bind(i));

@@ -220,7 +220,7 @@ class FindInFilesResultsPanel : public MarginContainer {
 		Color accent_color;
 		Color removed_color;
 		Color added_color;
-		Color font_color;
+		Color font_normal_color;
 	} theme_cache;
 
 	FindInFilesSearch *finder = nullptr;

@@ -633,8 +633,8 @@ void DynamicFontImportSettingsDialog::_notification(int p_what) {
 			preload_pages->set_theme_type_variation(type_variation);
 
 			add_var->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
-			label_warn->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
-			glyph_tree->add_theme_color_override(SNAME("font_disabled_color"), glyph_tree->get_theme_color(SceneStringName(font_color)));
+			label_warn->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
+			glyph_tree->add_theme_color_override(SNAME("font_disabled_color"), glyph_tree->get_theme_color(SceneStringName(font_normal_color)));
 		} break;
 	}
 }

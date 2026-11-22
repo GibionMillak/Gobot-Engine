@@ -208,7 +208,7 @@ void DependencyEditor::_update_file() {
 
 void DependencyEditor::_notification(int p_what) {
 	if (p_what == NOTIFICATION_THEME_CHANGED) {
-		warning_label->add_theme_color_override(SceneStringName(font_color), get_theme_color("warning_color", EditorStringName(Editor)));
+		warning_label->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color("warning_color", EditorStringName(Editor)));
 		filter->set_right_icon(get_editor_theme_icon(SNAME("action_search")));
 		menu_sort->set_button_icon(get_editor_theme_icon(SNAME("action_sort")));
 	}

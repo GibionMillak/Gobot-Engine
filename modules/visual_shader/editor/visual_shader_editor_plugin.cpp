@@ -984,7 +984,7 @@ void VisualShaderGraphPlugin::update_theme() {
 	vs_msdf_fonts_theme->set_font(SceneStringName(font_family), "GraphNodeTitleLabel", label_bold_font);
 	if (!EditorThemeManager::is_dark_icon_and_font()) {
 		// Override the color to white for light themes.
-		vs_msdf_fonts_theme->set_color(SceneStringName(font_color), "GraphNodeTitleLabel", Color(1, 1, 1));
+		vs_msdf_fonts_theme->set_color(SceneStringName(font_normal_color), "GraphNodeTitleLabel", Color(1, 1, 1));
 	}
 	vs_msdf_fonts_theme->set_font(SceneStringName(font), "LineEdit", label_font);
 	vs_msdf_fonts_theme->set_font(SceneStringName(font), "Button", label_font);
@@ -1560,7 +1560,7 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 					if (vsnode->is_input_port_default(j, mode) && !port_left_used) {
 						Label *hint_label = memnew(Label);
 						hint_label->set_text(TTR("[default]"));
-						hint_label->add_theme_color_override(SceneStringName(font_color), editor->get_theme_color(SNAME("font_readonly_color"), SNAME("TextEdit")));
+						hint_label->add_theme_color_override(SceneStringName(font_normal_color), editor->get_theme_color(SNAME("font_readonly_color"), SNAME("TextEdit")));
 						hint_label->add_theme_style_override(CoreStringName(normal), editor->get_theme_stylebox(SNAME("label_style"), SNAME("VShaderEditor")));
 						hb->add_child(hint_label);
 					}
@@ -1773,7 +1773,7 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 	}
 	if (!error.is_empty()) {
 		Label *error_label = memnew(Label);
-		error_label->add_theme_color_override(SceneStringName(font_color), editor->get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+		error_label->add_theme_color_override(SceneStringName(font_normal_color), editor->get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 		error_label->set_text(error);
 		error_label->set_autowrap_mode(TextServer::AUTOWRAP_WORD);
 		node->add_child(error_label);
@@ -1815,7 +1815,7 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 		expression_box->begin_bulk_theme_override();
 		expression_box->add_theme_font_override(SceneStringName(font), editor->get_theme_font(SNAME("expression"), EditorStringName(Editor)));
 		expression_box->add_theme_font_size_override(SceneStringName(font_size), editor->get_theme_font_size(SNAME("expression_size"), EditorStringName(Editor)));
-		expression_box->add_theme_color_override(SceneStringName(font_color), text_color);
+		expression_box->add_theme_color_override(SceneStringName(font_normal_color), text_color);
 		expression_box->end_bulk_theme_override();
 
 		expression_syntax_highlighter->set_number_color(number_color);
@@ -6071,7 +6071,7 @@ void VisualShaderEditor::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			highend_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
+			highend_label->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 
 			param_filter->set_right_icon(Control::get_editor_theme_icon(SNAME("action_search")));
 
@@ -6090,7 +6090,7 @@ void VisualShaderEditor::_notification(int p_what) {
 				Color members_color = EDITOR_GET("text_editor/theme/highlighting/member_variable_color");
 				Color error_color = get_theme_color(SNAME("error_color"), EditorStringName(Editor));
 
-				varying_error_label->add_theme_color_override(SceneStringName(font_color), error_color);
+				varying_error_label->add_theme_color_override(SceneStringName(font_normal_color), error_color);
 
 				for (const String &E : keyword_list) {
 					if (ShaderLanguage::is_control_flow_keyword(E)) {
@@ -6103,7 +6103,7 @@ void VisualShaderEditor::_notification(int p_what) {
 				preview_text->begin_bulk_theme_override();
 				preview_text->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("expression"), EditorStringName(Editor)));
 				preview_text->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("expression_size"), EditorStringName(Editor)));
-				preview_text->add_theme_color_override(SceneStringName(font_color), text_color);
+				preview_text->add_theme_color_override(SceneStringName(font_normal_color), text_color);
 				preview_text->end_bulk_theme_override();
 
 				syntax_highlighter->set_number_color(number_color);
@@ -6122,7 +6122,7 @@ void VisualShaderEditor::_notification(int p_what) {
 				error_label->begin_bulk_theme_override();
 				error_label->add_theme_font_override(SceneStringName(font_family), get_theme_font(SNAME("status_source"), EditorStringName(Editor)));
 				error_label->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("status_source_size"), EditorStringName(Editor)));
-				error_label->add_theme_color_override(SceneStringName(font_color), error_color);
+				error_label->add_theme_color_override(SceneStringName(font_normal_color), error_color);
 				error_label->end_bulk_theme_override();
 			}
 

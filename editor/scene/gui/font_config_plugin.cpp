@@ -892,7 +892,7 @@ void FontPreview::_notification(int p_what) {
 			// Draw font name (style).
 			Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 			int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
-			Color text_color = get_theme_color(SceneStringName(font_color), SNAME("Label"));
+			Color text_color = get_theme_color(SceneStringName(font_normal_color), SNAME("Label"));
 
 			// Draw font preview.
 			bool prev_ok = true;

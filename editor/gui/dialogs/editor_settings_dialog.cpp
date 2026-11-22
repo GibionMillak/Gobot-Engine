@@ -379,7 +379,7 @@ void EditorSettingsDialog::_update_icons() {
 	restart_close_button->set_button_icon(get_editor_theme_icon(SNAME("action_close")));
 	restart_container->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("Tree")));
 	restart_icon->set_texture(get_editor_theme_icon(SNAME("status_warning")));
-	restart_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
+	restart_label->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 }
 
 void EditorSettingsDialog::_event_config_confirmed() {
@@ -509,7 +509,7 @@ TreeItem *EditorSettingsDialog::_create_shortcut_treeitem(TreeItem *p_parent, co
 	shortcut_item->set_text(1, sc_text);
 	if (sc_text == "None") {
 		// Fade out unassigned shortcut labels for easier visual grepping.
-		shortcut_item->set_custom_color(1, get_theme_color(SceneStringName(font_color), SNAME("Label")) * Color(1, 1, 1, 0.5));
+		shortcut_item->set_custom_color(1, get_theme_color(SceneStringName(font_normal_color), SNAME("Label")) * Color(1, 1, 1, 0.5));
 	}
 
 	if (p_allow_revert) {

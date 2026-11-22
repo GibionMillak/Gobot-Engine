@@ -811,7 +811,7 @@ void CurveEdit::_redraw() {
 	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
 	float font_height = font->get_height(font_size);
-	Color text_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	Color text_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 
 	int pad = Math::round(2 * EDSCALE);
 
@@ -827,8 +827,8 @@ void CurveEdit::_redraw() {
 
 	// Draw curve in view coordinates. Curve world-to-view point conversion happens in plot_curve_accurate().
 
-	const Color line_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
-	const Color edge_line_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor)) * Color(1, 1, 1, 0.75);
+	const Color line_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
+	const Color edge_line_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor)) * Color(1, 1, 1, 0.75);
 
 	plot_curve_accurate(STEP_SIZE, line_color, edge_line_color);
 
@@ -836,7 +836,7 @@ void CurveEdit::_redraw() {
 
 	bool shift_pressed = Input::get_singleton()->is_key_pressed(Key::SHIFT);
 
-	const Color point_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	const Color point_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 
 	for (int i = 0; i < curve->get_point_count(); ++i) {
 		Vector2 pos = get_view_pos(curve->get_point_position(i));
@@ -857,7 +857,7 @@ void CurveEdit::_redraw() {
 		// Draw tangents if not dragging a point, or if holding a point without having moved it yet.
 		if (grabbing == GRAB_NONE || initial_grab_pos == point_pos || selected_tangent_index != TANGENT_NONE) {
 			const Color selected_tangent_color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor)).darkened(0.25);
-			const Color tangent_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor)).darkened(0.25);
+			const Color tangent_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor)).darkened(0.25);
 
 			if (selected_index != 0) {
 				Vector2 control_pos = get_tangent_view_pos(selected_index, TANGENT_LEFT);
@@ -1066,7 +1066,7 @@ Ref<Texture2D> CurvePreviewGenerator::generate(const Ref<Resource> &p_from, cons
 	Image &im = **img_ref;
 	im.initialize_data(p_size.x, p_size.y, false, Image::FORMAT_RGBA8);
 
-	Color line_color = EditorInterface::get_singleton()->get_editor_theme()->get_color(SceneStringName(font_color), EditorStringName(Editor));
+	Color line_color = EditorInterface::get_singleton()->get_editor_theme()->get_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 
 	// Set the first pixel of the thumbnail.
 	float v = (curve->sample_baked(curve->get_min_domain()) - curve->get_min_value()) / curve->get_value_range();

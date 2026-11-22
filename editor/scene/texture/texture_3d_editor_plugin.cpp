@@ -277,7 +277,7 @@ Texture3DEditor::Texture3DEditor() {
 	add_child(channel_selector);
 
 	info = memnew(Label);
-	info->add_theme_color_override(SceneStringName(font_color), Color(1, 1, 1));
+	info->add_theme_color_override(SceneStringName(font_normal_color), Color(1, 1, 1));
 	info->add_theme_color_override("font_shadow_color", Color(0, 0, 0));
 	info->add_theme_font_size_override(SceneStringName(font_size), 14 * EDSCALE);
 	info->add_theme_color_override("font_outline_color", Color(0, 0, 0));

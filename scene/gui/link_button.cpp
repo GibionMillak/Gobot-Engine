@@ -185,7 +185,7 @@ void LinkButton::_notification(int p_what) {
 					if (has_focus(true)) {
 						color = theme_cache.font_focus_color;
 					} else {
-						color = theme_cache.font_color;
+						color = theme_cache.font_normal_color;
 					}
 
 					do_underline = underline_mode == UNDERLINE_MODE_ALWAYS;
@@ -195,7 +195,7 @@ void LinkButton::_notification(int p_what) {
 					if (has_theme_color(SNAME("font_pressed_color"))) {
 						color = theme_cache.font_pressed_color;
 					} else {
-						color = theme_cache.font_color;
+						color = theme_cache.font_normal_color;
 					}
 
 					do_underline = underline_mode != UNDERLINE_MODE_NEVER;
@@ -272,7 +272,7 @@ void LinkButton::_bind_methods() {
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, LinkButton, focus);
 
-	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, LinkButton, font_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, LinkButton, font_normal_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, LinkButton, font_focus_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, LinkButton, font_pressed_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, LinkButton, font_hover_color);

@@ -901,13 +901,13 @@ void GameView::_update_speed_buttons() {
 void GameView::_update_speed_state_color() {
 	Color text_color;
 	if (time_scale_index == DEFAULT_TIME_SCALE_INDEX) {
-		text_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+		text_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 	} else if (time_scale_index > DEFAULT_TIME_SCALE_INDEX) {
 		text_color = get_theme_color(SNAME("success_color"), EditorStringName(Editor));
 	} else if (time_scale_index < DEFAULT_TIME_SCALE_INDEX) {
 		text_color = get_theme_color(SNAME("warning_color"), EditorStringName(Editor));
 	}
-	speed_state_button->add_theme_color_override(SceneStringName(font_color), text_color);
+	speed_state_button->add_theme_color_override(SceneStringName(font_normal_color), text_color);
 	speed_state_button->add_theme_color_override(SNAME("font_hover_color"), text_color);
 	speed_state_button->add_theme_color_override(SNAME("font_hover_pressed_color"), text_color);
 	speed_state_button->add_theme_color_override(SNAME("font_pressed_color"), text_color);
@@ -1011,11 +1011,11 @@ void GameView::_update_ui() {
 	}
 
 	if (available == EMBED_AVAILABLE) {
-		if (state_label->has_theme_color_override(SceneStringName(font_color))) {
-			state_label->remove_theme_color_override(SceneStringName(font_color));
+		if (state_label->has_theme_color_override(SceneStringName(font_normal_color))) {
+			state_label->remove_theme_color_override(SceneStringName(font_normal_color));
 		}
 	} else {
-		state_label->add_theme_color_override(SceneStringName(font_color), state_label->get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
+		state_label->add_theme_color_override(SceneStringName(font_normal_color), state_label->get_theme_color(SNAME("warning_color"), EditorStringName(Editor)));
 	}
 }
 

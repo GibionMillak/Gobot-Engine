@@ -227,7 +227,7 @@ void AnimationTreeEditor::_update_error_message() {
 		error_label->pop(); // Cell.
 
 		error_label->push_cell();
-		error_label->push_color(error_label->get_theme_color(SceneStringName(font_color), EditorStringName(Editor)));
+		error_label->push_color(error_label->get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor)));
 		for (const String &reason : kv.value.errors) {
 			error_label->append_text(reason);
 			error_label->add_newline();
@@ -422,7 +422,7 @@ void AnimationTreeEditor::_notification(int p_what) {
 			error_scroll->add_theme_style_override(SceneStringName(panel), empty_style);
 			error_label->add_theme_color_override(SNAME("default_color"), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 			error_button->set_button_icon(get_editor_theme_icon(SNAME("status_error")));
-			error_button->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+			error_button->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 			current_scope_error_label->add_theme_font_override(SNAME("normal_font"), get_theme_font(SNAME("main"), EditorStringName(Editor)));
 			current_scope_error_label->add_theme_font_size_override(SNAME("normal_font_size"), get_theme_font_size(SNAME("main_size"), EditorStringName(Editor)));
 			current_scope_error_label->add_theme_color_override(SNAME("default_color"), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));

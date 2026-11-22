@@ -150,7 +150,7 @@ private:
 		Ref<StyleBox> footer;
 		Ref<Font> font;
 		int font_size = 0;
-		Color font_color;
+		Color font_normal_color;
 		Color header_font_color;
 		int gap = 0;
 		int horizontal_cell_padding = 0;

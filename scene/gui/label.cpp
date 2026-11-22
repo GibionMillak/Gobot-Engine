@@ -896,11 +896,11 @@ void Label::_bind_methods() {
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, Label, paragraph_spacing);
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, Label, icon_max_width);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Label, icon_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Label, icon_normal_color);
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT, Label, font_family);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, Label, font_size);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Label, font_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Label, font_normal_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, Label, font_outline_color);
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_CONSTANT, Label, font_outline_size, "outline_size");
 
@@ -1565,7 +1565,7 @@ void Label::_draw() {
 	const Ref<Font> font = _get_font();
 	const int font_size = get_rendered_font_size();
 	const int font_h = font->get_height(font_size);
-	const Color font_color = has_settings ? _label_settings->get_font_color() : theme_cache.font_color;
+	const Color font_color = has_settings ? _label_settings->get_font_color() : theme_cache.font_normal_color;
 	const Color font_shadow_color = has_settings ? _label_settings->get_shadow_color() : theme_cache.font_shadow_color;
 	const Point2 shadow_ofs = has_settings ? _label_settings->get_shadow_offset() : theme_cache.font_shadow_offset;
 	const int paragraph_spacing = _get_paragraph_spacing();
@@ -1582,7 +1582,7 @@ void Label::_draw() {
 	}
 
 	if (_icon.is_valid() && _icon_rect.has_area()) {
-		draw_texture_rect(_icon, _icon_rect, false, theme_cache.icon_color);
+		draw_texture_rect(_icon, _icon_rect, false, theme_cache.icon_normal_color);
 	}
 
 	const bool trim_chars = (_visible_characters >= 0) && (_visible_characters_behavior == TextServer::VC_CHARS_AFTER_SHAPING);

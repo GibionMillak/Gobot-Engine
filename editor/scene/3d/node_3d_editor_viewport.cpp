@@ -3201,7 +3201,7 @@ void Node3DEditorViewport::_project_settings_changed() {
 static void override_label_colors(Control *p_control) {
 	const Ref<Theme> &editor_theme = EditorNode::get_singleton()->get_editor_theme();
 	p_control->begin_bulk_theme_override();
-	p_control->add_theme_color_override(SceneStringName(font_color), editor_theme->get_color(SNAME("font_dark_background_color"), EditorStringName(Editor)));
+	p_control->add_theme_color_override(SceneStringName(font_normal_color), editor_theme->get_color(SNAME("font_dark_background_color"), EditorStringName(Editor)));
 	p_control->add_theme_color_override("font_hover_color", editor_theme->get_color(SNAME("font_dark_background_hover_color"), EditorStringName(Editor)));
 	p_control->add_theme_color_override("font_focus_color", editor_theme->get_color(SNAME("font_dark_background_focus_color"), EditorStringName(Editor)));
 	p_control->add_theme_color_override("font_pressed_color", editor_theme->get_color(SNAME("font_dark_background_pressed_color"), EditorStringName(Editor)));
@@ -3456,13 +3456,13 @@ void Node3DEditorViewport::_notification(int p_what) {
 							// XY plane
 							corner_point = Vector3(end_pos.x, start_pos.y, start_pos.z);
 
-							ruler_label_x->add_theme_color_override(SceneStringName(font_color), axis_x_color);
+							ruler_label_x->add_theme_color_override(SceneStringName(font_normal_color), axis_x_color);
 							ruler_label_x->set_text(x_text);
 							ruler_label_x->set_visible(true);
 							Vector2 x_pos = camera->unproject_position((start_pos + corner_point) / 2) - (ruler_label_x->get_custom_minimum_size() / 2);
 							ruler_label_x->set_position(x_pos);
 
-							ruler_label_y->add_theme_color_override(SceneStringName(font_color), axis_y_color);
+							ruler_label_y->add_theme_color_override(SceneStringName(font_normal_color), axis_y_color);
 							ruler_label_y->set_text(y_text);
 							ruler_label_y->set_visible(true);
 							Vector2 y_pos = camera->unproject_position((corner_point + end_pos) / 2) - (ruler_label_y->get_custom_minimum_size() / 2);
@@ -3473,13 +3473,13 @@ void Node3DEditorViewport::_notification(int p_what) {
 							// XZ plane
 							corner_point = Vector3(end_pos.x, start_pos.y, start_pos.z);
 
-							ruler_label_x->add_theme_color_override(SceneStringName(font_color), axis_x_color);
+							ruler_label_x->add_theme_color_override(SceneStringName(font_normal_color), axis_x_color);
 							ruler_label_x->set_text(x_text);
 							ruler_label_x->set_visible(true);
 							Vector2 x_pos = camera->unproject_position((start_pos + corner_point) / 2) - (ruler_label_x->get_custom_minimum_size() / 2);
 							ruler_label_x->set_position(x_pos);
 
-							ruler_label_y->add_theme_color_override(SceneStringName(font_color), axis_z_color);
+							ruler_label_y->add_theme_color_override(SceneStringName(font_normal_color), axis_z_color);
 							ruler_label_y->set_text(z_text);
 							ruler_label_y->set_visible(true);
 							Vector2 z_pos = camera->unproject_position((corner_point + end_pos) / 2) - (ruler_label_y->get_custom_minimum_size() / 2);
@@ -3490,13 +3490,13 @@ void Node3DEditorViewport::_notification(int p_what) {
 							// YZ plane
 							corner_point = Vector3(start_pos.x, start_pos.y, end_pos.z);
 
-							ruler_label_x->add_theme_color_override(SceneStringName(font_color), axis_z_color);
+							ruler_label_x->add_theme_color_override(SceneStringName(font_normal_color), axis_z_color);
 							ruler_label_x->set_text(z_text);
 							ruler_label_x->set_visible(true);
 							Vector2 z_pos = camera->unproject_position((start_pos + corner_point) / 2) - (ruler_label_x->get_custom_minimum_size() / 2);
 							ruler_label_x->set_position(z_pos);
 
-							ruler_label_y->add_theme_color_override(SceneStringName(font_color), axis_y_color);
+							ruler_label_y->add_theme_color_override(SceneStringName(font_normal_color), axis_y_color);
 							ruler_label_y->set_text(y_text);
 							ruler_label_y->set_visible(true);
 							Vector2 y_pos = camera->unproject_position((corner_point + end_pos) / 2) - (ruler_label_y->get_custom_minimum_size() / 2);
@@ -3507,19 +3507,19 @@ void Node3DEditorViewport::_notification(int p_what) {
 							// All three axes
 							corner_point = Vector3(end_pos.x, start_pos.y, start_pos.z);
 
-							ruler_label_x->add_theme_color_override(SceneStringName(font_color), axis_x_color);
+							ruler_label_x->add_theme_color_override(SceneStringName(font_normal_color), axis_x_color);
 							ruler_label_x->set_text(x_text);
 							ruler_label_x->set_visible(true);
 							Vector2 x_pos = camera->unproject_position((start_pos + corner_point) / 2) - (ruler_label_x->get_custom_minimum_size() / 2);
 							ruler_label_x->set_position(x_pos);
 
-							ruler_label_y->add_theme_color_override(SceneStringName(font_color), axis_y_color);
+							ruler_label_y->add_theme_color_override(SceneStringName(font_normal_color), axis_y_color);
 							ruler_label_y->set_text(y_text);
 							ruler_label_y->set_visible(true);
 							Vector2 y_pos = camera->unproject_position((corner_point + end_pos) / 2) - (ruler_label_y->get_custom_minimum_size() / 2);
 							ruler_label_y->set_position(y_pos);
 
-							ruler_label_z->add_theme_color_override(SceneStringName(font_color), axis_z_color);
+							ruler_label_z->add_theme_color_override(SceneStringName(font_normal_color), axis_z_color);
 							ruler_label_z->set_text(z_text);
 							ruler_label_z->set_visible(true);
 							Vector2 z_pos = camera->unproject_position(center + Vector3(0, 0, -0.5)) - (ruler_label_z->get_custom_minimum_size() / 2);
@@ -3529,7 +3529,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 						corner_point = end_pos;
 
 						if (delta.x > 0.0) {
-							ruler_label_x->add_theme_color_override(SceneStringName(font_color), axis_x_color);
+							ruler_label_x->add_theme_color_override(SceneStringName(font_normal_color), axis_x_color);
 							ruler_label_x->set_text(x_text);
 							ruler_label_x->set_visible(true);
 							Vector2 pos = camera->unproject_position(center) - (ruler_label_x->get_custom_minimum_size() / 2);
@@ -3537,7 +3537,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 							ruler_label_y->set_visible(false);
 							ruler_label_z->set_visible(false);
 						} else if (delta.y > 0.0) {
-							ruler_label_x->add_theme_color_override(SceneStringName(font_color), axis_y_color);
+							ruler_label_x->add_theme_color_override(SceneStringName(font_normal_color), axis_y_color);
 							ruler_label_x->set_text(y_text);
 							ruler_label_x->set_visible(true);
 							Vector2 pos = camera->unproject_position(center) - (ruler_label_x->get_custom_minimum_size() / 2);
@@ -3545,7 +3545,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 							ruler_label_y->set_visible(false);
 							ruler_label_z->set_visible(false);
 						} else {
-							ruler_label_x->add_theme_color_override(SceneStringName(font_color), axis_z_color);
+							ruler_label_x->add_theme_color_override(SceneStringName(font_normal_color), axis_z_color);
 							ruler_label_x->set_text(z_text);
 							ruler_label_x->set_visible(true);
 							Vector2 pos = camera->unproject_position(center) - (ruler_label_x->get_custom_minimum_size() / 2);
@@ -3774,14 +3774,14 @@ void Node3DEditorViewport::_notification(int p_what) {
 				// Middle point is at 15 ms.
 				cpu_time_label->set_text(vformat(TTR("CPU Time: %s ms"), rtos(cpu_time).pad_decimals(2)));
 				cpu_time_label->add_theme_color_override(
-						SceneStringName(font_color),
+						SceneStringName(font_normal_color),
 						frame_time_gradient->get_color_at_offset(
 								Math::remap(cpu_time, 0, 30, 0, 1)));
 
 				gpu_time_label->set_text(vformat(TTR("GPU Time: %s ms"), rtos(gpu_time).pad_decimals(2)));
 				// Middle point is at 15 ms.
 				gpu_time_label->add_theme_color_override(
-						SceneStringName(font_color),
+						SceneStringName(font_normal_color),
 						frame_time_gradient->get_color_at_offset(
 								Math::remap(gpu_time, 0, 30, 0, 1)));
 
@@ -3789,7 +3789,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 				fps_label->set_text(vformat(TTR("FPS: %d"), fps));
 				// Middle point is at 60 FPS.
 				fps_label->add_theme_color_override(
-						SceneStringName(font_color),
+						SceneStringName(font_normal_color),
 						frame_time_gradient->get_color_at_offset(
 								Math::remap(fps, 110, 10, 0, 1)));
 			}
@@ -3917,7 +3917,7 @@ void Node3DEditorViewport::_notification(int p_what) {
 			override_control_stylebox(locked_label, information_3d_stylebox);
 			override_label_colors(locked_label);
 
-			ruler_label->add_theme_color_override(SceneStringName(font_color), Color(1.0, 0.9, 0.0, 1.0));
+			ruler_label->add_theme_color_override(SceneStringName(font_normal_color), Color(1.0, 0.9, 0.0, 1.0));
 			ruler_label->add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0));
 			ruler_label->add_theme_constant_override("outline_size", 4 * EDSCALE);
 			ruler_label->add_theme_font_size_override(SceneStringName(font_size), 15 * EDSCALE);
@@ -7188,7 +7188,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	zoom_limit_label = memnew(Label);
 	zoom_limit_label->set_text(TTRC(U"To zoom further, change the camera's clipping planes (View → Settings...)"));
 	zoom_limit_label->set_name("ZoomLimitMessageLabel");
-	zoom_limit_label->add_theme_color_override(SceneStringName(font_color), Color(1, 1, 1, 1));
+	zoom_limit_label->add_theme_color_override(SceneStringName(font_normal_color), Color(1, 1, 1, 1));
 	zoom_limit_label->hide();
 	bottom_center_vbox->add_child(zoom_limit_label);
 
@@ -7205,7 +7205,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	tooltip_panel->set_tab_size(1);
 	tooltip_panel->set_autowrap_mode(TextServer::AUTOWRAP_OFF);
 	tooltip_panel->set_anchors_and_offsets_preset(LayoutPreset::PRESET_TOP_LEFT);
-	tooltip_panel->add_theme_color_override(SceneStringName(font_color), Color(0.8f, 0.8f, 0.8f, 1));
+	tooltip_panel->add_theme_color_override(SceneStringName(font_normal_color), Color(0.8f, 0.8f, 0.8f, 1));
 	tooltip_panel->add_theme_constant_override("paragraph_separation", 5);
 
 	frame_time_gradient = memnew(Gradient);

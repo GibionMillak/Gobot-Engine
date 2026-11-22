@@ -82,7 +82,7 @@ VBoxContainer *EditorResourceTooltipPlugin::make_default_tooltip(const String &p
 		} else {
 			Label *label = memnew(Label(TTR("Invalid file or broken link.")));
 			label->set_theme_type_variation(SNAME("TooltipLabel"));
-			label->add_theme_color_override(SceneStringName(font_color), EditorNode::get_singleton()->get_gui_base()->get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+			label->add_theme_color_override(SceneStringName(font_normal_color), EditorNode::get_singleton()->get_gui_base()->get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 			vb->add_child(label);
 			return vb;
 		}

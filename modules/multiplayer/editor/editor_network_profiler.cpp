@@ -95,8 +95,8 @@ void EditorNetworkProfiler::_update_theme_item_cache() {
 	theme_cache.incoming_bandwidth_icon = get_theme_icon(SNAME("navigation_arrow_down"), EditorStringName(Editor));
 	theme_cache.outgoing_bandwidth_icon = get_theme_icon(SNAME("gui_tree_arrow_up"), EditorStringName(Editor));
 
-	theme_cache.incoming_bandwidth_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
-	theme_cache.outgoing_bandwidth_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	theme_cache.incoming_bandwidth_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
+	theme_cache.outgoing_bandwidth_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 }
 
 void EditorNetworkProfiler::_refresh() {

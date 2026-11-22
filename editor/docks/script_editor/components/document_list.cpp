@@ -352,7 +352,7 @@ void DocumentList::_update_item_list() {
 
 	Color hot_color = get_theme_color(SNAME("accent_color"), EditorStringName(Editor));
 	hot_color.set_s(hot_color.get_s() * 0.9);
-	Color cold_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	Color cold_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 
 	int edit_pass = _document_editor_container->_edit_pass;
 

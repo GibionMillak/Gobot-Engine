@@ -236,8 +236,8 @@ void EditorQuickOpenDialog::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
 			Color text_color = get_theme_color("font_readonly_color", EditorStringName(Editor));
-			_result_count_lbl->add_theme_color_override(SceneStringName(font_color), text_color);
-			_no_results_lbl->add_theme_color_override(SceneStringName(font_color), text_color);
+			_result_count_lbl->add_theme_color_override(SceneStringName(font_normal_color), text_color);
+			_no_results_lbl->add_theme_color_override(SceneStringName(font_normal_color), text_color);
 
 			_file_context_menu->set_item_icon(SHOW_IN_FILESYSTEM, get_editor_theme_icon(SNAME("gui_show_in_file_system")));
 			_file_context_menu->set_item_icon(SHOW_IN_FILE_MANAGER, get_editor_theme_icon(SNAME("gui_filesystem")));

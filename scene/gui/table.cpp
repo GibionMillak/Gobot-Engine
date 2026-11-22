@@ -614,10 +614,10 @@ void Table::_bind_methods() {
 				Table *table = Object::cast_to<Table>(p_instance);
 				table->_theme_cache.font_size = table->get_theme_item(Theme::DATA_TYPE_FONT_SIZE, p_item_name, p_type_name);
 			});
-	ThemeDB::get_singleton()->bind_class_item(Theme::DATA_TYPE_COLOR, get_class_static(), "font_color", "font_color",
+	ThemeDB::get_singleton()->bind_class_item(Theme::DATA_TYPE_COLOR, get_class_static(), "font_normal_color", "font_normal_color",
 			[](Node *p_instance, const StringName &p_item_name, const StringName &p_type_name) {
 				Table *table = Object::cast_to<Table>(p_instance);
-				table->_theme_cache.font_color = table->get_theme_item(Theme::DATA_TYPE_COLOR, p_item_name, p_type_name);
+				table->_theme_cache.font_normal_color = table->get_theme_item(Theme::DATA_TYPE_COLOR, p_item_name, p_type_name);
 			});
 	ThemeDB::get_singleton()->bind_class_item(Theme::DATA_TYPE_COLOR, get_class_static(), "header_font_color", "header_font_color",
 			[](Node *p_instance, const StringName &p_item_name, const StringName &p_type_name) {
@@ -1219,7 +1219,7 @@ void Table::_draw_cell(Control *p_canvas, const Cell &p_cell, const Rect2 &p_rec
 		return;
 	}
 	const Point2 text_position(position.x + ((icon_size.x + icon_gap)), position.y + (height - text_size.y) / 2);
-	p_cell.text_buf->draw(p_canvas->get_canvas_item(), text_position, p_cell.role == HEADER ? _theme_cache.header_font_color : _theme_cache.font_color);
+	p_cell.text_buf->draw(p_canvas->get_canvas_item(), text_position, p_cell.role == HEADER ? _theme_cache.header_font_color : _theme_cache.font_normal_color);
 }
 
 void Table::_draw_frozen() {
@@ -1261,7 +1261,7 @@ void Table::_draw_footer() {
 	}
 	if (_show_row_count && _theme_cache.font.is_valid()) {
 		const float baseline = (content.size.y - _theme_cache.font->get_height(_theme_cache.font_size)) / 2 + _theme_cache.font->get_ascent(_theme_cache.font_size);
-		_theme_cache.font->draw_string(_footer_background->get_canvas_item(), content.position + Point2(0, baseline), vformat(atr("Rows: %d"), _rows.size()), HORIZONTAL_ALIGNMENT_LEFT, content.size.x, _theme_cache.font_size, _theme_cache.font_color);
+		_theme_cache.font->draw_string(_footer_background->get_canvas_item(), content.position + Point2(0, baseline), vformat(atr("Rows: %d"), _rows.size()), HORIZONTAL_ALIGNMENT_LEFT, content.size.x, _theme_cache.font_size, _theme_cache.font_normal_color);
 	}
 }
 

@@ -949,7 +949,7 @@ void TileSetAtlasSourceEditor::_tile_data_editor_dropdown_button_draw() {
 				if (tile_data_editor_dropdown_button->has_focus()) {
 					clr = get_theme_color(SNAME("font_focus_color"));
 				} else {
-					clr = get_theme_color(SceneStringName(font_color));
+					clr = get_theme_color(SceneStringName(font_normal_color));
 				}
 		}
 	}

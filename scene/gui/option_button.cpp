@@ -114,7 +114,7 @@ void OptionButton::_notification(int p_what) {
 						if (has_focus(true)) {
 							clr = theme_cache.font_focus_color;
 						} else {
-							clr = theme_cache.font_color;
+							clr = theme_cache.font_normal_color;
 						}
 				}
 			}
@@ -639,7 +639,7 @@ void OptionButton::_bind_methods() {
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_STYLEBOX, OptionButton, normal);
 
-	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, OptionButton, font_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, OptionButton, font_normal_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, OptionButton, font_focus_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, OptionButton, font_pressed_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, OptionButton, font_hover_color);

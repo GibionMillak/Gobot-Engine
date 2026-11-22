@@ -535,7 +535,7 @@ void AnimationNodeBlendSpace2DEditor::_blend_space_draw() {
 	// Clear text rectangles for fresh click detection.
 	text_rects.clear();
 
-	Color linecolor = get_theme_color(SceneStringName(font_color), SNAME("Label"));
+	Color linecolor = get_theme_color(SceneStringName(font_normal_color), SNAME("Label"));
 	Color linecolor_soft = linecolor;
 	linecolor_soft.a *= 0.5;
 	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
@@ -1100,7 +1100,7 @@ void AnimationNodeBlendSpace2DEditor::_start_inline_edit(int p_point) {
 	inline_editor = memnew(LineEdit);
 	blend_space_draw->add_child(inline_editor);
 
-	inline_editor->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("accent_color"), EditorStringName(Editor)));
+	inline_editor->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color(SNAME("accent_color"), EditorStringName(Editor)));
 	inline_editor->add_theme_color_override("font_selected_color", Color::named("white"));
 	inline_editor->add_theme_color_override("selection_color", get_theme_color(SNAME("accent_color"), EditorStringName(Editor)));
 	inline_editor->add_theme_constant_override("minimum_character_width", 0);

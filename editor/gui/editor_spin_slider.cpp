@@ -358,7 +358,7 @@ void EditorSpinSlider::_draw_spin_slider() {
 
 	int vofs = (size.height - font->get_height(font_size)) / 2 + font->get_ascent(font_size);
 
-	Color fc = read_only ? theme_cache.font_uneditable_color : theme_cache.font_color;
+	Color fc = read_only ? theme_cache.font_uneditable_color : theme_cache.font_normal_color;
 	Color lc = read_only ? theme_cache.read_only_label_color : theme_cache.label_color;
 
 	if (flat && !label.is_empty()) {
@@ -750,7 +750,7 @@ void EditorSpinSlider::_bind_methods() {
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, EditorSpinSlider, line_edit_margin);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_CONSTANT, EditorSpinSlider, line_edit_margin_empty);
 
-	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, EditorSpinSlider, font_color, "font_color", "LineEdit");
+	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, EditorSpinSlider, font_normal_color, "font_normal_color", "LineEdit");
 	BIND_THEME_ITEM_EXT(Theme::DATA_TYPE_COLOR, EditorSpinSlider, font_uneditable_color, "font_uneditable_color", "LineEdit");
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, EditorSpinSlider, label_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, EditorSpinSlider, read_only_label_color);

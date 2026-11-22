@@ -152,7 +152,7 @@ void QuickOpenResultItemContainer::reset() {
 		_path_lbl->set_text("");
 		_path_lbl->reset_highlights();
 	}
-	_name_lbl->remove_theme_color_override(SceneStringName(font_color));
+	_name_lbl->remove_theme_color_override(SceneStringName(font_normal_color));
 	_content_source = ContentSource::PROJECT;
 	set_tooltip_text("");
 	_update_badges();
@@ -202,9 +202,9 @@ void QuickOpenResultItemContainer::set_content(const QuickOpenResultCandidate &p
 void QuickOpenResultItemContainer::highlight_item(bool p_enabled) {
 	_is_selected = p_enabled;
 	if (_is_selected) {
-		_name_lbl->add_theme_color_override(SceneStringName(font_color), _highlighted_font_color);
+		_name_lbl->add_theme_color_override(SceneStringName(font_normal_color), _highlighted_font_color);
 	} else {
-		_name_lbl->remove_theme_color_override(SceneStringName(font_color));
+		_name_lbl->remove_theme_color_override(SceneStringName(font_normal_color));
 	}
 	queue_redraw();
 }
@@ -221,7 +221,7 @@ void QuickOpenResultItemContainer::_notification(int p_what) {
 			_hovering_stylebox = get_theme_stylebox(SNAME("hovered"), "Tree");
 			_highlighted_font_color = get_theme_color("font_focus_color", EditorStringName(Editor));
 			if (_path_lbl) {
-				_path_lbl->add_theme_color_override(SceneStringName(font_color), get_theme_color("font_disabled_color", EditorStringName(Editor)));
+				_path_lbl->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color("font_disabled_color", EditorStringName(Editor)));
 			}
 			highlight_item(_is_selected);
 			_update_badges();

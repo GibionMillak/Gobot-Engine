@@ -165,7 +165,7 @@ void FindReplaceBar::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_THEME_CHANGED: {
-			matches_label->add_theme_color_override(SceneStringName(font_color), results_count > 0 ? get_theme_color(SceneStringName(font_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+			matches_label->add_theme_color_override(SceneStringName(font_normal_color), results_count > 0 ? get_theme_color(SceneStringName(font_normal_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 		} break;
 
 		case NOTIFICATION_PREDELETE: {
@@ -382,7 +382,7 @@ void FindReplaceBar::_replace_all() {
 	}
 
 	text_editor->set_v_scroll(vsval);
-	matches_label->add_theme_color_override(SceneStringName(font_color), rc > 0 ? get_theme_color(SceneStringName(font_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+	matches_label->add_theme_color_override(SceneStringName(font_normal_color), rc > 0 ? get_theme_color(SceneStringName(font_normal_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 	matches_label->set_text(vformat(TTR("%d replaced."), rc));
 
 	callable_mp((Object *)text_editor, &Object::connect).call_deferred(SceneStringName(text_changed), callable_mp(this, &FindReplaceBar::_editor_text_changed), 0U);
@@ -494,7 +494,7 @@ void FindReplaceBar::_update_matches_display() {
 	} else {
 		matches_label->show();
 
-		matches_label->add_theme_color_override(SceneStringName(font_color), results_count > 0 ? get_theme_color(SceneStringName(font_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+		matches_label->add_theme_color_override(SceneStringName(font_normal_color), results_count > 0 ? get_theme_color(SceneStringName(font_normal_color), SNAME("Label")) : get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 
 		if (results_count == 0) {
 			matches_label->set_text(TTR("No match"));
@@ -1656,10 +1656,10 @@ void CodeTextEditor::_update_text_editor_theme() {
 	error->end_bulk_theme_override();
 
 	error_button->set_button_icon(get_editor_theme_icon(SNAME("status_error")));
-	error_button->add_theme_color_override(SceneStringName(font_color), error_color);
+	error_button->add_theme_color_override(SceneStringName(font_normal_color), error_color);
 
 	warning_button->set_button_icon(get_editor_theme_icon(SNAME("status_node_warning")));
-	warning_button->add_theme_color_override(SceneStringName(font_color), warning_color);
+	warning_button->add_theme_color_override(SceneStringName(font_normal_color), warning_color);
 
 	const int child_count = status_bar->get_child_count();
 	for (int i = 0; i < child_count; i++) {

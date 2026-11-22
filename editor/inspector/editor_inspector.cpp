@@ -1819,7 +1819,7 @@ void EditorInspectorCategory::_notification(int p_what) {
 			tl->set_horizontal_alignment(HORIZONTAL_ALIGNMENT_LEFT);
 			float text_pos_y = (get_size().height - tl->get_size().height) / 2 + v_margin_offset;
 			Point2 text_pos = Point2(ofs, text_pos_y).round();
-			tl->draw(get_canvas_item(), text_pos, theme_cache.font_color);
+			tl->draw(get_canvas_item(), text_pos, theme_cache.font_normal_color);
 		} break;
 	}
 }
@@ -2139,7 +2139,7 @@ void EditorInspectorSection::_notification(int p_what) {
 
 				Ref<Font> font = theme_cache.bold_font;
 				int font_size = theme_cache.bold_font_size;
-				Color font_color = theme_cache.font_color;
+				Color font_color = theme_cache.font_normal_color;
 
 				Ref<Font> light_font = theme_cache.light_font;
 				int light_font_size = theme_cache.light_font_size;
@@ -3721,7 +3721,7 @@ void EditorInspector::initialize_section_theme(EditorInspectorSection::ThemeCach
 
 	p_cache.warning_color = p_control->get_theme_color(SNAME("warning_color"), EditorStringName(Editor));
 	p_cache.prop_subsection = p_control->get_theme_color(SNAME("prop_subsection"), EditorStringName(Editor));
-	p_cache.font_color = p_control->get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	p_cache.font_normal_color = p_control->get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 	p_cache.font_disabled_color = p_control->get_theme_color(SNAME("font_disabled_color"), EditorStringName(Editor));
 	p_cache.font_hover_color = p_control->get_theme_color(SNAME("font_hover_color"), EditorStringName(Editor));
 	p_cache.font_pressed_color = p_control->get_theme_color(SNAME("font_pressed_color"), EditorStringName(Editor));
@@ -3761,7 +3761,7 @@ void EditorInspector::initialize_category_theme(EditorInspectorCategory::ThemeCa
 	p_cache.vertical_separation = p_control->get_theme_constant(SNAME("separation"), SNAME("EditorPropertyContainer"));
 	p_cache.class_icon_size = p_control->get_theme_constant(SNAME("class_icon_size"), EditorStringName(Editor));
 
-	p_cache.font_color = p_control->get_theme_color(SceneStringName(font_color), SNAME("Tree"));
+	p_cache.font_normal_color = p_control->get_theme_color(SceneStringName(font_normal_color), SNAME("Tree"));
 
 	p_cache.bold_font = p_control->get_theme_font(SNAME("bold"), EditorStringName(Editor));
 	p_cache.bold_font_size = p_control->get_theme_font_size(SNAME("bold_size"), EditorStringName(Editor));

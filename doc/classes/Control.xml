@@ -185,11 +185,11 @@
 				[b]Example:[/b] Override a [Label]'s color and reset it later:
 				[codeblock]
 				# Given the child Label node "MyLabel", override its font color with a custom value.
-				$MyLabel.add_theme_color_override("font_color", Color(1, 0.5, 0))
+				$MyLabel.add_theme_color_override("font_normal_color", Color(1, 0.5, 0))
 				# Reset the font color of the child label.
-				$MyLabel.remove_theme_color_override("font_color")
+				$MyLabel.remove_theme_color_override("font_normal_color")
 				# Alternatively it can be overridden with the default value from the Label type.
-				$MyLabel.add_theme_color_override("font_color", get_theme_color("font_color", "Label"))
+				$MyLabel.add_theme_color_override("font_normal_color", get_theme_color("font_normal_color", "Label"))
 				[/codeblock]
 			</description>
 		</method>
@@ -447,9 +447,9 @@
 				[codeblock]
 				func _ready():
 					# Get the font color defined for the current Control's class, if it exists.
-					modulate = get_theme_color("font_color")
+					modulate = get_theme_color("font_normal_color")
 					# Get the font color defined for the Button class.
-					modulate = get_theme_color("font_color", "Button")
+					modulate = get_theme_color("font_normal_color", "Button")
 				[/codeblock]
 			</description>
 		</method>
@@ -1124,7 +1124,7 @@
 			style_box.set_border_width_all(2)
 			# We assume here that the `theme` property has been assigned a custom Theme beforehand.
 			theme.set_stylebox("panel", "TooltipPanel", style_box)
-			theme.set_color("font_color", "TooltipLabel", Color(0, 1, 1))
+			theme.set_color("font_normal_color", "TooltipLabel", Color(0, 1, 1))
 			[/codeblock]
 		</member>
 		<member name="translation_context" type="StringName" setter="set_translation_context" getter="get_translation_context" default="&amp;&quot;&quot;">
@@ -1264,7 +1264,7 @@
 				if what == NOTIFICATION_THEME_CHANGED:
 					if not is_node_ready():
 						await ready # Wait until ready signal.
-					$Label.add_theme_color_override("font_color", Color.YELLOW)
+					$Label.add_theme_color_override("font_normal_color", Color.YELLOW)
 			[/codeblock]
 		</constant>
 		<constant name="NOTIFICATION_SCROLL_BEGIN" value="47">

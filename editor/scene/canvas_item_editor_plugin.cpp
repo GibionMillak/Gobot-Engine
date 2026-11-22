@@ -1337,7 +1337,7 @@ void CanvasItemEditor::add_node_to_scene(Node *p_parent, Node *p_child, const Ve
 }
 
 void CanvasItemEditor::_draw_text_at_position(Point2 p_position, const String &p_string, Side p_side) {
-	Color color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	Color color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 	color.a = 0.8;
 	Ref<Font> font = get_theme_font(SceneStringName(font_family), SNAME("Label"));
 	int font_size = get_theme_font_size(SceneStringName(font_size), SNAME("Label"));
@@ -1410,7 +1410,7 @@ void CanvasItemEditor::_draw_guides() {
 	}
 
 	// Dragged guide.
-	Color text_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	Color text_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 	Color outline_color = text_color.inverted();
 	const float outline_size = 2;
 	const String &lang = _get_locale();
@@ -1456,8 +1456,8 @@ void CanvasItemEditor::_draw_smart_snapping() {
 
 void CanvasItemEditor::_draw_rulers() {
 	Color bg_color = get_theme_color(SNAME("ruler_color"), EditorStringName(Editor));
-	Color graduation_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor)).lerp(bg_color, 0.5);
-	Color font_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	Color graduation_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor)).lerp(bg_color, 0.5);
+	Color font_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 	font_color.a = 0.9;
 	Ref<Font> font = get_theme_font(SNAME("rulers"), EditorStringName(Editor));
 	real_t ruler_width = ci_manipulator->get_ruler_width();
@@ -1648,7 +1648,7 @@ void CanvasItemEditor::_draw_ruler_tool() {
 
 		Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(Editor));
 		int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(Editor));
-		Color font_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+		Color font_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 		Color font_secondary_color = font_color;
 		font_secondary_color.set_v(font_secondary_color.get_v() > 0.5 ? 0.7 : 0.3);
 		Color outline_color = font_color.inverted();
@@ -4011,7 +4011,7 @@ CanvasItemEditor::CanvasItemEditor() {
 	EditorTranslationPreviewButton *translation_preview_button = memnew(EditorTranslationPreviewButton);
 	translation_preview_button->add_theme_constant_override("outline_size", Math::ceil(2 * EDSCALE));
 	translation_preview_button->add_theme_color_override("font_outline_color", Color(0, 0, 0));
-	translation_preview_button->add_theme_color_override(SceneStringName(font_color), Color(1, 1, 1));
+	translation_preview_button->add_theme_color_override(SceneStringName(font_normal_color), Color(1, 1, 1));
 	controls_hb->add_child(translation_preview_button);
 
 	panner.instantiate();
@@ -5142,7 +5142,7 @@ bool CanvasItemEditorViewport::is_showing_frame_time() const {
 
 static void override_label_colors(Control *p_control) {
 	p_control->begin_bulk_theme_override();
-	p_control->add_theme_color_override(SceneStringName(font_color), p_control->get_theme_color(SNAME("font_dark_background_color"), EditorStringName(Editor)));
+	p_control->add_theme_color_override(SceneStringName(font_normal_color), p_control->get_theme_color(SNAME("font_dark_background_color"), EditorStringName(Editor)));
 	p_control->add_theme_color_override("font_hover_color", p_control->get_theme_color(SNAME("font_dark_background_hover_color"), EditorStringName(Editor)));
 	p_control->add_theme_color_override("font_focus_color", p_control->get_theme_color(SNAME("font_dark_background_focus_color"), EditorStringName(Editor)));
 	p_control->add_theme_color_override("font_pressed_color", p_control->get_theme_color(SNAME("font_dark_background_pressed_color"), EditorStringName(Editor)));
@@ -5245,14 +5245,14 @@ void CanvasItemEditorViewport::_notification(int p_what) {
 				// Middle point is at 15 ms.
 				cpu_time_label->set_text(vformat(TTR("CPU Time: %s ms"), rtos(cpu_time).pad_decimals(2)));
 				cpu_time_label->add_theme_color_override(
-						SceneStringName(font_color),
+						SceneStringName(font_normal_color),
 						frame_time_gradient->get_color_at_offset(
 								Math::remap(cpu_time, 0, 30, 0, 1)));
 
 				gpu_time_label->set_text(vformat(TTR("GPU Time: %s ms"), rtos(gpu_time).pad_decimals(2)));
 				// Middle point is at 15 ms.
 				gpu_time_label->add_theme_color_override(
-						SceneStringName(font_color),
+						SceneStringName(font_normal_color),
 						frame_time_gradient->get_color_at_offset(
 								Math::remap(gpu_time, 0, 30, 0, 1)));
 
@@ -5260,7 +5260,7 @@ void CanvasItemEditorViewport::_notification(int p_what) {
 				fps_label->set_text(vformat(TTR("FPS: %d"), fps));
 				// Middle point is at 60 FPS.
 				fps_label->add_theme_color_override(
-						SceneStringName(font_color),
+						SceneStringName(font_normal_color),
 						frame_time_gradient->get_color_at_offset(
 								Math::remap(fps, 110, 10, 0, 1)));
 			}
@@ -5327,7 +5327,7 @@ CanvasItemEditorViewport::CanvasItemEditorViewport(CanvasItemEditor *p_canvas_it
 	tooltip_panel->set_tab_size(0);
 	tooltip_panel->set_autowrap_mode(TextServer::AUTOWRAP_OFF);
 	tooltip_panel->set_anchors_and_offsets_preset(LayoutPreset::PRESET_TOP_LEFT);
-	tooltip_panel->add_theme_color_override(SceneStringName(font_color), Color(0.8f, 0.8f, 0.8f, 1));
+	tooltip_panel->add_theme_color_override(SceneStringName(font_normal_color), Color(0.8f, 0.8f, 0.8f, 1));
 	tooltip_panel->add_theme_constant_override("paragraph_separation", 5);
 
 	info_panel = memnew(PanelContainer);

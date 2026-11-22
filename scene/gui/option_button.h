@@ -50,7 +50,7 @@ class OptionButton : public Button {
 	struct ThemeCache {
 		Ref<StyleBox> normal;
 
-		Color font_color;
+		Color font_normal_color;
 		Color font_focus_color;
 		Color font_pressed_color;
 		Color font_hover_color;

@@ -47,7 +47,7 @@
 		</constant>
 	</constants>
 	<theme_items>
-		<theme_item name="font_color" data_type="color" type="Color" default="Color(0.875, 0.875, 0.875, 1)">
+		<theme_item name="font_normal_color" data_type="color" type="Color" default="Color(0.875, 0.875, 0.875, 1)">
 			Default text [Color] of the [LinkButton].
 		</theme_item>
 		<theme_item name="font_disabled_color" data_type="color" type="Color" default="Color(0, 0, 0, 1)">

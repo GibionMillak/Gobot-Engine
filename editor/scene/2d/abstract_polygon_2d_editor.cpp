@@ -686,7 +686,7 @@ void AbstractPolygon2DEditor::forward_canvas_draw_over_viewport(Control *p_overl
 	Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(Editor));
 	int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(Editor));
 	const float outline_size = 4 * EDSCALE;
-	Color font_color = get_theme_color(SceneStringName(font_color), EditorStringName(Editor));
+	Color font_color = get_theme_color(SceneStringName(font_normal_color), EditorStringName(Editor));
 	Color outline_color = font_color.inverted();
 
 	const Vertex active_point = get_active_point();

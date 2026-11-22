@@ -292,8 +292,8 @@ void Hub::_update_theme(bool p_skip_creation) {
 			create_tag_btn->set_button_icon(get_editor_theme_icon("action_add"));
 			donate_btn->set_button_icon(get_editor_theme_icon("status_heart"));
 
-			tag_error->add_theme_color_override(SceneStringName(font_color), get_theme_color("error_color", EditorStringName(Editor)));
-			tag_edit_error->add_theme_color_override(SceneStringName(font_color), get_theme_color("error_color", EditorStringName(Editor)));
+			tag_error->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color("error_color", EditorStringName(Editor)));
+			tag_edit_error->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color("error_color", EditorStringName(Editor)));
 
 			const int gap = get_theme_constant("sidebar_button_icon_separation", "Hub");
 			create_btn->add_theme_constant_override("gap", gap);

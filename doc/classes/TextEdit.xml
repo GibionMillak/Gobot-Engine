@@ -1517,7 +1517,7 @@
 		<theme_item name="current_line_color" data_type="color" type="Color" default="Color(0.25, 0.25, 0.26, 0.8)">
 			Background [Color] of the line containing the caret.
 		</theme_item>
-		<theme_item name="font_color" data_type="color" type="Color" default="Color(0.875, 0.875, 0.875, 1)">
+		<theme_item name="font_normal_color" data_type="color" type="Color" default="Color(0.875, 0.875, 0.875, 1)">
 			Sets the font [Color].
 		</theme_item>
 		<theme_item name="font_outline_color" data_type="color" type="Color" default="Color(0, 0, 0, 1)">

@@ -62,7 +62,7 @@
 void TextShaderPreviewLineLayer::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			line_color = Color(EditorNode::get_singleton()->get_editor_theme()->get_color(SceneStringName(font_color), EditorStringName(Editor)), 0.7);
+			line_color = Color(EditorNode::get_singleton()->get_editor_theme()->get_color(SceneStringName(font_normal_color), EditorStringName(Editor)), 0.7);
 		} break;
 		case NOTIFICATION_DRAW: {
 			int total_gutter_width = code_editor->get_line_start_margin();
@@ -320,7 +320,7 @@ void TextShaderPreview::_notification(int p_what) {
 			no_margins.instantiate();
 			no_margins->set_padding_all(0);
 			error_label->add_theme_style_override(CoreStringName(normal), no_margins);
-			error_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+			error_label->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 
 			delete_button->set_button_icon(get_editor_theme_icon(SNAME("gui_close")));
 
@@ -751,7 +751,7 @@ static uint32_t saved_warning_flags = 0U;
 void ShaderTextEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			code_editor->get_text_editor()->add_theme_color_override("breakpoint_color", EditorNode::get_singleton()->get_editor_theme()->get_color(SceneStringName(font_color), EditorStringName(Editor)));
+			code_editor->get_text_editor()->add_theme_color_override("breakpoint_color", EditorNode::get_singleton()->get_editor_theme()->get_color(SceneStringName(font_normal_color), EditorStringName(Editor)));
 			code_editor->get_text_editor()->add_theme_icon_override("breakpoint", get_editor_theme_icon(SNAME("gui_eye_open")));
 
 			if (is_visible_in_tree()) {

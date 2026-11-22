@@ -100,7 +100,7 @@ private:
 		int line_edit_margin = 0;
 		int line_edit_margin_empty = 0;
 
-		Color font_color;
+		Color font_normal_color;
 		Color font_uneditable_color;
 		Color label_color;
 		Color read_only_label_color;

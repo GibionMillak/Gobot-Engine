@@ -427,7 +427,7 @@ BaseButton/constants/click_margin = "(int(int(round((2 * theme.default_base_scal
 
 BoxContainer/constants/separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
 
-Button/colors/font_color = "theme.Editor.colors.font_normal_color"
+Button/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 Button/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
 Button/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
 Button/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
@@ -450,7 +450,7 @@ Button/styles/hover_pressed = ExtResource("stylebox_button_hover_pressed")
 Button/styles/normal = ExtResource("stylebox_button_normal")
 Button/styles/pressed = ExtResource("stylebox_button_hover_pressed")
 
-CheckBox/colors/font_color = "theme.Editor.colors.font_normal_color"
+CheckBox/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 CheckBox/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
 CheckBox/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
 CheckBox/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
@@ -487,7 +487,7 @@ CheckBoxNoIconTint/colors/icon_pressed_color = "theme.Editor.colors.icon_normal_
 CheckBoxNoIconTintNoDim/base_type = "CheckBoxNoIconTint"
 CheckBoxNoIconTintNoDim/colors/checkbox_unchecked_color = "((((theme.Editor.colors.mono_color_font.get_luminance() > 0.5))) ? Color(1, 1, 1) : Color(3, 3, 3))"
 
-CheckButton/colors/font_color = "theme.Editor.colors.font_normal_color"
+CheckButton/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 CheckButton/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
 CheckButton/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
 CheckButton/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
@@ -525,7 +525,7 @@ CodeEdit/colors/completion_selected_color = "theme.Editor.colors.text_editor_com
 CodeEdit/colors/current_line_color = "theme.Editor.colors.text_editor_current_line_color"
 CodeEdit/colors/executing_line_color = "theme.Editor.colors.text_editor_executing_line_color"
 CodeEdit/colors/folded_code_region_color = "theme.Editor.colors.text_editor_folded_code_region_color"
-CodeEdit/colors/font_color = "theme.Editor.colors.text_editor_text_color"
+CodeEdit/colors/font_normal_color = "theme.Editor.colors.text_editor_text_color"
 CodeEdit/colors/font_selected_color = "theme.Editor.colors.text_editor_text_selected_color"
 CodeEdit/colors/line_length_guideline_color = "theme.Editor.colors.text_editor_line_length_guideline_color"
 CodeEdit/colors/line_number_color = "theme.Editor.colors.text_editor_line_number_color"
@@ -614,7 +614,6 @@ Editor/colors/disabled_bg_color = "((theme.Editor.colors.mono_color).inverted())
 Editor/colors/disabled_border_color = "((theme.Editor.colors.mono_color).inverted()).lerp(theme.Editor.colors.base_color, 0.7)"
 Editor/colors/error_color = "(((theme.Editor.colors.mono_color_font.get_luminance() > 0.5)) ? Color(1, 0.47, 0.42) : Color(0.8, 0.22, 0.22))"
 Editor/colors/error_color_dark_background = Color(1, 0.47, 0.42, 1)
-Editor/colors/font_color = "theme.Editor.colors.font_normal_color"
 Editor/colors/font_dark_background_color = "(((theme.default_base_color.get_luminance() < 0.5)) ? theme.Editor.colors.font_normal_color : ((theme.Editor.colors.mono_color).inverted()).lerp(theme.Editor.colors.base_color, 0.75))"
 Editor/colors/font_dark_background_focus_color = "(((theme.default_base_color.get_luminance() < 0.5)) ? theme.Editor.colors.font_focus_color : ((theme.Editor.colors.mono_color).inverted()).lerp(theme.Editor.colors.base_color, 0.25))"
 Editor/colors/font_dark_background_hover_color = "(((theme.default_base_color.get_luminance() < 0.5)) ? theme.Editor.colors.font_hover_color : ((theme.Editor.colors.mono_color).inverted()).lerp(theme.Editor.colors.base_color, 0.25))"
@@ -1079,7 +1078,7 @@ EditorInspectorCategory/styles/bg = ExtResource("stylebox_editor_inspector_categ
 EditorInspectorContainer/base_type = "VBoxContainer"
 EditorInspectorContainer/constants/separation = 0
 
-EditorInspectorSection/colors/font_color = "(theme.Editor.colors.font_normal_color).lerp(Color(0.5, 0.5, 0.5), 0.35)"
+EditorInspectorSection/colors/font_normal_color = "(theme.Editor.colors.font_normal_color).lerp(Color(0.5, 0.5, 0.5), 0.35)"
 EditorInspectorSection/constants/h_separation = "int(round((2.0 * theme.default_base_scale)))"
 EditorInspectorSection/constants/indent_size = "int(round((6.0 * theme.default_base_scale)))"
 EditorInspectorSection/styles/indent_box = ExtResource("stylebox_editor_inspector_section_indent_box")
@@ -1172,7 +1171,7 @@ FlowContainer/constants/h_separation = "int((((int(round(theme.default_padding))
 FlowContainer/constants/v_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
 
 FoldableContainer/colors/collapsed_font_color = "theme.Editor.colors.font_pressed_color"
-FoldableContainer/colors/font_color = "theme.Editor.colors.font_normal_color"
+FoldableContainer/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 FoldableContainer/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
 FoldableContainer/colors/hover_font_color = "theme.Editor.colors.font_hover_color"
 FoldableContainer/constants/h_separation = "int((((int(round(theme.default_padding))) * theme.default_base_scale)))"
@@ -1234,7 +1233,7 @@ GraphFrame/styles/titlebar = ExtResource("stylebox_graph_frame_titlebar")
 GraphFrame/styles/titlebar_selected = ExtResource("stylebox_graph_frame_titlebar")
 
 GraphFrameTitleLabel/base_type = "Label"
-GraphFrameTitleLabel/colors/font_color = Color(1, 1, 1, 1)
+GraphFrameTitleLabel/colors/font_normal_color = Color(1, 1, 1, 1)
 GraphFrameTitleLabel/colors/font_outline_color = Color(1, 1, 1, 1)
 GraphFrameTitleLabel/colors/font_shadow_color = Color(0, 0, 0, 0)
 GraphFrameTitleLabel/constants/gap = "int(round((3 * theme.default_base_scale)))"
@@ -1357,7 +1356,7 @@ InspectorActionButton/styles/hover = ExtResource("stylebox_inspector_action_butt
 InspectorActionButton/styles/normal = ExtResource("stylebox_inspector_action_button_normal")
 InspectorActionButton/styles/pressed = ExtResource("stylebox_inspector_action_button_pressed")
 
-ItemList/colors/font_color = "theme.Editor.colors.font_normal_color"
+ItemList/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 ItemList/colors/font_hovered_color = "theme.Editor.colors.mono_color_font"
 ItemList/colors/font_hovered_selected_color = "theme.Editor.colors.mono_color_font"
 ItemList/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
@@ -1382,10 +1381,10 @@ ItemList/styles/selected_focus = ExtResource("stylebox_editor_property_bg_select
 
 ItemListSecondary/base_type = "ItemList"
 
-Label/colors/font_color = "theme.Editor.colors.font_normal_color"
+Label/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 Label/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
 Label/colors/font_shadow_color = Color(0, 0, 0, 0)
-Label/colors/icon_color = Color(1, 1, 1, 1)
+Label/colors/icon_normal_color = Color(1, 1, 1, 1)
 Label/constants/gap = "int(round((8 * theme.default_base_scale)))"
 Label/constants/icon_max_width = 0
 Label/constants/outline_size = 0
@@ -1406,7 +1405,7 @@ LabelNoMarginVertical/styles/normal = ExtResource("stylebox_label_no_margin_vert
 LineEdit/colors/caret_color = "theme.Editor.colors.font_normal_color"
 LineEdit/colors/clear_button_color = "theme.Editor.colors.font_normal_color"
 LineEdit/colors/clear_button_color_pressed = "theme.Editor.colors.accent_color"
-LineEdit/colors/font_color = "theme.Editor.colors.font_normal_color"
+LineEdit/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 LineEdit/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
 LineEdit/colors/font_placeholder_color = "theme.Editor.colors.font_placeholder_color"
 LineEdit/colors/font_selected_color = "theme.Editor.colors.mono_color_font"
@@ -1422,7 +1421,7 @@ LineEdit/styles/focus = ExtResource("stylebox_button_focus")
 LineEdit/styles/normal = ExtResource("stylebox_line_edit_normal")
 LineEdit/styles/read_only = ExtResource("stylebox_editor_audio_bus_master")
 
-LinkButton/colors/font_color = "theme.Editor.colors.font_normal_color"
+LinkButton/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 LinkButton/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
 LinkButton/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
 LinkButton/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
@@ -1457,7 +1456,7 @@ MarginContainer4px/constants/margin_left = "int(round((4 * theme.default_base_sc
 MarginContainer4px/constants/margin_right = "int(round((4 * theme.default_base_scale)))"
 MarginContainer4px/constants/margin_top = "int(round((4 * theme.default_base_scale)))"
 
-MenuBar/colors/font_color = "theme.Editor.colors.font_normal_color"
+MenuBar/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 MenuBar/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
 MenuBar/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
 MenuBar/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
@@ -1475,7 +1474,7 @@ ObjectSelectorMargin/base_type = "MarginContainer"
 ObjectSelectorMargin/constants/margin_left = "int(round((4 * theme.default_base_scale)))"
 ObjectSelectorMargin/constants/margin_right = "int(round((6 * theme.default_base_scale)))"
 
-OptionButton/colors/font_color = "theme.Editor.colors.font_normal_color"
+OptionButton/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 OptionButton/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
 OptionButton/colors/font_focus_color = "theme.Editor.colors.font_focus_color"
 OptionButton/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
@@ -1520,7 +1519,7 @@ PanelForeground/styles/panel = ExtResource("stylebox_label_normal")
 PopupDialog/styles/panel = ExtResource("stylebox_popup_dialog_panel")
 
 PopupMenu/colors/font_accelerator_color = "theme.Editor.colors.font_disabled_color"
-PopupMenu/colors/font_color = "theme.Editor.colors.font_normal_color"
+PopupMenu/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 PopupMenu/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
 PopupMenu/colors/font_hover_color = "theme.Editor.colors.font_hover_color"
 PopupMenu/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
@@ -1563,7 +1562,7 @@ PreviewLightButton/styles/normal = ExtResource("stylebox_editor_movie_writer_but
 PreviewLightButton/styles/pressed = ExtResource("stylebox_editor_movie_writer_button_normal")
 
 PrimaryButton/base_type = "Button"
-PrimaryButton/colors/font_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
+PrimaryButton/colors/font_normal_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
 PrimaryButton/colors/font_disabled_color = "Color(((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1)), 0.5)"
 PrimaryButton/colors/font_focus_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
 PrimaryButton/colors/font_hover_color = "((((theme.Editor.colors.accent_color).get_luminance() > 0.5)) ? Color(0, 0, 0) : Color(1, 1, 1))"
@@ -1587,13 +1586,13 @@ ProfilerAutostartIndicator/styles/hover = ExtResource("stylebox_profiler_autosta
 ProfilerAutostartIndicator/styles/normal = ExtResource("stylebox_profiler_autostart_indicator_hover")
 ProfilerAutostartIndicator/styles/pressed = ExtResource("stylebox_profiler_autostart_indicator_hover")
 
-ProgressBar/colors/font_color = "theme.Editor.colors.font_normal_color"
+ProgressBar/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 ProgressBar/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
 ProgressBar/constants/outline_size = 0
 ProgressBar/styles/background = ExtResource("stylebox_progress_bar_background")
 ProgressBar/styles/fill = ExtResource("stylebox_progress_bar_fill")
 
-ProjectList/colors/font_color = "theme.Editor.colors.font_normal_color"
+ProjectList/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 ProjectList/colors/guide_color = "(theme.Editor.colors.mono_color * Color(1, 1, 1, 0.05))"
 ProjectList/styles/focus = ExtResource("stylebox_button_focus")
 ProjectList/styles/hover_pressed = ExtResource("stylebox_item_list_hovered_selected")
@@ -1733,7 +1732,7 @@ TabContainerOdd/base_type = "TabContainer"
 TabContainerOdd/styles/panel = ExtResource("stylebox_tab_container_odd_panel")
 TabContainerOdd/styles/tab_selected = ExtResource("stylebox_tab_container_odd_tab_selected")
 
-Table/colors/font_color = "theme.Tree.colors.font_color"
+Table/colors/font_normal_color = "theme.Tree.colors.font_normal_color"
 Table/colors/header_font_color = "theme.Tree.colors.title_button_color"
 Table/constants/gap = "int((1 * theme.default_base_scale))"
 Table/constants/horizontal_cell_padding = "int((8 * theme.default_base_scale))"
@@ -1749,7 +1748,7 @@ Table/styles/row_even = ExtResource("stylebox_table_row_even")
 Table/styles/row_odd = ExtResource("stylebox_table_row_odd")
 
 TextEdit/colors/caret_color = "theme.Editor.colors.font_normal_color"
-TextEdit/colors/font_color = "theme.Editor.colors.font_normal_color"
+TextEdit/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 TextEdit/colors/font_outline_color = "theme.Editor.colors.font_outline_color"
 TextEdit/colors/font_placeholder_color = "theme.Editor.colors.font_placeholder_color"
 TextEdit/colors/font_readonly_color = "theme.Editor.colors.font_readonly_color"
@@ -1769,7 +1768,7 @@ ThemeEditor/styles/preview_picker_overlay = ExtResource("stylebox_theme_editor_p
 
 TileSetEditor/styles/expand_panel = ExtResource("stylebox_editor_validation_panel_panel")
 
-TooltipLabel/colors/font_color = "theme.Editor.colors.font_hover_color"
+TooltipLabel/colors/font_normal_color = "theme.Editor.colors.font_hover_color"
 TooltipLabel/colors/font_shadow_color = Color(0, 0, 0, 0)
 TooltipLabel/styles/normal = ExtResource("stylebox_label_normal")
 
@@ -1779,7 +1778,7 @@ Tree/colors/children_hl_line_color = "(theme.Editor.colors.mono_color * Color(1,
 Tree/colors/custom_button_font_highlight = "theme.Editor.colors.font_hover_color"
 Tree/colors/drop_on_item_color = "theme.Editor.colors.accent_color"
 Tree/colors/drop_position_color = "(theme.Editor.colors.mono_color * Color(1, 1, 1, 1))"
-Tree/colors/font_color = "theme.Editor.colors.font_normal_color"
+Tree/colors/font_normal_color = "theme.Editor.colors.font_normal_color"
 Tree/colors/font_disabled_color = "theme.Editor.colors.font_disabled_color"
 Tree/colors/font_hovered_color = "theme.Editor.colors.mono_color_font"
 Tree/colors/font_hovered_dimmed_color = "theme.Editor.colors.font_normal_color"

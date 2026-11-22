@@ -80,7 +80,7 @@ void EditorRunBar::_notification(int p_what) {
 				recovery_mode_button->add_theme_color_override("icon_pressed_color", Color(0.4, 0.4, 0.4, 1));
 				recovery_mode_button->add_theme_color_override("icon_hover_color", Color(0.6, 0.6, 0.6, 1));
 				Color dark_color = get_theme_color("recovery_mode_text_color", EditorStringName(Editor));
-				recovery_mode_button->add_theme_color_override(SceneStringName(font_color), dark_color);
+				recovery_mode_button->add_theme_color_override(SceneStringName(font_normal_color), dark_color);
 				recovery_mode_button->add_theme_color_override("font_pressed_color", dark_color.lightened(0.2));
 				recovery_mode_button->add_theme_color_override("font_hover_color", dark_color.lightened(0.4));
 				recovery_mode_button->add_theme_color_override("font_hover_pressed_color", dark_color.lightened(0.2));

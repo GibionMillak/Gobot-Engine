@@ -302,7 +302,7 @@ void ScriptTextEditor::_load_theme_settings() {
 	info_color.a = 0.5f;
 	drag_info_sb->set_border_color(info_color);
 	info_color.a = 0.7f;
-	drag_info_label->add_theme_color_override(SceneStringName(font_color), info_color);
+	drag_info_label->add_theme_color_override(SceneStringName(font_normal_color), info_color);
 
 	theme_loaded = true;
 	Ref<Script> script = edited_res;

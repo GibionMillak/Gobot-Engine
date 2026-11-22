@@ -1013,7 +1013,7 @@ void FindInFilesResultsPanel::_on_result_found(const String &p_fpath, int p_line
 		file_items_results_count[file_item]++;
 	}
 
-	Color file_item_color = results_display->get_theme_color(SceneStringName(font_color)) * Color(1, 1, 1, 0.67);
+	Color file_item_color = results_display->get_theme_color(SceneStringName(font_normal_color)) * Color(1, 1, 1, 0.67);
 	file_item->set_custom_color(0, file_item_color);
 	file_item->set_selectable(0, false);
 
@@ -1087,7 +1087,7 @@ void FindInFilesResultsPanel::_on_theme_changed() {
 	results_display->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("source"), EditorStringName(Editor)));
 	results_display->add_theme_font_size_override(SceneStringName(font_size), get_theme_font_size(SNAME("source_size"), EditorStringName(Editor)));
 
-	Color file_item_color = results_display->get_theme_color(SceneStringName(font_color)) * Color(1, 1, 1, 0.67);
+	Color file_item_color = results_display->get_theme_color(SceneStringName(font_normal_color)) * Color(1, 1, 1, 0.67);
 	Ref<Texture2D> remove_texture = get_editor_theme_icon(SNAME("action_close"));
 	Ref<Texture2D> replace_texture = get_editor_theme_icon(SNAME("action_replace_text"));
 
@@ -1116,7 +1116,7 @@ void FindInFilesResultsPanel::_on_theme_changed() {
 	theme_cache.accent_color = get_theme_color("accent_color", EditorStringName(Editor));
 	theme_cache.removed_color = get_theme_color("error_color", EditorStringName(Editor));
 	theme_cache.added_color = get_theme_color("success_color", EditorStringName(Editor));
-	theme_cache.font_color = get_theme_color(SceneStringName(font_color), Tree::get_class_static());
+	theme_cache.font_normal_color = get_theme_color(SceneStringName(font_normal_color), Tree::get_class_static());
 }
 
 void FindInFilesResultsPanel::_draw_result_text(Object *p_item_obj, const Rect2 &p_rect) {
@@ -1148,7 +1148,7 @@ void FindInFilesResultsPanel::_draw_result_text(Object *p_item_obj, const Rect2 
 		} else {
 			_draw_outlined_rect(ci, match_rect, Color(theme_cache.removed_color, fill_alpha), Color(theme_cache.removed_color, outline_alpha));
 		}
-		RenderingServer::get_singleton()->canvas_item_add_line(ci, Vector2(match_rect.position.x, match_rect.get_center().y), Vector2(match_rect.get_end().x, match_rect.get_center().y), theme_cache.font_color);
+		RenderingServer::get_singleton()->canvas_item_add_line(ci, Vector2(match_rect.position.x, match_rect.get_center().y), Vector2(match_rect.get_end().x, match_rect.get_center().y), theme_cache.font_normal_color);
 	}
 	if (replace_text.is_empty()) {
 		return;
@@ -1180,7 +1180,7 @@ void FindInFilesResultsPanel::_on_item_edited() {
 	TreeItem *item = results_display->get_selected();
 
 	// Change opacity to half if checkbox is checked, otherwise full.
-	Color use_color = results_display->get_theme_color(SceneStringName(font_color));
+	Color use_color = results_display->get_theme_color(SceneStringName(font_normal_color));
 	if (!item->is_checked(0)) {
 		use_color.a *= 0.5;
 	}

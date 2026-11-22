@@ -1122,7 +1122,7 @@ Variant LineEdit::get_drag_data(const Point2 &p_point) {
 		l->add_theme_font_override(SceneStringName(font_family), theme_cache.font);
 		l->add_theme_font_size_override(SceneStringName(font_size), theme_cache.font_size);
 		l->add_theme_constant_override(SNAME("outline_size"), theme_cache.font_outline_size);
-		l->add_theme_color_override(SceneStringName(font_color), theme_cache.font_color);
+		l->add_theme_color_override(SceneStringName(font_normal_color), theme_cache.font_normal_color);
 		l->add_theme_color_override(SNAME("font_outline_color"), theme_cache.font_outline_color);
 		l->add_theme_style_override(CoreStringName(normal), memnew(StyleBox())); // Ensure that the label has no margins inherited from the theme.
 		set_drag_preview(l);
@@ -1320,7 +1320,7 @@ void LineEdit::_notification(int p_what) {
 			Color selection_color = theme_cache.selection_color;
 			Color font_color;
 			if (is_editable()) {
-				font_color = theme_cache.font_color;
+				font_color = theme_cache.font_normal_color;
 			} else {
 				font_color = theme_cache.font_uneditable_color;
 			}
@@ -3137,7 +3137,7 @@ void LineEdit::_bind_methods() {
 
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT, LineEdit, font);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_FONT_SIZE, LineEdit, font_size);
-	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, LineEdit, font_color);
+	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, LineEdit, font_normal_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, LineEdit, font_uneditable_color);
 	BIND_THEME_ITEM(Theme::DATA_TYPE_COLOR, LineEdit, font_selected_color);
 	BIND_THEME_ITEM_CUSTOM(Theme::DATA_TYPE_CONSTANT, LineEdit, font_outline_size, "outline_size");

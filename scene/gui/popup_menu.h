@@ -234,7 +234,7 @@ class PopupMenu : public Popup {
 		Ref<Font> font_separator;
 		int font_separator_size = 0;
 
-		Color font_color;
+		Color font_normal_color;
 		Color font_hover_color;
 		Color font_disabled_color;
 		Color font_accelerator_color;

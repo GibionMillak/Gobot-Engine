@@ -139,7 +139,7 @@
 		</member>
 	</members>
 	<theme_items>
-		<theme_item name="font_color" data_type="color" type="Color" default="Color(1, 1, 1, 1)">
+		<theme_item name="font_normal_color" data_type="color" type="Color" default="Color(1, 1, 1, 1)">
 			Default text [Color] of the [Label].
 		</theme_item>
 		<theme_item name="font_outline_color" data_type="color" type="Color" default="Color(0, 0, 0, 1)">
@@ -148,7 +148,7 @@
 		<theme_item name="font_shadow_color" data_type="color" type="Color" default="Color(0, 0, 0, 0)">
 			[Color] of the text's shadow effect.
 		</theme_item>
-		<theme_item name="icon_color" data_type="color" type="Color" default="Color(1, 1, 1, 1)">
+		<theme_item name="icon_normal_color" data_type="color" type="Color" default="Color(1, 1, 1, 1)">
 			Color used to modulate the icon.
 		</theme_item>
 		<theme_item name="gap" data_type="constant" type="int" default="8">

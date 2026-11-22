@@ -171,11 +171,11 @@ private:
 		int paragraph_spacing = 0;
 
 		int icon_max_width = 0;
-		Color icon_color;
+		Color icon_normal_color;
 
 		Ref<Font> font_family;
 		int font_size = 0;
-		Color font_color;
+		Color font_normal_color;
 		Color font_outline_color;
 		int font_outline_size = 0;
 

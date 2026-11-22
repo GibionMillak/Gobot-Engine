@@ -643,7 +643,7 @@ private:
 
 		Ref<Font> font;
 		int font_size = 16;
-		Color font_color = Color(1, 1, 1);
+		Color font_normal_color = Color(1, 1, 1);
 		Color font_readonly_color = Color(1, 1, 1);
 		Color font_placeholder_color = Color(1, 1, 1, 0.6);
 

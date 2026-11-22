@@ -84,7 +84,7 @@ class MenuBar : public Control {
 		int outline_size = 0;
 		Color font_outline_color;
 
-		Color font_color;
+		Color font_normal_color;
 		Color font_disabled_color;
 		Color font_pressed_color;
 		Color font_hover_color;

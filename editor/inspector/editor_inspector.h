@@ -401,7 +401,7 @@ class EditorInspectorCategory : public Control {
 		int vertical_separation = 0;
 		int class_icon_size = 0;
 
-		Color font_color;
+		Color font_normal_color;
 
 		Ref<Font> bold_font;
 		int bold_font_size = 0;
@@ -520,7 +520,7 @@ class EditorInspectorSection : public Container {
 
 		Color warning_color;
 		Color prop_subsection;
-		Color font_color;
+		Color font_normal_color;
 		Color font_disabled_color;
 		Color font_hover_color;
 		Color font_pressed_color;

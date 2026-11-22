@@ -191,7 +191,7 @@ private:
 
 		Ref<Font> font;
 		int font_size = 0;
-		Color font_color;
+		Color font_normal_color;
 		Color font_uneditable_color;
 		Color font_selected_color;
 		int font_outline_size;

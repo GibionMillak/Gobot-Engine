@@ -81,7 +81,7 @@ void ProjectExportTextureFormatError::_bind_methods() {
 void ProjectExportTextureFormatError::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_THEME_CHANGED: {
-			texture_format_error_label->add_theme_color_override(SceneStringName(font_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
+			texture_format_error_label->add_theme_color_override(SceneStringName(font_normal_color), get_theme_color(SNAME("error_color"), EditorStringName(Editor)));
 		} break;
 	}
 }
@@ -127,10 +127,10 @@ void ProjectExportDialog::_notification(int p_what) {
 			delete_preset->set_button_icon(presets->get_editor_theme_icon(SNAME("action_remove")));
 			patch_add_btn->set_button_icon(get_editor_theme_icon(SNAME("action_add")));
 
-			script_key_error->add_theme_color_override(SceneStringName(font_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("error_color"), EditorStringName(Editor)));
-			export_error->add_theme_color_override(SceneStringName(font_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("error_color"), EditorStringName(Editor)));
-			export_error2->add_theme_color_override(SceneStringName(font_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("error_color"), EditorStringName(Editor)));
-			export_warning->add_theme_color_override(SceneStringName(font_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("warning_color"), EditorStringName(Editor)));
+			script_key_error->add_theme_color_override(SceneStringName(font_normal_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("error_color"), EditorStringName(Editor)));
+			export_error->add_theme_color_override(SceneStringName(font_normal_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("error_color"), EditorStringName(Editor)));
+			export_error2->add_theme_color_override(SceneStringName(font_normal_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("error_color"), EditorStringName(Editor)));
+			export_warning->add_theme_color_override(SceneStringName(font_normal_color), EditorNode::get_singleton()->get_editor_theme()->get_color(SNAME("warning_color"), EditorStringName(Editor)));
 		} break;
 
 		case NOTIFICATION_TRANSLATION_CHANGED: {

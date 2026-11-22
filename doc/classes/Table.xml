@@ -350,7 +350,7 @@
 		<theme_item name="font" data_type="font" type="Font">
 			Font for all cells.
 		</theme_item>
-		<theme_item name="font_color" data_type="color" type="Color">
+		<theme_item name="font_normal_color" data_type="color" type="Color">
 			Data-cell text color.
 		</theme_item>
 		<theme_item name="font_size" data_type="font_size" type="int">
