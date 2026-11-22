@@ -775,7 +775,6 @@ private:
 
 	PopupMenu *file_menu = nullptr;
 	PopupMenu *project_menu = nullptr;
-	PopupMenu *debug_menu = nullptr;
 	PopupMenu *settings_menu = nullptr;
 	PopupMenu *tool_menu = nullptr;
 	PopupMenu *export_as_menu = nullptr;

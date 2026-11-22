@@ -34,6 +34,8 @@
 
 class Button;
 class Label;
+class MenuButton;
+class PopupMenu;
 class Texture2D;
 
 class EditorHeaderContainer : public HBoxContainer {
@@ -47,6 +49,7 @@ public:
 	HBoxContainer *get_right_section() const { return _right_hbox; }
 
 	void add_editor_controls();
+	PopupMenu *get_debug_menu() const;
 
 	void set_can_move_window(bool p_enabled);
 	bool get_can_move_window() const;
@@ -74,7 +77,7 @@ private:
 	HBoxContainer *_center_hbox = nullptr;
 	HBoxContainer *_right_hbox = nullptr;
 	Label *_editor_name_lbl = nullptr;
-	bool _editor_controls_added = false;
+	MenuButton *_debug_btn = nullptr;
 	HBoxContainer *_window_buttons_hbox = nullptr;
 	Button *_minimize_btn = nullptr;
 	Button *_maximize_btn = nullptr;

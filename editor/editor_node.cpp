@@ -897,10 +897,6 @@ EditorNode::EditorNode() {
 	project_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
 	_add_to_main_menu(TTRC("Project"), project_menu);
 
-	debug_menu = memnew(PopupMenu);
-	// Options are added and handled by DebuggerEditorPlugin, do not rebuild.
-	_add_to_main_menu(TTRC("Debug"), debug_menu);
-
 	settings_menu = memnew(PopupMenu);
 	settings_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
 	_add_to_main_menu(TTRC("Editor"), settings_menu);
@@ -1068,7 +1064,7 @@ EditorNode::EditorNode() {
 	audio_preview_gen = memnew(AudioStreamPreviewGenerator);
 	add_child(audio_preview_gen);
 
-	add_editor_plugin(memnew(DebuggerEditorPlugin(debug_menu)));
+	add_editor_plugin(memnew(DebuggerEditorPlugin(title_bar->get_debug_menu())));
 
 	disk_changed = memnew(Dialog(true));
 	{
