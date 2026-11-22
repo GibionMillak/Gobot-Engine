@@ -1,0 +1,4 @@
+[gd_resource type="StyleBox" format=4]
+
+[resource]
+background_color = "theme.Editor.colors.dark_color_1"

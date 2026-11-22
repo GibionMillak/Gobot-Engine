@@ -672,6 +672,7 @@ EditorNode::EditorNode() {
 
 	editor_dock_manager = memnew(EditorDockManager);
 	DockSplitContainer *main_hsplit = nullptr;
+
 	_dock_panel_pc = memnew(PanelContainer);
 	_dock_panel_pc->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	_dock_panel_pc->set_v_size_flags(Control::SIZE_EXPAND_FILL);

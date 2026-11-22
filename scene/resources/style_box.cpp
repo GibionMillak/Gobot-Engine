@@ -1299,7 +1299,7 @@ Ref<StyleBox> StyleBox::_resolve_theme(const Theme &p_theme, ThemeResolver *r_co
 		return r_context ? r_context->has_style_parameter(p_parameter) : p_theme.has_style_parameter(p_parameter);
 	};
 	bool dependent = !_theme_expressions.is_empty();
-	for (int i = 0; !dependent && i < MAX_THEME_PROPERTIES; i++) {
+	for (int i = 0; !dependent && i < CORNER_DETAIL; i++) {
 		dependent = !(_theme_overrides & (uint64_t(1) << i)) && has_style_parameter(_get_theme_default_name(i));
 	}
 	if (!dependent) {
@@ -1322,7 +1322,7 @@ Ref<StyleBox> StyleBox::_resolve_theme(const Theme &p_theme, ThemeResolver *r_co
 				continue;
 			}
 			const StringName parameter = _get_theme_default_name(i);
-			if (!has_style_parameter(parameter)) {
+			if (parameter.is_empty() || !has_style_parameter(parameter)) {
 				continue;
 			}
 			Error error = OK;
@@ -1460,7 +1460,7 @@ StringName StyleBox::_get_theme_default_name(int p_property) {
 	if (p_property < CORNER_DETAIL) {
 		return "default_border_radius";
 	}
-	return StringName("default_" + String(_get_theme_property_name(p_property)));
+	return StringName();
 }
 
 

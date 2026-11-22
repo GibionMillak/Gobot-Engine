@@ -36,7 +36,6 @@
 #include "editor/editor_data.h"
 #include "editor/plugins/editor_plugin.h"
 #include "editor/settings/editor_folding.h"
-#include "servers/display/display_server_enums.h"
 
 typedef void (*EditorNodeInitCallback)();
 
@@ -347,7 +346,7 @@ public:
 	bool is_changing_scene() const;
 
 	SubViewport *get_scene_root() { return scene_root; }
- // Root of the scene being edited.
+	// Root of the scene being edited.
 
 	void set_edited_scene(Node *p_scene);
 	void set_edited_scene_root(Node *p_scene, bool p_auto_add);
@@ -882,12 +881,12 @@ private:
 	int current_menu_option = 0;
 
 	SubViewport *scene_root = nullptr;
- // Root of the scene being edited.
+	// Root of the scene being edited.
 
 	Ref<Resource> saving_resource;
 	HashSet<Ref<Resource>> saving_resources_in_path;
 	HashMap<Ref<Resource>, List<Node *>> resource_count;
- // Keeps track of linked Resources from a Scene.
+	// Keeps track of linked Resources from a Scene.
 
 	String saving_scene;
 	EditorProgress *save_scene_progress = nullptr;

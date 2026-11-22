@@ -164,9 +164,6 @@ Ref<EditorTheme> EditorThemeManager::_create_base_theme(const Ref<EditorTheme> &
 			theme->set_style_parameter("default_accent_color", accent);
 		}
 	}
-	// Resolution scales dimensions; keep focus outlines at least their authored pixel width.
-	const double focus_width = definition->get_style_parameter("default_focus_border_width");
-	theme->set_style_parameter("default_focus_border_width", focus_width * MAX(1.0f, EDSCALE) / EDSCALE);
 	const Color base_color = theme->get_style_parameter("default_base_color");
 	const bool dark = base_color.get_luminance() < 0.5;
 	const int icon_mode = EDITOR_GET("interface/theme/icon_and_font_color");
@@ -394,7 +391,7 @@ bool EditorThemeManager::_is_complete_theme_definition(const Ref<Theme> &p_theme
 		return false;
 	}
 	ERR_FAIL_COND_V_MSG(!p_theme->has_default_font_family() || !p_theme->has_default_font_size(), false, vformat("Editor theme '%s' must define its default font and size.", p_theme->get_path()));
-	const char *const PARAMETERS[] = { "default_base_color", "default_accent_color", "default_contrast", "default_icon_saturation", "default_padding", "default_border_width", "default_border_radius", "default_focus_border_width" };
+	const char *const PARAMETERS[] = { "default_base_color", "default_accent_color", "default_contrast", "default_icon_saturation", "default_padding", "default_border_width", "default_border_radius" };
 	for (const char *name : PARAMETERS) {
 		ERR_FAIL_COND_V_MSG(!p_theme->has_style_parameter(name), false, vformat("Editor theme '%s' is missing parameter '%s'.", p_theme->get_path(), name));
 	}

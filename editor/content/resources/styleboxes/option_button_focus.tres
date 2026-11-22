@@ -1,14 +1,13 @@
 [gd_resource type="StyleBox" format=4]
 
 [resource]
-resource_name = "Option Button Focus"
+background_color = Color(0, 0, 0, 0)
 padding_left = "theme.default_padding * 2"
 padding_top = "theme.default_padding * 2"
 padding_right = "theme.Editor.constants.option_button_arrow_padding"
 padding_bottom = "theme.default_padding * 2"
-background_color = Color(0, 0, 0, 0)
 border_color = "theme.default_accent_color"
-border_width_left = "theme.default_focus_border_width"
-border_width_top = "theme.default_focus_border_width"
-border_width_right = "theme.default_focus_border_width"
-border_width_bottom = "theme.default_focus_border_width"
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2

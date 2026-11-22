@@ -1,11 +1,11 @@
 [gd_resource type="StyleBox" format=4]
 
 [resource]
+background_color = Color(0.1, 0.1, 0.1, 0.6)
 padding_left = 0.0
 padding_top = 0.0
 padding_right = 0.0
 padding_bottom = 0.0
-background_color = Color(0.1, 0.1, 0.1, 0.6)
 border_width_left = 0
 border_width_top = 0
 border_width_right = 0

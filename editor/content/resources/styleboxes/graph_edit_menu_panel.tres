@@ -1,20 +1,18 @@
 [gd_resource type="StyleBox" format=4]
 
 [resource]
-resource_name = "GraphEdit menu_panel"
 background_color = "(theme.Editor.colors.dark_color_1 * Color(1, 1, 1, 0.6))"
+padding_left = "pixels((4 * theme.default_base_scale))"
+padding_top = "pixels((2 * theme.default_base_scale))"
+padding_right = "pixels((4 * theme.default_base_scale))"
+padding_bottom = "pixels((2 * theme.default_base_scale))"
 border_color = Color(0.8, 0.8, 0.8, 1)
-border_width_bottom = 0
 border_width_left = 0
-border_width_right = 0
 border_width_top = 0
-corner_detail = "pixels(int(ceil(((0.8 * 3) * theme.default_base_scale))))"
-corner_radius_bottom_left = "pixels(int((3 * theme.default_base_scale)))"
-corner_radius_bottom_right = "pixels(int((3 * theme.default_base_scale)))"
+border_width_right = 0
+border_width_bottom = 0
 corner_radius_top_left = "pixels(int((3 * theme.default_base_scale)))"
 corner_radius_top_right = "pixels(int((3 * theme.default_base_scale)))"
-padding_bottom = "pixels((2 * theme.default_base_scale))"
-padding_left = "pixels((4 * theme.default_base_scale))"
-padding_right = "pixels((4 * theme.default_base_scale))"
-padding_top = "pixels((2 * theme.default_base_scale))"
-shadow_color = Color(0, 0, 0, 0.6)
+corner_radius_bottom_right = "pixels(int((3 * theme.default_base_scale)))"
+corner_radius_bottom_left = "pixels(int((3 * theme.default_base_scale)))"
+corner_detail = "pixels(int(ceil(((0.8 * 3) * theme.default_base_scale))))"

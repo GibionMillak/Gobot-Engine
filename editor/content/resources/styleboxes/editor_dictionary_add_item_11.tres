@@ -1,22 +1,20 @@
 [gd_resource type="StyleBox" format=4]
 
 [resource]
-resource_name = "Editor DictionaryAddItem11"
 background_color = "(theme.Editor.colors.dark_color_3).lerp(theme.EditorInspector.colors.subresource_color_2, 0.08)"
+padding_left = 0
+padding_top = "pixels((4 * theme.default_base_scale))"
+padding_right = 0
+padding_bottom = "pixels((4 * theme.default_base_scale))"
 border_color = Color(0.8, 0.8, 0.8, 1)
-border_width_bottom = 0
 border_width_left = 0
-border_width_right = 0
 border_width_top = 0
-corner_detail = "pixels(int(ceil(((0.8 * (int(round(theme.default_border_radius)))) * theme.default_base_scale))))"
-corner_radius_bottom_left = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
-corner_radius_bottom_right = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+border_width_right = 0
+border_width_bottom = 0
 corner_radius_top_left = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
 corner_radius_top_right = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+corner_radius_bottom_right = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+corner_radius_bottom_left = "pixels(int(((int(round(theme.default_border_radius))) * theme.default_base_scale)))"
+corner_detail = "pixels(int(ceil(((0.8 * (int(round(theme.default_border_radius)))) * theme.default_base_scale))))"
 expand_margin_left = "pixels(round((2 * theme.default_base_scale)))"
 expand_margin_right = "pixels(round((2 * theme.default_base_scale)))"
-padding_bottom = "pixels((4 * theme.default_base_scale))"
-padding_left = 0
-padding_right = 0
-padding_top = "pixels((4 * theme.default_base_scale))"
-shadow_color = Color(0, 0, 0, 0.6)

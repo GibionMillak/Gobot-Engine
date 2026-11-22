@@ -1,20 +1,18 @@
 [gd_resource type="StyleBox" format=4]
 
 [resource]
-resource_name = "Editor LaunchPadMovieMode"
 background_color = "(theme.Editor.colors.accent_color * Color(1, 1, 1, 0.1))"
+padding_left = "pixels((round((2 * theme.default_base_scale)) * theme.default_base_scale))"
+padding_top = 0
+padding_right = "pixels((round((2 * theme.default_base_scale)) * theme.default_base_scale))"
+padding_bottom = 0
 border_color = "theme.Editor.colors.accent_color"
-border_width_bottom = "pixels(int(round(round((2 * theme.default_base_scale)))))"
 border_width_left = "pixels(int(round(round((2 * theme.default_base_scale)))))"
-border_width_right = "pixels(int(round(round((2 * theme.default_base_scale)))))"
 border_width_top = "pixels(int(round(round((2 * theme.default_base_scale)))))"
-corner_detail = "pixels(int(ceil(((0.8 * (int(round(theme.default_border_radius)))) * theme.default_base_scale))))"
-corner_radius_bottom_left = "pixels(int(round(((int(round(theme.default_border_radius))) * theme.default_base_scale))))"
-corner_radius_bottom_right = "pixels(int(round(((int(round(theme.default_border_radius))) * theme.default_base_scale))))"
+border_width_right = "pixels(int(round(round((2 * theme.default_base_scale)))))"
+border_width_bottom = "pixels(int(round(round((2 * theme.default_base_scale)))))"
 corner_radius_top_left = "pixels(int(round(((int(round(theme.default_border_radius))) * theme.default_base_scale))))"
 corner_radius_top_right = "pixels(int(round(((int(round(theme.default_border_radius))) * theme.default_base_scale))))"
-padding_bottom = 0
-padding_left = "pixels((round((2 * theme.default_base_scale)) * theme.default_base_scale))"
-padding_right = "pixels((round((2 * theme.default_base_scale)) * theme.default_base_scale))"
-padding_top = 0
-shadow_color = Color(0, 0, 0, 0.6)
+corner_radius_bottom_right = "pixels(int(round(((int(round(theme.default_border_radius))) * theme.default_base_scale))))"
+corner_radius_bottom_left = "pixels(int(round(((int(round(theme.default_border_radius))) * theme.default_base_scale))))"
+corner_detail = "pixels(int(ceil(((0.8 * (int(round(theme.default_border_radius)))) * theme.default_base_scale))))"

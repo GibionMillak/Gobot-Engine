@@ -117,10 +117,8 @@ Click the selected theme in Editor Settings or Project Settings to expand its
 items by type.
 
 The resource supplies base and accent colors, contrast, icon saturation, padding,
-border width, border radius, and focus border width. These values are not separate
-editor settings. Focus outlines scale up with the interface and retain their
-authored pixel width below scale 1; preparation adjusts the runtime parameter
-before stylebox resolution, leaving the source definition unchanged.
+border width, and border radius. StyleBox definitions supply colors and focus
+outline widths for individual controls.
 Each definition contains its complete control assignments, variations, palettes,
 and typography. The editor prepares a copy: fonts, icons, and sounds receive
 their rendering configuration, and expressions resolve against that copy.
@@ -148,11 +146,12 @@ names use the `default_` prefix, which is omitted from the Inspector labels.
 For example, `default_font_family` appears as Font Family and `default_padding`
 appears as Padding.
 
-Theme resources can define global padding, border width, border radius, focus
-border width, base, background, border, accent, and shadow colors, contrast, and
-icon saturation.
-Unspecified stylebox properties inherit matching defaults; an explicit value,
-including zero, overrides them.
+Theme resources can define global padding, border width, and border radius.
+Unspecified StyleBox padding, border widths, and corner radii inherit those
+values. An explicit value, including zero, overrides inheritance. Author
+background, border, and shadow colors and focus outline widths on the StyleBox.
+Theme-wide base and accent colors, contrast, and icon saturation are available
+to formulas.
 
 Write stylebox expressions as quoted strings, such as
 `padding_left = "theme.default_padding * 2 + 1"` or `border_color = "theme.default_accent_color"`.

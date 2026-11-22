@@ -1,6 +1,0 @@
-[gd_resource type="StyleBox" format=4]
-
-[resource]
-resource_name = "Base Panel"
-background_color = "theme.default_base_color"
-border_color = "theme.default_base_color"

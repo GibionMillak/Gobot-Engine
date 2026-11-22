@@ -627,7 +627,7 @@
 			<param index="0" name="name" type="StringName" />
 			<param index="1" name="value" type="Variant" />
 			<description>
-				Sets a global style parameter. Numeric parameters are [code]default_padding[/code], [code]default_border_width[/code], [code]default_border_radius[/code], and [code]default_focus_border_width[/code], in unscaled pixels. [code]default_contrast[/code] accepts values from -1 to 1, and [code]default_icon_saturation[/code] from 0 to 2. Color parameters are [code]default_base_color[/code], [code]default_background_color[/code], [code]default_border_color[/code], [code]default_accent_color[/code], and [code]default_shadow_color[/code]. Passing [code]null[/code] unsets the parameter. An expression string can derive the value from other theme properties. Changes invalidate resolved expressions and styleboxes and notify controls.
+				Sets a global style parameter. Numeric parameters are [code]default_padding[/code], [code]default_border_width[/code], and [code]default_border_radius[/code], in unscaled pixels. [code]default_contrast[/code] accepts values from -1 to 1, and [code]default_icon_saturation[/code] from 0 to 2. Color parameters are [code]default_base_color[/code] and [code]default_accent_color[/code]. Passing [code]null[/code] unsets the parameter. An expression string can derive the value from other theme properties. Changes invalidate resolved expressions and styleboxes and notify controls.
 			</description>
 		</method>
 		<method name="set_stylebox">
@@ -675,18 +675,12 @@
 		<member name="default_accent_color" type="Variant" setter="_set_style_parameter_value" getter="_get_style_parameter_value">
 			Optional color available to stylebox expressions as [code]theme.default_accent_color[/code]. Use [method has_style_parameter] to distinguish unset parameters and [method clear_style_parameter] to unset them.
 		</member>
-		<member name="default_background_color" type="Variant" setter="_set_style_parameter_value" getter="_get_style_parameter_value">
-			Optional global default for the corresponding unspecified stylebox color. It can also be referenced explicitly with [code]theme.default_background_color[/code]. Use [method has_style_parameter] to distinguish unset parameters and [method clear_style_parameter] to unset them.
-		</member>
 		<member name="default_base_color" type="Variant" setter="_set_style_parameter_value" getter="_get_style_parameter_value">
 			Base palette color used to prepare the editor theme. Styleboxes may reference it as [code]theme.default_base_color[/code]. Use [method has_style_parameter] to distinguish unset values.
 		</member>
 		<member name="default_base_scale" type="float" setter="set_default_base_scale" getter="get_default_base_scale" default="0.0">
 			The default base scale factor of this theme resource. Used by some controls to scale their visual properties based on the global scale factor. If this value is set to [code]0.0[/code], the global scale factor is used (see [member ThemeDB.fallback_base_scale]).
 			Use [method has_default_base_scale] to check if this value is valid.
-		</member>
-		<member name="default_border_color" type="Variant" setter="_set_style_parameter_value" getter="_get_style_parameter_value">
-			Optional global default for the corresponding unspecified stylebox color. It can also be referenced explicitly with [code]theme.default_border_color[/code]. Use [method has_style_parameter] to distinguish unset parameters and [method clear_style_parameter] to unset them.
 		</member>
 		<member name="default_border_radius" type="Variant" setter="_set_style_parameter_value" getter="_get_style_parameter_value">
 			Optional global default in unscaled pixels for unspecified stylebox properties. Resolved values are multiplied by [member default_base_scale] when it is valid. A literal stylebox value, including zero, overrides this default. Use [method has_style_parameter] to distinguish unset parameters and [method clear_style_parameter] to unset them.
@@ -696,9 +690,6 @@
 		</member>
 		<member name="default_contrast" type="Variant" setter="_set_style_parameter_value" getter="_get_style_parameter_value">
 			Palette contrast from -1 to 1. Negative values support light palettes. Use [method has_style_parameter] to distinguish unset values.
-		</member>
-		<member name="default_focus_border_width" type="Variant" setter="_set_style_parameter_value" getter="_get_style_parameter_value">
-			Optional nominal focus outline width in unscaled pixels, referenced with [code]theme.default_focus_border_width[/code]. It does not replace [member default_border_width] as the fallback for unspecified borders. When preparing editor themes, the editor adjusts this parameter so outlines scale up with the interface and retain their authored pixel width when the interface scale is below 1. Use [method has_style_parameter] to distinguish unset values.
 		</member>
 		<member name="default_font_family" type="Font" setter="set_default_font_family" getter="get_default_font_family">
 			The default font of this theme resource. Used as the default value when trying to fetch a font resource that doesn't exist in this theme or is in invalid state. If the default font is also missing or invalid, the engine fallback value is used (see [member ThemeDB.fallback_font]).
@@ -713,9 +704,6 @@
 		</member>
 		<member name="default_padding" type="Variant" setter="_set_style_parameter_value" getter="_get_style_parameter_value">
 			Optional global default in unscaled pixels for unspecified stylebox properties. Resolved values are multiplied by [member default_base_scale] when it is valid. A literal stylebox value, including zero, overrides this default. Use [method has_style_parameter] to distinguish unset parameters and [method clear_style_parameter] to unset them.
-		</member>
-		<member name="default_shadow_color" type="Variant" setter="_set_style_parameter_value" getter="_get_style_parameter_value">
-			Optional global default for the corresponding unspecified stylebox color. It can also be referenced explicitly with [code]theme.default_shadow_color[/code]. Use [method has_style_parameter] to distinguish unset parameters and [method clear_style_parameter] to unset them.
 		</member>
 	</members>
 	<constants>

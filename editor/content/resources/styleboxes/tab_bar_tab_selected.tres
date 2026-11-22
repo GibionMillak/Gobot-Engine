@@ -1,21 +1,18 @@
 [gd_resource type="StyleBox" format=4]
 
 [resource]
-resource_name = "TabBar tab_selected"
 background_color = "theme.Editor.colors.base_color"
+padding_left = "pixels((round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)) + round((5 * theme.default_base_scale))))"
+padding_top = "pixels(round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)))"
+padding_right = "pixels((round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)) + round((5 * theme.default_base_scale))))"
+padding_bottom = "pixels(round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)))"
 border_color = "(theme.Editor.colors.dark_color_2).lerp(theme.Editor.colors.accent_color, 0.75)"
-border_width_bottom = 0
 border_width_left = 0
-border_width_right = 0
 border_width_top = "pixels(int(round(round((2 * theme.default_base_scale)))))"
-corner_detail = 8
-corner_radius_bottom_left = 0
-corner_radius_bottom_right = 0
+border_width_right = 0
+border_width_bottom = 0
 corner_radius_top_left = 0
 corner_radius_top_right = 0
+corner_radius_bottom_right = 0
+corner_radius_bottom_left = 0
 expand_margin_left = "pixels((-(int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
-padding_bottom = "pixels(round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)))"
-padding_left = "pixels((round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)) + round((5 * theme.default_base_scale))))"
-padding_right = "pixels((round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)) + round((5 * theme.default_base_scale))))"
-padding_top = "pixels(round((int(((int(round(theme.default_padding))) * 2)) * theme.default_base_scale)))"
-shadow_color = "theme.default_shadow_color"

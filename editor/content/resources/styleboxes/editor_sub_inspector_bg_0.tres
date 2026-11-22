@@ -1,20 +1,15 @@
 [gd_resource type="StyleBox" format=4]
 
 [resource]
-resource_name = "Editor sub_inspector_bg0"
 background_color = Color(1, 1, 1, 0)
+padding_left = "pixels(round((4 * theme.default_base_scale)))"
+padding_top = "pixels(round((4 * theme.default_base_scale)))"
+padding_right = "pixels(round((4 * theme.default_base_scale)))"
+padding_bottom = "pixels(round((4 * theme.default_base_scale)))"
 border_color = "(theme.Editor.colors.dark_color_1).lerp(theme.Editor.colors.accent_color, 0.15)"
-border_width_bottom = "pixels(int(round((2 * theme.default_base_scale))))"
 border_width_left = "pixels(int(round((2 * theme.default_base_scale))))"
-border_width_right = "pixels(int(round((2 * theme.default_base_scale))))"
 border_width_top = "pixels(int(round((2 * theme.default_base_scale))))"
-corner_detail = 8
-corner_radius_bottom_left = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
-corner_radius_bottom_right = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
+border_width_right = "pixels(int(round((2 * theme.default_base_scale))))"
+border_width_bottom = "pixels(int(round((2 * theme.default_base_scale))))"
 corner_radius_top_left = 0
 corner_radius_top_right = 0
-padding_bottom = "pixels(round((4 * theme.default_base_scale)))"
-padding_left = "pixels(round((4 * theme.default_base_scale)))"
-padding_right = "pixels(round((4 * theme.default_base_scale)))"
-padding_top = "pixels(round((4 * theme.default_base_scale)))"
-shadow_color = "theme.default_shadow_color"

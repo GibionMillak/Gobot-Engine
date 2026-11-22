@@ -2543,17 +2543,17 @@ Vector<String> Theme::_get_type_list() const {
 }
 
 Variant::Type Theme::_get_style_parameter_type(const StringName &p_name) {
-	if (p_name == "default_padding" || p_name == "default_border_width" || p_name == "default_border_radius" || p_name == "default_contrast" || p_name == "default_icon_saturation" || p_name == "default_focus_border_width") {
+	if (p_name == "default_padding" || p_name == "default_border_width" || p_name == "default_border_radius" || p_name == "default_contrast" || p_name == "default_icon_saturation") {
 		return Variant::FLOAT;
 	}
-	if (p_name == "default_background_color" || p_name == "default_border_color" || p_name == "default_accent_color" || p_name == "default_shadow_color" || p_name == "default_base_color") {
+	if (p_name == "default_accent_color" || p_name == "default_base_color") {
 		return Variant::COLOR;
 	}
 	return Variant::NIL;
 }
 
 StringName Theme::_get_style_parameter_name(int p_parameter) {
-	static const char *const NAMES[] = { "default_padding", "default_border_width", "default_border_radius", "default_background_color", "default_border_color", "default_accent_color", "default_shadow_color", "default_base_color", "default_contrast", "default_icon_saturation", "default_focus_border_width" };
+	static const char *const NAMES[] = { "default_padding", "default_border_width", "default_border_radius", "default_accent_color", "default_base_color", "default_contrast", "default_icon_saturation" };
 	ERR_FAIL_INDEX_V(p_parameter, MAX_STYLE_PARAMETERS, StringName());
 	return NAMES[p_parameter];
 }

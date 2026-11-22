@@ -1,20 +1,13 @@
 [gd_resource type="StyleBox" format=4]
 
 [resource]
-resource_name = "Hub panel_container"
 background_color = "theme.default_base_color"
-border_color = "theme.Editor.colors.dark_color_3"
-border_width_bottom = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
-border_width_left = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
-border_width_right = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
-border_width_top = 0
-corner_detail = 8
-corner_radius_bottom_left = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
-corner_radius_bottom_right = "pixels(round((theme.default_border_radius * theme.default_base_scale)))"
-corner_radius_top_left = "pixels(int(round((theme.default_border_radius * theme.default_base_scale))))"
-corner_radius_top_right = "pixels(int(round((theme.default_border_radius * theme.default_base_scale))))"
-padding_bottom = "pixels(int(round(((int(round(theme.default_padding))) * theme.default_base_scale))))"
 padding_left = "pixels(int(round(((int(round(theme.default_padding))) * theme.default_base_scale))))"
-padding_right = "pixels(int(round(((int(round(theme.default_padding))) * theme.default_base_scale))))"
 padding_top = "pixels((round((2 * theme.default_base_scale)) + int(round(((int(round(theme.default_padding))) * theme.default_base_scale)))))"
-shadow_color = "theme.default_shadow_color"
+padding_right = "pixels(int(round(((int(round(theme.default_padding))) * theme.default_base_scale))))"
+padding_bottom = "pixels(int(round(((int(round(theme.default_padding))) * theme.default_base_scale))))"
+border_color = "theme.Editor.colors.dark_color_3"
+border_width_left = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
+border_width_top = 0
+border_width_right = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
+border_width_bottom = "pixels(int((int(round((theme.default_border_width * max(1, theme.default_base_scale)))))))"
