@@ -1138,7 +1138,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	_initial_set("run/auto_save/save_before_running", true, true);
 
 	// Docks
-	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "run/docks/action_on_play", EditorNode::ACTION_ON_PLAY_OPEN_OUTPUT, "Do Nothing,Open Output,Open Debugger")
+	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "run/docks/action_on_play", static_cast<int>(EditorNode::ActionOnPlay::OPEN_OUTPUT), "Do Nothing,Open Output,Open Debugger")
 
 	// Output
 	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_RANGE, "run/output/font_size", 13, "8,48,1")

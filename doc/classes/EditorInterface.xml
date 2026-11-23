@@ -53,7 +53,7 @@
 		<method name="get_base_control" qualifiers="const">
 			<return type="Control" />
 			<description>
-				Returns the main container of Godot editor's window. For example, you can use it to retrieve the size of the container and place your controls accordingly.
+				Returns the full-window [Control] used to place floating and plugin controls above the main editor layout. Use its size to position controls relative to the editor window.
 				[b]Warning:[/b] Removing and freeing this node will render the editor useless and may cause a crash.
 			</description>
 		</method>

@@ -4412,7 +4412,7 @@ void FileSystemDock::_on_open_editor_settings_file_exts() {
 
 	// The FileSystem settings are under "advanced settings", so we have to ensure
 	// that setting is enabled before we attempt to open the menu to them.
-	EditorSettingsDialog *ed_settings = EditorNode::get_singleton()->editor_settings_dialog;
+	EditorSettingsDialog *ed_settings = EditorNode::get_singleton()->_editor_settings_dialog;
 	ed_settings->set_advanced_mode_enabled(true);
 	ed_settings->popup_edit_settings();
 	ed_settings->set_current_section("docks/filesystem");

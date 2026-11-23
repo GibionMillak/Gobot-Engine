@@ -141,6 +141,7 @@
 [ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_audio_bus_master.tres" id="stylebox_editor_audio_bus_master"]
 [ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_audio_bus_normal.tres" id="stylebox_editor_audio_bus_normal"]
 [ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_background.tres" id="stylebox_editor_background"]
+[ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_background_padded.tres" id="stylebox_editor_background_padded"]
 [ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_content.tres" id="stylebox_editor_content"]
 [ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_debugger_panel.tres" id="stylebox_editor_debugger_panel"]
 [ext_resource type="StyleBox" path="res://.content/resources/styleboxes/editor_dictionary_add_item_0.tres" id="stylebox_editor_dictionary_add_item_0"]
@@ -881,7 +882,6 @@ Editor/constants/padding = "int(round(theme.default_padding))"
 Editor/constants/scale = "int(theme.default_base_scale)"
 Editor/constants/thumb_size = "int(((64)))"
 Editor/constants/top_bar_separation = "int((max(1, ((int(round(theme.default_padding))) * theme.default_base_scale))))"
-Editor/constants/window_border_margin = "int((max(1, ((int(round(theme.default_padding))) * theme.default_base_scale))))"
 Editor/font_sizes/bold_size = "int(theme.default_font_size)"
 Editor/font_sizes/doc_keyboard_size = "int(((int((15)) - 1) * theme.default_base_scale))"
 Editor/font_sizes/doc_size = "int((int((16)) * theme.default_base_scale))"
@@ -1015,6 +1015,7 @@ Editor/icons/scripting_code_region_folded_right_arrow = ExtResource("icon_script
 Editor/icons/scripting_text_editor_play = ExtResource("icon_scripting_text_editor_play")
 Editor/icons/viewport_overbright_indicator = ExtResource("icon_viewport_overbright_indicator")
 Editor/styles/background = ExtResource("stylebox_editor_background")
+Editor/styles/background_padded = ExtResource("stylebox_editor_background_padded")
 Editor/styles/button_disabled = ExtResource("stylebox_button_disabled")
 Editor/styles/button_focus = ExtResource("stylebox_button_focus")
 Editor/styles/button_hover = ExtResource("stylebox_button_hover")
