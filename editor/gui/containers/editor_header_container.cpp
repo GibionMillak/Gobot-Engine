@@ -88,7 +88,6 @@ void EditorHeaderContainer::add_editor_controls(bool p_main_menu_collapsed) {
 
 	_debug_btn = memnew(MenuButton);
 	_debug_btn->set_button_icon(get_editor_theme_icon(SNAME("gui_debug")));
-	_debug_btn->set_flat(true);
 	_debug_btn->set_switch_on_hover(true);
 	_debug_btn->set_text(TTRC("Debug"));
 	_right_hbox->add_child(_debug_btn);
