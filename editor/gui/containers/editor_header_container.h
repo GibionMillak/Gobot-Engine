@@ -34,6 +34,7 @@
 
 class Button;
 class Label;
+class MainMenuContainer;
 class MenuButton;
 class PopupMenu;
 class Texture2D;
@@ -48,8 +49,8 @@ public:
 	HBoxContainer *get_center_section() const { return _center_hbox; }
 	HBoxContainer *get_right_section() const { return _right_hbox; }
 
-	void add_editor_controls();
-	PopupMenu *get_tools_menu() const;
+	void add_editor_controls(bool p_main_menu_collapsed);
+	MainMenuContainer *get_main_menu() const { return _main_menu_hbox; }
 	PopupMenu *get_debug_menu() const;
 
 	void set_can_move_window(bool p_enabled);
@@ -78,7 +79,7 @@ private:
 	HBoxContainer *_center_hbox = nullptr;
 	HBoxContainer *_right_hbox = nullptr;
 	Label *_editor_name_lbl = nullptr;
-	MenuButton *_tools_btn = nullptr;
+	MainMenuContainer *_main_menu_hbox = nullptr;
 	MenuButton *_debug_btn = nullptr;
 	HBoxContainer *_window_buttons_hbox = nullptr;
 	Button *_minimize_btn = nullptr;

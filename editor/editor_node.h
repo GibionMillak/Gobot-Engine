@@ -52,8 +52,6 @@ class Control;
 class FileDialog;
 class HBoxContainer;
 class ImageTexture;
-class MenuBar;
-class MenuButton;
 class OptionButton;
 class PanelContainer;
 class RichTextLabel;
@@ -515,12 +513,6 @@ private:
 		Vector<String> patches;
 	};
 
-	enum class MenuType {
-		NONE,
-		COMPACT,
-		FULL,
-	};
-
 	static void _dependency_error_report(const String &p_path, const String &p_dep, const String &p_type) {
 		DEV_ASSERT(Thread::get_caller_id() == Thread::get_main_id());
 		if (!_singleton->_dependency_errors.has(p_path)) {
@@ -709,9 +701,6 @@ private:
 	void _build_project_menu();
 	void _build_settings_menu();
 
-	void _update_main_menu_type();
-	void _add_to_main_menu(const String &p_name, PopupMenu *r_menu);
-
 	void _copy_warning(const String &p_str);
 #ifdef ANDROID_ENABLED
 	void _screen_orientation_changed(int p_new_orientation);
@@ -772,9 +761,6 @@ private:
 	Control *_left_menu_spacer = nullptr;
 	EditorHeaderContainer *_editor_header = nullptr;
 	EditorRunBar *_project_run_bar = nullptr;
-
-	MenuButton *_main_menu_btn = nullptr;
-	MenuBar *_main_menu_bar = nullptr;
 
 	PopupMenu *_file_menu = nullptr;
 	PopupMenu *_project_menu = nullptr;
@@ -924,8 +910,6 @@ private:
 
 	static Vector<EditorNodeInitCallback> _init_callbacks;
 	Ref<ImageTexture> _default_thumbnail;
-	MenuType _menu_type = MenuType::NONE;
-	Vector<PopupMenu *> _main_menu_items;
 
 	HashMap<int, SceneModificationsEntry> _scenes_modification_table;
 	List<String> _scenes_reimported;

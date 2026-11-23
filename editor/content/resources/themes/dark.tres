@@ -1432,12 +1432,6 @@ LinkButton/colors/font_pressed_color = "theme.Editor.colors.font_pressed_color"
 LinkButton/constants/outline_size = 0
 LinkButton/styles/focus = ExtResource("stylebox_label_normal")
 
-MainMenuBar/base_type = "FlatMenuButton"
-MainMenuBar/styles/hover = ExtResource("stylebox_editor_log_filter_button_hover")
-MainMenuBar/styles/hover_pressed = ExtResource("stylebox_editor_log_filter_button_hover")
-MainMenuBar/styles/normal = ExtResource("stylebox_dock_toolbar_button_normal")
-MainMenuBar/styles/pressed = ExtResource("stylebox_editor_log_filter_button_hover")
-
 MainMenuButton/base_type = "Button"
 MainMenuButton/font_sizes/font_size = "int((theme.Editor.font_sizes.main_size + (2 * theme.default_base_scale)))"
 MainMenuButton/fonts/font = "theme.Editor.fonts.bold"

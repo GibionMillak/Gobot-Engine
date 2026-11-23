@@ -85,6 +85,7 @@
 #include "editor/gui/containers/editor_footer_container.h"
 #include "editor/gui/containers/editor_header_container.h"
 #include "editor/gui/containers/editor_toaster_container.h"
+#include "editor/gui/containers/main_menu_container.h"
 #include "editor/gui/dialogs/editor_quick_open_dialog.h"
 #include "editor/gui/dialogs/editor_settings_dialog.h"
 #include "editor/gui/dialogs/project_autoloads_dialog.h"
@@ -167,11 +168,10 @@
 #include "scene/gui/control.h"
 #include "scene/gui/dialog.h"
 #include "scene/gui/file_dialog.h"
-#include "scene/gui/menu_bar.h"
-#include "scene/gui/menu_button.h"
 #include "scene/gui/option_button.h"
 #include "scene/gui/panel_container.h"
 #include "scene/gui/popup.h"
+#include "scene/gui/popup_menu.h"
 #include "scene/gui/rich_text_label.h"
 #include "scene/gui/split_container.h"
 #include "scene/gui/tab_container.h"
@@ -913,20 +913,21 @@ EditorNode::EditorNode() {
 		_editor_header->get_left_section()->move_child(_left_menu_spacer, 0);
 	}
 
-	_file_menu = memnew(PopupMenu);
+	_editor_header->add_editor_controls(EDITOR_GET("interface/editor/appearance/collapse_main_menu"));
+
+	MainMenuContainer *main_menu_hbox = _editor_header->get_main_menu();
+	_file_menu = main_menu_hbox->get_file_menu();
 	_file_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
 	_file_menu->connect("about_to_popup", callable_mp(this, &EditorNode::_update_file_menu_opened));
-	_add_to_main_menu(TTRC("File"), _file_menu);
+	_build_file_menu();
 
-	_project_menu = memnew(PopupMenu);
+	_project_menu = main_menu_hbox->get_project_menu();
 	_project_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
-	_add_to_main_menu(TTRC("Project"), _project_menu);
+	_build_project_menu();
 
-	_settings_menu = memnew(PopupMenu);
+	_settings_menu = main_menu_hbox->get_editor_menu();
 	_settings_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
-	_add_to_main_menu(TTRC("Editor"), _settings_menu);
-
-	_update_main_menu_type();
+	_build_settings_menu();
 
 	_project_title_lbl = memnew(Label);
 	_project_title_lbl->add_theme_font_override(SceneStringName(font_family), _theme->get_font(SNAME("bold"), EditorStringName(Editor)));
@@ -934,9 +935,7 @@ EditorNode::EditorNode() {
 	_project_title_lbl->set_mouse_filter(Control::MOUSE_FILTER_IGNORE);
 	_editor_header->get_center_section()->add_child(_project_title_lbl);
 
-	_editor_header->add_editor_controls();
-
-	_tool_menu = _editor_header->get_tools_menu();
+	_tool_menu = main_menu_hbox->get_tools_menu();
 	_tool_menu->connect("index_pressed", callable_mp(this, &EditorNode::_tool_menu_option));
 	_tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/orphan_resource_explorer"), TOOLS_ORPHAN_RESOURCES);
 	_tool_menu->add_shortcut(ED_GET_SHORTCUT("editor/engine_compilation_configuration_editor"), TOOLS_BUILD_PROFILE_MANAGER);
@@ -4726,7 +4725,9 @@ void EditorNode::_notification(int p_what) {
 			}
 
 			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/editor/appearance")) {
-				_update_main_menu_type();
+				if (_editor_header && _editor_header->get_main_menu()) {
+					_editor_header->get_main_menu()->set_collapsed(EDITOR_GET("interface/editor/appearance/collapse_main_menu"));
+				}
 			}
 			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/editor/display")) {
 				_update_vsync_mode();
@@ -4938,10 +4939,6 @@ void EditorNode::_update_theme(bool p_skip_creation) {
 	{
 		_update_main_layout_style(true);
 		_dock_layout_pc->add_theme_style_override(SceneStringName(panel), _theme->get_stylebox(SNAME("dock_background"), EditorStringName(Editor)));
-
-		if (_main_menu_btn != nullptr) {
-			_main_menu_btn->set_button_icon(_theme->get_icon(SNAME("gui_triple_bar"), EditorStringName(Editor)));
-		}
 
 		_update_main_menu_icons();
 	}
@@ -8434,85 +8431,6 @@ void EditorNode::_build_settings_menu() {
 #if !defined(ANDROID_ENABLED)
 	_settings_menu->add_item(TTRC("Configure FBX Importer..."), EDITOR_CONFIGURE_FBX_IMPORTER);
 #endif
-}
-
-void EditorNode::_update_main_menu_type() {
-	const bool use_menu_button = EDITOR_GET("interface/editor/appearance/collapse_main_menu");
-	const MenuType new_menu_type = use_menu_button ? MenuType::COMPACT : MenuType::FULL;
-
-	if (new_menu_type == _menu_type) {
-		return; // Nothing to do.
-	}
-	_menu_type = new_menu_type;
-
-	// Update menu items.
-	_build_file_menu();
-	_build_project_menu();
-	_build_settings_menu();
-
-	// Delete all menu.
-	if (_main_menu_bar) {
-		for (PopupMenu *menu : _main_menu_items) {
-			if (menu->get_parent() == _main_menu_bar) {
-				_main_menu_bar->remove_child(menu);
-			}
-		}
-		memdelete(_main_menu_bar);
-		_main_menu_bar = nullptr;
-	}
-	if (_main_menu_btn) {
-		PopupMenu *popup = _main_menu_btn->get_popup();
-		popup->clear(false);
-		for (PopupMenu *menu : _main_menu_items) {
-			if (menu->get_parent() == popup) {
-				popup->remove_child(menu);
-			}
-		}
-		memdelete(_main_menu_btn);
-		_main_menu_btn = nullptr;
-	}
-	HBoxContainer *left_section = _editor_header->get_left_section();
-	const int menu_index = _left_menu_spacer ? _left_menu_spacer->get_index() + 2 : 1;
-
-	if (new_menu_type == MenuType::COMPACT) {
-		_main_menu_btn = memnew(MenuButton);
-		if (is_inside_tree()) {
-			_main_menu_btn->set_button_icon(_theme->get_icon(SNAME("gui_triple_bar"), EditorStringName(Editor)));
-		}
-		_main_menu_btn->set_focus_mode(Control::FOCUS_NONE);
-		_main_menu_btn->set_switch_on_hover(true);
-		_main_menu_btn->set_text(TTRC("Main Menu"));
-		_main_menu_btn->set_theme_type_variation("MainMenuButton");
-		left_section->add_child(_main_menu_btn);
-		left_section->move_child(_main_menu_btn, menu_index);
-
-		{
-			PopupMenu *popup = _main_menu_btn->get_popup();
-			for (PopupMenu *menu : _main_menu_items) {
-				popup->add_submenu_node_item(menu->get_name(), menu);
-			}
-		}
-	} else {
-		_main_menu_bar = memnew(MenuBar);
-		_main_menu_bar->set_mouse_filter(Control::MOUSE_FILTER_STOP);
-		_main_menu_bar->set_prefer_global_menu(false);
-		_main_menu_bar->set_switch_on_hover(true);
-		_main_menu_bar->set_theme_type_variation("MainMenuBar");
-		_main_menu_bar->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
-		left_section->add_child(_main_menu_bar);
-		left_section->move_child(_main_menu_bar, menu_index);
-
-		{
-			for (PopupMenu *menu : _main_menu_items) {
-				_main_menu_bar->add_child(menu);
-			}
-		}
-	}
-}
-
-void EditorNode::_add_to_main_menu(const String &p_name, PopupMenu *r_menu) {
-	r_menu->set_name(p_name);
-	_main_menu_items.push_back(r_menu);
 }
 
 void EditorNode::_copy_warning(const String &p_str) {
