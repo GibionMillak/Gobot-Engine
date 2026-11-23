@@ -2,10 +2,10 @@
 
 [resource]
 background_color = "Color((theme.Editor.colors.dark_color_2).r, (theme.Editor.colors.dark_color_2).g, (theme.Editor.colors.dark_color_2).b, 1.0)"
-padding_left = 5.0
-padding_top = 5.0
-padding_right = 5.0
-padding_bottom = 5.0
+padding_left = "pixels(theme.Editor.styles.background.get_padding(0) + 1)"
+padding_top = "pixels(theme.Editor.styles.background.get_padding(1) + 1)"
+padding_right = "pixels(theme.Editor.styles.background.get_padding(2) + 1)"
+padding_bottom = "pixels(theme.Editor.styles.background.get_padding(3) + 1)"
 border_width_left = 0
 border_width_top = 0
 border_width_right = 0
